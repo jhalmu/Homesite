@@ -2,6 +2,8 @@
 
 ![Elixir CI](https://github.com/jhalmu/Homesite/workflows/Elixir%20CI/badge.svg)
 
+Ominaisuuksia: Auth, Posts
+
 To start your Phoenix server:
 
 * Run `mix setup` to install and setup dependencies
