@@ -1,3 +1,5 @@
+![Elixir CI](https://github.com/noelworden/atlas/workflows/Elixir%20CI/badge.svg)
+
 # Kotisivut
 
 To start your Phoenix server:
