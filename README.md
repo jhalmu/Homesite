@@ -1,10 +1,10 @@
 # Kotisivut
 
 ![Elixir CI](https://github.com/jhalmu/Homesite/workflows/Elixir%20CI/badge.svg)
+Tests: Test, Format, Credo -strict, Dialyzer
+Apps: Auth, Posts
 
-Ominaisuuksia: Auth, Posts
-
-To start your Phoenix server:
+## To start your Phoenix server
 
 * Run `mix setup` to install and setup dependencies
 * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
