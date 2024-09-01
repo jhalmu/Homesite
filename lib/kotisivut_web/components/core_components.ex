@@ -16,7 +16,10 @@ defmodule KotisivutWeb.CoreComponents do
   """
   use Phoenix.Component
 
+  # my change
+  alias Phoenix.HTML.Form, as: PHF
   alias Phoenix.LiveView.JS
+
   import KotisivutWeb.Gettext
 
   @doc """
@@ -305,7 +308,7 @@ defmodule KotisivutWeb.CoreComponents do
   def input(%{type: "checkbox"} = assigns) do
     assigns =
       assign_new(assigns, :checked, fn ->
-        Phoenix.HTML.Form.normalize_value("checkbox", assigns[:value])
+        PHF.normalize_value("checkbox", assigns[:value])
       end)
 
     ~H"""

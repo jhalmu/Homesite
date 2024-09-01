@@ -1,4 +1,8 @@
 defmodule Kotisivut.Accounts.User do
+  @moduledoc """
+  Schema for Users see Doc
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 

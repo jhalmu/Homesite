@@ -13,6 +13,7 @@ defmodule Kotisivut.DataCase do
   by setting `use Kotisivut.DataCase, async: true`, although
   this option is not recommended for other databases.
   """
+  alias Ecto.Adapters.SQL.Sandbox, as: EASS
 
   use ExUnit.CaseTemplate
 
@@ -36,8 +37,8 @@ defmodule Kotisivut.DataCase do
   Sets up the sandbox based on the test tags.
   """
   def setup_sandbox(tags) do
-    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(Kotisivut.Repo, shared: not tags[:async])
-    on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
+    pid = EASS.start_owner!(Kotisivut.Repo, shared: not tags[:async])
+    on_exit(fn -> EASS.stop_owner(pid) end)
   end
 
   @doc """

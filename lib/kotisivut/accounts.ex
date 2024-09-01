@@ -6,7 +6,7 @@ defmodule Kotisivut.Accounts do
   import Ecto.Query, warn: false
   alias Kotisivut.Repo
 
-  alias Kotisivut.Accounts.{User, UserToken, UserNotifier}
+  alias Kotisivut.Accounts.{User, UserNotifier, UserToken}
 
   ## Database getters
 

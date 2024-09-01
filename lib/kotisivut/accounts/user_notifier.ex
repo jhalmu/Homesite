@@ -1,4 +1,8 @@
 defmodule Kotisivut.Accounts.UserNotifier do
+  @moduledoc """
+  UserNotifier TODO
+  """
+
   import Swoosh.Email
 
   alias Kotisivut.Mailer

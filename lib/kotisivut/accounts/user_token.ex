@@ -1,4 +1,8 @@
 defmodule Kotisivut.Accounts.UserToken do
+  @moduledoc """
+  Schema for UserTokens, read comments for more
+  """
+
   use Ecto.Schema
   import Ecto.Query
   alias Kotisivut.Accounts.UserToken

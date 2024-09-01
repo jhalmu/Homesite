@@ -1,9 +1,10 @@
 defmodule KotisivutWeb.UserAuthTest do
   use KotisivutWeb.ConnCase, async: true
 
-  alias Phoenix.LiveView
   alias Kotisivut.Accounts
   alias KotisivutWeb.UserAuth
+  alias Phoenix.LiveView
+
   import Kotisivut.AccountsFixtures
 
   @remember_me_cookie "_kotisivut_web_user_remember_me"

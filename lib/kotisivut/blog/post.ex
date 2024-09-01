@@ -1,4 +1,8 @@
 defmodule Kotisivut.Blog.Post do
+  @moduledoc """
+  Schema for Posts
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 

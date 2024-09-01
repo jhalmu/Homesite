@@ -1,4 +1,8 @@
 defmodule KotisivutWeb.UserAuth do
+  @moduledoc """
+  User auth see doc
+  """
+
   use KotisivutWeb, :verified_routes
 
   import Plug.Conn
