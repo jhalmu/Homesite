@@ -19,11 +19,12 @@ defmodule KotisivutWeb.Router do
 
   scope "/", KotisivutWeb do
     pipe_through :browser
-
-    get "/", PageController, :home
-
     live "/posts", PostLive.Index, :index
+    live "/posts/new", PostLive.Index, :new
     live "/posts/:id", PostLive.Show, :show
+    live "/posts/:id/edit", PostLive.Index, :edit
+    live "/posts/:id/show/edit", PostLive.Show, :edit
+    get "/", PageController, :home
   end
 
   # Other scopes may use custom stacks.
@@ -71,9 +72,6 @@ defmodule KotisivutWeb.Router do
       on_mount: [{KotisivutWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
-      live "/posts/new", PostLive.Index, :new
-      live "/posts/:id/edit", PostLive.Index, :edit
-      live "/posts/:id/show/edit", PostLive.Show, :edit
     end
   end
 
