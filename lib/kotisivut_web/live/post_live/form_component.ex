@@ -20,7 +20,7 @@ defmodule KotisivutWeb.PostLive.FormComponent do
         phx-submit="save"
       >
         <.input field={@form[:title]} type="text" label="Title" />
-        <.input field={@form[:body]} type="text" label="Body" />
+        <.input field={@form[:body]} type="textarea" label="Body" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Post</.button>
         </:actions>
@@ -46,7 +46,11 @@ defmodule KotisivutWeb.PostLive.FormComponent do
   end
 
   def handle_event("save", %{"post" => post_params}, socket) do
-    save_post(socket, socket.assigns.action, post_params)
+    params =
+      post_params
+      |> Map.put("user_id", socket.assigns.current_user.id)
+
+    save_post(socket, socket.assigns.action, params)
   end
 
   defp save_post(socket, :edit, post_params) do

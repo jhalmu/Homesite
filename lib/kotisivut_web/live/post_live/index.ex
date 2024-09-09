@@ -6,7 +6,10 @@ defmodule KotisivutWeb.PostLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :posts, Blog.list_posts())}
+    user_id =
+      socket.assigns.current_user.id
+
+    {:ok, stream(socket, :posts, Blog.list_posts(user_id))}
   end
 
   @impl true

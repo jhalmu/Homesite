@@ -7,6 +7,9 @@ defmodule Kotisivut.Accounts.User do
   import Ecto.Changeset
 
   schema "users" do
+    field :username, :string
+    field :fullname, :string
+    field :role, :boolean
     field :email, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
@@ -41,7 +44,8 @@ defmodule Kotisivut.Accounts.User do
   """
   def registration_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :password])
+    |> cast(attrs, [:username, :fullname, :role, :email, :password])
+    # |> unique_constraint([:username], message: "must be unique")
     |> validate_email(opts)
     |> validate_password(opts)
   end
@@ -57,7 +61,7 @@ defmodule Kotisivut.Accounts.User do
   defp validate_password(changeset, opts) do
     changeset
     |> validate_required([:password])
-    |> validate_length(:password, min: 12, max: 72)
+    |> validate_length(:password, min: 8, max: 72)
     # Examples of additional password validation:
     # |> validate_format(:password, ~r/[a-z]/, message: "at least one lower case character")
     # |> validate_format(:password, ~r/[A-Z]/, message: "at least one upper case character")

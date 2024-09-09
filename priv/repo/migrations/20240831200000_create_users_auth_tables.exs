@@ -5,6 +5,9 @@ defmodule Kotisivut.Repo.Migrations.CreateUsersAuthTables do
     execute "CREATE EXTENSION IF NOT EXISTS citext", ""
 
     create table(:users) do
+      add :username, :string, null: false
+      add :fullname, :string, null: false
+      add :role, :bool, null: false, default: false
       add :email, :citext, null: false
       add :hashed_password, :string, null: false
       add :confirmed_at, :utc_datetime
@@ -12,6 +15,7 @@ defmodule Kotisivut.Repo.Migrations.CreateUsersAuthTables do
       timestamps(type: :utc_datetime)
     end
 
+    create index(:users, [:username])
     create unique_index(:users, [:email])
 
     create table(:users_tokens) do

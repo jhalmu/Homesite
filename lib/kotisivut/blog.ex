@@ -17,8 +17,11 @@ defmodule Kotisivut.Blog do
       [%Post{}, ...]
 
   """
-  def list_posts do
-    Repo.all(Post)
+  def list_posts(user_id) do
+    Repo.all(
+      from l in Post,
+        where: l.user_id == ^user_id
+    )
   end
 
   @doc """
