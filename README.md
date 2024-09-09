@@ -4,6 +4,17 @@
 Tests: Test, Format, Credo -strict, Dialyzer
 Apps: Auth, Posts
 
+## Diary
+
+9.9.2024
+
+I practised with Andrew Steward's " How you start writing LiveView " video where he makes Link app allmost from scratch. I did the Links.
+Then I added user_id' and username etc fields to my Blog and I have to figure out how to get them to work. Gladdly I have gray hairs already. But I did it and got changres to work in generated code. So happy. So happy. I did not quit. I can move on.
+
+And I'm so bored with instruction videos... I need so much to go back and "read" again sometimes many times again.
+
+Well. Test do not pass. Credo and Dialyzer passes so very good. I have to figure out how to split them to see some green :D
+
 ## To start your Phoenix server
 
 * Run `mix setup` to install and setup dependencies
