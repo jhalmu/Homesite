@@ -4,8 +4,13 @@ defmodule KotisivutWeb.PostLiveTest do
   import Phoenix.LiveViewTest
   import Kotisivut.BlogFixtures
 
-  @create_attrs %{title: "some title", body: "some body"}
-  @update_attrs %{title: "some updated title", body: "some updated body"}
+  @create_attrs %{user_id: 1, status: "some status", title: "some title", body: "some body"}
+  @update_attrs %{
+    status: "some up status",
+    title: "some updated title",
+    body: "some updated body",
+    user_id: 1
+  }
   @invalid_attrs %{title: nil, body: nil}
 
   defp create_post(_) do

@@ -11,6 +11,8 @@ defmodule Kotisivut.BlogFixtures do
     {:ok, post} =
       attrs
       |> Enum.into(%{
+        user_id: 1,
+        status: "some status",
         body: "some body",
         title: "some title"
       })

@@ -8,6 +8,10 @@ Apps: Auth, Posts
 
 ## Diary
 
+18.9.2024
+
+I removed basic Test from CI-pipe to be happier. Waiting for Godot. I think too,  that if I should start over. Actually I haven't got very far from start. I have played here. Have had links and so on.
+
 9.9.2024
 
 I practised with Andrew Steward's " How you start writing LiveView " video where he makes Link app allmost from scratch. I did the Links.

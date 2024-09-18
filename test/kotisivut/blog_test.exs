@@ -8,7 +8,7 @@ defmodule Kotisivut.BlogTest do
 
     import Kotisivut.BlogFixtures
 
-    @invalid_attrs %{title: nil, body: nil}
+    @invalid_attrs %{status: nil, title: nil, body: nil}
 
     test "list_posts/0 returns all posts" do
       post = post_fixture()
@@ -21,9 +21,11 @@ defmodule Kotisivut.BlogTest do
     end
 
     test "create_post/1 with valid data creates a post" do
-      valid_attrs = %{title: "some title", body: "some body"}
+      valid_attrs = %{user_id: 1, status: "some status", title: "some title", body: "some body"}
 
       assert {:ok, %Post{} = post} = Blog.create_post(valid_attrs)
+      assert post.user_id == 1
+      assert post.status == "some status"
       assert post.title == "some title"
       assert post.body == "some body"
     end
@@ -34,9 +36,19 @@ defmodule Kotisivut.BlogTest do
 
     test "update_post/2 with valid data updates the post" do
       post = post_fixture()
-      update_attrs = %{title: "some updated title", body: "some updated body"}
+
+      update_attrs = %{
+        user_id: 1,
+        status: "Some up status",
+        title: "some updated title",
+        body: "some updated body"
+      }
 
       assert {:ok, %Post{} = post} = Blog.update_post(post, update_attrs)
+
+      assert post.user_id == 1,
+             assert(post.status == "some up status")
+
       assert post.title == "some updated title"
       assert post.body == "some updated body"
     end
