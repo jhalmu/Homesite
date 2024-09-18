@@ -3,7 +3,7 @@
 ![Elixir CI](https://github.com/jhalmu/Homesite/workflows/Elixir%20CI/badge.svg)
 
 
-Tests: Test, Format, Credo -strict, Dialyzer
+Tests: Format, Credo -strict, Dialyzer
 Apps: Auth, Posts
 
 ## Diary
