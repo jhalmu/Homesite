@@ -70,4 +70,12 @@ defmodule HomesiteWeb.Router do
     post "/users/log-in", UserSessionController, :create
     delete "/users/log-out", UserSessionController, :delete
   end
+
+  ## Admin routes
+
+  scope "/dashboard", HomesiteWeb.Admin, as: :admin do
+    pipe_through [:browser, :require_authenticated_user]
+
+    live "/", DashboardLive, :index
+  end
 end
