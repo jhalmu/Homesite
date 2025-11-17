@@ -1,0 +1,112 @@
+## `msgid`s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove `msgid`s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use `mix gettext.extract --merge` or `mix gettext.merge`
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: fi\n"
+
+## From Ecto.Changeset.cast/4
+msgid "can't be blank"
+msgstr "ei voi olla tyhjä"
+
+## From Ecto.Changeset.unique_constraint/3
+msgid "has already been taken"
+msgstr "on jo käytössä"
+
+## From Ecto.Changeset.put_change/3
+msgid "is invalid"
+msgstr "on virheellinen"
+
+## From Ecto.Changeset.validate_acceptance/3
+msgid "must be accepted"
+msgstr "täytyy hyväksyä"
+
+## From Ecto.Changeset.validate_format/3
+msgid "has invalid format"
+msgstr "muoto on virheellinen"
+
+## From Ecto.Changeset.validate_subset/3
+msgid "has an invalid entry"
+msgstr "sisältää virheellisen arvon"
+
+## From Ecto.Changeset.validate_exclusion/3
+msgid "is reserved"
+msgstr "on varattu"
+
+## From Ecto.Changeset.validate_confirmation/3
+msgid "does not match confirmation"
+msgstr "ei täsmää vahvistuksen kanssa"
+
+## From Ecto.Changeset.no_assoc_constraint/3
+msgid "is still associated with this entry"
+msgstr "on yhä liitetty tähän kohteeseen"
+
+msgid "are still associated with this entry"
+msgstr "ovat yhä liitetty tähän kohteeseen"
+
+## From Ecto.Changeset.validate_length/3
+msgid "should have %{count} item(s)"
+msgid_plural "should have %{count} item(s)"
+msgstr[0] "tulisi olla %{count} kohde"
+msgstr[1] "tulisi olla %{count} kohdetta"
+
+msgid "should be %{count} character(s)"
+msgid_plural "should be %{count} character(s)"
+msgstr[0] "tulisi olla %{count} merkki"
+msgstr[1] "tulisi olla %{count} merkkiä"
+
+msgid "should be %{count} byte(s)"
+msgid_plural "should be %{count} byte(s)"
+msgstr[0] "tulisi olla %{count} tavu"
+msgstr[1] "tulisi olla %{count} tavua"
+
+msgid "should have at least %{count} item(s)"
+msgid_plural "should have at least %{count} item(s)"
+msgstr[0] "tulisi olla vähintään %{count} kohde"
+msgstr[1] "tulisi olla vähintään %{count} kohdetta"
+
+msgid "should be at least %{count} character(s)"
+msgid_plural "should be at least %{count} character(s)"
+msgstr[0] "tulisi olla vähintään %{count} merkki"
+msgstr[1] "tulisi olla vähintään %{count} merkkiä"
+
+msgid "should be at least %{count} byte(s)"
+msgid_plural "should be at least %{count} byte(s)"
+msgstr[0] "tulisi olla vähintään %{count} tavu"
+msgstr[1] "tulisi olla vähintään %{count} tavua"
+
+msgid "should have at most %{count} item(s)"
+msgid_plural "should have at most %{count} item(s)"
+msgstr[0] "tulisi olla enintään %{count} kohde"
+msgstr[1] "tulisi olla enintään %{count} kohdetta"
+
+msgid "should be at most %{count} character(s)"
+msgid_plural "should be at most %{count} character(s)"
+msgstr[0] "tulisi olla enintään %{count} merkki"
+msgstr[1] "tulisi olla enintään %{count} merkkiä"
+
+msgid "should be at most %{count} byte(s)"
+msgid_plural "should be at most %{count} byte(s)"
+msgstr[0] "tulisi olla enintään %{count} tavu"
+msgstr[1] "tulisi olla enintään %{count} tavua"
+
+## From Ecto.Changeset.validate_number/3
+msgid "must be less than %{number}"
+msgstr "täytyy olla pienempi kuin %{number}"
+
+msgid "must be greater than %{number}"
+msgstr "täytyy olla suurempi kuin %{number}"
+
+msgid "must be less than or equal to %{number}"
+msgstr "täytyy olla pienempi tai yhtä suuri kuin %{number}"
+
+msgid "must be greater than or equal to %{number}"
+msgstr "täytyy olla suurempi tai yhtä suuri kuin %{number}"
+
+msgid "must be equal to %{number}"
+msgstr "täytyy olla %{number}"
