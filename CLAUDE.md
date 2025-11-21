@@ -47,10 +47,12 @@ Always check AGENTS.md first for project-specific patterns before making archite
 ### Development
 - **Setup:** `mix setup` (installs deps, creates DB, runs migrations, sets up assets)
 - **Start server:** `mix phx.server` or `iex -S mix phx.server` (visit http://localhost:4000)
-- **Test:** `mix test` (runs all tests)
+- **Test:** `mix test` (runs ExUnit tests)
 - **Test specific file:** `mix test test/path/to/test.exs`
 - **Test specific line:** `mix test test/path/to/test.exs:123`
+- **Test all (recommended):** `mix test.all` (precommit + credo)
 - **Format code:** `mix format`
+- **Code quality:** `mix credo --strict`
 - **Pre-commit check:** `mix precommit` (compile with warnings as errors, format, run tests)
 
 ### Database
@@ -250,8 +252,12 @@ The Content context uses PubSub for real-time updates:
 
 4. **Before GitHub Update - Run ALL checks**:
    ```bash
-   mix precommit              # Runs: compile (warnings as errors), format, test
-   mix credo --strict         # Code quality check (NOT included in precommit)
+   # RECOMMENDED: Run everything in one command
+   mix test.all               # Runs: precommit + credo --strict
+
+   # OR run separately:
+   mix precommit              # Compile (warnings as errors), format, test
+   mix credo --strict         # Code quality check
    ```
 
    **Optional:** Include Playwright tests for critical flows:

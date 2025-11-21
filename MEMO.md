@@ -151,3 +151,39 @@ Session notes and progress tracking for the Homesite project.
 - Always update tests when adding new features
 
 ---
+
+## 2025-11-21 19:45:00
+
+### Session: Add Custom test.all Mix Task
+
+#### Completed
+- ✅ Created `mix test.all` alias in mix.exs:
+  - Runs precommit (compile, format, test)
+  - Runs credo --strict (code quality)
+  - All checks in one command
+- ✅ Configured preferred environment for test.all (runs in :test env)
+- ✅ Updated CLAUDE.md:
+  - Added test.all to Essential Commands section
+  - Updated "Before GitHub Update" section with test.all
+  - Recommended as primary command for pre-commit checks
+- ✅ Tested successfully: all checks run correctly
+
+#### Usage
+```bash
+# Run EVERYTHING before commit (recommended)
+mix test.all
+
+# What it runs:
+# 1. Compile with warnings as errors
+# 2. Unlock unused dependencies
+# 3. Format code
+# 4. Run all ExUnit tests
+# 5. Run Credo strict analysis
+```
+
+#### Technical Notes
+- Alias defined in mix.exs aliases/0: `"test.all": ["precommit", "credo --strict"]`
+- Preferred env set in cli/0: `"test.all": :test`
+- Simplifies workflow from 2 commands to 1
+
+---

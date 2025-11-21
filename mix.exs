@@ -27,7 +27,7 @@ defmodule Homesite.MixProject do
 
   def cli do
     [
-      preferred_envs: [precommit: :test]
+      preferred_envs: [precommit: :test, "test.all": :test]
     ]
   end
 
@@ -110,7 +110,8 @@ defmodule Homesite.MixProject do
         "esbuild homesite --minify",
         "phx.digest"
       ],
-      precommit: ["compile --warning-as-errors", "deps.unlock --unused", "format", "test"]
+      precommit: ["compile --warning-as-errors", "deps.unlock --unused", "format", "test"],
+      "test.all": ["precommit", "credo --strict"]
     ]
   end
 end
