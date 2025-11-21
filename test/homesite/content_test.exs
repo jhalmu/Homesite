@@ -34,7 +34,7 @@ defmodule Homesite.ContentTest do
 
       assert {:ok, %Tag{} = tag} = Content.create_tag(scope, valid_attrs)
       assert tag.name == "some name"
-      assert tag.slug == "some slug"
+      assert tag.slug == "some-name"
       assert tag.is_public == true
       assert tag.user_id == scope.user.id
     end
@@ -51,7 +51,7 @@ defmodule Homesite.ContentTest do
 
       assert {:ok, %Tag{} = tag} = Content.update_tag(scope, tag, update_attrs)
       assert tag.name == "some updated name"
-      assert tag.slug == "some updated slug"
+      assert tag.slug == "some-updated-name"
       assert tag.is_public == false
     end
 
@@ -121,7 +121,7 @@ defmodule Homesite.ContentTest do
     test "create_post/2 with valid data creates a post" do
       valid_attrs = %{
         title: "some title",
-        body: "some body",
+        body: "some body content",
         slug: "some slug",
         published_at: ~U[2025-11-20 11:44:00Z]
       }
@@ -130,8 +130,8 @@ defmodule Homesite.ContentTest do
 
       assert {:ok, %Post{} = post} = Content.create_post(scope, valid_attrs)
       assert post.title == "some title"
-      assert post.body == "some body"
-      assert post.slug == "some slug"
+      assert post.body == "some body content"
+      assert post.slug =~ "some-title-"
       assert post.published_at == ~U[2025-11-20 11:44:00Z]
       assert post.user_id == scope.user.id
     end
@@ -147,15 +147,15 @@ defmodule Homesite.ContentTest do
 
       update_attrs = %{
         title: "some updated title",
-        body: "some updated body",
+        body: "some updated body content",
         slug: "some updated slug",
         published_at: ~U[2025-11-21 11:44:00Z]
       }
 
       assert {:ok, %Post{} = post} = Content.update_post(scope, post, update_attrs)
       assert post.title == "some updated title"
-      assert post.body == "some updated body"
-      assert post.slug == "some updated slug"
+      assert post.body == "some updated body content"
+      assert post.slug =~ "some-updated-title-"
       assert post.published_at == ~U[2025-11-21 11:44:00Z]
     end
 

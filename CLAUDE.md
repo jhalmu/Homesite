@@ -222,10 +222,47 @@ The Content context uses PubSub for real-time updates:
 - Use `render_submit/2` and `render_change/2` for form tests
 - Never test raw HTML - use `element/2`, `has_element?/2`
 
-### Code Quality
-- Run `mix precommit` before committing (includes compile warnings as errors, format, test)
-- Use `mix format` for consistent formatting
+### Testing & Code Quality
+
+**CRITICAL**: Always follow this workflow when making changes:
+
+1. **Write/Update Tests First** - When adding new features or fixing bugs:
+   - Write unit tests for context functions
+   - Write LiveView tests for UI interactions
+   - Update existing tests if behavior changes
+
+2. **Run Tests Before Committing**:
+   ```bash
+   mix test                    # Run all tests
+   mix test --failed           # Run only failed tests
+   mix credo --strict          # Run code quality analysis
+   ```
+
+3. **Testing Tools**:
+   - `ExUnit` - Unit testing framework (built-in)
+   - `Phoenix.LiveViewTest` - LiveView testing
+   - `Phoenix.Test.Playwright` - End-to-end browser testing
+   - `Credo` - Static code analysis for code quality
+   - `LazyHTML` - HTML assertions in tests
+
+4. **Before GitHub Update**:
+   ```bash
+   mix precommit              # Runs: compile (warnings as errors), format, test
+   mix credo --strict         # Code quality check
+   ```
+   **Exception**: If memory/context is running out, commit anyway to preserve work
+
+5. **Test Organization**:
+   - Context tests: `test/homesite/context_name_test.exs`
+   - LiveView tests: `test/homesite_web/live/resource_live_test.exs`
+   - Controller tests: `test/homesite_web/controllers/controller_name_test.exs`
+
+### Code Quality Standards
+- Run `mix format` for consistent formatting
+- Use `mix credo --strict` for code analysis
+- Fix all Credo warnings before committing
 - Use `req` library for HTTP requests (already included)
+- Follow Elixir style guide and AGENTS.md guidelines
 
 ## Project-Specific Notes
 

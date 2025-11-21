@@ -99,3 +99,55 @@ Session notes and progress tracking for the Homesite project.
 - Verify DaisyUI installation and configuration
 
 ---
+
+## 2025-11-21 19:30:00
+
+### Session: Testing Infrastructure and Code Quality Setup
+
+#### Completed
+- ✅ Updated CLAUDE.md with comprehensive testing guidelines:
+  - Added testing workflow (write tests → run tests → Credo → commit)
+  - Documented testing tools (ExUnit, LiveViewTest, Playwright, Credo, LazyHTML)
+  - Added test organization structure
+  - Required running tests before GitHub commits (with exception for low memory)
+- ✅ Configured Credo for code quality analysis:
+  - Generated `.credo.exs` configuration file
+  - Ran strict analysis: 13 minor readability issues, 4 design suggestions
+  - Issues are non-critical (missing @moduledoc, alias ordering)
+- ✅ Verified Playwright installation (phoenix_test_playwright 0.9.1)
+- ✅ Fixed all test failures (142 tests, 0 failures):
+  - Fixed Content fixtures: post body length validation (min 10 chars)
+  - Fixed Content fixtures: unique tag names and post titles
+  - Updated tests to expect auto-generated slugs (from title/name)
+  - Fixed error HTML tests to match custom 404 page
+  - Fixed LiveView test data for proper validations
+- ✅ Reset test database to clean state
+- ✅ All tests passing successfully
+
+#### Test Coverage
+- **Context tests:** Tags and Posts CRUD with scoping (✅ passing)
+- **LiveView tests:** Post and Tag Index/Show/Form (✅ passing)
+- **User authentication tests:** Login, registration, settings (✅ passing)
+- **Error HTML tests:** 404 and 500 pages (✅ passing)
+
+#### Code Quality Status
+- **Tests:** 142 tests, 0 failures ✅
+- **Credo:** 13 readability issues (non-blocking), 4 design suggestions
+- **Next:** Address Credo issues incrementally in future commits
+
+#### Technical Notes
+- Post body must be ≥10 characters (validation)
+- Tag names must be unique per user (slug generated from name)
+- Post slugs auto-generated from title + timestamp
+- Tag slugs auto-generated from name (normalized)
+- Fixtures use unique integers to avoid conflicts
+
+#### Next Steps / TODO
+- Run `mix test` before every commit
+- Run `mix credo --strict` for code quality checks
+- Add @moduledoc tags to schema modules (Credo suggestion)
+- Fix alias ordering in affected modules (Credo suggestion)
+- Consider Playwright E2E tests for critical user flows
+- Always update tests when adding new features
+
+---

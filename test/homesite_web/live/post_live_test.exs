@@ -6,13 +6,13 @@ defmodule HomesiteWeb.PostLiveTest do
 
   @create_attrs %{
     title: "some title",
-    body: "some body",
+    body: "some body content that is long enough",
     slug: "some slug",
     published_at: "2025-11-20T11:44:00Z"
   }
   @update_attrs %{
     title: "some updated title",
-    body: "some updated body",
+    body: "some updated body content that is long enough",
     slug: "some updated slug",
     published_at: "2025-11-21T11:44:00Z"
   }

@@ -5,9 +5,9 @@ defmodule Homesite.ContentFixtures do
   """
 
   @doc """
-  Generate a unique tag slug.
+  Generate a unique tag name.
   """
-  def unique_tag_slug, do: "some slug#{System.unique_integer([:positive])}"
+  def unique_tag_name, do: "tag name #{System.unique_integer([:positive])}"
 
   @doc """
   Generate a tag.
@@ -16,8 +16,8 @@ defmodule Homesite.ContentFixtures do
     attrs =
       Enum.into(attrs, %{
         is_public: true,
-        name: "some name",
-        slug: unique_tag_slug()
+        name: unique_tag_name(),
+        slug: "will-be-generated"
       })
 
     {:ok, tag} = Homesite.Content.create_tag(scope, attrs)
@@ -25,9 +25,9 @@ defmodule Homesite.ContentFixtures do
   end
 
   @doc """
-  Generate a unique post slug.
+  Generate a unique post title.
   """
-  def unique_post_slug, do: "some slug#{System.unique_integer([:positive])}"
+  def unique_post_title, do: "post title #{System.unique_integer([:positive])}"
 
   @doc """
   Generate a post.
@@ -35,10 +35,10 @@ defmodule Homesite.ContentFixtures do
   def post_fixture(scope, attrs \\ %{}) do
     attrs =
       Enum.into(attrs, %{
-        body: "some body",
+        body: "some body content that is long enough",
         published_at: ~U[2025-11-20 11:44:00Z],
-        slug: unique_post_slug(),
-        title: "some title"
+        slug: "will-be-generated",
+        title: unique_post_title()
       })
 
     {:ok, post} = Homesite.Content.create_post(scope, attrs)
