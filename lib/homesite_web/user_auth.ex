@@ -1,4 +1,7 @@
 defmodule HomesiteWeb.UserAuth do
+  @moduledoc """
+  Authentication plugs and helpers for user session management.
+  """
   use HomesiteWeb, :verified_routes
 
   import Plug.Conn

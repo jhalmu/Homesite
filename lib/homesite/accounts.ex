@@ -6,7 +6,7 @@ defmodule Homesite.Accounts do
   import Ecto.Query, warn: false
   alias Homesite.Repo
 
-  alias Homesite.Accounts.{User, UserToken, UserNotifier}
+  alias Homesite.Accounts.{User, UserNotifier, UserToken}
 
   ## Database getters
 

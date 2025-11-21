@@ -4,9 +4,10 @@ defmodule Homesite.Content do
   """
 
   import Ecto.Query, warn: false
-  alias Homesite.Repo
-  alias Homesite.Content.{Post, Tag}
+
   alias Homesite.Accounts.Scope
+  alias Homesite.Content.{Post, Tag}
+  alias Homesite.Repo
 
   @doc """
   Subscribes to scoped notifications about any tag changes.
@@ -143,9 +144,6 @@ defmodule Homesite.Content do
 
     Tag.changeset(tag, attrs, scope)
   end
-
-  alias Homesite.Content.Post
-  alias Homesite.Accounts.Scope
 
   @doc """
   Subscribes to scoped notifications about any post changes.

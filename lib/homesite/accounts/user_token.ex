@@ -1,4 +1,7 @@
 defmodule Homesite.Accounts.UserToken do
+  @moduledoc """
+  User authentication token schema for session management and email confirmation.
+  """
   use Ecto.Schema
   import Ecto.Query
   alias Homesite.Accounts.UserToken

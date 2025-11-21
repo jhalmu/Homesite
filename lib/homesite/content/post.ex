@@ -1,4 +1,7 @@
 defmodule Homesite.Content.Post do
+  @moduledoc """
+  Blog post schema with user scoping and tag associations.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

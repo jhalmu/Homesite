@@ -1,4 +1,7 @@
 defmodule Homesite.Content.PostTag do
+  @moduledoc """
+  Join table for many-to-many relationship between posts and tags.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

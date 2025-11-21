@@ -1,8 +1,11 @@
 defmodule Homesite.Accounts.UserNotifier do
+  @moduledoc """
+  Email notifications for user authentication and account management.
+  """
   import Swoosh.Email
 
-  alias Homesite.Mailer
   alias Homesite.Accounts.User
+  alias Homesite.Mailer
 
   # Delivers the email using the application mailer.
   defp deliver(recipient, subject, body) do

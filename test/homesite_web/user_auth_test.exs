@@ -1,10 +1,10 @@
 defmodule HomesiteWeb.UserAuthTest do
   use HomesiteWeb.ConnCase, async: true
 
-  alias Phoenix.LiveView
   alias Homesite.Accounts
   alias Homesite.Accounts.Scope
   alias HomesiteWeb.UserAuth
+  alias Phoenix.LiveView
 
   import Homesite.AccountsFixtures
 

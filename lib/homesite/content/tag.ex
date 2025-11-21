@@ -1,4 +1,7 @@
 defmodule Homesite.Content.Tag do
+  @moduledoc """
+  Tag schema for categorizing blog posts with user scoping.
+  """
   use Ecto.Schema
   import Ecto.Changeset
   alias Homesite.Accounts.Scope

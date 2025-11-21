@@ -1,4 +1,7 @@
 defmodule Homesite.Accounts.User do
+  @moduledoc """
+  User schema with authentication and content ownership.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 
