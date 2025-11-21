@@ -5,30 +5,43 @@ defmodule Homesite.ContentFixtures do
   """
 
   @doc """
-  Generate a unique blog_post slug.
+  Generate a unique tag slug.
   """
-  def unique_blog_post_slug, do: "some slug#{System.unique_integer([:positive])}"
+  def unique_tag_slug, do: "some slug#{System.unique_integer([:positive])}"
 
   @doc """
-  Generate a blog_post.
+  Generate a tag.
   """
-  def blog_post_fixture(scope, attrs \\ %{}) do
+  def tag_fixture(scope, attrs \\ %{}) do
     attrs =
       Enum.into(attrs, %{
-        author_id: 42,
-        author_type: "some author_type",
-        content_en: "some content_en",
-        content_fi: "some content_fi",
-        curator_added: true,
-        metadata: %{},
-        published_at: ~U[2025-11-16 15:19:00Z],
-        slug: unique_blog_post_slug(),
-        status: "some status",
-        title_en: "some title_en",
-        title_fi: "some title_fi"
+        is_public: true,
+        name: "some name",
+        slug: unique_tag_slug()
       })
 
-    {:ok, blog_post} = Homesite.Content.create_blog_post(scope, attrs)
-    blog_post
+    {:ok, tag} = Homesite.Content.create_tag(scope, attrs)
+    tag
+  end
+
+  @doc """
+  Generate a unique post slug.
+  """
+  def unique_post_slug, do: "some slug#{System.unique_integer([:positive])}"
+
+  @doc """
+  Generate a post.
+  """
+  def post_fixture(scope, attrs \\ %{}) do
+    attrs =
+      Enum.into(attrs, %{
+        body: "some body",
+        published_at: ~U[2025-11-20 11:44:00Z],
+        slug: unique_post_slug(),
+        title: "some title"
+      })
+
+    {:ok, post} = Homesite.Content.create_post(scope, attrs)
+    post
   end
 end

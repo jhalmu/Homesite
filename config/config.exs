@@ -30,10 +30,10 @@ config :homesite, HomesiteWeb.Endpoint,
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
     formats: [html: HomesiteWeb.ErrorHTML, json: HomesiteWeb.ErrorJSON],
-    layout: false
+    layout: {HomesiteWeb.Layouts, :error}
   ],
   pubsub_server: Homesite.PubSub,
-  live_view: [signing_salt: "5xaMbVKd"]
+  live_view: [signing_salt: "Dt4eUel3"]
 
 # Configures the mailer
 #
@@ -46,7 +46,7 @@ config :homesite, Homesite.Mailer, adapter: Swoosh.Adapters.Local
 
 # Configure esbuild (the version is required)
 config :esbuild,
-  version: "0.25.4",
+  version: "0.27.0",
   homesite: [
     args:
       ~w(js/app.js --bundle --target=es2022 --outdir=../priv/static/assets/js --external:/fonts/* --external:/images/* --alias:@=.),
@@ -72,11 +72,6 @@ config :logger, :default_formatter,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
-
-# Configure Gettext for internationalization
-config :homesite, HomesiteWeb.Gettext,
-  default_locale: "fi",
-  locales: ~w(fi en)
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

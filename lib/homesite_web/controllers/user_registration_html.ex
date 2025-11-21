@@ -1,5 +1,0 @@
-defmodule HomesiteWeb.UserRegistrationHTML do
-  use HomesiteWeb, :html
-
-  embed_templates "user_registration_html/*"
-end

@@ -5,143 +5,281 @@ defmodule Homesite.Content do
 
   import Ecto.Query, warn: false
   alias Homesite.Repo
-
-  alias Homesite.Content.BlogPost
+  alias Homesite.Content.{Post, Tag}
   alias Homesite.Accounts.Scope
 
   @doc """
-  Subscribes to scoped notifications about any blog_post changes.
+  Subscribes to scoped notifications about any tag changes.
 
   The broadcasted messages match the pattern:
 
-    * {:created, %BlogPost{}}
-    * {:updated, %BlogPost{}}
-    * {:deleted, %BlogPost{}}
+    * {:created, %Tag{}}
+    * {:updated, %Tag{}}
+    * {:deleted, %Tag{}}
 
   """
-  def subscribe_blog_posts(%Scope{} = scope) do
+  def subscribe_tags(%Scope{} = scope) do
     key = scope.user.id
 
-    Phoenix.PubSub.subscribe(Homesite.PubSub, "user:#{key}:blog_posts")
+    Phoenix.PubSub.subscribe(Homesite.PubSub, "user:#{key}:tags")
   end
 
-  defp broadcast_blog_post(%Scope{} = scope, message) do
+  defp broadcast_tag(%Scope{} = scope, message) do
     key = scope.user.id
 
-    Phoenix.PubSub.broadcast(Homesite.PubSub, "user:#{key}:blog_posts", message)
+    Phoenix.PubSub.broadcast(Homesite.PubSub, "user:#{key}:tags", message)
   end
 
   @doc """
-  Returns the list of blog_posts.
+  Returns the list of tags.
 
   ## Examples
 
-      iex> list_blog_posts(scope)
-      [%BlogPost{}, ...]
+      iex> list_tags(scope)
+      [%Tag{}, ...]
 
   """
-  def list_blog_posts(%Scope{} = scope) do
-    Repo.all_by(BlogPost, user_id: scope.user.id)
+  def list_tags(%Scope{} = scope) do
+    Repo.all_by(Tag, user_id: scope.user.id)
   end
 
   @doc """
-  Gets a single blog_post.
+  Gets a single tag.
 
-  Raises `Ecto.NoResultsError` if the Blog post does not exist.
+  Raises `Ecto.NoResultsError` if the Tag does not exist.
 
   ## Examples
 
-      iex> get_blog_post!(scope, 123)
-      %BlogPost{}
+      iex> get_tag!(scope, 123)
+      %Tag{}
 
-      iex> get_blog_post!(scope, 456)
+      iex> get_tag!(scope, 456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_blog_post!(%Scope{} = scope, id) do
-    Repo.get_by!(BlogPost, id: id, user_id: scope.user.id)
+  def get_tag!(%Scope{} = scope, id) do
+    Repo.get_by!(Tag, id: id, user_id: scope.user.id)
   end
 
   @doc """
-  Creates a blog_post.
+  Creates a tag.
 
   ## Examples
 
-      iex> create_blog_post(scope, %{field: value})
-      {:ok, %BlogPost{}}
+      iex> create_tag(scope, %{field: value})
+      {:ok, %Tag{}}
 
-      iex> create_blog_post(scope, %{field: bad_value})
+      iex> create_tag(scope, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_blog_post(%Scope{} = scope, attrs) do
-    with {:ok, blog_post = %BlogPost{}} <-
-           %BlogPost{}
-           |> BlogPost.changeset(attrs, scope)
+  def create_tag(%Scope{} = scope, attrs) do
+    with {:ok, tag = %Tag{}} <-
+           %Tag{}
+           |> Tag.changeset(attrs, scope)
            |> Repo.insert() do
-      broadcast_blog_post(scope, {:created, blog_post})
-      {:ok, blog_post}
+      broadcast_tag(scope, {:created, tag})
+      {:ok, tag}
     end
   end
 
   @doc """
-  Updates a blog_post.
+  Updates a tag.
 
   ## Examples
 
-      iex> update_blog_post(scope, blog_post, %{field: new_value})
-      {:ok, %BlogPost{}}
+      iex> update_tag(scope, tag, %{field: new_value})
+      {:ok, %Tag{}}
 
-      iex> update_blog_post(scope, blog_post, %{field: bad_value})
+      iex> update_tag(scope, tag, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_blog_post(%Scope{} = scope, %BlogPost{} = blog_post, attrs) do
-    true = blog_post.user_id == scope.user.id
+  def update_tag(%Scope{} = scope, %Tag{} = tag, attrs) do
+    true = tag.user_id == scope.user.id
 
-    with {:ok, blog_post = %BlogPost{}} <-
-           blog_post
-           |> BlogPost.changeset(attrs, scope)
+    with {:ok, tag = %Tag{}} <-
+           tag
+           |> Tag.changeset(attrs, scope)
            |> Repo.update() do
-      broadcast_blog_post(scope, {:updated, blog_post})
-      {:ok, blog_post}
+      broadcast_tag(scope, {:updated, tag})
+      {:ok, tag}
     end
   end
 
   @doc """
-  Deletes a blog_post.
+  Deletes a tag.
 
   ## Examples
 
-      iex> delete_blog_post(scope, blog_post)
-      {:ok, %BlogPost{}}
+      iex> delete_tag(scope, tag)
+      {:ok, %Tag{}}
 
-      iex> delete_blog_post(scope, blog_post)
+      iex> delete_tag(scope, tag)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_blog_post(%Scope{} = scope, %BlogPost{} = blog_post) do
-    true = blog_post.user_id == scope.user.id
+  def delete_tag(%Scope{} = scope, %Tag{} = tag) do
+    true = tag.user_id == scope.user.id
 
-    with {:ok, blog_post = %BlogPost{}} <-
-           Repo.delete(blog_post) do
-      broadcast_blog_post(scope, {:deleted, blog_post})
-      {:ok, blog_post}
+    with {:ok, tag = %Tag{}} <-
+           Repo.delete(tag) do
+      broadcast_tag(scope, {:deleted, tag})
+      {:ok, tag}
     end
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking blog_post changes.
+  Returns an `%Ecto.Changeset{}` for tracking tag changes.
 
   ## Examples
 
-      iex> change_blog_post(scope, blog_post)
-      %Ecto.Changeset{data: %BlogPost{}}
+      iex> change_tag(scope, tag)
+      %Ecto.Changeset{data: %Tag{}}
 
   """
-  def change_blog_post(%Scope{} = scope, %BlogPost{} = blog_post, attrs \\ %{}) do
-    true = blog_post.user_id == scope.user.id
+  def change_tag(%Scope{} = scope, %Tag{} = tag, attrs \\ %{}) do
+    true = tag.user_id == scope.user.id
 
-    BlogPost.changeset(blog_post, attrs, scope)
+    Tag.changeset(tag, attrs, scope)
+  end
+
+  alias Homesite.Content.Post
+  alias Homesite.Accounts.Scope
+
+  @doc """
+  Subscribes to scoped notifications about any post changes.
+
+  The broadcasted messages match the pattern:
+
+    * {:created, %Post{}}
+    * {:updated, %Post{}}
+    * {:deleted, %Post{}}
+
+  """
+  def subscribe_posts(%Scope{} = scope) do
+    key = scope.user.id
+
+    Phoenix.PubSub.subscribe(Homesite.PubSub, "user:#{key}:posts")
+  end
+
+  defp broadcast_post(%Scope{} = scope, message) do
+    key = scope.user.id
+
+    Phoenix.PubSub.broadcast(Homesite.PubSub, "user:#{key}:posts", message)
+  end
+
+  @doc """
+  Returns the list of posts.
+
+  ## Examples
+
+      iex> list_posts(scope)
+      [%Post{}, ...]
+
+  """
+  def list_posts(%Scope{} = scope) do
+    Repo.all_by(Post, user_id: scope.user.id)
+  end
+
+  @doc """
+  Gets a single post.
+
+  Raises `Ecto.NoResultsError` if the Post does not exist.
+
+  ## Examples
+
+      iex> get_post!(scope, 123)
+      %Post{}
+
+      iex> get_post!(scope, 456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_post!(%Scope{} = scope, id) do
+    Repo.get_by!(Post, id: id, user_id: scope.user.id)
+  end
+
+  @doc """
+  Creates a post.
+
+  ## Examples
+
+      iex> create_post(scope, %{field: value})
+      {:ok, %Post{}}
+
+      iex> create_post(scope, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_post(%Scope{} = scope, attrs) do
+    with {:ok, post = %Post{}} <-
+           %Post{}
+           |> Post.changeset(attrs, scope)
+           |> Repo.insert() do
+      broadcast_post(scope, {:created, post})
+      {:ok, post}
+    end
+  end
+
+  @doc """
+  Updates a post.
+
+  ## Examples
+
+      iex> update_post(scope, post, %{field: new_value})
+      {:ok, %Post{}}
+
+      iex> update_post(scope, post, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_post(%Scope{} = scope, %Post{} = post, attrs) do
+    true = post.user_id == scope.user.id
+
+    with {:ok, post = %Post{}} <-
+           post
+           |> Post.changeset(attrs, scope)
+           |> Repo.update() do
+      broadcast_post(scope, {:updated, post})
+      {:ok, post}
+    end
+  end
+
+  @doc """
+  Deletes a post.
+
+  ## Examples
+
+      iex> delete_post(scope, post)
+      {:ok, %Post{}}
+
+      iex> delete_post(scope, post)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_post(%Scope{} = scope, %Post{} = post) do
+    true = post.user_id == scope.user.id
+
+    with {:ok, post = %Post{}} <-
+           Repo.delete(post) do
+      broadcast_post(scope, {:deleted, post})
+      {:ok, post}
+    end
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking post changes.
+
+  ## Examples
+
+      iex> change_post(scope, post)
+      %Ecto.Changeset{data: %Post{}}
+
+  """
+  def change_post(%Scope{} = scope, %Post{} = post, attrs \\ %{}) do
+    true = post.user_id == scope.user.id
+
+    Post.changeset(post, attrs, scope)
   end
 end

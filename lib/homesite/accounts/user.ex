@@ -9,16 +9,8 @@ defmodule Homesite.Accounts.User do
     field :confirmed_at, :utc_datetime
     field :authenticated_at, :utc_datetime, virtual: true
 
-    # Extended fields
-    field :avatar, :binary
-    field :bio_fi, :string
-    field :bio_en, :string
-    field :role, :string, default: "user"
-    field :public_profile, :boolean, default: true
-
-    # Team associations
-    has_many :team_memberships, Homesite.Teams.TeamMembership
-    has_many :teams, through: [:team_memberships, :team]
+    has_many :posts, Homesite.Content.Post
+    has_many :tags, Homesite.Content.Tag
 
     timestamps(type: :utc_datetime)
   end
@@ -106,11 +98,9 @@ defmodule Homesite.Accounts.User do
 
     if hash_password? && password && changeset.valid? do
       changeset
-      # If using Bcrypt, then further validate it is at most 72 bytes long
-      |> validate_length(:password, max: 72, count: :bytes)
       # Hashing could be done with `Ecto.Changeset.prepare_changes/2`, but that
       # would keep the database transaction open longer and hurt performance.
-      |> put_change(:hashed_password, Bcrypt.hash_pwd_salt(password))
+      |> put_change(:hashed_password, Argon2.hash_pwd_salt(password))
       |> delete_change(:password)
     else
       changeset
@@ -126,37 +116,18 @@ defmodule Homesite.Accounts.User do
   end
 
   @doc """
-  A user changeset for updating profile information.
-  """
-  def profile_changeset(user, attrs) do
-    user
-    |> cast(attrs, [:avatar, :bio_fi, :bio_en, :public_profile])
-    |> validate_length(:bio_fi, max: 500)
-    |> validate_length(:bio_en, max: 500)
-  end
-
-  @doc """
-  A user changeset for updating role (admin only).
-  """
-  def role_changeset(user, attrs) do
-    user
-    |> cast(attrs, [:role])
-    |> validate_inclusion(:role, ["user", "curator", "admin"])
-  end
-
-  @doc """
   Verifies the password.
 
   If there is no user or the user doesn't have a password, we call
-  `Bcrypt.no_user_verify/0` to avoid timing attacks.
+  `Argon2.no_user_verify/0` to avoid timing attacks.
   """
   def valid_password?(%Homesite.Accounts.User{hashed_password: hashed_password}, password)
       when is_binary(hashed_password) and byte_size(password) > 0 do
-    Bcrypt.verify_pass(password, hashed_password)
+    Argon2.verify_pass(password, hashed_password)
   end
 
   def valid_password?(_, _) do
-    Bcrypt.no_user_verify()
+    Argon2.no_user_verify()
     false
   end
 end

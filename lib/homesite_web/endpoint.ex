@@ -7,7 +7,7 @@ defmodule HomesiteWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_homesite_key",
-    signing_salt: "OUspcE/f",
+    signing_salt: "CMmh8PHP",
     same_site: "Lax"
   ]
 

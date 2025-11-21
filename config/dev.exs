@@ -23,7 +23,7 @@ config :homesite, HomesiteWeb.Endpoint,
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "mxCFHleN8ZO+xTLxnV63eP8ZJ0WIBrbNEaFdmWKrcKh6084wJwU+JUl6+Ogs0pWb",
+  secret_key_base: "Ir465+Zr77XyPpbDU8H3BwTnrezDVwb5XVYQ8mxzA46je9xKHkpkzoekVfiaNw7X",
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:homesite, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:homesite, ~w(--watch)]}

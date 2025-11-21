@@ -4,8 +4,8 @@ defmodule Homesite.MixProject do
   def project do
     [
       app: :homesite,
-      version: "0.1.0",
-      elixir: "~> 1.15",
+      version: "0.0.0",
+      elixir: "~> 1.16",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -40,18 +40,13 @@ defmodule Homesite.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:bcrypt_elixir, "~> 3.0"},
+      {:argon2_elixir, "~> 4.0"},
       {:phoenix, "~> 1.8.1"},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.13"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 4.1"},
-      {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 1.1.0"},
-      {:lazy_html, ">= 0.1.0", only: :test},
-      {:phoenix_live_dashboard, "~> 0.8.3"},
-      {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
-      {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
       {:heroicons,
        github: "tailwindlabs/heroicons",
        tag: "v2.2.0",
@@ -61,12 +56,38 @@ defmodule Homesite.MixProject do
        depth: 1},
       {:swoosh, "~> 1.16"},
       {:req, "~> 0.5"},
-      {:telemetry_metrics, "~> 1.0"},
-      {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.26"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.2.0"},
-      {:bandit, "~> 1.5"}
+      {:bandit, "~> 1.5"},
+
+      # Extra adds
+      {:phoenix_seo, "0.1.11"},
+      {:atomex, "0.5.1"},
+      {:mdex, "0.10.0"},
+      {:yaml_elixir, "2.12.0"},
+      {:nimble_publisher, "1.1.1"},
+      {:nimble_csv, "~> 1.1"},
+      {:floki, "0.38.0"},
+
+      # Monitoring and Telemetry
+      {:phoenix_live_dashboard, "0.8.7"},
+      {:telemetry_metrics, "1.1.0"},
+      {:telemetry_poller, "1.3.0"},
+
+      # Dev and Test
+      {:phoenix_test, "0.9.1", only: :test, runtime: false},
+      {:phoenix_test_playwright, "0.9.1", only: :test, runtime: false},
+      {:a11y_audit, "0.3.0", only: :test},
+      {:esbuild, "0.10.0", runtime: Mix.env() == :dev},
+      {:tailwind, "0.4.1", runtime: Mix.env() == :dev},
+      {:phoenix_live_reload, "1.6.1", only: :dev},
+      {:tailwind_formatter, "0.4.2", only: [:dev, :test], runtime: false},
+      {:credo, "1.7.13", only: [:dev, :test], runtime: false},
+      {:lazy_html, "0.1.8", only: :test},
+      {:tidewave, "0.5.1", only: :dev},
+      {:igniter, "0.7.0", only: [:dev, :test]},
+      {:usage_rules, "~> 0.1", only: [:dev]}
     ]
   end
 
