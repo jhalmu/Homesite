@@ -17,7 +17,7 @@ defmodule HomesiteWeb.UserLive.Login do
               <% else %>
                 Don't have an account? <.link
                   navigate={~p"/users/register"}
-                  class="font-semibold text-brand hover:underline"
+                  class="text-brand font-semibold hover:underline"
                   phx-no-format
                 >Sign up</.link> for an account now.
               <% end %>
@@ -83,7 +83,7 @@ defmodule HomesiteWeb.UserLive.Login do
           <.button class="btn btn-primary w-full" name={@form[:remember_me].name} value="true">
             Log in and stay logged in <span aria-hidden="true">→</span>
           </.button>
-          <.button class="btn btn-primary btn-soft w-full mt-2">
+          <.button class="btn btn-primary btn-soft mt-2 w-full">
             Log in only this time
           </.button>
         </.form>

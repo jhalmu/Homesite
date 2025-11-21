@@ -40,7 +40,7 @@ defmodule Homesite.Content do
 
   """
   def list_tags(%Scope{} = scope) do
-    Repo.all_by(Tag, user_id: scope.user.id)
+    Repo.scoped_all(Tag, user_id: scope.user.id)
   end
 
   @doc """
@@ -179,7 +179,7 @@ defmodule Homesite.Content do
 
   """
   def list_posts(%Scope{} = scope) do
-    Repo.all_by(Post, user_id: scope.user.id)
+    Repo.scoped_all(Post, user_id: scope.user.id)
   end
 
   @doc """

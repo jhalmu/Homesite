@@ -58,7 +58,9 @@ defmodule HomesiteWeb.PostLive.Form do
 
   @impl true
   def handle_event("validate", %{"post" => post_params}, socket) do
-    changeset = Content.change_post(socket.assigns.current_scope, socket.assigns.post, post_params)
+    changeset =
+      Content.change_post(socket.assigns.current_scope, socket.assigns.post, post_params)
+
     {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
 

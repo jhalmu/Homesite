@@ -119,7 +119,13 @@ defmodule Homesite.ContentTest do
     end
 
     test "create_post/2 with valid data creates a post" do
-      valid_attrs = %{title: "some title", body: "some body", slug: "some slug", published_at: ~U[2025-11-20 11:44:00Z]}
+      valid_attrs = %{
+        title: "some title",
+        body: "some body",
+        slug: "some slug",
+        published_at: ~U[2025-11-20 11:44:00Z]
+      }
+
       scope = user_scope_fixture()
 
       assert {:ok, %Post{} = post} = Content.create_post(scope, valid_attrs)
@@ -138,7 +144,13 @@ defmodule Homesite.ContentTest do
     test "update_post/3 with valid data updates the post" do
       scope = user_scope_fixture()
       post = post_fixture(scope)
-      update_attrs = %{title: "some updated title", body: "some updated body", slug: "some updated slug", published_at: ~U[2025-11-21 11:44:00Z]}
+
+      update_attrs = %{
+        title: "some updated title",
+        body: "some updated body",
+        slug: "some updated slug",
+        published_at: ~U[2025-11-21 11:44:00Z]
+      }
 
       assert {:ok, %Post{} = post} = Content.update_post(scope, post, update_attrs)
       assert post.title == "some updated title"

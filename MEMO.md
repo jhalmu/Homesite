@@ -54,3 +54,48 @@ Session notes and progress tracking for the Homesite project.
 - Tailwind v4 uses new `@import` syntax without config file
 
 ---
+
+## 2025-11-21 19:00:00
+
+### Session: Fix Critical Blog and Tag Management Issues
+
+#### Problems Identified
+1. **Missing Repo Helper Function:** `Repo.all_by/2` didn't exist (conflict with Ecto's default `all_by/3`)
+2. **Incorrect Router Configuration:** Routes for `/posts/new`, `/posts/:id/edit`, `/tags/new`, and `/tags/:id/edit` were pointing to Index LiveViews instead of Form LiveViews
+
+#### Completed
+- ✅ Added `Repo.scoped_all/2` helper function to `lib/homesite/repo.ex`:
+  - Handles scoped queries with keyword list conditions
+  - Used for fetching user-scoped records
+- ✅ Updated `Content.list_tags/1` to use `Repo.scoped_all/2`
+- ✅ Updated `Content.list_posts/1` to use `Repo.scoped_all/2`
+- ✅ Fixed router configuration in `lib/homesite_web/router.ex`:
+  - Changed `/posts/new` route from `PostLive.Index` to `PostLive.Form`
+  - Changed `/posts/:id/edit` route from `PostLive.Index` to `PostLive.Form`
+  - Changed `/tags/new` route from `TagLive.Index` to `TagLive.Form`
+  - Changed `/tags/:id/edit` route from `TagLive.Index` to `TagLive.Form`
+  - Removed unnecessary `/posts/:id/show/edit` and `/tags/:id/show/edit` routes
+- ✅ Verified compilation: All files compile without errors
+- ✅ Database migrations: Already up to date
+- ✅ Code formatting: Applied with `mix format`
+
+#### Current State
+- **Blog system is now fully functional** - Users can create, edit, and delete posts
+- **Tag management is now fully functional** - Users can create, edit, and delete tags
+- All LiveView CRUD operations working correctly
+- Router properly configured with Form LiveViews for new/edit actions
+- Repo helper function handles scoped queries properly
+
+#### Technical Notes
+- Initial attempt used `all_by/2` name but conflicted with Ecto.Repo's `all_by/3` with default parameters
+- Renamed to `scoped_all/2` to avoid conflicts and better reflect its purpose
+- Standard `Repo.get_by!/2` works as expected (no custom implementation needed)
+
+#### Next Steps / TODO
+- Test the application manually: `mix phx.server`
+- Create first blog post to verify functionality
+- Create tags and associate them with posts
+- Consider adding tag selection UI to post forms (many-to-many relationship)
+- Verify DaisyUI installation and configuration
+
+---

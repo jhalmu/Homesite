@@ -4,8 +4,18 @@ defmodule HomesiteWeb.PostLiveTest do
   import Phoenix.LiveViewTest
   import Homesite.ContentFixtures
 
-  @create_attrs %{title: "some title", body: "some body", slug: "some slug", published_at: "2025-11-20T11:44:00Z"}
-  @update_attrs %{title: "some updated title", body: "some updated body", slug: "some updated slug", published_at: "2025-11-21T11:44:00Z"}
+  @create_attrs %{
+    title: "some title",
+    body: "some body",
+    slug: "some slug",
+    published_at: "2025-11-20T11:44:00Z"
+  }
+  @update_attrs %{
+    title: "some updated title",
+    body: "some updated body",
+    slug: "some updated slug",
+    published_at: "2025-11-21T11:44:00Z"
+  }
   @invalid_attrs %{title: nil, body: nil, slug: nil, published_at: nil}
 
   setup :register_and_log_in_user

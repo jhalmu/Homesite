@@ -53,16 +53,14 @@ defmodule HomesiteWeb.Router do
     live_session :require_authenticated_user,
       on_mount: [{HomesiteWeb.UserAuth, :require_authenticated}] do
       live "/posts", PostLive.Index, :index
-      live "/posts/new", PostLive.Index, :new
-      live "/posts/:id/edit", PostLive.Index, :edit
+      live "/posts/new", PostLive.Form, :new
+      live "/posts/:id/edit", PostLive.Form, :edit
       live "/posts/:id", PostLive.Show, :show
-      live "/posts/:id/show/edit", PostLive.Show, :edit
 
       live "/tags", TagLive.Index, :index
-      live "/tags/new", TagLive.Index, :new
-      live "/tags/:id/edit", TagLive.Index, :edit
+      live "/tags/new", TagLive.Form, :new
+      live "/tags/:id/edit", TagLive.Form, :edit
       live "/tags/:id", TagLive.Show, :show
-      live "/tags/:id/show/edit", TagLive.Show, :edit
 
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
