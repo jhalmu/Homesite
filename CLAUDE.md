@@ -233,10 +233,13 @@ The Content context uses PubSub for real-time updates:
 
 2. **Run Tests Before Committing**:
    ```bash
-   mix test                    # Run all tests
+   mix test                    # Run ExUnit tests (unit + integration)
    mix test --failed           # Run only failed tests
-   mix credo --strict          # Run code quality analysis
+   mix test --include playwright  # Run Playwright E2E tests (optional)
+   mix credo --strict          # Run code quality analysis (separate from tests)
    ```
+
+   **Note:** `mix test` does NOT run Credo or Playwright by default
 
 3. **Testing Tools**:
    - `ExUnit` - Unit testing framework (built-in)
@@ -245,17 +248,31 @@ The Content context uses PubSub for real-time updates:
    - `Credo` - Static code analysis for code quality
    - `LazyHTML` - HTML assertions in tests
 
-4. **Before GitHub Update**:
+4. **Before GitHub Update - Run ALL checks**:
    ```bash
    mix precommit              # Runs: compile (warnings as errors), format, test
-   mix credo --strict         # Code quality check
+   mix credo --strict         # Code quality check (NOT included in precommit)
    ```
+
+   **Optional:** Include Playwright tests for critical flows:
+   ```bash
+   mix test --include playwright
+   ```
+
    **Exception**: If memory/context is running out, commit anyway to preserve work
 
 5. **Test Organization**:
    - Context tests: `test/homesite/context_name_test.exs`
    - LiveView tests: `test/homesite_web/live/resource_live_test.exs`
    - Controller tests: `test/homesite_web/controllers/controller_name_test.exs`
+
+6. **Edge Cases to Test**:
+   - **Security**: Scope isolation, unauthorized access attempts
+   - **Validation**: Min/max lengths, required fields, format validation
+   - **Constraints**: Unique constraints, foreign key violations
+   - **Boundary conditions**: Empty lists, null values, very long strings
+   - **Concurrency**: Race conditions, simultaneous updates (when applicable)
+   - **State**: Published vs draft, soft deletes, cascading deletes
 
 ### Code Quality Standards
 - Run `mix format` for consistent formatting
