@@ -38,25 +38,34 @@ defmodule HomesiteWeb.Layouts do
     <header class="bg-gradient-to-r from-base-200 to-base-300 shadow-md">
       <div class="navbar mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex-1">
-          <a href="/" class="flex items-center gap-3 transition-transform hover:scale-105">
+          <a href="/" class="flex items-center gap-3">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 100 100"
               class="h-10 w-10"
-              fill="orangered"
+              fill="#ff4500"
             >
-              <path d="M50 10 L65 25 L75 20 L70 35 L85 40 L75 50 L85 60 L65 65 L60 80 L50 70 L40 85 L35 70 L20 75 L25 60 L10 55 L20 45 L15 30 L30 35 L40 20 Z" />
-              <circle cx="55" cy="35" r="3" fill="white" />
-              <path
-                d="M55 25 Q65 15 75 20"
-                stroke="orangered"
-                stroke-width="3"
-                fill="none"
-                stroke-linecap="round"
-              />
+              <!-- Pegasus body and legs -->
+              <ellipse cx="50" cy="55" rx="18" ry="12" />
+              <rect x="44" y="60" width="4" height="20" rx="2" />
+              <rect x="52" y="60" width="4" height="20" rx="2" />
+              <rect x="48" y="64" width="4" height="16" rx="2" />
+              <rect x="56" y="64" width="4" height="16" rx="2" />
+
+              <!-- Pegasus head and neck -->
+              <ellipse cx="38" cy="48" rx="6" ry="8" transform="rotate(-20 38 48)" />
+              <path d="M 44 52 Q 40 50 38 48" stroke="#ff4500" stroke-width="4" fill="none" stroke-linecap="round" />
+
+              <!-- Wings (traditional feathered style) -->
+              <path d="M 55 50 Q 70 45 75 48 Q 72 52 68 54 Q 64 56 60 56 Q 57 54 55 52 Z" opacity="0.9" />
+              <path d="M 56 52 Q 68 48 72 50 Q 70 53 66 55 Q 62 56 58 55 Z" opacity="0.7" />
+              <path d="M 57 54 Q 66 51 69 52 Q 68 54 64 55 Q 61 55 58 54 Z" opacity="0.5" />
+
+              <!-- Eye -->
+              <circle cx="36" cy="46" r="1.5" fill="white" />
             </svg>
-            <span class="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-2xl font-bold text-transparent">
-              Homesite
+            <span class="text-slate-700 dark:text-slate-300 text-2xl font-semibold">
+              homesite
             </span>
           </a>
         </div>
@@ -79,20 +88,26 @@ defmodule HomesiteWeb.Layouts do
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 100 100"
             class="h-12 w-12"
-            fill="orangered"
+            fill="#ff4500"
           >
-            <path d="M50 10 L65 25 L75 20 L70 35 L85 40 L75 50 L85 60 L65 65 L60 80 L50 70 L40 85 L35 70 L20 75 L25 60 L10 55 L20 45 L15 30 L30 35 L40 20 Z" />
-            <circle cx="55" cy="35" r="3" fill="white" />
-            <path
-              d="M55 25 Q65 15 75 20"
-              stroke="orangered"
-              stroke-width="3"
-              fill="none"
-              stroke-linecap="round"
-            />
+            <!-- Pegasus body and legs -->
+            <ellipse cx="50" cy="55" rx="18" ry="12" />
+            <rect x="44" y="60" width="4" height="20" rx="2" />
+            <rect x="52" y="60" width="4" height="20" rx="2" />
+            <rect x="48" y="64" width="4" height="16" rx="2" />
+            <rect x="56" y="64" width="4" height="16" rx="2" />
+            <!-- Pegasus head and neck -->
+            <ellipse cx="38" cy="48" rx="6" ry="8" transform="rotate(-20 38 48)" />
+            <path d="M 44 52 Q 40 50 38 48" stroke="#ff4500" stroke-width="4" fill="none" stroke-linecap="round" />
+            <!-- Wings -->
+            <path d="M 55 50 Q 70 45 75 48 Q 72 52 68 54 Q 64 56 60 56 Q 57 54 55 52 Z" opacity="0.9" />
+            <path d="M 56 52 Q 68 48 72 50 Q 70 53 66 55 Q 62 56 58 55 Z" opacity="0.7" />
+            <path d="M 57 54 Q 66 51 69 52 Q 68 54 64 55 Q 61 55 58 54 Z" opacity="0.5" />
+            <!-- Eye -->
+            <circle cx="36" cy="46" r="1.5" fill="white" />
           </svg>
           <p class="font-semibold">
-            Homesite
+            homesite
             <br />
             <span class="text-sm font-normal opacity-70">Personal blogging platform</span>
           </p>
