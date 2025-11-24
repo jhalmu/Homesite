@@ -290,6 +290,26 @@ defmodule Homesite.Content do
   end
 
   @doc """
+  Gets a single post by ID without scope checking (for public viewing).
+
+  Raises `Ecto.NoResultsError` if the Post does not exist.
+
+  ## Examples
+
+      iex> get_post_by_id!(123)
+      %Post{}
+
+      iex> get_post_by_id!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_post_by_id!(id) do
+    Post
+    |> Repo.get!(id)
+    |> Repo.preload(:user)
+  end
+
+  @doc """
   Creates a post.
 
   ## Examples

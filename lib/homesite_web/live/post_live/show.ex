@@ -14,9 +14,11 @@ defmodule HomesiteWeb.PostLive.Show do
           <.button navigate={~p"/posts"}>
             <.icon name="hero-arrow-left" />
           </.button>
-          <.button variant="primary" navigate={~p"/posts/#{@post}/edit?return_to=show"}>
-            <.icon name="hero-pencil-square" /> Edit post
-          </.button>
+          <%= if @can_edit do %>
+            <.button variant="primary" navigate={~p"/posts/#{@post}/edit?return_to=show"}>
+              <.icon name="hero-pencil-square" /> Edit post
+            </.button>
+          <% end %>
         </:actions>
       </.header>
 
@@ -44,10 +46,15 @@ defmodule HomesiteWeb.PostLive.Show do
       Content.subscribe_posts(socket.assigns.current_scope)
     end
 
+    post = Content.get_post_by_id!(id)
+    current_user_id = socket.assigns.current_scope.user.id
+    can_edit = post.user_id == current_user_id
+
     {:ok,
      socket
      |> assign(:page_title, "Show Post")
-     |> assign(:post, Content.get_post!(socket.assigns.current_scope, id))}
+     |> assign(:post, post)
+     |> assign(:can_edit, can_edit)}
   end
 
   @impl true
