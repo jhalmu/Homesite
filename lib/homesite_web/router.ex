@@ -17,6 +17,26 @@ defmodule HomesiteWeb.Router do
     plug :accepts, ["json"]
   end
 
+  # Rate limiting for authentication actions
+  pipeline :rate_limit_auth do
+    plug Hammer.Plug,
+      rate_limit: {"auth:login", 60_000, 5},
+      by: {:conn, &__MODULE__.get_ip/1}
+  end
+
+  pipeline :rate_limit_registration do
+    plug Hammer.Plug,
+      rate_limit: {"auth:register", 3_600_000, 3},
+      by: {:conn, &__MODULE__.get_ip/1}
+  end
+
+  # Helper function to get IP address for rate limiting
+  def get_ip(conn) do
+    conn.remote_ip
+    |> Tuple.to_list()
+    |> Enum.join(".")
+  end
+
   scope "/", HomesiteWeb do
     pipe_through :browser
 
@@ -70,16 +90,44 @@ defmodule HomesiteWeb.Router do
   end
 
   scope "/", HomesiteWeb do
-    pipe_through [:browser]
+    # Only apply rate limiting in non-test environments
+    if Mix.env() != :test do
+      pipe_through [:browser, :rate_limit_registration]
+    else
+      pipe_through [:browser]
+    end
 
-    live_session :current_user,
+    live_session :registration,
       on_mount: [{HomesiteWeb.UserAuth, :mount_current_scope}] do
       live "/users/register", UserLive.Registration, :new
+    end
+  end
+
+  scope "/", HomesiteWeb do
+    # Only apply rate limiting in non-test environments
+    if Mix.env() != :test do
+      pipe_through [:browser, :rate_limit_auth]
+    else
+      pipe_through [:browser]
+    end
+
+    live_session :login,
+      on_mount: [{HomesiteWeb.UserAuth, :mount_current_scope}] do
       live "/users/log-in", UserLive.Login, :new
       live "/users/log-in/:token", UserLive.Confirmation, :new
     end
 
     post "/users/log-in", UserSessionController, :create
+  end
+
+  scope "/", HomesiteWeb do
+    pipe_through [:browser]
+
+    live_session :current_user,
+      on_mount: [{HomesiteWeb.UserAuth, :mount_current_scope}] do
+      live "/users/:id", UserLive.Profile, :show
+    end
+
     delete "/users/log-out", UserSessionController, :delete
   end
 end

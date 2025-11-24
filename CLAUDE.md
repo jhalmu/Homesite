@@ -218,6 +218,87 @@ The Content context uses PubSub for real-time updates:
 - Subscribe with `Content.subscribe_posts(scope)` or `Content.subscribe_tags(scope)`
 - Broadcasts: `{:created, item}`, `{:updated, item}`, `{:deleted, item}`
 
+### Security (MANDATORY)
+
+**CRITICAL**: Security testing and best practices are MANDATORY for all features.
+
+#### Security Dependencies
+- **Sobelow** - Static security analysis for Phoenix apps
+- **mix_audit** - Dependency vulnerability scanner
+- **Hammer** - Rate limiting library with ETS backend
+- **Hammer.Plug** - Plug integration for Hammer
+
+#### Rate Limiting (Hammer)
+Configuration in `config/config.exs`:
+```elixir
+config :hammer,
+  backend: {Hammer.Backend.ETS, [expiry_ms: 60_000 * 60 * 4, cleanup_interval_ms: 60_000 * 10]}
+```
+
+Rate limits applied to authentication routes:
+- **Login**: 5 attempts per minute per IP (`/users/log-in`)
+- **Registration**: 3 attempts per hour per IP (`/users/register`)
+
+#### Scope Isolation (MANDATORY)
+**All context functions MUST enforce scope isolation**:
+- Use pattern matching: `true = record.user_id == scope.user.id`
+- This raises `MatchError` when users try to access other users' data
+- NEVER skip scope checks in context functions
+
+Example:
+```elixir
+def update_post(%Scope{} = scope, %Post{} = post, attrs) do
+  true = post.user_id == scope.user.id  # Security check - raises if mismatch
+  # ... rest of function
+end
+```
+
+#### Security Testing Requirements
+**Every feature MUST include security tests** in `test/homesite_web/security_test.exs`:
+
+1. **Scope Isolation Tests**:
+   - User A cannot view User B's data
+   - User A cannot update User B's data
+   - User A cannot delete User B's data
+   - List functions only return scoped data
+
+2. **Authorization Tests**:
+   - Protected routes require authentication
+   - Unauthenticated users are redirected to login
+
+3. **CSRF Protection**:
+   - POST requests without CSRF token are rejected
+   - Forms include CSRF tokens
+
+#### Security Scanning
+Run these commands before every commit:
+```bash
+mix sobelow --config         # Security analysis
+mix deps.audit               # Check for vulnerable dependencies
+```
+
+Add to pre-commit workflow:
+```bash
+mix test.all                 # Runs precommit + credo
+mix sobelow                  # Security scan
+mix deps.audit               # Dependency audit
+```
+
+#### Built-in Security Features
+- **CSRF Protection**: Automatic via `protect_from_forgery` plug in router
+- **XSS Prevention**: Automatic HTML escaping in Phoenix templates
+- **Password Hashing**: Argon2 for secure password storage
+- **Secure Headers**: `put_secure_browser_headers` plug adds security headers
+
+#### Security Best Practices
+1. **Never skip scope checks** in context functions
+2. **Always write security tests** for new features
+3. **Rate limit authentication endpoints** to prevent brute force
+4. **Validate all user input** at schema level
+5. **Use prepared statements** (Ecto does this automatically)
+6. **Keep dependencies updated** (run `mix deps.audit` regularly)
+7. **Review Sobelow warnings** and fix high/medium severity issues
+
 ### Testing (See AGENTS.md for complete testing guide)
 - Use `Phoenix.LiveViewTest` and `LazyHTML` for assertions
 - Reference DOM IDs added in templates: `has_element?(view, "#post-form")`

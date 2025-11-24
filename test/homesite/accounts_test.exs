@@ -389,6 +389,155 @@ defmodule Homesite.AccountsTest do
     end
   end
 
+  describe "change_user_profile/2" do
+    test "returns a changeset" do
+      user = user_fixture()
+      assert %Ecto.Changeset{} = Accounts.change_user_profile(user, %{})
+    end
+
+    test "allows valid profile attributes" do
+      user = user_fixture()
+
+      changeset =
+        Accounts.change_user_profile(user, %{
+          display_name: "John Doe",
+          bio: "Software developer",
+          website_url: "https://example.com",
+          bluesky_handle: "@john.bsky.social",
+          mastodon_handle: "@john@mastodon.social"
+        })
+
+      assert changeset.valid?
+    end
+
+    test "validates display_name length" do
+      user = user_fixture()
+      long_name = String.duplicate("a", 101)
+
+      changeset = Accounts.change_user_profile(user, %{display_name: long_name})
+
+      assert %{display_name: ["should be at most 100 character(s)"]} =
+               errors_on(changeset)
+    end
+
+    test "validates bio length" do
+      user = user_fixture()
+      long_bio = String.duplicate("a", 501)
+
+      changeset = Accounts.change_user_profile(user, %{bio: long_bio})
+
+      assert %{bio: ["should be at most 500 character(s)"]} = errors_on(changeset)
+    end
+
+    test "validates website_url format" do
+      user = user_fixture()
+
+      changeset = Accounts.change_user_profile(user, %{website_url: "invalid-url"})
+
+      assert %{website_url: ["must be a valid URL starting with http:// or https://"]} =
+               errors_on(changeset)
+    end
+
+    test "accepts valid website URLs" do
+      user = user_fixture()
+
+      for url <- ["http://example.com", "https://example.com", "https://sub.example.com/path"] do
+        changeset = Accounts.change_user_profile(user, %{website_url: url})
+        assert changeset.valid?, "Expected #{url} to be valid"
+      end
+    end
+
+    test "accepts empty strings for optional fields" do
+      user = user_fixture()
+
+      changeset =
+        Accounts.change_user_profile(user, %{
+          display_name: "",
+          bio: "",
+          website_url: "",
+          bluesky_handle: "",
+          mastodon_handle: ""
+        })
+
+      assert changeset.valid?
+    end
+  end
+
+  describe "update_user_profile/2" do
+    test "updates the user profile with valid data" do
+      user = user_fixture()
+
+      assert {:ok, updated_user} =
+               Accounts.update_user_profile(user, %{
+                 display_name: "Jane Smith",
+                 bio: "Elixir enthusiast",
+                 website_url: "https://jane.example.com"
+               })
+
+      assert updated_user.display_name == "Jane Smith"
+      assert updated_user.bio == "Elixir enthusiast"
+      assert updated_user.website_url == "https://jane.example.com"
+    end
+
+    test "returns error changeset with invalid data" do
+      user = user_fixture()
+
+      assert {:error, %Ecto.Changeset{}} =
+               Accounts.update_user_profile(user, %{
+                 website_url: "not-a-url"
+               })
+    end
+
+    test "deletes old avatar when uploading new one" do
+      user = user_fixture()
+
+      # Simulate having an old avatar
+      {:ok, user} = Accounts.update_user_profile(user, %{"avatar" => "/uploads/avatars/old.jpg"})
+      assert user.avatar == "/uploads/avatars/old.jpg"
+
+      # Update with new avatar
+      {:ok, updated_user} =
+        Accounts.update_user_profile(user, %{"avatar" => "/uploads/avatars/new.jpg"})
+
+      assert updated_user.avatar == "/uploads/avatars/new.jpg"
+    end
+  end
+
+  describe "get_avatar_url/1" do
+    test "returns uploaded avatar path when present" do
+      user = user_fixture()
+      {:ok, user} = Accounts.update_user_profile(user, %{"avatar" => "/uploads/avatars/test.jpg"})
+
+      assert Accounts.get_avatar_url(user) == "/uploads/avatars/test.jpg"
+    end
+
+    test "generates SVG avatar when no upload" do
+      user = user_fixture()
+
+      avatar_url = Accounts.get_avatar_url(user)
+
+      assert String.starts_with?(avatar_url, "data:image/svg+xml;charset=utf-8")
+    end
+
+    test "generates SVG avatar with display_name initials" do
+      user = user_fixture()
+      {:ok, user} = Accounts.update_user_profile(user, %{"display_name" => "John Doe"})
+
+      avatar_url = Accounts.get_avatar_url(user)
+
+      assert avatar_url =~ "JD"
+    end
+
+    test "generates SVG avatar from email when no display_name" do
+      user = user_fixture()
+      email_initial = String.first(user.email) |> String.upcase()
+
+      avatar_url = Accounts.get_avatar_url(user)
+
+      assert avatar_url =~ email_initial
+    end
+  end
+
   describe "inspect/2 for the User module" do
     test "does not include password" do
       refute inspect(%User{password: "123456"}) =~ "password: \"123456\""

@@ -24,6 +24,10 @@ config :homesite,
   ecto_repos: [Homesite.Repo],
   generators: [timestamp_type: :utc_datetime]
 
+# Configures Hammer rate limiting
+config :hammer,
+  backend: {Hammer.Backend.ETS, [expiry_ms: 60_000 * 60 * 4, cleanup_interval_ms: 60_000 * 10]}
+
 # Configures the endpoint
 config :homesite, HomesiteWeb.Endpoint,
   url: [host: "localhost"],

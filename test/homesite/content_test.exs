@@ -200,4 +200,58 @@ defmodule Homesite.ContentTest do
       assert %Ecto.Changeset{} = Content.change_post(scope, post)
     end
   end
+
+  describe "list_published_posts_for_user/1" do
+    import Homesite.AccountsFixtures, only: [user_scope_fixture: 0]
+    import Homesite.ContentFixtures
+
+    test "returns published posts for the user" do
+      scope = user_scope_fixture()
+      post1 = post_fixture(scope, %{published_at: ~U[2025-11-20 11:44:00Z]})
+      post2 = post_fixture(scope, %{published_at: ~U[2025-11-21 11:44:00Z]})
+
+      posts = Content.list_published_posts_for_user(scope.user.id)
+
+      assert length(posts) == 2
+      post_ids = Enum.map(posts, & &1.id)
+      assert post1.id in post_ids
+      assert post2.id in post_ids
+    end
+
+    test "returns posts ordered by published_at descending" do
+      scope = user_scope_fixture()
+
+      old_post = post_fixture(scope, %{published_at: ~U[2025-11-10 10:00:00Z], title: "Old Post"})
+
+      new_post =
+        post_fixture(scope, %{published_at: ~U[2025-11-20 10:00:00Z], title: "New Post"})
+
+      posts = Content.list_published_posts_for_user(scope.user.id)
+
+      assert length(posts) == 2
+      assert hd(posts).id == new_post.id
+      assert List.last(posts).id == old_post.id
+    end
+
+    test "does not return posts from other users" do
+      scope1 = user_scope_fixture()
+      scope2 = user_scope_fixture()
+
+      _user1_post = post_fixture(scope1, %{published_at: ~U[2025-11-20 11:44:00Z]})
+      user2_post = post_fixture(scope2, %{published_at: ~U[2025-11-20 11:44:00Z]})
+
+      posts = Content.list_published_posts_for_user(scope2.user.id)
+
+      assert length(posts) == 1
+      assert hd(posts).id == user2_post.id
+    end
+
+    test "returns empty list when user has no posts" do
+      scope = user_scope_fixture()
+
+      posts = Content.list_published_posts_for_user(scope.user.id)
+
+      assert posts == []
+    end
+  end
 end

@@ -75,6 +75,10 @@ defmodule Homesite.MixProject do
       {:telemetry_metrics, "1.1.0"},
       {:telemetry_poller, "1.3.0"},
 
+      # Security
+      {:hammer, "~> 6.2"},
+      {:hammer_plug, "~> 3.1"},
+
       # Dev and Test
       {:phoenix_test, "0.9.1", only: :test, runtime: false},
       {:phoenix_test_playwright, "0.9.1", only: :test, runtime: false},
@@ -84,6 +88,8 @@ defmodule Homesite.MixProject do
       {:phoenix_live_reload, "1.6.1", only: :dev},
       {:tailwind_formatter, "0.4.2", only: [:dev, :test], runtime: false},
       {:credo, "1.7.13", only: [:dev, :test], runtime: false},
+      {:sobelow, "~> 0.14", only: [:dev, :test], runtime: false},
+      {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
       {:lazy_html, "0.1.8", only: :test},
       {:tidewave, "0.5.1", only: :dev},
       {:igniter, "0.7.0", only: [:dev, :test]},

@@ -181,6 +181,25 @@ defmodule Homesite.Content do
   end
 
   @doc """
+  Returns the list of published posts for a specific user (public access).
+
+  Only returns posts with a published_at date, ordered by published_at descending.
+
+  ## Examples
+
+      iex> list_published_posts_for_user(123)
+      [%Post{}, ...]
+
+  """
+  def list_published_posts_for_user(user_id) do
+    from(p in Post,
+      where: p.user_id == ^user_id and not is_nil(p.published_at),
+      order_by: [desc: p.published_at]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
   Gets a single post.
 
   Raises `Ecto.NoResultsError` if the Post does not exist.
