@@ -26,10 +26,11 @@ defmodule Homesite.Content.Post do
   def changeset(post, attrs, user_scope) do
     post
     |> cast(attrs, [:title, :body, :slug, :published_at, :is_public])
-    |> validate_required([:title, :body, :slug, :published_at])
+    |> validate_required([:title, :body, :published_at])
     |> validate_length(:title, min: 3, max: 200)
     |> validate_length(:body, min: 10)
     |> generate_slug()
+    |> validate_required([:slug])
     |> unique_constraint(:slug)
     |> foreign_key_constraint(:user_id)
     |> put_change(:user_id, user_scope.user.id)
@@ -44,7 +45,12 @@ defmodule Homesite.Content.Post do
         base_slug =
           title
           |> String.downcase()
-          |> String.replace(~r/[^\w-]+/, "-")
+          # Transliterate Finnish/Swedish characters
+          |> String.replace("ä", "a")
+          |> String.replace("ö", "o")
+          |> String.replace("å", "a")
+          # Keep only alphanumeric and hyphens
+          |> String.replace(~r/[^a-z0-9-]+/, "-")
           |> String.trim("-")
 
         slug = "#{base_slug}-#{:os.system_time(:millisecond)}"

@@ -14,9 +14,16 @@ defmodule HomesiteWeb.PostLive.Form do
       </.header>
 
       <.form for={@form} id="post-form" phx-change="validate" phx-submit="save">
-        <.input field={@form[:title]} type="text" label="Title" />
+        <div class="mb-4">
+          <.input field={@form[:title]} type="text" label="Title" />
+          <%= if @form[:slug].value do %>
+            <p class="text-base-content/60 mt-1 text-sm">
+              <.icon name="hero-link" class="inline h-4 w-4" />
+              Slug: <span class="font-mono"><%= @form[:slug].value %></span>
+            </p>
+          <% end %>
+        </div>
         <.input field={@form[:body]} type="textarea" label="Body" />
-        <.input field={@form[:slug]} type="text" label="Slug" />
 
         <div class="fieldset mb-4">
           <label class="label mb-2">
