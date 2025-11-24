@@ -4,6 +4,7 @@ defmodule Homesite.Content.Post do
   """
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
 
   schema "posts" do
     field :title, :string
@@ -34,7 +35,27 @@ defmodule Homesite.Content.Post do
     |> unique_constraint(:slug)
     |> foreign_key_constraint(:user_id)
     |> put_change(:user_id, user_scope.user.id)
+    |> put_tags(attrs, user_scope)
   end
+
+  defp put_tags(changeset, %{"tag_ids" => tag_ids}, user_scope) when is_list(tag_ids) do
+    # Filter out empty strings and get valid tag IDs
+    tag_ids = Enum.reject(tag_ids, &(&1 == "" || is_nil(&1)))
+
+    if tag_ids == [] do
+      put_assoc(changeset, :tags, [])
+    else
+      # Fetch tags that belong to the user
+      tags = Homesite.Repo.all(
+        from t in Homesite.Content.Tag,
+        where: t.id in ^tag_ids and t.user_id == ^user_scope.user.id
+      )
+      put_assoc(changeset, :tags, tags)
+    end
+  end
+
+  defp put_tags(changeset, _attrs, _user_scope), do: changeset
+
 
   defp generate_slug(changeset) do
     case get_change(changeset, :title) do

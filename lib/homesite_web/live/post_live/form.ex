@@ -59,6 +59,40 @@ defmodule HomesiteWeb.PostLive.Form do
           label="Make this post publicly visible"
         />
 
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-semibold">Tags</span>
+          </label>
+          <%= if @available_tags == [] do %>
+            <div class="alert alert-info">
+              <.icon name="hero-information-circle" class="h-5 w-5" />
+              <span>
+                No tags available. <.link navigate={~p"/tags/new"} class="link">Create a tag</.link>
+                first!
+              </span>
+            </div>
+          <% else %>
+            <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
+              <%= for tag <- @available_tags do %>
+                <label class="label cursor-pointer justify-start gap-2">
+                  <input
+                    type="checkbox"
+                    name="post[tag_ids][]"
+                    value={tag.id}
+                    checked={tag.id in Enum.map(@post.tags || [], & &1.id)}
+                    class="checkbox checkbox-sm"
+                  />
+                  <span class="label-text">{tag.name}</span>
+                </label>
+              <% end %>
+            </div>
+            <p class="text-base-content/70 mt-2 text-sm">
+              <.icon name="hero-tag" class="inline h-4 w-4" />
+              Select tags to categorize this post
+            </p>
+          <% end %>
+        </div>
+
         <footer>
           <.button phx-disable-with="Saving..." variant="primary">Save Post</.button>
           <.button navigate={return_path(@current_scope, @return_to, @post)}>Cancel</.button>
@@ -80,20 +114,27 @@ defmodule HomesiteWeb.PostLive.Form do
   defp return_to(_), do: "index"
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    post = Content.get_post!(socket.assigns.current_scope, id)
+    post =
+      Content.get_post!(socket.assigns.current_scope, id)
+      |> Homesite.Repo.preload(:tags)
+
+    available_tags = Content.list_tags(socket.assigns.current_scope)
 
     socket
     |> assign(:page_title, "Edit Post")
     |> assign(:post, post)
+    |> assign(:available_tags, available_tags)
     |> assign(:form, to_form(Content.change_post(socket.assigns.current_scope, post)))
   end
 
   defp apply_action(socket, :new, _params) do
     post = %Post{user_id: socket.assigns.current_scope.user.id}
+    available_tags = Content.list_tags(socket.assigns.current_scope)
 
     socket
     |> assign(:page_title, "New Post")
     |> assign(:post, post)
+    |> assign(:available_tags, available_tags)
     |> assign(:form, to_form(Content.change_post(socket.assigns.current_scope, post)))
   end
 

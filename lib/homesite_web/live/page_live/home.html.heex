@@ -10,20 +10,11 @@
           <p class="text-[clamp(1rem,3vw,1.25rem)] py-6">
             A personal blogging platform for sharing ideas and stories.
           </p>
-          <div class="flex flex-wrap justify-center gap-4">
-            <%= if @current_scope do %>
-              <.link navigate={~p"/dashboard"} class="btn btn-primary btn-lg gap-2">
-                <.icon name="hero-home" class="h-6 w-6" /> Go to Dashboard
-              </.link>
-            <% else %>
-              <.link navigate={~p"/users/register"} class="btn btn-primary btn-lg gap-2">
-                <.icon name="hero-user-plus" class="h-6 w-6" /> Get Started
-              </.link>
-              <.link navigate={~p"/users/log-in"} class="btn btn-outline btn-lg gap-2">
-                <.icon name="hero-arrow-right-on-rectangle" class="h-6 w-6" /> Log In
-              </.link>
-            <% end %>
-          </div>
+          <%= if @current_scope do %>
+            <.link navigate={~p"/dashboard"} class="btn btn-primary btn-lg gap-2">
+              <.icon name="hero-home" class="h-6 w-6" /> Go to Dashboard
+            </.link>
+          <% end %>
         </div>
       </div>
     </div>
@@ -41,54 +32,38 @@
 
       <div
         :if={length(@posts) > 0}
-        class="gap-[clamp(1rem,3vw,1.5rem)] grid grid-cols-1 md:grid-cols-2"
+        class="gap-[clamp(1rem,3vw,1.5rem)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
       >
         <%= for post <- @posts do %>
-          <article class="card bg-base-200 shadow-lg transition-shadow hover:shadow-xl">
-            <div class="card-body">
-              <h3 class="card-title text-[clamp(1.25rem,3vw,1.5rem)]">
-                {post.title}
-              </h3>
+          <.link navigate={~p"/posts/#{post.id}"} class="group">
+            <article class="card bg-base-200 h-full shadow-lg transition-all hover:shadow-xl hover:-translate-y-1">
+              <div class="card-body">
+                <h3 class="card-title text-[clamp(1.25rem,3vw,1.5rem)] group-hover:text-primary transition-colors">
+                  {post.title}
+                </h3>
 
-              <.author_byline user={post.user} date={post.published_at} class="mb-3" />
+                <.author_byline user={post.user} date={post.published_at} class="mb-3" />
 
-              <p :if={post.body} class="line-clamp-3 text-sm">
-                {String.slice(post.body, 0, 200)}{if String.length(post.body) > 200, do: "..."}
-              </p>
+                <p :if={post.body} class="line-clamp-3 text-sm opacity-80">
+                  {String.slice(post.body, 0, 200)}{if String.length(post.body) > 200, do: "..."}
+                </p>
 
-              <div class="card-actions mt-4 justify-end">
-                <.link
-                  navigate={~p"/users/#{post.user.id}"}
-                  class="btn btn-sm btn-ghost gap-2"
-                >
-                  <.avatar user={post.user} class="h-6 w-6" /> View Profile
-                </.link>
+                <div class="card-actions mt-4 justify-between items-center">
+                  <.link
+                    navigate={~p"/users/#{post.user.id}"}
+                    class="btn btn-sm btn-ghost gap-2"
+                    onclick="event.stopPropagation()"
+                  >
+                    <.avatar user={post.user} class="h-6 w-6" /> {post.user.display_name || String.slice(post.user.email, 0, 10)}
+                  </.link>
+                  <span class="text-sm text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                    Read more →
+                  </span>
+                </div>
               </div>
-            </div>
-          </article>
+            </article>
+          </.link>
         <% end %>
-      </div>
-    </div>
-    
-<!-- Call to Action -->
-    <div
-      :if={!@current_scope && length(@posts) > 0}
-      class="mt-[clamp(3rem,7vw,5rem)] text-center"
-    >
-      <div class="card bg-primary text-primary-content shadow-xl">
-        <div class="card-body items-center">
-          <h3 class="card-title text-[clamp(1.5rem,4vw,2rem)]">
-            Ready to share your story?
-          </h3>
-          <p class="text-[clamp(1rem,3vw,1.125rem)]">
-            Join our community and start publishing your own posts.
-          </p>
-          <div class="card-actions mt-4">
-            <.link navigate={~p"/users/register"} class="btn btn-secondary btn-lg">
-              Sign Up Now
-            </.link>
-          </div>
-        </div>
       </div>
     </div>
   </div>
