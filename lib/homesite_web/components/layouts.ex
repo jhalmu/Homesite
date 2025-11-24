@@ -63,7 +63,7 @@ defmodule HomesiteWeb.Layouts do
             class="h-12 w-12"
             fill="#ff4500"
           >
-            <g transform="scale(-1, 1) translate(-100, 10)">
+            <g transform="scale(-1, 1) translate(-100, 25)">
               <!-- Horse body -->
               <ellipse cx="55" cy="60" rx="22" ry="16" />
 
