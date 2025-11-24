@@ -129,17 +129,37 @@ Admin scopes automatically get `admin_override?: true` and `flower_count: n`
 - **Ready for production use with full feature set!** 🚀
 
 #### Next Steps / Future Enhancements
-Per user request:
-- Create GitHub issues for completed work (closed)
-- Create GitHub issues for future todos (open)
-- Update documentation with admin system details
-- Consider:
-  - User management UI for admins
-  - Bulk actions for admin operations
-  - Analytics dashboard
-  - Email notifications for new posts
-  - RSS feed support
-  - Search functionality
+
+**GitHub Issues Created:**
+- ✅ #7-9: Closed issues for Sprints 1-3 (completed work)
+- 📋 #10-14: Open issues for future features
+
+**Priority TODOs (User Requested):**
+1. **Internationalization (i18n)**
+   - Implement Gettext for Finnish & English translations
+   - Add preferred_language field to user profiles
+   - Extract and translate UI strings
+   - Support locale detection
+
+2. **Registration Strategy**
+   - Decide: Open registration vs invitation system
+   - Implement chosen approach
+   - Consider spam prevention if open
+   - Build invitation management if closed
+
+3. **IP Tracking & Bot Detection**
+   - Track visitor IPs and user agents
+   - Monitor request patterns for bot detection
+   - Geographic analysis via IP lookup
+   - Failed login attempt tracking
+   - Consider privacy/GDPR compliance
+
+**Future Enhancements (From GitHub Issues):**
+- User management UI for admins (#10)
+- Search functionality for posts (#11)
+- RSS feed support (#12) - atomex already installed!
+- Email notifications (#13)
+- Analytics dashboard (#14)
 
 ---
 
