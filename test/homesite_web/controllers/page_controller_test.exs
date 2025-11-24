@@ -1,8 +1,11 @@
 defmodule HomesiteWeb.PageControllerTest do
   use HomesiteWeb.ConnCase
 
+  import Phoenix.LiveViewTest
+
   test "GET /", %{conn: conn} do
-    conn = get(conn, ~p"/")
-    assert html_response(conn, 200) =~ "Peace of mind from prototype to production"
+    {:ok, _view, html} = live(conn, ~p"/")
+    assert html =~ "Welcome to Homesite"
+    assert html =~ "Recent Posts"
   end
 end

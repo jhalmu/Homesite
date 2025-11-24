@@ -92,8 +92,9 @@ defmodule HomesiteWeb.TagLiveTest do
     test "displays tag", %{conn: conn, tag: tag} do
       {:ok, _show_live, html} = live(conn, ~p"/tags/#{tag}")
 
-      assert html =~ "Show Tag"
       assert html =~ tag.name
+      assert html =~ "Your Posts"
+      assert html =~ "Edit Tag"
     end
 
     test "updates tag and returns to show", %{conn: conn, tag: tag} do

@@ -40,7 +40,10 @@ defmodule HomesiteWeb.Router do
   scope "/", HomesiteWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live_session :public,
+      on_mount: [{HomesiteWeb.UserAuth, :mount_current_scope}] do
+      live "/", PageLive.Home, :index
+    end
   end
 
   # Other scopes may use custom stacks.

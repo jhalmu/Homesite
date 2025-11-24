@@ -200,6 +200,76 @@ defmodule Homesite.Content do
   end
 
   @doc """
+  Returns the user's posts that have the specified tag.
+
+  ## Examples
+
+      iex> list_user_posts_by_tag(scope, tag_id)
+      [%Post{}, ...]
+
+  """
+  def list_user_posts_by_tag(%Scope{} = scope, tag_id) do
+    from(p in Post,
+      join: pt in "post_tags",
+      on: pt.post_id == p.id,
+      where: p.user_id == ^scope.user.id and pt.tag_id == ^tag_id,
+      order_by: [desc: p.published_at],
+      preload: [:user]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns public posts from other users that have the specified tag.
+
+  Excludes posts from the specified user_id.
+
+  ## Examples
+
+      iex> list_public_posts_by_tag(tag_id, exclude_user_id)
+      [%Post{}, ...]
+
+  """
+  def list_public_posts_by_tag(tag_id, exclude_user_id \\ nil) do
+    query =
+      from(p in Post,
+        join: pt in "post_tags",
+        on: pt.post_id == p.id,
+        where: pt.tag_id == ^tag_id and not is_nil(p.published_at),
+        order_by: [desc: p.published_at],
+        preload: [:user]
+      )
+
+    query =
+      if exclude_user_id do
+        from(p in query, where: p.user_id != ^exclude_user_id)
+      else
+        query
+      end
+
+    Repo.all(query)
+  end
+
+  @doc """
+  Returns all published posts from all users (public homepage).
+
+  ## Examples
+
+      iex> list_all_published_posts()
+      [%Post{}, ...]
+
+  """
+  def list_all_published_posts do
+    from(p in Post,
+      where: not is_nil(p.published_at),
+      order_by: [desc: p.published_at],
+      preload: [:user],
+      limit: 20
+    )
+    |> Repo.all()
+  end
+
+  @doc """
   Gets a single post.
 
   Raises `Ecto.NoResultsError` if the Post does not exist.
