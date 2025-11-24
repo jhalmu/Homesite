@@ -46,7 +46,7 @@ defmodule HomesiteWeb.PostLive.Show do
       Content.subscribe_posts(socket.assigns.current_scope)
     end
 
-    post = Content.get_post_by_id!(id)
+    post = Content.get_post_by_id!(socket.assigns.current_scope, id)
     current_user_id = socket.assigns.current_scope.user.id
     can_edit = post.user_id == current_user_id
 

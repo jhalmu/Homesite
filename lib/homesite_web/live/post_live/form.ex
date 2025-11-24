@@ -46,6 +46,12 @@ defmodule HomesiteWeb.PostLive.Form do
           </p>
         </div>
 
+        <.input
+          field={@form[:is_public]}
+          type="checkbox"
+          label="Make this post publicly visible"
+        />
+
         <footer>
           <.button phx-disable-with="Saving..." variant="primary">Save Post</.button>
           <.button navigate={return_path(@current_scope, @return_to, @post)}>Cancel</.button>

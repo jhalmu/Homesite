@@ -290,22 +290,27 @@ defmodule Homesite.Content do
   end
 
   @doc """
-  Gets a single post by ID without scope checking (for public viewing).
+  Gets a single post by ID for public viewing.
 
-  Raises `Ecto.NoResultsError` if the Post does not exist.
+  Only returns posts that are public (is_public = true) or belong to the given scope.
+  Raises `Ecto.NoResultsError` if the Post does not exist or is not accessible.
 
   ## Examples
 
-      iex> get_post_by_id!(123)
+      iex> get_post_by_id!(scope, 123)
       %Post{}
 
-      iex> get_post_by_id!(456)
+      iex> get_post_by_id!(scope, 456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_post_by_id!(id) do
+  def get_post_by_id!(%Scope{} = scope, id) do
+    user_id = scope.user.id
+
     Post
-    |> Repo.get!(id)
+    |> where([p], p.id == ^id)
+    |> where([p], p.is_public == true or p.user_id == ^user_id)
+    |> Repo.one!()
     |> Repo.preload(:user)
   end
 

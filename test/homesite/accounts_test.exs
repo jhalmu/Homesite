@@ -516,7 +516,7 @@ defmodule Homesite.AccountsTest do
 
       avatar_url = Accounts.get_avatar_url(user)
 
-      assert String.starts_with?(avatar_url, "data:image/svg+xml;charset=utf-8")
+      assert String.starts_with?(avatar_url, "data:image/svg+xml;base64,")
     end
 
     test "generates SVG avatar with display_name initials" do
@@ -525,7 +525,10 @@ defmodule Homesite.AccountsTest do
 
       avatar_url = Accounts.get_avatar_url(user)
 
-      assert avatar_url =~ "JD"
+      # Decode base64 to check SVG content
+      [_prefix, base64] = String.split(avatar_url, ",", parts: 2)
+      decoded_svg = Base.decode64!(base64)
+      assert decoded_svg =~ "JD"
     end
 
     test "generates SVG avatar from email when no display_name" do

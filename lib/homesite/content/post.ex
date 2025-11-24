@@ -10,6 +10,7 @@ defmodule Homesite.Content.Post do
     field :body, :string
     field :slug, :string
     field :published_at, :utc_datetime
+    field :is_public, :boolean, default: false
     # field :user_id, :id
 
     belongs_to :user, Homesite.Accounts.User
@@ -24,7 +25,7 @@ defmodule Homesite.Content.Post do
   @doc false
   def changeset(post, attrs, user_scope) do
     post
-    |> cast(attrs, [:title, :body, :slug, :published_at])
+    |> cast(attrs, [:title, :body, :slug, :published_at, :is_public])
     |> validate_required([:title, :body, :slug, :published_at])
     |> validate_length(:title, min: 3, max: 200)
     |> validate_length(:body, min: 10)
