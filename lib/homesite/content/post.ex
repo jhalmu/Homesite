@@ -56,8 +56,13 @@ defmodule Homesite.Content.Post do
   end
 
   # Transliterate special characters to ASCII for URL-friendly slugs
+  # Uses a hybrid approach:
+  # 1. First handle special base characters that don't decompose (Nordic, German, etc.)
+  # 2. Then normalize Unicode to strip accents from decomposable characters
+  # 3. Finally remove any remaining non-ASCII characters
   defp transliterate(string) do
     string
+    # Handle base characters that don't decompose with NFD
     # Nordic/Scandinavian
     |> String.replace("ä", "a")
     |> String.replace("ö", "o")
@@ -67,42 +72,18 @@ defmodule Homesite.Content.Post do
     # German
     |> String.replace("ü", "u")
     |> String.replace("ß", "ss")
-    # French
-    |> String.replace(~r/[éèêë]/, "e")
-    |> String.replace(~r/[àâ]/, "a")
-    |> String.replace(~r/[ùû]/, "u")
-    |> String.replace(~r/[îï]/, "i")
-    |> String.replace("ô", "o")
-    |> String.replace("ç", "c")
-    # Spanish
-    |> String.replace("ñ", "n")
-    |> String.replace(~r/[áà]/, "a")
-    |> String.replace("í", "i")
-    |> String.replace("ó", "o")
-    |> String.replace("ú", "u")
-    # Portuguese
-    |> String.replace(~r/[ãâ]/, "a")
-    |> String.replace(~r/[õ]/, "o")
     # Polish
     |> String.replace("ł", "l")
-    |> String.replace("ą", "a")
-    |> String.replace("ę", "e")
-    |> String.replace("ć", "c")
-    |> String.replace("ń", "n")
-    |> String.replace("ś", "s")
-    |> String.replace(~r/[źż]/, "z")
-    # Czech/Slovak
-    |> String.replace("č", "c")
-    |> String.replace("š", "s")
-    |> String.replace("ž", "z")
-    |> String.replace("ř", "r")
-    |> String.replace(~r/[ůú]/, "u")
-    # Turkish
-    |> String.replace("ı", "i")
-    |> String.replace("ş", "s")
-    |> String.replace("ğ", "g")
-    # Icelandic
+    # Icelandic (multi-character)
     |> String.replace("þ", "th")
     |> String.replace("ð", "d")
+    # Turkish
+    |> String.replace("ı", "i")
+    # Normalize to NFD (decompose accented characters like é → e + accent)
+    |> String.normalize(:nfd)
+    # Strip combining diacritical marks (accents, tildes, etc.)
+    |> String.replace(~r/\p{Mn}+/u, "")
+    # Remove any remaining non-ASCII characters
+    |> String.replace(~r/[^\x00-\x7F]+/, "")
   end
 end
