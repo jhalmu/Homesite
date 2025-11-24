@@ -75,9 +75,10 @@
               </details>
             </li>
           <% else %>
-            <li>
+            <%!-- Registration disabled for testing phase --%>
+            <%!-- <li>
               <.link navigate={~p"/users/register"}>Register</.link>
-            </li>
+            </li> --%>
             <li>
               <.link navigate={~p"/users/log-in"} class="btn btn-primary">Log in</.link>
             </li>

@@ -105,19 +105,21 @@ defmodule HomesiteWeb.Router do
     end
   end
 
-  scope "/", HomesiteWeb do
-    # Only apply rate limiting in non-test environments
-    if Mix.env() != :test do
-      pipe_through [:browser, :rate_limit_registration]
-    else
-      pipe_through [:browser]
-    end
-
-    live_session :registration,
-      on_mount: [{HomesiteWeb.UserAuth, :mount_current_scope}] do
-      live "/users/register", UserLive.Registration, :new
-    end
-  end
+  # Registration route disabled for testing phase
+  # To re-enable: uncomment the scope block below
+  # scope "/", HomesiteWeb do
+  #   # Only apply rate limiting in non-test environments
+  #   if Mix.env() != :test do
+  #     pipe_through [:browser, :rate_limit_registration]
+  #   else
+  #     pipe_through [:browser]
+  #   end
+  #
+  #   live_session :registration,
+  #     on_mount: [{HomesiteWeb.UserAuth, :mount_current_scope}] do
+  #     live "/users/register", UserLive.Registration, :new
+  #   end
+  # end
 
   scope "/", HomesiteWeb do
     # Only apply rate limiting in non-test environments
