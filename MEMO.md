@@ -1,8 +1,3 @@
-- Put newest memo first.
-- Adding time to blog posts is clunky. Time is not set automatically. What can we do?
-- Function to show that field is empty is too aggressive.
-- We need simple dashboard style landing page when user logs in. No statistics yet.
-
 # MEMO.md
 
 Session notes and progress tracking for the Homesite project.
@@ -135,24 +130,43 @@ Admin scopes automatically get `admin_override?: true` and `flower_count: n`
 - 📋 #10-14: Open issues for future features
 
 **Priority TODOs (User Requested):**
-1. **Internationalization (i18n)**
+
+**From Earlier Sessions (Now Prioritized):**
+1. **Fix Blog Post Time Input** ⏰
+   - Make `published_at` set automatically (currently clunky)
+   - Consider auto-setting to current time on publish
+   - Or use "Publish Now" vs "Schedule" options
+   - Improve UX for datetime input
+
+2. **Review Empty Field Validation** 🔍
+   - Current validation too aggressive
+   - Identify which fields are problematic
+   - Adjust validation rules to be more user-friendly
+   - Balance between data quality and UX
+
+**New Priorities:**
+3. **Internationalization (i18n)**
    - Implement Gettext for Finnish & English translations
    - Add preferred_language field to user profiles
    - Extract and translate UI strings
    - Support locale detection
 
-2. **Registration Strategy**
+4. **Registration Strategy**
    - Decide: Open registration vs invitation system
    - Implement chosen approach
    - Consider spam prevention if open
    - Build invitation management if closed
 
-3. **IP Tracking & Bot Detection**
+5. **IP Tracking & Bot Detection**
    - Track visitor IPs and user agents
    - Monitor request patterns for bot detection
    - Geographic analysis via IP lookup
    - Failed login attempt tracking
    - Consider privacy/GDPR compliance
+
+**Completed from Earlier Notes:**
+- ✅ Put newest memo first (already doing this!)
+- ✅ Simple dashboard landing page (created in Sprint 2 at /dashboard)
 
 **Future Enhancements (From GitHub Issues):**
 - User management UI for admins (#10)
