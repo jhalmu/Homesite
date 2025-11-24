@@ -59,25 +59,54 @@ defmodule HomesiteWeb.Layouts do
         <div>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 100 100"
+            viewBox="0 20 100 70"
             class="h-12 w-12"
             fill="#ff4500"
           >
-            <!-- Pegasus body and legs -->
-            <ellipse cx="50" cy="55" rx="18" ry="12" />
-            <rect x="44" y="60" width="4" height="20" rx="2" />
-            <rect x="52" y="60" width="4" height="20" rx="2" />
-            <rect x="48" y="64" width="4" height="16" rx="2" />
-            <rect x="56" y="64" width="4" height="16" rx="2" />
-            <!-- Pegasus head and neck -->
-            <ellipse cx="38" cy="48" rx="6" ry="8" transform="rotate(-20 38 48)" />
-            <path d="M 44 52 Q 40 50 38 48" stroke="#ff4500" stroke-width="4" fill="none" stroke-linecap="round" />
-            <!-- Wings -->
-            <path d="M 55 50 Q 70 45 75 48 Q 72 52 68 54 Q 64 56 60 56 Q 57 54 55 52 Z" opacity="0.9" />
-            <path d="M 56 52 Q 68 48 72 50 Q 70 53 66 55 Q 62 56 58 55 Z" opacity="0.7" />
-            <path d="M 57 54 Q 66 51 69 52 Q 68 54 64 55 Q 61 55 58 54 Z" opacity="0.5" />
-            <!-- Eye -->
-            <circle cx="36" cy="46" r="1.5" fill="white" />
+            <g transform="scale(-1, 1) translate(-100, 0)">
+              <!-- Horse body -->
+              <ellipse cx="55" cy="60" rx="22" ry="16" />
+
+              <!-- Horse neck -->
+              <path d="M 40 55 Q 32 50 28 42" stroke="#ff4500" stroke-width="8" fill="none" stroke-linecap="round" />
+
+              <!-- Horse head (elongated, horizontal) -->
+              <ellipse cx="22" cy="38" rx="8" ry="5.5" />
+
+              <!-- Snout/muzzle -->
+              <ellipse cx="15" cy="38" rx="3.5" ry="3" />
+
+              <!-- Ear (pointed upward) -->
+              <path d="M 26 32 L 28 26 L 24 30 Z" />
+
+              <!-- Eye -->
+              <circle cx="24" cy="37" r="1.5" fill="white" />
+              <circle cx="24" cy="37" r="0.8" fill="#333" />
+
+              <!-- Nostril -->
+              <circle cx="15" cy="39" r="0.7" fill="#cc3300" opacity="0.6" />
+
+              <!-- Front legs -->
+              <rect x="42" y="68" width="4" height="20" rx="2" />
+              <rect x="48" y="68" width="4" height="20" rx="2" />
+
+              <!-- Back legs -->
+              <rect x="62" y="68" width="4" height="20" rx="2" />
+              <rect x="68" y="68" width="4" height="20" rx="2" />
+
+              <!-- Tail -->
+              <path d="M 75 58 Q 82 55 85 60 Q 84 65 80 68" stroke="#ff4500" stroke-width="3" fill="none" stroke-linecap="round" />
+
+              <!-- Mane -->
+              <path d="M 28 38 Q 32 34 36 38" stroke="#ff4500" stroke-width="2.5" fill="none" stroke-linecap="round" />
+              <path d="M 32 42 Q 36 38 40 42" stroke="#ff4500" stroke-width="2.5" fill="none" stroke-linecap="round" />
+              <path d="M 36 46 Q 40 42 44 46" stroke="#ff4500" stroke-width="2.5" fill="none" stroke-linecap="round" />
+
+              <!-- Wings (on the back) -->
+              <path d="M 60 52 Q 75 45 82 48 Q 80 54 75 58 Q 70 60 65 59 Q 61 56 60 53 Z" opacity="0.95" />
+              <path d="M 61 54 Q 73 48 78 50 Q 77 55 72 58 Q 68 59 64 57 Z" opacity="0.8" />
+              <path d="M 62 56 Q 70 51 74 53 Q 73 56 69 58 Q 66 58 63 56 Z" opacity="0.65" />
+            </g>
           </svg>
           <p class="font-semibold">
             homesite
