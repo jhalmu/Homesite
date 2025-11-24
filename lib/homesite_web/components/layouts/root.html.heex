@@ -33,24 +33,45 @@
   <body>
     <div class="navbar bg-base-100">
       <div class="flex-1">
-        <.link navigate={~p"/"} class="btn btn-ghost text-xl gap-2">
+        <.link navigate={~p"/"} class="btn btn-ghost text-xl gap-3">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 100 100"
-            class="h-6 w-6"
+            class="h-10 w-10"
             fill="#ff4500"
           >
-            <ellipse cx="50" cy="55" rx="18" ry="12" />
-            <rect x="44" y="60" width="4" height="20" rx="2" />
-            <rect x="52" y="60" width="4" height="20" rx="2" />
-            <rect x="48" y="64" width="4" height="16" rx="2" />
-            <rect x="56" y="64" width="4" height="16" rx="2" />
-            <ellipse cx="38" cy="48" rx="6" ry="8" transform="rotate(-20 38 48)" />
-            <path d="M 44 52 Q 40 50 38 48" stroke="#ff4500" stroke-width="4" fill="none" stroke-linecap="round" />
-            <path d="M 55 50 Q 70 45 75 48 Q 72 52 68 54 Q 64 56 60 56 Q 57 54 55 52 Z" opacity="0.9" />
-            <path d="M 56 52 Q 68 48 72 50 Q 70 53 66 55 Q 62 56 58 55 Z" opacity="0.7" />
-            <path d="M 57 54 Q 66 51 69 52 Q 68 54 64 55 Q 61 55 58 54 Z" opacity="0.5" />
-            <circle cx="36" cy="46" r="1.5" fill="white" />
+            <!-- Pegasus body (larger, rounder) -->
+            <ellipse cx="50" cy="55" rx="20" ry="14" />
+
+            <!-- Legs (thicker, more defined) -->
+            <rect x="42" y="62" width="5" height="22" rx="2.5" />
+            <rect x="53" y="62" width="5" height="22" rx="2.5" />
+            <rect x="46" y="66" width="5" height="18" rx="2.5" />
+            <rect x="57" y="66" width="5" height="18" rx="2.5" />
+
+            <!-- Head and muzzle (more horse-like) -->
+            <ellipse cx="35" cy="46" rx="7" ry="9" transform="rotate(-15 35 46)" />
+            <ellipse cx="32" cy="50" rx="3" ry="4" transform="rotate(-15 32 50)" />
+
+            <!-- Neck (curved, natural) -->
+            <path d="M 42 50 Q 38 48 35 46" stroke="#ff4500" stroke-width="5" fill="none" stroke-linecap="round" />
+
+            <!-- Mane -->
+            <path d="M 36 40 Q 40 38 42 42" stroke="#ff4500" stroke-width="2.5" fill="none" stroke-linecap="round" />
+            <path d="M 38 42 Q 42 40 44 44" stroke="#ff4500" stroke-width="2.5" fill="none" stroke-linecap="round" />
+
+            <!-- Wings (larger, more detailed feathers) -->
+            <path d="M 56 48 Q 72 42 78 46 Q 75 52 70 56 Q 65 58 60 58 Q 57 54 56 50 Z" opacity="0.95" />
+            <path d="M 57 51 Q 70 46 75 49 Q 73 54 68 57 Q 63 58 59 56 Z" opacity="0.8" />
+            <path d="M 58 54 Q 68 50 72 52 Q 71 55 66 57 Q 62 57 59 55 Z" opacity="0.65" />
+            <path d="M 59 56 Q 66 53 69 54 Q 68 56 64 57 Q 61 56 59 56 Z" opacity="0.5" />
+
+            <!-- Eye (larger, more expressive) -->
+            <circle cx="33" cy="45" r="2" fill="white" />
+            <circle cx="33" cy="45" r="1" fill="#333" />
+
+            <!-- Nostril -->
+            <circle cx="30" cy="51" r="0.8" fill="#cc3300" opacity="0.7" />
           </svg>
           homesite
         </.link>
