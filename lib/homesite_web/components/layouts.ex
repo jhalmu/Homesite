@@ -59,11 +59,11 @@ defmodule HomesiteWeb.Layouts do
         <div>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 20 100 70"
+            viewBox="0 0 100 100"
             class="h-12 w-12"
             fill="#ff4500"
           >
-            <g transform="scale(-1, 1) translate(-100, 0)">
+            <g transform="scale(-1, 1) translate(-100, 10)">
               <!-- Horse body -->
               <ellipse cx="55" cy="60" rx="22" ry="16" />
 
