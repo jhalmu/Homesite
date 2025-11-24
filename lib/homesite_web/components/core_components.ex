@@ -437,6 +437,70 @@ defmodule HomesiteWeb.CoreComponents do
   end
 
   @doc """
+  Renders a user avatar.
+
+  Displays an uploaded avatar or generates an SVG avatar with user initials.
+  Uses fluid sizing for responsive design.
+
+  ## Examples
+
+      <.avatar user={@user} />
+      <.avatar user={@user} class="w-12 h-12" />
+  """
+  attr :user, :map, required: true, doc: "the user struct"
+  attr :class, :string, default: nil, doc: "additional CSS classes"
+  attr :rest, :global, doc: "arbitrary HTML attributes"
+
+  def avatar(assigns) do
+    assigns = assign(assigns, :avatar_url, Homesite.Accounts.get_avatar_url(assigns.user))
+
+    ~H"""
+    <img
+      src={@avatar_url}
+      alt={"#{@user.display_name || @user.email} avatar"}
+      class={[
+        "rounded-full object-cover",
+        "w-[clamp(2rem,8vw,3rem)] h-[clamp(2rem,8vw,3rem)]",
+        @class
+      ]}
+      {@rest}
+    />
+    """
+  end
+
+  @doc """
+  Renders an author byline with avatar, name, and optional date.
+
+  Displays user information in a consistent format across the application.
+  Uses fluid typography and spacing from MODERN_CSS_GUIDE.md patterns.
+
+  ## Examples
+
+      <.author_byline user={@user} />
+      <.author_byline user={@user} date={@post.published_at} />
+  """
+  attr :user, :map, required: true, doc: "the user struct"
+  attr :date, :any, default: nil, doc: "optional datetime to display"
+  attr :class, :string, default: nil, doc: "additional CSS classes"
+  attr :rest, :global, doc: "arbitrary HTML attributes"
+
+  def author_byline(assigns) do
+    ~H"""
+    <div class={["gap-[clamp(0.5rem,2vw,1rem)] flex items-center", @class]} {@rest}>
+      <.avatar user={@user} class="h-10 w-10" />
+      <div class="flex flex-col">
+        <span class="text-[clamp(0.875rem,2vw,1rem)] font-medium">
+          {@user.display_name || String.split(@user.email, "@") |> List.first()}
+        </span>
+        <time :if={@date} class="text-sm text-gray-600 dark:text-gray-400">
+          {Calendar.strftime(@date, "%B %d, %Y")}
+        </time>
+      </div>
+    </div>
+    """
+  end
+
+  @doc """
   Translates an error message using gettext.
   """
   def translate_error({msg, opts}) do

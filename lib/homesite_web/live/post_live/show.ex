@@ -8,8 +8,8 @@ defmodule HomesiteWeb.PostLive.Show do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <.header>
-        Post {@post.id}
-        <:subtitle>This is a post record from your database.</:subtitle>
+        {@post.title}
+        <:subtitle>Published post</:subtitle>
         <:actions>
           <.button navigate={~p"/posts"}>
             <.icon name="hero-arrow-left" />
@@ -19,6 +19,14 @@ defmodule HomesiteWeb.PostLive.Show do
           </.button>
         </:actions>
       </.header>
+
+      <div class="my-[clamp(1rem,3vw,2rem)]">
+        <.author_byline user={@post.user} date={@post.published_at} />
+      </div>
+
+      <div class="my-[clamp(1.5rem,4vw,3rem)] prose max-w-none whitespace-pre-wrap">
+        {@post.body}
+      </div>
 
       <.list>
         <:item title="Title">{@post.title}</:item>

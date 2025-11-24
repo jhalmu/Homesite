@@ -1,6 +1,119 @@
+- Put newest memo first.
+- Adding time to blog posts is clunky. Time is not set automatically. What can we do?
+- Function to show that field is empty is too aggressive.
+- We need simple dashboard style landing page when user logs in. No statistics yet.
+
 # MEMO.md
 
 Session notes and progress tracking for the Homesite project.
+
+---
+
+## 2025-11-24 [Current Session]
+
+### Session: User Profile Features Implementation
+
+#### Completed
+- ✅ Answered Playwright tests question (documented findings in MEMO)
+- ✅ **Database Migration**: Added 6 profile fields to users table (display_name, avatar, bio, website_url, bluesky_handle, mastodon_handle)
+- ✅ **User Schema**: Updated with new fields and profile_changeset with URL validation
+- ✅ **AvatarGenerator Module**: Created SVG avatar generator with user initials and DaisyUI theme colors
+- ✅ **Accounts Context**: Added profile management functions (change_user_profile, update_user_profile, get_avatar_url, delete_avatar_file)
+- ✅ **UI Components**: Created `<.avatar>` and `<.author_byline>` components using MODERN_CSS_GUIDE.md patterns (clamp, fluid sizing)
+- ✅ **Settings Page**: Extended with profile form and avatar file upload (LiveView native uploads)
+- ✅ **Post Views**: Updated PostLive.Show with author byline display
+- ✅ **Uploads Directory**: Created priv/static/uploads/avatars/ with .gitignore rules
+- ✅ **Tests**: Fixed 2 test failures, all 142 tests passing
+- ✅ **Code Quality**: Fixed Credo refactoring issue (Enum.map_join), 0 failures
+
+#### Technical Implementation Details
+
+**Avatar System:**
+- File uploads handled with Phoenix LiveView native `allow_upload/3`
+- Accepts JPG/PNG, max 5MB
+- Generates unique filenames: `{user_id}_{timestamp}.{ext}`
+- Auto-deletes old avatar when new one uploaded
+- Falls back to SVG avatar with initials if no upload
+
+**SVG Avatar Generation:**
+- Deterministic colors based on user ID (8 DaisyUI-inspired color combinations)
+- Displays up to 2 initials from display_name or first letter of email
+- Returns data URL for direct use in img src
+
+**Modern CSS Patterns Applied:**
+- Fluid sizing: `w-[clamp(2rem,8vw,3rem)]`
+- Fluid spacing: `gap-[clamp(0.5rem,2vw,1rem)]`
+- Fluid typography: `text-[clamp(0.875rem,2vw,1rem)]`
+- Responsive layouts following MODERN_CSS_GUIDE.md
+
+**Profile Fields Added:**
+1. `display_name` - Public name (max 100 chars)
+2. `avatar` - File path to uploaded image
+3. `bio` - User biography (max 500 chars)
+4. `website_url` - Personal website (URL validation)
+5. `bluesky_handle` - Bluesky social (max 255 chars)
+6. `mastodon_handle` - Mastodon social (max 255 chars)
+
+#### Current Status
+- **Tests:** 142 tests, 0 failures ✅
+- **Credo:** 5 design suggestions (optional nested module aliasing, pre-existing)
+- **Profile system fully functional** - Users can edit profile, upload avatars, view author info on posts
+- **Auto-generated avatars** working for users without uploads
+
+#### Next Steps / TODO
+- Update navigation header with user avatar
+- Create public profile page (UserLive.Profile) at `/users/:id`
+- Add tests for new profile functionality
+- Consider remaining MEMO questions:
+  - Time input for blog posts (clunky)
+  - Empty field validation (too aggressive)
+  - Dashboard landing page
+
+---
+
+## 2025-11-24 (Earlier Session)
+
+### Session: Documentation Review and Outstanding Questions
+
+#### Playwright Tests Investigation
+
+**Question Answered:** What was playwright tests command?
+
+**Findings:**
+- **Command:** `mix test --include playwright`
+- **Status:** Playwright is configured but NOT actively used
+  - Dependencies installed: `phoenix_test_playwright` 0.9.1
+  - Configuration exists in `config/test.exs`
+  - Tests excluded by default in `test/test_helper.exs`
+  - **No actual Playwright tests exist** in the codebase
+  - Playwright browser binaries NOT installed (requires npm setup)
+
+**Configuration Details:**
+```elixir
+# config/test.exs
+config :phoenix_test,
+  playwright: [
+    browser: :chromium,
+    browser_launch_timeout: 10_000,
+    trace: System.get_env("PLAYWRIGHT_TRACE", "false") in ~w(t true),
+    trace_dir: "tmp"
+  ]
+
+# test/test_helper.exs
+ExUnit.configure(exclude: [playwright: true])
+```
+
+**To Actually Use Playwright (if needed in future):**
+1. Install Playwright via npm:
+   ```bash
+   npm --prefix assets i -D playwright
+   npm --prefix assets exec -- playwright install chromium --with-deps
+   ```
+2. Create test case using `PhoenixTest.Playwright.Case`
+3. Write tests tagged with `@tag :playwright`
+4. Run with `mix test --include playwright`
+
+**Conclusion:** Playwright is ready to use but currently dormant. Standard `Phoenix.LiveViewTest` is sufficient for current needs.
 
 ---
 

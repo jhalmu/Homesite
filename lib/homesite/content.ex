@@ -195,7 +195,9 @@ defmodule Homesite.Content do
 
   """
   def get_post!(%Scope{} = scope, id) do
-    Repo.get_by!(Post, id: id, user_id: scope.user.id)
+    Post
+    |> Repo.get_by!(id: id, user_id: scope.user.id)
+    |> Repo.preload(:user)
   end
 
   @doc """

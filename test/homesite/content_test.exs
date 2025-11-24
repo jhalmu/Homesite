@@ -114,7 +114,9 @@ defmodule Homesite.ContentTest do
       scope = user_scope_fixture()
       post = post_fixture(scope)
       other_scope = user_scope_fixture()
-      assert Content.get_post!(scope, post.id) == post
+      fetched_post = Content.get_post!(scope, post.id)
+      assert fetched_post.id == post.id
+      assert fetched_post.user.id == scope.user.id
       assert_raise Ecto.NoResultsError, fn -> Content.get_post!(other_scope, post.id) end
     end
 
@@ -173,7 +175,9 @@ defmodule Homesite.ContentTest do
       scope = user_scope_fixture()
       post = post_fixture(scope)
       assert {:error, %Ecto.Changeset{}} = Content.update_post(scope, post, @invalid_attrs)
-      assert post == Content.get_post!(scope, post.id)
+      fetched_post = Content.get_post!(scope, post.id)
+      assert fetched_post.id == post.id
+      assert fetched_post.title == post.title
     end
 
     test "delete_post/2 deletes the post" do

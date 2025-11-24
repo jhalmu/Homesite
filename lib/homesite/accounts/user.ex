@@ -12,6 +12,14 @@ defmodule Homesite.Accounts.User do
     field :confirmed_at, :utc_datetime
     field :authenticated_at, :utc_datetime, virtual: true
 
+    # Profile fields
+    field :display_name, :string
+    field :avatar, :string
+    field :bio, :string
+    field :website_url, :string
+    field :bluesky_handle, :string
+    field :mastodon_handle, :string
+
     has_many :posts, Homesite.Content.Post
     has_many :tags, Homesite.Content.Tag
 
@@ -116,6 +124,43 @@ defmodule Homesite.Accounts.User do
   def confirm_changeset(user) do
     now = DateTime.utc_now(:second)
     change(user, confirmed_at: now)
+  end
+
+  @doc """
+  A user changeset for updating profile information.
+
+  Validates display name, bio, URLs, and social media handles.
+  """
+  def profile_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:display_name, :avatar, :bio, :website_url, :bluesky_handle, :mastodon_handle])
+    |> validate_length(:display_name, max: 100)
+    |> validate_length(:bio, max: 500)
+    |> validate_url(:website_url)
+    |> validate_social_handle(:bluesky_handle)
+    |> validate_social_handle(:mastodon_handle)
+  end
+
+  defp validate_url(changeset, field) do
+    case get_change(changeset, field) do
+      nil ->
+        changeset
+
+      "" ->
+        changeset
+
+      url ->
+        if String.match?(url, ~r/^https?:\/\/.+\..+/i) do
+          changeset
+        else
+          add_error(changeset, field, "must be a valid URL starting with http:// or https://")
+        end
+    end
+  end
+
+  defp validate_social_handle(changeset, field) do
+    changeset
+    |> validate_length(field, max: 255)
   end
 
   @doc """

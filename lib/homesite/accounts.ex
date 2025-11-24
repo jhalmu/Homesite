@@ -167,6 +167,86 @@ defmodule Homesite.Accounts do
     |> update_user_and_delete_all_tokens()
   end
 
+  @doc """
+  Returns an `%Ecto.Changeset{}` for changing the user profile.
+
+  ## Examples
+
+      iex> change_user_profile(user)
+      %Ecto.Changeset{data: %User{}}
+
+  """
+  def change_user_profile(user, attrs \\ %{}) do
+    User.profile_changeset(user, attrs)
+  end
+
+  @doc """
+  Updates the user profile.
+
+  If the user uploads a new avatar, the old avatar file is deleted.
+
+  ## Examples
+
+      iex> update_user_profile(user, %{display_name: "New Name"})
+      {:ok, %User{}}
+
+      iex> update_user_profile(user, %{website_url: "invalid"})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_user_profile(user, attrs) do
+    # Delete old avatar file if a new one is being uploaded
+    if Map.has_key?(attrs, "avatar") && attrs["avatar"] != user.avatar && user.avatar do
+      delete_avatar_file(user.avatar)
+    end
+
+    user
+    |> User.profile_changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Gets the avatar URL for a user.
+
+  Returns the uploaded avatar path if available, otherwise generates
+  an SVG avatar with user initials.
+
+  ## Examples
+
+      iex> get_avatar_url(%User{avatar: "/uploads/avatars/123.jpg"})
+      "/uploads/avatars/123.jpg"
+
+      iex> get_avatar_url(%User{avatar: nil, id: 1, display_name: "John Doe"})
+      "data:image/svg+xml;charset=utf-8,..."
+
+  """
+  def get_avatar_url(%User{avatar: avatar}) when is_binary(avatar) and avatar != "" do
+    avatar
+  end
+
+  def get_avatar_url(user) do
+    Homesite.Accounts.AvatarGenerator.generate_avatar(user)
+  end
+
+  @doc """
+  Deletes an avatar file from disk.
+
+  ## Examples
+
+      iex> delete_avatar_file("/uploads/avatars/123.jpg")
+      :ok
+
+  """
+  def delete_avatar_file(avatar_path) when is_binary(avatar_path) do
+    full_path = Path.join(["priv", "static", avatar_path])
+
+    if File.exists?(full_path) do
+      File.rm!(full_path)
+    end
+
+    :ok
+  end
+
   ## Session
 
   @doc """
