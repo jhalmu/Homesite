@@ -223,4 +223,115 @@ defmodule HomesiteWeb.SecurityTest do
       assert html =~ "csrf_token"
     end
   end
+
+  describe "Admin User Management Security" do
+    test "non-admin users cannot access admin user management page", %{conn: conn} do
+      user = user_fixture() |> set_password()
+      conn = log_in_user(conn, user)
+
+      # Try to access admin users page
+      assert {:error, {:redirect, %{to: "/"}}} = live(conn, ~p"/admin/users")
+    end
+
+    test "admin with insufficient flowers cannot access user management", %{conn: conn} do
+      # Create regular user then upgrade to admin with only 2 flowers (needs 3+)
+      user = user_fixture() |> set_password()
+      {:ok, admin} = Accounts.update_user_admin_settings(user, %{role: "admin", admin_flowers: 2})
+      conn = log_in_user(conn, admin)
+
+      # Try to access admin users page
+      {:error, {:redirect, redirect_info}} = live(conn, ~p"/admin/users")
+      assert redirect_info.to == "/admin"
+      assert redirect_info.flash["error"] =~ "Level 3"
+    end
+
+    test "admin with 3+ flowers can access user management", %{conn: conn} do
+      # Create regular user then upgrade to admin with 3 flowers
+      user = user_fixture() |> set_password()
+      {:ok, admin} = Accounts.update_user_admin_settings(user, %{role: "admin", admin_flowers: 3})
+      conn = log_in_user(conn, admin)
+
+      # Should successfully load the page
+      {:ok, _view, html} = live(conn, ~p"/admin/users")
+      assert html =~ "User Management"
+    end
+
+    test "admin can update user roles via Accounts context", %{conn: _conn} do
+      user = user_fixture()
+
+      # Update user to admin with 5 flowers
+      assert {:ok, updated_user} =
+               Accounts.update_user_admin_settings(user, %{
+                 role: "admin",
+                 admin_flowers: 5
+               })
+
+      assert updated_user.role == "admin"
+      assert updated_user.admin_flowers == 5
+    end
+
+    test "cannot set invalid flower levels", %{conn: _conn} do
+      user = user_fixture()
+
+      # Try to set flower level > 5
+      assert {:error, changeset} =
+               Accounts.update_user_admin_settings(user, %{
+                 role: "admin",
+                 admin_flowers: 10
+               })
+
+      assert changeset.errors[:admin_flowers]
+    end
+
+    test "non-admin user's flowers are reset when role is user", %{conn: _conn} do
+      # Start with admin user with flowers
+      user = user_fixture()
+      {:ok, admin} = Accounts.update_user_admin_settings(user, %{role: "admin", admin_flowers: 5})
+
+      # Downgrade to regular user
+      assert {:ok, updated_user} =
+               Accounts.update_user_admin_settings(admin, %{
+                 role: "user",
+                 admin_flowers: 0
+               })
+
+      assert updated_user.role == "user"
+      assert updated_user.admin_flowers == 0
+    end
+
+    test "user pagination and search work correctly", %{conn: _conn} do
+      # Create multiple users
+      _user1 = user_fixture(%{email: "alice@example.com"})
+      _user2 = user_fixture(%{email: "bob@example.com"})
+      _user3 = user_fixture(%{email: "charlie@example.com"})
+
+      # Test pagination
+      users_page1 = Accounts.list_users_paginated(page: 1, per_page: 2)
+      assert length(users_page1) == 2
+
+      # Test search
+      search_results = Accounts.list_users_paginated(search: "alice")
+      assert length(search_results) == 1
+      assert hd(search_results).email == "alice@example.com"
+
+      # Count total users
+      assert Accounts.count_users() >= 3
+    end
+
+    test "user stats are correctly calculated", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      # Create some posts and tags
+      _post1 = post_fixture(scope)
+      _post2 = post_fixture(scope)
+      _tag1 = tag_fixture(scope)
+
+      # Get user stats
+      stats = Accounts.get_user_with_stats(user.id)
+      assert stats.post_count == 2
+      assert stats.tag_count == 1
+      assert stats.user.id == user.id
+    end
+  end
 end

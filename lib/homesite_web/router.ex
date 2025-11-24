@@ -101,6 +101,7 @@ defmodule HomesiteWeb.Router do
     live_session :require_admin,
       on_mount: [{HomesiteWeb.UserAuth, :require_authenticated}] do
       live "/admin", AdminLive.Index, :index
+      live "/admin/users", AdminLive.Users.Index, :index
     end
   end
 

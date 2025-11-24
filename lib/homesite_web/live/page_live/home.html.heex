@@ -1,5 +1,5 @@
 <Layouts.app flash={@flash} current_scope={@current_scope}>
-  <div class="container mx-auto px-[clamp(1rem,4vw,2rem)] py-[clamp(1.5rem,5vw,3rem)]">
+  <div class="px-[clamp(1rem,4vw,2rem)] py-[clamp(1.5rem,5vw,3rem)] container mx-auto">
     <!-- Hero Section -->
     <div class="hero min-h-[clamp(20rem,40vh,30rem)] bg-base-200 rounded-box mb-[clamp(2rem,5vw,3rem)]">
       <div class="hero-content text-center">
@@ -7,62 +7,61 @@
           <h1 class="text-[clamp(2.5rem,7vw,4rem)] font-bold">
             Welcome to Homesite
           </h1>
-          <p class="py-6 text-[clamp(1rem,3vw,1.25rem)]">
+          <p class="text-[clamp(1rem,3vw,1.25rem)] py-6">
             A personal blogging platform for sharing ideas and stories.
           </p>
-          <div class="flex gap-4 justify-center flex-wrap">
+          <div class="flex flex-wrap justify-center gap-4">
             <%= if @current_scope do %>
               <.link navigate={~p"/dashboard"} class="btn btn-primary btn-lg gap-2">
-                <.icon name="hero-home" class="w-6 h-6" />
-                Go to Dashboard
+                <.icon name="hero-home" class="h-6 w-6" /> Go to Dashboard
               </.link>
             <% else %>
               <.link navigate={~p"/users/register"} class="btn btn-primary btn-lg gap-2">
-                <.icon name="hero-user-plus" class="w-6 h-6" />
-                Get Started
+                <.icon name="hero-user-plus" class="h-6 w-6" /> Get Started
               </.link>
               <.link navigate={~p"/users/log-in"} class="btn btn-outline btn-lg gap-2">
-                <.icon name="hero-arrow-right-on-rectangle" class="w-6 h-6" />
-                Log In
+                <.icon name="hero-arrow-right-on-rectangle" class="h-6 w-6" /> Log In
               </.link>
             <% end %>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- Recent Posts -->
+    
+<!-- Recent Posts -->
     <div>
-      <h2 class="text-[clamp(1.75rem,5vw,2.5rem)] font-bold mb-[clamp(1.5rem,4vw,2rem)]">
+      <h2 class="text-[clamp(1.75rem,5vw,2.5rem)] mb-[clamp(1.5rem,4vw,2rem)] font-bold">
         Recent Posts
       </h2>
 
       <div :if={length(@posts) == 0} class="alert alert-info">
-        <.icon name="hero-information-circle" class="w-6 h-6" />
+        <.icon name="hero-information-circle" class="h-6 w-6" />
         <span>No published posts yet. Be the first to share something!</span>
       </div>
 
-      <div :if={length(@posts) > 0} class="grid grid-cols-1 md:grid-cols-2 gap-[clamp(1rem,3vw,1.5rem)]">
+      <div
+        :if={length(@posts) > 0}
+        class="gap-[clamp(1rem,3vw,1.5rem)] grid grid-cols-1 md:grid-cols-2"
+      >
         <%= for post <- @posts do %>
-          <article class="card bg-base-200 shadow-lg hover:shadow-xl transition-shadow">
+          <article class="card bg-base-200 shadow-lg transition-shadow hover:shadow-xl">
             <div class="card-body">
               <h3 class="card-title text-[clamp(1.25rem,3vw,1.5rem)]">
-                <%= post.title %>
+                {post.title}
               </h3>
 
               <.author_byline user={post.user} date={post.published_at} class="mb-3" />
 
-              <p :if={post.body} class="text-sm line-clamp-3">
-                <%= String.slice(post.body, 0, 200) %><%= if String.length(post.body) > 200, do: "..." %>
+              <p :if={post.body} class="line-clamp-3 text-sm">
+                {String.slice(post.body, 0, 200)}{if String.length(post.body) > 200, do: "..."}
               </p>
 
-              <div class="card-actions justify-end mt-4">
+              <div class="card-actions mt-4 justify-end">
                 <.link
                   navigate={~p"/users/#{post.user.id}"}
                   class="btn btn-sm btn-ghost gap-2"
                 >
-                  <.avatar user={post.user} class="w-6 h-6" />
-                  View Profile
+                  <.avatar user={post.user} class="h-6 w-6" /> View Profile
                 </.link>
               </div>
             </div>
@@ -70,10 +69,12 @@
         <% end %>
       </div>
     </div>
-
-    <!-- Call to Action -->
-    <div :if={!@current_scope && length(@posts) > 0}
-         class="mt-[clamp(3rem,7vw,5rem)] text-center">
+    
+<!-- Call to Action -->
+    <div
+      :if={!@current_scope && length(@posts) > 0}
+      class="mt-[clamp(3rem,7vw,5rem)] text-center"
+    >
       <div class="card bg-primary text-primary-content shadow-xl">
         <div class="card-body items-center">
           <h3 class="card-title text-[clamp(1.5rem,4vw,2rem)]">

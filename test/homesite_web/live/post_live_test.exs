@@ -8,15 +8,17 @@ defmodule HomesiteWeb.PostLiveTest do
     title: "some title",
     body: "some body content that is long enough",
     slug: "some slug",
-    published_at: "2025-11-20T11:44:00Z"
+    publish_date: "2025-11-20",
+    publish_time: "11:44"
   }
   @update_attrs %{
     title: "some updated title",
     body: "some updated body content that is long enough",
     slug: "some updated slug",
-    published_at: "2025-11-21T11:44:00Z"
+    publish_date: "2025-11-21",
+    publish_time: "11:44"
   }
-  @invalid_attrs %{title: nil, body: nil, slug: nil, published_at: nil}
+  @invalid_attrs %{title: nil, body: nil, slug: nil, publish_date: nil, publish_time: nil}
 
   setup :register_and_log_in_user
 

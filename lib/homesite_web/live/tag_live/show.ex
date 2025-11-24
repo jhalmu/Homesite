@@ -7,13 +7,13 @@ defmodule HomesiteWeb.TagLive.Show do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="container mx-auto px-[clamp(1rem,4vw,2rem)] py-[clamp(1.5rem,5vw,3rem)]">
+      <div class="px-[clamp(1rem,4vw,2rem)] py-[clamp(1.5rem,5vw,3rem)] container mx-auto">
         <!-- Header -->
-        <div class="flex flex-col gap-[clamp(1rem,3vw,1.5rem)] mb-[clamp(2rem,5vw,3rem)]">
-          <div class="flex items-center justify-between flex-wrap gap-4">
+        <div class="gap-[clamp(1rem,3vw,1.5rem)] mb-[clamp(2rem,5vw,3rem)] flex flex-col">
+          <div class="flex flex-wrap items-center justify-between gap-4">
             <div class="flex items-center gap-4">
               <.link navigate={~p"/tags"} class="btn btn-circle btn-ghost">
-                <.icon name="hero-arrow-left" class="w-6 h-6" />
+                <.icon name="hero-arrow-left" class="h-6 w-6" />
               </.link>
               <div>
                 <h1 class="text-[clamp(2rem,6vw,3rem)] font-bold">
@@ -30,20 +30,19 @@ defmodule HomesiteWeb.TagLive.Show do
               </div>
             </div>
             <.link navigate={~p"/tags/#{@tag}/edit?return_to=show"} class="btn btn-primary gap-2">
-              <.icon name="hero-pencil-square" class="w-5 h-5" />
-              Edit Tag
+              <.icon name="hero-pencil-square" class="h-5 w-5" /> Edit Tag
             </.link>
           </div>
         </div>
-
-        <!-- User's Posts with this Tag -->
+        
+    <!-- User's Posts with this Tag -->
         <div class="mb-[clamp(2rem,5vw,3rem)]">
-          <h2 class="text-[clamp(1.5rem,4vw,2rem)] font-semibold mb-[clamp(1rem,3vw,1.5rem)]">
+          <h2 class="text-[clamp(1.5rem,4vw,2rem)] mb-[clamp(1rem,3vw,1.5rem)] font-semibold">
             Your Posts
           </h2>
 
           <div :if={length(@user_posts) == 0} class="alert alert-info">
-            <.icon name="hero-information-circle" class="w-6 h-6" />
+            <.icon name="hero-information-circle" class="h-6 w-6" />
             <span>You don't have any posts with this tag yet.</span>
           </div>
 
@@ -53,16 +52,16 @@ defmodule HomesiteWeb.TagLive.Show do
                 <div class="card-body">
                   <h3 class="card-title">
                     <.link navigate={~p"/posts/#{post}"} class="link link-hover">
-                      <%= post.title %>
+                      {post.title}
                     </.link>
                   </h3>
-                  <p :if={post.body} class="text-sm line-clamp-2">
-                    <%= String.slice(post.body, 0, 150) %><%= if String.length(post.body) > 150, do: "..." %>
+                  <p :if={post.body} class="line-clamp-2 text-sm">
+                    {String.slice(post.body, 0, 150)}{if String.length(post.body) > 150, do: "..."}
                   </p>
-                  <div class="card-actions justify-between items-center">
+                  <div class="card-actions items-center justify-between">
                     <div class="text-sm text-gray-600 dark:text-gray-400">
                       <%= if post.published_at do %>
-                        <%= Calendar.strftime(post.published_at, "%B %d, %Y") %>
+                        {Calendar.strftime(post.published_at, "%B %d, %Y")}
                       <% else %>
                         <span class="badge badge-ghost">Draft</span>
                       <% end %>
@@ -81,10 +80,10 @@ defmodule HomesiteWeb.TagLive.Show do
             <% end %>
           </div>
         </div>
-
-        <!-- Public Posts from Others -->
+        
+    <!-- Public Posts from Others -->
         <div :if={length(@public_posts) > 0}>
-          <h2 class="text-[clamp(1.5rem,4vw,2rem)] font-semibold mb-[clamp(1rem,3vw,1.5rem)]">
+          <h2 class="text-[clamp(1.5rem,4vw,2rem)] mb-[clamp(1rem,3vw,1.5rem)] font-semibold">
             Community Posts
           </h2>
 
@@ -96,14 +95,14 @@ defmodule HomesiteWeb.TagLive.Show do
                     <div class="flex-1">
                       <h3 class="card-title">
                         <.link navigate={~p"/users/#{post.user.id}"} class="link link-hover">
-                          <%= post.title %>
+                          {post.title}
                         </.link>
                       </h3>
                       <.author_byline user={post.user} date={post.published_at} class="mt-2" />
                     </div>
                   </div>
-                  <p :if={post.body} class="text-sm line-clamp-2 mt-2">
-                    <%= String.slice(post.body, 0, 150) %><%= if String.length(post.body) > 150, do: "..." %>
+                  <p :if={post.body} class="line-clamp-2 mt-2 text-sm">
+                    {String.slice(post.body, 0, 150)}{if String.length(post.body) > 150, do: "..."}
                   </p>
                   <div class="card-actions justify-end">
                     <.link navigate={~p"/users/#{post.user.id}"} class="btn btn-sm btn-ghost">

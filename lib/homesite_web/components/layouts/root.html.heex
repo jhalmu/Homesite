@@ -31,26 +31,60 @@
     </script>
   </head>
   <body>
-    <ul class="menu menu-horizontal relative z-10 flex w-full items-center justify-end gap-4 px-4 sm:px-6 lg:px-8">
-      <%= if @current_scope do %>
-        <li>
-          {@current_scope.user.email}
-        </li>
-        <li>
-          <.link href={~p"/users/settings"}>Settings</.link>
-        </li>
-        <li>
-          <.link href={~p"/users/log-out"} method="delete">Log out</.link>
-        </li>
-      <% else %>
-        <li>
-          <.link href={~p"/users/register"}>Register</.link>
-        </li>
-        <li>
-          <.link href={~p"/users/log-in"}>Log in</.link>
-        </li>
-      <% end %>
-    </ul>
+    <div class="navbar bg-base-100">
+      <div class="flex-1">
+        <.link navigate={~p"/"} class="btn btn-ghost text-xl">
+          Homesite
+        </.link>
+      </div>
+      <div class="flex-none">
+        <ul class="menu menu-horizontal px-1">
+          <%= if @current_scope do %>
+            <li>
+              <.link navigate={~p"/dashboard"}>Dashboard</.link>
+            </li>
+            <li>
+              <.link navigate={~p"/posts"}>Posts</.link>
+            </li>
+            <li>
+              <.link navigate={~p"/tags"}>Tags</.link>
+            </li>
+            <%= if Homesite.Accounts.Scope.admin?(@current_scope) do %>
+              <li>
+                <.link navigate={~p"/admin"}>Admin</.link>
+              </li>
+            <% end %>
+            <li>
+              <details>
+                <summary class="flex items-center gap-2">
+                  <.avatar user={@current_scope.user} class="h-8 w-8" />
+                  <span>{@current_scope.user.display_name || @current_scope.user.email}</span>
+                </summary>
+                <ul class="bg-base-100 z-50 rounded-t-none p-2">
+                  <li>
+                    <.link navigate={~p"/users/settings"}>
+                      <.icon name="hero-cog-6-tooth" class="h-4 w-4" /> Settings
+                    </.link>
+                  </li>
+                  <li>
+                    <.link href={~p"/users/log-out"} method="delete">
+                      <.icon name="hero-arrow-right-on-rectangle" class="h-4 w-4" /> Log out
+                    </.link>
+                  </li>
+                </ul>
+              </details>
+            </li>
+          <% else %>
+            <li>
+              <.link navigate={~p"/users/register"}>Register</.link>
+            </li>
+            <li>
+              <.link navigate={~p"/users/log-in"} class="btn btn-primary">Log in</.link>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
     {@inner_content}
   </body>
 </html>

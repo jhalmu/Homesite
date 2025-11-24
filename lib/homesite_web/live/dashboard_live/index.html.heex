@@ -1,17 +1,18 @@
 <Layouts.app flash={@flash} current_scope={@current_scope}>
-  <div class="container mx-auto px-[clamp(1rem,4vw,2rem)] py-[clamp(1.5rem,5vw,3rem)]">
+  <div class="px-[clamp(1rem,4vw,2rem)] py-[clamp(1.5rem,5vw,3rem)] container mx-auto">
     <!-- Header -->
-    <div class="flex flex-col gap-[clamp(1rem,3vw,1.5rem)] mb-[clamp(2rem,5vw,3rem)]">
+    <div class="gap-[clamp(1rem,3vw,1.5rem)] mb-[clamp(2rem,5vw,3rem)] flex flex-col">
       <h1 class="text-[clamp(2rem,6vw,3rem)] font-bold">
-        Welcome back, <%= @current_scope.user.display_name || String.split(@current_scope.user.email, "@") |> List.first() %>!
+        Welcome back, {@current_scope.user.display_name ||
+          String.split(@current_scope.user.email, "@") |> List.first()}!
       </h1>
 
-      <div class="flex flex-wrap gap-[clamp(1rem,3vw,1.5rem)]">
+      <div class="gap-[clamp(1rem,3vw,1.5rem)] flex flex-wrap">
         <!-- Stats Cards -->
-        <div class="stats shadow bg-base-200">
+        <div class="stats bg-base-200 shadow">
           <div class="stat">
             <div class="stat-title">Total Posts</div>
-            <div class="stat-value text-primary"><%= @post_count %></div>
+            <div class="stat-value text-primary">{@post_count}</div>
             <div class="stat-actions">
               <.link navigate={~p"/posts"} class="btn btn-sm btn-primary">
                 View all
@@ -20,10 +21,10 @@
           </div>
         </div>
 
-        <div class="stats shadow bg-base-200">
+        <div class="stats bg-base-200 shadow">
           <div class="stat">
             <div class="stat-title">Total Tags</div>
-            <div class="stat-value text-secondary"><%= @tag_count %></div>
+            <div class="stat-value text-secondary">{@tag_count}</div>
             <div class="stat-actions">
               <.link navigate={~p"/tags"} class="btn btn-sm btn-secondary">
                 View all
@@ -33,31 +34,28 @@
         </div>
       </div>
     </div>
-
-    <!-- Quick Actions -->
+    
+<!-- Quick Actions -->
     <div class="mb-[clamp(2rem,5vw,3rem)]">
-      <h2 class="text-[clamp(1.5rem,4vw,2rem)] font-semibold mb-[clamp(1rem,3vw,1.5rem)]">
+      <h2 class="text-[clamp(1.5rem,4vw,2rem)] mb-[clamp(1rem,3vw,1.5rem)] font-semibold">
         Quick Actions
       </h2>
-      <div class="flex flex-wrap gap-[clamp(0.75rem,2vw,1rem)]">
+      <div class="gap-[clamp(0.75rem,2vw,1rem)] flex flex-wrap">
         <.link navigate={~p"/posts/new"} class="btn btn-primary gap-2">
-          <.icon name="hero-plus" class="w-5 h-5" />
-          New Post
+          <.icon name="hero-plus" class="h-5 w-5" /> New Post
         </.link>
         <.link navigate={~p"/tags/new"} class="btn btn-secondary gap-2">
-          <.icon name="hero-plus" class="w-5 h-5" />
-          New Tag
+          <.icon name="hero-plus" class="h-5 w-5" /> New Tag
         </.link>
         <.link navigate={~p"/users/settings"} class="btn btn-outline gap-2">
-          <.icon name="hero-cog-6-tooth" class="w-5 h-5" />
-          Settings
+          <.icon name="hero-cog-6-tooth" class="h-5 w-5" /> Settings
         </.link>
       </div>
     </div>
-
-    <!-- Recent Posts -->
+    
+<!-- Recent Posts -->
     <div class="mb-[clamp(2rem,5vw,3rem)]">
-      <div class="flex justify-between items-center mb-[clamp(1rem,3vw,1.5rem)]">
+      <div class="mb-[clamp(1rem,3vw,1.5rem)] flex items-center justify-between">
         <h2 class="text-[clamp(1.5rem,4vw,2rem)] font-semibold">
           Recent Posts
         </h2>
@@ -67,12 +65,14 @@
       </div>
 
       <div :if={@post_count == 0} class="alert alert-info">
-        <.icon name="hero-information-circle" class="w-6 h-6" />
-        <span>You haven't created any posts yet. <.link navigate={~p"/posts/new"} class="link">Create your first post</.link>!</span>
+        <.icon name="hero-information-circle" class="h-6 w-6" />
+        <span>
+          You haven't created any posts yet. <.link navigate={~p"/posts/new"} class="link">Create your first post</.link>!
+        </span>
       </div>
 
       <div :if={@post_count > 0} class="overflow-x-auto">
-        <table class="table table-zebra">
+        <table class="table-zebra table">
           <thead>
             <tr>
               <th>Title</th>
@@ -85,12 +85,12 @@
               <tr>
                 <td>
                   <.link navigate={~p"/posts/#{post}"} class="link link-hover font-medium">
-                    <%= post.title %>
+                    {post.title}
                   </.link>
                 </td>
                 <td>
                   <%= if post.published_at do %>
-                    <%= Calendar.strftime(post.published_at, "%b %d, %Y") %>
+                    {Calendar.strftime(post.published_at, "%b %d, %Y")}
                   <% else %>
                     <span class="badge badge-ghost">Draft</span>
                   <% end %>
@@ -111,10 +111,10 @@
         </table>
       </div>
     </div>
-
-    <!-- Recent Tags -->
+    
+<!-- Recent Tags -->
     <div>
-      <div class="flex justify-between items-center mb-[clamp(1rem,3vw,1.5rem)]">
+      <div class="mb-[clamp(1rem,3vw,1.5rem)] flex items-center justify-between">
         <h2 class="text-[clamp(1.5rem,4vw,2rem)] font-semibold">
           Your Tags
         </h2>
@@ -124,15 +124,17 @@
       </div>
 
       <div :if={@tag_count == 0} class="alert alert-info">
-        <.icon name="hero-information-circle" class="w-6 h-6" />
-        <span>You haven't created any tags yet. <.link navigate={~p"/tags/new"} class="link">Create your first tag</.link>!</span>
+        <.icon name="hero-information-circle" class="h-6 w-6" />
+        <span>
+          You haven't created any tags yet. <.link navigate={~p"/tags/new"} class="link">Create your first tag</.link>!
+        </span>
       </div>
 
       <div :if={@tag_count > 0} class="flex flex-wrap gap-2">
         <%= for tag <- Enum.take(@tags, 10) do %>
           <.link navigate={~p"/tags/#{tag}"} class="badge badge-lg badge-primary gap-2">
-            <%= tag.name %>
-            <span class="badge badge-sm"><%= tag.slug %></span>
+            {tag.name}
+            <span class="badge badge-sm">{tag.slug}</span>
           </.link>
         <% end %>
       </div>

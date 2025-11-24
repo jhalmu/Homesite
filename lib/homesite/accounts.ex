@@ -374,6 +374,138 @@ defmodule Homesite.Accounts do
     :ok
   end
 
+  ## Admin User Management
+
+  @doc """
+  Returns a paginated list of users with optional search.
+
+  ## Options
+
+    * `:page` - Page number (default: 1)
+    * `:per_page` - Number of users per page (default: 20)
+    * `:search` - Search query for email filtering
+
+  ## Examples
+
+      iex> list_users_paginated(page: 1, per_page: 20)
+      [%User{}, ...]
+
+      iex> list_users_paginated(page: 1, per_page: 20, search: "admin")
+      [%User{email: "admin@example.com"}, ...]
+
+  """
+  def list_users_paginated(opts \\ []) do
+    page = Keyword.get(opts, :page, 1)
+    per_page = Keyword.get(opts, :per_page, 20)
+    search = Keyword.get(opts, :search, nil)
+
+    offset = (page - 1) * per_page
+
+    query =
+      from u in User,
+        order_by: [desc: u.inserted_at],
+        limit: ^per_page,
+        offset: ^offset
+
+    query =
+      if search && search != "" do
+        search_pattern = "%#{search}%"
+        from u in query, where: ilike(u.email, ^search_pattern)
+      else
+        query
+      end
+
+    Repo.all(query)
+  end
+
+  @doc """
+  Counts total users, optionally filtered by search query.
+
+  ## Examples
+
+      iex> count_users()
+      42
+
+      iex> count_users(search: "admin")
+      3
+
+  """
+  def count_users(opts \\ []) do
+    search = Keyword.get(opts, :search, nil)
+
+    query = from(u in User, select: count(u.id))
+
+    query =
+      if search && search != "" do
+        search_pattern = "%#{search}%"
+        from u in query, where: ilike(u.email, ^search_pattern)
+      else
+        query
+      end
+
+    Repo.one(query)
+  end
+
+  @doc """
+  Updates a user's admin settings (role and flower permissions).
+
+  Only admins should be able to call this function.
+
+  ## Examples
+
+      iex> update_user_admin_settings(user, %{role: "admin", admin_flowers: 5})
+      {:ok, %User{}}
+
+      iex> update_user_admin_settings(user, %{admin_flowers: 10})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_user_admin_settings(user, attrs) do
+    changeset =
+      user
+      |> Ecto.Changeset.cast(attrs, [:role, :admin_flowers])
+      |> Ecto.Changeset.validate_required([:role])
+      |> Ecto.Changeset.validate_inclusion(:role, ["user", "admin"])
+      |> Ecto.Changeset.validate_inclusion(:admin_flowers, 0..5)
+
+    Repo.update(changeset)
+  end
+
+  @doc """
+  Gets user statistics including post count and tag count.
+
+  Returns a map with user and their statistics.
+
+  ## Examples
+
+      iex> get_user_with_stats(user_id)
+      %{user: %User{}, post_count: 5, tag_count: 3}
+
+  """
+  def get_user_with_stats(user_id) do
+    user = get_user!(user_id)
+
+    post_count =
+      Repo.one(
+        from p in Homesite.Content.Post,
+          where: p.user_id == ^user_id,
+          select: count(p.id)
+      )
+
+    tag_count =
+      Repo.one(
+        from t in Homesite.Content.Tag,
+          where: t.user_id == ^user_id,
+          select: count(t.id)
+      )
+
+    %{
+      user: user,
+      post_count: post_count,
+      tag_count: tag_count
+    }
+  end
+
   ## Token helper
 
   defp update_user_and_delete_all_tokens(changeset) do
