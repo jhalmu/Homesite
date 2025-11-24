@@ -42,7 +42,9 @@ defmodule Homesite.Accounts.AvatarGenerator do
       |> String.replace("\n", "")
       |> String.replace("  ", "")
 
-    "data:image/svg+xml;charset=utf-8,#{URI.encode(svg)}"
+    # Use base64 encoding for better browser compatibility
+    encoded_svg = Base.encode64(svg)
+    "data:image/svg+xml;base64,#{encoded_svg}"
   end
 
   defp get_initials(%{display_name: name}) when is_binary(name) and name != "" do

@@ -460,8 +460,7 @@ defmodule HomesiteWeb.CoreComponents do
       alt={"#{@user.display_name || @user.email} avatar"}
       class={[
         "rounded-full object-cover",
-        "w-[clamp(2rem,8vw,3rem)] h-[clamp(2rem,8vw,3rem)]",
-        @class
+        if(@class, do: @class, else: "w-[clamp(2rem,8vw,3rem)] h-[clamp(2rem,8vw,3rem)]")
       ]}
       {@rest}
     />
