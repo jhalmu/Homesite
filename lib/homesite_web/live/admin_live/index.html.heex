@@ -1,0 +1,107 @@
+<Layouts.app flash={@flash} current_scope={@current_scope}>
+  <div class="container mx-auto px-[clamp(1rem,4vw,2rem)] py-[clamp(1.5rem,5vw,3rem)]">
+    <!-- Header with Flowers -->
+    <div class="flex flex-col gap-[clamp(1rem,3vw,1.5rem)] mb-[clamp(2rem,5vw,3rem)]">
+      <div class="flex items-center gap-[clamp(1rem,3vw,1.5rem)]">
+        <h1 class="text-[clamp(2rem,6vw,3rem)] font-bold">
+          Admin Dashboard
+        </h1>
+        <div class="text-[clamp(2rem,5vw,3rem)]" title={"Admin Level #{@flower_count}"}>
+          <%= @flowers %>
+        </div>
+      </div>
+
+      <div class="alert alert-success">
+        <.icon name="hero-shield-check" class="w-6 h-6" />
+        <div>
+          <p class="font-semibold">Admin Access Granted</p>
+          <p class="text-sm">You have <%= @flower_count %> flower(s) - Admin Level <%= @flower_count %></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="mb-[clamp(2rem,5vw,3rem)]">
+      <h2 class="text-[clamp(1.5rem,4vw,2rem)] font-semibold mb-[clamp(1rem,3vw,1.5rem)]">
+        System Overview
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[clamp(1rem,3vw,1.5rem)]">
+        <!-- Total Users -->
+        <div class="stats shadow bg-base-200">
+          <div class="stat">
+            <div class="stat-figure text-primary">
+              <.icon name="hero-users" class="w-8 h-8" />
+            </div>
+            <div class="stat-title">Total Users</div>
+            <div class="stat-value text-primary"><%= @total_users %></div>
+            <div class="stat-desc">Registered users</div>
+          </div>
+        </div>
+
+        <!-- Admin Users -->
+        <div class="stats shadow bg-base-200">
+          <div class="stat">
+            <div class="stat-figure text-secondary">
+              <.icon name="hero-shield-check" class="w-8 h-8" />
+            </div>
+            <div class="stat-title">Admins</div>
+            <div class="stat-value text-secondary"><%= @admin_count %></div>
+            <div class="stat-desc">With admin access</div>
+          </div>
+        </div>
+
+        <!-- Your Level -->
+        <div class="stats shadow bg-base-200">
+          <div class="stat">
+            <div class="stat-figure text-accent">
+              <span class="text-[clamp(1.5rem,4vw,2rem)]">🌸</span>
+            </div>
+            <div class="stat-title">Your Level</div>
+            <div class="stat-value text-accent"><%= @flower_count %></div>
+            <div class="stat-desc">Flower permissions</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="mb-[clamp(2rem,5vw,3rem)]">
+      <h2 class="text-[clamp(1.5rem,4vw,2rem)] font-semibold mb-[clamp(1rem,3vw,1.5rem)]">
+        Admin Actions
+      </h2>
+
+      <div class="flex flex-wrap gap-[clamp(0.75rem,2vw,1rem)]">
+        <.link navigate={~p"/dashboard"} class="btn btn-outline gap-2">
+          <.icon name="hero-home" class="w-5 h-5" />
+          Back to User Dashboard
+        </.link>
+        <.link navigate={~p"/posts"} class="btn btn-outline gap-2">
+          <.icon name="hero-document-text" class="w-5 h-5" />
+          View All Posts
+        </.link>
+        <.link navigate={~p"/tags"} class="btn btn-outline gap-2">
+          <.icon name="hero-tag" class="w-5 h-5" />
+          View All Tags
+        </.link>
+      </div>
+    </div>
+
+    <!-- Permissions Info -->
+    <div class="card bg-base-200 shadow-xl">
+      <div class="card-body">
+        <h2 class="card-title">Flower Permission System 🌸</h2>
+        <div class="space-y-2">
+          <p><strong>Level 1 (🌸):</strong> Basic admin access</p>
+          <p><strong>Level 2 (🌸🌸):</strong> Content moderation</p>
+          <p><strong>Level 3 (🌸🌸🌸):</strong> User management</p>
+          <p><strong>Level 4 (🌸🌸🌸🌸):</strong> System configuration</p>
+          <p><strong>Level 5 (🌸🌸🌸🌸🌸):</strong> Full administrative access</p>
+        </div>
+        <div class="card-actions justify-end mt-4">
+          <span class="badge badge-lg badge-primary">Your level: <%= @flower_count %></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layouts.app>

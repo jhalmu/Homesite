@@ -20,11 +20,27 @@ defmodule Homesite.Accounts.User do
     field :bluesky_handle, :string
     field :mastodon_handle, :string
 
+    # Admin fields
+    field :role, :string, default: "user"
+    field :admin_flowers, :integer, default: 0
+
     has_many :posts, Homesite.Content.Post
     has_many :tags, Homesite.Content.Tag
 
     timestamps(type: :utc_datetime)
   end
+
+  @doc """
+  Returns true if the user is an admin.
+  """
+  def admin?(%__MODULE__{role: "admin"}), do: true
+  def admin?(_user), do: false
+
+  @doc """
+  Returns the number of flower permissions (1-5) for admin users, 0 for regular users.
+  """
+  def flower_count(%__MODULE__{role: "admin", admin_flowers: count}), do: count
+  def flower_count(_user), do: 0
 
   @doc """
   A user changeset for registering or changing the email.

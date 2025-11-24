@@ -18,16 +18,45 @@ defmodule Homesite.Accounts.Scope do
 
   alias Homesite.Accounts.User
 
-  defstruct user: nil
+  defstruct user: nil, admin_override?: false, flower_count: 0
 
   @doc """
   Creates a scope for the given user.
 
   Returns nil if no user is given.
+
+  For admin users, sets admin_override? to true and includes their flower_count.
   """
+  def for_user(%User{role: "admin", admin_flowers: flowers} = user) do
+    %__MODULE__{user: user, admin_override?: true, flower_count: flowers}
+  end
+
   def for_user(%User{} = user) do
-    %__MODULE__{user: user}
+    %__MODULE__{user: user, admin_override?: false, flower_count: 0}
   end
 
   def for_user(nil), do: nil
+
+  @doc """
+  Returns true if the scope has admin override permissions.
+  """
+  def admin?(%__MODULE__{admin_override?: true}), do: true
+  def admin?(_scope), do: false
+
+  @doc """
+  Checks if the scope has at least the required number of flowers (admin permission level).
+
+  ## Examples
+
+      iex> has_flowers?(scope, 3)
+      true # if scope has 3 or more flowers
+
+      iex> has_flowers?(scope, 5)
+      false # if scope has less than 5 flowers
+  """
+  def has_flowers?(%__MODULE__{flower_count: count}, required) when is_integer(required) do
+    count >= required
+  end
+
+  def has_flowers?(_scope, _required), do: false
 end

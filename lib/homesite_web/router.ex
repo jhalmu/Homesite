@@ -72,6 +72,8 @@ defmodule HomesiteWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [{HomesiteWeb.UserAuth, :require_authenticated}] do
+      live "/dashboard", DashboardLive.Index, :index
+
       live "/posts", PostLive.Index, :index
       live "/posts/new", PostLive.Form, :new
       live "/posts/:id/edit", PostLive.Form, :edit
@@ -87,6 +89,16 @@ defmodule HomesiteWeb.Router do
     end
 
     post "/users/update-password", UserSessionController, :update_password
+  end
+
+  # Admin routes (require admin role)
+  scope "/", HomesiteWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
+    live_session :require_admin,
+      on_mount: [{HomesiteWeb.UserAuth, :require_authenticated}] do
+      live "/admin", AdminLive.Index, :index
+    end
   end
 
   scope "/", HomesiteWeb do
