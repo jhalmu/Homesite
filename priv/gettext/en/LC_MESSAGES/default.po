@@ -98,7 +98,7 @@ msgstr ""
 #: lib/homesite_web/components/layouts.ex:58
 #: lib/homesite_web/components/layouts.ex:163
 #: lib/homesite_web/components/layouts.ex:231
-#: lib/homesite_web/live/post_live/form.ex:72
+#: lib/homesite_web/live/post_live/form.ex:79
 #, elixir-autogen, elixir-format
 msgid "Tags"
 msgstr ""
@@ -129,12 +129,12 @@ msgstr ""
 msgid "Body"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:106
+#: lib/homesite_web/live/post_live/form.ex:118
 #, elixir-autogen, elixir-format
 msgid "Cancel"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:79
+#: lib/homesite_web/live/post_live/form.ex:86
 #, elixir-autogen, elixir-format
 msgid "Create a tag"
 msgstr ""
@@ -154,7 +154,7 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:132
+#: lib/homesite_web/live/post_live/form.ex:144
 #, elixir-autogen, elixir-format
 msgid "Edit Post"
 msgstr ""
@@ -165,28 +165,28 @@ msgstr ""
 msgid "Listing Posts"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:66
+#: lib/homesite_web/live/post_live/form.ex:68
 #, elixir-autogen, elixir-format
 msgid "Make this post publicly visible"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:143
+#: lib/homesite_web/live/post_live/form.ex:156
 #: lib/homesite_web/live/post_live/index.ex:15
 #, elixir-autogen, elixir-format
 msgid "New Post"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:78
+#: lib/homesite_web/live/post_live/form.ex:85
 #, elixir-autogen, elixir-format
 msgid "No tags available."
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:186
+#: lib/homesite_web/live/post_live/form.ex:224
 #, elixir-autogen, elixir-format
 msgid "Post created successfully"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:171
+#: lib/homesite_web/live/post_live/form.ex:209
 #, elixir-autogen, elixir-format
 msgid "Post updated successfully"
 msgstr ""
@@ -201,17 +201,17 @@ msgstr ""
 msgid "Published at"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:105
+#: lib/homesite_web/live/post_live/form.ex:117
 #, elixir-autogen, elixir-format
 msgid "Save Post"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:105
+#: lib/homesite_web/live/post_live/form.ex:117
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:99
+#: lib/homesite_web/live/post_live/form.ex:109
 #, elixir-autogen, elixir-format
 msgid "Select tags to categorize this post"
 msgstr ""
@@ -248,7 +248,12 @@ msgstr ""
 msgid "Use this form to manage post records in your database."
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:80
+#: lib/homesite_web/live/post_live/form.ex:87
 #, elixir-autogen, elixir-format
 msgid "first!"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:71
+#, elixir-autogen, elixir-format
+msgid "Public posts are visible to everyone. Turn off to make this post private."
 msgstr ""

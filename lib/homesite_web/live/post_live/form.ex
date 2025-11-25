@@ -54,6 +54,8 @@ defmodule HomesiteWeb.PostLive.Form do
           </p>
         </div>
 
+        <div class="divider"></div>
+
         <div class="form-control">
           <label class="label cursor-pointer justify-start gap-3">
             <input
@@ -63,9 +65,14 @@ defmodule HomesiteWeb.PostLive.Form do
               checked={@form[:is_public].value == true}
               class="toggle toggle-primary"
             />
-            <span class="label-text">{gettext("Make this post publicly visible")}</span>
+            <span class="label-text font-semibold">{gettext("Make this post publicly visible")}</span>
           </label>
+          <p class="text-base-content/60 ml-14 text-sm">
+            {gettext("Public posts are visible to everyone. Turn off to make this post private.")}
+          </p>
         </div>
+
+        <div class="divider"></div>
 
         <div class="form-control">
           <label class="label">
@@ -81,27 +88,32 @@ defmodule HomesiteWeb.PostLive.Form do
               </span>
             </div>
           <% else %>
-            <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
+            <input type="hidden" name="post[tag_ids][]" value="" />
+            <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
               <%= for tag <- @available_tags do %>
-                <label class="label cursor-pointer justify-start gap-2">
+                <label class="label cursor-pointer justify-start gap-3 rounded-lg border border-base-300 p-3 hover:bg-base-200">
                   <input
                     type="checkbox"
                     name="post[tag_ids][]"
                     value={tag.id}
-                    checked={tag.id in get_tag_ids(@post)}
-                    class="checkbox checkbox-sm"
+                    checked={tag.id in @selected_tag_ids}
+                    class="checkbox checkbox-sm checkbox-primary"
+                    phx-click="toggle_tag"
+                    phx-value-tag-id={tag.id}
                   />
-                  <span class="label-text">{tag.name}</span>
+                  <span class="label-text flex-1">{tag.name}</span>
                 </label>
               <% end %>
             </div>
-            <p class="text-base-content/70 mt-2 text-sm">
+            <p class="text-base-content/60 mt-3 text-sm">
               <.icon name="hero-tag" class="inline h-4 w-4" /> {gettext("Select tags to categorize this post")}
             </p>
           <% end %>
         </div>
 
-        <footer>
+        <div class="divider"></div>
+
+        <footer class="flex gap-3">
           <.button phx-disable-with={gettext("Saving...")} variant="primary">{gettext("Save Post")}</.button>
           <.button navigate={return_path(@current_scope, @return_to, @post)}>{gettext("Cancel")}</.button>
         </footer>
@@ -132,6 +144,7 @@ defmodule HomesiteWeb.PostLive.Form do
     |> assign(:page_title, gettext("Edit Post"))
     |> assign(:post, post)
     |> assign(:available_tags, available_tags)
+    |> assign(:selected_tag_ids, get_tag_ids(post))
     |> assign(:form, to_form(Content.change_post(socket.assigns.current_scope, post)))
   end
 
@@ -143,23 +156,48 @@ defmodule HomesiteWeb.PostLive.Form do
     |> assign(:page_title, gettext("New Post"))
     |> assign(:post, post)
     |> assign(:available_tags, available_tags)
+    |> assign(:selected_tag_ids, [])
     |> assign(:form, to_form(Content.change_post(socket.assigns.current_scope, post)))
   end
 
   @impl true
+  def handle_event("toggle_tag", %{"tag-id" => tag_id_str}, socket) do
+    tag_id = String.to_integer(tag_id_str)
+
+    selected_tag_ids =
+      if tag_id in socket.assigns.selected_tag_ids do
+        List.delete(socket.assigns.selected_tag_ids, tag_id)
+      else
+        [tag_id | socket.assigns.selected_tag_ids]
+      end
+
+    {:noreply, assign(socket, :selected_tag_ids, selected_tag_ids)}
+  end
+
   def handle_event("validate", %{"post" => post_params}, socket) do
     # Combine date and time into published_at
     post_params = combine_datetime(post_params)
 
+    # Preserve selected tags from params or keep existing selection
+    selected_tag_ids =
+      case post_params["tag_ids"] do
+        [_ | _] = ids -> Enum.map(ids, &String.to_integer/1)
+        _ -> socket.assigns.selected_tag_ids
+      end
+
     changeset =
       Content.change_post(socket.assigns.current_scope, socket.assigns.post, post_params)
 
-    {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
+    {:noreply, assign(socket, form: to_form(changeset, action: :validate), selected_tag_ids: selected_tag_ids)}
   end
 
   def handle_event("save", %{"post" => post_params}, socket) do
     # Combine date and time into published_at before saving
     post_params = combine_datetime(post_params)
+
+    # Add selected tag IDs to params
+    post_params = Map.put(post_params, "tag_ids", Enum.map(socket.assigns.selected_tag_ids, &to_string/1))
+
     save_post(socket, socket.assigns.live_action, post_params)
   end
 

@@ -98,7 +98,7 @@ msgstr "Jokin meni pieleen!"
 #: lib/homesite_web/components/layouts.ex:58
 #: lib/homesite_web/components/layouts.ex:163
 #: lib/homesite_web/components/layouts.ex:231
-#: lib/homesite_web/live/post_live/form.ex:72
+#: lib/homesite_web/live/post_live/form.ex:79
 #, elixir-autogen, elixir-format
 msgid "Tags"
 msgstr "Tagit"
@@ -129,12 +129,12 @@ msgstr "Oletko varma?"
 msgid "Body"
 msgstr "Sisältö"
 
-#: lib/homesite_web/live/post_live/form.ex:106
+#: lib/homesite_web/live/post_live/form.ex:118
 #, elixir-autogen, elixir-format
 msgid "Cancel"
 msgstr "Peruuta"
 
-#: lib/homesite_web/live/post_live/form.ex:79
+#: lib/homesite_web/live/post_live/form.ex:86
 #, elixir-autogen, elixir-format
 msgid "Create a tag"
 msgstr "Luo tagi"
@@ -154,7 +154,7 @@ msgstr "Poista"
 msgid "Edit"
 msgstr "Muokkaa"
 
-#: lib/homesite_web/live/post_live/form.ex:132
+#: lib/homesite_web/live/post_live/form.ex:144
 #, elixir-autogen, elixir-format
 msgid "Edit Post"
 msgstr "Muokkaa kirjoitusta"
@@ -165,28 +165,28 @@ msgstr "Muokkaa kirjoitusta"
 msgid "Listing Posts"
 msgstr "Kirjoitusten listaus"
 
-#: lib/homesite_web/live/post_live/form.ex:66
+#: lib/homesite_web/live/post_live/form.ex:68
 #, elixir-autogen, elixir-format
 msgid "Make this post publicly visible"
 msgstr "Tee tästä kirjoituksesta julkinen"
 
-#: lib/homesite_web/live/post_live/form.ex:143
+#: lib/homesite_web/live/post_live/form.ex:156
 #: lib/homesite_web/live/post_live/index.ex:15
 #, elixir-autogen, elixir-format
 msgid "New Post"
 msgstr "Uusi kirjoitus"
 
-#: lib/homesite_web/live/post_live/form.ex:78
+#: lib/homesite_web/live/post_live/form.ex:85
 #, elixir-autogen, elixir-format
 msgid "No tags available."
 msgstr "Tageja ei saatavilla."
 
-#: lib/homesite_web/live/post_live/form.ex:186
+#: lib/homesite_web/live/post_live/form.ex:224
 #, elixir-autogen, elixir-format
 msgid "Post created successfully"
 msgstr "Kirjoitus luotu onnistuneesti"
 
-#: lib/homesite_web/live/post_live/form.ex:171
+#: lib/homesite_web/live/post_live/form.ex:209
 #, elixir-autogen, elixir-format
 msgid "Post updated successfully"
 msgstr "Kirjoitus päivitetty onnistuneesti"
@@ -201,17 +201,17 @@ msgstr "Julkaisupäivä ja -aika"
 msgid "Published at"
 msgstr "Julkaistu"
 
-#: lib/homesite_web/live/post_live/form.ex:105
+#: lib/homesite_web/live/post_live/form.ex:117
 #, elixir-autogen, elixir-format
 msgid "Save Post"
 msgstr "Tallenna kirjoitus"
 
-#: lib/homesite_web/live/post_live/form.ex:105
+#: lib/homesite_web/live/post_live/form.ex:117
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr "Tallennetaan..."
 
-#: lib/homesite_web/live/post_live/form.ex:99
+#: lib/homesite_web/live/post_live/form.ex:109
 #, elixir-autogen, elixir-format
 msgid "Select tags to categorize this post"
 msgstr "Valitse tagit luokitellaksesi tämän kirjoituksen"
@@ -248,7 +248,12 @@ msgstr "Otsikko"
 msgid "Use this form to manage post records in your database."
 msgstr "Käytä tätä lomaketta hallinnoidaksesi kirjoituksia tietokannassasi."
 
-#: lib/homesite_web/live/post_live/form.ex:80
+#: lib/homesite_web/live/post_live/form.ex:87
 #, elixir-autogen, elixir-format
 msgid "first!"
 msgstr "ensin!"
+
+#: lib/homesite_web/live/post_live/form.ex:71
+#, elixir-autogen, elixir-format
+msgid "Public posts are visible to everyone. Turn off to make this post private."
+msgstr "Julkiset kirjoitukset ovat kaikkien nähtävillä. Kytke pois päältä tehdäksesi kirjoituksesta yksityisen."
