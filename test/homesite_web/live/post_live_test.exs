@@ -106,6 +106,22 @@ defmodule HomesiteWeb.PostLiveTest do
       assert html =~ post.body
     end
 
+    test "shows edit button for post owner", %{conn: conn, post: post} do
+      {:ok, show_live, _html} = live(conn, ~p"/posts/#{post}")
+
+      assert has_element?(show_live, "a", "Edit post")
+    end
+
+    test "hides edit button for non-owner", %{scope: scope} do
+      other_scope = Homesite.AccountsFixtures.user_scope_fixture()
+      other_post = Homesite.ContentFixtures.post_fixture(other_scope, %{is_public: true})
+
+      conn = build_conn() |> log_in_user(scope.user)
+      {:ok, show_live, _html} = live(conn, ~p"/posts/#{other_post}")
+
+      refute has_element?(show_live, "a", "Edit post")
+    end
+
     test "updates post and returns to show", %{conn: conn, post: post} do
       {:ok, show_live, _html} = live(conn, ~p"/posts/#{post}")
 
@@ -130,6 +146,42 @@ defmodule HomesiteWeb.PostLiveTest do
       html = render(show_live)
       assert html =~ "Post updated successfully"
       assert html =~ "some updated title"
+    end
+  end
+
+  describe "Show (non-authenticated)" do
+    test "non-authenticated user can view public post" do
+      scope = Homesite.AccountsFixtures.user_scope_fixture()
+      public_post = Homesite.ContentFixtures.post_fixture(scope, %{is_public: true})
+
+      conn = build_conn()
+      {:ok, _show_live, html} = live(conn, ~p"/posts/#{public_post}")
+
+      assert html =~ public_post.title
+      assert html =~ public_post.body
+    end
+
+    test "non-authenticated user cannot view private post" do
+      scope = Homesite.AccountsFixtures.user_scope_fixture()
+      private_post = Homesite.ContentFixtures.post_fixture(scope, %{is_public: false})
+
+      conn = build_conn()
+
+      # The LiveView will raise Ecto.NoResultsError during mount
+      # Phoenix catches this and renders a 404 error page
+      assert_error_sent 404, fn ->
+        live(conn, ~p"/posts/#{private_post}")
+      end
+    end
+
+    test "non-authenticated user does not see edit button on public post" do
+      scope = Homesite.AccountsFixtures.user_scope_fixture()
+      public_post = Homesite.ContentFixtures.post_fixture(scope, %{is_public: true})
+
+      conn = build_conn()
+      {:ok, show_live, _html} = live(conn, ~p"/posts/#{public_post}")
+
+      refute has_element?(show_live, "a", "Edit post")
     end
   end
 end

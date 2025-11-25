@@ -91,6 +91,29 @@ defmodule Homesite.ContentTest do
       tag = tag_fixture(scope)
       assert %Ecto.Changeset{} = Content.change_tag(scope, tag)
     end
+
+    test "get_tag_by_name/2 returns tag when it exists" do
+      scope = user_scope_fixture()
+      tag = tag_fixture(scope, %{name: "Technology"})
+
+      assert tag_found = Content.get_tag_by_name(scope, "Technology")
+      assert tag_found.id == tag.id
+      assert tag_found.name == "Technology"
+    end
+
+    test "get_tag_by_name/2 returns nil when tag does not exist" do
+      scope = user_scope_fixture()
+
+      assert Content.get_tag_by_name(scope, "NonExistent") == nil
+    end
+
+    test "get_tag_by_name/2 does not return tags from other users" do
+      scope1 = user_scope_fixture()
+      scope2 = user_scope_fixture()
+      _tag = tag_fixture(scope1, %{name: "Technology"})
+
+      assert Content.get_tag_by_name(scope2, "Technology") == nil
+    end
   end
 
   describe "posts" do
@@ -198,6 +221,57 @@ defmodule Homesite.ContentTest do
       scope = user_scope_fixture()
       post = post_fixture(scope)
       assert %Ecto.Changeset{} = Content.change_post(scope, post)
+    end
+
+    test "get_public_post!/1 returns public post" do
+      scope = user_scope_fixture()
+      public_post = post_fixture(scope, %{is_public: true})
+
+      fetched_post = Content.get_public_post!(public_post.id)
+      assert fetched_post.id == public_post.id
+      assert fetched_post.user.id == scope.user.id
+    end
+
+    test "get_public_post!/1 raises for private post" do
+      scope = user_scope_fixture()
+      private_post = post_fixture(scope, %{is_public: false})
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Content.get_public_post!(private_post.id)
+      end
+    end
+
+    test "get_public_post!/1 raises for non-existent post" do
+      assert_raise Ecto.NoResultsError, fn ->
+        Content.get_public_post!(99999)
+      end
+    end
+
+    test "get_post_by_id!/2 returns public post for authenticated user" do
+      scope = user_scope_fixture()
+      other_scope = user_scope_fixture()
+      public_post = post_fixture(other_scope, %{is_public: true})
+
+      fetched_post = Content.get_post_by_id!(scope, public_post.id)
+      assert fetched_post.id == public_post.id
+    end
+
+    test "get_post_by_id!/2 returns own private post" do
+      scope = user_scope_fixture()
+      private_post = post_fixture(scope, %{is_public: false})
+
+      fetched_post = Content.get_post_by_id!(scope, private_post.id)
+      assert fetched_post.id == private_post.id
+    end
+
+    test "get_post_by_id!/2 raises for other user's private post" do
+      scope1 = user_scope_fixture()
+      scope2 = user_scope_fixture()
+      private_post = post_fixture(scope1, %{is_public: false})
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Content.get_post_by_id!(scope2, private_post.id)
+      end
     end
   end
 
