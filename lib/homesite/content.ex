@@ -63,6 +63,24 @@ defmodule Homesite.Content do
   end
 
   @doc """
+  Gets a single tag by name.
+
+  Returns nil if the Tag does not exist.
+
+  ## Examples
+
+      iex> get_tag_by_name(scope, "Technology")
+      %Tag{}
+
+      iex> get_tag_by_name(scope, "NonExistent")
+      nil
+
+  """
+  def get_tag_by_name(%Scope{} = scope, name) do
+    Repo.get_by(Tag, name: name, user_id: scope.user.id)
+  end
+
+  @doc """
   Creates a tag.
 
   ## Examples
