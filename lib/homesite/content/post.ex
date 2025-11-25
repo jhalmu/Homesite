@@ -46,16 +46,17 @@ defmodule Homesite.Content.Post do
       put_assoc(changeset, :tags, [])
     else
       # Fetch tags that belong to the user
-      tags = Homesite.Repo.all(
-        from t in Homesite.Content.Tag,
-        where: t.id in ^tag_ids and t.user_id == ^user_scope.user.id
-      )
+      tags =
+        Homesite.Repo.all(
+          from t in Homesite.Content.Tag,
+            where: t.id in ^tag_ids and t.user_id == ^user_scope.user.id
+        )
+
       put_assoc(changeset, :tags, tags)
     end
   end
 
   defp put_tags(changeset, _attrs, _user_scope), do: changeset
-
 
   defp generate_slug(changeset) do
     case get_change(changeset, :title) do

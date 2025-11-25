@@ -500,6 +500,130 @@ defmodule HomesiteWeb.CoreComponents do
   end
 
   @doc """
+  Renders the Pegasus logo SVG.
+
+  A reusable component for the site's Pegasus branding.
+  Can be used in headers, footers, and anywhere the logo is needed.
+
+  ## Examples
+
+      <.pegasus class="h-12 w-12" />
+      <.pegasus class="h-36 w-28" />
+  """
+  attr :class, :string, default: "h-12 w-12", doc: "CSS classes for sizing"
+  attr :fill, :string, default: "#ff4500", doc: "SVG fill color"
+  attr :rest, :global, doc: "arbitrary HTML attributes"
+
+  def pegasus(assigns) do
+    ~H"""
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 -20 100 140"
+      class={@class}
+      fill={@fill}
+      {@rest}
+    >
+      <g transform="scale(-1, 1) translate(-100, 5)">
+        <!-- Horse body -->
+        <ellipse cx="55" cy="60" rx="22" ry="16" />
+        
+    <!-- Horse neck -->
+        <path
+          d="M 40 55 Q 32 50 28 42"
+          stroke={@fill}
+          stroke-width="8"
+          fill="none"
+          stroke-linecap="round"
+        />
+        
+    <!-- Horse head (elongated, horizontal) -->
+        <ellipse cx="22" cy="38" rx="8" ry="5.5" />
+        
+    <!-- Snout/muzzle -->
+        <ellipse cx="15" cy="38" rx="3.5" ry="3" />
+        
+    <!-- Ear (pointed upward) -->
+        <path d="M 26 32 L 28 26 L 24 30 Z" />
+        
+    <!-- HORN - Majestic unicorn/pegasus horn -->
+        <path d="M 24 30 L 22 18 L 26 28 Z" fill="#FFD700" opacity="0.9" />
+        <path d="M 23 28 L 22 18" stroke="#FFA500" stroke-width="0.5" fill="none" />
+        
+    <!-- Eye -->
+        <circle cx="24" cy="37" r="1.5" fill="white" />
+        <circle cx="24" cy="37" r="0.8" fill="#333" />
+        
+    <!-- Nostril -->
+        <circle cx="15" cy="39" r="0.7" fill="#cc3300" opacity="0.6" />
+        
+    <!-- Front legs -->
+        <rect x="42" y="68" width="4" height="20" rx="2" />
+        <rect x="48" y="68" width="4" height="20" rx="2" />
+        
+    <!-- Back legs -->
+        <rect x="62" y="68" width="4" height="20" rx="2" />
+        <rect x="68" y="68" width="4" height="20" rx="2" />
+        
+    <!-- Tail - flowing -->
+        <path
+          d="M 75 58 Q 82 55 85 60 Q 84 65 80 68"
+          stroke={@fill}
+          stroke-width="3"
+          fill="none"
+          stroke-linecap="round"
+        />
+        
+    <!-- Mane - flowing -->
+        <path
+          d="M 28 38 Q 32 34 36 38"
+          stroke={@fill}
+          stroke-width="2.5"
+          fill="none"
+          stroke-linecap="round"
+        />
+        <path
+          d="M 32 42 Q 36 38 40 42"
+          stroke={@fill}
+          stroke-width="2.5"
+          fill="none"
+          stroke-linecap="round"
+        />
+        <path
+          d="M 36 46 Q 40 42 44 46"
+          stroke={@fill}
+          stroke-width="2.5"
+          fill="none"
+          stroke-linecap="round"
+        />
+        
+    <!-- WINGS - Larger, more majestic wings -->
+        <!-- Upper wing layer -->
+        <path
+          d="M 58 48 Q 70 38 82 40 Q 88 42 90 48 Q 88 56 82 62 Q 74 66 66 64 Q 60 60 58 52 Z"
+          opacity="0.95"
+          stroke={@fill}
+          stroke-width="0.5"
+        />
+        <!-- Middle wing layer -->
+        <path
+          d="M 59 52 Q 68 44 78 46 Q 84 48 86 54 Q 84 60 78 64 Q 72 66 66 63 Q 61 59 59 54 Z"
+          opacity="0.85"
+        />
+        <!-- Lower wing layer -->
+        <path
+          d="M 60 55 Q 66 50 74 52 Q 78 54 80 58 Q 78 62 74 64 Q 70 64 66 62 Q 62 59 60 56 Z"
+          opacity="0.75"
+        />
+        <!-- Wing detail lines (feathers) -->
+        <path d="M 62 50 Q 70 46 76 48" stroke={@fill} stroke-width="0.5" fill="none" opacity="0.6" />
+        <path d="M 64 54 Q 70 50 76 52" stroke={@fill} stroke-width="0.5" fill="none" opacity="0.6" />
+        <path d="M 66 58 Q 70 54 74 56" stroke={@fill} stroke-width="0.5" fill="none" opacity="0.6" />
+      </g>
+    </svg>
+    """
+  end
+
+  @doc """
   Translates an error message using gettext.
   """
   def translate_error({msg, opts}) do

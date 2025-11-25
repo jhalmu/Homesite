@@ -35,82 +35,16 @@ defmodule HomesiteWeb.Layouts do
 
   def app(assigns) do
     ~H"""
-    <header class="bg-gradient-to-r from-base-200 to-base-300 shadow-md">
-      <div class="navbar mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="flex-1">
-          <a href="/" class="text-slate-700 dark:text-slate-300 text-2xl font-semibold">
-            homesite
-          </a>
-        </div>
-        <div class="flex-none">
-          <.theme_toggle />
-        </div>
-      </div>
-    </header>
-
-    <main class="min-h-screen px-4 py-20 sm:px-6 lg:px-8">
-      <div class="mx-auto max-w-7xl space-y-4">
-        {render_slot(@inner_block)}
-      </div>
+    <main class="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-7xl space-y-4">{render_slot(@inner_block)}</div>
     </main>
 
-    <footer class="bg-gradient-to-r from-base-200 to-base-300 mt-16 border-t border-base-300">
+    <footer class="from-base-200 to-base-300 border-base-300 mt-16 border-t bg-gradient-to-r">
       <div class="footer mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 100 100"
-            class="h-12 w-12"
-            fill="#ff4500"
-          >
-            <g transform="scale(-1, 1) translate(-100, 25)">
-              <!-- Horse body -->
-              <ellipse cx="55" cy="60" rx="22" ry="16" />
-
-              <!-- Horse neck -->
-              <path d="M 40 55 Q 32 50 28 42" stroke="#ff4500" stroke-width="8" fill="none" stroke-linecap="round" />
-
-              <!-- Horse head (elongated, horizontal) -->
-              <ellipse cx="22" cy="38" rx="8" ry="5.5" />
-
-              <!-- Snout/muzzle -->
-              <ellipse cx="15" cy="38" rx="3.5" ry="3" />
-
-              <!-- Ear (pointed upward) -->
-              <path d="M 26 32 L 28 26 L 24 30 Z" />
-
-              <!-- Eye -->
-              <circle cx="24" cy="37" r="1.5" fill="white" />
-              <circle cx="24" cy="37" r="0.8" fill="#333" />
-
-              <!-- Nostril -->
-              <circle cx="15" cy="39" r="0.7" fill="#cc3300" opacity="0.6" />
-
-              <!-- Front legs -->
-              <rect x="42" y="68" width="4" height="20" rx="2" />
-              <rect x="48" y="68" width="4" height="20" rx="2" />
-
-              <!-- Back legs -->
-              <rect x="62" y="68" width="4" height="20" rx="2" />
-              <rect x="68" y="68" width="4" height="20" rx="2" />
-
-              <!-- Tail -->
-              <path d="M 75 58 Q 82 55 85 60 Q 84 65 80 68" stroke="#ff4500" stroke-width="3" fill="none" stroke-linecap="round" />
-
-              <!-- Mane -->
-              <path d="M 28 38 Q 32 34 36 38" stroke="#ff4500" stroke-width="2.5" fill="none" stroke-linecap="round" />
-              <path d="M 32 42 Q 36 38 40 42" stroke="#ff4500" stroke-width="2.5" fill="none" stroke-linecap="round" />
-              <path d="M 36 46 Q 40 42 44 46" stroke="#ff4500" stroke-width="2.5" fill="none" stroke-linecap="round" />
-
-              <!-- Wings (on the back) -->
-              <path d="M 60 52 Q 75 45 82 48 Q 80 54 75 58 Q 70 60 65 59 Q 61 56 60 53 Z" opacity="0.95" />
-              <path d="M 61 54 Q 73 48 78 50 Q 77 55 72 58 Q 68 59 64 57 Z" opacity="0.8" />
-              <path d="M 62 56 Q 70 51 74 53 Q 73 56 69 58 Q 66 58 63 56 Z" opacity="0.65" />
-            </g>
-          </svg>
+          <.pegasus class="h-20 w-20" />
           <p class="font-semibold">
-            homesite
-            <br />
+            homesite <br />
             <span class="text-sm font-normal opacity-70">Personal blogging platform</span>
           </p>
         </div>
@@ -130,7 +64,7 @@ defmodule HomesiteWeb.Layouts do
           <p class="text-sm opacity-70">Tailwind CSS & DaisyUI</p>
         </div>
       </div>
-      <div class="border-t border-base-300 bg-base-200/50 px-4 py-4 text-center text-sm opacity-70">
+      <div class="border-base-300 bg-base-200/50 border-t px-4 py-4 text-center text-sm opacity-70">
         <p>© {Date.utc_today().year} Homesite. Built with ❤️ and Elixir.</p>
       </div>
     </footer>
@@ -183,37 +117,118 @@ defmodule HomesiteWeb.Layouts do
   end
 
   @doc """
+  Renders the main navigation bar.
+
+  Displays the Pegasus logo, site name, navigation links, and user menu.
+  Follows MODERN_CSS_GUIDE.md patterns with fluid sizing and spacing.
+
+  ## Examples
+
+      <.navbar current_scope={@current_scope} />
+  """
+  attr :current_scope, :map, default: nil, doc: "the current user scope"
+
+  def navbar(assigns) do
+    ~H"""
+    <div class="navbar from-base-200 to-base-100 border-base-300 px-[clamp(1rem,5vw,4rem)] mt-4 border-b bg-gradient-to-r py-4 shadow-sm">
+      <div class="flex-1">
+        <.link
+          navigate={~p"/"}
+          class="btn btn-ghost text-[clamp(1rem,2.5vw,1.5rem)] gap-[clamp(0.5rem,2vw,1rem)] items-center"
+        >
+          <div class="relative overflow-visible rounded-full bg-white p-2 shadow-lg">
+            <.pegasus class="absolute -inset-2 h-28 w-28" />
+          </div>
+          <span class="font-display">homesite</span>
+        </.link>
+      </div>
+      <div class="gap-[clamp(0.5rem,2vw,1rem)] flex-none">
+        <ul class="menu menu-horizontal gap-[clamp(0.25rem,1vw,0.5rem)]">
+          <%= if @current_scope do %>
+            <li>
+              <.link navigate={~p"/dashboard"}>Dashboard</.link>
+            </li>
+            <li>
+              <.link navigate={~p"/posts"}>Posts</.link>
+            </li>
+            <li>
+              <.link navigate={~p"/tags"}>Tags</.link>
+            </li>
+            <%= if Homesite.Accounts.Scope.admin?(@current_scope) do %>
+              <li>
+                <.link navigate={~p"/admin"}>Admin</.link>
+              </li>
+            <% end %>
+            <li>
+              <details>
+                <summary class="flex items-center gap-2">
+                  <.avatar user={@current_scope.user} class="h-8 w-8" />
+                  <span>{@current_scope.user.display_name || @current_scope.user.email}</span>
+                </summary>
+                <ul class="bg-base-100 z-50 rounded-t-none p-2">
+                  <li>
+                    <.link navigate={~p"/users/settings"}>
+                      <.icon name="hero-cog-6-tooth" class="h-4 w-4" /> Settings
+                    </.link>
+                  </li>
+                  <li>
+                    <.link href={~p"/users/log-out"} method="delete">
+                      <.icon name="hero-arrow-right-on-rectangle" class="h-4 w-4" /> Log out
+                    </.link>
+                  </li>
+                </ul>
+              </details>
+            </li>
+          <% else %>
+            <%!-- Registration disabled for testing phase --%>
+            <%!-- <li>
+              <.link navigate={~p"/users/register"}>Register</.link>
+            </li> --%>
+            <li>
+              <.link navigate={~p"/users/log-in"} class="btn btn-primary">Log in</.link>
+            </li>
+          <% end %>
+          <li>
+            <.theme_toggle />
+          </li>
+        </ul>
+      </div>
+    </div>
+    """
+  end
+
+  @doc """
   Provides dark vs light theme toggle based on themes defined in app.css.
 
   See <head> in root.html.heex which applies the theme before page load.
   """
   def theme_toggle(assigns) do
     ~H"""
-    <div class="card border-base-300 bg-base-300 relative flex flex-row items-center rounded-full border-2">
+    <div class="card border-base-300 bg-base-300 relative flex flex-row items-center rounded-full border">
       <div class="border-1 border-base-200 bg-base-100 [[data-theme=light]_&]:left-1/3 [[data-theme=dark]_&]:left-2/3 transition-[left] absolute left-0 h-full w-1/3 rounded-full brightness-200" />
 
       <button
-        class="flex w-1/3 cursor-pointer p-2"
+        class="flex w-1/3 cursor-pointer p-1"
         phx-click={JS.dispatch("phx:set-theme")}
         data-phx-theme="system"
       >
-        <.icon name="hero-computer-desktop-micro" class="size-4 opacity-75 hover:opacity-100" />
+        <.icon name="hero-computer-desktop-micro" class="size-3 opacity-75 hover:opacity-100" />
       </button>
 
       <button
-        class="flex w-1/3 cursor-pointer p-2"
+        class="flex w-1/3 cursor-pointer p-1"
         phx-click={JS.dispatch("phx:set-theme")}
         data-phx-theme="light"
       >
-        <.icon name="hero-sun-micro" class="size-4 opacity-75 hover:opacity-100" />
+        <.icon name="hero-sun-micro" class="size-3 opacity-75 hover:opacity-100" />
       </button>
 
       <button
-        class="flex w-1/3 cursor-pointer p-2"
+        class="flex w-1/3 cursor-pointer p-1"
         phx-click={JS.dispatch("phx:set-theme")}
         data-phx-theme="dark"
       >
-        <.icon name="hero-moon-micro" class="size-4 opacity-75 hover:opacity-100" />
+        <.icon name="hero-moon-micro" class="size-3 opacity-75 hover:opacity-100" />
       </button>
     </div>
     """

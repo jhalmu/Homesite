@@ -18,8 +18,8 @@ defmodule HomesiteWeb.PostLive.Form do
           <.input field={@form[:title]} type="text" label="Title" />
           <%= if @form[:slug].value do %>
             <p class="text-base-content/60 mt-1 text-sm">
-              <.icon name="hero-link" class="inline h-4 w-4" />
-              Slug: <span class="font-mono"><%= @form[:slug].value %></span>
+              <.icon name="hero-link" class="inline h-4 w-4" /> Slug:
+              <span class="font-mono">{@form[:slug].value}</span>
             </p>
           <% end %>
         </div>
@@ -87,8 +87,7 @@ defmodule HomesiteWeb.PostLive.Form do
               <% end %>
             </div>
             <p class="text-base-content/70 mt-2 text-sm">
-              <.icon name="hero-tag" class="inline h-4 w-4" />
-              Select tags to categorize this post
+              <.icon name="hero-tag" class="inline h-4 w-4" /> Select tags to categorize this post
             </p>
           <% end %>
         </div>

@@ -24,13 +24,14 @@ defmodule Homesite.Accounts.AvatarGenerator do
     {bg_color, text_color} = get_colors(user.id)
 
     # Build SVG as a single line to avoid whitespace issues
-    svg = """
-    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">\
-    <circle cx="50" cy="50" r="50" fill="#{bg_color}"/>\
-    <text x="50" y="50" font-family="sans-serif" font-size="40" font-weight="600" fill="#{text_color}" text-anchor="middle" dominant-baseline="central">#{initials}</text>\
-    </svg>\
-    """
-    |> String.trim()
+    svg =
+      """
+      <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">\
+      <circle cx="50" cy="50" r="50" fill="#{bg_color}"/>\
+      <text x="50" y="50" font-family="sans-serif" font-size="40" font-weight="600" fill="#{text_color}" text-anchor="middle" dominant-baseline="central">#{initials}</text>\
+      </svg>\
+      """
+      |> String.trim()
 
     # Use base64 encoding for better browser compatibility
     encoded_svg = Base.encode64(svg)
