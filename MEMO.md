@@ -4,6 +4,130 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-11-25 21:00:00 - 22:00:00 [Session COMPLETED]
+
+### Session: Test Data Generation & Homepage UX Improvements
+
+#### Completed ✅
+
+**Seed Users Mix Task:**
+- ✅ Created `mix seed_users` task for generating test data
+- ✅ Generates 10 users (5 English, 5 Finnish) with full profiles
+- ✅ Each user creates 30 long public articles (300 total)
+- ✅ Random publication dates (last 90 days)
+- ✅ Realistic content in English and Finnish
+- ✅ `--clean` flag to reset database before seeding
+- ✅ Added `get_tag_by_name/2` function to Content context
+
+**User Data Generated:**
+- **English users**: Emma Johnson, Liam Williams, Olivia Brown, Noah Davis, Ava Miller
+- **Finnish users**: Aino Virtanen, Eero Korhonen, Liisa Mäkinen, Mikko Nieminen, Sofia Laine
+- All users have display names, bios, preferred language, website URLs
+- Password for all: `password123`
+
+**Bug Fixes:**
+- ✅ Fixed user profile fields not being saved during registration
+- ✅ Changed to two-step user creation: register email/password, then update profile
+- ✅ Finnish users now correctly have `preferred_language: "fi"`
+
+**Homepage Layout Improvements:**
+- ✅ Redesigned homepage with two-tier layout
+- ✅ Featured section: 3 newest posts in horizontal card grid
+- ✅ List section: Remaining posts in traditional blog list
+- ✅ Responsive card grid (1→2→3 columns)
+- ✅ Card hover effects with shadows
+- ✅ Public posts accessible without login
+- ✅ Removed "odd" card grid layout per user feedback
+
+**Files Created:**
+- `lib/mix/tasks/seed_users.ex` - Comprehensive seeding task with 400+ lines
+
+**Files Modified:**
+- `lib/homesite/content.ex` - Added `get_tag_by_name/2` function
+- `lib/homesite_web/live/page_live/home.html.heex` - New two-tier layout
+
+**Commits:**
+- d499184 - Add seed_users Mix task for generating test data
+- 8053eeb - Improve homepage layout with featured posts section
+
+#### Known Issues / TODO
+
+**High Priority:**
+1. **Tag Creation Bug** - Tags not being created in seed task
+   - Posts created successfully (300 posts)
+   - Tags lookup queries run but no INSERTs
+   - `Content.create_tag` might be failing silently
+   - Need to debug why tags aren't persisting
+
+**Medium Priority:**
+2. **Seed Task Enhancement** - Once tags work, implement:
+   - 10 tags per user (5 unique, 5 common)
+   - 3-5 random tags per article
+   - Tag associations via post_tags table
+
+#### Technical Implementation Details
+
+**Seed Task Features:**
+- Two-step user creation to bypass email_changeset limitations
+- Random article topics and varied titles
+- Long-form content (7 paragraphs per article)
+- Realistic user bios in both languages
+- Published dates randomized over 90-day period
+
+**Homepage Layout:**
+```heex
+<!-- Featured Posts (Top 3) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <!-- Card grid -->
+</div>
+
+<!-- More Posts (Rest) -->
+<div class="max-w-4xl mx-auto space-y-8">
+  <!-- Traditional list -->
+</div>
+```
+
+**User Profile Update Pattern:**
+```elixir
+# Step 1: Register with email/password only
+{:ok, user} = Accounts.register_user(%{email: email, password: password})
+
+# Step 2: Update profile fields
+{:ok, updated_user} = Accounts.update_user_profile(user, profile_attrs)
+```
+
+#### Current Status
+- **Test Data:** 10 users, 300 posts ✅
+- **Tags:** Not created (bug) ⚠️
+- **Homepage:** Modern two-tier layout ✅
+- **Server:** Running at http://localhost:4000 ✅
+- **Pushed to GitHub:** All commits pushed ✅
+
+#### Usage
+Test the application with any seeded user:
+```bash
+# English user
+Email: emma.johnson@example.com
+Password: password123
+
+# Finnish user
+Email: aino.virtanen@example.com
+Password: password123
+```
+
+To reseed database:
+```bash
+mix seed_users --clean
+```
+
+#### Notes
+- User feedback: Wanted simpler homepage layout instead of card grid
+- Implemented hybrid approach: featured cards + list for best UX
+- Tag system needs debugging before full seed implementation
+- All 300 posts are public and visible on homepage
+
+---
+
 ## 2025-11-25 20:30:00 - 21:15:00 [Session COMPLETED]
 
 ### Session: Complete i18n Translation Coverage - All Forms & Views
