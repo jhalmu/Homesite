@@ -4,6 +4,140 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-11-25 22:30:00 - 23:15:00 [Session COMPLETED]
+
+### Session: Comprehensive Test Coverage for Public Post Viewing
+
+#### Completed ✅
+
+**Test Suite Expansion:**
+- ✅ Added 14 new tests for recently implemented features
+- ✅ Tests for `get_tag_by_name/2` function (3 tests)
+- ✅ Tests for `get_public_post!/1` function (3 tests)
+- ✅ Tests for `get_post_by_id!/2` function (3 tests)
+- ✅ LiveView tests for edit button visibility (2 tests)
+- ✅ LiveView tests for non-authenticated user access (3 tests)
+- ✅ All 194 tests passing (was 180 tests)
+
+**Error Layout Creation:**
+- ✅ Created `error.html.heex` layout to fix missing error template issue
+- ✅ Simple layout for 404/500 error pages without navigation
+- ✅ Fixed test failures caused by missing error rendering
+
+**Bug Fixes:**
+- ✅ Fixed test expectation for private post access (404 not 500)
+- ✅ Fixed error template rendering issue in tests
+- ✅ Proper use of `assert_error_sent/2` for error testing
+
+**Test Coverage Details:**
+
+**Content Context Tests:**
+```elixir
+# get_tag_by_name/2 tests
+- Returns tag when it exists
+- Returns nil when tag does not exist
+- Does not return tags from other users (scope isolation)
+
+# get_public_post!/1 tests
+- Returns public post successfully
+- Raises for private post (security)
+- Raises for non-existent post
+
+# get_post_by_id!/2 tests
+- Returns public post for authenticated user
+- Returns own private post
+- Raises for other user's private post (security)
+```
+
+**LiveView Security Tests:**
+```elixir
+# Post ownership tests
+- Shows edit button for post owner
+- Hides edit button for non-owner
+
+# Non-authenticated user access tests
+- Can view public post
+- Cannot view private post (404 error)
+- Does not see edit button on public post
+```
+
+**Files Created:**
+- `lib/homesite_web/components/layouts/error.html.heex` - Error page layout
+
+**Files Modified:**
+- `test/homesite/content_test.exs` - Added 9 new tests
+- `test/homesite_web/live/post_live_test.exs` - Added 5 new tests
+
+**Commits:**
+- b941279 - Add comprehensive tests for public post viewing and seed functions
+
+#### Test Results
+- **Before:** 180 tests, 0 failures
+- **After:** 194 tests, 0 failures ✅
+- **New Tests:** 14 tests covering public/private access security
+- **Code Quality:** All tests passing, benign Gettext warnings (expected)
+
+#### Technical Implementation Details
+
+**Error Layout Structure:**
+```heex
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <.live_title default="Homesite">
+      {assigns[:page_title] || "Error"}
+    </.live_title>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
+  </head>
+  <body>
+    {@inner_content}
+  </body>
+</html>
+```
+
+**Security Test Pattern:**
+```elixir
+test "non-authenticated user cannot view private post" do
+  scope = user_scope_fixture()
+  private_post = post_fixture(scope, %{is_public: false})
+  conn = build_conn()
+
+  # Phoenix catches Ecto.NoResultsError and renders 404
+  assert_error_sent 404, fn ->
+    live(conn, ~p"/posts/#{private_post}")
+  end
+end
+```
+
+**Scope Isolation Testing:**
+- All new tests verify that users cannot access other users' private data
+- Tests confirm `get_public_post!/1` only returns public posts
+- Tests confirm `get_post_by_id!/2` respects scope boundaries
+
+#### Current Status
+- **Tests:** 194 tests, 0 failures ✅
+- **Coverage:** Public post viewing fully tested ✅
+- **Security:** Access control verified with tests ✅
+- **Error Handling:** 404/500 pages render correctly ✅
+- **Pushed to GitHub:** Commit b941279 ✅
+
+#### Notes
+- Ecto.NoResultsError in LiveView mount results in 404 response (not 500)
+- Error layout is minimal but functional - can be enhanced later
+- All seed task functions now have test coverage
+- Public/private post access security is thoroughly tested
+
+#### Next Steps
+These comprehensive tests ensure that:
+1. Non-authenticated users can only view public posts (security ✅)
+2. Authenticated users can view public posts + own private posts (scope ✅)
+3. Tag and post query functions work correctly across scopes (isolation ✅)
+4. Edit buttons only appear for post owners (authorization ✅)
+
+---
+
 ## 2025-11-25 21:00:00 - 22:00:00 [Session COMPLETED]
 
 ### Session: Test Data Generation & Homepage UX Improvements
