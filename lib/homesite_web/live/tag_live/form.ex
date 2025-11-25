@@ -10,16 +10,20 @@ defmodule HomesiteWeb.TagLive.Form do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <.header>
         {@page_title}
-        <:subtitle>Use this form to manage tag records in your database.</:subtitle>
+        <:subtitle>{gettext("Use this form to manage tag records in your database.")}</:subtitle>
       </.header>
 
       <.form for={@form} id="tag-form" phx-change="validate" phx-submit="save">
-        <.input field={@form[:name]} type="text" label="Name" />
-        <.input field={@form[:slug]} type="text" label="Slug" />
-        <.input field={@form[:is_public]} type="checkbox" label="Is public" />
+        <.input field={@form[:name]} type="text" label={gettext("Name")} />
+        <.input field={@form[:slug]} type="text" label={gettext("Slug")} />
+        <.input field={@form[:is_public]} type="checkbox" label={gettext("Is public")} />
         <footer>
-          <.button phx-disable-with="Saving..." variant="primary">Save Tag</.button>
-          <.button navigate={return_path(@current_scope, @return_to, @tag)}>Cancel</.button>
+          <.button phx-disable-with={gettext("Saving...")} variant="primary">
+            {gettext("Save Tag")}
+          </.button>
+          <.button navigate={return_path(@current_scope, @return_to, @tag)}>
+            {gettext("Cancel")}
+          </.button>
         </footer>
       </.form>
     </Layouts.app>
@@ -41,7 +45,7 @@ defmodule HomesiteWeb.TagLive.Form do
     tag = Content.get_tag!(socket.assigns.current_scope, id)
 
     socket
-    |> assign(:page_title, "Edit Tag")
+    |> assign(:page_title, gettext("Edit Tag"))
     |> assign(:tag, tag)
     |> assign(:form, to_form(Content.change_tag(socket.assigns.current_scope, tag)))
   end
@@ -50,7 +54,7 @@ defmodule HomesiteWeb.TagLive.Form do
     tag = %Tag{user_id: socket.assigns.current_scope.user.id}
 
     socket
-    |> assign(:page_title, "New Tag")
+    |> assign(:page_title, gettext("New Tag"))
     |> assign(:tag, tag)
     |> assign(:form, to_form(Content.change_tag(socket.assigns.current_scope, tag)))
   end
@@ -70,7 +74,7 @@ defmodule HomesiteWeb.TagLive.Form do
       {:ok, tag} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Tag updated successfully")
+         |> put_flash(:info, gettext("Tag updated successfully"))
          |> push_navigate(
            to: return_path(socket.assigns.current_scope, socket.assigns.return_to, tag)
          )}
@@ -85,7 +89,7 @@ defmodule HomesiteWeb.TagLive.Form do
       {:ok, tag} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Tag created successfully")
+         |> put_flash(:info, gettext("Tag created successfully"))
          |> push_navigate(
            to: return_path(socket.assigns.current_scope, socket.assigns.return_to, tag)
          )}

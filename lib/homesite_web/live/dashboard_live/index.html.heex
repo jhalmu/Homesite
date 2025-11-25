@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="gap-[clamp(1rem,3vw,1.5rem)] mb-[clamp(2rem,5vw,3rem)] flex flex-col">
       <h1 class="text-[clamp(2rem,6vw,3rem)] font-bold">
-        Welcome back, {@current_scope.user.display_name ||
+        {gettext("Welcome back")}, {@current_scope.user.display_name ||
           String.split(@current_scope.user.email, "@") |> List.first()}!
       </h1>
 
@@ -11,11 +11,11 @@
         <!-- Stats Cards -->
         <div class="stats bg-base-200 shadow">
           <div class="stat">
-            <div class="stat-title">Total Posts</div>
+            <div class="stat-title">{gettext("Total Posts")}</div>
             <div class="stat-value text-primary">{@post_count}</div>
             <div class="stat-actions">
               <.link navigate={~p"/posts"} class="btn btn-sm btn-primary">
-                View all
+                {gettext("View all")}
               </.link>
             </div>
           </div>
@@ -23,11 +23,11 @@
 
         <div class="stats bg-base-200 shadow">
           <div class="stat">
-            <div class="stat-title">Total Tags</div>
+            <div class="stat-title">{gettext("Total Tags")}</div>
             <div class="stat-value text-secondary">{@tag_count}</div>
             <div class="stat-actions">
               <.link navigate={~p"/tags"} class="btn btn-sm btn-secondary">
-                View all
+                {gettext("View all")}
               </.link>
             </div>
           </div>
@@ -38,17 +38,17 @@
 <!-- Quick Actions -->
     <div class="mb-[clamp(2rem,5vw,3rem)]">
       <h2 class="text-[clamp(1.5rem,4vw,2rem)] mb-[clamp(1rem,3vw,1.5rem)] font-semibold">
-        Quick Actions
+        {gettext("Quick Actions")}
       </h2>
       <div class="gap-[clamp(0.75rem,2vw,1rem)] flex flex-wrap">
         <.link navigate={~p"/posts/new"} class="btn btn-primary gap-2">
-          <.icon name="hero-plus" class="h-5 w-5" /> New Post
+          <.icon name="hero-plus" class="h-5 w-5" /> {gettext("New Post")}
         </.link>
         <.link navigate={~p"/tags/new"} class="btn btn-secondary gap-2">
-          <.icon name="hero-plus" class="h-5 w-5" /> New Tag
+          <.icon name="hero-plus" class="h-5 w-5" /> {gettext("New Tag")}
         </.link>
         <.link navigate={~p"/users/settings"} class="btn btn-outline gap-2">
-          <.icon name="hero-cog-6-tooth" class="h-5 w-5" /> Settings
+          <.icon name="hero-cog-6-tooth" class="h-5 w-5" /> {gettext("Settings")}
         </.link>
       </div>
     </div>
@@ -57,17 +57,20 @@
     <div class="mb-[clamp(2rem,5vw,3rem)]">
       <div class="mb-[clamp(1rem,3vw,1.5rem)] flex items-center justify-between">
         <h2 class="text-[clamp(1.5rem,4vw,2rem)] font-semibold">
-          Recent Posts
+          {gettext("Recent Posts")}
         </h2>
         <.link navigate={~p"/posts"} class="link link-primary">
-          View all →
+          {gettext("View all")} →
         </.link>
       </div>
 
       <div :if={@post_count == 0} class="alert alert-info">
         <.icon name="hero-information-circle" class="h-6 w-6" />
         <span>
-          You haven't created any posts yet. <.link navigate={~p"/posts/new"} class="link">Create your first post</.link>!
+          {gettext("You haven't created any posts yet.")} <.link
+            navigate={~p"/posts/new"}
+            class="link"
+          >{gettext("Create your first post")}</.link>!
         </span>
       </div>
 
@@ -75,9 +78,9 @@
         <table class="table-zebra table">
           <thead>
             <tr>
-              <th>Title</th>
-              <th>Published</th>
-              <th>Actions</th>
+              <th>{gettext("Title")}</th>
+              <th>{gettext("Published")}</th>
+              <th>{gettext("Actions")}</th>
             </tr>
           </thead>
           <tbody>
@@ -92,16 +95,16 @@
                   <%= if post.published_at do %>
                     {Calendar.strftime(post.published_at, "%b %d, %Y")}
                   <% else %>
-                    <span class="badge badge-ghost">Draft</span>
+                    <span class="badge badge-ghost">{gettext("Draft")}</span>
                   <% end %>
                 </td>
                 <td>
                   <div class="flex gap-2">
                     <.link navigate={~p"/posts/#{post}"} class="btn btn-ghost btn-xs">
-                      View
+                      {gettext("View")}
                     </.link>
                     <.link navigate={~p"/posts/#{post}/edit"} class="btn btn-ghost btn-xs">
-                      Edit
+                      {gettext("Edit")}
                     </.link>
                   </div>
                 </td>
@@ -116,17 +119,20 @@
     <div>
       <div class="mb-[clamp(1rem,3vw,1.5rem)] flex items-center justify-between">
         <h2 class="text-[clamp(1.5rem,4vw,2rem)] font-semibold">
-          Your Tags
+          {gettext("Your Tags")}
         </h2>
         <.link navigate={~p"/tags"} class="link link-primary">
-          View all →
+          {gettext("View all")} →
         </.link>
       </div>
 
       <div :if={@tag_count == 0} class="alert alert-info">
         <.icon name="hero-information-circle" class="h-6 w-6" />
         <span>
-          You haven't created any tags yet. <.link navigate={~p"/tags/new"} class="link">Create your first tag</.link>!
+          {gettext("You haven't created any tags yet.")} <.link
+            navigate={~p"/tags/new"}
+            class="link"
+          >{gettext("Create your first tag")}</.link>!
         </span>
       </div>
 

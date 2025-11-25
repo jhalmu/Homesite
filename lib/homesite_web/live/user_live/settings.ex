@@ -11,8 +11,8 @@ defmodule HomesiteWeb.UserLive.Settings do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="text-center">
         <.header>
-          Account Settings
-          <:subtitle>Manage your profile, email address and password settings</:subtitle>
+          {gettext("Account Settings")}
+          <:subtitle>{gettext("Manage your profile, email address and password settings")}</:subtitle>
         </.header>
       </div>
 
@@ -30,7 +30,9 @@ defmodule HomesiteWeb.UserLive.Settings do
               class="file-input file-input-bordered w-full max-w-xs"
             />
             <p class="text-sm text-gray-600 dark:text-gray-400">
-              Upload a new avatar (JPG, PNG, max 5MB) or leave empty for auto-generated avatar
+              {gettext(
+                "Upload a new avatar (JPG, PNG, max 5MB) or leave empty for auto-generated avatar"
+              )}
             </p>
           </div>
         </div>
@@ -38,40 +40,42 @@ defmodule HomesiteWeb.UserLive.Settings do
         <.input
           field={@profile_form[:display_name]}
           type="text"
-          label="Display Name"
-          placeholder="Your public name"
+          label={gettext("Display Name")}
+          placeholder={gettext("Your public name")}
         />
         <.input
           field={@profile_form[:bio]}
           type="textarea"
-          label="Bio"
-          placeholder="Tell us about yourself (max 500 characters)"
+          label={gettext("Bio")}
+          placeholder={gettext("Tell us about yourself (max 500 characters)")}
         />
         <.input
           field={@profile_form[:website_url]}
           type="url"
-          label="Website URL"
+          label={gettext("Website URL")}
           placeholder="https://example.com"
         />
         <.input
           field={@profile_form[:bluesky_handle]}
           type="text"
-          label="Bluesky Handle"
+          label={gettext("Bluesky Handle")}
           placeholder="@username.bsky.social"
         />
         <.input
           field={@profile_form[:mastodon_handle]}
           type="text"
-          label="Mastodon Handle"
+          label={gettext("Mastodon Handle")}
           placeholder="@username@mastodon.social"
         />
         <.input
           field={@profile_form[:preferred_language]}
           type="select"
-          label="Preferred Language"
+          label={gettext("Preferred Language")}
           options={[{"English", "en"}, {"Suomi (Finnish)", "fi"}]}
         />
-        <.button variant="primary" phx-disable-with="Saving...">Update Profile</.button>
+        <.button variant="primary" phx-disable-with={gettext("Saving...")}>
+          {gettext("Update Profile")}
+        </.button>
       </.form>
 
       <div class="divider" />
@@ -80,11 +84,13 @@ defmodule HomesiteWeb.UserLive.Settings do
         <.input
           field={@email_form[:email]}
           type="email"
-          label="Email"
+          label={gettext("Email")}
           autocomplete="username"
           required
         />
-        <.button variant="primary" phx-disable-with="Changing...">Change Email</.button>
+        <.button variant="primary" phx-disable-with={gettext("Changing...")}>
+          {gettext("Change Email")}
+        </.button>
       </.form>
 
       <div class="divider" />
@@ -108,18 +114,18 @@ defmodule HomesiteWeb.UserLive.Settings do
         <.input
           field={@password_form[:password]}
           type="password"
-          label="New password"
+          label={gettext("New password")}
           autocomplete="new-password"
           required
         />
         <.input
           field={@password_form[:password_confirmation]}
           type="password"
-          label="Confirm new password"
+          label={gettext("Confirm new password")}
           autocomplete="new-password"
         />
-        <.button variant="primary" phx-disable-with="Saving...">
-          Save Password
+        <.button variant="primary" phx-disable-with={gettext("Saving...")}>
+          {gettext("Save Password")}
         </.button>
       </.form>
     </Layouts.app>
@@ -131,10 +137,10 @@ defmodule HomesiteWeb.UserLive.Settings do
     socket =
       case Accounts.update_user_email(socket.assigns.current_scope.user, token) do
         {:ok, _user} ->
-          put_flash(socket, :info, "Email changed successfully.")
+          put_flash(socket, :info, gettext("Email changed successfully."))
 
         {:error, _} ->
-          put_flash(socket, :error, "Email change link is invalid or it has expired.")
+          put_flash(socket, :error, gettext("Email change link is invalid or it has expired."))
       end
 
     {:ok, push_navigate(socket, to: ~p"/users/settings")}
@@ -189,7 +195,7 @@ defmodule HomesiteWeb.UserLive.Settings do
           &url(~p"/users/settings/confirm-email/#{&1}")
         )
 
-        info = "A link to confirm your email change has been sent to the new address."
+        info = gettext("A link to confirm your email change has been sent to the new address.")
         {:noreply, socket |> put_flash(:info, info)}
 
       changeset ->
@@ -266,7 +272,7 @@ defmodule HomesiteWeb.UserLive.Settings do
         socket
         |> assign(:current_scope, scope)
         |> assign(:profile_form, to_form(Accounts.change_user_profile(updated_user, %{})))
-        |> put_flash(:info, "Profile updated successfully.")
+        |> put_flash(:info, gettext("Profile updated successfully."))
         |> then(&{:noreply, &1})
 
       {:error, changeset} ->

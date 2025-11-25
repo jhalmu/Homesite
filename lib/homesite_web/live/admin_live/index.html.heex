@@ -4,9 +4,12 @@
     <div class="gap-[clamp(1rem,3vw,1.5rem)] mb-[clamp(2rem,5vw,3rem)] flex flex-col">
       <div class="gap-[clamp(1rem,3vw,1.5rem)] flex items-center">
         <h1 class="text-[clamp(2rem,6vw,3rem)] font-bold">
-          Admin Dashboard
+          {gettext("Admin Dashboard")}
         </h1>
-        <div class="text-[clamp(2rem,5vw,3rem)]" title={"Admin Level #{@flower_count}"}>
+        <div
+          class="text-[clamp(2rem,5vw,3rem)]"
+          title={gettext("Admin Level %{level}", level: @flower_count)}
+        >
           {@flowers}
         </div>
       </div>
@@ -14,8 +17,13 @@
       <div class="alert alert-success">
         <.icon name="hero-shield-check" class="h-6 w-6" />
         <div>
-          <p class="font-semibold">Admin Access Granted</p>
-          <p class="text-sm">You have {@flower_count} flower(s) - Admin Level {@flower_count}</p>
+          <p class="font-semibold">{gettext("Admin Access Granted")}</p>
+          <p class="text-sm">
+            {gettext("You have %{count} flower(s) - Admin Level %{level}",
+              count: @flower_count,
+              level: @flower_count
+            )}
+          </p>
         </div>
       </div>
     </div>
@@ -23,7 +31,7 @@
 <!-- Stats Overview -->
     <div class="mb-[clamp(2rem,5vw,3rem)]">
       <h2 class="text-[clamp(1.5rem,4vw,2rem)] mb-[clamp(1rem,3vw,1.5rem)] font-semibold">
-        System Overview
+        {gettext("System Overview")}
       </h2>
 
       <div class="gap-[clamp(1rem,3vw,1.5rem)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
@@ -33,9 +41,9 @@
             <div class="stat-figure text-primary">
               <.icon name="hero-users" class="h-8 w-8" />
             </div>
-            <div class="stat-title">Total Users</div>
+            <div class="stat-title">{gettext("Total Users")}</div>
             <div class="stat-value text-primary">{@total_users}</div>
-            <div class="stat-desc">Registered users</div>
+            <div class="stat-desc">{gettext("Registered users")}</div>
           </div>
         </div>
         
@@ -45,9 +53,9 @@
             <div class="stat-figure text-secondary">
               <.icon name="hero-shield-check" class="h-8 w-8" />
             </div>
-            <div class="stat-title">Admins</div>
+            <div class="stat-title">{gettext("Admins")}</div>
             <div class="stat-value text-secondary">{@admin_count}</div>
-            <div class="stat-desc">With admin access</div>
+            <div class="stat-desc">{gettext("With admin access")}</div>
           </div>
         </div>
         
@@ -57,9 +65,9 @@
             <div class="stat-figure text-accent">
               <span class="text-[clamp(1.5rem,4vw,2rem)]">🌸</span>
             </div>
-            <div class="stat-title">Your Level</div>
+            <div class="stat-title">{gettext("Your Level")}</div>
             <div class="stat-value text-accent">{@flower_count}</div>
-            <div class="stat-desc">Flower permissions</div>
+            <div class="stat-desc">{gettext("Flower permissions")}</div>
           </div>
         </div>
       </div>
@@ -68,25 +76,25 @@
 <!-- Quick Actions -->
     <div class="mb-[clamp(2rem,5vw,3rem)]">
       <h2 class="text-[clamp(1.5rem,4vw,2rem)] mb-[clamp(1rem,3vw,1.5rem)] font-semibold">
-        Admin Actions
+        {gettext("Admin Actions")}
       </h2>
 
       <div class="gap-[clamp(0.75rem,2vw,1rem)] flex flex-wrap">
         <.link navigate={~p"/dashboard"} class="btn btn-outline gap-2">
-          <.icon name="hero-home" class="h-5 w-5" /> Back to User Dashboard
+          <.icon name="hero-home" class="h-5 w-5" /> {gettext("Back to User Dashboard")}
         </.link>
 
         <%= if @flower_count >= 3 do %>
           <.link navigate={~p"/admin/users"} class="btn btn-primary gap-2">
-            <.icon name="hero-users" class="h-5 w-5" /> Manage Users
+            <.icon name="hero-users" class="h-5 w-5" /> {gettext("Manage Users")}
           </.link>
         <% end %>
 
         <.link navigate={~p"/posts"} class="btn btn-outline gap-2">
-          <.icon name="hero-document-text" class="h-5 w-5" /> View All Posts
+          <.icon name="hero-document-text" class="h-5 w-5" /> {gettext("View All Posts")}
         </.link>
         <.link navigate={~p"/tags"} class="btn btn-outline gap-2">
-          <.icon name="hero-tag" class="h-5 w-5" /> View All Tags
+          <.icon name="hero-tag" class="h-5 w-5" /> {gettext("View All Tags")}
         </.link>
       </div>
     </div>
@@ -94,16 +102,28 @@
 <!-- Permissions Info -->
     <div class="card bg-base-200 shadow-xl">
       <div class="card-body">
-        <h2 class="card-title">Flower Permission System 🌸</h2>
+        <h2 class="card-title">{gettext("Flower Permission System")} 🌸</h2>
         <div class="space-y-2">
-          <p><strong>Level 1 (🌸):</strong> Basic admin access</p>
-          <p><strong>Level 2 (🌸🌸):</strong> Content moderation</p>
-          <p><strong>Level 3 (🌸🌸🌸):</strong> User management</p>
-          <p><strong>Level 4 (🌸🌸🌸🌸):</strong> System configuration</p>
-          <p><strong>Level 5 (🌸🌸🌸🌸🌸):</strong> Full administrative access</p>
+          <p><strong>{gettext("Level 1 (🌸):")} </strong>{gettext("Basic admin access")}</p>
+          <p><strong>{gettext("Level 2 (🌸🌸):")} </strong>{gettext("Content moderation")}</p>
+          <p>
+            <strong>{gettext("Level 3 (🌸🌸🌸):")} </strong>{gettext("User management")}
+          </p>
+          <p>
+            <strong>{gettext("Level 4 (🌸🌸🌸🌸):")} </strong>{gettext(
+              "System configuration"
+            )}
+          </p>
+          <p>
+            <strong>{gettext("Level 5 (🌸🌸🌸🌸🌸):")} </strong>{gettext(
+              "Full administrative access"
+            )}
+          </p>
         </div>
         <div class="card-actions mt-4 justify-end">
-          <span class="badge badge-lg badge-primary">Your level: {@flower_count}</span>
+          <span class="badge badge-lg badge-primary">
+            {gettext("Your level:")}{@flower_count}
+          </span>
         </div>
       </div>
     </div>

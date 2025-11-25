@@ -20,17 +20,17 @@ defmodule HomesiteWeb.TagLive.Show do
                   {@tag.name}
                 </h1>
                 <p class="text-sm text-gray-600 dark:text-gray-400">
-                  Slug: {@tag.slug}
+                  {gettext("Slug")}: {@tag.slug}
                   <%= if @tag.is_public do %>
-                    <span class="badge badge-success ml-2">Public</span>
+                    <span class="badge badge-success ml-2">{gettext("Public")}</span>
                   <% else %>
-                    <span class="badge badge-ghost ml-2">Private</span>
+                    <span class="badge badge-ghost ml-2">{gettext("Private")}</span>
                   <% end %>
                 </p>
               </div>
             </div>
             <.link navigate={~p"/tags/#{@tag}/edit?return_to=show"} class="btn btn-primary gap-2">
-              <.icon name="hero-pencil-square" class="h-5 w-5" /> Edit Tag
+              <.icon name="hero-pencil-square" class="h-5 w-5" /> {gettext("Edit Tag")}
             </.link>
           </div>
         </div>
@@ -38,12 +38,12 @@ defmodule HomesiteWeb.TagLive.Show do
     <!-- User's Posts with this Tag -->
         <div class="mb-[clamp(2rem,5vw,3rem)]">
           <h2 class="text-[clamp(1.5rem,4vw,2rem)] mb-[clamp(1rem,3vw,1.5rem)] font-semibold">
-            Your Posts
+            {gettext("Your Posts")}
           </h2>
 
           <div :if={length(@user_posts) == 0} class="alert alert-info">
             <.icon name="hero-information-circle" class="h-6 w-6" />
-            <span>You don't have any posts with this tag yet.</span>
+            <span>{gettext("You don't have any posts with this tag yet.")}</span>
           </div>
 
           <div :if={length(@user_posts) > 0} class="space-y-4">
@@ -63,15 +63,15 @@ defmodule HomesiteWeb.TagLive.Show do
                       <%= if post.published_at do %>
                         {Calendar.strftime(post.published_at, "%B %d, %Y")}
                       <% else %>
-                        <span class="badge badge-ghost">Draft</span>
+                        <span class="badge badge-ghost">{gettext("Draft")}</span>
                       <% end %>
                     </div>
                     <div class="flex gap-2">
                       <.link navigate={~p"/posts/#{post}"} class="btn btn-sm btn-ghost">
-                        View
+                        {gettext("View")}
                       </.link>
                       <.link navigate={~p"/posts/#{post}/edit"} class="btn btn-sm btn-primary">
-                        Edit
+                        {gettext("Edit")}
                       </.link>
                     </div>
                   </div>
@@ -84,7 +84,7 @@ defmodule HomesiteWeb.TagLive.Show do
     <!-- Public Posts from Others -->
         <div :if={length(@public_posts) > 0}>
           <h2 class="text-[clamp(1.5rem,4vw,2rem)] mb-[clamp(1rem,3vw,1.5rem)] font-semibold">
-            Community Posts
+            {gettext("Community Posts")}
           </h2>
 
           <div class="space-y-4">
@@ -106,7 +106,7 @@ defmodule HomesiteWeb.TagLive.Show do
                   </p>
                   <div class="card-actions justify-end">
                     <.link navigate={~p"/users/#{post.user.id}"} class="btn btn-sm btn-ghost">
-                      View Profile
+                      {gettext("View Profile")}
                     </.link>
                   </div>
                 </div>
@@ -133,7 +133,7 @@ defmodule HomesiteWeb.TagLive.Show do
 
     {:ok,
      socket
-     |> assign(:page_title, "Tag: #{tag.name}")
+     |> assign(:page_title, "#{gettext("Tag")}: #{tag.name}")
      |> assign(:tag, tag)
      |> assign(:user_posts, user_posts)
      |> assign(:public_posts, public_posts)}
@@ -153,7 +153,7 @@ defmodule HomesiteWeb.TagLive.Show do
       ) do
     {:noreply,
      socket
-     |> put_flash(:error, "The current tag was deleted.")
+     |> put_flash(:error, gettext("The current tag was deleted."))
      |> push_navigate(to: ~p"/tags")}
   end
 

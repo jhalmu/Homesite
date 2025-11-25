@@ -46,7 +46,9 @@ defmodule HomesiteWeb.Layouts do
           <.pegasus class="h-20 w-20" />
           <p class="font-semibold">
             homesite <br />
-            <span class="text-sm font-normal opacity-70">{gettext("Personal blogging platform")}</span>
+            <span class="text-sm font-normal opacity-70">
+              {gettext("Personal blogging platform")}
+            </span>
           </p>
         </div>
         <div>
@@ -150,7 +152,7 @@ defmodule HomesiteWeb.Layouts do
       </div>
 
       <%!-- Desktop navigation --%>
-      <div class="gap-[clamp(0.5rem,2vw,1rem)] flex-none hidden lg:flex">
+      <div class="gap-[clamp(0.5rem,2vw,1rem)] hidden flex-none lg:flex">
         <ul class="menu menu-horizontal gap-[clamp(0.25rem,1vw,0.5rem)]">
           <%= if @current_scope do %>
             <li>
@@ -181,7 +183,9 @@ defmodule HomesiteWeb.Layouts do
                   </li>
                   <li>
                     <.link href={~p"/users/log-out"} method="delete">
-                      <.icon name="hero-arrow-right-on-rectangle" class="h-4 w-4" /> {gettext("Log out")}
+                      <.icon name="hero-arrow-right-on-rectangle" class="h-4 w-4" /> {gettext(
+                        "Log out"
+                      )}
                     </.link>
                   </li>
                 </ul>
@@ -207,12 +211,12 @@ defmodule HomesiteWeb.Layouts do
     <dialog id="mobile_menu" class="modal">
       <div class="modal-box">
         <form method="dialog">
-          <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+          <button class="btn btn-sm btn-circle btn-ghost absolute top-2 right-2">
             <.icon name="hero-x-mark" class="h-5 w-5" />
           </button>
         </form>
 
-        <h3 class="font-display text-lg font-bold mb-4">{gettext("Menu")}</h3>
+        <h3 class="font-display mb-4 text-lg font-bold">{gettext("Menu")}</h3>
 
         <ul class="menu menu-vertical gap-2">
           <%= if @current_scope do %>
@@ -245,7 +249,7 @@ defmodule HomesiteWeb.Layouts do
               <div class="flex items-center gap-3 px-4 py-2">
                 <.avatar user={@current_scope.user} class="h-10 w-10" />
                 <div class="flex flex-col">
-                  <span class="font-semibold text-sm">
+                  <span class="text-sm font-semibold">
                     {@current_scope.user.display_name || @current_scope.user.email}
                   </span>
                   <span class="text-xs opacity-70">{@current_scope.user.email}</span>
@@ -259,7 +263,7 @@ defmodule HomesiteWeb.Layouts do
               </.link>
             </li>
             <li>
-              <.link href={~p"/users/log-out"} method="delete" class="text-base text-error">
+              <.link href={~p"/users/log-out"} method="delete" class="text-error text-base">
                 <.icon name="hero-arrow-right-on-rectangle" class="h-5 w-5" /> {gettext("Log out")}
               </.link>
             </li>

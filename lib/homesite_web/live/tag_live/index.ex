@@ -8,10 +8,10 @@ defmodule HomesiteWeb.TagLive.Index do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <.header>
-        Listing Tags
+        {gettext("Listing Tags")}
         <:actions>
           <.button variant="primary" navigate={~p"/tags/new"}>
-            <.icon name="hero-plus" /> New Tag
+            <.icon name="hero-plus" /> {gettext("New Tag")}
           </.button>
         </:actions>
       </.header>
@@ -21,21 +21,21 @@ defmodule HomesiteWeb.TagLive.Index do
         rows={@streams.tags}
         row_click={fn {_id, tag} -> JS.navigate(~p"/tags/#{tag}") end}
       >
-        <:col :let={{_id, tag}} label="Name">{tag.name}</:col>
-        <:col :let={{_id, tag}} label="Slug">{tag.slug}</:col>
-        <:col :let={{_id, tag}} label="Is public">{tag.is_public}</:col>
+        <:col :let={{_id, tag}} label={gettext("Name")}>{tag.name}</:col>
+        <:col :let={{_id, tag}} label={gettext("Slug")}>{tag.slug}</:col>
+        <:col :let={{_id, tag}} label={gettext("Is public")}>{tag.is_public}</:col>
         <:action :let={{_id, tag}}>
           <div class="sr-only">
-            <.link navigate={~p"/tags/#{tag}"}>Show</.link>
+            <.link navigate={~p"/tags/#{tag}"}>{gettext("Show")}</.link>
           </div>
-          <.link navigate={~p"/tags/#{tag}/edit"}>Edit</.link>
+          <.link navigate={~p"/tags/#{tag}/edit"}>{gettext("Edit")}</.link>
         </:action>
         <:action :let={{id, tag}}>
           <.link
             phx-click={JS.push("delete", value: %{id: tag.id}) |> hide("##{id}")}
-            data-confirm="Are you sure?"
+            data-confirm={gettext("Are you sure?")}
           >
-            Delete
+            {gettext("Delete")}
           </.link>
         </:action>
       </.table>
@@ -51,7 +51,7 @@ defmodule HomesiteWeb.TagLive.Index do
 
     {:ok,
      socket
-     |> assign(:page_title, "Listing Tags")
+     |> assign(:page_title, gettext("Listing Tags"))
      |> stream(:tags, list_tags(socket.assigns.current_scope))}
   end
 

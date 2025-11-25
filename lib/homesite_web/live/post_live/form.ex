@@ -91,7 +91,7 @@ defmodule HomesiteWeb.PostLive.Form do
             <input type="hidden" name="post[tag_ids][]" value="" />
             <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
               <%= for tag <- @available_tags do %>
-                <label class="label cursor-pointer justify-start gap-3 rounded-lg border border-base-300 p-3 hover:bg-base-200">
+                <label class="label border-base-300 cursor-pointer justify-start gap-3 rounded-lg border p-3 hover:bg-base-200">
                   <input
                     type="checkbox"
                     name="post[tag_ids][]"
@@ -106,7 +106,9 @@ defmodule HomesiteWeb.PostLive.Form do
               <% end %>
             </div>
             <p class="text-base-content/60 mt-3 text-sm">
-              <.icon name="hero-tag" class="inline h-4 w-4" /> {gettext("Select tags to categorize this post")}
+              <.icon name="hero-tag" class="inline h-4 w-4" /> {gettext(
+                "Select tags to categorize this post"
+              )}
             </p>
           <% end %>
         </div>
@@ -114,8 +116,12 @@ defmodule HomesiteWeb.PostLive.Form do
         <div class="divider"></div>
 
         <footer class="flex gap-3">
-          <.button phx-disable-with={gettext("Saving...")} variant="primary">{gettext("Save Post")}</.button>
-          <.button navigate={return_path(@current_scope, @return_to, @post)}>{gettext("Cancel")}</.button>
+          <.button phx-disable-with={gettext("Saving...")} variant="primary">
+            {gettext("Save Post")}
+          </.button>
+          <.button navigate={return_path(@current_scope, @return_to, @post)}>
+            {gettext("Cancel")}
+          </.button>
         </footer>
       </.form>
     </Layouts.app>
@@ -193,7 +199,11 @@ defmodule HomesiteWeb.PostLive.Form do
     changeset =
       Content.change_post(socket.assigns.current_scope, socket.assigns.post, post_params)
 
-    {:noreply, assign(socket, form: to_form(changeset, action: :validate), selected_tag_ids: selected_tag_ids)}
+    {:noreply,
+     assign(socket,
+       form: to_form(changeset, action: :validate),
+       selected_tag_ids: selected_tag_ids
+     )}
   end
 
   def handle_event("save", %{"post" => post_params}, socket) do
@@ -201,7 +211,8 @@ defmodule HomesiteWeb.PostLive.Form do
     post_params = combine_datetime(post_params)
 
     # Add selected tag IDs to params
-    post_params = Map.put(post_params, "tag_ids", Enum.map(socket.assigns.selected_tag_ids, &to_string/1))
+    post_params =
+      Map.put(post_params, "tag_ids", Enum.map(socket.assigns.selected_tag_ids, &to_string/1))
 
     save_post(socket, socket.assigns.live_action, post_params)
   end
