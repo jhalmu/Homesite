@@ -181,8 +181,13 @@ defmodule HomesiteWeb.PostLive.Form do
     # Preserve selected tags from params or keep existing selection
     selected_tag_ids =
       case post_params["tag_ids"] do
-        [_ | _] = ids -> Enum.map(ids, &String.to_integer/1)
-        _ -> socket.assigns.selected_tag_ids
+        [_ | _] = ids ->
+          ids
+          |> Enum.reject(&(&1 == ""))
+          |> Enum.map(&String.to_integer/1)
+
+        _ ->
+          socket.assigns.selected_tag_ids
       end
 
     changeset =
