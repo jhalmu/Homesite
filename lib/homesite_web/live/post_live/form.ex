@@ -88,7 +88,7 @@ defmodule HomesiteWeb.PostLive.Form do
                     type="checkbox"
                     name="post[tag_ids][]"
                     value={tag.id}
-                    checked={tag.id in Enum.map(@post.tags || [], & &1.id)}
+                    checked={tag.id in get_tag_ids(@post)}
                     class="checkbox checkbox-sm"
                   />
                   <span class="label-text">{tag.name}</span>
@@ -225,4 +225,10 @@ defmodule HomesiteWeb.PostLive.Form do
   end
 
   defp combine_datetime(params), do: params
+
+  # Helper to safely get tag IDs from a post, handling NotLoaded associations
+  defp get_tag_ids(%Post{tags: %Ecto.Association.NotLoaded{}}), do: []
+  defp get_tag_ids(%Post{tags: tags}) when is_list(tags), do: Enum.map(tags, & &1.id)
+  defp get_tag_ids(%Post{tags: nil}), do: []
+  defp get_tag_ids(_), do: []
 end
