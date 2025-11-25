@@ -4,6 +4,8 @@ defmodule HomesiteWeb.Layouts do
   used by your application.
   """
   use HomesiteWeb, :html
+
+  # Gettext is used in embedded HEEx templates (compiler can't detect usage in ~H sigils)
   import HomesiteWeb.Gettext
 
   # Embed all files in layouts/* within this module.

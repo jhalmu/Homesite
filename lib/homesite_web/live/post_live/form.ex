@@ -1,5 +1,7 @@
 defmodule HomesiteWeb.PostLive.Form do
   use HomesiteWeb, :live_view
+
+  # Gettext is used in ~H sigil templates (compiler can't detect usage in templates)
   import HomesiteWeb.Gettext
 
   alias Homesite.Content

@@ -5,7 +5,6 @@ defmodule HomesiteWeb.SetLocaleHook do
   This ensures locale is set correctly for LiveView WebSocket connections,
   not just the initial HTTP request.
   """
-  import Phoenix.Component
 
   def on_mount(:default, _params, _session, socket) do
     locale = get_locale_from_socket(socket)
