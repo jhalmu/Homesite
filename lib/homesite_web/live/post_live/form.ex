@@ -1,5 +1,6 @@
 defmodule HomesiteWeb.PostLive.Form do
   use HomesiteWeb, :live_view
+  import HomesiteWeb.Gettext
 
   alias Homesite.Content
   alias Homesite.Content.Post
@@ -10,31 +11,31 @@ defmodule HomesiteWeb.PostLive.Form do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <.header>
         {@page_title}
-        <:subtitle>Use this form to manage post records in your database.</:subtitle>
+        <:subtitle>{gettext("Use this form to manage post records in your database.")}</:subtitle>
       </.header>
 
       <.form for={@form} id="post-form" phx-change="validate" phx-submit="save">
         <div class="mb-4">
-          <.input field={@form[:title]} type="text" label="Title" />
+          <.input field={@form[:title]} type="text" label={gettext("Title")} />
           <%= if @form[:slug].value do %>
             <p class="text-base-content/60 mt-1 text-sm">
-              <.icon name="hero-link" class="inline h-4 w-4" /> Slug:
+              <.icon name="hero-link" class="inline h-4 w-4" /> {gettext("Slug")}:
               <span class="font-mono">{@form[:slug].value}</span>
             </p>
           <% end %>
         </div>
-        <.input field={@form[:body]} type="textarea" label="Body" />
+        <.input field={@form[:body]} type="textarea" label={gettext("Body")} />
 
         <div class="fieldset mb-4">
           <label class="label mb-2">
-            <span class="label-text font-semibold">Publication Date & Time</span>
+            <span class="label-text font-semibold">{gettext("Publication Date & Time")}</span>
           </label>
           <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <.input
                 field={@form[:publish_date]}
                 type="date"
-                label="Date"
+                label={gettext("Date")}
                 value={format_date(@form[:published_at].value)}
               />
             </div>
@@ -42,33 +43,41 @@ defmodule HomesiteWeb.PostLive.Form do
               <.input
                 field={@form[:publish_time]}
                 type="time"
-                label="Time"
+                label={gettext("Time")}
                 value={format_time(@form[:published_at].value)}
               />
             </div>
           </div>
           <p class="text-base-content/70 mt-2 text-sm">
             <.icon name="hero-information-circle" class="inline h-4 w-4" />
-            Select when this post should be published
+            {gettext("Select when this post should be published")}
           </p>
         </div>
 
-        <.input
-          field={@form[:is_public]}
-          type="checkbox"
-          label="Make this post publicly visible"
-        />
+        <div class="form-control">
+          <label class="label cursor-pointer justify-start gap-3">
+            <input
+              type="checkbox"
+              name={@form[:is_public].name}
+              value="true"
+              checked={@form[:is_public].value == true}
+              class="toggle toggle-primary"
+            />
+            <span class="label-text">{gettext("Make this post publicly visible")}</span>
+          </label>
+        </div>
 
         <div class="form-control">
           <label class="label">
-            <span class="label-text font-semibold">Tags</span>
+            <span class="label-text font-semibold">{gettext("Tags")}</span>
           </label>
           <%= if @available_tags == [] do %>
             <div class="alert alert-info">
               <.icon name="hero-information-circle" class="h-5 w-5" />
               <span>
-                No tags available. <.link navigate={~p"/tags/new"} class="link">Create a tag</.link>
-                first!
+                {gettext("No tags available.")}
+                <.link navigate={~p"/tags/new"} class="link">{gettext("Create a tag")}</.link>
+                {gettext("first!")}
               </span>
             </div>
           <% else %>
@@ -87,14 +96,14 @@ defmodule HomesiteWeb.PostLive.Form do
               <% end %>
             </div>
             <p class="text-base-content/70 mt-2 text-sm">
-              <.icon name="hero-tag" class="inline h-4 w-4" /> Select tags to categorize this post
+              <.icon name="hero-tag" class="inline h-4 w-4" /> {gettext("Select tags to categorize this post")}
             </p>
           <% end %>
         </div>
 
         <footer>
-          <.button phx-disable-with="Saving..." variant="primary">Save Post</.button>
-          <.button navigate={return_path(@current_scope, @return_to, @post)}>Cancel</.button>
+          <.button phx-disable-with={gettext("Saving...")} variant="primary">{gettext("Save Post")}</.button>
+          <.button navigate={return_path(@current_scope, @return_to, @post)}>{gettext("Cancel")}</.button>
         </footer>
       </.form>
     </Layouts.app>
@@ -120,7 +129,7 @@ defmodule HomesiteWeb.PostLive.Form do
     available_tags = Content.list_tags(socket.assigns.current_scope)
 
     socket
-    |> assign(:page_title, "Edit Post")
+    |> assign(:page_title, gettext("Edit Post"))
     |> assign(:post, post)
     |> assign(:available_tags, available_tags)
     |> assign(:form, to_form(Content.change_post(socket.assigns.current_scope, post)))
@@ -131,7 +140,7 @@ defmodule HomesiteWeb.PostLive.Form do
     available_tags = Content.list_tags(socket.assigns.current_scope)
 
     socket
-    |> assign(:page_title, "New Post")
+    |> assign(:page_title, gettext("New Post"))
     |> assign(:post, post)
     |> assign(:available_tags, available_tags)
     |> assign(:form, to_form(Content.change_post(socket.assigns.current_scope, post)))
@@ -159,7 +168,7 @@ defmodule HomesiteWeb.PostLive.Form do
       {:ok, post} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Post updated successfully")
+         |> put_flash(:info, gettext("Post updated successfully"))
          |> push_navigate(
            to: return_path(socket.assigns.current_scope, socket.assigns.return_to, post)
          )}
@@ -174,7 +183,7 @@ defmodule HomesiteWeb.PostLive.Form do
       {:ok, post} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Post created successfully")
+         |> put_flash(:info, gettext("Post created successfully"))
          |> push_navigate(
            to: return_path(socket.assigns.current_scope, socket.assigns.return_to, post)
          )}

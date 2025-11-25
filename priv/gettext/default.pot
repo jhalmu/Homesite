@@ -97,6 +97,7 @@ msgstr ""
 #: lib/homesite_web/components/layouts.ex:58
 #: lib/homesite_web/components/layouts.ex:163
 #: lib/homesite_web/components/layouts.ex:231
+#: lib/homesite_web/live/post_live/form.ex:72
 #, elixir-autogen, elixir-format
 msgid "Tags"
 msgstr ""
@@ -114,4 +115,139 @@ msgstr ""
 #: lib/homesite_web/components/core_components.ex:74
 #, elixir-autogen, elixir-format
 msgid "close"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/index.ex:38
+#, elixir-autogen, elixir-format
+msgid "Are you sure?"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:27
+#: lib/homesite_web/live/post_live/index.ex:26
+#, elixir-autogen, elixir-format
+msgid "Body"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:106
+#, elixir-autogen, elixir-format
+msgid "Cancel"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:79
+#, elixir-autogen, elixir-format
+msgid "Create a tag"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:38
+#, elixir-autogen, elixir-format
+msgid "Date"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/index.ex:40
+#, elixir-autogen, elixir-format
+msgid "Delete"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/index.ex:33
+#, elixir-autogen, elixir-format
+msgid "Edit"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:132
+#, elixir-autogen, elixir-format
+msgid "Edit Post"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/index.ex:12
+#: lib/homesite_web/live/post_live/index.ex:56
+#, elixir-autogen, elixir-format
+msgid "Listing Posts"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:66
+#, elixir-autogen, elixir-format
+msgid "Make this post publicly visible"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:143
+#: lib/homesite_web/live/post_live/index.ex:15
+#, elixir-autogen, elixir-format
+msgid "New Post"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:78
+#, elixir-autogen, elixir-format
+msgid "No tags available."
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:186
+#, elixir-autogen, elixir-format
+msgid "Post created successfully"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:171
+#, elixir-autogen, elixir-format
+msgid "Post updated successfully"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:31
+#, elixir-autogen, elixir-format
+msgid "Publication Date & Time"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/index.ex:28
+#, elixir-autogen, elixir-format
+msgid "Published at"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:105
+#, elixir-autogen, elixir-format
+msgid "Save Post"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:105
+#, elixir-autogen, elixir-format
+msgid "Saving..."
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:99
+#, elixir-autogen, elixir-format
+msgid "Select tags to categorize this post"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:53
+#, elixir-autogen, elixir-format
+msgid "Select when this post should be published"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/index.ex:31
+#, elixir-autogen, elixir-format
+msgid "Show"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:22
+#: lib/homesite_web/live/post_live/index.ex:27
+#, elixir-autogen, elixir-format
+msgid "Slug"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:46
+#, elixir-autogen, elixir-format
+msgid "Time"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:19
+#: lib/homesite_web/live/post_live/index.ex:25
+#, elixir-autogen, elixir-format
+msgid "Title"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:14
+#, elixir-autogen, elixir-format
+msgid "Use this form to manage post records in your database."
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:80
+#, elixir-autogen, elixir-format
+msgid "first!"
 msgstr ""

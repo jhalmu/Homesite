@@ -98,6 +98,7 @@ msgstr "Jokin meni pieleen!"
 #: lib/homesite_web/components/layouts.ex:58
 #: lib/homesite_web/components/layouts.ex:163
 #: lib/homesite_web/components/layouts.ex:231
+#: lib/homesite_web/live/post_live/form.ex:72
 #, elixir-autogen, elixir-format
 msgid "Tags"
 msgstr "Tagit"
@@ -116,3 +117,138 @@ msgstr "Internet-yhteyttä ei löydy"
 #, elixir-autogen, elixir-format
 msgid "close"
 msgstr "sulje"
+
+#: lib/homesite_web/live/post_live/index.ex:38
+#, elixir-autogen, elixir-format
+msgid "Are you sure?"
+msgstr "Oletko varma?"
+
+#: lib/homesite_web/live/post_live/form.ex:27
+#: lib/homesite_web/live/post_live/index.ex:26
+#, elixir-autogen, elixir-format
+msgid "Body"
+msgstr "Sisältö"
+
+#: lib/homesite_web/live/post_live/form.ex:106
+#, elixir-autogen, elixir-format
+msgid "Cancel"
+msgstr "Peruuta"
+
+#: lib/homesite_web/live/post_live/form.ex:79
+#, elixir-autogen, elixir-format
+msgid "Create a tag"
+msgstr "Luo tagi"
+
+#: lib/homesite_web/live/post_live/form.ex:38
+#, elixir-autogen, elixir-format
+msgid "Date"
+msgstr "Päivämäärä"
+
+#: lib/homesite_web/live/post_live/index.ex:40
+#, elixir-autogen, elixir-format
+msgid "Delete"
+msgstr "Poista"
+
+#: lib/homesite_web/live/post_live/index.ex:33
+#, elixir-autogen, elixir-format
+msgid "Edit"
+msgstr "Muokkaa"
+
+#: lib/homesite_web/live/post_live/form.ex:132
+#, elixir-autogen, elixir-format
+msgid "Edit Post"
+msgstr "Muokkaa kirjoitusta"
+
+#: lib/homesite_web/live/post_live/index.ex:12
+#: lib/homesite_web/live/post_live/index.ex:56
+#, elixir-autogen, elixir-format
+msgid "Listing Posts"
+msgstr "Kirjoitusten listaus"
+
+#: lib/homesite_web/live/post_live/form.ex:66
+#, elixir-autogen, elixir-format
+msgid "Make this post publicly visible"
+msgstr "Tee tästä kirjoituksesta julkinen"
+
+#: lib/homesite_web/live/post_live/form.ex:143
+#: lib/homesite_web/live/post_live/index.ex:15
+#, elixir-autogen, elixir-format
+msgid "New Post"
+msgstr "Uusi kirjoitus"
+
+#: lib/homesite_web/live/post_live/form.ex:78
+#, elixir-autogen, elixir-format
+msgid "No tags available."
+msgstr "Tageja ei saatavilla."
+
+#: lib/homesite_web/live/post_live/form.ex:186
+#, elixir-autogen, elixir-format
+msgid "Post created successfully"
+msgstr "Kirjoitus luotu onnistuneesti"
+
+#: lib/homesite_web/live/post_live/form.ex:171
+#, elixir-autogen, elixir-format
+msgid "Post updated successfully"
+msgstr "Kirjoitus päivitetty onnistuneesti"
+
+#: lib/homesite_web/live/post_live/form.ex:31
+#, elixir-autogen, elixir-format
+msgid "Publication Date & Time"
+msgstr "Julkaisupäivä ja -aika"
+
+#: lib/homesite_web/live/post_live/index.ex:28
+#, elixir-autogen, elixir-format
+msgid "Published at"
+msgstr "Julkaistu"
+
+#: lib/homesite_web/live/post_live/form.ex:105
+#, elixir-autogen, elixir-format
+msgid "Save Post"
+msgstr "Tallenna kirjoitus"
+
+#: lib/homesite_web/live/post_live/form.ex:105
+#, elixir-autogen, elixir-format
+msgid "Saving..."
+msgstr "Tallennetaan..."
+
+#: lib/homesite_web/live/post_live/form.ex:99
+#, elixir-autogen, elixir-format
+msgid "Select tags to categorize this post"
+msgstr "Valitse tagit luokitellaksesi tämän kirjoituksen"
+
+#: lib/homesite_web/live/post_live/form.ex:53
+#, elixir-autogen, elixir-format
+msgid "Select when this post should be published"
+msgstr "Valitse milloin tämä kirjoitus julkaistaan"
+
+#: lib/homesite_web/live/post_live/index.ex:31
+#, elixir-autogen, elixir-format
+msgid "Show"
+msgstr "Näytä"
+
+#: lib/homesite_web/live/post_live/form.ex:22
+#: lib/homesite_web/live/post_live/index.ex:27
+#, elixir-autogen, elixir-format
+msgid "Slug"
+msgstr "Osoitetunniste"
+
+#: lib/homesite_web/live/post_live/form.ex:46
+#, elixir-autogen, elixir-format
+msgid "Time"
+msgstr "Aika"
+
+#: lib/homesite_web/live/post_live/form.ex:19
+#: lib/homesite_web/live/post_live/index.ex:25
+#, elixir-autogen, elixir-format
+msgid "Title"
+msgstr "Otsikko"
+
+#: lib/homesite_web/live/post_live/form.ex:14
+#, elixir-autogen, elixir-format
+msgid "Use this form to manage post records in your database."
+msgstr "Käytä tätä lomaketta hallinnoidaksesi kirjoituksia tietokannassasi."
+
+#: lib/homesite_web/live/post_live/form.ex:80
+#, elixir-autogen, elixir-format
+msgid "first!"
+msgstr "ensin!"

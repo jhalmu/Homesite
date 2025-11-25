@@ -1,5 +1,6 @@
 defmodule HomesiteWeb.PostLive.Index do
   use HomesiteWeb, :live_view
+  import HomesiteWeb.Gettext
 
   alias Homesite.Content
 
@@ -8,10 +9,10 @@ defmodule HomesiteWeb.PostLive.Index do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <.header>
-        Listing Posts
+        {gettext("Listing Posts")}
         <:actions>
           <.button variant="primary" navigate={~p"/posts/new"}>
-            <.icon name="hero-plus" /> New Post
+            <.icon name="hero-plus" /> {gettext("New Post")}
           </.button>
         </:actions>
       </.header>
@@ -21,22 +22,22 @@ defmodule HomesiteWeb.PostLive.Index do
         rows={@streams.posts}
         row_click={fn {_id, post} -> JS.navigate(~p"/posts/#{post}") end}
       >
-        <:col :let={{_id, post}} label="Title">{post.title}</:col>
-        <:col :let={{_id, post}} label="Body">{post.body}</:col>
-        <:col :let={{_id, post}} label="Slug">{post.slug}</:col>
-        <:col :let={{_id, post}} label="Published at">{post.published_at}</:col>
+        <:col :let={{_id, post}} label={gettext("Title")}>{post.title}</:col>
+        <:col :let={{_id, post}} label={gettext("Body")}>{post.body}</:col>
+        <:col :let={{_id, post}} label={gettext("Slug")}>{post.slug}</:col>
+        <:col :let={{_id, post}} label={gettext("Published at")}>{post.published_at}</:col>
         <:action :let={{_id, post}}>
           <div class="sr-only">
-            <.link navigate={~p"/posts/#{post}"}>Show</.link>
+            <.link navigate={~p"/posts/#{post}"}>{gettext("Show")}</.link>
           </div>
-          <.link navigate={~p"/posts/#{post}/edit"}>Edit</.link>
+          <.link navigate={~p"/posts/#{post}/edit"}>{gettext("Edit")}</.link>
         </:action>
         <:action :let={{id, post}}>
           <.link
             phx-click={JS.push("delete", value: %{id: post.id}) |> hide("##{id}")}
-            data-confirm="Are you sure?"
+            data-confirm={gettext("Are you sure?")}
           >
-            Delete
+            {gettext("Delete")}
           </.link>
         </:action>
       </.table>
@@ -52,7 +53,7 @@ defmodule HomesiteWeb.PostLive.Index do
 
     {:ok,
      socket
-     |> assign(:page_title, "Listing Posts")
+     |> assign(:page_title, gettext("Listing Posts"))
      |> stream(:posts, list_posts(socket.assigns.current_scope))}
   end
 
