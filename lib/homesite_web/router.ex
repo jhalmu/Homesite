@@ -42,7 +42,10 @@ defmodule HomesiteWeb.Router do
     pipe_through :browser
 
     live_session :public,
-      on_mount: [{HomesiteWeb.UserAuth, :mount_current_scope}] do
+      on_mount: [
+        {HomesiteWeb.UserAuth, :mount_current_scope},
+        {HomesiteWeb.SetLocaleHook, :default}
+      ] do
       live "/", PageLive.Home, :index
     end
   end
@@ -75,7 +78,10 @@ defmodule HomesiteWeb.Router do
     pipe_through [:browser, :require_authenticated_user]
 
     live_session :require_authenticated_user,
-      on_mount: [{HomesiteWeb.UserAuth, :require_authenticated}] do
+      on_mount: [
+        {HomesiteWeb.UserAuth, :require_authenticated},
+        {HomesiteWeb.SetLocaleHook, :default}
+      ] do
       live "/dashboard", DashboardLive.Index, :index
 
       live "/posts", PostLive.Index, :index
@@ -100,7 +106,10 @@ defmodule HomesiteWeb.Router do
     pipe_through [:browser, :require_authenticated_user]
 
     live_session :require_admin,
-      on_mount: [{HomesiteWeb.UserAuth, :require_authenticated}] do
+      on_mount: [
+        {HomesiteWeb.UserAuth, :require_authenticated},
+        {HomesiteWeb.SetLocaleHook, :default}
+      ] do
       live "/admin", AdminLive.Index, :index
       live "/admin/users", AdminLive.Users.Index, :index
     end
@@ -131,7 +140,10 @@ defmodule HomesiteWeb.Router do
     end
 
     live_session :login,
-      on_mount: [{HomesiteWeb.UserAuth, :mount_current_scope}] do
+      on_mount: [
+        {HomesiteWeb.UserAuth, :mount_current_scope},
+        {HomesiteWeb.SetLocaleHook, :default}
+      ] do
       live "/users/log-in", UserLive.Login, :new
       live "/users/log-in/:token", UserLive.Confirmation, :new
     end
