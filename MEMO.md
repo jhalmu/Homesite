@@ -4,6 +4,141 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-11-25 20:30:00 - 21:15:00 [Session COMPLETED]
+
+### Session: Complete i18n Translation Coverage - All Forms & Views
+
+#### Completed ✅
+
+**Comprehensive Translation Implementation:**
+- ✅ Translated ALL remaining UI strings across the entire application
+- ✅ Added 90+ new translatable strings to gettext catalogs
+- ✅ Created Finnish translations for all new strings
+- ✅ Fixed critical LiveView locale persistence issue
+
+**Files Translated:**
+1. **TagLive.Index** - Listing, actions, table headers
+2. **TagLive.Show** - Tag details, post sections, empty states
+3. **TagLive.Form** - Form labels, help text, flash messages
+4. **UserLive.Settings** - Profile, email, password sections, all form fields
+5. **UserLive.Login** - Login form, flash messages, mail adapter warnings
+6. **UserLive.Registration** - Registration form, flash messages
+7. **DashboardLive.Index** - Welcome, stats, quick actions, recent posts, empty states
+8. **AdminLive.Index** - Admin header, system overview, flower permission system
+
+**Translation Extraction:**
+- ✅ Ran `mix gettext.extract --merge` successfully
+- ✅ Extracted 90 new messages, 0 removed, 46 unchanged, 10 reworded (fuzzy)
+- ✅ Used Python script to programmatically add all Finnish translations
+
+**Critical Bug Fix - LiveView Locale Persistence:**
+- **Problem:** Translations appeared briefly then reverted to English (Finnish "flashing" on reload)
+- **Root Cause:** SetLocale plug only runs on HTTP requests; LiveView WebSocket bypasses browser pipeline
+- **Solution:** Created SetLocaleHook module with on_mount callback
+- ✅ Reads user's preferred_language from socket.assigns.current_scope
+- ✅ Calls Gettext.put_locale() for every LiveView mount
+- ✅ Added hook to ALL 4 live_session blocks in router:
+  - :public session
+  - :require_authenticated_user session
+  - :require_admin session
+  - :login session
+
+**Translation Examples (Finnish):**
+- "Account Settings" → "Tilin asetukset"
+- "New Post" → "Uusi kirjoitus"
+- "Admin Dashboard" → "Ylläpidon kojelauta"
+- "Welcome back" → "Tervetuloa takaisin"
+- "Flower Permission System" → "Kukka-oikeusjärjestelmä"
+- "You haven't created any posts yet." → "Et ole vielä luonut yhtään kirjoitusta."
+- "Use this form to manage tag records in your database." → "Käytä tätä lomaketta tagien hallintaan."
+
+**Files Created:**
+- `lib/homesite_web/live/set_locale_hook.ex` - LiveView locale persistence hook
+
+**Files Modified:**
+- `lib/homesite_web/live/tag_live/index.ex` - Added gettext() calls
+- `lib/homesite_web/live/tag_live/show.ex` - Added gettext() calls
+- `lib/homesite_web/live/tag_live/form.ex` - Added gettext() calls
+- `lib/homesite_web/live/user_live/settings.ex` - Added gettext() calls (profile, email, password)
+- `lib/homesite_web/live/user_live/login.ex` - Added gettext() calls
+- `lib/homesite_web/live/user_live/registration.ex` - Added gettext() calls
+- `lib/homesite_web/live/dashboard_live/index.html.heex` - Added gettext() calls
+- `lib/homesite_web/live/admin_live/index.html.heex` - Added gettext() calls
+- `lib/homesite_web/router.ex` - Added SetLocaleHook to all live_session blocks
+- `priv/gettext/fi/LC_MESSAGES/default.po` - Added 90+ Finnish translations
+- `priv/gettext/default.pot` - Updated template with new strings
+
+**Commits:**
+- 3b2101f - Add comprehensive i18n translations for all forms and views (10 files, 189 insertions)
+- 0901cef - Add Finnish translations for 90+ UI strings (3 files, 1704 insertions)
+- da3ba0d - Fix i18n translations not appearing in LiveView (2 files, 41 insertions)
+
+#### Current Status
+- **Translation Coverage:** 100% of UI strings in forms and views ✅
+- **Total Translations:** 110+ Finnish translations ✅
+- **LiveView Locale:** Persists correctly across WebSocket connections ✅
+- **Server:** Running at http://localhost:4000 ✅
+- **Pushed to GitHub:** All commits pushed successfully ✅
+
+#### How to Use
+Users can now:
+1. Navigate to http://localhost:4000/users/settings
+2. Change "Preferred Language" to "Suomi (Finnish)"
+3. Click "Päivitä profiili" (Update Profile)
+4. All pages will display in Finnish immediately and persist across navigation
+
+#### Technical Implementation Details
+
+**SetLocaleHook Module:**
+```elixir
+def on_mount(:default, _params, _session, socket) do
+  locale = get_locale_from_socket(socket)
+  Gettext.put_locale(HomesiteWeb.Gettext, locale)
+  {:cont, socket}
+end
+```
+
+**Locale Detection Priority:**
+1. User's preferred_language from database (via current_scope)
+2. Falls back to "en" if not set or invalid
+
+**Router Integration:**
+```elixir
+live_session :require_authenticated_user,
+  on_mount: [
+    {HomesiteWeb.UserAuth, :require_authenticated},
+    {HomesiteWeb.SetLocaleHook, :default}
+  ] do
+  # ... routes
+end
+```
+
+#### Notes
+- Gettext extracts strings at compile time for performance
+- Translation persistence now works correctly across LiveView reconnections
+- Browser pipeline SetLocale plug handles initial HTTP request
+- SetLocaleHook handles all subsequent LiveView WebSocket connections
+- All flash messages, error messages, and UI strings are now translatable
+
+#### Next Steps / Future Enhancements
+
+**Remaining TODO from Previous Session:**
+1. **Tag Display System** - Design how tags appear in post listings and individual posts
+2. **Post Display Styling** - Better typography, code highlighting, meta info
+3. **Post Visibility Feature** - Enum-based visibility (public/authenticated/private)
+4. **Settings Page Improvements** - Better organization of sections
+5. **Tag Management UX** - Inline tag creation, better editing flow
+
+**Translation System:**
+- ✅ All forms and views translated
+- ✅ Navigation and menus translated (previous session)
+- ✅ Footer translated (previous session)
+- ✅ Post forms translated (previous session)
+- Consider translating error messages in errors.po (optional)
+- Consider translating validation messages (optional)
+
+---
+
 ## 2025-11-25 16:45:00 - 17:00:00 [Session COMPLETED]
 
 ### Session: Post Form Translations & Tag System UX Improvements
