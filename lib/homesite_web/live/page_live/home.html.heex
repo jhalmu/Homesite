@@ -21,52 +21,78 @@
     
 <!-- Recent Posts -->
     <div>
-      <h2 class="text-[clamp(1.75rem,5vw,2.5rem)] mb-[clamp(1.5rem,4vw,2rem)] font-bold">
+      <h2 class="text-3xl font-bold mb-8 text-center">
         Recent Posts
       </h2>
 
-      <div :if={length(@posts) == 0} class="alert alert-info">
+      <div :if={length(@posts) == 0} class="alert alert-info max-w-4xl mx-auto">
         <.icon name="hero-information-circle" class="h-6 w-6" />
         <span>No published posts yet. Be the first to share something!</span>
       </div>
 
-      <div
-        :if={length(@posts) > 0}
-        class="gap-[clamp(1rem,3vw,2rem)] grid w-full"
-        style="grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));"
-      >
-        <%= for post <- @posts do %>
-          <.link navigate={~p"/posts/#{post.id}"} class="group">
-            <article class="card bg-base-200 h-full shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl">
-              <div class="card-body">
-                <h3 class="card-title text-[clamp(1.25rem,3vw,1.5rem)] transition-colors group-hover:text-primary">
-                  {post.title}
-                </h3>
+      <%= if length(@posts) > 0 do %>
+        <% {featured_posts, rest_posts} = Enum.split(@posts, 3) %>
 
-                <.author_byline user={post.user} date={post.published_at} class="mb-3" />
+        <!-- Featured Posts (Newest 3) -->
+        <div :if={length(featured_posts) > 0} class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+          <%= for post <- featured_posts do %>
+            <.link navigate={~p"/posts/#{post.id}"} class="group">
+              <article class="card bg-base-200 h-full shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl">
+                <div class="card-body">
+                  <h3 class="card-title text-xl transition-colors group-hover:text-primary">
+                    {post.title}
+                  </h3>
 
-                <p :if={post.body} class="line-clamp-3 text-sm opacity-80">
-                  {String.slice(post.body, 0, 200)}{if String.length(post.body) > 200, do: "..."}
+                  <.author_byline user={post.user} date={post.published_at} class="mb-3" />
+
+                  <p :if={post.body} class="line-clamp-3 text-sm opacity-80">
+                    {String.slice(post.body, 0, 150)}{if String.length(post.body) > 150, do: "..."}
+                  </p>
+
+                  <div class="card-actions mt-4 justify-end">
+                    <span class="text-primary text-sm opacity-0 transition-opacity group-hover:opacity-100">
+                      Read more →
+                    </span>
+                  </div>
+                </div>
+              </article>
+            </.link>
+          <% end %>
+        </div>
+
+        <!-- Older Posts (List View) -->
+        <div :if={length(rest_posts) > 0} class="max-w-4xl mx-auto">
+          <h3 class="text-2xl font-bold mb-6 text-center">
+            More Posts
+          </h3>
+
+          <div class="space-y-8">
+            <%= for post <- rest_posts do %>
+              <article class="border-b border-base-300 pb-8 last:border-b-0">
+                <.link navigate={~p"/posts/#{post.id}"} class="block group">
+                  <h4 class="text-2xl font-bold mb-2 transition-colors group-hover:text-primary">
+                    {post.title}
+                  </h4>
+                </.link>
+
+                <.author_byline user={post.user} date={post.published_at} class="mb-4" />
+
+                <p :if={post.body} class="text-base-content/80 mb-4 leading-relaxed">
+                  {String.slice(post.body, 0, 300)}{if String.length(post.body) > 300, do: "..."}
                 </p>
 
-                <div class="card-actions mt-4 items-center justify-between">
-                  <.link
-                    navigate={~p"/users/#{post.user.id}"}
-                    class="btn btn-sm btn-ghost gap-2"
-                    onclick="event.stopPropagation()"
-                  >
-                    <.avatar user={post.user} class="h-6 w-6" /> {post.user.display_name ||
-                      String.slice(post.user.email, 0, 10)}
-                  </.link>
-                  <span class="text-primary text-sm opacity-0 transition-opacity group-hover:opacity-100">
-                    Read more →
-                  </span>
-                </div>
-              </div>
-            </article>
-          </.link>
-        <% end %>
-      </div>
+                <.link
+                  navigate={~p"/posts/#{post.id}"}
+                  class="text-primary hover:text-primary-focus transition-colors inline-flex items-center gap-2"
+                >
+                  Read more
+                  <.icon name="hero-arrow-right" class="h-4 w-4" />
+                </.link>
+              </article>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
     </div>
   </div>
 </Layouts.app>
