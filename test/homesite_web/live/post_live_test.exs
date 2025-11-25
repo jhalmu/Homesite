@@ -102,8 +102,8 @@ defmodule HomesiteWeb.PostLiveTest do
     test "displays post", %{conn: conn, post: post} do
       {:ok, _show_live, html} = live(conn, ~p"/posts/#{post}")
 
-      assert html =~ "Show Post"
       assert html =~ post.title
+      assert html =~ post.body
     end
 
     test "updates post and returns to show", %{conn: conn, post: post} do

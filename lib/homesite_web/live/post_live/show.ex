@@ -42,17 +42,25 @@ defmodule HomesiteWeb.PostLive.Show do
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
-    if connected?(socket) do
-      Content.subscribe_posts(socket.assigns.current_scope)
-    end
+    current_scope = socket.assigns.current_scope
 
-    post = Content.get_post_by_id!(socket.assigns.current_scope, id)
-    current_user_id = socket.assigns.current_scope.user.id
-    can_edit = post.user_id == current_user_id
+    # Fetch post based on authentication status
+    post =
+      if current_scope do
+        # Authenticated: can see public posts + own posts
+        if connected?(socket), do: Content.subscribe_posts(current_scope)
+        Content.get_post_by_id!(current_scope, id)
+      else
+        # Not authenticated: can only see public posts
+        Content.get_public_post!(id)
+      end
+
+    # Check if current user can edit (only if authenticated and is owner)
+    can_edit = current_scope && post.user_id == current_scope.user.id
 
     {:ok,
      socket
-     |> assign(:page_title, "Show Post")
+     |> assign(:page_title, post.title)
      |> assign(:post, post)
      |> assign(:can_edit, can_edit)}
   end

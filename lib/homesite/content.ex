@@ -333,6 +333,28 @@ defmodule Homesite.Content do
   end
 
   @doc """
+  Gets a single public post by ID without requiring authentication.
+
+  Returns only posts with is_public = true.
+  Raises `Ecto.NoResultsError` if the Post does not exist or is not public.
+
+  ## Examples
+
+      iex> get_public_post!(123)
+      %Post{}
+
+      iex> get_public_post!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_public_post!(id) do
+    Post
+    |> where([p], p.id == ^id and p.is_public == true)
+    |> Repo.one!()
+    |> Repo.preload(:user)
+  end
+
+  @doc """
   Creates a post.
 
   ## Examples

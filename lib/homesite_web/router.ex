@@ -87,7 +87,6 @@ defmodule HomesiteWeb.Router do
       live "/posts", PostLive.Index, :index
       live "/posts/new", PostLive.Form, :new
       live "/posts/:id/edit", PostLive.Form, :edit
-      live "/posts/:id", PostLive.Show, :show
 
       live "/tags", TagLive.Index, :index
       live "/tags/new", TagLive.Form, :new
@@ -155,8 +154,12 @@ defmodule HomesiteWeb.Router do
     pipe_through [:browser]
 
     live_session :current_user,
-      on_mount: [{HomesiteWeb.UserAuth, :mount_current_scope}] do
+      on_mount: [
+        {HomesiteWeb.UserAuth, :mount_current_scope},
+        {HomesiteWeb.SetLocaleHook, :default}
+      ] do
       live "/users/:id", UserLive.Profile, :show
+      live "/posts/:id", PostLive.Show, :show
     end
 
     delete "/users/log-out", UserSessionController, :delete
