@@ -4,6 +4,7 @@ defmodule HomesiteWeb.Layouts do
   used by your application.
   """
   use HomesiteWeb, :html
+  import HomesiteWeb.Gettext
 
   # Embed all files in layouts/* within this module.
   # The default root.html.heex file contains the HTML
@@ -45,27 +46,27 @@ defmodule HomesiteWeb.Layouts do
           <.pegasus class="h-20 w-20" />
           <p class="font-semibold">
             homesite <br />
-            <span class="text-sm font-normal opacity-70">Personal blogging platform</span>
+            <span class="text-sm font-normal opacity-70">{gettext("Personal blogging platform")}</span>
           </p>
         </div>
         <div>
-          <span class="footer-title">Platform</span>
-          <a href="/" class="link-hover link">Home</a>
+          <span class="footer-title">{gettext("Platform")}</span>
+          <a href="/" class="link-hover link">{gettext("Home")}</a>
           <%= if @current_scope do %>
-            <a href="/dashboard" class="link-hover link">Dashboard</a>
-            <a href="/posts" class="link-hover link">Posts</a>
-            <a href="/tags" class="link-hover link">Tags</a>
+            <a href="/dashboard" class="link-hover link">{gettext("Dashboard")}</a>
+            <a href="/posts" class="link-hover link">{gettext("Posts")}</a>
+            <a href="/tags" class="link-hover link">{gettext("Tags")}</a>
           <% end %>
         </div>
         <div>
-          <span class="footer-title">Built with</span>
+          <span class="footer-title">{gettext("Built with")}</span>
           <p class="text-sm opacity-70">Phoenix Framework</p>
           <p class="text-sm opacity-70">Elixir</p>
           <p class="text-sm opacity-70">Tailwind CSS & DaisyUI</p>
         </div>
       </div>
       <div class="border-base-300 bg-base-200/50 border-t px-4 py-4 text-center text-sm opacity-70">
-        <p>© {Date.utc_today().year} Homesite. Built with ❤️ and Elixir.</p>
+        <p>© {Date.utc_today().year} Homesite. {gettext("Built with ❤️ and Elixir.")}</p>
       </div>
     </footer>
 
@@ -136,27 +137,34 @@ defmodule HomesiteWeb.Layouts do
           navigate={~p"/"}
           class="btn btn-ghost text-[clamp(1rem,2.5vw,1.5rem)] gap-[clamp(0.5rem,2vw,1rem)] items-center"
         >
-          <div class="relative overflow-visible rounded-full bg-white p-2 shadow-lg">
-            <.pegasus class="absolute -inset-2 h-28 w-28" />
-          </div>
+          <.pegasus class="h-20 w-20" />
           <span class="font-display">homesite</span>
         </.link>
       </div>
-      <div class="gap-[clamp(0.5rem,2vw,1rem)] flex-none">
+
+      <%!-- Mobile menu button --%>
+      <div class="flex-none lg:hidden">
+        <button class="btn btn-square btn-ghost" onclick="mobile_menu.showModal()">
+          <.icon name="hero-bars-3" class="h-6 w-6" />
+        </button>
+      </div>
+
+      <%!-- Desktop navigation --%>
+      <div class="gap-[clamp(0.5rem,2vw,1rem)] flex-none hidden lg:flex">
         <ul class="menu menu-horizontal gap-[clamp(0.25rem,1vw,0.5rem)]">
           <%= if @current_scope do %>
             <li>
-              <.link navigate={~p"/dashboard"}>Dashboard</.link>
+              <.link navigate={~p"/dashboard"}>{gettext("Dashboard")}</.link>
             </li>
             <li>
-              <.link navigate={~p"/posts"}>Posts</.link>
+              <.link navigate={~p"/posts"}>{gettext("Posts")}</.link>
             </li>
             <li>
-              <.link navigate={~p"/tags"}>Tags</.link>
+              <.link navigate={~p"/tags"}>{gettext("Tags")}</.link>
             </li>
             <%= if Homesite.Accounts.Scope.admin?(@current_scope) do %>
               <li>
-                <.link navigate={~p"/admin"}>Admin</.link>
+                <.link navigate={~p"/admin"}>{gettext("Admin")}</.link>
               </li>
             <% end %>
             <li>
@@ -168,12 +176,12 @@ defmodule HomesiteWeb.Layouts do
                 <ul class="bg-base-100 z-50 rounded-t-none p-2">
                   <li>
                     <.link navigate={~p"/users/settings"}>
-                      <.icon name="hero-cog-6-tooth" class="h-4 w-4" /> Settings
+                      <.icon name="hero-cog-6-tooth" class="h-4 w-4" /> {gettext("Settings")}
                     </.link>
                   </li>
                   <li>
                     <.link href={~p"/users/log-out"} method="delete">
-                      <.icon name="hero-arrow-right-on-rectangle" class="h-4 w-4" /> Log out
+                      <.icon name="hero-arrow-right-on-rectangle" class="h-4 w-4" /> {gettext("Log out")}
                     </.link>
                   </li>
                 </ul>
@@ -182,10 +190,10 @@ defmodule HomesiteWeb.Layouts do
           <% else %>
             <%!-- Registration disabled for testing phase --%>
             <%!-- <li>
-              <.link navigate={~p"/users/register"}>Register</.link>
+              <.link navigate={~p"/users/register"}>{gettext("Register")}</.link>
             </li> --%>
             <li>
-              <.link navigate={~p"/users/log-in"} class="btn btn-primary">Log in</.link>
+              <.link navigate={~p"/users/log-in"} class="btn btn-primary">{gettext("Log in")}</.link>
             </li>
           <% end %>
           <li>
@@ -194,6 +202,90 @@ defmodule HomesiteWeb.Layouts do
         </ul>
       </div>
     </div>
+
+    <%!-- Mobile navigation modal --%>
+    <dialog id="mobile_menu" class="modal">
+      <div class="modal-box">
+        <form method="dialog">
+          <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+            <.icon name="hero-x-mark" class="h-5 w-5" />
+          </button>
+        </form>
+
+        <h3 class="font-display text-lg font-bold mb-4">{gettext("Menu")}</h3>
+
+        <ul class="menu menu-vertical gap-2">
+          <%= if @current_scope do %>
+            <li>
+              <.link navigate={~p"/dashboard"} class="text-base">
+                <.icon name="hero-home" class="h-5 w-5" /> {gettext("Dashboard")}
+              </.link>
+            </li>
+            <li>
+              <.link navigate={~p"/posts"} class="text-base">
+                <.icon name="hero-document-text" class="h-5 w-5" /> {gettext("Posts")}
+              </.link>
+            </li>
+            <li>
+              <.link navigate={~p"/tags"} class="text-base">
+                <.icon name="hero-tag" class="h-5 w-5" /> {gettext("Tags")}
+              </.link>
+            </li>
+            <%= if Homesite.Accounts.Scope.admin?(@current_scope) do %>
+              <li>
+                <.link navigate={~p"/admin"} class="text-base">
+                  <.icon name="hero-shield-check" class="h-5 w-5" /> {gettext("Admin")}
+                </.link>
+              </li>
+            <% end %>
+
+            <div class="divider my-2"></div>
+
+            <li>
+              <div class="flex items-center gap-3 px-4 py-2">
+                <.avatar user={@current_scope.user} class="h-10 w-10" />
+                <div class="flex flex-col">
+                  <span class="font-semibold text-sm">
+                    {@current_scope.user.display_name || @current_scope.user.email}
+                  </span>
+                  <span class="text-xs opacity-70">{@current_scope.user.email}</span>
+                </div>
+              </div>
+            </li>
+
+            <li>
+              <.link navigate={~p"/users/settings"} class="text-base">
+                <.icon name="hero-cog-6-tooth" class="h-5 w-5" /> {gettext("Settings")}
+              </.link>
+            </li>
+            <li>
+              <.link href={~p"/users/log-out"} method="delete" class="text-base text-error">
+                <.icon name="hero-arrow-right-on-rectangle" class="h-5 w-5" /> {gettext("Log out")}
+              </.link>
+            </li>
+          <% else %>
+            <li>
+              <.link navigate={~p"/users/log-in"} class="btn btn-primary">
+                <.icon name="hero-arrow-right-on-rectangle" class="h-5 w-5" /> {gettext("Log in")}
+              </.link>
+            </li>
+          <% end %>
+
+          <div class="divider my-2"></div>
+
+          <li class="px-4">
+            <div class="flex items-center justify-between">
+              <span class="text-sm opacity-70">{gettext("Theme")}</span>
+              <.theme_toggle />
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+      </form>
+    </dialog>
     """
   end
 

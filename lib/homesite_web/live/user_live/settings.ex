@@ -65,6 +65,12 @@ defmodule HomesiteWeb.UserLive.Settings do
           label="Mastodon Handle"
           placeholder="@username@mastodon.social"
         />
+        <.input
+          field={@profile_form[:preferred_language]}
+          type="select"
+          label="Preferred Language"
+          options={[{"English", "en"}, {"Suomi (Finnish)", "fi"}]}
+        />
         <.button variant="primary" phx-disable-with="Saving...">Update Profile</.button>
       </.form>
 

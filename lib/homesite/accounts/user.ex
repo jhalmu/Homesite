@@ -24,6 +24,9 @@ defmodule Homesite.Accounts.User do
     field :role, :string, default: "user"
     field :admin_flowers, :integer, default: 0
 
+    # Localization
+    field :preferred_language, :string, default: "en"
+
     has_many :posts, Homesite.Content.Post
     has_many :tags, Homesite.Content.Tag
 
@@ -149,12 +152,21 @@ defmodule Homesite.Accounts.User do
   """
   def profile_changeset(user, attrs) do
     user
-    |> cast(attrs, [:display_name, :avatar, :bio, :website_url, :bluesky_handle, :mastodon_handle])
+    |> cast(attrs, [
+      :display_name,
+      :avatar,
+      :bio,
+      :website_url,
+      :bluesky_handle,
+      :mastodon_handle,
+      :preferred_language
+    ])
     |> validate_length(:display_name, max: 100)
     |> validate_length(:bio, max: 500)
     |> validate_url(:website_url)
     |> validate_social_handle(:bluesky_handle)
     |> validate_social_handle(:mastodon_handle)
+    |> validate_inclusion(:preferred_language, ["en", "fi"])
   end
 
   defp validate_url(changeset, field) do

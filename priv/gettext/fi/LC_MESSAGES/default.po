@@ -1,0 +1,118 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: fi\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: lib/homesite_web/components/core_components.ex:336
+#, elixir-autogen, elixir-format
+msgid "Actions"
+msgstr "Toiminnot"
+
+#: lib/homesite_web/components/layouts.ex:167
+#: lib/homesite_web/components/layouts.ex:237
+#, elixir-autogen, elixir-format
+msgid "Admin"
+msgstr "Ylläpito"
+
+#: lib/homesite_web/components/layouts.ex:101
+#: lib/homesite_web/components/layouts.ex:113
+#, elixir-autogen, elixir-format
+msgid "Attempting to reconnect"
+msgstr "Yritetään yhdistää uudelleen"
+
+#: lib/homesite_web/components/layouts.ex:62
+#, elixir-autogen, elixir-format
+msgid "Built with"
+msgstr "Rakennettu"
+
+#: lib/homesite_web/components/layouts.ex:69
+#, elixir-autogen, elixir-format
+msgid "Built with ❤️ and Elixir."
+msgstr "Rakennettu ❤️:llä ja Elixirillä."
+
+#: lib/homesite_web/components/layouts.ex:56
+#: lib/homesite_web/components/layouts.ex:157
+#: lib/homesite_web/components/layouts.ex:221
+#, elixir-autogen, elixir-format
+msgid "Dashboard"
+msgstr "Kojelauta"
+
+#: lib/homesite_web/components/layouts.ex:54
+#, elixir-autogen, elixir-format
+msgid "Home"
+msgstr "Etusivu"
+
+#: lib/homesite_web/components/layouts.ex:196
+#: lib/homesite_web/components/layouts.ex:269
+#, elixir-autogen, elixir-format
+msgid "Log in"
+msgstr "Kirjaudu sisään"
+
+#: lib/homesite_web/components/layouts.ex:184
+#: lib/homesite_web/components/layouts.ex:263
+#, elixir-autogen, elixir-format
+msgid "Log out"
+msgstr "Kirjaudu ulos"
+
+#: lib/homesite_web/components/layouts.ex:215
+#, elixir-autogen, elixir-format
+msgid "Menu"
+msgstr "Valikko"
+
+#: lib/homesite_web/components/layouts.ex:49
+#, elixir-autogen, elixir-format
+msgid "Personal blogging platform"
+msgstr "Henkilökohtainen bloggausalusta"
+
+#: lib/homesite_web/components/layouts.ex:53
+#, elixir-autogen, elixir-format
+msgid "Platform"
+msgstr "Alusta"
+
+#: lib/homesite_web/components/layouts.ex:57
+#: lib/homesite_web/components/layouts.ex:160
+#: lib/homesite_web/components/layouts.ex:226
+#, elixir-autogen, elixir-format
+msgid "Posts"
+msgstr "Kirjoitukset"
+
+#: lib/homesite_web/components/layouts.ex:179
+#: lib/homesite_web/components/layouts.ex:258
+#, elixir-autogen, elixir-format
+msgid "Settings"
+msgstr "Asetukset"
+
+#: lib/homesite_web/components/layouts.ex:108
+#, elixir-autogen, elixir-format
+msgid "Something went wrong!"
+msgstr "Jokin meni pieleen!"
+
+#: lib/homesite_web/components/layouts.ex:58
+#: lib/homesite_web/components/layouts.ex:163
+#: lib/homesite_web/components/layouts.ex:231
+#, elixir-autogen, elixir-format
+msgid "Tags"
+msgstr "Tagit"
+
+#: lib/homesite_web/components/layouts.ex:278
+#, elixir-autogen, elixir-format
+msgid "Theme"
+msgstr "Teema"
+
+#: lib/homesite_web/components/layouts.ex:96
+#, elixir-autogen, elixir-format
+msgid "We can't find the internet"
+msgstr "Internet-yhteyttä ei löydy"
+
+#: lib/homesite_web/components/core_components.ex:74
+#, elixir-autogen, elixir-format
+msgid "close"
+msgstr "sulje"

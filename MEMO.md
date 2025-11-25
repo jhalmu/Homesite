@@ -4,6 +4,107 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-11-25 14:00:00 - 16:10:00 [Session COMPLETED]
+
+### Session: Internationalization (i18n) - English & Finnish Support
+
+#### Completed - Full i18n Implementation ✅
+
+**Database & Schema:**
+- ✅ Added `preferred_language` field to users table (default: "en")
+- ✅ Updated User schema with language preference support
+- ✅ Updated profile changeset to accept and validate language selection
+
+**Gettext Configuration:**
+- ✅ Configured Gettext in config.exs with English and Finnish locales
+- ✅ Created SetLocale plug for automatic locale detection
+- ✅ Plug checks: user preference → browser language → default (en)
+- ✅ Added plug to browser pipeline in router
+
+**Translation Infrastructure:**
+- ✅ Extracted 19 UI strings from navigation, menus, and footer
+- ✅ Created Finnish translations for all strings
+- ✅ Set up translation files:
+  - `priv/gettext/default.pot` - template
+  - `priv/gettext/en/LC_MESSAGES/default.po` - English (19 strings)
+  - `priv/gettext/fi/LC_MESSAGES/default.po` - Finnish (19 strings, translated)
+  - Error message files for both locales
+
+**UI Updates:**
+- ✅ Wrapped navigation strings with `gettext()` calls
+- ✅ Updated navbar (desktop + mobile menu)
+- ✅ Updated footer
+- ✅ Added language selector to settings page (English / Suomi dropdown)
+
+**Finnish Translations:**
+- Dashboard → Kojelauta
+- Posts → Kirjoitukset
+- Tags → Tagit
+- Settings → Asetukset
+- Log in → Kirjaudu sisään
+- Log out → Kirjaudu ulos
+- Menu → Valikko
+- Theme → Teema
+- Admin → Ylläpito
+- Home → Etusivu
+- (and 9 more...)
+
+#### Technical Implementation Details
+
+**Locale Detection Priority:**
+1. Authenticated user's `preferred_language` setting (from database)
+2. Browser's `Accept-Language` header
+3. Default: English ("en")
+
+**Files Modified:**
+- Migration: `20251125140656_add_preferred_language_to_users.exs`
+- `lib/homesite/accounts/user.ex` - Added language field and validation
+- `config/config.exs` - Gettext configuration
+- `lib/homesite_web/router.ex` - Added SetLocale plug
+- `lib/homesite_web/plugs/set_locale.ex` - NEW locale detection plug
+- `lib/homesite_web/components/layouts.ex` - Wrapped strings in gettext()
+- `lib/homesite_web/live/user_live/settings.ex` - Added language selector
+- Translation files in `priv/gettext/`
+
+#### Current Status
+- **Tests:** 180 tests, 0 failures ✅
+- **Languages:** English (default) + Finnish ✅
+- **Translation Coverage:** Navigation, menus, footer, common UI ✅
+- **User Control:** Language selector in settings ✅
+- **Auto-detection:** Browser language detection working ✅
+
+#### Technical Notes
+- Gettext compiles translations at compile time (very fast!)
+- Translations are stored in .po files (industry standard)
+- `mix gettext.extract --merge` auto-extracts new strings
+- Warning about unused import is benign (used in HEEx templates)
+
+#### Next Steps / Future Enhancements
+
+**TODO: Expand Translation Coverage**
+- Forms (post creation, tag management)
+- Error messages and validations
+- Homepage content
+- Dashboard UI
+- Admin interface
+- Flash messages
+
+**Remaining from User TODOs:**
+1. **Post Visibility Feature** (planned, see plan file)
+   - Implement enum-based visibility (public/authenticated/private)
+   - UI indicators and access control
+2. **Registration Strategy** - Decide open vs invitation-only
+3. **IP Tracking & Bot Detection** - Analytics and security
+
+#### Key Learnings
+- Phoenix Gettext is powerful and well-integrated
+- Extraction tool automates string discovery
+- .po file format is standard and translator-friendly
+- Locale detection plug makes multi-language seamless
+- Finnish language support essential for personal blog
+
+---
+
 ## 2025-11-25 09:30:00 - 10:45:00 [Session COMPLETED]
 
 ### Session: UI/UX Polish - Pegasus Logo Redesign & MODERN_CSS_GUIDE Compliance
