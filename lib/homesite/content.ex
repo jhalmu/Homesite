@@ -199,6 +199,27 @@ defmodule Homesite.Content do
   end
 
   @doc """
+  Returns all public posts (non-authenticated access).
+
+  Only returns posts with a published_at date, ordered by published_at descending.
+  No scope required - this is for public viewing.
+
+  ## Examples
+
+      iex> list_public_posts()
+      [%Post{}, ...]
+
+  """
+  def list_public_posts do
+    from(p in Post,
+      where: not is_nil(p.published_at),
+      order_by: [desc: p.published_at],
+      preload: [:user, :tags]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
   Returns the list of published posts for a specific user (public access).
 
   Only returns posts with a published_at date, ordered by published_at descending.

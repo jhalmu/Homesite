@@ -13,9 +13,11 @@ defmodule HomesiteWeb.PostLive.Index do
       <.header>
         {gettext("Listing Posts")}
         <:actions>
-          <.button variant="primary" navigate={~p"/posts/new"}>
-            <.icon name="hero-plus" /> {gettext("New Post")}
-          </.button>
+          <%= if @current_scope do %>
+            <.button variant="primary" navigate={~p"/posts/new"}>
+              <.icon name="hero-plus" /> {gettext("New Post")}
+            </.button>
+          <% end %>
         </:actions>
       </.header>
 
@@ -32,15 +34,19 @@ defmodule HomesiteWeb.PostLive.Index do
           <div class="sr-only">
             <.link navigate={~p"/posts/#{post}"}>{gettext("Show")}</.link>
           </div>
-          <.link navigate={~p"/posts/#{post}/edit"}>{gettext("Edit")}</.link>
+          <%= if @current_scope && post.user_id == @current_scope.user.id do %>
+            <.link navigate={~p"/posts/#{post}/edit"}>{gettext("Edit")}</.link>
+          <% end %>
         </:action>
         <:action :let={{id, post}}>
-          <.link
-            phx-click={JS.push("delete", value: %{id: post.id}) |> hide("##{id}")}
-            data-confirm={gettext("Are you sure?")}
-          >
-            {gettext("Delete")}
-          </.link>
+          <%= if @current_scope && post.user_id == @current_scope.user.id do %>
+            <.link
+              phx-click={JS.push("delete", value: %{id: post.id}) |> hide("##{id}")}
+              data-confirm={gettext("Are you sure?")}
+            >
+              {gettext("Delete")}
+            </.link>
+          <% end %>
         </:action>
       </.table>
     </Layouts.app>
@@ -49,14 +55,16 @@ defmodule HomesiteWeb.PostLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    if connected?(socket) do
-      Content.subscribe_posts(socket.assigns.current_scope)
+    current_scope = socket.assigns.current_scope
+
+    if connected?(socket) && current_scope do
+      Content.subscribe_posts(current_scope)
     end
 
     {:ok,
      socket
      |> assign(:page_title, gettext("Listing Posts"))
-     |> stream(:posts, list_posts(socket.assigns.current_scope))}
+     |> stream(:posts, list_posts(current_scope))}
   end
 
   @impl true
@@ -73,7 +81,13 @@ defmodule HomesiteWeb.PostLive.Index do
     {:noreply, stream(socket, :posts, list_posts(socket.assigns.current_scope), reset: true)}
   end
 
+  defp list_posts(nil) do
+    # Non-authenticated users see only public posts
+    Content.list_public_posts()
+  end
+
   defp list_posts(current_scope) do
+    # Authenticated users see their own posts
     Content.list_posts(current_scope)
   end
 end
