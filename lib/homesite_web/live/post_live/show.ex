@@ -26,18 +26,28 @@ defmodule HomesiteWeb.PostLive.Show do
         <.author_byline user={@post.user} date={@post.published_at} />
       </div>
 
-      <div class="my-[clamp(1.5rem,4vw,3rem)] prose max-w-none whitespace-pre-wrap">
-        {@post.body}
+      <div class="my-[clamp(1.5rem,4vw,3rem)] prose prose-slate dark:prose-invert max-w-none prose-pre:bg-gray-900 prose-pre:text-gray-100">
+        {Phoenix.HTML.raw(render_markdown(@post.body))}
       </div>
-
-      <.list>
-        <:item title="Title">{@post.title}</:item>
-        <:item title="Body">{@post.body}</:item>
-        <:item title="Slug">{@post.slug}</:item>
-        <:item title="Published at">{@post.published_at}</:item>
-      </.list>
     </Layouts.app>
     """
+  end
+
+  defp render_markdown(markdown) do
+    MDEx.to_html!(markdown,
+      extension: [
+        strikethrough: true,
+        table: true,
+        tasklist: true,
+        autolink: true
+      ],
+      render: [
+        unsafe_: true
+      ],
+      syntax_highlight: [
+        formatter: {:html_inline, theme: "catppuccin_mocha"}
+      ]
+    )
   end
 
   @impl true

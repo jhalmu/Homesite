@@ -14,4 +14,15 @@ defmodule HomesiteWeb.PageLive.Home do
 
     {:ok, socket}
   end
+
+  def markdown_preview(markdown, length) do
+    markdown
+    |> MDEx.to_html!(extension: [], render: [unsafe_: true])
+    |> Floki.parse_document!()
+    |> Floki.text()
+    |> String.slice(0, length)
+    |> then(fn text ->
+      if String.length(text) >= length, do: text <> "...", else: text
+    end)
+  end
 end
