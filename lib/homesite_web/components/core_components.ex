@@ -489,13 +489,12 @@ defmodule HomesiteWeb.CoreComponents do
   attr :rest, :global, doc: "arbitrary HTML attributes"
 
   def author_byline(assigns) do
-    # Get user's preferred locale, fallback to browser's locale via JavaScript
-    assigns =
-      assign(
-        assigns,
-        :locale,
-        get_in(assigns, [:current_scope, :user, :preferred_language])
-      )
+    # Get user's preferred locale, fallback to current Gettext locale
+    locale =
+      get_in(assigns, [:current_scope, :user, :preferred_language]) ||
+        Gettext.get_locale(HomesiteWeb.Gettext)
+
+    assigns = assign(assigns, :locale, locale)
 
     ~H"""
     <div class={["gap-[clamp(0.5rem,2vw,1rem)] flex items-center", @class]} {@rest}>
