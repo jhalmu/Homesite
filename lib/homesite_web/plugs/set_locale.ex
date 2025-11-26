@@ -4,8 +4,9 @@ defmodule HomesiteWeb.Plugs.SetLocale do
 
   Locale is determined in this priority order:
   1. Authenticated user's preferred_language setting
-  2. Browser's Accept-Language header
-  3. Default locale ("en")
+  2. Locale cookie (for non-authenticated users)
+  3. Browser's Accept-Language header
+  4. Default locale ("fi")
   """
   import Plug.Conn
 
@@ -17,6 +18,7 @@ defmodule HomesiteWeb.Plugs.SetLocale do
     locale =
       conn
       |> get_locale_from_user()
+      |> Kernel.||(get_locale_from_cookie(conn))
       |> Kernel.||(get_locale_from_header(conn))
       |> Kernel.||(Gettext.get_locale(HomesiteWeb.Gettext))
       |> validate_locale()
@@ -29,6 +31,14 @@ defmodule HomesiteWeb.Plugs.SetLocale do
   defp get_locale_from_user(conn) do
     case conn.assigns[:current_scope] do
       %{user: %{preferred_language: lang}} when is_binary(lang) -> lang
+      _ -> nil
+    end
+  end
+
+  # Get locale from cookie
+  defp get_locale_from_cookie(conn) do
+    case conn.cookies["locale"] do
+      locale when is_binary(locale) and locale in @supported_locales -> locale
       _ -> nil
     end
   end

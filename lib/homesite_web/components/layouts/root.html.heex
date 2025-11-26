@@ -19,7 +19,7 @@
       rel="alternate"
       type="application/atom+xml"
       title="Homesite - All Posts"
-      href={~p"/feed.xml"}
+      href={url(~p"/feed.xml")}
     />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
     </script>
@@ -44,18 +44,36 @@
 
       // Locale management
       (() => {
+        const setLocaleCookie = (locale) => {
+          // Set cookie for server-side reading (1 year expiration)
+          const expires = new Date();
+          expires.setFullYear(expires.getFullYear() + 1);
+          document.cookie = `locale=${locale}; path=/; expires=${expires.toUTCString()}; SameSite=Lax`;
+        };
+
+        const getLocaleCookie = () => {
+          const match = document.cookie.match(/(?:^|;\s*)locale=([^;]*)/);
+          return match ? match[1] : null;
+        };
+
         const setLocale = (locale) => {
           localStorage.setItem("phx:locale", locale);
+          setLocaleCookie(locale);
           document.documentElement.setAttribute("lang", locale);
           document.documentElement.setAttribute("data-locale", locale);
           // Reload page to apply new locale (LiveView limitation)
           window.location.reload();
         };
 
-        // Set initial locale from localStorage or default to 'fi'
-        const savedLocale = localStorage.getItem("phx:locale") || "fi";
+        // Set initial locale from cookie, localStorage, or default to 'fi'
+        const savedLocale = getLocaleCookie() || localStorage.getItem("phx:locale") || "fi";
         document.documentElement.setAttribute("lang", savedLocale);
         document.documentElement.setAttribute("data-locale", savedLocale);
+
+        // If no cookie exists, set it to match localStorage or default
+        if (!getLocaleCookie()) {
+          setLocaleCookie(savedLocale);
+        }
 
         window.addEventListener("storage", (e) => e.key === "phx:locale" && setLocale(e.newValue || "fi"));
         window.addEventListener("phx:set-locale", (e) => setLocale(e.target.dataset.phxLocale));
