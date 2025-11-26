@@ -5,14 +5,14 @@
       <div class="hero-content text-center">
         <div class="max-w-md">
           <h1 class="text-[clamp(2.5rem,7vw,4rem)] font-bold">
-            Welcome to Homesite
+            {gettext("Welcome to Homesite")}
           </h1>
           <p class="text-[clamp(1rem,3vw,1.25rem)] py-6">
-            A personal blogging platform for sharing ideas and stories.
+            {gettext("A personal blogging platform for sharing ideas and stories.")}
           </p>
           <%= if @current_scope do %>
             <.link navigate={~p"/dashboard"} class="btn btn-primary btn-lg gap-2">
-              <.icon name="hero-home" class="h-6 w-6" /> Go to Dashboard
+              <.icon name="hero-home" class="h-6 w-6" /> {gettext("Go to Dashboard")}
             </.link>
           <% end %>
         </div>
@@ -22,12 +22,12 @@
 <!-- Recent Posts -->
     <div>
       <h2 class="mb-8 text-center text-3xl font-bold">
-        Recent Posts
+        {gettext("Recent Posts")}
       </h2>
 
       <div :if={length(@posts) == 0} class="alert alert-info mx-auto max-w-4xl">
         <.icon name="hero-information-circle" class="h-6 w-6" />
-        <span>No published posts yet. Be the first to share something!</span>
+        <span>{gettext("No published posts yet. Be the first to share something!")}</span>
       </div>
 
       <%= if length(@posts) > 0 do %>
@@ -54,7 +54,7 @@
 
                   <div class="card-actions mt-4 justify-end">
                     <span class="text-primary text-sm opacity-0 transition-opacity group-hover:opacity-100">
-                      Read more →
+                      {gettext("Read more")} →
                     </span>
                   </div>
                 </div>
@@ -66,7 +66,7 @@
 <!-- Older Posts (List View) -->
         <div :if={length(rest_posts) > 0} class="mx-auto max-w-4xl">
           <h3 class="mb-6 text-center text-2xl font-bold">
-            More Posts
+            {gettext("More Posts")}
           </h3>
 
           <div class="space-y-8">
@@ -88,7 +88,7 @@
                   navigate={~p"/posts/#{post.id}"}
                   class="text-primary inline-flex items-center gap-2 transition-colors hover:text-primary-focus"
                 >
-                  Read more <.icon name="hero-arrow-right" class="h-4 w-4" />
+                  {gettext("Read more")} <.icon name="hero-arrow-right" class="h-4 w-4" />
                 </.link>
               </article>
             <% end %>
