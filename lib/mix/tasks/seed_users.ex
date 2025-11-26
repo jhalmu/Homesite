@@ -103,7 +103,10 @@ defmodule Mix.Tasks.SeedUsers do
     Mix.shell().info("  - Users created: 10")
     Mix.shell().info("  - Total posts: #{10 * 30}")
     Mix.shell().info("  - Total tags: ~#{10 * 10 + 5}")
-    Mix.shell().info("\nYou can now log in with any of these users using password: 'password123'\n")
+
+    Mix.shell().info(
+      "\nYou can now log in with any of these users using password: 'password123'\n"
+    )
   end
 
   defp clean_database do

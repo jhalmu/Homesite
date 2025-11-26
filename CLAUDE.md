@@ -12,6 +12,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Always check AGENTS.md first for project-specific patterns before making architectural decisions.
 
+### Project Documentation Files
+
+**IMPORTANT**: This project contains multiple Markdown (.md) files with essential information:
+
+- **AGENTS.md** - Primary source for coding patterns, Phoenix/LiveView guidelines, testing
+- **REGISTRATION_STRATEGY.md** - Authentication system documentation and strategy decisions
+- **MODERN_CSS_GUIDE.md** - CSS/Tailwind patterns and responsive design guidelines (if exists)
+- **MEMO.md** - Session notes and historical context
+
+**When to read .md files:**
+- Before making architectural decisions (check AGENTS.md)
+- When working with authentication/registration (check REGISTRATION_STRATEGY.md)
+- When implementing UI changes (check MODERN_CSS_GUIDE.md if it exists)
+- At the start of each session (check MEMO.md for context)
+- When encountering unfamiliar patterns or decisions
+
+**Best practice:** Use `find . -name "*.md" -type f` to discover all documentation files in the project.
+
 ## Git & GitHub Workflow
 
 **CRITICAL**: Follow this workflow when working on the codebase:

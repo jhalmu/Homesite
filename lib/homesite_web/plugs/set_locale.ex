@@ -61,5 +61,5 @@ defmodule HomesiteWeb.Plugs.SetLocale do
 
   # Validate locale is supported, fallback to default
   defp validate_locale(locale) when locale in @supported_locales, do: locale
-  defp validate_locale(_), do: "en"
+  defp validate_locale(_), do: "fi"
 end

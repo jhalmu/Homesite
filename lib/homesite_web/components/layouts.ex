@@ -203,6 +203,9 @@ defmodule HomesiteWeb.Layouts do
             </li>
           <% end %>
           <li>
+            <.language_toggle />
+          </li>
+          <li>
             <.theme_toggle />
           </li>
         </ul>
@@ -281,6 +284,12 @@ defmodule HomesiteWeb.Layouts do
 
           <li class="px-4">
             <div class="flex items-center justify-between">
+              <span class="text-sm opacity-70">{gettext("Language")}</span>
+              <.language_toggle />
+            </div>
+          </li>
+          <li class="px-4">
+            <div class="flex items-center justify-between">
               <span class="text-sm opacity-70">{gettext("Theme")}</span>
               <.theme_toggle />
             </div>
@@ -292,6 +301,36 @@ defmodule HomesiteWeb.Layouts do
         <button>close</button>
       </form>
     </dialog>
+    """
+  end
+
+  @doc """
+  Provides language toggle between English and Finnish.
+
+  Persists selection in localStorage and reloads page to apply new locale.
+  Styled similarly to theme_toggle for consistency.
+  """
+  def language_toggle(assigns) do
+    ~H"""
+    <div class="card border-base-300 bg-base-300 relative flex flex-row items-center rounded-full border">
+      <div class="border-1 border-base-200 bg-base-100 [[data-locale=en]_&]:left-0 [[data-locale=fi]_&]:left-1/2 transition-[left] absolute h-full w-1/2 rounded-full brightness-200" />
+
+      <button
+        class="flex w-1/2 cursor-pointer items-center justify-center p-1 text-xs font-semibold"
+        phx-click={JS.dispatch("phx:set-locale")}
+        data-phx-locale="en"
+      >
+        EN
+      </button>
+
+      <button
+        class="flex w-1/2 cursor-pointer items-center justify-center p-1 text-xs font-semibold"
+        phx-click={JS.dispatch("phx:set-locale")}
+        data-phx-locale="fi"
+      >
+        FI
+      </button>
+    </div>
     """
   end
 

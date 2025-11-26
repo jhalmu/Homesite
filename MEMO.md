@@ -4,6 +4,244 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-11-26 14:00:00 - 15:30:00 [Session COMPLETED]
+
+### Session: i18n Language Switcher & RSS Feeds Implementation
+
+#### Completed ✅
+
+**Session Workflow Documentation:**
+- ✅ Added session workflow section to AGENTS.md
+- ✅ Instructions for reading MEMO.md and GitHub issues at session start/end
+- ✅ Clear workflow: Start (read MEMO, check issues) → Work → End (update MEMO, issues, commit)
+
+**Project Documentation Enhancements:**
+- ✅ Updated CLAUDE.md with .md files reading instruction
+- ✅ Added "Project Documentation Files" section listing AGENTS.md, REGISTRATION_STRATEGY.md, MODERN_CSS_GUIDE.md, MEMO.md
+- ✅ Guidance on when to read each documentation file
+
+**Language Toggle Implementation:**
+- ✅ Created `language_toggle/1` component in layouts.ex (styled like theme toggle)
+- ✅ Added to desktop navbar and mobile menu
+- ✅ Client-side JavaScript for locale persistence in localStorage
+- ✅ Page reload on language change (LiveView limitation)
+- ✅ Default locale changed from "en" to "fi" in two places:
+  - `config/config.exs` - Gettext config
+  - `lib/homesite_web/plugs/set_locale.ex` - SetLocale plug default
+- ✅ Priority: User DB preference → localStorage → browser Accept-Language → "fi" (default)
+
+**RSS/Atom Feeds Implementation:**
+- ✅ Three feed types implemented:
+  1. Site-wide feed: `/feed.xml` (all public posts)
+  2. Per-user feed: `/users/:id/feed.xml` (user's public posts)
+  3. Per-tag feed: `/tags/:slug/feed.xml` (tag's public posts)
+- ✅ All feeds use Atomex library with functional API (not struct-based)
+- ✅ Feed discovery meta tags added to root layout
+- ✅ Only public posts in feeds (security via `published_at` check)
+- ✅ Preloading for performance (`:user` and `:tags` associations)
+- ✅ Added TODO comments for future enhancements (pagination, full content, caching, images, JSON Feed)
+
+**UI/UX Improvements:**
+- ✅ Removed broken registration link from login page (route is disabled during testing)
+- ✅ Language toggle uses sliding indicator like theme toggle (consistent design)
+- ✅ Two-button layout (EN / FI) with visual feedback
+
+**Insights Logger Planning:**
+- ✅ Created comprehensive INSIGHTS_LOGGER_PLAN.md (400+ lines)
+- ✅ Three-phase workflow: Capture → Review → Integrate
+- ✅ Directory structure design (`.claude/insights/`)
+- ✅ Session file format with categories (Architecture, Database, Security, etc.)
+- ✅ Selection criteria (what to include/skip)
+- ✅ Example use cases (Elixir patterns, LiveView gotchas, Ecto optimizations)
+- ✅ Implementation timeline and success metrics
+- ✅ Implementation deferred until after current feature work
+
+**Testing & Quality Assurance:**
+- ✅ Fixed Atomex compilation error (rewrote to use functional API)
+- ✅ Ran full test suite: 194 tests, 0 failures, 6 skipped ✅
+- ✅ Ran Credo analysis: Minor warnings (TODOs, nested modules) - all intentional
+- ✅ Phoenix server restarted successfully
+- ✅ Automated test workflow implemented (start/stop server as needed)
+
+#### Files Created
+
+**New Files:**
+- `INSIGHTS_LOGGER_PLAN.md` - Comprehensive planning document for insights logger system
+- `lib/homesite_web/controllers/feed_controller.ex` - RSS/Atom feed controller with 3 actions
+
+#### Files Modified
+
+**Documentation:**
+- `AGENTS.md` - Added Session Workflow section (lines 5-25)
+- `CLAUDE.md` - Added Project Documentation Files section
+
+**Language Toggle:**
+- `lib/homesite_web/components/layouts.ex` - Added `language_toggle/1` component (lines 313-335), integrated into navbar and mobile menu
+- `lib/homesite_web/components/layouts/root.html.heex` - Added locale management JavaScript (lines 45-62)
+- `config/config.exs` - Changed default locale to "fi" (line 82)
+- `lib/homesite_web/plugs/set_locale.ex` - Changed fallback locale to "fi" (line 64)
+
+**RSS Feeds:**
+- `lib/homesite/content.ex` - Added 3 feed query functions (lines 440-512):
+  - `list_public_posts_for_feed/1`
+  - `list_user_posts_for_feed/2`
+  - `list_tag_posts_for_feed/2`
+- `lib/homesite_web/router.ex` - Added 3 feed routes (lines 156-159)
+- `lib/homesite_web/components/layouts/root.html.heex` - Added RSS feed discovery meta tag (lines 17-23)
+
+**UI Cleanup:**
+- `lib/homesite_web/live/user_live/login.ex` - Removed broken registration link (replaced with comment)
+
+**Other:**
+- `assets/js/app.js` - Minor changes (exact nature from previous session)
+- `lib/homesite_web/components/core_components.ex` - Minor changes (exact nature from previous session)
+- `lib/mix/tasks/seed_users.ex` - Minor changes (exact nature from previous session)
+- `lib/homesite_web/live/page_live/home.html.heex` - Minor changes (exact nature from previous session)
+
+#### Technical Implementation Details
+
+**Language Toggle Component:**
+```elixir
+def language_toggle(assigns) do
+  ~H"""
+  <div class="card border-base-300 bg-base-300 relative flex flex-row items-center rounded-full border">
+    <div class="border-1 border-base-200 bg-base-100 [[data-locale=en]_&]:left-0 [[data-locale=fi]_&]:left-1/2 transition-[left] absolute h-full w-1/2 rounded-full brightness-200" />
+
+    <button class="flex w-1/2 cursor-pointer items-center justify-center p-1 text-xs font-semibold"
+            phx-click={JS.dispatch("phx:set-locale")} data-phx-locale="en">
+      EN
+    </button>
+
+    <button class="flex w-1/2 cursor-pointer items-center justify-center p-1 text-xs font-semibold"
+            phx-click={JS.dispatch("phx:set-locale")} data-phx-locale="fi">
+      FI
+    </button>
+  </div>
+  """
+end
+```
+
+**JavaScript Locale Management:**
+- Reads locale from localStorage on page load (defaults to "fi")
+- Sets `data-locale` attribute on `<html>` for CSS targeting
+- Dispatches custom event on toggle click
+- Reloads page to apply new locale (required for LiveView)
+
+**Atomex Functional API Pattern:**
+```elixir
+# Correct functional API (not struct-based)
+Atomex.Entry.new(url, datetime, title)
+|> Atomex.Entry.author(author_name)
+|> Atomex.Entry.link(link_url)
+|> Atomex.Entry.published(published_at)
+|> Atomex.Entry.summary(truncated_html)
+|> Atomex.Entry.content(body_html, type: "html")
+|> Atomex.Entry.build()
+
+Atomex.Feed.new(self_link, latest_date, title)
+|> Atomex.Feed.author("Homesite")
+|> Atomex.Feed.link(link)
+|> Atomex.Feed.link(self_link, rel: "self")
+|> Atomex.Feed.subtitle(subtitle_text)
+|> Atomex.Feed.entries(entries)
+|> Atomex.Feed.build()
+|> Atomex.generate_document()
+```
+
+**Feed Query Pattern:**
+```elixir
+def list_public_posts_for_feed(limit \\ 20) do
+  from(p in Post,
+    where: not is_nil(p.published_at),  # Only public posts
+    order_by: [desc: p.published_at],
+    limit: ^limit,
+    preload: [:user, :tags]  # Avoid N+1 queries
+  )
+  |> Repo.all()
+end
+```
+
+#### Error Resolution
+
+**Atomex Compilation Error:**
+- **Problem**: Used struct syntax (`%Atomex.Person{}`, `%Atomex.Entry{}`) but library uses functional API
+- **Discovery**: Read atomex source code from `deps/atomex/lib/atomex/`
+- **Solution**: Rewrote `generate_feed/5` to use pipeline pattern with builder functions
+- **Result**: Clean, idiomatic Elixir code using functional API
+
+**Build Lock Error:**
+- **Problem**: Phoenix server holding build directory lock
+- **Solution**: Found processes with `lsof -ti:4000`, killed with `kill` command
+- **Prevention**: Automated server management (start when needed, stop before compilation)
+
+#### Current Status
+
+- **Tests:** 194 tests, 0 failures, 6 skipped ✅
+- **Credo:** Minor intentional warnings (TODOs, nested modules) ✅
+- **Language Toggle:** Fully functional with Finnish default ✅
+- **RSS Feeds:** All 3 feed types working correctly ✅
+- **Documentation:** Comprehensive session workflow and .md file reading instructions ✅
+- **Insights Logger:** Planned (deferred to future) ✅
+- **Server:** Running at http://localhost:4000 ✅
+
+#### Feed URLs Available
+
+**Site-wide feed:**
+- http://localhost:4000/feed.xml - All public posts
+
+**Per-user feeds (example with user ID 1):**
+- http://localhost:4000/users/1/feed.xml - User's public posts
+
+**Per-tag feeds (example with "elixir" tag):**
+- http://localhost:4000/tags/elixir/feed.xml - Posts tagged with "elixir"
+
+#### Notes
+
+**Gettext Warnings:**
+- 3 warnings about unused `import HomesiteWeb.Gettext` are false positives
+- Gettext IS used in embedded HEEx templates but compiler can't detect it
+- Comment added to layouts.ex explaining this
+
+**Atomex Library:**
+- Version 0.5.1 uses functional API, not struct-based
+- No Context7 documentation available
+- Source code reading was necessary to discover correct API
+
+**Page Reload on Locale Change:**
+- Required due to LiveView limitation
+- Gettext locale is process-scoped and set on mount
+- Cannot change mid-session without reconnection
+
+**RSS Feed Security:**
+- All feeds enforce `published_at IS NOT NULL` for privacy
+- No `is_public` flag in schema - publication controlled by date field
+- Preloading prevents N+1 queries when rendering feeds
+
+#### Future Enhancements (TODO Comments in FeedController)
+
+1. **Pagination** - Add `?page=2` query parameter support
+2. **Full Content** - Add `?full=true` option for complete post bodies
+3. **Feed Caching** - Implement with Phoenix.Cache or ETS (reduce DB load)
+4. **Feed Images** - Add thumbnails/featured images if posts support them
+5. **JSON Feed** - Consider adding JSON Feed format alongside Atom
+
+#### Next Steps / Pending
+
+**From INSIGHTS_LOGGER_PLAN.md (Deferred):**
+- Phase 1: Infrastructure (1 hour)
+- Phase 2: Capture System (2-3 hours)
+- Phase 3: Review System (3-4 hours)
+- Phase 4: Integration System (2-3 hours)
+- **Total:** 8-11 hours of work planned
+
+**Other Potential Improvements:**
+- Expand RSS feed discovery to include per-user and per-tag feeds in meta tags
+- Add feed links to user profile pages and tag pages
+- Consider feed analytics (subscriber counts)
+- Evaluate feed performance under load
+
+---
+
 ## 2025-11-25 22:30:00 - 23:15:00 [Session COMPLETED]
 
 ### Session: Comprehensive Test Coverage for Public Post Viewing

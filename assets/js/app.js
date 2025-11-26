@@ -25,11 +25,69 @@ import {LiveSocket} from "phoenix_live_view"
 import {hooks as colocatedHooks} from "phoenix-colocated/homesite"
 import topbar from "../vendor/topbar"
 
+// Custom hooks for date formatting
+const Hooks = {
+  LocalTime: {
+    mounted() {
+      this.formatTime()
+    },
+    updated() {
+      this.formatTime()
+    },
+    formatTime() {
+      const datetime = this.el.getAttribute('datetime')
+      const locale = this.el.dataset.locale || navigator.language
+      const showRelative = this.el.dataset.relative === 'true'
+
+      if (!datetime) return
+
+      const date = new Date(datetime)
+
+      if (showRelative) {
+        // Show relative time for recent posts
+        const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' })
+        const now = new Date()
+        const diffInSeconds = Math.floor((date - now) / 1000)
+        const diffInMinutes = Math.floor(diffInSeconds / 60)
+        const diffInHours = Math.floor(diffInMinutes / 60)
+        const diffInDays = Math.floor(diffInHours / 24)
+
+        let formatted
+        if (Math.abs(diffInDays) > 7) {
+          // Use absolute date for posts older than 7 days
+          formatted = new Intl.DateTimeFormat(locale, {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          }).format(date)
+        } else if (Math.abs(diffInDays) >= 1) {
+          formatted = rtf.format(diffInDays, 'day')
+        } else if (Math.abs(diffInHours) >= 1) {
+          formatted = rtf.format(diffInHours, 'hour')
+        } else {
+          formatted = rtf.format(diffInMinutes, 'minute')
+        }
+
+        this.el.textContent = formatted
+      } else {
+        // Show full formatted date
+        const formatted = new Intl.DateTimeFormat(locale, {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        }).format(date)
+
+        this.el.textContent = formatted
+      }
+    }
+  }
+}
+
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken},
-  hooks: {...colocatedHooks},
+  hooks: {...colocatedHooks, ...Hooks},
 })
 
 // Show progress bar on live navigation and form submits

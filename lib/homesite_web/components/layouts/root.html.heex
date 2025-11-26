@@ -14,6 +14,13 @@
       rel="stylesheet"
     />
     <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
+    <%!-- RSS Feed Discovery --%>
+    <link
+      rel="alternate"
+      type="application/atom+xml"
+      title="Homesite - All Posts"
+      href={~p"/feed.xml"}
+    />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
     </script>
     <script>
@@ -33,6 +40,25 @@
         window.addEventListener("storage", (e) => e.key === "phx:theme" && setTheme(e.newValue || "system"));
         
         window.addEventListener("phx:set-theme", (e) => setTheme(e.target.dataset.phxTheme));
+      })();
+
+      // Locale management
+      (() => {
+        const setLocale = (locale) => {
+          localStorage.setItem("phx:locale", locale);
+          document.documentElement.setAttribute("lang", locale);
+          document.documentElement.setAttribute("data-locale", locale);
+          // Reload page to apply new locale (LiveView limitation)
+          window.location.reload();
+        };
+
+        // Set initial locale from localStorage or default to 'fi'
+        const savedLocale = localStorage.getItem("phx:locale") || "fi";
+        document.documentElement.setAttribute("lang", savedLocale);
+        document.documentElement.setAttribute("data-locale", savedLocale);
+
+        window.addEventListener("storage", (e) => e.key === "phx:locale" && setLocale(e.newValue || "fi"));
+        window.addEventListener("phx:set-locale", (e) => setLocale(e.target.dataset.phxLocale));
       })();
     </script>
   </head>

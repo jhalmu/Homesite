@@ -79,7 +79,7 @@ config :phoenix, :json_library, Jason
 
 # Configure Gettext for internationalization
 config :homesite, HomesiteWeb.Gettext,
-  default_locale: "en",
+  default_locale: "fi",
   locales: ~w(en fi)
 
 # Import environment specific config. This must remain at the bottom

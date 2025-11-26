@@ -436,4 +436,77 @@ defmodule Homesite.Content do
 
     Post.changeset(post, attrs, scope)
   end
+
+  # RSS Feed Functions
+
+  @doc """
+  Returns recent public posts for RSS feed.
+
+  Only returns posts that are published (published_at is not nil).
+  Orders by published_at descending (newest first).
+  Preloads user and tags associations for feed display.
+
+  ## Examples
+
+      iex> list_public_posts_for_feed(20)
+      [%Post{}, ...]
+
+  """
+  def list_public_posts_for_feed(limit \\ 20) do
+    from(p in Post,
+      where: not is_nil(p.published_at),
+      order_by: [desc: p.published_at],
+      limit: ^limit,
+      preload: [:user, :tags]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns recent public posts by a specific user for RSS feed.
+
+  Only returns posts that are published (published_at is not nil).
+  Orders by published_at descending (newest first).
+  Preloads user and tags associations for feed display.
+
+  ## Examples
+
+      iex> list_user_posts_for_feed(user_id, 20)
+      [%Post{}, ...]
+
+  """
+  def list_user_posts_for_feed(user_id, limit \\ 20) do
+    from(p in Post,
+      where: p.user_id == ^user_id and not is_nil(p.published_at),
+      order_by: [desc: p.published_at],
+      limit: ^limit,
+      preload: [:user, :tags]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns recent public posts with a specific tag for RSS feed.
+
+  Only returns posts that are published (published_at is not nil).
+  Orders by published_at descending (newest first).
+  Preloads user and tags associations for feed display.
+  Uses tag slug for lookup.
+
+  ## Examples
+
+      iex> list_tag_posts_for_feed("elixir", 20)
+      [%Post{}, ...]
+
+  """
+  def list_tag_posts_for_feed(tag_slug, limit \\ 20) do
+    from(p in Post,
+      join: t in assoc(p, :tags),
+      where: t.slug == ^tag_slug and not is_nil(p.published_at),
+      order_by: [desc: p.published_at],
+      limit: ^limit,
+      preload: [:user, :tags]
+    )
+    |> Repo.all()
+  end
 end

@@ -15,11 +15,7 @@ defmodule HomesiteWeb.UserLive.Login do
               <%= if @current_scope do %>
                 {gettext("You need to reauthenticate to perform sensitive actions on your account.")}
               <% else %>
-                {gettext("Don't have an account?")} <.link
-                  navigate={~p"/users/register"}
-                  class="text-brand font-semibold hover:underline"
-                  phx-no-format
-                >{gettext("Sign up")}</.link> {gettext("for an account now.")}
+                <%!-- Registration temporarily disabled during testing phase --%>
               <% end %>
             </:subtitle>
           </.header>

@@ -21,20 +21,23 @@
     
 <!-- Recent Posts -->
     <div>
-      <h2 class="text-3xl font-bold mb-8 text-center">
+      <h2 class="mb-8 text-center text-3xl font-bold">
         Recent Posts
       </h2>
 
-      <div :if={length(@posts) == 0} class="alert alert-info max-w-4xl mx-auto">
+      <div :if={length(@posts) == 0} class="alert alert-info mx-auto max-w-4xl">
         <.icon name="hero-information-circle" class="h-6 w-6" />
         <span>No published posts yet. Be the first to share something!</span>
       </div>
 
       <%= if length(@posts) > 0 do %>
         <% {featured_posts, rest_posts} = Enum.split(@posts, 3) %>
-
-        <!-- Featured Posts (Newest 3) -->
-        <div :if={length(featured_posts) > 0} class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+        
+<!-- Featured Posts (Newest 3) -->
+        <div
+          :if={length(featured_posts) > 0}
+          class="mb-16 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+        >
           <%= for post <- featured_posts do %>
             <.link navigate={~p"/posts/#{post.id}"} class="group">
               <article class="card bg-base-200 h-full shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl">
@@ -59,18 +62,18 @@
             </.link>
           <% end %>
         </div>
-
-        <!-- Older Posts (List View) -->
-        <div :if={length(rest_posts) > 0} class="max-w-4xl mx-auto">
-          <h3 class="text-2xl font-bold mb-6 text-center">
+        
+<!-- Older Posts (List View) -->
+        <div :if={length(rest_posts) > 0} class="mx-auto max-w-4xl">
+          <h3 class="mb-6 text-center text-2xl font-bold">
             More Posts
           </h3>
 
           <div class="space-y-8">
             <%= for post <- rest_posts do %>
-              <article class="border-b border-base-300 pb-8 last:border-b-0">
-                <.link navigate={~p"/posts/#{post.id}"} class="block group">
-                  <h4 class="text-2xl font-bold mb-2 transition-colors group-hover:text-primary">
+              <article class="border-base-300 border-b pb-8 last:border-b-0">
+                <.link navigate={~p"/posts/#{post.id}"} class="group block">
+                  <h4 class="mb-2 text-2xl font-bold transition-colors group-hover:text-primary">
                     {post.title}
                   </h4>
                 </.link>
@@ -83,10 +86,9 @@
 
                 <.link
                   navigate={~p"/posts/#{post.id}"}
-                  class="text-primary hover:text-primary-focus transition-colors inline-flex items-center gap-2"
+                  class="text-primary inline-flex items-center gap-2 transition-colors hover:text-primary-focus"
                 >
-                  Read more
-                  <.icon name="hero-arrow-right" class="h-4 w-4" />
+                  Read more <.icon name="hero-arrow-right" class="h-4 w-4" />
                 </.link>
               </article>
             <% end %>

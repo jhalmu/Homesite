@@ -5,6 +5,51 @@ This is a web application written using the Phoenix web framework.
 - Use `mix precommit` alias when you are done with all changes and fix any pending issues
 - Use the already included and available `:req` (`Req`) library for HTTP requests, **avoid** `:httpoison`, `:tesla`, and `:httpc`. Req is included by default and is the preferred HTTP client for Phoenix apps
 
+### Session Workflow
+
+**CRITICAL**: Follow this workflow for every coding session:
+
+#### Starting a Session
+1. **Read MEMO.md** - Review the latest session notes to understand:
+   - What was accomplished in previous sessions
+   - Any pending tasks or decisions needed
+   - Known blockers or issues
+   - Context for continuing work
+
+2. **Check GitHub Issues** - Review issues to see:
+   - What has been completed (closed issues)
+   - What needs to be done (open issues)
+   - Current priorities and planned features
+   - Any bugs or technical debt
+
+#### During a Session
+- Work on tasks systematically
+- Update code following project guidelines
+- Write/update tests as you go
+- Run `mix test` and `mix test.all` frequently
+
+#### Ending a Session
+1. **Update MEMO.md** - Add a new entry with:
+   - Datetime stamp (ISO 8601 format: `2025-11-21 14:30:00`)
+   - Summary of what was accomplished
+   - Files created or modified
+   - Any pending tasks or decisions needed
+   - Known blockers or issues encountered
+   - Context for next session
+
+2. **Update GitHub Issues**:
+   - Create issues for completed work (close immediately with summary)
+   - Create issues for planned features or improvements
+   - Create issues for known bugs or technical debt
+   - Reference issue numbers in commit messages: `Fix user scope issue #123`
+
+3. **Commit and Push**:
+   - Run `mix test.all` before committing
+   - Write descriptive commit messages
+   - Push to GitHub to preserve work
+
+**Note:** If memory/context is running out, commit anyway to preserve work
+
 ### Phoenix v1.8 guidelines
 
 - **Always** begin your LiveView templates with `<Layouts.app flash={@flash} ...>` which wraps all inner content

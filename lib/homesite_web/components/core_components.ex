@@ -472,18 +472,31 @@ defmodule HomesiteWeb.CoreComponents do
 
   Displays user information in a consistent format across the application.
   Uses fluid typography and spacing from MODERN_CSS_GUIDE.md patterns.
+  Dates are formatted using JavaScript based on user's locale preference.
 
   ## Examples
 
       <.author_byline user={@user} />
       <.author_byline user={@user} date={@post.published_at} />
+      <.author_byline user={@user} date={@post.published_at} current_scope={@current_scope} />
+      <.author_byline user={@user} date={@post.published_at} relative={true} />
   """
   attr :user, :map, required: true, doc: "the user struct"
   attr :date, :any, default: nil, doc: "optional datetime to display"
+  attr :current_scope, :map, default: nil, doc: "current scope for locale preference"
+  attr :relative, :boolean, default: false, doc: "show relative time (e.g., '2 hours ago')"
   attr :class, :string, default: nil, doc: "additional CSS classes"
   attr :rest, :global, doc: "arbitrary HTML attributes"
 
   def author_byline(assigns) do
+    # Get user's preferred locale, fallback to browser's locale via JavaScript
+    assigns =
+      assign(
+        assigns,
+        :locale,
+        get_in(assigns, [:current_scope, :user, :preferred_language])
+      )
+
     ~H"""
     <div class={["gap-[clamp(0.5rem,2vw,1rem)] flex items-center", @class]} {@rest}>
       <.avatar user={@user} class="h-10 w-10" />
@@ -491,7 +504,15 @@ defmodule HomesiteWeb.CoreComponents do
         <span class="text-[clamp(0.875rem,2vw,1rem)] font-medium">
           {@user.display_name || String.split(@user.email, "@") |> List.first()}
         </span>
-        <time :if={@date} class="text-sm text-gray-600 dark:text-gray-400">
+        <time
+          :if={@date}
+          class="text-sm text-gray-600 dark:text-gray-400"
+          datetime={DateTime.to_iso8601(@date)}
+          phx-hook="LocalTime"
+          data-locale={@locale}
+          data-relative={to_string(@relative)}
+          id={"time-#{System.unique_integer([:positive])}"}
+        >
           {Calendar.strftime(@date, "%B %d, %Y")}
         </time>
       </div>
