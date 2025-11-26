@@ -153,10 +153,18 @@ defmodule HomesiteWeb.Router do
   scope "/", HomesiteWeb do
     pipe_through [:browser]
 
-    # RSS Feeds
+    # Feeds - RSS, Atom, and JSON
+    get "/rss.xml", FeedController, :index
     get "/feed.xml", FeedController, :index
+    get "/feed.json", FeedController, :index
+
+    get "/users/:id/rss.xml", FeedController, :user
     get "/users/:id/feed.xml", FeedController, :user
+    get "/users/:id/feed.json", FeedController, :user
+
+    get "/tags/:slug/rss.xml", FeedController, :tag
     get "/tags/:slug/feed.xml", FeedController, :tag
+    get "/tags/:slug/feed.json", FeedController, :tag
 
     live_session :current_user,
       on_mount: [

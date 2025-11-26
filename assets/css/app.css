@@ -110,3 +110,28 @@
   font-weight: 600;
   letter-spacing: -0.02em;
 }
+
+/* Field with help - responsive layout */
+.field-with-help {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.field-with-help .field-input {
+  min-width: 0; /* Prevent grid overflow */
+}
+
+.field-with-help .field-help {
+  min-width: 0;
+}
+
+/* Desktop: side-by-side layout */
+@media (min-width: 1024px) {
+  .field-with-help {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+}

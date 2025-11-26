@@ -47,6 +47,26 @@ Always check AGENTS.md first for project-specific patterns before making archite
   - Known bugs or technical debt
 - Reference issue numbers in commit messages: `git commit -m "Fix user scope issue #123"`
 
+**MANDATORY - End of Session GitHub Issue Updates:**
+At the end of EVERY coding session, update GitHub issues to reflect completed work:
+1. **Close completed issues** - Use `gh issue close <number> --comment "summary"`
+2. **Update partial progress** - Add comments to issues showing what was completed
+3. **Create completion issues** - For new features not tracked, create and immediately close with summary
+4. **Keep issues synchronized** - GitHub issues should always reflect the current project state
+
+Example workflow:
+```bash
+# Close completed issue
+gh issue close 12 --comment "Fixed RSS feed autodiscovery by changing to absolute URLs. Tested with RSS readers."
+
+# Update partial progress
+gh issue comment 15 --body "✅ Completed: Language switcher, locale persistence, homepage translations. Still needed: Full translation coverage."
+
+# Create + close for untracked completed work
+gh issue create --title "Public Post Viewing Without Authentication" --body "Implemented public access to /posts page..."
+gh issue close <number> --comment "Completed in this session"
+```
+
 ### MEMO.md Protocol
 **Before ending any coding session**, update `MEMO.md`:
 - Add datetime stamp for each entry (use ISO 8601 format: `2025-11-21 14:30:00`)

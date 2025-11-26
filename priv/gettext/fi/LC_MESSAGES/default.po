@@ -11,20 +11,20 @@ msgstr ""
 "Language: fi\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/homesite_web/components/core_components.ex:336
+#: lib/homesite_web/components/core_components.ex:395
 #: lib/homesite_web/live/dashboard_live/index.html.heex:83
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr "Toiminnot"
 
-#: lib/homesite_web/components/layouts.ex:171
-#: lib/homesite_web/components/layouts.ex:246
+#: lib/homesite_web/components/layouts.ex:182
+#: lib/homesite_web/components/layouts.ex:259
 #, elixir-autogen, elixir-format
 msgid "Admin"
 msgstr "Ylläpito"
 
-#: lib/homesite_web/components/layouts.ex:105
-#: lib/homesite_web/components/layouts.ex:117
+#: lib/homesite_web/components/layouts.ex:116
+#: lib/homesite_web/components/layouts.ex:128
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr "Yritetään yhdistää uudelleen"
@@ -34,14 +34,14 @@ msgstr "Yritetään yhdistää uudelleen"
 msgid "Built with"
 msgstr "Rakennettu"
 
-#: lib/homesite_web/components/layouts.ex:73
+#: lib/homesite_web/components/layouts.ex:84
 #, elixir-autogen, elixir-format
 msgid "Built with ❤️ and Elixir."
 msgstr "Rakennettu ❤️:llä ja Elixirillä."
 
 #: lib/homesite_web/components/layouts.ex:60
-#: lib/homesite_web/components/layouts.ex:161
-#: lib/homesite_web/components/layouts.ex:230
+#: lib/homesite_web/components/layouts.ex:172
+#: lib/homesite_web/components/layouts.ex:243
 #, elixir-autogen, elixir-format
 msgid "Dashboard"
 msgstr "Kojelauta"
@@ -51,21 +51,21 @@ msgstr "Kojelauta"
 msgid "Home"
 msgstr "Etusivu"
 
-#: lib/homesite_web/components/layouts.ex:202
-#: lib/homesite_web/components/layouts.ex:278
+#: lib/homesite_web/components/layouts.ex:213
+#: lib/homesite_web/components/layouts.ex:291
 #: lib/homesite_web/live/user_live/login.ex:13
 #: lib/homesite_web/live/user_live/registration.ex:18
 #, elixir-autogen, elixir-format
 msgid "Log in"
 msgstr "Kirjaudu sisään"
 
-#: lib/homesite_web/components/layouts.ex:188
-#: lib/homesite_web/components/layouts.ex:272
+#: lib/homesite_web/components/layouts.ex:199
+#: lib/homesite_web/components/layouts.ex:285
 #, elixir-autogen, elixir-format
 msgid "Log out"
 msgstr "Kirjaudu ulos"
 
-#: lib/homesite_web/components/layouts.ex:224
+#: lib/homesite_web/components/layouts.ex:237
 #, elixir-autogen, elixir-format
 msgid "Menu"
 msgstr "Valikko"
@@ -81,43 +81,43 @@ msgid "Platform"
 msgstr "Alusta"
 
 #: lib/homesite_web/components/layouts.ex:61
-#: lib/homesite_web/components/layouts.ex:164
-#: lib/homesite_web/components/layouts.ex:235
+#: lib/homesite_web/components/layouts.ex:175
+#: lib/homesite_web/components/layouts.ex:248
 #, elixir-autogen, elixir-format
 msgid "Posts"
 msgstr "Kirjoitukset"
 
-#: lib/homesite_web/components/layouts.ex:183
-#: lib/homesite_web/components/layouts.ex:267
+#: lib/homesite_web/components/layouts.ex:194
+#: lib/homesite_web/components/layouts.ex:280
 #: lib/homesite_web/live/dashboard_live/index.html.heex:51
 #, elixir-autogen, elixir-format
 msgid "Settings"
 msgstr "Asetukset"
 
-#: lib/homesite_web/components/layouts.ex:112
+#: lib/homesite_web/components/layouts.ex:123
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr "Jokin meni pieleen!"
 
 #: lib/homesite_web/components/layouts.ex:62
-#: lib/homesite_web/components/layouts.ex:167
-#: lib/homesite_web/components/layouts.ex:240
+#: lib/homesite_web/components/layouts.ex:178
+#: lib/homesite_web/components/layouts.ex:253
 #: lib/homesite_web/live/post_live/form.ex:81
 #, elixir-autogen, elixir-format
 msgid "Tags"
 msgstr "Tagit"
 
-#: lib/homesite_web/components/layouts.ex:293
+#: lib/homesite_web/components/layouts.ex:308
 #, elixir-autogen, elixir-format
 msgid "Theme"
 msgstr "Teema"
 
-#: lib/homesite_web/components/layouts.ex:100
+#: lib/homesite_web/components/layouts.ex:111
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr "Internet-yhteyttä ei löydy"
 
-#: lib/homesite_web/components/core_components.ex:74
+#: lib/homesite_web/components/core_components.ex:75
 #, elixir-autogen, elixir-format
 msgid "close"
 msgstr "sulje"
@@ -219,8 +219,8 @@ msgstr "Tallenna kirjoitus"
 
 #: lib/homesite_web/live/post_live/form.ex:121
 #: lib/homesite_web/live/tag_live/form.ex:21
-#: lib/homesite_web/live/user_live/settings.ex:76
-#: lib/homesite_web/live/user_live/settings.ex:127
+#: lib/homesite_web/live/user_live/settings.ex:112
+#: lib/homesite_web/live/user_live/settings.ex:181
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr "Tallennetaan..."
@@ -277,7 +277,7 @@ msgstr "ensin!"
 msgid "Public posts are visible to everyone. Turn off to make this post private."
 msgstr "Julkiset kirjoitukset ovat kaikkien nähtävillä. Kytke pois päältä tehdäksesi kirjoituksesta yksityisen."
 
-#: lib/homesite_web/live/user_live/settings.ex:198
+#: lib/homesite_web/live/user_live/settings.ex:252
 #, elixir-autogen, elixir-format
 msgid "A link to confirm your email change has been sent to the new address."
 msgstr "Linkki sähköpostin vaihdon vahvistamiseen on lähetetty uuteen osoitteeseen."
@@ -317,7 +317,7 @@ msgstr "Ylläpitäjät"
 msgid "Already registered?"
 msgstr "Oletko jo rekisteröitynyt?"
 
-#: lib/homesite_web/live/user_live/registration.ex:70
+#: lib/homesite_web/live/user_live/registration.ex:84
 #, elixir-autogen, elixir-format
 msgid "An email was sent to %{email}, please access it to confirm your account."
 msgstr "Sähköposti lähetettiin osoitteeseen %{email}, käy vahvistamassa tilisi."
@@ -332,22 +332,22 @@ msgstr "Takaisin käyttäjän kojelautaan"
 msgid "Basic admin access"
 msgstr "Perusylläpito-oikeus"
 
-#: lib/homesite_web/live/user_live/settings.ex:49
+#: lib/homesite_web/live/user_live/settings.ex:55
 #, elixir-autogen, elixir-format
 msgid "Bio"
 msgstr "Esittely"
 
-#: lib/homesite_web/live/user_live/settings.ex:61
+#: lib/homesite_web/live/user_live/settings.ex:79
 #, elixir-autogen, elixir-format
 msgid "Bluesky Handle"
 msgstr "Bluesky-tunnus"
 
-#: lib/homesite_web/live/user_live/settings.ex:92
+#: lib/homesite_web/live/user_live/settings.ex:134
 #, elixir-autogen, elixir-format
 msgid "Change Email"
 msgstr "Vaihda sähköposti"
 
-#: lib/homesite_web/live/user_live/settings.ex:91
+#: lib/homesite_web/live/user_live/settings.ex:133
 #, elixir-autogen, elixir-format
 msgid "Changing..."
 msgstr "Vaihdetaan..."
@@ -357,7 +357,7 @@ msgstr "Vaihdetaan..."
 msgid "Community Posts"
 msgstr "Yhteisön kirjoitukset"
 
-#: lib/homesite_web/live/user_live/settings.ex:124
+#: lib/homesite_web/live/user_live/settings.ex:172
 #, elixir-autogen, elixir-format
 msgid "Confirm new password"
 msgstr "Vahvista uusi salasana"
@@ -367,7 +367,7 @@ msgstr "Vahvista uusi salasana"
 msgid "Content moderation"
 msgstr "Sisällön moderointi"
 
-#: lib/homesite_web/live/user_live/registration.ex:36
+#: lib/homesite_web/live/user_live/registration.ex:50
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Create an account"
 msgstr "Luo tili"
@@ -382,7 +382,7 @@ msgstr "Luo ensimmäinen kirjoituksesi"
 msgid "Create your first tag"
 msgstr "Luo ensimmäinen tagisi"
 
-#: lib/homesite_web/live/user_live/registration.ex:35
+#: lib/homesite_web/live/user_live/registration.ex:49
 #, elixir-autogen, elixir-format
 msgid "Creating account..."
 msgstr "Luodaan tiliä..."
@@ -407,17 +407,17 @@ msgstr "Muokkaa tagia"
 #: lib/homesite_web/live/user_live/login.ex:45
 #: lib/homesite_web/live/user_live/login.ex:69
 #: lib/homesite_web/live/user_live/registration.ex:29
-#: lib/homesite_web/live/user_live/settings.ex:87
+#: lib/homesite_web/live/user_live/settings.ex:123
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr "Sähköposti"
 
-#: lib/homesite_web/live/user_live/settings.ex:143
+#: lib/homesite_web/live/user_live/settings.ex:197
 #, elixir-autogen, elixir-format
 msgid "Email change link is invalid or it has expired."
 msgstr "Sähköpostin vaihto linkki on virheellinen tai vanhentunut."
 
-#: lib/homesite_web/live/user_live/settings.ex:140
+#: lib/homesite_web/live/user_live/settings.ex:194
 #, elixir-autogen, elixir-format
 msgid "Email changed successfully."
 msgstr "Sähköposti vaihdettu onnistuneesti."
@@ -504,7 +504,7 @@ msgstr "Hallitse käyttäjiä"
 msgid "Manage your profile, email address and password settings"
 msgstr "Hallitse profiiliasi, sähköpostiosoitettasi ja salasana-asetuksia"
 
-#: lib/homesite_web/live/user_live/settings.ex:67
+#: lib/homesite_web/live/user_live/settings.ex:91
 #, elixir-autogen, elixir-format
 msgid "Mastodon Handle"
 msgstr "Mastodon-tunnus"
@@ -522,7 +522,7 @@ msgstr "Nimi"
 msgid "New Tag"
 msgstr "Uusi tagi"
 
-#: lib/homesite_web/live/user_live/settings.ex:117
+#: lib/homesite_web/live/user_live/settings.ex:159
 #, elixir-autogen, elixir-format
 msgid "New password"
 msgstr "Uusi salasana"
@@ -532,7 +532,8 @@ msgstr "Uusi salasana"
 msgid "Password"
 msgstr "Salasana"
 
-#: lib/homesite_web/live/user_live/settings.ex:73
+#: lib/homesite_web/live/user_live/registration.ex:38
+#: lib/homesite_web/live/user_live/settings.ex:103
 #, elixir-autogen, elixir-format
 msgid "Preferred Language"
 msgstr "Ensisijainen kieli"
@@ -542,7 +543,7 @@ msgstr "Ensisijainen kieli"
 msgid "Private"
 msgstr "Yksityinen"
 
-#: lib/homesite_web/live/user_live/settings.ex:275
+#: lib/homesite_web/live/user_live/settings.ex:329
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Profile updated successfully."
 msgstr "Profiili päivitetty onnistuneesti."
@@ -578,7 +579,7 @@ msgstr "Rekisteröidy tilille"
 msgid "Registered users"
 msgstr "Rekisteröityneitä käyttäjiä"
 
-#: lib/homesite_web/live/user_live/settings.ex:128
+#: lib/homesite_web/live/user_live/settings.ex:182
 #, elixir-autogen, elixir-format
 msgid "Save Password"
 msgstr "Tallenna salasana"
@@ -613,7 +614,7 @@ msgstr "Tagi luotu onnistuneesti"
 msgid "Tag updated successfully"
 msgstr "Tagi päivitetty onnistuneesti"
 
-#: lib/homesite_web/live/user_live/settings.ex:50
+#: lib/homesite_web/live/user_live/settings.ex:56
 #, elixir-autogen, elixir-format
 msgid "Tell us about yourself (max 500 characters)"
 msgstr "Kerro itsestäsi (max 500 merkkiä)"
@@ -643,7 +644,7 @@ msgstr "Tageja yhteensä"
 msgid "Total Users"
 msgstr "Käyttäjiä yhteensä"
 
-#: lib/homesite_web/live/user_live/settings.ex:77
+#: lib/homesite_web/live/user_live/settings.ex:113
 #, elixir-autogen, elixir-format
 msgid "Update Profile"
 msgstr "Päivitä profiili"
@@ -692,7 +693,7 @@ msgstr "Näytä profiili"
 msgid "View all"
 msgstr "Näytä kaikki"
 
-#: lib/homesite_web/live/user_live/settings.ex:55
+#: lib/homesite_web/live/user_live/settings.ex:67
 #, elixir-autogen, elixir-format
 msgid "Website URL"
 msgstr "Verkkosivun osoite"
@@ -787,7 +788,7 @@ msgstr "Henkilökohtainen bloggausalusta ideoiden ja tarinoiden jakamiseen."
 msgid "Go to Dashboard"
 msgstr "Siirry kojelaudalle"
 
-#: lib/homesite_web/components/layouts.ex:287
+#: lib/homesite_web/components/layouts.ex:301
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr "Kieli"
@@ -812,3 +813,78 @@ msgstr "Lue lisää"
 #, elixir-autogen, elixir-format
 msgid "Welcome to Homesite"
 msgstr "Tervetuloa Homesitelle"
+
+#: lib/homesite_web/live/user_live/settings.ex:164
+#, elixir-autogen, elixir-format
+msgid "Choose a strong password with at least 12 characters. Use a mix of uppercase, lowercase, numbers, and special characters for better security."
+msgstr "Valitse vahva salasana, jossa on vähintään 12 merkkiä. Käytä isoja ja pieniä kirjaimia, numeroita ja erikoismerkkejä paremman turvallisuuden vuoksi."
+
+#: lib/homesite_web/live/user_live/settings.ex:107
+#, elixir-autogen, elixir-format
+msgid "Choose your preferred language for the user interface. This setting affects menus, buttons, and system messages throughout the application."
+msgstr "Valitse haluamasi kieli käyttöliittymälle. Tämä asetus vaikuttaa valikoihin, painikkeisiin ja järjestelmäviesteihin koko sovelluksessa."
+
+#: lib/homesite_web/live/user_live/settings.ex:176
+#, elixir-autogen, elixir-format
+msgid "Re-enter your new password exactly as above to confirm. This helps prevent typos when setting your password."
+msgstr "Kirjoita uusi salasanasi uudelleen täsmälleen samalla tavalla. Tämä auttaa estämään kirjoitusvirheet salasanaa asettaessa."
+
+#: lib/homesite_web/live/user_live/settings.ex:59
+#, elixir-autogen, elixir-format
+msgid "Write a brief description about yourself. This appears on your public profile. Maximum 500 characters."
+msgstr "Kirjoita lyhyt kuvaus itsestäsi. Tämä näkyy julkisessa profiilissasi. Enintään 500 merkkiä."
+
+#: lib/homesite_web/live/user_live/settings.ex:83
+#, elixir-autogen, elixir-format
+msgid "Your Bluesky username in the format @username.bsky.social or @username.custom-domain.com. This will be linked from your profile."
+msgstr "Bluesky-käyttäjänimesi muodossa @kayttajanimi.bsky.social tai @kayttajanimi.oma-domain.com. Tämä linkitetään profiilissasi."
+
+#: lib/homesite_web/live/user_live/settings.ex:95
+#, elixir-autogen, elixir-format
+msgid "Your Mastodon handle in the format @username@instance.social. Include both your username and instance. This will be linked from your profile."
+msgstr "Mastodon-tunnuksesi muodossa @kayttajanimi@palvelin.social. Sisällytä sekä käyttäjänimi että palvelin. Tämä linkitetään profiilissasi."
+
+#: lib/homesite_web/live/user_live/settings.ex:47
+#, elixir-autogen, elixir-format
+msgid "Your display name appears on your posts and profile. This can be your real name or a pseudonym. Maximum 100 characters."
+msgstr "Näyttönimesi näkyy julkaisuissasi ja profiilissasi. Tämä voi olla oikea nimesi tai nimimerkki. Enintään 100 merkkiä."
+
+#: lib/homesite_web/live/user_live/settings.ex:128
+#, elixir-autogen, elixir-format
+msgid "Your email address is used for login and notifications. Changing it will send a confirmation link to the new address. Your old email remains active until confirmed."
+msgstr "Sähköpostiosoitettasi käytetään kirjautumiseen ja ilmoituksiin. Vaihtaminen lähettää vahvistuslinkin uuteen osoitteeseen. Vanha sähköpostisi pysyy aktiivisena kunnes uusi on vahvistettu."
+
+#: lib/homesite_web/live/user_live/settings.ex:71
+#, elixir-autogen, elixir-format
+msgid "Your personal website, blog, or portfolio URL. Must start with http:// or https://. This link will appear on your public profile."
+msgstr "Henkilökohtaisen verkkosivustosi, blogisi tai portfoliosi URL-osoite. Täytyy alkaa http:// tai https://. Tämä linkki näkyy julkisessa profiilissasi."
+
+#: lib/homesite_web/live/user_live/registration.ex:43
+#, elixir-autogen, elixir-format
+msgid "Choose your preferred language for the user interface. This can be changed later in Settings."
+msgstr "Valitse haluamasi kieli käyttöliittymälle. Voit muuttaa tätä myöhemmin Asetuksissa."
+
+#: lib/homesite_web/live/user_live/registration.ex:39
+#, elixir-autogen, elixir-format
+msgid "English"
+msgstr "Englanti"
+
+#: lib/homesite_web/live/user_live/registration.ex:39
+#, elixir-autogen, elixir-format
+msgid "Finnish"
+msgstr "Suomi"
+
+#: lib/homesite_web/components/layouts.ex:79
+#, elixir-autogen, elixir-format
+msgid "JSON Feed"
+msgstr "JSON-syöte"
+
+#: lib/homesite_web/components/layouts.ex:75
+#, elixir-autogen, elixir-format
+msgid "RSS Feed"
+msgstr "RSS-syöte"
+
+#: lib/homesite_web/components/layouts.ex:72
+#, elixir-autogen, elixir-format
+msgid "Subscribe"
+msgstr "Tilaa"

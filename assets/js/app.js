@@ -80,6 +80,43 @@ const Hooks = {
         this.el.textContent = formatted
       }
     }
+  },
+  AvatarPreview: {
+    mounted() {
+      const fileInput = this.el.querySelector('input[type="file"]')
+      const avatarImg = this.el.querySelector('#avatar-preview')
+
+      if (!fileInput || !avatarImg) return
+
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0]
+
+        if (file && file.type.startsWith('image/')) {
+          const reader = new FileReader()
+
+          reader.onload = (e) => {
+            avatarImg.src = e.target.result
+          }
+
+          reader.readAsDataURL(file)
+        }
+      })
+    }
+  },
+  AutoDismissFlash: {
+    mounted() {
+      // Auto-dismiss flash message after 10 seconds
+      this.timeout = setTimeout(() => {
+        // Trigger the click event to dismiss the flash
+        this.el.click()
+      }, 10000)
+    },
+    destroyed() {
+      // Clear timeout if flash is manually dismissed before 10 seconds
+      if (this.timeout) {
+        clearTimeout(this.timeout)
+      }
+    }
   }
 }
 

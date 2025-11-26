@@ -68,6 +68,17 @@ defmodule HomesiteWeb.Layouts do
           <p class="text-sm opacity-70">Elixir</p>
           <p class="text-sm opacity-70">Tailwind CSS & DaisyUI</p>
         </div>
+        <div>
+          <span class="footer-title">{gettext("Subscribe")}</span>
+          <.link href={~p"/rss.xml"} class="link-hover link flex items-center gap-2">
+            <.icon name="hero-rss" class="h-4 w-4" />
+            {gettext("RSS Feed")}
+          </.link>
+          <.link href={~p"/feed.json"} class="link-hover link flex items-center gap-2">
+            <.icon name="hero-code-bracket" class="h-4 w-4" />
+            {gettext("JSON Feed")}
+          </.link>
+        </div>
       </div>
       <div class="border-base-300 bg-base-200/50 border-t px-4 py-4 text-center text-sm opacity-70">
         <p>© {Date.utc_today().year} Homesite. {gettext("Built with ❤️ and Elixir.")}</p>
@@ -202,9 +213,11 @@ defmodule HomesiteWeb.Layouts do
               <.link navigate={~p"/users/log-in"} class="btn btn-primary">{gettext("Log in")}</.link>
             </li>
           <% end %>
-          <li>
-            <.language_toggle />
-          </li>
+          <%= if !@current_scope do %>
+            <li>
+              <.language_toggle />
+            </li>
+          <% end %>
           <li>
             <.theme_toggle />
           </li>
@@ -282,12 +295,14 @@ defmodule HomesiteWeb.Layouts do
 
           <div class="divider my-2"></div>
 
-          <li class="px-4">
-            <div class="flex items-center justify-between">
-              <span class="text-sm opacity-70">{gettext("Language")}</span>
-              <.language_toggle />
-            </div>
-          </li>
+          <%= if !@current_scope do %>
+            <li class="px-4">
+              <div class="flex items-center justify-between">
+                <span class="text-sm opacity-70">{gettext("Language")}</span>
+                <.language_toggle />
+              </div>
+            </li>
+          <% end %>
           <li class="px-4">
             <div class="flex items-center justify-between">
               <span class="text-sm opacity-70">{gettext("Theme")}</span>

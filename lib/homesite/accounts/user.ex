@@ -58,8 +58,9 @@ defmodule Homesite.Accounts.User do
   """
   def email_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email])
+    |> cast(attrs, [:email, :preferred_language])
     |> validate_email(opts)
+    |> validate_inclusion(:preferred_language, ["en", "fi"])
   end
 
   defp validate_email(changeset, opts) do

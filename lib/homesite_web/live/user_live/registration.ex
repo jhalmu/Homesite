@@ -32,6 +32,20 @@ defmodule HomesiteWeb.UserLive.Registration do
             phx-mounted={JS.focus()}
           />
 
+          <.input
+            field={@form[:preferred_language]}
+            type="select"
+            label={gettext("Preferred Language")}
+            options={[{gettext("English"), "en"}, {gettext("Finnish"), "fi"}]}
+            value={@form[:preferred_language].value || "en"}
+          >
+            <:help>
+              {gettext(
+                "Choose your preferred language for the user interface. This can be changed later in Settings."
+              )}
+            </:help>
+          </.input>
+
           <.button phx-disable-with={gettext("Creating account...")} class="btn btn-primary w-full">
             {gettext("Create an account")}
           </.button>

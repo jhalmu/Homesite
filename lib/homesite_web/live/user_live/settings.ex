@@ -23,8 +23,8 @@ defmodule HomesiteWeb.UserLive.Settings do
         phx-change="validate_profile"
       >
         <div class="gap-[clamp(1rem,3vw,2rem)] flex flex-col items-center">
-          <div class="gap-[clamp(0.5rem,2vw,1rem)] flex flex-col items-center">
-            <.avatar user={@current_scope.user} class="h-24 w-24" />
+          <div class="gap-[clamp(0.5rem,2vw,1rem)] flex flex-col items-center" id="avatar-upload-container" phx-hook="AvatarPreview">
+            <.avatar user={@current_scope.user} class="h-24 w-24" id="avatar-preview" />
             <.live_file_input
               upload={@uploads.avatar}
               class="file-input file-input-bordered w-full max-w-xs"
@@ -42,37 +42,73 @@ defmodule HomesiteWeb.UserLive.Settings do
           type="text"
           label={gettext("Display Name")}
           placeholder={gettext("Your public name")}
-        />
+        >
+          <:help>
+            {gettext(
+              "Your display name appears on your posts and profile. This can be your real name or a pseudonym. Maximum 100 characters."
+            )}
+          </:help>
+        </.input>
         <.input
           field={@profile_form[:bio]}
           type="textarea"
           label={gettext("Bio")}
           placeholder={gettext("Tell us about yourself (max 500 characters)")}
-        />
+        >
+          <:help>
+            {gettext(
+              "Write a brief description about yourself. This appears on your public profile. Maximum 500 characters."
+            )}
+          </:help>
+        </.input>
         <.input
           field={@profile_form[:website_url]}
           type="url"
           label={gettext("Website URL")}
           placeholder="https://example.com"
-        />
+        >
+          <:help>
+            {gettext(
+              "Your personal website, blog, or portfolio URL. Must start with http:// or https://. This link will appear on your public profile."
+            )}
+          </:help>
+        </.input>
         <.input
           field={@profile_form[:bluesky_handle]}
           type="text"
           label={gettext("Bluesky Handle")}
           placeholder="@username.bsky.social"
-        />
+        >
+          <:help>
+            {gettext(
+              "Your Bluesky username in the format @username.bsky.social or @username.custom-domain.com. This will be linked from your profile."
+            )}
+          </:help>
+        </.input>
         <.input
           field={@profile_form[:mastodon_handle]}
           type="text"
           label={gettext("Mastodon Handle")}
           placeholder="@username@mastodon.social"
-        />
+        >
+          <:help>
+            {gettext(
+              "Your Mastodon handle in the format @username@instance.social. Include both your username and instance. This will be linked from your profile."
+            )}
+          </:help>
+        </.input>
         <.input
           field={@profile_form[:preferred_language]}
           type="select"
           label={gettext("Preferred Language")}
           options={[{"English", "en"}, {"Suomi (Finnish)", "fi"}]}
-        />
+        >
+          <:help>
+            {gettext(
+              "Choose your preferred language for the user interface. This setting affects menus, buttons, and system messages throughout the application."
+            )}
+          </:help>
+        </.input>
         <.button variant="primary" phx-disable-with={gettext("Saving...")}>
           {gettext("Update Profile")}
         </.button>
@@ -87,7 +123,13 @@ defmodule HomesiteWeb.UserLive.Settings do
           label={gettext("Email")}
           autocomplete="username"
           required
-        />
+        >
+          <:help>
+            {gettext(
+              "Your email address is used for login and notifications. Changing it will send a confirmation link to the new address. Your old email remains active until confirmed."
+            )}
+          </:help>
+        </.input>
         <.button variant="primary" phx-disable-with={gettext("Changing...")}>
           {gettext("Change Email")}
         </.button>
@@ -117,13 +159,25 @@ defmodule HomesiteWeb.UserLive.Settings do
           label={gettext("New password")}
           autocomplete="new-password"
           required
-        />
+        >
+          <:help>
+            {gettext(
+              "Choose a strong password with at least 12 characters. Use a mix of uppercase, lowercase, numbers, and special characters for better security."
+            )}
+          </:help>
+        </.input>
         <.input
           field={@password_form[:password_confirmation]}
           type="password"
           label={gettext("Confirm new password")}
           autocomplete="new-password"
-        />
+        >
+          <:help>
+            {gettext(
+              "Re-enter your new password exactly as above to confirm. This helps prevent typos when setting your password."
+            )}
+          </:help>
+        </.input>
         <.button variant="primary" phx-disable-with={gettext("Saving...")}>
           {gettext("Save Password")}
         </.button>

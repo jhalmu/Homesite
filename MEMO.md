@@ -4,6 +4,227 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-11-26 16:30:00 - 17:45:00 [Session COMPLETED]
+
+### Session: Fix i18n Translation System - Homepage, LiveView Locale, and Date Formatting
+
+#### Completed ✅
+
+**Critical Bug Fixes - Translations Not Working:**
+- ✅ **Homepage Text Translation** - Fixed all hardcoded English strings
+- ✅ **LiveView Locale Persistence** - Fixed locale being overridden by SetLocaleHook
+- ✅ **Date Formatting** - Fixed dates not changing format with language toggle
+- ✅ Comprehensive testing with curl to verify all fixes working
+
+**Problem 1: Homepage Text Not Translating**
+- **Root Cause:** `lib/homesite_web/live/page_live/home.html.heex` had hardcoded English text instead of gettext() calls
+- **Fix:** Wrapped all UI strings with `{gettext("...")}` syntax
+- **Strings Added:**
+  - "Welcome to Homesite" → "Tervetuloa Homesitelle"
+  - "A personal blogging platform..." → "Henkilökohtainen bloggausalusta..."
+  - "Go to Dashboard" → "Siirry kojelaudalle"
+  - "Recent Posts" → "Viimeisimmät kirjoitukset"
+  - "More Posts" → "Lisää kirjoituksia"
+  - "Read more" → "Lue lisää"
+  - "No published posts yet..." → "Ei vielä julkaistuja kirjoituksia..."
+  - "Language" → "Kieli"
+- ✅ Ran `mix gettext.extract --merge` - 6 new messages extracted
+- ✅ Added all Finnish translations to `priv/gettext/fi/LC_MESSAGES/default.po`
+
+**Problem 2: LiveView Locale Always Reverting to English**
+- **Root Cause:** SetLocaleHook only checked user DB preference, defaulted to "en" for non-authenticated users
+- **Discovery:** SetLocale plug set locale correctly, but SetLocaleHook OVERRODE it in LiveView WebSocket
+- **Fix:** Updated SetLocaleHook to:
+  1. Check user's `preferred_language` (DB)
+  2. Fallback to session locale (set by plug from cookie/header)
+  3. Fallback to current Gettext locale
+  4. Default to "fi" instead of "en"
+- ✅ Updated SetLocale plug to store locale in session: `put_session(conn, :locale, locale)`
+- ✅ Updated SetLocaleHook to read from session if no user preference exists
+
+**Problem 3: Dates Not Changing Format**
+- **Root Cause:** `author_byline` component only used user DB `preferred_language`, was nil for non-authenticated users
+- **Fix:** Updated component to fallback to `Gettext.get_locale(HomesiteWeb.Gettext)` if no user preference
+- ✅ Dates now format correctly based on current locale
+- ✅ JavaScript LocalTime hook receives correct locale via `data-locale` attribute
+
+**Files Modified:**
+1. `lib/homesite_web/live/page_live/home.html.heex` - Added gettext() to all UI strings
+2. `lib/homesite_web/live/set_locale_hook.ex` - Added session locale fallback
+3. `lib/homesite_web/plugs/set_locale.ex` - Store locale in session
+4. `lib/homesite_web/components/core_components.ex` - Date locale fallback
+5. `priv/gettext/fi/LC_MESSAGES/default.po` - Added Finnish translations
+6. `priv/gettext/default.pot` - Updated template with new strings
+
+**Commits:**
+- 400f213 - Add Finnish translations for homepage
+- 4c16733 - Fix LiveView locale not respecting cookie/session
+- 977d50a - Fix date formatting to respect current locale
+
+#### Testing Results ✅
+
+**Curl Tests (Programmatic):**
+```bash
+# Default (no cookie) → Finnish ✅
+curl http://localhost:4000 | grep "Kirjaudu\|Tervetuloa"
+
+# With EN cookie → English ✅
+curl -H "Cookie: locale=en" http://localhost:4000 | grep "Log in\|Welcome"
+
+# With FI cookie → Finnish ✅
+curl -H "Cookie: locale=fi" http://localhost:4000 | grep "Kirjaudu\|Viimeisimmät"
+
+# Posts page FI → "Kirjoitusten listaus" ✅
+# Posts page EN → "Listing Posts" ✅
+```
+
+**User Browser Testing (Confirmed):**
+- ✅ Language toggle (FI/EN) switches all text
+- ✅ Dates change format (Finnish: "marraskuu 26, 2025" / English: "November 26, 2025")
+- ✅ Locale persists across page navigation
+- ✅ Works for both authenticated and non-authenticated users
+
+#### Technical Implementation Details
+
+**Locale Priority Chain:**
+```
+1. User DB preferred_language (authenticated users)
+   ↓
+2. Session locale (from cookie or Accept-Language header)
+   ↓
+3. Current Gettext locale
+   ↓
+4. Default: "fi" (Finnish)
+```
+
+**SetLocaleHook Fix:**
+```elixir
+# Before (BROKEN):
+defp get_locale_from_socket(socket) do
+  case socket.assigns[:current_scope] do
+    %{user: %{preferred_language: lang}} -> lang
+    _ -> "en"  # Always defaulted to English!
+  end
+end
+
+# After (FIXED):
+defp get_locale(socket, session) do
+  socket
+  |> get_locale_from_user()
+  |> Kernel.||(get_locale_from_session(session))
+  |> Kernel.||(Gettext.get_locale(HomesiteWeb.Gettext))
+  |> validate_locale()
+end
+
+defp get_locale_from_session(session) do
+  case session["locale"] do
+    locale when is_binary(locale) and locale in @supported_locales -> locale
+    _ -> nil
+  end
+end
+```
+
+**Date Component Fix:**
+```elixir
+# Before:
+locale = get_in(assigns, [:current_scope, :user, :preferred_language])
+
+# After:
+locale =
+  get_in(assigns, [:current_scope, :user, :preferred_language]) ||
+    Gettext.get_locale(HomesiteWeb.Gettext)
+```
+
+#### Current Status
+- **Translation Coverage:** Homepage 100% ✅
+- **Locale Switching:** FI/EN toggle fully functional ✅
+- **Date Formatting:** Changes with locale ✅
+- **Default Locale:** Finnish (fi) ✅
+- **Persistence:** Cookie + session working ✅
+- **Tests:** All verified via curl and browser ✅
+- **Server:** Running at http://localhost:4000 ✅
+
+#### Available Test Users
+
+**Password for all users:** `password123`
+
+**Admin Users:**
+- `admin1@example.com` (1 flower)
+- `admin2@example.com` (2 flowers)
+- `admin3@example.com` (3 flowers)
+- `admin5@example.com` (5 flowers)
+
+**Regular Users:**
+- `emma.johnson@example.com` (Emma Johnson)
+- `aino.virtanen@example.com` (Aino Virtanen)
+- `liam.williams@example.com` (Liam Williams)
+- (and 9 more users - see database query results)
+
+#### Key Learnings
+
+**LiveView Locale Persistence:**
+- Browser pipeline SetLocale plug runs ONLY on initial HTTP request
+- LiveView WebSocket connections bypass browser pipeline
+- SetLocaleHook runs on EVERY LiveView mount
+- Must coordinate plug + hook for proper locale persistence
+- Session is the bridge between plug (HTTP) and hook (WebSocket)
+
+**i18n Architecture:**
+```
+HTTP Request → SetLocale Plug → put_session(:locale) → Response
+                                         ↓
+WebSocket Connect → LiveView Mount → SetLocaleHook → get_session(:locale)
+```
+
+**Translation Workflow:**
+1. Wrap strings with `{gettext("English text")}`
+2. Run `mix gettext.extract --merge` to extract
+3. Add Finnish translations to `.po` file
+4. Translations apply immediately in LiveView
+
+#### Notes
+
+**Why Date Flashing Occurs:**
+- Page reload required for locale change (LiveView limitation)
+- Brief flash of old locale before new one loads
+- Expected behavior, not a bug
+- Duration: < 1 second
+
+**Default Locale Changed:**
+- Previous: "en" (English)
+- Current: "fi" (Finnish)
+- Reason: Site is Finnish personal blog
+
+**Gettext Compiler Warnings:**
+- 3 warnings about "unused import HomesiteWeb.Gettext"
+- False positives - Gettext IS used in embedded HEEx templates
+- Compiler can't detect usage in `~H` sigils
+- Safe to ignore
+
+#### Next Steps / Future Enhancements
+
+**From Previous Sessions (Still TODO):**
+1. Expand translation coverage to remaining pages
+2. RSS feed enhancements (pagination, caching, images)
+3. Insights Logger implementation (deferred)
+4. Post visibility feature (public/authenticated/private)
+
+**i18n Remaining Work:**
+- Consider translating error messages in `errors.po`
+- Consider translating validation messages
+- Add language selector to public pages (not just settings)
+- Consider adding more supported languages
+
+**Completed in This Session:**
+- ✅ Homepage translations
+- ✅ Language toggle functionality
+- ✅ Date formatting localization
+- ✅ LiveView locale persistence
+- ✅ Cookie-based locale storage
+- ✅ Session-based locale for WebSocket
+
+---
+
 ## 2025-11-26 14:00:00 - 15:30:00 [Session COMPLETED]
 
 ### Session: i18n Language Switcher & RSS Feeds Implementation

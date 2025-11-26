@@ -55,8 +55,9 @@ defmodule HomesiteWeb.CoreComponents do
       :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
       id={@id}
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
+      phx-hook="AutoDismissFlash"
       role="alert"
-      class="toast toast-top toast-end z-50"
+      class="toast toast-top toast-center z-50"
       {@rest}
     >
       <div class={[
@@ -167,6 +168,8 @@ defmodule HomesiteWeb.CoreComponents do
     include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
                 multiple pattern placeholder readonly required rows size step)
 
+  slot :help, doc: "the help text shown alongside the input"
+
   def input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
     errors = if Phoenix.Component.used_input?(field), do: field.errors, else: []
 
@@ -185,60 +188,102 @@ defmodule HomesiteWeb.CoreComponents do
       end)
 
     ~H"""
-    <div class="fieldset mb-2">
-      <label>
-        <input type="hidden" name={@name} value="false" disabled={@rest[:disabled]} />
-        <span class="label">
-          <input
-            type="checkbox"
-            id={@id}
-            name={@name}
-            value="true"
-            checked={@checked}
-            class={@class || "checkbox checkbox-sm"}
-            {@rest}
-          />{@label}
-        </span>
-      </label>
-      <.error :for={msg <- @errors}>{msg}</.error>
+    <div class={["field-with-help", @help == [] && "mb-2"]}>
+      <div class="field-input">
+        <div class="fieldset">
+          <label>
+            <input type="hidden" name={@name} value="false" disabled={@rest[:disabled]} />
+            <span class="label">
+              <input
+                type="checkbox"
+                id={@id}
+                name={@name}
+                value="true"
+                checked={@checked}
+                class={@class || "checkbox checkbox-sm"}
+                {@rest}
+              />{@label}
+            </span>
+          </label>
+          <.error :for={msg <- @errors}>{msg}</.error>
+        </div>
+      </div>
+      <div :if={@help != []} class="field-help">
+        <div class="rounded-lg bg-base-200/50 p-4 text-sm">
+          <div class="flex items-start gap-2">
+            <.icon name="hero-information-circle" class="mt-0.5 h-5 w-5 flex-shrink-0 text-info" />
+            <div class="text-base-content/70">
+              {render_slot(@help)}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     """
   end
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <div class="fieldset mb-2">
-      <label>
-        <span :if={@label} class="label mb-1">{@label}</span>
-        <select
-          id={@id}
-          name={@name}
-          class={[@class || "select w-full", @errors != [] && (@error_class || "select-error")]}
-          multiple={@multiple}
-          {@rest}
-        >
-          <option :if={@prompt} value="">{@prompt}</option>
-          {Phoenix.HTML.Form.options_for_select(@options, @value)}
-        </select>
-      </label>
-      <.error :for={msg <- @errors}>{msg}</.error>
+    <div class={["field-with-help", @help == [] && "mb-2"]}>
+      <div class="field-input">
+        <div class="fieldset">
+          <label>
+            <span :if={@label} class="label mb-1">{@label}</span>
+            <select
+              id={@id}
+              name={@name}
+              class={[@class || "select w-full", @errors != [] && (@error_class || "select-error")]}
+              multiple={@multiple}
+              {@rest}
+            >
+              <option :if={@prompt} value="">{@prompt}</option>
+              {Phoenix.HTML.Form.options_for_select(@options, @value)}
+            </select>
+          </label>
+          <.error :for={msg <- @errors}>{msg}</.error>
+        </div>
+      </div>
+      <div :if={@help != []} class="field-help">
+        <div class="rounded-lg bg-base-200/50 p-4 text-sm">
+          <div class="flex items-start gap-2">
+            <.icon name="hero-information-circle" class="mt-0.5 h-5 w-5 flex-shrink-0 text-info" />
+            <div class="text-base-content/70">
+              {render_slot(@help)}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     """
   end
 
   def input(%{type: "textarea"} = assigns) do
     ~H"""
-    <div class="fieldset mb-2">
-      <label>
-        <span :if={@label} class="label mb-1">{@label}</span>
-        <textarea
-          id={@id}
-          name={@name}
-          class={[@class || "textarea w-full", @errors != [] && (@error_class || "textarea-error")]}
-          {@rest}
-        >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
-      </label>
-      <.error :for={msg <- @errors}>{msg}</.error>
+    <div class={["field-with-help", @help == [] && "mb-2"]}>
+      <div class="field-input">
+        <div class="fieldset">
+          <label>
+            <span :if={@label} class="label mb-1">{@label}</span>
+            <textarea
+              id={@id}
+              name={@name}
+              class={[@class || "textarea w-full", @errors != [] && (@error_class || "textarea-error")]}
+              {@rest}
+            >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
+          </label>
+          <.error :for={msg <- @errors}>{msg}</.error>
+        </div>
+      </div>
+      <div :if={@help != []} class="field-help">
+        <div class="rounded-lg bg-base-200/50 p-4 text-sm">
+          <div class="flex items-start gap-2">
+            <.icon name="hero-information-circle" class="mt-0.5 h-5 w-5 flex-shrink-0 text-info" />
+            <div class="text-base-content/70">
+              {render_slot(@help)}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     """
   end
@@ -246,19 +291,33 @@ defmodule HomesiteWeb.CoreComponents do
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
-    <div class="fieldset mb-2">
-      <label>
-        <span :if={@label} class="label mb-1">{@label}</span>
-        <input
-          type={@type}
-          name={@name}
-          id={@id}
-          value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-          class={[@class || "input w-full", @errors != [] && (@error_class || "input-error")]}
-          {@rest}
-        />
-      </label>
-      <.error :for={msg <- @errors}>{msg}</.error>
+    <div class={["field-with-help", @help == [] && "mb-2"]}>
+      <div class="field-input">
+        <div class="fieldset">
+          <label>
+            <span :if={@label} class="label mb-1">{@label}</span>
+            <input
+              type={@type}
+              name={@name}
+              id={@id}
+              value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+              class={[@class || "input w-full", @errors != [] && (@error_class || "input-error")]}
+              {@rest}
+            />
+          </label>
+          <.error :for={msg <- @errors}>{msg}</.error>
+        </div>
+      </div>
+      <div :if={@help != []} class="field-help">
+        <div class="rounded-lg bg-base-200/50 p-4 text-sm">
+          <div class="flex items-start gap-2">
+            <.icon name="hero-information-circle" class="mt-0.5 h-5 w-5 flex-shrink-0 text-info" />
+            <div class="text-base-content/70">
+              {render_slot(@help)}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     """
   end

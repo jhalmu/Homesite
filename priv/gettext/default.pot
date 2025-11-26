@@ -10,20 +10,20 @@
 msgid ""
 msgstr ""
 
-#: lib/homesite_web/components/core_components.ex:336
+#: lib/homesite_web/components/core_components.ex:395
 #: lib/homesite_web/live/dashboard_live/index.html.heex:83
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:171
-#: lib/homesite_web/components/layouts.ex:246
+#: lib/homesite_web/components/layouts.ex:182
+#: lib/homesite_web/components/layouts.ex:259
 #, elixir-autogen, elixir-format
 msgid "Admin"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:105
-#: lib/homesite_web/components/layouts.ex:117
+#: lib/homesite_web/components/layouts.ex:116
+#: lib/homesite_web/components/layouts.ex:128
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr ""
@@ -33,14 +33,14 @@ msgstr ""
 msgid "Built with"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:73
+#: lib/homesite_web/components/layouts.ex:84
 #, elixir-autogen, elixir-format
 msgid "Built with ❤️ and Elixir."
 msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:60
-#: lib/homesite_web/components/layouts.ex:161
-#: lib/homesite_web/components/layouts.ex:230
+#: lib/homesite_web/components/layouts.ex:172
+#: lib/homesite_web/components/layouts.ex:243
 #, elixir-autogen, elixir-format
 msgid "Dashboard"
 msgstr ""
@@ -50,21 +50,21 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:202
-#: lib/homesite_web/components/layouts.ex:278
+#: lib/homesite_web/components/layouts.ex:213
+#: lib/homesite_web/components/layouts.ex:291
 #: lib/homesite_web/live/user_live/login.ex:13
 #: lib/homesite_web/live/user_live/registration.ex:18
 #, elixir-autogen, elixir-format
 msgid "Log in"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:188
-#: lib/homesite_web/components/layouts.ex:272
+#: lib/homesite_web/components/layouts.ex:199
+#: lib/homesite_web/components/layouts.ex:285
 #, elixir-autogen, elixir-format
 msgid "Log out"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:224
+#: lib/homesite_web/components/layouts.ex:237
 #, elixir-autogen, elixir-format
 msgid "Menu"
 msgstr ""
@@ -80,43 +80,43 @@ msgid "Platform"
 msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:61
-#: lib/homesite_web/components/layouts.ex:164
-#: lib/homesite_web/components/layouts.ex:235
+#: lib/homesite_web/components/layouts.ex:175
+#: lib/homesite_web/components/layouts.ex:248
 #, elixir-autogen, elixir-format
 msgid "Posts"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:183
-#: lib/homesite_web/components/layouts.ex:267
+#: lib/homesite_web/components/layouts.ex:194
+#: lib/homesite_web/components/layouts.ex:280
 #: lib/homesite_web/live/dashboard_live/index.html.heex:51
 #, elixir-autogen, elixir-format
 msgid "Settings"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:112
+#: lib/homesite_web/components/layouts.ex:123
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:62
-#: lib/homesite_web/components/layouts.ex:167
-#: lib/homesite_web/components/layouts.ex:240
+#: lib/homesite_web/components/layouts.ex:178
+#: lib/homesite_web/components/layouts.ex:253
 #: lib/homesite_web/live/post_live/form.ex:81
 #, elixir-autogen, elixir-format
 msgid "Tags"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:293
+#: lib/homesite_web/components/layouts.ex:308
 #, elixir-autogen, elixir-format
 msgid "Theme"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:100
+#: lib/homesite_web/components/layouts.ex:111
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr ""
 
-#: lib/homesite_web/components/core_components.ex:74
+#: lib/homesite_web/components/core_components.ex:75
 #, elixir-autogen, elixir-format
 msgid "close"
 msgstr ""
@@ -218,8 +218,8 @@ msgstr ""
 
 #: lib/homesite_web/live/post_live/form.ex:121
 #: lib/homesite_web/live/tag_live/form.ex:21
-#: lib/homesite_web/live/user_live/settings.ex:76
-#: lib/homesite_web/live/user_live/settings.ex:127
+#: lib/homesite_web/live/user_live/settings.ex:112
+#: lib/homesite_web/live/user_live/settings.ex:181
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr ""
@@ -276,7 +276,7 @@ msgstr ""
 msgid "Public posts are visible to everyone. Turn off to make this post private."
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:198
+#: lib/homesite_web/live/user_live/settings.ex:252
 #, elixir-autogen, elixir-format
 msgid "A link to confirm your email change has been sent to the new address."
 msgstr ""
@@ -316,7 +316,7 @@ msgstr ""
 msgid "Already registered?"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/registration.ex:70
+#: lib/homesite_web/live/user_live/registration.ex:84
 #, elixir-autogen, elixir-format
 msgid "An email was sent to %{email}, please access it to confirm your account."
 msgstr ""
@@ -331,22 +331,22 @@ msgstr ""
 msgid "Basic admin access"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:49
+#: lib/homesite_web/live/user_live/settings.ex:55
 #, elixir-autogen, elixir-format
 msgid "Bio"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:61
+#: lib/homesite_web/live/user_live/settings.ex:79
 #, elixir-autogen, elixir-format
 msgid "Bluesky Handle"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:92
+#: lib/homesite_web/live/user_live/settings.ex:134
 #, elixir-autogen, elixir-format
 msgid "Change Email"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:91
+#: lib/homesite_web/live/user_live/settings.ex:133
 #, elixir-autogen, elixir-format
 msgid "Changing..."
 msgstr ""
@@ -356,7 +356,7 @@ msgstr ""
 msgid "Community Posts"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:124
+#: lib/homesite_web/live/user_live/settings.ex:172
 #, elixir-autogen, elixir-format
 msgid "Confirm new password"
 msgstr ""
@@ -366,7 +366,7 @@ msgstr ""
 msgid "Content moderation"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/registration.ex:36
+#: lib/homesite_web/live/user_live/registration.ex:50
 #, elixir-autogen, elixir-format
 msgid "Create an account"
 msgstr ""
@@ -381,7 +381,7 @@ msgstr ""
 msgid "Create your first tag"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/registration.ex:35
+#: lib/homesite_web/live/user_live/registration.ex:49
 #, elixir-autogen, elixir-format
 msgid "Creating account..."
 msgstr ""
@@ -406,17 +406,17 @@ msgstr ""
 #: lib/homesite_web/live/user_live/login.ex:45
 #: lib/homesite_web/live/user_live/login.ex:69
 #: lib/homesite_web/live/user_live/registration.ex:29
-#: lib/homesite_web/live/user_live/settings.ex:87
+#: lib/homesite_web/live/user_live/settings.ex:123
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:143
+#: lib/homesite_web/live/user_live/settings.ex:197
 #, elixir-autogen, elixir-format
 msgid "Email change link is invalid or it has expired."
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:140
+#: lib/homesite_web/live/user_live/settings.ex:194
 #, elixir-autogen, elixir-format
 msgid "Email changed successfully."
 msgstr ""
@@ -503,7 +503,7 @@ msgstr ""
 msgid "Manage your profile, email address and password settings"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:67
+#: lib/homesite_web/live/user_live/settings.ex:91
 #, elixir-autogen, elixir-format
 msgid "Mastodon Handle"
 msgstr ""
@@ -521,7 +521,7 @@ msgstr ""
 msgid "New Tag"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:117
+#: lib/homesite_web/live/user_live/settings.ex:159
 #, elixir-autogen, elixir-format
 msgid "New password"
 msgstr ""
@@ -531,7 +531,8 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:73
+#: lib/homesite_web/live/user_live/registration.ex:38
+#: lib/homesite_web/live/user_live/settings.ex:103
 #, elixir-autogen, elixir-format
 msgid "Preferred Language"
 msgstr ""
@@ -541,7 +542,7 @@ msgstr ""
 msgid "Private"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:275
+#: lib/homesite_web/live/user_live/settings.ex:329
 #, elixir-autogen, elixir-format
 msgid "Profile updated successfully."
 msgstr ""
@@ -577,7 +578,7 @@ msgstr ""
 msgid "Registered users"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:128
+#: lib/homesite_web/live/user_live/settings.ex:182
 #, elixir-autogen, elixir-format
 msgid "Save Password"
 msgstr ""
@@ -612,7 +613,7 @@ msgstr ""
 msgid "Tag updated successfully"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:50
+#: lib/homesite_web/live/user_live/settings.ex:56
 #, elixir-autogen, elixir-format
 msgid "Tell us about yourself (max 500 characters)"
 msgstr ""
@@ -642,7 +643,7 @@ msgstr ""
 msgid "Total Users"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:77
+#: lib/homesite_web/live/user_live/settings.ex:113
 #, elixir-autogen, elixir-format
 msgid "Update Profile"
 msgstr ""
@@ -691,7 +692,7 @@ msgstr ""
 msgid "View all"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:55
+#: lib/homesite_web/live/user_live/settings.ex:67
 #, elixir-autogen, elixir-format
 msgid "Website URL"
 msgstr ""
@@ -786,7 +787,7 @@ msgstr ""
 msgid "Go to Dashboard"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:287
+#: lib/homesite_web/components/layouts.ex:301
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr ""
@@ -810,4 +811,79 @@ msgstr ""
 #: lib/homesite_web/live/page_live/home.html.heex:8
 #, elixir-autogen, elixir-format
 msgid "Welcome to Homesite"
+msgstr ""
+
+#: lib/homesite_web/live/user_live/settings.ex:164
+#, elixir-autogen, elixir-format
+msgid "Choose a strong password with at least 12 characters. Use a mix of uppercase, lowercase, numbers, and special characters for better security."
+msgstr ""
+
+#: lib/homesite_web/live/user_live/settings.ex:107
+#, elixir-autogen, elixir-format
+msgid "Choose your preferred language for the user interface. This setting affects menus, buttons, and system messages throughout the application."
+msgstr ""
+
+#: lib/homesite_web/live/user_live/settings.ex:176
+#, elixir-autogen, elixir-format
+msgid "Re-enter your new password exactly as above to confirm. This helps prevent typos when setting your password."
+msgstr ""
+
+#: lib/homesite_web/live/user_live/settings.ex:59
+#, elixir-autogen, elixir-format
+msgid "Write a brief description about yourself. This appears on your public profile. Maximum 500 characters."
+msgstr ""
+
+#: lib/homesite_web/live/user_live/settings.ex:83
+#, elixir-autogen, elixir-format
+msgid "Your Bluesky username in the format @username.bsky.social or @username.custom-domain.com. This will be linked from your profile."
+msgstr ""
+
+#: lib/homesite_web/live/user_live/settings.ex:95
+#, elixir-autogen, elixir-format
+msgid "Your Mastodon handle in the format @username@instance.social. Include both your username and instance. This will be linked from your profile."
+msgstr ""
+
+#: lib/homesite_web/live/user_live/settings.ex:47
+#, elixir-autogen, elixir-format
+msgid "Your display name appears on your posts and profile. This can be your real name or a pseudonym. Maximum 100 characters."
+msgstr ""
+
+#: lib/homesite_web/live/user_live/settings.ex:128
+#, elixir-autogen, elixir-format
+msgid "Your email address is used for login and notifications. Changing it will send a confirmation link to the new address. Your old email remains active until confirmed."
+msgstr ""
+
+#: lib/homesite_web/live/user_live/settings.ex:71
+#, elixir-autogen, elixir-format
+msgid "Your personal website, blog, or portfolio URL. Must start with http:// or https://. This link will appear on your public profile."
+msgstr ""
+
+#: lib/homesite_web/live/user_live/registration.ex:43
+#, elixir-autogen, elixir-format
+msgid "Choose your preferred language for the user interface. This can be changed later in Settings."
+msgstr ""
+
+#: lib/homesite_web/live/user_live/registration.ex:39
+#, elixir-autogen, elixir-format
+msgid "English"
+msgstr ""
+
+#: lib/homesite_web/live/user_live/registration.ex:39
+#, elixir-autogen, elixir-format
+msgid "Finnish"
+msgstr ""
+
+#: lib/homesite_web/components/layouts.ex:79
+#, elixir-autogen, elixir-format
+msgid "JSON Feed"
+msgstr ""
+
+#: lib/homesite_web/components/layouts.ex:75
+#, elixir-autogen, elixir-format
+msgid "RSS Feed"
+msgstr ""
+
+#: lib/homesite_web/components/layouts.ex:72
+#, elixir-autogen, elixir-format
+msgid "Subscribe"
 msgstr ""
