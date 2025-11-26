@@ -4,6 +4,132 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-11-26 21:00:00 - 21:30:00 [Session COMPLETED]
+
+### Session: Markdown Rendering with Syntax Highlighting
+
+#### Completed ✅
+
+**Markdown Support for Blog Posts:**
+- ✅ Added full Markdown rendering to post show view
+- ✅ Added Markdown-to-text conversion for homepage previews
+- ✅ Syntax highlighting with catppuccin_mocha theme
+- ✅ Support for code blocks, tables, task lists, strikethrough, autolinks
+- ✅ Clean preview text extraction (strips HTML tags)
+
+**Post Show View:**
+- ✅ Created `render_markdown/1` function using MDEx
+- ✅ Configured extensions: strikethrough, table, tasklist, autolink
+- ✅ Syntax highlighting: `{:html_inline, theme: "catppuccin_mocha"}`
+- ✅ Added Tailwind Typography prose classes for styling
+- ✅ Custom prose styles: `prose-pre:bg-gray-900 prose-pre:text-gray-100`
+
+**Homepage Previews:**
+- ✅ Created `markdown_preview/2` function in home.ex
+- ✅ Renders Markdown → HTML → plain text extraction via Floki
+- ✅ Truncates to specified length (150 chars for featured, 300 for list)
+- ✅ Auto-appends "..." when truncated
+
+**Bug Fixes:**
+- ✅ Fixed MDEx API error: Changed `features:` to `syntax_highlight:`
+- ✅ Used correct theme name: `catppuccin_mocha` (underscore not hyphen)
+
+**Files Modified:**
+- `lib/homesite_web/live/post_live/show.ex` - Added render_markdown/1 function
+- `lib/homesite_web/live/page_live/home.ex` - Added markdown_preview/2 function
+- `lib/homesite_web/live/page_live/home.html.heex` - Updated preview calls
+
+**Commits:**
+- 04b6f76 - Add Markdown rendering support to blog posts
+
+#### Technical Implementation Details
+
+**MDEx Configuration:**
+```elixir
+MDEx.to_html!(markdown,
+  extension: [
+    strikethrough: true,
+    table: true,
+    tasklist: true,
+    autolink: true
+  ],
+  render: [
+    unsafe_: true
+  ],
+  syntax_highlight: [
+    formatter: {:html_inline, theme: "catppuccin_mocha"}
+  ]
+)
+```
+
+**Preview Text Extraction:**
+```elixir
+def markdown_preview(markdown, length) do
+  markdown
+  |> MDEx.to_html!(extension: [], render: [unsafe_: true])
+  |> Floki.parse_document!()
+  |> Floki.text()
+  |> String.slice(0, length)
+  |> then(fn text ->
+    if String.length(text) >= length, do: text <> "...", else: text
+  end)
+end
+```
+
+**Typography Styling:**
+- Base: `prose prose-slate dark:prose-invert max-w-none`
+- Code blocks: `prose-pre:bg-gray-900 prose-pre:text-gray-100`
+- Fluid spacing: `my-[clamp(1.5rem,4vw,3rem)]`
+
+#### Current Status
+- **Tests:** 194 tests, 6 pre-existing failures (unrelated) ✅
+- **Server:** Running at http://localhost:4000 ✅
+- **Markdown Rendering:** Fully functional ✅
+- **Syntax Highlighting:** catppuccin_mocha theme ✅
+- **Pushed to GitHub:** Commit 04b6f76 ✅
+
+#### Available Markdown Features
+
+**Supported Extensions:**
+- ✅ Code blocks with syntax highlighting
+- ✅ Tables (GFM-style)
+- ✅ Task lists ([x] and [ ])
+- ✅ Strikethrough (~~text~~)
+- ✅ Autolinks (URLs auto-converted to links)
+
+**Supported Themes:**
+- catppuccin_mocha (implemented)
+- Many other themes available (see MDEx Autumn docs)
+
+#### Notes
+- MDEx 0.10.0 uses `syntax_highlight:` option (not `features:`)
+- Theme names use underscores: `catppuccin_mocha` not `catppuccin-mocha`
+- Homepage previews strip Markdown syntax for clean text excerpts
+- Floki (already a dependency) used for HTML parsing
+- unsafe_: true allows raw HTML in Markdown (use with caution)
+
+#### Next Steps / Future Enhancements
+
+**From Previous Sessions (Still TODO):**
+1. Expand translation coverage to remaining pages
+2. RSS feed enhancements (pagination, caching, images)
+3. Insights Logger implementation (deferred)
+4. Post visibility feature (public/authenticated/private)
+
+**Markdown Enhancements:**
+- Consider adding table of contents for long posts
+- Add custom syntax highlighting themes
+- Consider line numbers for code blocks
+- Add copy button for code blocks
+- Evaluate footnote support
+
+**Testing Ideas:**
+- Test various Markdown edge cases (nested lists, complex tables)
+- Verify syntax highlighting works for multiple languages
+- Test XSS protection with HTML in Markdown
+
+---
+
 ## 2025-11-26 16:30:00 - 17:45:00 [Session COMPLETED]
 
 ### Session: Fix i18n Translation System - Homepage, LiveView Locale, and Date Formatting
