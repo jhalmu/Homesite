@@ -15,6 +15,9 @@ defmodule HomesiteWeb.Plugs.SetLocale do
   def init(opts), do: opts
 
   def call(conn, _opts) do
+    # Fetch cookies so conn.cookies is populated
+    conn = fetch_cookies(conn)
+
     locale =
       conn
       |> get_locale_from_user()
