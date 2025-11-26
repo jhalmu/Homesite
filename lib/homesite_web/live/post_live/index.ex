@@ -96,7 +96,7 @@ defmodule HomesiteWeb.PostLive.Index do
         <% end %>
       </div>
 
-      <%= if Enum.empty?(@streams.posts) do %>
+      <%= if not @has_posts do %>
         <div class="alert alert-info mt-8">
           <.icon name="hero-information-circle" class="h-6 w-6" />
           <span>{gettext("No posts yet. Create your first post to get started!")}</span>
@@ -114,10 +114,13 @@ defmodule HomesiteWeb.PostLive.Index do
       Content.subscribe_posts(current_scope)
     end
 
+    posts = list_posts(current_scope)
+
     {:ok,
      socket
      |> assign(:page_title, gettext("Listing Posts"))
-     |> stream(:posts, list_posts(current_scope))}
+     |> assign(:has_posts, length(posts) > 0)
+     |> stream(:posts, posts)}
   end
 
   @impl true
@@ -131,7 +134,12 @@ defmodule HomesiteWeb.PostLive.Index do
   @impl true
   def handle_info({type, %Homesite.Content.Post{}}, socket)
       when type in [:created, :updated, :deleted] do
-    {:noreply, stream(socket, :posts, list_posts(socket.assigns.current_scope), reset: true)}
+    posts = list_posts(socket.assigns.current_scope)
+
+    {:noreply,
+     socket
+     |> assign(:has_posts, length(posts) > 0)
+     |> stream(:posts, posts, reset: true)}
   end
 
   defp list_posts(nil) do
