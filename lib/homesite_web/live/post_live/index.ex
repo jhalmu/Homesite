@@ -21,34 +21,87 @@ defmodule HomesiteWeb.PostLive.Index do
         </:actions>
       </.header>
 
-      <.table
-        id="posts"
-        rows={@streams.posts}
-        row_click={fn {_id, post} -> JS.navigate(~p"/posts/#{post}") end}
-      >
-        <:col :let={{_id, post}} label={gettext("Title")}>{post.title}</:col>
-        <:col :let={{_id, post}} label={gettext("Body")}>{post.body}</:col>
-        <:col :let={{_id, post}} label={gettext("Slug")}>{post.slug}</:col>
-        <:col :let={{_id, post}} label={gettext("Published at")}>{post.published_at}</:col>
-        <:action :let={{_id, post}}>
-          <div class="sr-only">
-            <.link navigate={~p"/posts/#{post}"}>{gettext("Show")}</.link>
-          </div>
-          <%= if @current_scope && post.user_id == @current_scope.user.id do %>
-            <.link navigate={~p"/posts/#{post}/edit"}>{gettext("Edit")}</.link>
-          <% end %>
-        </:action>
-        <:action :let={{id, post}}>
-          <%= if @current_scope && post.user_id == @current_scope.user.id do %>
-            <.link
-              phx-click={JS.push("delete", value: %{id: post.id}) |> hide("##{id}")}
-              data-confirm={gettext("Are you sure?")}
-            >
-              {gettext("Delete")}
-            </.link>
-          <% end %>
-        </:action>
-      </.table>
+      <div class="mt-8 space-y-4" id="posts" phx-update="stream">
+        <%= for {id, post} <- @streams.posts do %>
+          <article
+            id={id}
+            class="card bg-base-200 shadow-lg hover:shadow-xl transition-shadow"
+          >
+            <div class="card-body">
+              <div class="flex items-start justify-between gap-4">
+                <div class="flex-1 min-w-0">
+                  <.link navigate={~p"/posts/#{post}"} class="group">
+                    <h3 class="card-title text-xl mb-2 group-hover:text-primary transition-colors">
+                      {post.title}
+                    </h3>
+                  </.link>
+
+                  <p class="text-sm opacity-70 line-clamp-2 mb-3">
+                    {preview_text(post.body)}
+                  </p>
+
+                  <div class="flex flex-wrap gap-3 text-sm">
+                    <%= if post.published_at do %>
+                      <div class="badge badge-success gap-2">
+                        <.icon name="hero-check-circle" class="h-3 w-3" />
+                        {gettext("Published")}
+                      </div>
+                      <div class="opacity-70">
+                        <.icon name="hero-calendar" class="inline h-4 w-4" />
+                        <time datetime={post.published_at}>
+                          {Calendar.strftime(post.published_at, "%B %d, %Y")}
+                        </time>
+                      </div>
+                    <% else %>
+                      <div class="badge badge-warning gap-2">
+                        <.icon name="hero-pencil" class="h-3 w-3" />
+                        {gettext("Draft")}
+                      </div>
+                    <% end %>
+
+                    <%= if post.is_public do %>
+                      <div class="badge badge-ghost gap-2">
+                        <.icon name="hero-globe-alt" class="h-3 w-3" />
+                        {gettext("Public")}
+                      </div>
+                    <% else %>
+                      <div class="badge badge-ghost gap-2">
+                        <.icon name="hero-lock-closed" class="h-3 w-3" />
+                        {gettext("Private")}
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+
+                <%= if @current_scope && post.user_id == @current_scope.user.id do %>
+                  <div class="flex gap-2 flex-shrink-0">
+                    <.link navigate={~p"/posts/#{post}"} class="btn btn-sm btn-ghost">
+                      <.icon name="hero-eye" class="h-4 w-4" />
+                    </.link>
+                    <.link navigate={~p"/posts/#{post}/edit"} class="btn btn-sm btn-ghost">
+                      <.icon name="hero-pencil-square" class="h-4 w-4" />
+                    </.link>
+                    <.link
+                      phx-click={JS.push("delete", value: %{id: post.id}) |> hide("##{id}")}
+                      data-confirm={gettext("Are you sure?")}
+                      class="btn btn-sm btn-ghost text-error"
+                    >
+                      <.icon name="hero-trash" class="h-4 w-4" />
+                    </.link>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </article>
+        <% end %>
+      </div>
+
+      <%= if Enum.empty?(@streams.posts) do %>
+        <div class="alert alert-info mt-8">
+          <.icon name="hero-information-circle" class="h-6 w-6" />
+          <span>{gettext("No posts yet. Create your first post to get started!")}</span>
+        </div>
+      <% end %>
     </Layouts.app>
     """
   end
@@ -89,5 +142,16 @@ defmodule HomesiteWeb.PostLive.Index do
   defp list_posts(current_scope) do
     # Authenticated users see their own posts
     Content.list_posts(current_scope)
+  end
+
+  defp preview_text(body) do
+    body
+    |> MDEx.to_html!(extension: [], render: [unsafe_: true])
+    |> Floki.parse_document!()
+    |> Floki.text()
+    |> String.slice(0, 150)
+    |> then(fn text ->
+      if String.length(text) >= 150, do: text <> "...", else: text
+    end)
   end
 end

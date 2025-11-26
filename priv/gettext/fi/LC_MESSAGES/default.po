@@ -122,14 +122,13 @@ msgstr "Internet-yhteyttä ei löydy"
 msgid "close"
 msgstr "sulje"
 
-#: lib/homesite_web/live/post_live/index.ex:45
+#: lib/homesite_web/live/post_live/index.ex:86
 #: lib/homesite_web/live/tag_live/index.ex:36
 #, elixir-autogen, elixir-format
 msgid "Are you sure?"
 msgstr "Oletko varma?"
 
 #: lib/homesite_web/live/post_live/form.ex:29
-#: lib/homesite_web/live/post_live/index.ex:30
 #, elixir-autogen, elixir-format
 msgid "Body"
 msgstr "Sisältö"
@@ -150,14 +149,12 @@ msgstr "Luo tagi"
 msgid "Date"
 msgstr "Päivämäärä"
 
-#: lib/homesite_web/live/post_live/index.ex:47
 #: lib/homesite_web/live/tag_live/index.ex:38
 #, elixir-autogen, elixir-format
 msgid "Delete"
 msgstr "Poista"
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:107
-#: lib/homesite_web/live/post_live/index.ex:38
 #: lib/homesite_web/live/tag_live/index.ex:31
 #: lib/homesite_web/live/tag_live/show.ex:74
 #, elixir-autogen, elixir-format
@@ -170,7 +167,7 @@ msgid "Edit Post"
 msgstr "Muokkaa kirjoitusta"
 
 #: lib/homesite_web/live/post_live/index.ex:14
-#: lib/homesite_web/live/post_live/index.ex:66
+#: lib/homesite_web/live/post_live/index.ex:119
 #, elixir-autogen, elixir-format
 msgid "Listing Posts"
 msgstr "Kirjoitusten listaus"
@@ -207,11 +204,6 @@ msgstr "Kirjoitus päivitetty onnistuneesti"
 msgid "Publication Date & Time"
 msgstr "Julkaisupäivä ja -aika"
 
-#: lib/homesite_web/live/post_live/index.ex:32
-#, elixir-autogen, elixir-format
-msgid "Published at"
-msgstr "Julkaistu"
-
 #: lib/homesite_web/live/post_live/form.ex:122
 #, elixir-autogen, elixir-format
 msgid "Save Post"
@@ -235,14 +227,12 @@ msgstr "Valitse tagit luokitellaksesi tämän kirjoituksen"
 msgid "Select when this post should be published"
 msgstr "Valitse milloin tämä kirjoitus julkaistaan"
 
-#: lib/homesite_web/live/post_live/index.ex:35
 #: lib/homesite_web/live/tag_live/index.ex:29
 #, elixir-autogen, elixir-format
 msgid "Show"
 msgstr "Näytä"
 
 #: lib/homesite_web/live/post_live/form.ex:24
-#: lib/homesite_web/live/post_live/index.ex:31
 #: lib/homesite_web/live/tag_live/form.ex:18
 #: lib/homesite_web/live/tag_live/index.ex:25
 #: lib/homesite_web/live/tag_live/show.ex:23
@@ -257,7 +247,6 @@ msgstr "Aika"
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:81
 #: lib/homesite_web/live/post_live/form.ex:21
-#: lib/homesite_web/live/post_live/index.ex:29
 #, elixir-autogen, elixir-format
 msgid "Title"
 msgstr "Otsikko"
@@ -393,6 +382,7 @@ msgid "Display Name"
 msgstr "Näyttönimi"
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:98
+#: lib/homesite_web/live/post_live/index.ex:58
 #: lib/homesite_web/live/tag_live/show.ex:66
 #, elixir-autogen, elixir-format
 msgid "Draft"
@@ -538,6 +528,7 @@ msgstr "Salasana"
 msgid "Preferred Language"
 msgstr "Ensisijainen kieli"
 
+#: lib/homesite_web/live/post_live/index.ex:70
 #: lib/homesite_web/live/tag_live/show.ex:27
 #, elixir-autogen, elixir-format
 msgid "Private"
@@ -548,12 +539,14 @@ msgstr "Yksityinen"
 msgid "Profile updated successfully."
 msgstr "Profiili päivitetty onnistuneesti."
 
+#: lib/homesite_web/live/post_live/index.ex:65
 #: lib/homesite_web/live/tag_live/show.ex:25
 #, elixir-autogen, elixir-format
 msgid "Public"
 msgstr "Julkinen"
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:82
+#: lib/homesite_web/live/post_live/index.ex:47
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Published"
 msgstr "Julkaistu"
@@ -888,3 +881,8 @@ msgstr "RSS-syöte"
 #, elixir-autogen, elixir-format
 msgid "Subscribe"
 msgstr "Tilaa"
+
+#: lib/homesite_web/live/post_live/index.ex:102
+#, elixir-autogen, elixir-format
+msgid "No posts yet. Create your first post to get started!"
+msgstr "Ei vielä kirjoituksia. Luo ensimmäinen kirjoitus päästäksesi alkuun!"

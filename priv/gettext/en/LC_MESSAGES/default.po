@@ -122,14 +122,13 @@ msgstr ""
 msgid "close"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/index.ex:45
+#: lib/homesite_web/live/post_live/index.ex:86
 #: lib/homesite_web/live/tag_live/index.ex:36
 #, elixir-autogen, elixir-format
 msgid "Are you sure?"
 msgstr ""
 
 #: lib/homesite_web/live/post_live/form.ex:29
-#: lib/homesite_web/live/post_live/index.ex:30
 #, elixir-autogen, elixir-format
 msgid "Body"
 msgstr ""
@@ -150,14 +149,12 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/index.ex:47
 #: lib/homesite_web/live/tag_live/index.ex:38
 #, elixir-autogen, elixir-format
 msgid "Delete"
 msgstr ""
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:107
-#: lib/homesite_web/live/post_live/index.ex:38
 #: lib/homesite_web/live/tag_live/index.ex:31
 #: lib/homesite_web/live/tag_live/show.ex:74
 #, elixir-autogen, elixir-format
@@ -170,7 +167,7 @@ msgid "Edit Post"
 msgstr ""
 
 #: lib/homesite_web/live/post_live/index.ex:14
-#: lib/homesite_web/live/post_live/index.ex:66
+#: lib/homesite_web/live/post_live/index.ex:119
 #, elixir-autogen, elixir-format
 msgid "Listing Posts"
 msgstr ""
@@ -207,11 +204,6 @@ msgstr ""
 msgid "Publication Date & Time"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/index.ex:32
-#, elixir-autogen, elixir-format
-msgid "Published at"
-msgstr ""
-
 #: lib/homesite_web/live/post_live/form.ex:122
 #, elixir-autogen, elixir-format
 msgid "Save Post"
@@ -235,14 +227,12 @@ msgstr ""
 msgid "Select when this post should be published"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/index.ex:35
 #: lib/homesite_web/live/tag_live/index.ex:29
 #, elixir-autogen, elixir-format
 msgid "Show"
 msgstr ""
 
 #: lib/homesite_web/live/post_live/form.ex:24
-#: lib/homesite_web/live/post_live/index.ex:31
 #: lib/homesite_web/live/tag_live/form.ex:18
 #: lib/homesite_web/live/tag_live/index.ex:25
 #: lib/homesite_web/live/tag_live/show.ex:23
@@ -257,7 +247,6 @@ msgstr ""
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:81
 #: lib/homesite_web/live/post_live/form.ex:21
-#: lib/homesite_web/live/post_live/index.ex:29
 #, elixir-autogen, elixir-format
 msgid "Title"
 msgstr ""
@@ -393,6 +382,7 @@ msgid "Display Name"
 msgstr ""
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:98
+#: lib/homesite_web/live/post_live/index.ex:58
 #: lib/homesite_web/live/tag_live/show.ex:66
 #, elixir-autogen, elixir-format
 msgid "Draft"
@@ -538,6 +528,7 @@ msgstr ""
 msgid "Preferred Language"
 msgstr ""
 
+#: lib/homesite_web/live/post_live/index.ex:70
 #: lib/homesite_web/live/tag_live/show.ex:27
 #, elixir-autogen, elixir-format
 msgid "Private"
@@ -548,12 +539,14 @@ msgstr ""
 msgid "Profile updated successfully."
 msgstr ""
 
+#: lib/homesite_web/live/post_live/index.ex:65
 #: lib/homesite_web/live/tag_live/show.ex:25
 #, elixir-autogen, elixir-format
 msgid "Public"
 msgstr ""
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:82
+#: lib/homesite_web/live/post_live/index.ex:47
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Published"
 msgstr ""
@@ -887,4 +880,9 @@ msgstr ""
 #: lib/homesite_web/components/layouts.ex:72
 #, elixir-autogen, elixir-format
 msgid "Subscribe"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/index.ex:102
+#, elixir-autogen, elixir-format
+msgid "No posts yet. Create your first post to get started!"
 msgstr ""
