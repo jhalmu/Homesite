@@ -27,7 +27,9 @@ defmodule HomesiteWeb.Plugs.SetLocale do
       |> validate_locale()
 
     Gettext.put_locale(HomesiteWeb.Gettext, locale)
-    conn
+
+    # Store locale in session for LiveView to access
+    put_session(conn, :locale, locale)
   end
 
   # Get locale from authenticated user's preference
