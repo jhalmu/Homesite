@@ -34,6 +34,47 @@ Always check AGENTS.md first for project-specific patterns before making archite
 
 **CRITICAL**: Follow this workflow when working on the codebase:
 
+### 🎯 End of Session Checklist (MANDATORY)
+
+**Before ending ANY coding session, complete this checklist:**
+
+1. **Update MEMO.md** ✍️
+   - Add datetime stamp (ISO 8601 format: `2025-11-27 22:00:00`)
+   - Summarize what was accomplished
+   - Note any pending tasks or decisions needed
+   - Document any blockers or issues encountered
+   - Provide context for next session
+
+2. **Update GitHub Issues** 📋
+   - Close completed issues with summary: `gh issue close <number> --comment "summary"`
+   - Update partial progress: `gh issue comment <number> --body "progress update"`
+   - Create new issues for discovered work
+   - Keep issues synchronized with reality
+
+3. **Run Tests** 🧪
+   - Execute: `mix test.all` (precompile + format + test + credo)
+   - Fix any failures before committing
+   - Verify: "211 tests, 0 failures"
+
+4. **Review Changes** 👀
+   - Check git status: `git status`
+   - Review diff: `git diff`
+   - Ensure only intended files modified
+
+5. **Commit & Push** 🚀
+   - Add files: `git add .` (or specific files)
+   - Write descriptive commit message
+   - Include issue references: `#123`
+   - Push to GitHub: `git push`
+
+6. **(Optional) Log Insights** 💡
+   - If using Insights Logger, capture any reusable patterns discovered
+   - Trigger: "Log this insight: [description]"
+
+**To trigger this checklist, say:** "End of session checklist" or "EOD"
+
+---
+
 ### When to Commit & Push
 1. **Before major changes** - Always commit and push current work before starting significant refactoring or new features
 2. **When context is filling** - Monitor token usage and commit/push when context approaches limits
