@@ -9,7 +9,8 @@ defmodule Homesite.Content.Tag do
   schema "tags" do
     field :name, :string
     field :slug, :string
-    field :is_public, :boolean, default: false
+    field :description, :string
+    field :is_public, :boolean, default: true
     field :user_id, :id
 
     belongs_to :user, Homesite.Accounts.User, define_field: false
@@ -24,9 +25,10 @@ defmodule Homesite.Content.Tag do
   @doc false
   def changeset(tag, attrs, %Scope{} = user_scope) do
     tag
-    |> cast(attrs, [:name, :slug, :is_public])
+    |> cast(attrs, [:name, :description, :slug, :is_public])
     |> validate_required([:name, :slug])
     |> validate_length(:name, min: 2, max: 50)
+    |> validate_length(:description, max: 500)
     |> generate_slug()
     |> put_change(:user_id, user_scope.user.id)
     |> unique_constraint(:slug)
@@ -40,12 +42,14 @@ defmodule Homesite.Content.Tag do
         changeset
 
       name ->
-        slug =
+        base_slug =
           name
           |> String.downcase()
           |> String.replace(~r/[^\w-]+/, "-")
           |> String.trim("-")
 
+        # Add timestamp like posts for uniqueness
+        slug = "#{base_slug}-#{:os.system_time(:millisecond)}"
         put_change(changeset, :slug, slug)
     end
   end

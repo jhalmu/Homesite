@@ -34,6 +34,12 @@ defmodule HomesiteWeb.TagLive.Show do
             </.link>
           </div>
         </div>
+
+        <%= if @tag.description do %>
+          <div class="mb-[clamp(2rem,5vw,3rem)]">
+            <p class="text-base-content/70">{@tag.description}</p>
+          </div>
+        <% end %>
         
     <!-- User's Posts with this Tag -->
         <div class="mb-[clamp(2rem,5vw,3rem)]">

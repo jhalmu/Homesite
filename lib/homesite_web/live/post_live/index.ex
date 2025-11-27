@@ -25,18 +25,18 @@ defmodule HomesiteWeb.PostLive.Index do
         <%= for {id, post} <- @streams.posts do %>
           <article
             id={id}
-            class="card bg-base-200 shadow-lg hover:shadow-xl transition-shadow"
+            class="card bg-base-200 shadow-lg transition-shadow hover:shadow-xl"
           >
             <div class="card-body">
               <div class="flex items-start justify-between gap-4">
-                <div class="flex-1 min-w-0">
+                <div class="min-w-0 flex-1">
                   <.link navigate={~p"/posts/#{post}"} class="group">
-                    <h3 class="card-title text-xl mb-2 group-hover:text-primary transition-colors">
+                    <h3 class="card-title mb-2 text-xl transition-colors group-hover:text-primary">
                       {post.title}
                     </h3>
                   </.link>
 
-                  <p class="text-sm opacity-70 line-clamp-2 mb-3">
+                  <p class="line-clamp-2 mb-3 text-sm opacity-70">
                     {preview_text(post.body)}
                   </p>
 
@@ -74,7 +74,7 @@ defmodule HomesiteWeb.PostLive.Index do
                 </div>
 
                 <%= if @current_scope && post.user_id == @current_scope.user.id do %>
-                  <div class="flex gap-2 flex-shrink-0">
+                  <div class="flex flex-shrink-0 gap-2">
                     <.link navigate={~p"/posts/#{post}"} class="btn btn-sm btn-ghost">
                       <.icon name="hero-eye" class="h-4 w-4" />
                     </.link>

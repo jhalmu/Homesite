@@ -23,7 +23,11 @@ defmodule HomesiteWeb.UserLive.Settings do
         phx-change="validate_profile"
       >
         <div class="gap-[clamp(1rem,3vw,2rem)] flex flex-col items-center">
-          <div class="gap-[clamp(0.5rem,2vw,1rem)] flex flex-col items-center" id="avatar-upload-container" phx-hook="AvatarPreview">
+          <div
+            class="gap-[clamp(0.5rem,2vw,1rem)] flex flex-col items-center"
+            id="avatar-upload-container"
+            phx-hook="AvatarPreview"
+          >
             <.avatar user={@current_scope.user} class="h-24 w-24" id="avatar-preview" />
             <.live_file_input
               upload={@uploads.avatar}

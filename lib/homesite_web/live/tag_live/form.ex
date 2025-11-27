@@ -14,10 +14,45 @@ defmodule HomesiteWeb.TagLive.Form do
       </.header>
 
       <.form for={@form} id="tag-form" phx-change="validate" phx-submit="save">
-        <.input field={@form[:name]} type="text" label={gettext("Name")} />
-        <.input field={@form[:slug]} type="text" label={gettext("Slug")} />
-        <.input field={@form[:is_public]} type="checkbox" label={gettext("Is public")} />
-        <footer>
+        <div class="mb-4">
+          <.input field={@form[:name]} type="text" label={gettext("Name")} />
+          <%= if @form[:slug].value do %>
+            <p class="text-base-content/60 mt-1 text-sm">
+              <.icon name="hero-link" class="inline h-4 w-4" /> {gettext("Slug")}:
+              <span class="font-mono">{@form[:slug].value}</span>
+            </p>
+          <% end %>
+        </div>
+
+        <.input
+          field={@form[:description]}
+          type="textarea"
+          label={gettext("Description")}
+          placeholder={gettext("Optional description for this tag")}
+        />
+
+        <div class="divider"></div>
+
+        <div class="form-control">
+          <label class="label cursor-pointer justify-start gap-3">
+            <input type="hidden" name={@form[:is_public].name} value="false" />
+            <input
+              type="checkbox"
+              name={@form[:is_public].name}
+              value="true"
+              checked={@form[:is_public].value == true}
+              class="toggle toggle-primary"
+            />
+            <span class="label-text font-semibold">{gettext("Make this tag publicly visible")}</span>
+          </label>
+          <p class="text-base-content/60 ml-14 text-sm">
+            {gettext("Public tags can be seen by everyone. Turn off to make this tag private.")}
+          </p>
+        </div>
+
+        <div class="divider"></div>
+
+        <footer class="flex gap-3">
           <.button phx-disable-with={gettext("Saving...")} variant="primary">
             {gettext("Save Tag")}
           </.button>

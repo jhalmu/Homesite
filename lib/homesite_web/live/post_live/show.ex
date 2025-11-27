@@ -26,7 +26,7 @@ defmodule HomesiteWeb.PostLive.Show do
         <.author_byline user={@post.user} date={@post.published_at} />
       </div>
 
-      <div class="my-[clamp(1.5rem,4vw,3rem)] prose prose-slate dark:prose-invert max-w-none prose-pre:bg-gray-900 prose-pre:text-gray-100">
+      <div class="my-[clamp(1.5rem,4vw,3rem)] prose prose-slate max-w-none prose-pre:bg-gray-900 prose-pre:text-gray-100 dark:prose-invert">
         {Phoenix.HTML.raw(render_markdown(@post.body))}
       </div>
     </Layouts.app>

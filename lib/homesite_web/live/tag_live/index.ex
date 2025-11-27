@@ -16,29 +16,69 @@ defmodule HomesiteWeb.TagLive.Index do
         </:actions>
       </.header>
 
-      <.table
-        id="tags"
-        rows={@streams.tags}
-        row_click={fn {_id, tag} -> JS.navigate(~p"/tags/#{tag}") end}
-      >
-        <:col :let={{_id, tag}} label={gettext("Name")}>{tag.name}</:col>
-        <:col :let={{_id, tag}} label={gettext("Slug")}>{tag.slug}</:col>
-        <:col :let={{_id, tag}} label={gettext("Is public")}>{tag.is_public}</:col>
-        <:action :let={{_id, tag}}>
-          <div class="sr-only">
-            <.link navigate={~p"/tags/#{tag}"}>{gettext("Show")}</.link>
-          </div>
-          <.link navigate={~p"/tags/#{tag}/edit"}>{gettext("Edit")}</.link>
-        </:action>
-        <:action :let={{id, tag}}>
-          <.link
-            phx-click={JS.push("delete", value: %{id: tag.id}) |> hide("##{id}")}
-            data-confirm={gettext("Are you sure?")}
+      <div class="mt-8 space-y-4" id="tags" phx-update="stream">
+        <%= for {id, tag} <- @streams.tags do %>
+          <article
+            id={id}
+            class="card bg-base-200 shadow-lg transition-shadow hover:shadow-xl"
           >
-            {gettext("Delete")}
-          </.link>
-        </:action>
-      </.table>
+            <div class="card-body">
+              <div class="flex items-start justify-between gap-4">
+                <div class="min-w-0 flex-1">
+                  <.link navigate={~p"/tags/#{tag}"} class="group">
+                    <h3 class="card-title mb-2 text-xl transition-colors group-hover:text-primary">
+                      {tag.name}
+                    </h3>
+                  </.link>
+
+                  <%= if tag.description do %>
+                    <p class="line-clamp-2 mb-3 text-sm opacity-70">
+                      {tag.description}
+                    </p>
+                  <% end %>
+
+                  <div class="flex flex-wrap gap-3 text-sm">
+                    <%= if tag.is_public do %>
+                      <div class="badge badge-ghost gap-2">
+                        <.icon name="hero-globe-alt" class="h-3 w-3" />
+                        {gettext("Public")}
+                      </div>
+                    <% else %>
+                      <div class="badge badge-ghost gap-2">
+                        <.icon name="hero-lock-closed" class="h-3 w-3" />
+                        {gettext("Private")}
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+
+                <div class="flex flex-shrink-0 gap-2">
+                  <.link navigate={~p"/tags/#{tag}"} class="btn btn-sm btn-ghost">
+                    <.icon name="hero-eye" class="h-4 w-4" />
+                  </.link>
+                  <.link navigate={~p"/tags/#{tag}/edit"} class="btn btn-sm btn-ghost">
+                    <.icon name="hero-pencil-square" class="h-4 w-4" />
+                  </.link>
+                  <.link
+                    phx-click={JS.push("delete", value: %{id: tag.id}) |> hide("##{id}")}
+                    data-confirm={gettext("Are you sure?")}
+                    class="btn btn-sm btn-ghost text-error"
+                  >
+                    <.icon name="hero-trash" class="h-4 w-4" />
+                  </.link>
+                </div>
+              </div>
+            </div>
+          </article>
+        <% end %>
+      </div>
+
+      <%= if not @has_tags do %>
+        <div class="alert alert-info mt-8">
+          <.icon name="hero-information-circle" class="h-6 w-6" />
+          <span>{gettext("No tags yet. Create your first tag to get started!")}</span>
+        </div>
+      <% end %>
     </Layouts.app>
     """
   end
@@ -49,10 +89,13 @@ defmodule HomesiteWeb.TagLive.Index do
       Content.subscribe_tags(socket.assigns.current_scope)
     end
 
+    tags = list_tags(socket.assigns.current_scope)
+
     {:ok,
      socket
      |> assign(:page_title, gettext("Listing Tags"))
-     |> stream(:tags, list_tags(socket.assigns.current_scope))}
+     |> assign(:has_tags, length(tags) > 0)
+     |> stream(:tags, tags)}
   end
 
   @impl true
@@ -66,7 +109,12 @@ defmodule HomesiteWeb.TagLive.Index do
   @impl true
   def handle_info({type, %Homesite.Content.Tag{}}, socket)
       when type in [:created, :updated, :deleted] do
-    {:noreply, stream(socket, :tags, list_tags(socket.assigns.current_scope), reset: true)}
+    tags = list_tags(socket.assigns.current_scope)
+
+    {:noreply,
+     socket
+     |> assign(:has_tags, length(tags) > 0)
+     |> stream(:tags, tags, reset: true)}
   end
 
   defp list_tags(current_scope) do

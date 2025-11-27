@@ -209,9 +209,9 @@ defmodule HomesiteWeb.CoreComponents do
         </div>
       </div>
       <div :if={@help != []} class="field-help">
-        <div class="rounded-lg bg-base-200/50 p-4 text-sm">
+        <div class="bg-base-200/50 rounded-lg p-4 text-sm">
           <div class="flex items-start gap-2">
-            <.icon name="hero-information-circle" class="mt-0.5 h-5 w-5 flex-shrink-0 text-info" />
+            <.icon name="hero-information-circle" class="text-info mt-0.5 h-5 w-5 flex-shrink-0" />
             <div class="text-base-content/70">
               {render_slot(@help)}
             </div>
@@ -244,9 +244,9 @@ defmodule HomesiteWeb.CoreComponents do
         </div>
       </div>
       <div :if={@help != []} class="field-help">
-        <div class="rounded-lg bg-base-200/50 p-4 text-sm">
+        <div class="bg-base-200/50 rounded-lg p-4 text-sm">
           <div class="flex items-start gap-2">
-            <.icon name="hero-information-circle" class="mt-0.5 h-5 w-5 flex-shrink-0 text-info" />
+            <.icon name="hero-information-circle" class="text-info mt-0.5 h-5 w-5 flex-shrink-0" />
             <div class="text-base-content/70">
               {render_slot(@help)}
             </div>
@@ -267,7 +267,10 @@ defmodule HomesiteWeb.CoreComponents do
             <textarea
               id={@id}
               name={@name}
-              class={[@class || "textarea w-full", @errors != [] && (@error_class || "textarea-error")]}
+              class={[
+                @class || "textarea w-full",
+                @errors != [] && (@error_class || "textarea-error")
+              ]}
               {@rest}
             >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
           </label>
@@ -275,9 +278,9 @@ defmodule HomesiteWeb.CoreComponents do
         </div>
       </div>
       <div :if={@help != []} class="field-help">
-        <div class="rounded-lg bg-base-200/50 p-4 text-sm">
+        <div class="bg-base-200/50 rounded-lg p-4 text-sm">
           <div class="flex items-start gap-2">
-            <.icon name="hero-information-circle" class="mt-0.5 h-5 w-5 flex-shrink-0 text-info" />
+            <.icon name="hero-information-circle" class="text-info mt-0.5 h-5 w-5 flex-shrink-0" />
             <div class="text-base-content/70">
               {render_slot(@help)}
             </div>
@@ -309,9 +312,9 @@ defmodule HomesiteWeb.CoreComponents do
         </div>
       </div>
       <div :if={@help != []} class="field-help">
-        <div class="rounded-lg bg-base-200/50 p-4 text-sm">
+        <div class="bg-base-200/50 rounded-lg p-4 text-sm">
           <div class="flex items-start gap-2">
-            <.icon name="hero-information-circle" class="mt-0.5 h-5 w-5 flex-shrink-0 text-info" />
+            <.icon name="hero-information-circle" class="text-info mt-0.5 h-5 w-5 flex-shrink-0" />
             <div class="text-base-content/70">
               {render_slot(@help)}
             </div>

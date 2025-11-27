@@ -30,37 +30,40 @@ defmodule HomesiteWeb.FeedController do
 
     case format do
       :rss ->
-        feed = generate_rss_feed(
-          posts,
-          "Homesite - All Posts",
-          "Recent posts from Homesite",
-          url(~p"/"),
-          url(~p"/rss.xml")
-        )
+        feed =
+          generate_rss_feed(
+            posts,
+            "Homesite - All Posts",
+            "Recent posts from Homesite",
+            url(~p"/"),
+            url(~p"/rss.xml")
+          )
 
         conn
         |> put_resp_content_type("application/rss+xml")
         |> send_resp(200, feed)
 
       :json ->
-        feed = generate_json_feed(
-          posts,
-          "Homesite - All Posts",
-          "Recent posts from Homesite",
-          url(~p"/"),
-          url(~p"/feed.json")
-        )
+        feed =
+          generate_json_feed(
+            posts,
+            "Homesite - All Posts",
+            "Recent posts from Homesite",
+            url(~p"/"),
+            url(~p"/feed.json")
+          )
 
         json(conn, feed)
 
       :atom ->
-        feed = generate_atom_feed(
-          posts,
-          "Homesite - All Posts",
-          "Recent posts from Homesite",
-          url(~p"/"),
-          url(~p"/feed.xml")
-        )
+        feed =
+          generate_atom_feed(
+            posts,
+            "Homesite - All Posts",
+            "Recent posts from Homesite",
+            url(~p"/"),
+            url(~p"/feed.xml")
+          )
 
         conn
         |> put_resp_content_type("application/atom+xml")
@@ -92,15 +95,27 @@ defmodule HomesiteWeb.FeedController do
 
     case format do
       :rss ->
-        feed = generate_rss_feed(posts, title, description, link, url(~p"/users/#{user_id}/rss.xml"))
+        feed =
+          generate_rss_feed(posts, title, description, link, url(~p"/users/#{user_id}/rss.xml"))
+
         conn |> put_resp_content_type("application/rss+xml") |> send_resp(200, feed)
 
       :json ->
-        feed = generate_json_feed(posts, title, description, link, url(~p"/users/#{user_id}/feed.json"))
+        feed =
+          generate_json_feed(
+            posts,
+            title,
+            description,
+            link,
+            url(~p"/users/#{user_id}/feed.json")
+          )
+
         json(conn, feed)
 
       :atom ->
-        feed = generate_atom_feed(posts, title, description, link, url(~p"/users/#{user_id}/feed.xml"))
+        feed =
+          generate_atom_feed(posts, title, description, link, url(~p"/users/#{user_id}/feed.xml"))
+
         conn |> put_resp_content_type("application/atom+xml") |> send_resp(200, feed)
     end
   end
@@ -126,11 +141,15 @@ defmodule HomesiteWeb.FeedController do
         conn |> put_resp_content_type("application/rss+xml") |> send_resp(200, feed)
 
       :json ->
-        feed = generate_json_feed(posts, title, description, link, url(~p"/tags/#{slug}/feed.json"))
+        feed =
+          generate_json_feed(posts, title, description, link, url(~p"/tags/#{slug}/feed.json"))
+
         json(conn, feed)
 
       :atom ->
-        feed = generate_atom_feed(posts, title, description, link, url(~p"/tags/#{slug}/feed.xml"))
+        feed =
+          generate_atom_feed(posts, title, description, link, url(~p"/tags/#{slug}/feed.xml"))
+
         conn |> put_resp_content_type("application/atom+xml") |> send_resp(200, feed)
     end
   end

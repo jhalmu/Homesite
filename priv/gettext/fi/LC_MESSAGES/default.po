@@ -123,7 +123,7 @@ msgid "close"
 msgstr "sulje"
 
 #: lib/homesite_web/live/post_live/index.ex:86
-#: lib/homesite_web/live/tag_live/index.ex:36
+#: lib/homesite_web/live/tag_live/index.ex:64
 #, elixir-autogen, elixir-format
 msgid "Are you sure?"
 msgstr "Oletko varma?"
@@ -134,7 +134,7 @@ msgid "Body"
 msgstr "Sisältö"
 
 #: lib/homesite_web/live/post_live/form.ex:125
-#: lib/homesite_web/live/tag_live/form.ex:25
+#: lib/homesite_web/live/tag_live/form.ex:59
 #, elixir-autogen, elixir-format
 msgid "Cancel"
 msgstr "Peruuta"
@@ -149,14 +149,8 @@ msgstr "Luo tagi"
 msgid "Date"
 msgstr "Päivämäärä"
 
-#: lib/homesite_web/live/tag_live/index.ex:38
-#, elixir-autogen, elixir-format
-msgid "Delete"
-msgstr "Poista"
-
 #: lib/homesite_web/live/dashboard_live/index.html.heex:107
-#: lib/homesite_web/live/tag_live/index.ex:31
-#: lib/homesite_web/live/tag_live/show.ex:74
+#: lib/homesite_web/live/tag_live/show.ex:80
 #, elixir-autogen, elixir-format
 msgid "Edit"
 msgstr "Muokkaa"
@@ -167,7 +161,7 @@ msgid "Edit Post"
 msgstr "Muokkaa kirjoitusta"
 
 #: lib/homesite_web/live/post_live/index.ex:14
-#: lib/homesite_web/live/post_live/index.ex:119
+#: lib/homesite_web/live/post_live/index.ex:121
 #, elixir-autogen, elixir-format
 msgid "Listing Posts"
 msgstr "Kirjoitusten listaus"
@@ -210,7 +204,7 @@ msgid "Save Post"
 msgstr "Tallenna kirjoitus"
 
 #: lib/homesite_web/live/post_live/form.ex:121
-#: lib/homesite_web/live/tag_live/form.ex:21
+#: lib/homesite_web/live/tag_live/form.ex:55
 #: lib/homesite_web/live/user_live/settings.ex:112
 #: lib/homesite_web/live/user_live/settings.ex:181
 #, elixir-autogen, elixir-format
@@ -227,14 +221,8 @@ msgstr "Valitse tagit luokitellaksesi tämän kirjoituksen"
 msgid "Select when this post should be published"
 msgstr "Valitse milloin tämä kirjoitus julkaistaan"
 
-#: lib/homesite_web/live/tag_live/index.ex:29
-#, elixir-autogen, elixir-format
-msgid "Show"
-msgstr "Näytä"
-
 #: lib/homesite_web/live/post_live/form.ex:24
-#: lib/homesite_web/live/tag_live/form.ex:18
-#: lib/homesite_web/live/tag_live/index.ex:25
+#: lib/homesite_web/live/tag_live/form.ex:21
 #: lib/homesite_web/live/tag_live/show.ex:23
 #, elixir-autogen, elixir-format
 msgid "Slug"
@@ -341,7 +329,7 @@ msgstr "Vaihda sähköposti"
 msgid "Changing..."
 msgstr "Vaihdetaan..."
 
-#: lib/homesite_web/live/tag_live/show.ex:87
+#: lib/homesite_web/live/tag_live/show.ex:93
 #, elixir-autogen, elixir-format
 msgid "Community Posts"
 msgstr "Yhteisön kirjoitukset"
@@ -383,12 +371,12 @@ msgstr "Näyttönimi"
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:98
 #: lib/homesite_web/live/post_live/index.ex:58
-#: lib/homesite_web/live/tag_live/show.ex:66
+#: lib/homesite_web/live/tag_live/show.ex:72
 #, elixir-autogen, elixir-format
 msgid "Draft"
 msgstr "Luonnos"
 
-#: lib/homesite_web/live/tag_live/form.ex:48
+#: lib/homesite_web/live/tag_live/form.ex:82
 #: lib/homesite_web/live/tag_live/show.ex:33
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Edit Tag"
@@ -432,12 +420,6 @@ msgstr "Täydet ylläpito-oikeudet"
 msgid "If your email is in our system, you will receive instructions for logging in shortly."
 msgstr "Jos sähköpostisi on järjestelmässämme, saat pian ohjeet kirjautumiseen."
 
-#: lib/homesite_web/live/tag_live/form.ex:19
-#: lib/homesite_web/live/tag_live/index.ex:26
-#, elixir-autogen, elixir-format
-msgid "Is public"
-msgstr "Julkinen"
-
 #: lib/homesite_web/live/admin_live/index.html.heex:107
 #, elixir-autogen, elixir-format
 msgid "Level 1 (🌸):"
@@ -464,7 +446,7 @@ msgid "Level 5 (🌸🌸🌸🌸🌸):"
 msgstr "Taso 5 (🌸🌸🌸🌸🌸):"
 
 #: lib/homesite_web/live/tag_live/index.ex:11
-#: lib/homesite_web/live/tag_live/index.ex:54
+#: lib/homesite_web/live/tag_live/index.ex:96
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Listing Tags"
 msgstr "Tagien listaus"
@@ -499,14 +481,13 @@ msgstr "Hallitse profiiliasi, sähköpostiosoitettasi ja salasana-asetuksia"
 msgid "Mastodon Handle"
 msgstr "Mastodon-tunnus"
 
-#: lib/homesite_web/live/tag_live/form.ex:17
-#: lib/homesite_web/live/tag_live/index.ex:24
+#: lib/homesite_web/live/tag_live/form.ex:18
 #, elixir-autogen, elixir-format
 msgid "Name"
 msgstr "Nimi"
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:48
-#: lib/homesite_web/live/tag_live/form.ex:57
+#: lib/homesite_web/live/tag_live/form.ex:91
 #: lib/homesite_web/live/tag_live/index.ex:14
 #, elixir-autogen, elixir-format
 msgid "New Tag"
@@ -529,6 +510,7 @@ msgid "Preferred Language"
 msgstr "Ensisijainen kieli"
 
 #: lib/homesite_web/live/post_live/index.ex:70
+#: lib/homesite_web/live/tag_live/index.ex:49
 #: lib/homesite_web/live/tag_live/show.ex:27
 #, elixir-autogen, elixir-format
 msgid "Private"
@@ -540,6 +522,7 @@ msgid "Profile updated successfully."
 msgstr "Profiili päivitetty onnistuneesti."
 
 #: lib/homesite_web/live/post_live/index.ex:65
+#: lib/homesite_web/live/tag_live/index.ex:44
 #: lib/homesite_web/live/tag_live/show.ex:25
 #, elixir-autogen, elixir-format
 msgid "Public"
@@ -577,7 +560,7 @@ msgstr "Rekisteröityneitä käyttäjiä"
 msgid "Save Password"
 msgstr "Tallenna salasana"
 
-#: lib/homesite_web/live/tag_live/form.ex:22
+#: lib/homesite_web/live/tag_live/form.ex:56
 #, elixir-autogen, elixir-format
 msgid "Save Tag"
 msgstr "Tallenna tagi"
@@ -592,17 +575,17 @@ msgstr "Järjestelmän yleiskatsaus"
 msgid "System configuration"
 msgstr "Järjestelmän konfigurointi"
 
-#: lib/homesite_web/live/tag_live/show.ex:136
+#: lib/homesite_web/live/tag_live/show.ex:142
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Tag"
 msgstr "Tagi"
 
-#: lib/homesite_web/live/tag_live/form.ex:92
+#: lib/homesite_web/live/tag_live/form.ex:126
 #, elixir-autogen, elixir-format
 msgid "Tag created successfully"
 msgstr "Tagi luotu onnistuneesti"
 
-#: lib/homesite_web/live/tag_live/form.ex:77
+#: lib/homesite_web/live/tag_live/form.ex:111
 #, elixir-autogen, elixir-format
 msgid "Tag updated successfully"
 msgstr "Tagi päivitetty onnistuneesti"
@@ -612,7 +595,7 @@ msgstr "Tagi päivitetty onnistuneesti"
 msgid "Tell us about yourself (max 500 characters)"
 msgstr "Kerro itsestäsi (max 500 merkkiä)"
 
-#: lib/homesite_web/live/tag_live/show.ex:156
+#: lib/homesite_web/live/tag_live/show.ex:162
 #, elixir-autogen, elixir-format
 msgid "The current tag was deleted."
 msgstr "Nykyinen tagi poistettiin."
@@ -658,7 +641,7 @@ msgid "User management"
 msgstr "Käyttäjien hallinta"
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:104
-#: lib/homesite_web/live/tag_live/show.ex:71
+#: lib/homesite_web/live/tag_live/show.ex:77
 #, elixir-autogen, elixir-format
 msgid "View"
 msgstr "Näytä"
@@ -673,7 +656,7 @@ msgstr "Näytä kaikki kirjoitukset"
 msgid "View All Tags"
 msgstr "Näytä kaikki tagit"
 
-#: lib/homesite_web/live/tag_live/show.ex:109
+#: lib/homesite_web/live/tag_live/show.ex:115
 #, elixir-autogen, elixir-format
 msgid "View Profile"
 msgstr "Näytä profiili"
@@ -706,7 +689,7 @@ msgstr "Ylläpito-oikeuksilla"
 msgid "You are running the local mail adapter."
 msgstr "Käytät paikallista sähköpostiadapteria."
 
-#: lib/homesite_web/live/tag_live/show.ex:46
+#: lib/homesite_web/live/tag_live/show.ex:52
 #, elixir-autogen, elixir-format
 msgid "You don't have any posts with this tag yet."
 msgstr "Sinulla ei ole vielä kirjoituksia tällä tagilla."
@@ -736,7 +719,7 @@ msgstr "Sinun täytyy kirjautua uudelleen suorittaaksesi arkaluonteisia toiminto
 msgid "Your Level"
 msgstr "Sinun tasosi"
 
-#: lib/homesite_web/live/tag_live/show.ex:41
+#: lib/homesite_web/live/tag_live/show.ex:47
 #, elixir-autogen, elixir-format
 msgid "Your Posts"
 msgstr "Omat kirjoituksesi"
@@ -886,3 +869,28 @@ msgstr "Tilaa"
 #, elixir-autogen, elixir-format
 msgid "No posts yet. Create your first post to get started!"
 msgstr "Ei vielä kirjoituksia. Luo ensimmäinen kirjoitus päästäksesi alkuun!"
+
+#: lib/homesite_web/live/tag_live/form.ex:30
+#, elixir-autogen, elixir-format
+msgid "Description"
+msgstr "Kuvaus"
+
+#: lib/homesite_web/live/tag_live/form.ex:45
+#, elixir-autogen, elixir-format
+msgid "Make this tag publicly visible"
+msgstr "Tee tästä tagista julkinen"
+
+#: lib/homesite_web/live/tag_live/index.ex:79
+#, elixir-autogen, elixir-format
+msgid "No tags yet. Create your first tag to get started!"
+msgstr "Ei vielä tageja. Luo ensimmäinen tagi päästäksesi alkuun!"
+
+#: lib/homesite_web/live/tag_live/form.ex:31
+#, elixir-autogen, elixir-format
+msgid "Optional description for this tag"
+msgstr "Valinnainen kuvaus tälle tagille"
+
+#: lib/homesite_web/live/tag_live/form.ex:48
+#, elixir-autogen, elixir-format
+msgid "Public tags can be seen by everyone. Turn off to make this tag private."
+msgstr "Julkiset tagit näkyvät kaikille. Poista valinta tehdäksesi tagista yksityisen."
