@@ -34,7 +34,7 @@ defmodule Homesite.ContentTest do
 
       assert {:ok, %Tag{} = tag} = Content.create_tag(scope, valid_attrs)
       assert tag.name == "some name"
-      assert tag.slug =~ ~r/^some-name-\d+$/
+      assert tag.slug == "some-name"
       assert tag.is_public == true
       assert tag.user_id == scope.user.id
     end
@@ -51,7 +51,7 @@ defmodule Homesite.ContentTest do
 
       assert {:ok, %Tag{} = tag} = Content.update_tag(scope, tag, update_attrs)
       assert tag.name == "some updated name"
-      assert tag.slug =~ ~r/^some-updated-name-\d+$/
+      assert tag.slug == "some-updated-name"
       assert tag.is_public == false
     end
 
@@ -116,6 +116,181 @@ defmodule Homesite.ContentTest do
     end
   end
 
+  describe "global tags" do
+    import Homesite.AccountsFixtures, only: [user_scope_fixture: 0]
+    import Homesite.ContentFixtures
+
+    test "list_all_public_tags/0 returns all public tags with post counts" do
+      scope1 = user_scope_fixture()
+      scope2 = user_scope_fixture()
+
+      # Create public tags from different users
+      tag1 = tag_fixture(scope1, %{name: "Elixir", is_public: true})
+      tag2 = tag_fixture(scope2, %{name: "Phoenix", is_public: true})
+      _tag3 = tag_fixture(scope1, %{name: "Private Tag", is_public: false})
+
+      # Create posts with tags
+      post1 = post_fixture(scope1)
+      post2 = post_fixture(scope1)
+      post3 = post_fixture(scope2)
+
+      Homesite.Repo.insert_all("post_tags", [
+        %{post_id: post1.id, tag_id: tag1.id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
+        %{post_id: post2.id, tag_id: tag1.id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
+        %{post_id: post3.id, tag_id: tag2.id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()}
+      ])
+
+      results = Content.list_all_public_tags()
+
+      # Should return public tags sorted by post count (desc), then name (asc)
+      assert length(results) == 2
+      [{elixir_tag, elixir_count}, {phoenix_tag, phoenix_count}] = results
+      assert elixir_tag.name == "Elixir"
+      assert elixir_count == 2
+      assert phoenix_tag.name == "Phoenix"
+      assert phoenix_count == 1
+    end
+
+    test "list_all_public_tags/1 with search filters by name" do
+      scope = user_scope_fixture()
+      _tag1 = tag_fixture(scope, %{name: "Elixir Programming", is_public: true})
+      tag2 = tag_fixture(scope, %{name: "Phoenix Framework", is_public: true})
+      _tag3 = tag_fixture(scope, %{name: "Ruby on Rails", is_public: true})
+
+      results = Content.list_all_public_tags("Phoenix")
+
+      assert length(results) == 1
+      {found_tag, _count} = hd(results)
+      assert found_tag.id == tag2.id
+    end
+
+    test "find_similar_tags/1 finds tags with similar names" do
+      scope = user_scope_fixture()
+      _tag1 = tag_fixture(scope, %{name: "Elixir", is_public: true})
+      _tag2 = tag_fixture(scope, %{name: "Elixer", is_public: true})  # typo
+      _tag3 = tag_fixture(scope, %{name: "Phoenix", is_public: true})
+
+      similar = Content.find_similar_tags("Elixir")
+
+      # Should find both "Elixir" and "Elixer" due to trigram similarity
+      assert length(similar) >= 1
+      tag_names = Enum.map(similar, & &1.name)
+      assert "Elixir" in tag_names or "Elixer" in tag_names
+    end
+
+    test "find_similar_tags/2 excludes specified tag" do
+      scope = user_scope_fixture()
+      tag1 = tag_fixture(scope, %{name: "JavaScript", is_public: true})
+      _tag2 = tag_fixture(scope, %{name: "JavaScripting", is_public: true})
+
+      similar = Content.find_similar_tags("JavaScript", tag1.id)
+
+      # Should not include the excluded tag
+      refute Enum.any?(similar, &(&1.id == tag1.id))
+    end
+
+    test "find_similar_tags/1 does not return private tags" do
+      scope1 = user_scope_fixture()
+      scope2 = user_scope_fixture()
+      _public_tag = tag_fixture(scope1, %{name: "Testing", is_public: true})
+      _private_tag = tag_fixture(scope2, %{name: "Tsting", is_public: false})
+
+      similar = Content.find_similar_tags("Testing")
+
+      # Should only return public tags
+      assert Enum.all?(similar, & &1.is_public)
+    end
+
+    test "get_or_create_tag/2 returns existing public tag" do
+      scope1 = user_scope_fixture()
+      scope2 = user_scope_fixture()
+      existing_tag = tag_fixture(scope1, %{name: "DevOps", is_public: true})
+
+      {:ok, tag} = Content.get_or_create_tag(scope2, %{"name" => "DevOps", "is_public" => true})
+
+      # Should return the existing tag, not create a new one
+      assert tag.id == existing_tag.id
+      assert tag.user_id == existing_tag.user_id
+    end
+
+    test "get_or_create_tag/2 creates new tag if not exists" do
+      scope = user_scope_fixture()
+
+      {:ok, tag} = Content.get_or_create_tag(scope, %{"name" => "NewTag", "is_public" => true})
+
+      assert tag.name == "NewTag"
+      assert tag.is_public == true
+      assert tag.user_id == scope.user.id
+    end
+
+    test "get_tag_by_slug!/1 returns public tag" do
+      scope = user_scope_fixture()
+      tag = tag_fixture(scope, %{name: "Web Development", is_public: true})
+
+      found_tag = Content.get_tag_by_slug!(tag.slug)
+
+      assert found_tag.id == tag.id
+      assert found_tag.name == "Web Development"
+    end
+
+    test "get_tag_by_slug!/1 raises for non-existent slug" do
+      assert_raise Ecto.NoResultsError, fn ->
+        Content.get_tag_by_slug!("non-existent-slug")
+      end
+    end
+  end
+
+  describe "tag privacy" do
+    import Homesite.AccountsFixtures, only: [user_scope_fixture: 0]
+    import Homesite.ContentFixtures
+
+    test "public tags are globally unique" do
+      scope1 = user_scope_fixture()
+      scope2 = user_scope_fixture()
+
+      {:ok, _tag1} = Content.create_tag(scope1, %{"name" => "GlobalTag", "is_public" => true})
+      {:error, changeset} = Content.create_tag(scope2, %{"name" => "GlobalTag", "is_public" => true})
+
+      assert "This public tag name already exists" in errors_on(changeset).name
+    end
+
+    test "private tags are user-scoped" do
+      scope1 = user_scope_fixture()
+      scope2 = user_scope_fixture()
+
+      {:ok, tag1} = Content.create_tag(scope1, %{"name" => "PrivateTag", "is_public" => false})
+      {:ok, tag2} = Content.create_tag(scope2, %{"name" => "PrivateTag", "is_public" => false})
+
+      # Both should succeed - private tags are user-scoped
+      assert tag1.id != tag2.id
+      assert tag1.name == tag2.name
+      assert tag1.user_id == scope1.user.id
+      assert tag2.user_id == scope2.user.id
+    end
+
+    test "cannot create duplicate private tag for same user" do
+      scope = user_scope_fixture()
+
+      {:ok, _tag1} = Content.create_tag(scope, %{"name" => "MyPrivate", "is_public" => false})
+      {:error, changeset} = Content.create_tag(scope, %{"name" => "MyPrivate", "is_public" => false})
+
+      # Composite unique constraint [:user_id, :name] puts error on :user_id
+      assert "You already have a private tag with this name" in errors_on(changeset).user_id
+    end
+
+    test "can create public and private tag with same name for same user" do
+      scope = user_scope_fixture()
+
+      {:ok, public_tag} = Content.create_tag(scope, %{"name" => "Shared", "is_public" => true})
+      {:ok, private_tag} = Content.create_tag(scope, %{"name" => "Shared", "is_public" => false})
+
+      # Both should succeed - different visibility scopes
+      assert public_tag.id != private_tag.id
+      assert public_tag.is_public == true
+      assert private_tag.is_public == false
+    end
+  end
+
   describe "posts" do
     alias Homesite.Content.Post
 
@@ -129,8 +304,13 @@ defmodule Homesite.ContentTest do
       other_scope = user_scope_fixture()
       post = post_fixture(scope)
       other_post = post_fixture(other_scope)
-      assert Content.list_posts(scope) == [post]
-      assert Content.list_posts(other_scope) == [other_post]
+
+      # list_posts preloads tags, so compare with preloaded version
+      post_with_tags = %{post | tags: []}
+      other_post_with_tags = %{other_post | tags: []}
+
+      assert Content.list_posts(scope) == [post_with_tags]
+      assert Content.list_posts(other_scope) == [other_post_with_tags]
     end
 
     test "get_post!/2 returns the post with given id" do

@@ -34,7 +34,14 @@ defmodule Homesite.Content.Tag do
     |> generate_slug()
     |> validate_required([:slug])
     |> put_change(:user_id, user_scope.user.id)
-    |> unique_constraint(:slug)
+    |> unique_constraint(:slug,
+      name: :tags_global_public_slug_index,
+      message: "This public tag slug already exists"
+    )
+    |> unique_constraint([:user_id, :slug],
+      name: :tags_private_user_slug_index,
+      message: "You already have a private tag with this slug"
+    )
     |> unique_constraint(:name,
       name: :tags_global_public_name_index,
       message: "This public tag name already exists"
