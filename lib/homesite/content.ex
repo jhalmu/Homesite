@@ -164,6 +164,155 @@ defmodule Homesite.Content do
   end
 
   @doc """
+  Search public tags with fuzzy matching using PostgreSQL pg_trgm extension.
+  Returns tags sorted by similarity score.
+
+  ## Examples
+
+      iex> search_public_tags("elixr")  # typo
+      [%Tag{name: "Elixir"}, ...]
+
+      iex> search_public_tags("phoenix", 5)
+      [%Tag{name: "Phoenix"}, ...]
+
+  """
+  def search_public_tags(query, limit \\ 10) when is_binary(query) do
+    from(t in Tag,
+      where: t.is_public == true,
+      where: fragment("similarity(?, ?) > 0.3", t.name, ^query),
+      order_by: [desc: fragment("similarity(?, ?)", t.name, ^query)],
+      limit: ^limit
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Find similar tags to suggest avoiding duplicates.
+  Uses PostgreSQL trigram similarity for typo tolerance.
+
+  ## Examples
+
+      iex> find_similar_tags("Elixir")
+      [%Tag{name: "Elixir-Lang"}, %Tag{name: "Elixir Programming"}, ...]
+
+      iex> find_similar_tags("NewTag", tag_id, 3)
+      []
+
+  """
+  def find_similar_tags(name, exclude_tag_id \\ nil, limit \\ 5)
+      when is_binary(name) do
+    query =
+      from(t in Tag,
+        where: t.is_public == true,
+        where: fragment("? % ?", t.name, ^name),
+        order_by: [desc: fragment("similarity(?, ?)", t.name, ^name)],
+        limit: ^limit
+      )
+
+    query =
+      if exclude_tag_id,
+        do: where(query, [t], t.id != ^exclude_tag_id),
+        else: query
+
+    Repo.all(query)
+  end
+
+  @doc """
+  Get or create a tag atomically.
+  Handles concurrent creation of same tag name with retry logic.
+
+  ## Examples
+
+      iex> get_or_create_tag(scope, %{"name" => "Elixir"})
+      {:ok, %Tag{name: "Elixir"}}
+
+  """
+  def get_or_create_tag(%Scope{} = scope, %{"name" => name} = attrs)
+      when is_binary(name) do
+    # First try to find existing public tag
+    case Repo.get_by(Tag, name: name, is_public: true) do
+      %Tag{} = tag -> {:ok, tag}
+      nil -> create_tag_with_retry(scope, attrs)
+    end
+  end
+
+  defp create_tag_with_retry(scope, attrs, retries \\ 3) do
+    case create_tag(scope, attrs) do
+      {:ok, tag} ->
+        {:ok, tag}
+
+      {:error, %Ecto.Changeset{errors: errors} = changeset} ->
+        # Check if error is due to unique constraint (race condition)
+        case Keyword.get(errors, :name) do
+          {msg, _} when msg in ["This public tag name already exists"] and retries > 0 ->
+            # Another user created it concurrently, fetch and return
+            case Repo.get_by(Tag, name: attrs["name"], is_public: true) do
+              %Tag{} = tag -> {:ok, tag}
+              nil -> create_tag_with_retry(scope, attrs, retries - 1)
+            end
+
+          _ ->
+            {:error, changeset}
+        end
+    end
+  end
+
+  @doc """
+  List all public tags with optional search filter and post counts.
+
+  ## Examples
+
+      iex> list_all_public_tags()
+      [{%Tag{name: "Elixir"}, 10}, {%Tag{name: "Phoenix"}, 5}, ...]
+
+      iex> list_all_public_tags("phoenix")
+      [{%Tag{name: "Phoenix"}, 5}, ...]
+
+  """
+  def list_all_public_tags(search \\ nil) do
+    query =
+      from(t in Tag,
+        where: t.is_public == true,
+        left_join: pt in "post_tags",
+        on: pt.tag_id == t.id,
+        group_by: t.id,
+        select: {t, count(pt.id)},
+        order_by: [desc: count(pt.id), asc: t.name]
+      )
+
+    query =
+      if search && String.length(search) >= 2 do
+        from([t, pt] in query,
+          where:
+            ilike(t.name, ^"%#{search}%") or
+              fragment("? % ?", t.name, ^search)
+        )
+      else
+        query
+      end
+
+    Repo.all(query)
+  end
+
+  @doc """
+  Get tag by slug (public access, no scope required).
+
+  Raises `Ecto.NoResultsError` if the Tag does not exist.
+
+  ## Examples
+
+      iex> get_tag_by_slug!("elixir")
+      %Tag{slug: "elixir", name: "Elixir"}
+
+      iex> get_tag_by_slug!("nonexistent")
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_tag_by_slug!(slug) when is_binary(slug) do
+    Repo.get_by!(Tag, slug: slug)
+  end
+
+  @doc """
   Subscribes to scoped notifications about any post changes.
 
   The broadcasted messages match the pattern:
@@ -195,7 +344,12 @@ defmodule Homesite.Content do
 
   """
   def list_posts(%Scope{} = scope) do
-    Repo.scoped_all(Post, user_id: scope.user.id)
+    from(p in Post,
+      where: p.user_id == ^scope.user.id,
+      preload: [:tags],
+      order_by: [desc: p.inserted_at]
+    )
+    |> Repo.all()
   end
 
   @doc """

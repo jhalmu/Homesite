@@ -26,6 +26,17 @@ defmodule HomesiteWeb.PostLive.Show do
         <.author_byline user={@post.user} date={@post.published_at} />
       </div>
 
+      <%= if @post.tags && length(@post.tags) > 0 do %>
+        <div class="my-4 flex flex-wrap gap-2">
+          <%= for tag <- @post.tags do %>
+            <.link navigate={~p"/tags/#{tag.slug}"} class="badge badge-lg badge-primary gap-2">
+              <.icon name="hero-tag" class="h-4 w-4" />
+              {tag.name}
+            </.link>
+          <% end %>
+        </div>
+      <% end %>
+
       <div class="my-[clamp(1.5rem,4vw,3rem)] prose prose-slate max-w-none prose-pre:bg-gray-900 prose-pre:text-gray-100 dark:prose-invert">
         {Phoenix.HTML.raw(render_markdown(@post.body))}
       </div>

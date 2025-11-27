@@ -4,9 +4,9 @@ defmodule HomesiteWeb.TagLiveTest do
   import Phoenix.LiveViewTest
   import Homesite.ContentFixtures
 
-  @create_attrs %{name: "some name", slug: "some slug", is_public: true}
-  @update_attrs %{name: "some updated name", slug: "some updated slug", is_public: false}
-  @invalid_attrs %{name: nil, slug: nil, is_public: false}
+  @create_attrs %{name: "some name", is_public: true}
+  @update_attrs %{name: "some updated name"}
+  @invalid_attrs %{name: nil}
 
   setup :register_and_log_in_user
 
@@ -60,24 +60,26 @@ defmodule HomesiteWeb.TagLiveTest do
       assert html =~ "Make this tag publicly visible"
     end
 
-    test "new tag stays public when name changes", %{conn: conn} do
+    test "toggle stays checked when typing in name field", %{conn: conn} do
       {:ok, form_live, _html} = live(conn, ~p"/tags/new")
 
-      # Change the name field (simulating typing)
-      html =
-        form_live
-        |> form("#tag-form", tag: %{name: "Test Tag"})
-        |> render_change()
+      # Initial state - should be checked
+      assert has_element?(form_live, "input[name='tag[is_public]'][type='checkbox'][checked]")
 
-      # The toggle should still be checked (defaults to true)
-      assert html =~ "checked"
-      assert html =~ "Test Tag"
+      # Type in name field
+      form_live
+      |> form("#tag-form", tag: %{name: "Test Tag"})
+      |> render_change()
+
+      # Toggle should STILL be checked
+      assert has_element?(form_live, "input[name='tag[is_public]'][type='checkbox'][checked]")
     end
 
-    test "can create private tag by unchecking toggle", %{conn: conn} do
+    test "can create private tag when toggle unchecked", %{conn: conn} do
       {:ok, form_live, _html} = live(conn, ~p"/tags/new")
 
-      # Submit with is_public: false (unchecked checkbox)
+      # Submit without is_public (simulating unchecked toggle)
+      # Note: The save handler adds is_public: false when not in params
       assert {:ok, index_live, _html} =
                form_live
                |> form("#tag-form", tag: %{name: "Private Tag"})
@@ -89,12 +91,30 @@ defmodule HomesiteWeb.TagLiveTest do
       assert html =~ "Private Tag"
     end
 
+    test "edit form preserves public tag during typing", %{conn: conn, scope: scope} do
+      # Create a public tag
+      tag = tag_fixture(scope, %{name: "Public Tag", is_public: true})
+
+      {:ok, form_live, _html} = live(conn, ~p"/tags/#{tag}/edit")
+
+      # Should be checked
+      assert has_element?(form_live, "input[name='tag[is_public]'][type='checkbox'][checked]")
+
+      # Type in name field
+      form_live
+      |> form("#tag-form", tag: %{name: "Updated"})
+      |> render_change()
+
+      # Should STILL be checked
+      assert has_element?(form_live, "input[name='tag[is_public]'][type='checkbox'][checked]")
+    end
+
     test "updates tag in listing", %{conn: conn, tag: tag} do
       {:ok, index_live, _html} = live(conn, ~p"/tags")
 
       assert {:ok, form_live, _html} =
                index_live
-               |> element("#tags-#{tag.id} a", "Edit")
+               |> element("#tags-#{tag.id} a[href='/tags/#{tag.id}/edit']")
                |> render_click()
                |> follow_redirect(conn, ~p"/tags/#{tag}/edit")
 
@@ -118,7 +138,7 @@ defmodule HomesiteWeb.TagLiveTest do
     test "deletes tag in listing", %{conn: conn, tag: tag} do
       {:ok, index_live, _html} = live(conn, ~p"/tags")
 
-      assert index_live |> element("#tags-#{tag.id} a", "Delete") |> render_click()
+      assert index_live |> element("#tags-#{tag.id} a[phx-click*='delete']") |> render_click()
       refute has_element?(index_live, "#tags-#{tag.id}")
     end
   end

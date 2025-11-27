@@ -1,6 +1,9 @@
 defmodule HomesiteWeb.TagLive.Show do
   use HomesiteWeb, :live_view
 
+  # Gettext is used in ~H sigil templates (compiler can't detect usage in templates)
+  import HomesiteWeb.Gettext
+
   alias Homesite.Content
 
   @impl true
@@ -29,13 +32,15 @@ defmodule HomesiteWeb.TagLive.Show do
                 </p>
               </div>
             </div>
-            <.link navigate={~p"/tags/#{@tag}/edit?return_to=show"} class="btn btn-primary gap-2">
-              <.icon name="hero-pencil-square" class="h-5 w-5" /> {gettext("Edit Tag")}
-            </.link>
+            <%= if @can_edit do %>
+              <.link navigate={~p"/tags/#{@tag}/edit?return_to=show"} class="btn btn-primary gap-2">
+                <.icon name="hero-pencil-square" class="h-5 w-5" /> {gettext("Edit Tag")}
+              </.link>
+            <% end %>
           </div>
         </div>
 
-        <%= if @tag.description do %>
+        <%= if @tag.description && @can_edit do %>
           <div class="mb-[clamp(2rem,5vw,3rem)]">
             <p class="text-base-content/70">{@tag.description}</p>
           </div>
@@ -126,21 +131,36 @@ defmodule HomesiteWeb.TagLive.Show do
   end
 
   @impl true
-  def mount(%{"id" => id}, _session, socket) do
+  def mount(%{"id" => slug}, _session, socket) do
     scope = socket.assigns.current_scope
 
-    if connected?(socket) do
+    if connected?(socket) && scope do
       Content.subscribe_tags(scope)
     end
 
-    tag = Content.get_tag!(scope, id)
-    user_posts = Content.list_user_posts_by_tag(scope, tag.id)
-    public_posts = Content.list_public_posts_by_tag(tag.id, scope.user.id)
+    # Get tag by slug (public access, no scope required)
+    tag = Content.get_tag_by_slug!(slug)
+
+    # Check if current user can edit (only if authenticated and is owner)
+    can_edit = scope && tag.user_id == scope.user.id
+
+    # Get posts with this tag
+    {user_posts, public_posts} =
+      if scope do
+        {
+          Content.list_user_posts_by_tag(scope, tag.id),
+          Content.list_public_posts_by_tag(tag.id, scope.user.id)
+        }
+      else
+        # Not authenticated: show only public posts
+        {[], Content.list_public_posts_by_tag(tag.id, nil)}
+      end
 
     {:ok,
      socket
      |> assign(:page_title, "#{gettext("Tag")}: #{tag.name}")
      |> assign(:tag, tag)
+     |> assign(:can_edit, can_edit)
      |> assign(:user_posts, user_posts)
      |> assign(:public_posts, public_posts)}
   end

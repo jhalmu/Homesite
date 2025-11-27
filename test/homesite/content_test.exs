@@ -34,7 +34,7 @@ defmodule Homesite.ContentTest do
 
       assert {:ok, %Tag{} = tag} = Content.create_tag(scope, valid_attrs)
       assert tag.name == "some name"
-      assert tag.slug == "some-name"
+      assert tag.slug =~ ~r/^some-name-\d+$/
       assert tag.is_public == true
       assert tag.user_id == scope.user.id
     end
@@ -51,7 +51,7 @@ defmodule Homesite.ContentTest do
 
       assert {:ok, %Tag{} = tag} = Content.update_tag(scope, tag, update_attrs)
       assert tag.name == "some updated name"
-      assert tag.slug == "some-updated-name"
+      assert tag.slug =~ ~r/^some-updated-name-\d+$/
       assert tag.is_public == false
     end
 

@@ -28,24 +28,22 @@ defmodule HomesiteWeb.PostLive.Form do
         </div>
         <.input field={@form[:body]} type="textarea" label={gettext("Body")} />
 
-        <div class="fieldset mb-4">
-          <label class="label mb-2">
+        <div class="form-control mb-4">
+          <label class="label">
             <span class="label-text font-semibold">{gettext("Publication Date & Time")}</span>
           </label>
-          <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            <div>
+          <div class="flex flex-wrap gap-2">
+            <div class="min-w-[140px] flex-1">
               <.input
                 field={@form[:publish_date]}
                 type="date"
-                label={gettext("Date")}
                 value={format_date(@form[:published_at].value)}
               />
             </div>
-            <div>
+            <div class="min-w-[100px] flex-1">
               <.input
                 field={@form[:publish_time]}
                 type="time"
-                label={gettext("Time")}
                 value={format_time(@form[:published_at].value)}
               />
             </div>
@@ -64,7 +62,7 @@ defmodule HomesiteWeb.PostLive.Form do
               type="checkbox"
               name={@form[:is_public].name}
               value="true"
-              checked={@form[:is_public].value == true}
+              checked={@is_public}
               class="toggle toggle-primary"
             />
             <span class="label-text font-semibold">{gettext("Make this post publicly visible")}</span>
@@ -80,39 +78,97 @@ defmodule HomesiteWeb.PostLive.Form do
           <label class="label">
             <span class="label-text font-semibold">{gettext("Tags")}</span>
           </label>
-          <%= if @available_tags == [] do %>
-            <div class="alert alert-info">
-              <.icon name="hero-information-circle" class="h-5 w-5" />
-              <span>
-                {gettext("No tags available.")}
-                <.link navigate={~p"/tags/new"} class="link">{gettext("Create a tag")}</.link>
-                {gettext("first!")}
-              </span>
+
+          <!-- Selected tags -->
+          <%= if @selected_tags != [] do %>
+            <div class="mb-3 flex flex-wrap gap-2">
+              <%= for tag <- @selected_tags do %>
+                <div class="badge badge-primary badge-lg gap-2">
+                  {tag.name}
+                  <button
+                    type="button"
+                    phx-click="remove-tag"
+                    phx-value-tag-id={tag.id}
+                    class="btn btn-xs btn-ghost btn-circle"
+                  >
+                    <.icon name="hero-x-mark" class="h-3 w-3" />
+                  </button>
+                </div>
+                <input type="hidden" name="post[tag_ids][]" value={tag.id} />
+              <% end %>
             </div>
           <% else %>
             <input type="hidden" name="post[tag_ids][]" value="" />
-            <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-              <%= for tag <- @available_tags do %>
-                <label class="label border-base-300 cursor-pointer justify-start gap-3 rounded-lg border p-3 hover:bg-base-200">
-                  <input
-                    type="checkbox"
-                    name="post[tag_ids][]"
-                    value={tag.id}
-                    checked={tag.id in @selected_tag_ids}
-                    class="checkbox checkbox-sm checkbox-primary"
-                    phx-click="toggle_tag"
-                    phx-value-tag-id={tag.id}
-                  />
-                  <span class="label-text flex-1">{tag.name}</span>
-                </label>
-              <% end %>
-            </div>
-            <p class="text-base-content/60 mt-3 text-sm">
-              <.icon name="hero-tag" class="inline h-4 w-4" /> {gettext(
-                "Select tags to categorize this post"
-              )}
-            </p>
           <% end %>
+
+          <!-- Tag search/add -->
+          <div class="relative">
+            <.input
+              type="text"
+              value={@tag_search_query}
+              phx-keyup="search-tags"
+              phx-debounce="300"
+              placeholder={gettext("Search or create tags...")}
+              autocomplete="off"
+            />
+
+            <!-- Suggestions dropdown -->
+            <%= if @tag_suggestions != [] do %>
+              <div class="absolute z-10 mt-1 w-full overflow-y-auto rounded-lg border border-base-300 bg-base-100 shadow-lg max-h-60">
+                <%= for {tag, post_count} <- @tag_suggestions do %>
+                  <button
+                    type="button"
+                    phx-click="add-tag"
+                    phx-value-tag-id={tag.id}
+                    class="flex w-full items-center justify-between px-4 py-2 text-left hover:bg-base-200"
+                  >
+                    <span>{tag.name}</span>
+                    <span class="text-sm text-base-content/60">{post_count} posts</span>
+                  </button>
+                <% end %>
+
+                <!-- Create new option -->
+                <%= if @tag_search_query != "" and !exact_match?(@tag_suggestions, @tag_search_query) do %>
+                  <button
+                    type="button"
+                    phx-click="create-and-add-tag"
+                    phx-value-name={@tag_search_query}
+                    class="flex w-full items-center gap-2 border-t border-base-300 px-4 py-2 text-left font-semibold hover:bg-base-200"
+                  >
+                    <.icon name="hero-plus" class="h-4 w-4" />
+                    {gettext("Create")} "{@tag_search_query}"
+                  </button>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+
+          <!-- Similar tags warning -->
+          <%= if @similar_tags_warning != [] do %>
+            <div class="alert alert-warning mt-3">
+              <.icon name="hero-information-circle" />
+              <div>
+                <p class="font-semibold">{gettext("Similar tags exist:")}</p>
+                <div class="mt-1 flex flex-wrap gap-2">
+                  <%= for tag <- @similar_tags_warning do %>
+                    <button
+                      type="button"
+                      phx-click="add-tag"
+                      phx-value-tag-id={tag.id}
+                      class="badge badge-sm badge-outline"
+                    >
+                      {tag.name}
+                    </button>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+
+          <p class="text-base-content/60 mt-3 text-sm">
+            <.icon name="hero-tag" class="inline h-4 w-4" />
+            {gettext("Search for tags or type to create new ones")}
+          </p>
         </div>
 
         <div class="divider"></div>
@@ -146,66 +202,117 @@ defmodule HomesiteWeb.PostLive.Form do
       Content.get_post!(socket.assigns.current_scope, id)
       |> Homesite.Repo.preload(:tags)
 
-    available_tags = Content.list_tags(socket.assigns.current_scope)
-
     socket
     |> assign(:page_title, gettext("Edit Post"))
     |> assign(:post, post)
-    |> assign(:available_tags, available_tags)
-    |> assign(:selected_tag_ids, get_tag_ids(post))
+    |> assign(:selected_tags, post.tags || [])
+    |> assign(:tag_search_query, "")
+    |> assign(:tag_suggestions, [])
+    |> assign(:similar_tags_warning, [])
+    |> assign(:is_public, post.is_public)
     |> assign(:form, to_form(Content.change_post(socket.assigns.current_scope, post)))
   end
 
   defp apply_action(socket, :new, _params) do
-    post = %Post{user_id: socket.assigns.current_scope.user.id}
-    available_tags = Content.list_tags(socket.assigns.current_scope)
+    post = %Post{user_id: socket.assigns.current_scope.user.id, is_public: true}
 
     socket
     |> assign(:page_title, gettext("New Post"))
     |> assign(:post, post)
-    |> assign(:available_tags, available_tags)
-    |> assign(:selected_tag_ids, [])
+    |> assign(:selected_tags, [])
+    |> assign(:tag_search_query, "")
+    |> assign(:tag_suggestions, [])
+    |> assign(:similar_tags_warning, [])
+    |> assign(:is_public, true)
     |> assign(:form, to_form(Content.change_post(socket.assigns.current_scope, post)))
   end
 
   @impl true
-  def handle_event("toggle_tag", %{"tag-id" => tag_id_str}, socket) do
-    tag_id = String.to_integer(tag_id_str)
-
-    selected_tag_ids =
-      if tag_id in socket.assigns.selected_tag_ids do
-        List.delete(socket.assigns.selected_tag_ids, tag_id)
+  def handle_event("search-tags", %{"value" => query}, socket) do
+    suggestions =
+      if String.length(query) >= 2 do
+        Content.list_all_public_tags(query)
       else
-        [tag_id | socket.assigns.selected_tag_ids]
+        []
       end
 
-    {:noreply, assign(socket, :selected_tag_ids, selected_tag_ids)}
+    {:noreply,
+     assign(socket, tag_search_query: query, tag_suggestions: suggestions, similar_tags_warning: [])}
+  end
+
+  def handle_event("add-tag", %{"tag-id" => tag_id_str}, socket) do
+    tag_id = String.to_integer(tag_id_str)
+
+    # Find the tag from suggestions or fetch it
+    tag = case Enum.find(socket.assigns.tag_suggestions, fn {t, _} -> t.id == tag_id end) do
+      {tag, _count} -> tag
+      nil -> Homesite.Repo.get!(Content.Tag, tag_id)
+    end
+
+    selected_tags = Enum.uniq_by([tag | socket.assigns.selected_tags], & &1.id)
+
+    {:noreply,
+     assign(socket,
+       selected_tags: selected_tags,
+       tag_search_query: "",
+       tag_suggestions: [],
+       similar_tags_warning: []
+     )}
+  end
+
+  def handle_event("remove-tag", %{"tag-id" => tag_id_str}, socket) do
+    tag_id = String.to_integer(tag_id_str)
+    selected_tags = Enum.reject(socket.assigns.selected_tags, &(&1.id == tag_id))
+    {:noreply, assign(socket, selected_tags: selected_tags)}
+  end
+
+  def handle_event("create-and-add-tag", %{"name" => name}, socket) do
+    # Check for similar tags first
+    similar = Content.find_similar_tags(name)
+
+    if similar != [] do
+      {:noreply, assign(socket, similar_tags_warning: similar)}
+    else
+      case Content.get_or_create_tag(socket.assigns.current_scope, %{"name" => name, "is_public" => true}) do
+        {:ok, tag} ->
+          selected_tags = Enum.uniq_by([tag | socket.assigns.selected_tags], & &1.id)
+
+          {:noreply,
+           assign(socket,
+             selected_tags: selected_tags,
+             tag_search_query: "",
+             tag_suggestions: [],
+             similar_tags_warning: []
+           )}
+
+        {:error, _changeset} ->
+          {:noreply, put_flash(socket, :error, gettext("Could not create tag"))}
+      end
+    end
   end
 
   def handle_event("validate", %{"post" => post_params}, socket) do
     # Combine date and time into published_at
     post_params = combine_datetime(post_params)
 
-    # Preserve selected tags from params or keep existing selection
-    selected_tag_ids =
-      case post_params["tag_ids"] do
-        [_ | _] = ids ->
-          ids
-          |> Enum.reject(&(&1 == ""))
-          |> Enum.map(&String.to_integer/1)
-
-        _ ->
-          socket.assigns.selected_tag_ids
+    # Update is_public from params if present, otherwise keep current value
+    is_public =
+      case post_params["is_public"] do
+        "true" -> true
+        "false" -> false
+        _ -> socket.assigns.is_public
       end
+
+    # Always include is_public in params based on current state
+    post_params = Map.put(post_params, "is_public", if(is_public, do: "true", else: "false"))
 
     changeset =
       Content.change_post(socket.assigns.current_scope, socket.assigns.post, post_params)
 
     {:noreply,
-     assign(socket,
-       form: to_form(changeset, action: :validate),
-       selected_tag_ids: selected_tag_ids
-     )}
+     socket
+     |> assign(:is_public, is_public)
+     |> assign(:form, to_form(changeset, action: :validate))}
   end
 
   def handle_event("save", %{"post" => post_params}, socket) do
@@ -217,7 +324,7 @@ defmodule HomesiteWeb.PostLive.Form do
 
     # Add selected tag IDs to params
     post_params =
-      Map.put(post_params, "tag_ids", Enum.map(socket.assigns.selected_tag_ids, &to_string/1))
+      Map.put(post_params, "tag_ids", Enum.map(socket.assigns.selected_tags, fn tag -> to_string(tag.id) end))
 
     save_post(socket, socket.assigns.live_action, post_params)
   end
@@ -285,9 +392,11 @@ defmodule HomesiteWeb.PostLive.Form do
 
   defp combine_datetime(params), do: params
 
-  # Helper to safely get tag IDs from a post, handling NotLoaded associations
-  defp get_tag_ids(%Post{tags: %Ecto.Association.NotLoaded{}}), do: []
-  defp get_tag_ids(%Post{tags: tags}) when is_list(tags), do: Enum.map(tags, & &1.id)
-  defp get_tag_ids(%Post{tags: nil}), do: []
-  defp get_tag_ids(_), do: []
+  # Helper to check if any suggestion exactly matches the query (case-insensitive)
+  defp exact_match?(suggestions, query) do
+    query_lower = String.downcase(query)
+    Enum.any?(suggestions, fn {tag, _count} ->
+      String.downcase(tag.name) == query_lower
+    end)
+  end
 end

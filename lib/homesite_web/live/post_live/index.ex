@@ -71,6 +71,20 @@ defmodule HomesiteWeb.PostLive.Index do
                       </div>
                     <% end %>
                   </div>
+
+                  <%= if post.tags && length(post.tags) > 0 do %>
+                    <div class="mt-2 flex flex-wrap gap-2">
+                      <%= for tag <- post.tags do %>
+                        <.link
+                          navigate={~p"/tags/#{tag.slug}"}
+                          class="badge badge-sm badge-primary gap-1"
+                        >
+                          <.icon name="hero-tag" class="h-3 w-3" />
+                          {tag.name}
+                        </.link>
+                      <% end %>
+                    </div>
+                  <% end %>
                 </div>
 
                 <%= if @current_scope && post.user_id == @current_scope.user.id do %>

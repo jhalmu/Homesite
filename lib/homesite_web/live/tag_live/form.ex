@@ -1,6 +1,9 @@
 defmodule HomesiteWeb.TagLive.Form do
   use HomesiteWeb, :live_view
 
+  # Gettext is used in ~H sigil templates (compiler can't detect usage in templates)
+  import HomesiteWeb.Gettext
+
   alias Homesite.Content
   alias Homesite.Content.Tag
 
@@ -24,6 +27,27 @@ defmodule HomesiteWeb.TagLive.Form do
           <% end %>
         </div>
 
+        <!-- Similar tags warning -->
+        <%= if @similar_tags != [] do %>
+          <div class="alert alert-warning mb-4">
+            <.icon name="hero-information-circle" />
+            <div>
+              <p class="font-semibold">{gettext("Similar tags already exist:")}</p>
+              <div class="mt-2 flex flex-wrap gap-2">
+                <%= for tag <- @similar_tags do %>
+                  <.link navigate={~p"/tags/#{tag}"} class="badge badge-lg badge-outline gap-1">
+                    <.icon name="hero-tag" class="h-3 w-3" />
+                    {tag.name}
+                  </.link>
+                <% end %>
+              </div>
+              <p class="mt-2 text-sm">
+                {gettext("Consider using one of these existing tags instead of creating a new one.")}
+              </p>
+            </div>
+          </div>
+        <% end %>
+
         <.input
           field={@form[:description]}
           type="textarea"
@@ -39,7 +63,7 @@ defmodule HomesiteWeb.TagLive.Form do
               type="checkbox"
               name={@form[:is_public].name}
               value="true"
-              checked={@form[:is_public].value == true}
+              checked={@is_public}
               class="toggle toggle-primary"
             />
             <span class="label-text font-semibold">{gettext("Make this tag publicly visible")}</span>
@@ -81,6 +105,8 @@ defmodule HomesiteWeb.TagLive.Form do
     socket
     |> assign(:page_title, gettext("Edit Tag"))
     |> assign(:tag, tag)
+    |> assign(:is_public, tag.is_public)
+    |> assign(:similar_tags, [])
     |> assign(:form, to_form(Content.change_tag(socket.assigns.current_scope, tag)))
   end
 
@@ -90,13 +116,43 @@ defmodule HomesiteWeb.TagLive.Form do
     socket
     |> assign(:page_title, gettext("New Tag"))
     |> assign(:tag, tag)
+    |> assign(:is_public, true)
+    |> assign(:similar_tags, [])
     |> assign(:form, to_form(Content.change_tag(socket.assigns.current_scope, tag)))
   end
 
   @impl true
   def handle_event("validate", %{"tag" => tag_params}, socket) do
+    # Update is_public from params if present, otherwise keep current value
+    is_public =
+      case tag_params["is_public"] do
+        "true" -> true
+        "false" -> false
+        _ -> socket.assigns.is_public
+      end
+
+    # Always include is_public in params based on current state
+    tag_params = Map.put(tag_params, "is_public", if(is_public, do: "true", else: "false"))
+
     changeset = Content.change_tag(socket.assigns.current_scope, socket.assigns.tag, tag_params)
-    {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
+
+    # Check for similar tags when creating new tag or when name changes during edit
+    similar_tags =
+      case tag_params["name"] do
+        name when is_binary(name) and byte_size(name) >= 2 ->
+          # When editing, exclude the current tag from similar results
+          exclude_id = if socket.assigns.live_action == :edit, do: socket.assigns.tag.id, else: nil
+          Content.find_similar_tags(name, exclude_id)
+
+        _ ->
+          []
+      end
+
+    {:noreply,
+     socket
+     |> assign(:is_public, is_public)
+     |> assign(:similar_tags, similar_tags)
+     |> assign(:form, to_form(changeset, action: :validate))}
   end
 
   def handle_event("save", %{"tag" => tag_params}, socket) do

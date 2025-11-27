@@ -67,7 +67,7 @@ defmodule HomesiteWeb.PostLiveTest do
 
       assert {:ok, form_live, _html} =
                index_live
-               |> element("#posts-#{post.id} a", "Edit")
+               |> element("#posts-#{post.id} a[href='/posts/#{post.id}/edit']")
                |> render_click()
                |> follow_redirect(conn, ~p"/posts/#{post}/edit")
 
@@ -91,7 +91,7 @@ defmodule HomesiteWeb.PostLiveTest do
     test "deletes post in listing", %{conn: conn, post: post} do
       {:ok, index_live, _html} = live(conn, ~p"/posts")
 
-      assert index_live |> element("#posts-#{post.id} a", "Delete") |> render_click()
+      assert index_live |> element("#posts-#{post.id} a[phx-click*='delete']") |> render_click()
       refute has_element?(index_live, "#posts-#{post.id}")
     end
   end
