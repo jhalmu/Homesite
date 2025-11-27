@@ -114,7 +114,7 @@ defmodule HomesiteWeb.TagLiveTest do
 
       assert {:ok, form_live, _html} =
                index_live
-               |> element("#tags-#{tag.id} a[href='/tags/#{tag.id}/edit']")
+               |> element("#tags-#{tag.id} a[href='/tags/#{tag.slug}/edit']")
                |> render_click()
                |> follow_redirect(conn, ~p"/tags/#{tag}/edit")
 
@@ -147,7 +147,7 @@ defmodule HomesiteWeb.TagLiveTest do
     setup [:create_tag]
 
     test "displays tag", %{conn: conn, tag: tag} do
-      {:ok, _show_live, html} = live(conn, ~p"/tags/#{tag}")
+      {:ok, _show_live, html} = live(conn, ~p"/tags/#{tag.slug}")
 
       assert html =~ tag.name
       assert html =~ "Your Posts"
@@ -155,7 +155,7 @@ defmodule HomesiteWeb.TagLiveTest do
     end
 
     test "updates tag and returns to show", %{conn: conn, tag: tag} do
-      {:ok, show_live, _html} = live(conn, ~p"/tags/#{tag}")
+      {:ok, show_live, _html} = live(conn, ~p"/tags/#{tag.slug}")
 
       assert {:ok, form_live, _} =
                show_live
@@ -173,7 +173,7 @@ defmodule HomesiteWeb.TagLiveTest do
                form_live
                |> form("#tag-form", tag: @update_attrs)
                |> render_submit()
-               |> follow_redirect(conn, ~p"/tags/#{tag}")
+               |> follow_redirect(conn, ~p"/tags/some-updated-name")
 
       html = render(show_live)
       assert html =~ "Tag updated successfully"

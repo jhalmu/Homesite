@@ -99,15 +99,19 @@ defmodule HomesiteWeb.TagLive.Form do
   defp return_to("show"), do: "show"
   defp return_to(_), do: "index"
 
-  defp apply_action(socket, :edit, %{"id" => id}) do
-    tag = Content.get_tag!(socket.assigns.current_scope, id)
+  defp apply_action(socket, :edit, %{"id" => slug}) do
+    tag = Content.get_tag_by_slug!(slug)
+    scope = socket.assigns.current_scope
+
+    # Verify ownership
+    true = tag.user_id == scope.user.id
 
     socket
     |> assign(:page_title, gettext("Edit Tag"))
     |> assign(:tag, tag)
     |> assign(:is_public, tag.is_public)
     |> assign(:similar_tags, [])
-    |> assign(:form, to_form(Content.change_tag(socket.assigns.current_scope, tag)))
+    |> assign(:form, to_form(Content.change_tag(scope, tag)))
   end
 
   defp apply_action(socket, :new, _params) do

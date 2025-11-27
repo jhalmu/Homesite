@@ -70,3 +70,8 @@ defmodule Homesite.Content.Tag do
     end
   end
 end
+
+# Implement Phoenix.Param to use slug in URLs instead of ID
+defimpl Phoenix.Param, for: Homesite.Content.Tag do
+  def to_param(%{slug: slug}), do: slug
+end
