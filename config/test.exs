@@ -39,6 +39,10 @@ config :phoenix, :plug_init_mode, :runtime
 config :phoenix_live_view,
   enable_expensive_runtime_checks: true
 
+# Use English locale for tests (assertions are written in English)
+config :homesite, HomesiteWeb.Gettext,
+  default_locale: "en"
+
 config :phoenix_test,
   otp_app: :homesite,
   endpoint: HomesiteWeb.Endpoint,

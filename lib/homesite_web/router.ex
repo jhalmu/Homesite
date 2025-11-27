@@ -47,7 +47,6 @@ defmodule HomesiteWeb.Router do
         {HomesiteWeb.SetLocaleHook, :default}
       ] do
       live "/", PageLive.Home, :index
-      live "/posts", PostLive.Index, :index
     end
   end
 
@@ -85,6 +84,7 @@ defmodule HomesiteWeb.Router do
       ] do
       live "/dashboard", DashboardLive.Index, :index
 
+      live "/posts", PostLive.Index, :index
       live "/posts/new", PostLive.Form, :new
       live "/posts/:id/edit", PostLive.Form, :edit
 
