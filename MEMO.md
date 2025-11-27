@@ -38,14 +38,25 @@ Session notes and progress tracking for the Homesite project.
 
 **Committed:** `4b06c42` - Fix TagLive integration tests for slug-based URLs
 
+**Playwright E2E Tests:**
+- ✅ Created foundation for Playwright E2E tests
+- ✅ Implemented 2 public-facing tests (slug URLs, tag display)
+- ✅ Documented future work needed for authenticated flows
+- ✅ Created clear TODO list for PlaywrightAuthHelper implementation
+- **Committed:** `83c4a46` - Add Playwright E2E test foundation for tag workflows
+
+**Test Results Summary:**
+- Unit tests: 211 passing ✅
+- TagLive integration: 10/10 passing ✅
+- Playwright E2E: 2 basic tests created, ready for expansion
+- Pre-existing failures: 6 (unrelated to tags work)
+
 #### Next Steps 📋
 
-**Priority 1: Playwright E2E Tests (In Progress)**
-- Create end-to-end tests for global tag workflows
-- Test tag creation with similar tag warnings
-- Test tag search and selection in post form
-- Test viewing public tags from other users
-- Ensure no "bad popcorn" for users
+**Priority 1: Complete Playwright E2E Coverage**
+- Implement `PlaywrightAuthHelper` for browser authentication
+- Enable commented-out authenticated flow tests
+- This will catch UI bugs like the KeyError before users see them
 
 **Priority 2: Fix Pre-existing Test Failures (6 tests)**
 - Post form toggle persistence tests (3 tests)
