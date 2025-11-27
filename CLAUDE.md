@@ -30,6 +30,133 @@ Always check AGENTS.md first for project-specific patterns before making archite
 
 **Best practice:** Use `find . -name "*.md" -type f` to discover all documentation files in the project.
 
+## 🤖 Automated Workflows
+
+### Insights Logger - Pattern Capture System
+
+**Purpose**: Automatically capture reusable coding patterns, architectural decisions, and gotchas during development.
+
+**Location**: `.claude/insights/`
+
+**How to Use**:
+
+1. **Manual Capture** (Primary Method):
+   ```
+   User: "Log this insight: Scope pattern enforcement"
+   Claude: Creates formatted entry in today's session file
+   ```
+
+2. **Keyword Detection** (Automatic):
+   - Say "Gotcha: [description]" → Auto-captures as insight
+   - Say "Important pattern: [description]" → Auto-captures
+   - Say "Tricky: [description]" → Auto-captures
+
+3. **Session File Format**:
+   - File: `.claude/insights/session-YYYY-MM-DD-HHMMSS.md`
+   - Categories: Architecture, Database, Security, UI/UX, Performance, Bugs, Testing, Dependencies
+   - Structure: Problem → Solution → Rationale → Why it matters
+
+**What Gets Logged**:
+- ✅ Reusable patterns applicable across features
+- ✅ Security-critical patterns
+- ✅ Performance optimizations
+- ✅ Library-specific quirks and gotchas
+- ✅ Non-obvious solutions
+- ✅ Common mistakes to avoid
+
+**What to Skip**:
+- ❌ Feature-specific implementation details
+- ❌ Obvious patterns already well-known
+- ❌ Temporary workarounds
+- ❌ Incomplete thoughts
+
+**Review Later** (Manual):
+```
+User: "Review insights from sessions"
+Claude: Reads all session files, categorizes, presents for selection
+User: Selects valuable insights
+Claude: Integrates into CLAUDE.md/AGENTS.md, archives processed files
+```
+
+---
+
+### Automated EOD Workflow
+
+**Purpose**: Fully automated end-of-session workflow - zero manual steps required.
+
+**Trigger**: Say **"EOD"** or **"End of session"**
+
+**What Happens Automatically**:
+
+1. **Run Tests** 🧪
+   - Executes: `mix test.all`
+   - Shows results (pass/fail)
+   - Stops if tests fail (won't commit broken code)
+
+2. **Analyze Changes** 🔍
+   - Runs: `git status` and `git diff`
+   - Identifies modified files
+   - Categorizes changes (new features, bug fixes, docs, etc.)
+
+3. **Draft MEMO.md Entry** ✍️
+   - Generates timestamp (ISO 8601 format)
+   - Summarizes what was accomplished based on git changes
+   - Identifies files created/modified
+   - Notes test results
+   - Appends to MEMO.md automatically
+
+4. **Update GitHub Issues** 📋
+   - Identifies issues mentioned in code/commits
+   - Suggests which issues to close (looks for "fixes #", "closes #")
+   - Updates issue comments with progress
+   - Creates new issues for TODOs discovered in code
+
+5. **Check for Insights** 💡
+   - Asks: "Did we discover any patterns worth logging?"
+   - If yes: Prompts for quick insight capture
+   - If no: Continues to commit
+
+6. **Generate Commit Message** 📝
+   - Creates descriptive commit message from changes
+   - Includes issue references
+   - Adds standard footer:
+     ```
+     🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+     Co-Authored-By: Claude <noreply@anthropic.com>
+     ```
+
+7. **Commit & Push** 🚀
+   - Stages all changes: `git add .`
+   - Commits with generated message
+   - Pushes to GitHub: `git push`
+   - Shows confirmation with commit hash
+
+8. **Summary Report** 📊
+   - Shows what was done:
+     - ✅ Tests passed
+     - ✅ MEMO.md updated
+     - ✅ Issues updated (#X closed, #Y commented)
+     - ✅ Committed: [hash]
+     - ✅ Pushed to GitHub
+
+**Manual Override**:
+If you want to review before pushing, say:
+```
+"EOD with review"  → Stops before push for your approval
+"EOD skip tests"   → Skips test run (use carefully!)
+"EOD draft only"   → Only drafts MEMO, doesn't commit/push
+```
+
+**Safety Features**:
+- ❌ Won't commit if tests fail
+- ❌ Won't commit files with "SECRET" or "PASSWORD" in names
+- ❌ Won't push to protected branches without confirmation
+- ✅ Creates backup of MEMO.md before modifying
+- ✅ Shows diff before final commit
+
+---
+
 ## Git & GitHub Workflow
 
 **CRITICAL**: Follow this workflow when working on the codebase:

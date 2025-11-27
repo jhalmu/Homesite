@@ -22,6 +22,10 @@ erl_crash.dump
 # Temporary files, for example, from tests.
 /tmp/
 
+# Claude Code Insights - ignore active sessions, commit archived
+.claude/insights/session-*.md
+!.claude/insights/archive/
+
 # Ignore package tarball (built via "mix hex.build").
 homesite-*.tar
 
