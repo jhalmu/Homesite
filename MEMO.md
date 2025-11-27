@@ -4,6 +4,37 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-11-27 16:47:00 - Global Tags Testing & Critical Lesson Learned
+
+### CRITICAL LESSON LEARNED ⚠️
+
+**Problem**: Fixed all Content context unit tests (46 tests passing), but missed UI bug that broke `/posts/new` page in production.
+
+**What Went Wrong**:
+- Unit tests verified business logic works
+- LiveView integration tests (11 failures) were ignored
+- UI bug (`<.input>` component missing required `name` attribute) was not caught
+- User discovered the bug instead of tests
+
+**Key Insight**:
+> **"Bad popcorn" - Users should never be the testers!**
+> Unit tests + Integration tests + E2E tests = Complete coverage
+
+**The Testing Pyramid**:
+1. **Unit Tests** (46 ✅) - Business logic (Content context)
+2. **Integration Tests** (11 ❌ ignored!) - LiveView rendering, component interactions
+3. **E2E Tests** (Playwright) - Real browser, complete user flows
+
+**Action Items**:
+- ✅ Always run FULL test suite (`mix test`) before claiming completion
+- ✅ Never ignore failing integration tests
+- ✅ Run Playwright E2E tests for critical user flows
+- ✅ Document this lesson to prevent repeat mistakes
+
+### Session: Global Tag System Test Coverage
+
+---
+
 ## 2025-11-27 14:00:00 - 15:30:00 [Session COMPLETED]
 
 ### Session: Toggle Persistence Bug Fix & Date/Time Layout Improvements
