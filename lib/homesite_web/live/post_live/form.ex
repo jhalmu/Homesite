@@ -103,13 +103,14 @@ defmodule HomesiteWeb.PostLive.Form do
 
           <!-- Tag search/add -->
           <div class="relative">
-            <.input
+            <input
               type="text"
               value={@tag_search_query}
               phx-keyup="search-tags"
               phx-debounce="300"
               placeholder={gettext("Search or create tags...")}
               autocomplete="off"
+              class="input input-bordered w-full"
             />
 
             <!-- Suggestions dropdown -->
