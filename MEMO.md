@@ -4,6 +4,57 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-11-27 18:15:00 - TagLive Integration Tests Fixed
+
+### Session: Slug-Based URL Implementation
+
+#### Completed ✅
+
+**Phoenix.Param Protocol Implementation:**
+- ✅ Implemented Phoenix.Param protocol for Tag schema to use slugs in URLs
+- ✅ Tags now use SEO-friendly URLs: `/tags/elixir` instead of `/tags/123`
+- ✅ Updated TagLive.Form to use `get_tag_by_slug!` for edit routes
+- ✅ Added ownership verification when editing tags via slugs
+
+**Integration Test Fixes:**
+- ✅ Fixed all 10 TagLive integration tests to expect slug-based URLs
+- ✅ Updated test selectors from `href='/tags/1872/edit'` to `href='/tags/tag-slug/edit'`
+- ✅ Fixed redirect expectations to use new slugs after tag updates
+- ✅ All TagLive tests now passing (10/10)
+
+**Test Results:**
+- ✅ Total tests: 211 passing, 6 failures, 6 skipped
+- ✅ TagLive: 10/10 passing (100%)
+- ℹ️ Remaining 6 failures are pre-existing, unrelated to tags work:
+  - SecurityTest: `/posts` redirect
+  - PostLive.FormTest: public/private toggle tests (3 tests)
+  - UserLive.LoginTest: magic link message
+  - PageControllerTest: home page content
+
+**Files Modified:**
+- `lib/homesite/content/tag.ex`: Added Phoenix.Param implementation
+- `lib/homesite_web/live/tag_live/form.ex`: Use slug lookup with ownership check
+- `test/homesite_web/live/tag_live_test.exs`: Updated for slug-based URLs
+
+**Committed:** `4b06c42` - Fix TagLive integration tests for slug-based URLs
+
+#### Next Steps 📋
+
+**Priority 1: Playwright E2E Tests (In Progress)**
+- Create end-to-end tests for global tag workflows
+- Test tag creation with similar tag warnings
+- Test tag search and selection in post form
+- Test viewing public tags from other users
+- Ensure no "bad popcorn" for users
+
+**Priority 2: Fix Pre-existing Test Failures (6 tests)**
+- Post form toggle persistence tests (3 tests)
+- Security test redirect
+- User login magic link message
+- Page controller home page content
+
+---
+
 ## 2025-11-27 16:47:00 - Global Tags Testing & Critical Lesson Learned
 
 ### CRITICAL LESSON LEARNED ⚠️
