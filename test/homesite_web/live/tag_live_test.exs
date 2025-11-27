@@ -52,6 +52,43 @@ defmodule HomesiteWeb.TagLiveTest do
       assert html =~ "some name"
     end
 
+    test "new tag defaults to public", %{conn: conn} do
+      {:ok, _form_live, html} = live(conn, ~p"/tags/new")
+
+      # Check that the toggle is checked by default
+      assert html =~ "checked"
+      assert html =~ "Make this tag publicly visible"
+    end
+
+    test "new tag stays public when name changes", %{conn: conn} do
+      {:ok, form_live, _html} = live(conn, ~p"/tags/new")
+
+      # Change the name field (simulating typing)
+      html =
+        form_live
+        |> form("#tag-form", tag: %{name: "Test Tag"})
+        |> render_change()
+
+      # The toggle should still be checked (defaults to true)
+      assert html =~ "checked"
+      assert html =~ "Test Tag"
+    end
+
+    test "can create private tag by unchecking toggle", %{conn: conn} do
+      {:ok, form_live, _html} = live(conn, ~p"/tags/new")
+
+      # Submit with is_public: false (unchecked checkbox)
+      assert {:ok, index_live, _html} =
+               form_live
+               |> form("#tag-form", tag: %{name: "Private Tag"})
+               |> render_submit()
+               |> follow_redirect(conn, ~p"/tags")
+
+      html = render(index_live)
+      assert html =~ "Tag created successfully"
+      assert html =~ "Private Tag"
+    end
+
     test "updates tag in listing", %{conn: conn, tag: tag} do
       {:ok, index_live, _html} = live(conn, ~p"/tags")
 

@@ -11,7 +11,7 @@ defmodule Homesite.Content.Post do
     field :body, :string
     field :slug, :string
     field :published_at, :utc_datetime
-    field :is_public, :boolean, default: false
+    field :is_public, :boolean, default: true
     # field :user_id, :id
 
     belongs_to :user, Homesite.Accounts.User

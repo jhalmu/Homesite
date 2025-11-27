@@ -32,7 +32,7 @@ defmodule HomesiteWeb.PostLive.Form do
           <label class="label mb-2">
             <span class="label-text font-semibold">{gettext("Publication Date & Time")}</span>
           </label>
-          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <div>
               <.input
                 field={@form[:publish_date]}
@@ -211,6 +211,9 @@ defmodule HomesiteWeb.PostLive.Form do
   def handle_event("save", %{"post" => post_params}, socket) do
     # Combine date and time into published_at before saving
     post_params = combine_datetime(post_params)
+
+    # Handle unchecked checkbox - when checkbox is unchecked, it doesn't send any value
+    post_params = Map.put_new(post_params, "is_public", "false")
 
     # Add selected tag IDs to params
     post_params =

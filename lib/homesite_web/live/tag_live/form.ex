@@ -35,7 +35,6 @@ defmodule HomesiteWeb.TagLive.Form do
 
         <div class="form-control">
           <label class="label cursor-pointer justify-start gap-3">
-            <input type="hidden" name={@form[:is_public].name} value="false" />
             <input
               type="checkbox"
               name={@form[:is_public].name}
@@ -86,7 +85,7 @@ defmodule HomesiteWeb.TagLive.Form do
   end
 
   defp apply_action(socket, :new, _params) do
-    tag = %Tag{user_id: socket.assigns.current_scope.user.id}
+    tag = %Tag{user_id: socket.assigns.current_scope.user.id, is_public: true}
 
     socket
     |> assign(:page_title, gettext("New Tag"))
@@ -101,6 +100,9 @@ defmodule HomesiteWeb.TagLive.Form do
   end
 
   def handle_event("save", %{"tag" => tag_params}, socket) do
+    # Handle unchecked checkbox - when checkbox is unchecked, it doesn't send any value
+    tag_params = Map.put_new(tag_params, "is_public", "false")
+
     save_tag(socket, socket.assigns.live_action, tag_params)
   end
 
