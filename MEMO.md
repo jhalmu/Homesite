@@ -4,6 +4,75 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-11-27 19:45:00 - All Pre-existing Test Failures Fixed ✅
+
+### Session: Test Environment Configuration & Security Route Protection
+
+#### Problem Statement
+6 pre-existing test failures needed fixing:
+- 5 locale-related failures (ConfirmationTest, LoginTest x3, PageControllerTest)
+- 1 security redirect failure (SecurityTest)
+
+#### Completed ✅
+
+**1. Locale Configuration Fix (5 tests fixed):**
+- ✅ Added English locale configuration to `config/test.exs:42-44`
+- ✅ Root cause: App defaults to Finnish locale, but tests expect English text
+- ✅ Solution: Override default locale to "en" in test environment
+- ✅ Fixed tests:
+  - `UserLive.ConfirmationTest` - "Log in" text assertion
+  - `UserLive.LoginTest` - "If your email is in our system" assertions (3 tests)
+  - `PageControllerTest` - "Welcome to Homesite" text assertion
+
+**2. Security Route Protection Fix (1 test fixed):**
+- ✅ Moved `/posts` route from `:public` to `:require_authenticated_user` live_session
+- ✅ Root cause: `/posts` index was publicly accessible (line 50 in router)
+- ✅ Solution: Moved to authenticated section (now line 87) alongside `/posts/new` and edit routes
+- ✅ Now properly redirects unauthenticated users to `/users/log-in` with status 302
+- ✅ Fixed test: `SecurityTest` - "non-authenticated users are redirected from /posts"
+
+#### Test Results
+
+**Before Fix:**
+- 211 tests, 6 failures
+
+**After Fix:**
+- 211 tests, 0 failures ✅
+- 100% passing rate achieved!
+
+#### Files Modified
+
+1. **config/test.exs** - Added locale configuration:
+```elixir
+# Use English locale for tests (assertions are written in English)
+config :homesite, HomesiteWeb.Gettext,
+  default_locale: "en"
+```
+
+2. **lib/homesite_web/router.ex** - Moved `/posts` route:
+```elixir
+# Removed from :public live_session (was line 50)
+# Added to :require_authenticated_user live_session (line 87)
+live "/posts", PostLive.Index, :index
+```
+
+#### Commits
+- **28f9e35** - Fix all 6 pre-existing test failures
+
+#### Next Steps 📋
+
+**Test Suite Status:**
+- ✅ All 211 ExUnit tests passing
+- ⏳ Playwright E2E tests available but require explicit run: `mix test --include playwright`
+- ℹ️ Some compiler warnings remain (unused imports in Gettext) - non-critical
+
+**Potential Future Work:**
+- Clean up unused Gettext imports in LiveView modules
+- Consider running Playwright tests in CI pipeline
+- Document when to use Playwright vs ExUnit integration tests
+
+---
+
 ## 2025-11-27 18:15:00 - TagLive Integration Tests Fixed
 
 ### Session: Slug-Based URL Implementation
