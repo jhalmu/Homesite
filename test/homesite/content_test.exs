@@ -135,9 +135,24 @@ defmodule Homesite.ContentTest do
       post3 = post_fixture(scope2)
 
       Homesite.Repo.insert_all("post_tags", [
-        %{post_id: post1.id, tag_id: tag1.id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
-        %{post_id: post2.id, tag_id: tag1.id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
-        %{post_id: post3.id, tag_id: tag2.id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()}
+        %{
+          post_id: post1.id,
+          tag_id: tag1.id,
+          inserted_at: DateTime.utc_now(),
+          updated_at: DateTime.utc_now()
+        },
+        %{
+          post_id: post2.id,
+          tag_id: tag1.id,
+          inserted_at: DateTime.utc_now(),
+          updated_at: DateTime.utc_now()
+        },
+        %{
+          post_id: post3.id,
+          tag_id: tag2.id,
+          inserted_at: DateTime.utc_now(),
+          updated_at: DateTime.utc_now()
+        }
       ])
 
       results = Content.list_all_public_tags()
@@ -167,7 +182,8 @@ defmodule Homesite.ContentTest do
     test "find_similar_tags/1 finds tags with similar names" do
       scope = user_scope_fixture()
       _tag1 = tag_fixture(scope, %{name: "Elixir", is_public: true})
-      _tag2 = tag_fixture(scope, %{name: "Elixer", is_public: true})  # typo
+      # typo
+      _tag2 = tag_fixture(scope, %{name: "Elixer", is_public: true})
       _tag3 = tag_fixture(scope, %{name: "Phoenix", is_public: true})
 
       similar = Content.find_similar_tags("Elixir")
@@ -249,7 +265,9 @@ defmodule Homesite.ContentTest do
       scope2 = user_scope_fixture()
 
       {:ok, _tag1} = Content.create_tag(scope1, %{"name" => "GlobalTag", "is_public" => true})
-      {:error, changeset} = Content.create_tag(scope2, %{"name" => "GlobalTag", "is_public" => true})
+
+      {:error, changeset} =
+        Content.create_tag(scope2, %{"name" => "GlobalTag", "is_public" => true})
 
       assert "This public tag name already exists" in errors_on(changeset).name
     end
@@ -272,7 +290,9 @@ defmodule Homesite.ContentTest do
       scope = user_scope_fixture()
 
       {:ok, _tag1} = Content.create_tag(scope, %{"name" => "MyPrivate", "is_public" => false})
-      {:error, changeset} = Content.create_tag(scope, %{"name" => "MyPrivate", "is_public" => false})
+
+      {:error, changeset} =
+        Content.create_tag(scope, %{"name" => "MyPrivate", "is_public" => false})
 
       # Composite unique constraint [:user_id, :name] puts error on :user_id
       assert "You already have a private tag with this name" in errors_on(changeset).user_id

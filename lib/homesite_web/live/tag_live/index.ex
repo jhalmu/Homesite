@@ -18,8 +18,8 @@ defmodule HomesiteWeb.TagLive.Index do
           </.button>
         </:actions>
       </.header>
-
-      <!-- Tabs -->
+      
+    <!-- Tabs -->
       <div role="tablist" class="tabs tabs-boxed mt-6">
         <button
           role="tab"
@@ -40,8 +40,8 @@ defmodule HomesiteWeb.TagLive.Index do
           {gettext("All Tags")}
         </button>
       </div>
-
-      <!-- Search bar (only in All Tags tab) -->
+      
+    <!-- Search bar (only in All Tags tab) -->
       <%= if @current_tab == "all" do %>
         <div class="mt-4">
           <.input
@@ -192,7 +192,12 @@ defmodule HomesiteWeb.TagLive.Index do
   @impl true
   def handle_info({type, %Homesite.Content.Tag{}}, socket)
       when type in [:created, :updated, :deleted] do
-    tags = list_tags(socket.assigns.current_scope, socket.assigns.current_tab, socket.assigns.search_query)
+    tags =
+      list_tags(
+        socket.assigns.current_scope,
+        socket.assigns.current_tab,
+        socket.assigns.search_query
+      )
 
     {:noreply,
      socket

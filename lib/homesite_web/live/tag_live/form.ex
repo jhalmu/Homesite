@@ -26,8 +26,8 @@ defmodule HomesiteWeb.TagLive.Form do
             </p>
           <% end %>
         </div>
-
-        <!-- Similar tags warning -->
+        
+    <!-- Similar tags warning -->
         <%= if @similar_tags != [] do %>
           <div class="alert alert-warning mb-4">
             <.icon name="hero-information-circle" />
@@ -145,7 +145,9 @@ defmodule HomesiteWeb.TagLive.Form do
       case tag_params["name"] do
         name when is_binary(name) and byte_size(name) >= 2 ->
           # When editing, exclude the current tag from similar results
-          exclude_id = if socket.assigns.live_action == :edit, do: socket.assigns.tag.id, else: nil
+          exclude_id =
+            if socket.assigns.live_action == :edit, do: socket.assigns.tag.id, else: nil
+
           Content.find_similar_tags(name, exclude_id)
 
         _ ->

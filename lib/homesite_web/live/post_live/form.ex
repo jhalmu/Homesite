@@ -78,8 +78,8 @@ defmodule HomesiteWeb.PostLive.Form do
           <label class="label">
             <span class="label-text font-semibold">{gettext("Tags")}</span>
           </label>
-
-          <!-- Selected tags -->
+          
+    <!-- Selected tags -->
           <%= if @selected_tags != [] do %>
             <div class="mb-3 flex flex-wrap gap-2">
               <%= for tag <- @selected_tags do %>
@@ -100,8 +100,8 @@ defmodule HomesiteWeb.PostLive.Form do
           <% else %>
             <input type="hidden" name="post[tag_ids][]" value="" />
           <% end %>
-
-          <!-- Tag search/add -->
+          
+    <!-- Tag search/add -->
           <div class="relative">
             <input
               type="text"
@@ -112,10 +112,10 @@ defmodule HomesiteWeb.PostLive.Form do
               autocomplete="off"
               class="input input-bordered w-full"
             />
-
-            <!-- Suggestions dropdown -->
+            
+    <!-- Suggestions dropdown -->
             <%= if @tag_suggestions != [] do %>
-              <div class="absolute z-10 mt-1 w-full overflow-y-auto rounded-lg border border-base-300 bg-base-100 shadow-lg max-h-60">
+              <div class="border-base-300 bg-base-100 absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border shadow-lg">
                 <%= for {tag, post_count} <- @tag_suggestions do %>
                   <button
                     type="button"
@@ -124,17 +124,17 @@ defmodule HomesiteWeb.PostLive.Form do
                     class="flex w-full items-center justify-between px-4 py-2 text-left hover:bg-base-200"
                   >
                     <span>{tag.name}</span>
-                    <span class="text-sm text-base-content/60">{post_count} posts</span>
+                    <span class="text-base-content/60 text-sm">{post_count} posts</span>
                   </button>
                 <% end %>
-
-                <!-- Create new option -->
+                
+    <!-- Create new option -->
                 <%= if @tag_search_query != "" and !exact_match?(@tag_suggestions, @tag_search_query) do %>
                   <button
                     type="button"
                     phx-click="create-and-add-tag"
                     phx-value-name={@tag_search_query}
-                    class="flex w-full items-center gap-2 border-t border-base-300 px-4 py-2 text-left font-semibold hover:bg-base-200"
+                    class="border-base-300 flex w-full items-center gap-2 border-t px-4 py-2 text-left font-semibold hover:bg-base-200"
                   >
                     <.icon name="hero-plus" class="h-4 w-4" />
                     {gettext("Create")} "{@tag_search_query}"
@@ -143,8 +143,8 @@ defmodule HomesiteWeb.PostLive.Form do
               </div>
             <% end %>
           </div>
-
-          <!-- Similar tags warning -->
+          
+    <!-- Similar tags warning -->
           <%= if @similar_tags_warning != [] do %>
             <div class="alert alert-warning mt-3">
               <.icon name="hero-information-circle" />
@@ -238,17 +238,22 @@ defmodule HomesiteWeb.PostLive.Form do
       end
 
     {:noreply,
-     assign(socket, tag_search_query: query, tag_suggestions: suggestions, similar_tags_warning: [])}
+     assign(socket,
+       tag_search_query: query,
+       tag_suggestions: suggestions,
+       similar_tags_warning: []
+     )}
   end
 
   def handle_event("add-tag", %{"tag-id" => tag_id_str}, socket) do
     tag_id = String.to_integer(tag_id_str)
 
     # Find the tag from suggestions or fetch it
-    tag = case Enum.find(socket.assigns.tag_suggestions, fn {t, _} -> t.id == tag_id end) do
-      {tag, _count} -> tag
-      nil -> Homesite.Repo.get!(Content.Tag, tag_id)
-    end
+    tag =
+      case Enum.find(socket.assigns.tag_suggestions, fn {t, _} -> t.id == tag_id end) do
+        {tag, _count} -> tag
+        nil -> Homesite.Repo.get!(Content.Tag, tag_id)
+      end
 
     selected_tags = Enum.uniq_by([tag | socket.assigns.selected_tags], & &1.id)
 
@@ -274,7 +279,10 @@ defmodule HomesiteWeb.PostLive.Form do
     if similar != [] do
       {:noreply, assign(socket, similar_tags_warning: similar)}
     else
-      case Content.get_or_create_tag(socket.assigns.current_scope, %{"name" => name, "is_public" => true}) do
+      case Content.get_or_create_tag(socket.assigns.current_scope, %{
+             "name" => name,
+             "is_public" => true
+           }) do
         {:ok, tag} ->
           selected_tags = Enum.uniq_by([tag | socket.assigns.selected_tags], & &1.id)
 
@@ -325,7 +333,11 @@ defmodule HomesiteWeb.PostLive.Form do
 
     # Add selected tag IDs to params
     post_params =
-      Map.put(post_params, "tag_ids", Enum.map(socket.assigns.selected_tags, fn tag -> to_string(tag.id) end))
+      Map.put(
+        post_params,
+        "tag_ids",
+        Enum.map(socket.assigns.selected_tags, fn tag -> to_string(tag.id) end)
+      )
 
     save_post(socket, socket.assigns.live_action, post_params)
   end
@@ -396,6 +408,7 @@ defmodule HomesiteWeb.PostLive.Form do
   # Helper to check if any suggestion exactly matches the query (case-insensitive)
   defp exact_match?(suggestions, query) do
     query_lower = String.downcase(query)
+
     Enum.any?(suggestions, fn {tag, _count} ->
       String.downcase(tag.name) == query_lower
     end)

@@ -49,18 +49,20 @@ defmodule HomesiteWeb.E2E.TagWorkflowsTest do
     user = user_fixture()
     scope = %Homesite.Accounts.Scope{user: user}
 
-    {:ok, tag} = Homesite.Content.create_tag(scope, %{
-      "name" => "Elixir",
-      "is_public" => "true",
-      "description" => "The Elixir programming language"
-    })
+    {:ok, tag} =
+      Homesite.Content.create_tag(scope, %{
+        "name" => "Elixir",
+        "is_public" => "true",
+        "description" => "The Elixir programming language"
+      })
 
-    {:ok, post} = Homesite.Content.create_post(scope, %{
-      "title" => "Getting Started with Elixir",
-      "body" => "Elixir is a functional programming language...",
-      "is_public" => "true",
-      "tag_ids" => [to_string(tag.id)]
-    })
+    {:ok, post} =
+      Homesite.Content.create_post(scope, %{
+        "title" => "Getting Started with Elixir",
+        "body" => "Elixir is a functional programming language...",
+        "is_public" => "true",
+        "tag_ids" => [to_string(tag.id)]
+      })
 
     %{user: user, scope: scope, tag: tag, post: post}
   end
@@ -71,6 +73,7 @@ defmodule HomesiteWeb.E2E.TagWorkflowsTest do
     |> visit(~p"/tags/#{tag.slug}")
     |> assert_has("body .phx-connected")
     |> assert_has("h1", text: "Elixir")
+
     # Verify slug-based URL works (not ID-based)
     # This test verifies the Phoenix.Param implementation
   end

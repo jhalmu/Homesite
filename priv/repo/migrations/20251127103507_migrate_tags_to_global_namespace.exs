@@ -56,15 +56,15 @@ defmodule Homesite.Repo.Migrations.MigrateTagsToGlobalNamespace do
 
     # Step 3: Add global unique constraint for public tags
     create unique_index(:tags, [:name],
-      name: :tags_global_public_name_index,
-      where: "is_public = true"
-    )
+             name: :tags_global_public_name_index,
+             where: "is_public = true"
+           )
 
     # Step 4: Keep user-scoped constraint for private tags
     create unique_index(:tags, [:user_id, :name],
-      name: :tags_private_user_name_index,
-      where: "is_public = false"
-    )
+             name: :tags_private_user_name_index,
+             where: "is_public = false"
+           )
 
     # Step 5: Remove duplicate post_tags that may have been created
     execute """

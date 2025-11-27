@@ -8,15 +8,15 @@ defmodule Homesite.Repo.Migrations.FixTagSlugConstraints do
     # Add scoped unique slug indexes matching the name constraints
     # Public tags: globally unique slug
     create unique_index(:tags, [:slug],
-      name: :tags_global_public_slug_index,
-      where: "is_public = true"
-    )
+             name: :tags_global_public_slug_index,
+             where: "is_public = true"
+           )
 
     # Private tags: user-scoped unique slug
     create unique_index(:tags, [:user_id, :slug],
-      name: :tags_private_user_slug_index,
-      where: "is_public = false"
-    )
+             name: :tags_private_user_slug_index,
+             where: "is_public = false"
+           )
   end
 
   def down do
