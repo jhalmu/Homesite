@@ -224,7 +224,7 @@ msgstr "Käytä tätä lomaketta hallinnoidaksesi kirjoituksia tietokannassasi."
 msgid "Public posts are visible to everyone. Turn off to make this post private."
 msgstr "Julkiset kirjoitukset ovat kaikkien nähtävillä. Kytke pois päältä tehdäksesi kirjoituksesta yksityisen."
 
-#: lib/homesite_web/live/user_live/settings.ex:256
+#: lib/homesite_web/live/user_live/settings.ex:285
 #, elixir-autogen, elixir-format
 msgid "A link to confirm your email change has been sent to the new address."
 msgstr "Linkki sähköpostin vaihdon vahvistamiseen on lähetetty uuteen osoitteeseen."
@@ -486,7 +486,7 @@ msgstr "Ensisijainen kieli"
 msgid "Private"
 msgstr "Yksityinen"
 
-#: lib/homesite_web/live/user_live/settings.ex:339
+#: lib/homesite_web/live/user_live/settings.ex:354
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Profile updated successfully."
 msgstr "Profiili päivitetty onnistuneesti."
@@ -910,7 +910,7 @@ msgstr ""
 msgid "No tags found."
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:335
+#: lib/homesite_web/live/user_live/settings.ex:350
 #, elixir-autogen, elixir-format
 msgid "Profile updated successfully. Remember to also update your display name, bio, and social links to complete your profile!"
 msgstr "Profiili päivitetty onnistuneesti. Muista päivittää myös näyttönimesi, esittelytekstisi ja sosiaalisen median linkkisi täydentääksesi profiilisi!"
@@ -956,3 +956,8 @@ msgid "post"
 msgid_plural "posts"
 msgstr[0] ""
 msgstr[1] ""
+
+#: lib/homesite_web/live/user_live/settings.ex:242
+#, elixir-autogen, elixir-format
+msgid "Avatar image selected. Don't forget to click 'Update Profile' to save your changes!"
+msgstr "Avatar-kuva valittu. Muista klikata 'Päivitä profiili' tallentaaksesi muutoksesi!"

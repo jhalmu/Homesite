@@ -228,6 +228,35 @@ defmodule HomesiteWeb.UserLive.Settings do
   end
 
   @impl true
+  def handle_event("validate_profile", params, socket) do
+    %{"user" => user_params} = params
+
+    # Check if an avatar upload is in progress
+    uploaded_entries = uploaded_entries(socket, :avatar)
+
+    socket =
+      if length(uploaded_entries) > 0 do
+        put_flash(
+          socket,
+          :info,
+          gettext(
+            "Avatar image selected. Don't forget to click 'Update Profile' to save your changes!"
+          )
+        )
+      else
+        socket
+      end
+
+    profile_form =
+      socket.assigns.current_scope.user
+      |> Accounts.change_user_profile(user_params)
+      |> Map.put(:action, :validate)
+      |> to_form()
+
+    {:noreply, assign(socket, profile_form: profile_form)}
+  end
+
+  @impl true
   def handle_event("validate_email", params, socket) do
     %{"user" => user_params} = params
 
@@ -285,18 +314,6 @@ defmodule HomesiteWeb.UserLive.Settings do
       changeset ->
         {:noreply, assign(socket, password_form: to_form(changeset, action: :insert))}
     end
-  end
-
-  def handle_event("validate_profile", params, socket) do
-    %{"user" => user_params} = params
-
-    profile_form =
-      socket.assigns.current_scope.user
-      |> Accounts.change_user_profile(user_params)
-      |> Map.put(:action, :validate)
-      |> to_form()
-
-    {:noreply, assign(socket, profile_form: profile_form)}
   end
 
   def handle_event("update_profile", params, socket) do
