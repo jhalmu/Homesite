@@ -303,8 +303,8 @@ defmodule HomesiteWeb.UserLive.Settings do
     %{"user" => user_params} = params
     user = socket.assigns.current_scope.user
 
-    # Handle avatar upload
-    user_params =
+    # Handle avatar upload and track if one was uploaded
+    {user_params, avatar_uploaded?} =
       consume_uploaded_entries(socket, :avatar, fn %{path: path}, entry ->
         # Generate unique filename
         ext = Path.extname(entry.client_name)
@@ -318,8 +318,8 @@ defmodule HomesiteWeb.UserLive.Settings do
         {:ok, "/uploads/avatars/#{filename}"}
       end)
       |> case do
-        [avatar_path] -> Map.put(user_params, "avatar", avatar_path)
-        [] -> user_params
+        [avatar_path] -> {Map.put(user_params, "avatar", avatar_path), true}
+        [] -> {user_params, false}
       end
 
     case Accounts.update_user_profile(user, user_params) do
@@ -327,11 +327,9 @@ defmodule HomesiteWeb.UserLive.Settings do
         # Update the current_scope with the new user data
         scope = %{socket.assigns.current_scope | user: updated_user}
 
-        # Check if avatar was updated to show additional reminder
-        avatar_updated? = Map.has_key?(user_params, "avatar")
-
+        # Show reminder if avatar was uploaded
         flash_message =
-          if avatar_updated? do
+          if avatar_uploaded? do
             gettext(
               "Profile updated successfully. Remember to also update your display name, bio, and social links to complete your profile!"
             )
