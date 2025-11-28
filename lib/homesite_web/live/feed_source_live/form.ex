@@ -5,7 +5,7 @@ defmodule HomesiteWeb.FeedSourceLive.Form do
   alias Homesite.ExternalFeeds.FeedSource
 
   @impl true
-  def mount(params, _session, socket) do
+  def mount(_params, _session, socket) do
     {:ok, socket}
   end
 

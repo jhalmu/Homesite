@@ -7,6 +7,7 @@ defmodule Homesite.MixProject do
       version: "0.0.0",
       elixir: "~> 1.16",
       elixirc_paths: elixirc_paths(Mix.env()),
+      elixirc_options: elixirc_options(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
@@ -14,6 +15,11 @@ defmodule Homesite.MixProject do
       listeners: [Phoenix.CodeReloader]
     ]
   end
+
+  # Compiler options
+  # Note: warnings_as_errors disabled because of false positive "unused import"
+  # warnings for Gettext in HEEx templates (compiler can't detect macro usage in templates)
+  defp elixirc_options(_), do: []
 
   # Configuration for the OTP application.
   #

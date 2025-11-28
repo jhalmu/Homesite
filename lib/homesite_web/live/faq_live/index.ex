@@ -1,0 +1,138 @@
+defmodule HomesiteWeb.FaqLive.Index do
+  use HomesiteWeb, :live_view
+
+  import HomesiteWeb.Gettext
+
+  alias Homesite.Faqs
+
+  @impl true
+  def render(assigns) do
+    ~H"""
+    <Layouts.app flash={@flash} current_scope={@current_scope}>
+      <.header>
+        {if @category == "admin", do: gettext("Admin FAQs"), else: gettext("User FAQs")}
+        <:subtitle>
+          {if @category == "admin",
+            do: gettext("Frequently asked questions for administrators"),
+            else: gettext("Frequently asked questions")}
+        </:subtitle>
+        <:actions>
+          <%= if @is_admin do %>
+            <.link navigate={~p"/faqs?category=user"} class="btn">
+              {gettext("User FAQs")}
+            </.link>
+            <.link navigate={~p"/faqs?category=admin"} class="btn">
+              {gettext("Admin FAQs")}
+            </.link>
+            <.button variant="primary" navigate={~p"/faqs/new"}>
+              <.icon name="hero-plus" /> {gettext("New FAQ")}
+            </.button>
+          <% end %>
+        </:actions>
+      </.header>
+
+      <div class="mt-8 space-y-4">
+        <%= if Enum.empty?(@faqs) do %>
+          <div class="card bg-base-200">
+            <div class="card-body text-center">
+              <p class="text-base-content/60">{gettext("No FAQs available yet.")}</p>
+              <%= if @is_admin do %>
+                <p class="text-base-content/40 text-sm">
+                  {gettext("Click 'New FAQ' to create your first FAQ entry.")}
+                </p>
+              <% end %>
+            </div>
+          </div>
+        <% else %>
+          <%= for faq <- @faqs do %>
+            <div class="card bg-base-200 shadow-md" id={"faq-#{faq.id}"}>
+              <div class="card-body">
+                <h2 class="card-title">
+                  <.icon name="hero-question-mark-circle" class="h-6 w-6" />
+                  {faq.question}
+                </h2>
+                <div class="prose prose-sm max-w-none">
+                  {raw(faq.answer)}
+                </div>
+                <%= if @is_admin do %>
+                  <div class="card-actions mt-4 justify-end">
+                    <.link navigate={~p"/faqs/#{faq}/edit"} class="btn btn-sm">
+                      <.icon name="hero-pencil" class="h-4 w-4" />
+                      {gettext("Edit")}
+                    </.link>
+                    <button
+                      class="btn btn-sm btn-ghost"
+                      phx-click="delete"
+                      phx-value-id={faq.id}
+                      data-confirm={gettext("Are you sure you want to delete this FAQ?")}
+                    >
+                      <.icon name="hero-trash" class="h-4 w-4" />
+                      {gettext("Delete")}
+                    </button>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </Layouts.app>
+    """
+  end
+
+  @impl true
+  def mount(_params, _session, socket) do
+    locale = Gettext.get_locale(HomesiteWeb.Gettext)
+
+    is_admin =
+      socket.assigns[:current_scope] &&
+        Homesite.Accounts.Scope.admin?(socket.assigns.current_scope)
+
+    {:ok, assign(socket, locale: locale, is_admin: is_admin)}
+  end
+
+  @impl true
+  def handle_params(params, _url, socket) do
+    category = Map.get(params, "category", "user")
+    faqs = load_faqs(socket, category)
+
+    {:noreply, assign(socket, category: category, faqs: faqs, page_title: page_title(category))}
+  end
+
+  @impl true
+  def handle_event("delete", %{"id" => id}, socket) do
+    # Only admins can delete
+    unless socket.assigns.is_admin do
+      {:noreply, put_flash(socket, :error, gettext("Unauthorized"))}
+    else
+      faq = Faqs.get_faq_for_management!(socket.assigns.current_scope, String.to_integer(id))
+      {:ok, _} = Faqs.delete_faq(socket.assigns.current_scope, faq)
+
+      faqs = load_faqs(socket, socket.assigns.category)
+
+      {:noreply,
+       socket
+       |> assign(:faqs, faqs)
+       |> put_flash(:info, gettext("FAQ deleted successfully."))}
+    end
+  end
+
+  defp load_faqs(socket, category) do
+    if socket.assigns.is_admin do
+      case category do
+        "admin" -> Faqs.list_admin_faqs(socket.assigns.current_scope, socket.assigns.locale)
+        "user" -> Faqs.list_user_faqs(socket.assigns.locale)
+        _ -> []
+      end
+    else
+      if category == "user" do
+        Faqs.list_user_faqs(socket.assigns.locale)
+      else
+        []
+      end
+    end
+  end
+
+  defp page_title("admin"), do: gettext("Admin FAQs")
+  defp page_title(_), do: gettext("FAQs")
+end

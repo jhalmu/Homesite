@@ -47,6 +47,9 @@ defmodule HomesiteWeb.Router do
         {HomesiteWeb.SetLocaleHook, :default}
       ] do
       live "/", PageLive.Home, :index
+
+      # Public FAQ viewing
+      live "/faqs", FaqLive.Index, :index
     end
   end
 
@@ -115,11 +118,16 @@ defmodule HomesiteWeb.Router do
     live_session :require_admin,
       on_mount: [
         {HomesiteWeb.UserAuth, :require_authenticated},
+        {HomesiteWeb.UserAuth, :require_admin},
         {HomesiteWeb.SetLocaleHook, :default}
       ] do
       live "/admin", AdminLive.Index, :index
       live "/admin/users", AdminLive.Users.Index, :index
       live "/admin/invitations", AdminLive.Invitations.Index, :index
+
+      # Admin FAQ management
+      live "/faqs/new", FaqLive.Form, :new
+      live "/faqs/:id/edit", FaqLive.Form, :edit
     end
   end
 

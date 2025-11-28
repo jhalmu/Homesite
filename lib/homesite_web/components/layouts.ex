@@ -5,7 +5,7 @@ defmodule HomesiteWeb.Layouts do
   """
   use HomesiteWeb, :html
 
-  # Gettext is used in embedded HEEx templates (compiler can't detect usage in ~H sigils)
+  # Note: "unused import" warning is false positive - gettext() used in HEEx templates
   import HomesiteWeb.Gettext
 
   # Embed all files in layouts/* within this module.
@@ -177,6 +177,9 @@ defmodule HomesiteWeb.Layouts do
             <li>
               <.link navigate={~p"/tags"}>{gettext("Tags")}</.link>
             </li>
+            <li>
+              <.link navigate={~p"/faqs"}>{gettext("FAQs")}</.link>
+            </li>
             <%= if Homesite.Accounts.Scope.admin?(@current_scope) do %>
               <li>
                 <.link navigate={~p"/admin"}>{gettext("Admin")}</.link>
@@ -205,6 +208,9 @@ defmodule HomesiteWeb.Layouts do
               </details>
             </li>
           <% else %>
+            <li>
+              <.link navigate={~p"/faqs"}>{gettext("FAQs")}</.link>
+            </li>
             <%!-- Registration disabled for testing phase --%>
             <%!-- <li>
               <.link navigate={~p"/users/register"}>{gettext("Register")}</.link>
@@ -253,6 +259,11 @@ defmodule HomesiteWeb.Layouts do
                 <.icon name="hero-tag" class="h-5 w-5" /> {gettext("Tags")}
               </.link>
             </li>
+            <li>
+              <.link navigate={~p"/faqs"} class="text-base">
+                <.icon name="hero-question-mark-circle" class="h-5 w-5" /> {gettext("FAQs")}
+              </.link>
+            </li>
             <%= if Homesite.Accounts.Scope.admin?(@current_scope) do %>
               <li>
                 <.link navigate={~p"/admin"} class="text-base">
@@ -286,6 +297,11 @@ defmodule HomesiteWeb.Layouts do
               </.link>
             </li>
           <% else %>
+            <li>
+              <.link navigate={~p"/faqs"} class="text-base">
+                <.icon name="hero-question-mark-circle" class="h-5 w-5" /> {gettext("FAQs")}
+              </.link>
+            </li>
             <li>
               <.link navigate={~p"/users/log-in"} class="btn btn-primary">
                 <.icon name="hero-arrow-right-on-rectangle" class="h-5 w-5" /> {gettext("Log in")}

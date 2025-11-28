@@ -113,6 +113,26 @@ defmodule HomesiteWeb.UserLive.Settings do
             )}
           </:help>
         </.input>
+        <%= if @avatar_pending do %>
+          <div class="alert alert-warning mb-4">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6 shrink-0 stroke-current"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+            <span>
+              {gettext("Avatar image selected. Click 'Update Profile' below to save your changes!")}
+            </span>
+          </div>
+        <% end %>
         <.button variant="primary" phx-disable-with={gettext("Saving...")}>
           {gettext("Update Profile")}
         </.button>
@@ -217,6 +237,7 @@ defmodule HomesiteWeb.UserLive.Settings do
       |> assign(:password_form, to_form(password_changeset))
       |> assign(:profile_form, to_form(profile_changeset))
       |> assign(:trigger_submit, false)
+      |> assign(:avatar_pending, false)
       |> allow_upload(:avatar,
         accept: ~w(.jpg .jpeg .png),
         max_entries: 1,
@@ -231,20 +252,21 @@ defmodule HomesiteWeb.UserLive.Settings do
   def handle_event("validate_profile", params, socket) do
     %{"user" => user_params} = params
 
-    # Check if an avatar upload is in progress
-    uploaded_entries = uploaded_entries(socket, :avatar)
+    # Check if an avatar file has been selected
+    has_avatar_upload? = length(socket.assigns.uploads.avatar.entries) > 0
 
     socket =
-      if length(uploaded_entries) > 0 do
-        put_flash(
-          socket,
-          :info,
+      if has_avatar_upload? do
+        socket
+        |> assign(:avatar_pending, true)
+        |> put_flash(
+          :warning,
           gettext(
-            "Avatar image selected. Don't forget to click 'Update Profile' to save your changes!"
+            "⚠️ Avatar selected but not saved yet. Click 'Update Profile' to save your changes!"
           )
         )
       else
-        socket
+        assign(socket, :avatar_pending, false)
       end
 
     profile_form =
@@ -357,6 +379,7 @@ defmodule HomesiteWeb.UserLive.Settings do
         socket
         |> assign(:current_scope, scope)
         |> assign(:profile_form, to_form(Accounts.change_user_profile(updated_user, %{})))
+        |> assign(:avatar_pending, false)
         |> put_flash(:info, flash_message)
         |> then(&{:noreply, &1})
 

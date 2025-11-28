@@ -1,7 +1,7 @@
 defmodule HomesiteWeb.TagLive.Show do
   use HomesiteWeb, :live_view
 
-  # Gettext is used in ~H sigil templates (compiler can't detect usage in templates)
+  # Note: "unused import" warning is false positive - gettext() used in HEEx template
   import HomesiteWeb.Gettext
 
   alias Homesite.Content

@@ -18,7 +18,7 @@ msgid "Actions"
 msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:182
-#: lib/homesite_web/components/layouts.ex:259
+#: lib/homesite_web/components/layouts.ex:262
 #, elixir-autogen, elixir-format
 msgid "Admin"
 msgstr ""
@@ -41,7 +41,7 @@ msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:60
 #: lib/homesite_web/components/layouts.ex:172
-#: lib/homesite_web/components/layouts.ex:243
+#: lib/homesite_web/components/layouts.ex:246
 #, elixir-autogen, elixir-format
 msgid "Dashboard"
 msgstr ""
@@ -51,21 +51,21 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:213
-#: lib/homesite_web/components/layouts.ex:291
+#: lib/homesite_web/components/layouts.ex:216
+#: lib/homesite_web/components/layouts.ex:299
 #: lib/homesite_web/live/user_live/login.ex:13
 #: lib/homesite_web/live/user_live/registration.ex:18
 #, elixir-autogen, elixir-format
 msgid "Log in"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:199
-#: lib/homesite_web/components/layouts.ex:285
+#: lib/homesite_web/components/layouts.ex:202
+#: lib/homesite_web/components/layouts.ex:293
 #, elixir-autogen, elixir-format
 msgid "Log out"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:237
+#: lib/homesite_web/components/layouts.ex:240
 #, elixir-autogen, elixir-format
 msgid "Menu"
 msgstr ""
@@ -82,13 +82,13 @@ msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:61
 #: lib/homesite_web/components/layouts.ex:175
-#: lib/homesite_web/components/layouts.ex:248
+#: lib/homesite_web/components/layouts.ex:251
 #, elixir-autogen, elixir-format
 msgid "Posts"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:194
-#: lib/homesite_web/components/layouts.ex:280
+#: lib/homesite_web/components/layouts.ex:197
+#: lib/homesite_web/components/layouts.ex:288
 #: lib/homesite_web/live/dashboard_live/index.html.heex:85
 #, elixir-autogen, elixir-format
 msgid "Settings"
@@ -101,13 +101,13 @@ msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:62
 #: lib/homesite_web/components/layouts.ex:178
-#: lib/homesite_web/components/layouts.ex:253
+#: lib/homesite_web/components/layouts.ex:256
 #: lib/homesite_web/live/post_live/form.ex:79
 #, elixir-autogen, elixir-format
 msgid "Tags"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:308
+#: lib/homesite_web/components/layouts.ex:316
 #, elixir-autogen, elixir-format
 msgid "Theme"
 msgstr ""
@@ -133,6 +133,7 @@ msgstr ""
 msgid "Body"
 msgstr ""
 
+#: lib/homesite_web/live/faq_live/form.ex:100
 #: lib/homesite_web/live/post_live/form.ex:182
 #: lib/homesite_web/live/tag_live/form.ex:83
 #, elixir-autogen, elixir-format
@@ -140,6 +141,7 @@ msgid "Cancel"
 msgstr ""
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:141
+#: lib/homesite_web/live/faq_live/index.ex:67
 #: lib/homesite_web/live/tag_live/show.ex:85
 #, elixir-autogen, elixir-format
 msgid "Edit"
@@ -188,10 +190,11 @@ msgstr ""
 msgid "Save Post"
 msgstr ""
 
+#: lib/homesite_web/live/faq_live/form.ex:96
 #: lib/homesite_web/live/post_live/form.ex:178
 #: lib/homesite_web/live/tag_live/form.ex:79
-#: lib/homesite_web/live/user_live/settings.ex:116
-#: lib/homesite_web/live/user_live/settings.ex:185
+#: lib/homesite_web/live/user_live/settings.ex:136
+#: lib/homesite_web/live/user_live/settings.ex:205
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr ""
@@ -224,7 +227,7 @@ msgstr ""
 msgid "Public posts are visible to everyone. Turn off to make this post private."
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:285
+#: lib/homesite_web/live/user_live/settings.ex:307
 #, elixir-autogen, elixir-format
 msgid "A link to confirm your email change has been sent to the new address."
 msgstr ""
@@ -289,12 +292,12 @@ msgstr ""
 msgid "Bluesky Handle"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:138
+#: lib/homesite_web/live/user_live/settings.ex:158
 #, elixir-autogen, elixir-format
 msgid "Change Email"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:137
+#: lib/homesite_web/live/user_live/settings.ex:157
 #, elixir-autogen, elixir-format
 msgid "Changing..."
 msgstr ""
@@ -304,7 +307,7 @@ msgstr ""
 msgid "Community Posts"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:176
+#: lib/homesite_web/live/user_live/settings.ex:196
 #, elixir-autogen, elixir-format
 msgid "Confirm new password"
 msgstr ""
@@ -355,17 +358,17 @@ msgstr ""
 #: lib/homesite_web/live/user_live/login.ex:45
 #: lib/homesite_web/live/user_live/login.ex:69
 #: lib/homesite_web/live/user_live/registration.ex:42
-#: lib/homesite_web/live/user_live/settings.ex:127
+#: lib/homesite_web/live/user_live/settings.ex:147
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:201
+#: lib/homesite_web/live/user_live/settings.ex:221
 #, elixir-autogen, elixir-format
 msgid "Email change link is invalid or it has expired."
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:198
+#: lib/homesite_web/live/user_live/settings.ex:218
 #, elixir-autogen, elixir-format
 msgid "Email changed successfully."
 msgstr ""
@@ -463,7 +466,7 @@ msgstr ""
 msgid "New Tag"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:163
+#: lib/homesite_web/live/user_live/settings.ex:183
 #, elixir-autogen, elixir-format
 msgid "New password"
 msgstr ""
@@ -486,7 +489,7 @@ msgstr ""
 msgid "Private"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:354
+#: lib/homesite_web/live/user_live/settings.ex:376
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Profile updated successfully."
 msgstr ""
@@ -525,7 +528,7 @@ msgstr ""
 msgid "Registered users"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:186
+#: lib/homesite_web/live/user_live/settings.ex:206
 #, elixir-autogen, elixir-format
 msgid "Save Password"
 msgstr ""
@@ -590,7 +593,7 @@ msgstr ""
 msgid "Total Users"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:117
+#: lib/homesite_web/live/user_live/settings.ex:137
 #, elixir-autogen, elixir-format
 msgid "Update Profile"
 msgstr ""
@@ -734,7 +737,7 @@ msgstr ""
 msgid "Go to Dashboard"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:301
+#: lib/homesite_web/components/layouts.ex:309
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr ""
@@ -760,7 +763,7 @@ msgstr ""
 msgid "Welcome to Homesite"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:168
+#: lib/homesite_web/live/user_live/settings.ex:188
 #, elixir-autogen, elixir-format
 msgid "Choose a strong password with at least 12 characters. Use a mix of uppercase, lowercase, numbers, and special characters for better security."
 msgstr ""
@@ -770,7 +773,7 @@ msgstr ""
 msgid "Choose your preferred language for the user interface. This setting affects menus, buttons, and system messages throughout the application."
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:180
+#: lib/homesite_web/live/user_live/settings.ex:200
 #, elixir-autogen, elixir-format
 msgid "Re-enter your new password exactly as above to confirm. This helps prevent typos when setting your password."
 msgstr ""
@@ -795,7 +798,7 @@ msgstr ""
 msgid "Your display name appears on your posts and profile. This can be your real name or a pseudonym. Maximum 100 characters."
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:132
+#: lib/homesite_web/live/user_live/settings.ex:152
 #, elixir-autogen, elixir-format
 msgid "Your email address is used for login and notifications. Changing it will send a confirmation link to the new address. Your old email remains active until confirmed."
 msgstr ""
@@ -810,11 +813,13 @@ msgstr ""
 msgid "Choose your preferred language for the user interface. This can be changed later in Settings."
 msgstr ""
 
+#: lib/homesite_web/live/faq_live/form.ex:49
 #: lib/homesite_web/live/user_live/registration.ex:52
 #, elixir-autogen, elixir-format
 msgid "English"
 msgstr ""
 
+#: lib/homesite_web/live/faq_live/form.ex:69
 #: lib/homesite_web/live/user_live/registration.ex:52
 #, elixir-autogen, elixir-format
 msgid "Finnish"
@@ -910,7 +915,7 @@ msgstr ""
 msgid "No tags found."
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:350
+#: lib/homesite_web/live/user_live/settings.ex:372
 #, elixir-autogen, elixir-format
 msgid "Profile updated successfully. Remember to also update your display name, bio, and social links to complete your profile!"
 msgstr ""
@@ -957,7 +962,183 @@ msgid_plural "posts"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/homesite_web/live/user_live/settings.ex:242
+#: lib/homesite_web/live/user_live/settings.ex:132
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Avatar image selected. Click 'Update Profile' below to save your changes!"
+msgstr ""
+
+#: lib/homesite_web/live/user_live/settings.ex:264
 #, elixir-autogen, elixir-format
-msgid "Avatar image selected. Don't forget to click 'Update Profile' to save your changes!"
+msgid "⚠️ Avatar selected but not saved yet. Click 'Update Profile' to save your changes!"
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/form.ex:89
+#, elixir-autogen, elixir-format
+msgid "Active"
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/form.ex:26
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Admin FAQ"
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/index.ex:13
+#: lib/homesite_web/live/faq_live/index.ex:31
+#: lib/homesite_web/live/faq_live/index.ex:139
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Admin FAQs"
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/form.ex:60
+#, elixir-autogen, elixir-format
+msgid "Answer (English)"
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/form.ex:80
+#, elixir-autogen, elixir-format
+msgid "Answer (Finnish)"
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/index.ex:73
+#, elixir-autogen, elixir-format
+msgid "Are you sure you want to delete this FAQ?"
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/form.ex:23
+#, elixir-autogen, elixir-format
+msgid "Category"
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/index.ex:47
+#, elixir-autogen, elixir-format
+msgid "Click 'New FAQ' to create your first FAQ entry."
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/index.ex:76
+#, elixir-autogen, elixir-format
+msgid "Delete"
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/form.ex:40
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Display Order"
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/form.ex:133
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Edit FAQ"
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/form.ex:157
+#, elixir-autogen, elixir-format, fuzzy
+msgid "FAQ created successfully."
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/index.ex:122
+#, elixir-autogen, elixir-format
+msgid "FAQ deleted successfully."
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/form.ex:170
+#, elixir-autogen, elixir-format, fuzzy
+msgid "FAQ updated successfully."
+msgstr ""
+
+#: lib/homesite_web/components/layouts.ex:185
+#: lib/homesite_web/components/layouts.ex:267
+#: lib/homesite_web/live/faq_live/index.ex:140
+#, elixir-autogen, elixir-format
+msgid "FAQs"
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/index.ex:17
+#, elixir-autogen, elixir-format
+msgid "Frequently asked questions"
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/index.ex:16
+#, elixir-autogen, elixir-format
+msgid "Frequently asked questions for administrators"
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/form.ex:91
+#, elixir-autogen, elixir-format
+msgid "Inactive FAQs are hidden from users but remain in the database."
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/form.ex:44
+#, elixir-autogen, elixir-format
+msgid "Lower numbers appear first. FAQs with same order are sorted by ID."
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/form.ex:123
+#: lib/homesite_web/live/faq_live/index.ex:34
+#, elixir-autogen, elixir-format
+msgid "New FAQ"
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/index.ex:44
+#, elixir-autogen, elixir-format
+msgid "No FAQs available yet."
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/form.ex:51
+#, elixir-autogen, elixir-format
+msgid "Question (English)"
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/form.ex:71
+#, elixir-autogen, elixir-format
+msgid "Question (Finnish)"
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/form.ex:97
+#, elixir-autogen, elixir-format
+msgid "Save FAQ"
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/form.ex:65
+#, elixir-autogen, elixir-format
+msgid "The answer in English. Supports basic HTML for formatting."
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/form.ex:85
+#, elixir-autogen, elixir-format
+msgid "The answer in Finnish. Supports basic HTML for formatting."
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/form.ex:53
+#, elixir-autogen, elixir-format
+msgid "The question in English. Will be shown to users with English locale."
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/form.ex:73
+#, elixir-autogen, elixir-format
+msgid "The question in Finnish. Will be shown to users with Finnish locale."
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/index.ex:112
+#, elixir-autogen, elixir-format
+msgid "Unauthorized"
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/form.ex:15
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Use this form to manage FAQ entries in the database."
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/form.ex:25
+#, elixir-autogen, elixir-format
+msgid "User FAQ"
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/index.ex:13
+#: lib/homesite_web/live/faq_live/index.ex:25
+#, elixir-autogen, elixir-format
+msgid "User FAQs"
+msgstr ""
+
+#: lib/homesite_web/live/faq_live/form.ex:31
+#, elixir-autogen, elixir-format
+msgid "User FAQs are visible to everyone. Admin FAQs are only visible to administrators."
 msgstr ""
