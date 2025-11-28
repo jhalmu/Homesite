@@ -4,7 +4,7 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
-## 2025-11-28 18:20:00 - Post Form UX Improvements ✅
+## 2025-11-28 18:30:00 - Post Form UX Improvements (FIXED) ✅
 
 ### Session: Enhanced Post Form Layout and FAQ Content Update
 
@@ -13,14 +13,15 @@ Session notes and progress tracking for the Homesite project.
 **1. Post Form Date/Time Layout Improvements**
 
 **Changes Made:**
-- `lib/homesite_web/live/post_live/form.ex` (+23 lines)
-  - Date field: Changed to `flex-1 min-w-[140px]` (responsive)
-  - Time field: Changed from `flex-1` to fixed `w-32` (128px, no longer stretches)
+- `lib/homesite_web/live/post_live/form.ex` (final fix: raw HTML inputs)
+  - **CRITICAL FIX:** Replaced `.input` components with raw HTML `<input>` tags
+  - Removed wrapper divs that were causing spacing issues
+  - Date field: Fixed width `w-40` (160px)
+  - Time field: Fixed width `w-32` (128px)
   - Added "Now" button next to time field for one-click current time
-  - Button styled with `btn btn-outline btn-sm mb-2` (DaisyUI)
+  - All three elements (date, time, button) now same height and grouped together
+  - Simple flex container with `gap-2` (8px spacing)
   - New event handler `handle_event("set-time-now", ...)` updates form with current UTC time
-  - Fields now sit closer together with minimal gap
-  - Mobile responsive: fields stack on small screens via `flex-wrap`
 
 **2. Body Textarea Enlargement**
 - Changed from browser default (~2-4 lines) to `rows="12"` (~250px height)

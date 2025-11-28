@@ -32,30 +32,28 @@ defmodule HomesiteWeb.PostLive.Form do
           <label class="label">
             <span class="label-text font-semibold">{gettext("Publication Date & Time")}</span>
           </label>
-          <div class="flex flex-wrap gap-2">
-            <div class="flex-1 min-w-[140px]">
-              <.input
-                field={@form[:publish_date]}
-                type="date"
-                value={format_date(@form[:published_at].value)}
-              />
-            </div>
-            <div class="flex gap-2 items-end">
-              <div class="w-32">
-                <.input
-                  field={@form[:publish_time]}
-                  type="time"
-                  value={format_time(@form[:published_at].value)}
-                />
-              </div>
-              <button
-                type="button"
-                phx-click="set-time-now"
-                class="btn btn-outline btn-sm mb-2"
-              >
-                {gettext("Now")}
-              </button>
-            </div>
+          <div class="flex gap-2">
+            <input
+              type="date"
+              name={@form[:publish_date].name}
+              id={@form[:publish_date].id}
+              value={format_date(@form[:published_at].value)}
+              class="input input-bordered w-40"
+            />
+            <input
+              type="time"
+              name={@form[:publish_time].name}
+              id={@form[:publish_time].id}
+              value={format_time(@form[:published_at].value)}
+              class="input input-bordered w-32"
+            />
+            <button
+              type="button"
+              phx-click="set-time-now"
+              class="btn btn-outline btn-sm"
+            >
+              {gettext("Now")}
+            </button>
           </div>
           <p class="text-base-content/70 mt-2 text-sm">
             <.icon name="hero-information-circle" class="inline h-4 w-4" />
