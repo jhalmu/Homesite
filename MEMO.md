@@ -2965,3 +2965,199 @@ Successfully implemented complete dual-FAQ system:
 
 ---
 
+
+---
+
+## 2025-11-28 14:20:00 - External Feeds Integration (Phases 1, 2, 5) + Documentation
+
+### What Was Accomplished
+
+Implemented RSS/Atom feed aggregation system with automatic background refresh. Full production-ready implementation with comprehensive testing and documentation.
+
+### Changes Made
+
+#### Phase 1: Foundation (commit ef13d99)
+**Database:**
+- Created `feed_sources` table (user feed configurations)
+- Created `feed_items` table (cached feed content)
+- Added indexes for performance
+- Cascade deletes for data integrity
+
+**Schemas:**
+- `FeedSource`: Supports RSS, Atom, JSON, Bluesky, Mastodon
+- `FeedItem`: Cached content with metadata
+- Validation for feed types and required fields
+- Default icons per feed type (📰, 🦋, 🐘)
+
+**Context:**
+- `ExternalFeeds` context with scoped CRUD operations
+- `list_feed_sources(scope)`, `create_feed_source(scope, attrs)`, etc.
+- `list_feed_items(scope, opts)` with limit support
+- `upsert_feed_item/2` for caching
+- Scope isolation enforced (users can't access others' feeds)
+
+**Tests:** 21 new tests (297 total passing)
+
+#### Phase 2: RSS/Atom Adapter (commit 3607744)
+**Parser:**
+- Built with `sweet_xml` (removed feeder_ex due to Erlang compatibility)
+- Supports RSS 2.0 and Atom 1.0 formats
+- XPath-based extraction for robust parsing
+
+**Features:**
+- HTTP fetching with Req (2 retries, 1s delay, custom user-agent)
+- Multiple date format support (ISO8601, RFC1123, RFC2822)
+- HTML sanitization with HtmlSanitizeEx
+- Stable external IDs (GUID → link hash → fallback)
+- Graceful error handling for missing fields
+
+**FeedFetcher:**
+- `fetch_and_store(feed_source)` - Single feed
+- `fetch_all_enabled()` - Batch processing
+- Error tracking in `last_error` field
+- Updates `last_fetched_at` timestamps
+
+**Tests:** 7 new tests (304 total passing, 3 marked :external)
+
+#### Phase 5: Oban Background Jobs (commit 6a9537a)
+**Worker:**
+- `FeedRefreshWorker` for automated refresh
+- Queue: `:feeds` (5 concurrent workers)
+- Max attempts: 3 with automatic retry
+- Priority: 1
+
+**Job Modes:**
+1. Single feed: `%{feed_source_id: id}` - respects refresh_interval
+2. Batch all: `%{refresh_all: true}` - refreshes all enabled feeds
+
+**Features:**
+- Smart interval-based refresh (skips recently fetched)
+- Handles disabled feeds gracefully
+- Cancels jobs for non-existent feeds
+- Comprehensive logging
+
+**Oban Configuration:**
+- Cron plugin enabled
+- **Automatic refresh every 30 minutes**
+- Pruner plugin for job cleanup
+- Test mode: `:inline` (synchronous)
+
+**Scheduling Functions:**
+```elixir
+ExternalFeeds.schedule_refresh(feed_source_id)
+ExternalFeeds.schedule_refresh_all()
+ExternalFeeds.schedule_individual_refreshes()
+```
+
+**Tests:** 9 new tests (313 total passing)
+
+#### Documentation (commit b7988bb)
+**Created:** `EXTERNAL_FEEDS_IMPLEMENTATION.md` (640 lines)
+- Complete architecture overview
+- Database schema documentation
+- Implementation details for all phases
+- Usage examples with code snippets
+- Testing guide (36 tests total)
+- Production deployment instructions
+- Monitoring and troubleshooting
+- Known limitations and next phases
+- File manifest
+
+### Test Results
+```
+313 tests, 0 failures, 11 skipped (6 excluded)
+```
+
+**External Feeds Tests:** 36 tests across 4 files
+- Context: 21 tests (scope isolation, CRUD, validation)
+- Adapter: 3 tests (validation, error handling)
+- Fetcher: 3 tests (single, batch, error recording)
+- Worker: 9 tests (job modes, scheduling, intervals)
+
+### Files Created/Modified
+
+**Migrations (2):**
+- `priv/repo/migrations/*_create_feed_sources.exs`
+- `priv/repo/migrations/*_create_feed_items.exs`
+
+**Schemas (2):**
+- `lib/homesite/external_feeds/feed_source.ex`
+- `lib/homesite/external_feeds/feed_item.ex`
+
+**Context (1):**
+- `lib/homesite/external_feeds.ex`
+
+**Adapters (3):**
+- `lib/homesite/external_feeds/adapters/feed_adapter.ex` (behaviour)
+- `lib/homesite/external_feeds/adapters/rss_adapter.ex` (implementation)
+- `lib/homesite/external_feeds/feed_fetcher.ex` (orchestration)
+
+**Workers (1):**
+- `lib/homesite/workers/feed_refresh_worker.ex`
+
+**Tests (4):**
+- `test/homesite/external_feeds_test.exs`
+- `test/homesite/external_feeds/adapters/rss_adapter_test.exs`
+- `test/homesite/external_feeds/feed_fetcher_test.exs`
+- `test/homesite/workers/feed_refresh_worker_test.exs`
+
+**Documentation (2):**
+- `EXTERNAL_FEEDS_IMPLEMENTATION.md`
+- `test_results_final.txt`
+
+**Configuration:**
+- `config/config.exs` - Enabled Oban cron plugin
+
+**Total:** 15 new files, 3 modified files
+
+### GitHub Issues Updated
+
+**Issue #29:** External Feeds Integration
+- Updated with Phase 1 completion (commit ef13d99)
+- Updated with Phase 2 completion (commit 3607744)
+- Updated with Phase 5 completion (commit 6a9537a)
+- Updated with documentation (commit b7988bb)
+
+### Status
+
+**✅ Production Ready:**
+- RSS/Atom feed aggregation
+- Multi-user with scope isolation
+- Automatic refresh every 30 minutes
+- Error tracking and retry logic
+- Comprehensive test coverage
+
+**⏳ Next Priority:**
+- Phase 6: LiveView UI (4-5h)
+  - Feed source CRUD interface
+  - Unified timeline display
+  - Filtering & sorting
+  - Manual refresh buttons
+
+**⏸️ Optional (Social Features):**
+- Phase 3: Bluesky adapter (3-4h)
+- Phase 4: Mastodon adapter (3-4h)
+
+### Key Decisions
+
+1. **Used sweet_xml instead of feeder_ex** - feeder_ex had Erlang OTP 27 compatibility issues
+2. **Oban cron every 30 minutes** - Balance between freshness and server load
+3. **Scope isolation enforced** - Security pattern matching across codebase
+4. **HTML sanitization mandatory** - Security for user-facing content
+5. **External tests excluded by default** - Network dependency in tests
+
+### Notes for Next Session
+
+- External Feeds foundation is complete and production-ready
+- All RSS/Atom feeds automatically refresh every 30 minutes
+- LiveView UI is the next logical step (Phase 6)
+- Bluesky/Mastodon adapters are optional enhancements
+- Documentation is comprehensive and ready for deployment
+- All tests passing, no known issues
+
+### Commits
+- `ef13d99` - Phase 1: Foundation
+- `3607744` - Phase 2: RSS/Atom adapter
+- `6a9537a` - Phase 5: Oban background jobs
+- `b7988bb` - Complete documentation
+
