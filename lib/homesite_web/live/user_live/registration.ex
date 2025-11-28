@@ -90,59 +90,26 @@ defmodule HomesiteWeb.UserLive.Registration do
 
   @impl true
   def handle_event("save", %{"user" => user_params}, socket) do
-    invitation_code = Map.get(user_params, "invitation_code", "")
-
-    # Validate invitation code first
-    case Accounts.validate_invitation(invitation_code) do
-      :ok ->
-        # Proceed with registration
-        case Accounts.register_user(user_params) do
-          {:ok, user} ->
-            # Mark invitation as used
-            Accounts.use_invitation(invitation_code)
-
-            {:ok, _} =
-              Accounts.deliver_login_instructions(
-                user,
-                &url(~p"/users/log-in/#{&1}")
-              )
-
-            {:noreply,
-             socket
-             |> put_flash(
-               :info,
-               gettext("An email was sent to %{email}, please access it to confirm your account.",
-                 email: user.email
-               )
-             )
-             |> push_navigate(to: ~p"/users/log-in")}
-
-          {:error, %Ecto.Changeset{} = changeset} ->
-            {:noreply, assign_form(socket, changeset)}
-        end
-
-      {:error, :not_found} ->
-        changeset =
-          Accounts.change_user_email(%User{}, user_params, validate_unique: false)
-          |> Ecto.Changeset.add_error(:invitation_code, gettext("Invalid invitation code"))
-
-        {:noreply, assign_form(socket, changeset)}
-
-      {:error, :expired} ->
-        changeset =
-          Accounts.change_user_email(%User{}, user_params, validate_unique: false)
-          |> Ecto.Changeset.add_error(:invitation_code, gettext("This invitation has expired"))
-
-        {:noreply, assign_form(socket, changeset)}
-
-      {:error, :exhausted} ->
-        changeset =
-          Accounts.change_user_email(%User{}, user_params, validate_unique: false)
-          |> Ecto.Changeset.add_error(
-            :invitation_code,
-            gettext("This invitation has been used too many times")
+    # register_user now handles invitation validation and consumption
+    case Accounts.register_user(user_params) do
+      {:ok, user} ->
+        {:ok, _} =
+          Accounts.deliver_login_instructions(
+            user,
+            &url(~p"/users/log-in/#{&1}")
           )
 
+        {:noreply,
+         socket
+         |> put_flash(
+           :info,
+           gettext("An email was sent to %{email}, please access it to confirm your account.",
+             email: user.email
+           )
+         )
+         |> push_navigate(to: ~p"/users/log-in")}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}
     end
   end

@@ -76,11 +76,11 @@ defmodule Homesite.Accounts do
   ## User registration
 
   @doc """
-  Registers a user.
+  Registers a user with an invitation code.
 
   ## Examples
 
-      iex> register_user(%{field: value})
+      iex> register_user(%{field: value, invitation_code: "ABC123XY"})
       {:ok, %User{}}
 
       iex> register_user(%{field: bad_value})
@@ -88,10 +88,66 @@ defmodule Homesite.Accounts do
 
   """
   def register_user(attrs) do
+    invitation_code = Map.get(attrs, "invitation_code") || Map.get(attrs, :invitation_code)
+
+    # Validate invitation code first
+    case validate_invitation_for_registration(invitation_code) do
+      :ok ->
+        # Create user
+        result =
+          %User{}
+          |> User.email_changeset(attrs)
+          |> User.password_changeset(attrs)
+          |> Repo.insert()
+
+        # If user created successfully, consume the invitation
+        case result do
+          {:ok, user} ->
+            use_invitation(invitation_code)
+            {:ok, user}
+
+          error ->
+            error
+        end
+
+      {:error, reason} ->
+        {:error,
+         %User{}
+         |> User.email_changeset(attrs)
+         |> Ecto.Changeset.add_error(:invitation_code, invitation_error_message(reason))
+         |> Map.put(:action, :insert)}
+    end
+  end
+
+  @doc """
+  Registers an admin user without requiring an invitation code.
+
+  This is used by the seed_admin mix task and should NOT be used
+  for regular user registration.
+
+  ## Examples
+
+      iex> register_admin(%{email: "admin@test.com", password: "pass123", role: "admin"})
+      {:ok, %User{}}
+
+  """
+  def register_admin(attrs) do
     %User{}
     |> User.email_changeset(attrs)
+    |> User.password_changeset(attrs)
+    |> Ecto.Changeset.cast(attrs, [:role, :admin_flowers, :display_name])
     |> Repo.insert()
   end
+
+  defp validate_invitation_for_registration(nil), do: {:error, :required}
+  defp validate_invitation_for_registration(""), do: {:error, :required}
+  defp validate_invitation_for_registration(code), do: validate_invitation(code)
+
+  defp invitation_error_message(:required), do: "is required"
+  defp invitation_error_message(:not_found), do: "is invalid"
+  defp invitation_error_message(:expired), do: "has expired"
+  defp invitation_error_message(:exhausted), do: "has been used too many times"
+  defp invitation_error_message(_), do: "is invalid"
 
   ## Settings
 

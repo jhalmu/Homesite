@@ -29,6 +29,7 @@ defmodule Homesite.Accounts.User do
 
     has_many :posts, Homesite.Content.Post
     has_many :tags, Homesite.Content.Tag
+    has_many :feed_sources, Homesite.ExternalFeeds.FeedSource
 
     timestamps(type: :utc_datetime)
   end

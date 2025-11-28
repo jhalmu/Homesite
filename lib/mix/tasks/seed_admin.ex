@@ -1,6 +1,6 @@
 defmodule Mix.Tasks.SeedAdmin do
   @moduledoc """
-  Seeds an admin user with specified flower permissions.
+  Seeds an admin user with specified flower permissions and creates an invitation code.
 
   ## Usage
 
@@ -20,12 +20,19 @@ defmodule Mix.Tasks.SeedAdmin do
       # Create admin with specific flower level and custom password
       mix seed.admin admin@example.com --flowers 3 --password MyPass123
 
+  ## What This Task Does
+
+  1. Creates an admin user with the specified email and password
+  2. Assigns the specified flower permission level (1-5)
+  3. Automatically creates an unlimited invitation code for the admin to share
+
   ## Security Notes
 
   - This task requires command-line access to the server
   - Admin creation is logged for audit purposes
   - Random passwords are 20 characters with mixed case, numbers, and symbols
   - Use strong passwords for production environments
+  - The invitation code can be used unlimited times by default
   """
 
   use Mix.Task
@@ -80,21 +87,28 @@ defmodule Mix.Tasks.SeedAdmin do
           display_name: "Admin User"
         }
 
-        case Accounts.register_user(attrs) do
+        case Accounts.register_admin(attrs) do
           {:ok, user} ->
+            # Create an unlimited invitation code for this admin
+            {:ok, invitation} = Accounts.create_invitation(user, %{})
+
             Mix.shell().info("""
 
             ✅ Admin user created successfully!
 
-            Email:    #{user.email}
-            Role:     #{user.role}
-            Flowers:  #{"🌸" |> String.duplicate(flowers)}  (Level #{flowers})
-            Password: #{password}
+            Email:         #{user.email}
+            Role:          #{user.role}
+            Flowers:       #{"🌸" |> String.duplicate(flowers)}  (Level #{flowers})
+            Password:      #{password}
+            Invitation:    #{invitation.code}
 
-            ⚠️  IMPORTANT: Save this password securely!
+            ⚠️  IMPORTANT: Save this password and invitation code securely!
+
+            The invitation code can be used by new users to register.
+            Share it only with people you want to grant access to.
             """)
 
-            log_admin_creation(user, flowers)
+            log_admin_creation(user, flowers, invitation.code)
 
           {:error, changeset} ->
             Mix.shell().error("Error creating admin user:")
@@ -114,18 +128,30 @@ defmodule Mix.Tasks.SeedAdmin do
 
         case Repo.update(changeset) do
           {:ok, user} ->
+            # Create an invitation code if the user doesn't have one
+            invitation =
+              case Accounts.list_invitations(user) do
+                [] ->
+                  {:ok, inv} = Accounts.create_invitation(user, %{})
+                  inv
+
+                [inv | _] ->
+                  inv
+              end
+
             Mix.shell().info("""
 
             ✅ Existing user updated to admin!
 
-            Email:    #{user.email}
-            Role:     #{user.role}
-            Flowers:  #{"🌸" |> String.duplicate(flowers)}  (Level #{flowers})
+            Email:         #{user.email}
+            Role:          #{user.role}
+            Flowers:       #{"🌸" |> String.duplicate(flowers)}  (Level #{flowers})
+            Invitation:    #{invitation.code}
 
             Note: Password was not changed. Use existing password or reset via settings.
             """)
 
-            log_admin_creation(user, flowers)
+            log_admin_creation(user, flowers, invitation.code)
 
           {:error, changeset} ->
             Mix.shell().error("Error updating user to admin:")
@@ -145,12 +171,13 @@ defmodule Mix.Tasks.SeedAdmin do
     |> binary_part(0, 20)
   end
 
-  defp log_admin_creation(user, flowers) do
+  defp log_admin_creation(user, flowers, invitation_code) do
     Mix.shell().info("""
     📝 Admin creation logged
     User ID: #{user.id}
     Email: #{user.email}
     Flower Level: #{flowers}
+    Invitation Code: #{invitation_code}
     Timestamp: #{DateTime.utc_now() |> DateTime.to_iso8601()}
     """)
   end

@@ -28,7 +28,10 @@ defmodule Homesite.Activities do
     attrs =
       if subject do
         attrs
-        |> Map.put(:subject_type, subject.__struct__ |> to_string() |> String.split(".") |> List.last())
+        |> Map.put(
+          :subject_type,
+          subject.__struct__ |> to_string() |> String.split(".") |> List.last()
+        )
         |> Map.put(:subject_id, subject.id)
       else
         attrs

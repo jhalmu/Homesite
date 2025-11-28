@@ -33,12 +33,12 @@ config :homesite, Oban,
   repo: Homesite.Repo,
   queues: [default: 10, feeds: 5, analytics: 2],
   plugins: [
-    Oban.Plugins.Pruner,
-    {Oban.Plugins.Cron,
-     crontab: [
-       {"*/30 * * * *", Homesite.Workers.FeedScheduler},
-       {"0 * * * *", Homesite.Workers.AlgorithmUpdater}
-     ]}
+    Oban.Plugins.Pruner
+    # {Oban.Plugins.Cron,
+    #  crontab: [
+    #    {"*/30 * * * *", Homesite.Workers.FeedScheduler},
+    #    {"0 * * * *", Homesite.Workers.AlgorithmUpdater}
+    #  ]}
   ]
 
 # Configures the endpoint

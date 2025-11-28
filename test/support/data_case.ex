@@ -29,6 +29,7 @@ defmodule Homesite.DataCase do
 
   setup tags do
     Homesite.DataCase.setup_sandbox(tags)
+    Homesite.DataCase.ensure_test_invitation()
     :ok
   end
 
@@ -38,6 +39,48 @@ defmodule Homesite.DataCase do
   def setup_sandbox(tags) do
     pid = Ecto.Adapters.SQL.Sandbox.start_owner!(Homesite.Repo, shared: not tags[:async])
     on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
+  end
+
+  @doc """
+  Ensures a test invitation code exists in the database.
+  This invitation is used by test fixtures for user registration.
+  """
+  def ensure_test_invitation do
+    alias Homesite.Accounts.Invitation
+
+    # Create a test admin user if needed
+    test_admin =
+      case Homesite.Repo.get_by(Homesite.Accounts.User, email: "test-admin@example.com") do
+        nil ->
+          {:ok, admin} =
+            Homesite.Accounts.register_admin(%{
+              email: "test-admin@example.com",
+              password: "test-password-123",
+              role: "admin",
+              admin_flowers: 5
+            })
+
+          admin
+
+        existing ->
+          existing
+      end
+
+    # Create test invitation if it doesn't exist
+    case Homesite.Repo.get_by(Invitation, code: "TEST-INVITE") do
+      nil ->
+        Homesite.Repo.insert!(%Invitation{
+          code: "TEST-INVITE",
+          created_by_user_id: test_admin.id,
+          max_uses: nil,
+          current_uses: 0,
+          expires_at: nil,
+          default_role: "user"
+        })
+
+      existing ->
+        existing
+    end
   end
 
   @doc """

@@ -339,6 +339,7 @@ Content.list_posts()  # This will fail
 #### Context Boundaries
 1. **Homesite.Accounts** - User authentication and management
    - Uses custom Scope pattern for multi-tenancy
+   - **Invitation System** - Controlled user registration with invitation codes
    - Location: `lib/homesite/accounts/`
 
 2. **Homesite.Content** - Blog posts and tags
@@ -346,13 +347,29 @@ Content.list_posts()  # This will fail
    - Uses PubSub for real-time updates
    - Location: `lib/homesite/content/`
 
+3. **Homesite.Faqs** - FAQ management system (database-driven)
+   - Bilingual FAQs (English/Finnish) for admins and users
+   - Admin-only CRUD operations
+   - Location: `lib/homesite/faqs/`
+
+4. **Homesite.DevFaqs** - Development documentation (markdown-based)
+   - **Development environment only** - not available in production/test
+   - Parsed at compile-time using NimblePublisher
+   - Location: `lib/homesite/dev_faqs/`, files in `priv/dev_faqs/`
+
 #### Data Models
-- **User** (`users` table) - Has many posts and tags
+- **User** (`users` table) - Has many posts, tags, and created invitations
 - **Post** (`posts` table) - Belongs to user, has many tags through post_tags
   - Fields: title, body, slug, published_at, user_id
   - Auto-generates slug from title with timestamp
 - **Tag** (`tags` table) - Belongs to user, has many posts through post_tags
 - **PostTag** (`post_tags` table) - Join table for posts and tags
+- **Invitation** (`invitations` table) - Invitation codes for user registration
+  - Fields: code, max_uses, current_uses, expires_at, created_by_user_id, default_role
+  - Auto-generates unique codes, tracks usage, supports expiration
+- **Faq** (`faqs` table) - Bilingual FAQ entries
+  - Fields: category (admin/user), question_en/fi, answer_en/fi, display_order, is_active, slug
+  - Created/updated by admins, publicly viewable based on category
 
 #### Router Organization
 The router (`lib/homesite_web/router.ex`) has three key pipelines:
@@ -593,3 +610,237 @@ For comprehensive guidelines on Phoenix, LiveView, Ecto, and Elixir patterns, **
 - Elixir core patterns
 - Testing strategies
 - Usage rules for all dependencies
+
+## FAQ Systems
+
+This application has TWO separate FAQ systems serving different purposes:
+
+### 1. DEV FAQs (Development Documentation)
+
+**Purpose**: Developer documentation accessible only in development environment.
+
+**Location**: 
+- Files: `priv/dev_faqs/*.md`
+- Context: `lib/homesite/dev_faqs.ex`
+- LiveView: `lib/homesite_web/live/dev_faqs_live/index.ex`
+- Route: `/dev/faqs` (development only)
+
+**Features**:
+- Markdown files with YAML frontmatter
+- Compile-time parsing using NimblePublisher
+- Syntax highlighting for code blocks (Elixir)
+- Category filtering
+- English only (no i18n)
+- Zero database overhead
+
+**File Format**:
+```markdown
+---
+title: "Test Users and Accounts"
+order: 1
+category: "authentication"
+---
+
+# Your content here
+
+## Code examples with syntax highlighting
+\`\`\`elixir
+user = Repo.get(User, 1)
+\`\`\`
+```
+
+**Adding New DEV FAQs**:
+1. Create file in `priv/dev_faqs/` with pattern `NNN-slug.md`
+2. Add YAML frontmatter with title, order, category
+3. Write markdown content
+4. Recompile app (automatic in dev with file watching)
+
+**Access**:
+- Development: `http://localhost:4000/dev/faqs`
+- Test/Production: Route doesn't exist (404)
+
+**Best for**:
+- Test user credentials
+- Database commands
+- Common development tasks
+- Known issues and gotchas
+- Dev environment setup
+
+### 2. Database FAQs (Production FAQ System)
+
+**Purpose**: User-facing and admin FAQs with full internationalization.
+
+**Location**:
+- Context: `lib/homesite/faqs.ex`
+- Schema: `lib/homesite/faqs/faq.ex`
+- Tests: `test/homesite/faqs_test.exs`
+- Table: `faqs`
+
+**Features**:
+- Bilingual support (English/Finnish)
+- Two categories: "admin" and "user"
+- Admin-only CRUD operations
+- Display ordering
+- Active/inactive toggle
+- Auto-generated slugs
+- Audit trail (created_by, updated_by)
+
+**Usage**:
+```elixir
+# List user FAQs (public, no auth required)
+faqs = Faqs.list_user_faqs("en")
+
+# List admin FAQs (requires admin scope)
+faqs = Faqs.list_admin_faqs(admin_scope, "fi")
+
+# Create FAQ (requires admin scope)
+{:ok, faq} = Faqs.create_faq(admin_scope, %{
+  category: "user",
+  question_en: "How do I...?",
+  question_fi: "Miten voin...?",
+  answer_en: "You can...",
+  answer_fi: "Voit...",
+  display_order: 10
+})
+
+# Get FAQ by slug
+faq = Faqs.get_user_faq_by_slug!("how-to-do-something", "en")
+```
+
+**Best for**:
+- Public user documentation
+- Admin-specific documentation
+- Multilingual content
+- Frequently updated content
+
+## Invitation System
+
+**Purpose**: Controlled user registration with trackable invitation codes.
+
+**Location**:
+- Schema: `lib/homesite/accounts/invitation.ex`
+- Functions in: `lib/homesite/accounts.ex`
+- Table: `invitations`
+
+**Features**:
+- Auto-generated unique codes (format: `XXXX-XXXX-XXXX`)
+- Usage tracking (current_uses vs max_uses)
+- Expiration dates (optional)
+- Default role assignment
+- Audit trail (who created the invitation)
+
+**Creating Invitations**:
+```elixir
+# Unlimited uses, never expires
+{:ok, invitation} = Accounts.create_invitation(admin_user, %{
+  default_role: "user"
+})
+
+# Limited uses with expiration
+{:ok, invitation} = Accounts.create_invitation(admin_user, %{
+  max_uses: 10,
+  expires_at: DateTime.add(DateTime.utc_now(:second), 7, :day),
+  default_role: "user"
+})
+
+# Custom code
+{:ok, invitation} = Accounts.create_invitation(admin_user, %{
+  code: "SPECIAL-INVITE-2025",
+  max_uses: 5,
+  default_role: "user"
+})
+```
+
+**Validation**:
+```elixir
+# During registration
+case Accounts.validate_invitation(code) do
+  {:ok, invitation} -> 
+    # Proceed with registration, code is valid and consumed
+  {:error, reason} ->
+    # "invitation code is invalid"
+    # "invitation code has expired"
+    # "invitation code has reached maximum uses"
+end
+```
+
+**Test Invitation**:
+- Code: `TEST-INVITE`
+- Auto-created in test environment by `DataCase.ensure_test_invitation/0`
+- Unlimited uses, never expires
+- Used by all test fixtures via `AccountsFixtures.valid_user_attributes/1`
+
+**Edge Cases Handled**:
+1. Concurrent usage with max_uses (atomic increment)
+2. Expired invitations
+3. Maximum uses reached
+4. Invalid/nonexistent codes
+5. Nil or empty codes
+
+## Test Infrastructure
+
+### Test Invitation System
+
+**Purpose**: Provide consistent invitation code for all tests.
+
+**Implementation** (`test/support/data_case.ex:48`):
+```elixir
+def ensure_test_invitation do
+  # Creates test admin if needed
+  test_admin = case Repo.get_by(User, email: "test-admin@example.com") do
+    nil -> Accounts.register_admin(%{...})
+    existing -> existing
+  end
+
+  # Creates TEST-INVITE code if needed
+  case Repo.get_by(Invitation, code: "TEST-INVITE") do
+    nil -> Repo.insert!(%Invitation{code: "TEST-INVITE", ...})
+    existing -> existing
+  end
+end
+```
+
+**Usage**:
+- Automatically called in `DataCase` and `ConnCase` setup
+- All test fixtures use "TEST-INVITE" by default
+- Runs in each test's sandbox transaction (isolated per-test)
+
+### Test Fixtures
+
+**AccountsFixtures** (`test/support/fixtures/accounts_fixtures.ex`):
+```elixir
+# Creates confirmed user with password
+user = user_fixture()
+
+# Creates unconfirmed user with password
+user = unconfirmed_user_fixture()
+
+# Creates unconfirmed user WITHOUT password (for magic-link tests)
+user = unconfirmed_user_fixture_no_password()
+
+# Custom attributes (invitation_code always added)
+user = user_fixture(%{email: "custom@example.com"})
+```
+
+**Important**: 
+- `user_fixture/1` creates CONFIRMED users (manually sets `confirmed_at`)
+- `unconfirmed_user_fixture_no_password/1` bypasses invitation system (direct DB insert)
+- All regular fixtures use password-based auth with "TEST-INVITE"
+
+### Test Organization
+
+**Edge Case Tests**:
+- DEV FAQs: `test/homesite/dev_faqs_test.exs` (22 tests)
+  - Environment restrictions
+  - Empty states
+  - Category filtering
+  - HTML safety
+- LiveView: `test/homesite_web/live/dev_faqs_live/index_test.exs` (6 tests)
+  - Route availability (404 in test)
+  - Parameter handling
+  - XSS protection
+
+**Test Coverage**: 276 total tests (as of 2025-11-28)
+- DEV FAQs added 22 new tests
+- All tests passing in test environment
+- DEV FAQ routes correctly return 404 in test environment (expected behavior)

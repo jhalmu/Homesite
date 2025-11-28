@@ -53,13 +53,13 @@
               <div>
                 <div class="flex items-center gap-2">
                   <%= if activity.activity_type == "blog_published" do %>
-                    <.icon name="hero-document-check" class="h-5 w-5 text-success" />
+                    <.icon name="hero-document-check" class="text-success h-5 w-5" />
                   <% else %>
-                    <.icon name="hero-document-text" class="h-5 w-5 text-info" />
+                    <.icon name="hero-document-text" class="text-info h-5 w-5" />
                   <% end %>
                   <span class="font-medium">{activity.content}</span>
                 </div>
-                <div class="text-sm text-base-content/60 mt-1">
+                <div class="text-base-content/60 mt-1 text-sm">
                   {Calendar.strftime(activity.inserted_at, "%b %d, %Y at %H:%M")}
                 </div>
               </div>

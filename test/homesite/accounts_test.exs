@@ -77,11 +77,11 @@ defmodule Homesite.AccountsTest do
       assert "has already been taken" in errors_on(changeset).email
     end
 
-    test "registers users without password" do
+    test "registers users with password and invitation code" do
       email = unique_user_email()
       {:ok, user} = Accounts.register_user(valid_user_attributes(email: email))
       assert user.email == email
-      assert is_nil(user.hashed_password)
+      assert user.hashed_password != nil
       assert is_nil(user.confirmed_at)
       assert is_nil(user.password)
     end
@@ -331,7 +331,7 @@ defmodule Homesite.AccountsTest do
 
   describe "login_user_by_magic_link/1" do
     test "confirms user and expires tokens" do
-      user = unconfirmed_user_fixture()
+      user = unconfirmed_user_fixture_no_password()
       refute user.confirmed_at
       {encoded_token, hashed_token} = generate_user_magic_link_token(user)
 
@@ -351,8 +351,13 @@ defmodule Homesite.AccountsTest do
     end
 
     test "raises when unconfirmed user has password set" do
-      user = unconfirmed_user_fixture()
-      {1, nil} = Repo.update_all(User, set: [hashed_password: "hashed"])
+      user = unconfirmed_user_fixture_no_password()
+      # Update only this specific user, not all users
+      {1, nil} =
+        Repo.update_all(from(u in User, where: u.id == ^user.id),
+          set: [hashed_password: "hashed"]
+        )
+
       {encoded_token, _hashed_token} = generate_user_magic_link_token(user)
 
       assert_raise RuntimeError, ~r/magic link log in is not allowed/, fn ->
@@ -372,7 +377,7 @@ defmodule Homesite.AccountsTest do
 
   describe "deliver_login_instructions/2" do
     setup do
-      %{user: unconfirmed_user_fixture()}
+      %{user: unconfirmed_user_fixture_no_password()}
     end
 
     test "sends token through notification", %{user: user} do

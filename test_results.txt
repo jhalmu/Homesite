@@ -1,0 +1,132 @@
+    warning: no route path for HomesiteWeb.Router matches "/dev/faqs?category=#{category}"
+    │
+ 46 │     {:noreply, push_patch(socket, to: ~p"/dev/faqs?category=#{category}")}
+    │                                         ~
+    │
+    └─ lib/homesite_web/live/dev_faqs_live/index.ex:46: HomesiteWeb.DevFaqsLive.Index.handle_event/3
+
+    warning: no route path for HomesiteWeb.Router matches "/dev/faqs"
+    │
+ 51 │     {:noreply, push_patch(socket, to: ~p"/dev/faqs")}
+    │                                         ~
+    │
+    └─ lib/homesite_web/live/dev_faqs_live/index.ex:51: HomesiteWeb.DevFaqsLive.Index.handle_event/3
+
+    warning: unused import HomesiteWeb.Gettext
+    │
+  5 │   import HomesiteWeb.Gettext
+    │   ~
+    │
+    └─ lib/homesite_web/live/post_live/index.ex:5:3
+
+    warning: unused import HomesiteWeb.Gettext
+    │
+  5 │   import HomesiteWeb.Gettext
+    │   ~
+    │
+    └─ lib/homesite_web/live/post_live/form.ex:5:3
+
+    warning: unused import HomesiteWeb.Gettext
+    │
+  5 │   import HomesiteWeb.Gettext
+    │   ~
+    │
+    └─ lib/homesite_web/live/tag_live/index.ex:5:3
+
+    warning: unused import HomesiteWeb.Gettext
+    │
+  5 │   import HomesiteWeb.Gettext
+    │   ~
+    │
+    └─ lib/homesite_web/live/tag_live/show.ex:5:3
+
+    warning: unused import HomesiteWeb.Gettext
+    │
+  9 │   import HomesiteWeb.Gettext
+    │   ~
+    │
+    └─ lib/homesite_web/components/layouts.ex:9:3
+
+    warning: unused import HomesiteWeb.Gettext
+    │
+  5 │   import HomesiteWeb.Gettext
+    │   ~
+    │
+    └─ lib/homesite_web/live/tag_live/form.ex:5:3
+
+Running ExUnit with seed: 746637, max_cases: 4
+Excluding tags: [playwright: true]
+
+    warning: variable "tag" is unused (if the variable is not meant to be used, prefix it with an underscore)
+    │
+ 83 │   test "public post shows tags", %{conn: conn, post: post, tag: tag} do
+    │                                                                 ~~~
+    │
+    └─ test/homesite_web/e2e/tag_workflows_test.exs:83:65: HomesiteWeb.E2E.TagWorkflowsTest."test public post shows tags"/1
+
+***********    warning: unused import Homesite.ContentFixtures
+    │
+ 45 │   import Homesite.ContentFixtures
+    │   ~
+    │
+    └─ test/homesite_web/e2e/tag_workflows_test.exs:45:3
+
+..........................    warning: no route path for HomesiteWeb.Router matches "/dev/faqs?category=nonexistent"
+    │
+ 55 │       {:ok, view, _html} = live(conn, ~p"/dev/faqs?category=nonexistent")
+    │                                         ~
+    │
+    └─ test/homesite_web/live/dev_faqs_live/index_test.exs:55: HomesiteWeb.DevFaqsLive.IndexTest."test DEV FAQs Index (development only) shows empty state when no articles match filter"/1
+
+    warning: no route path for HomesiteWeb.Router matches "/dev/faqs"
+    │
+ 50 │       assert_patch(view, ~p"/dev/faqs")
+    │                            ~
+    │
+    └─ test/homesite_web/live/dev_faqs_live/index_test.exs:50: HomesiteWeb.DevFaqsLive.IndexTest."test DEV FAQs Index (development only) clears category filter"/1
+
+    warning: no route path for HomesiteWeb.Router matches "/dev/faqs?category=authentication"
+    │
+ 43 │       {:ok, view, _html} = live(conn, ~p"/dev/faqs?category=authentication")
+    │                                         ~
+    │
+    └─ test/homesite_web/live/dev_faqs_live/index_test.exs:43: HomesiteWeb.DevFaqsLive.IndexTest."test DEV FAQs Index (development only) clears category filter"/1
+
+    warning: no route path for HomesiteWeb.Router matches "/dev/faqs?category=authentication"
+    │
+ 38 │       assert_patch(view, ~p"/dev/faqs?category=authentication")
+    │                            ~
+    │
+    └─ test/homesite_web/live/dev_faqs_live/index_test.exs:38: HomesiteWeb.DevFaqsLive.IndexTest."test DEV FAQs Index (development only) filters by category"/1
+
+    warning: no route path for HomesiteWeb.Router matches "/dev/faqs"
+    │
+ 30 │       {:ok, view, _html} = live(conn, ~p"/dev/faqs")
+    │                                         ~
+    │
+    └─ test/homesite_web/live/dev_faqs_live/index_test.exs:30: HomesiteWeb.DevFaqsLive.IndexTest."test DEV FAQs Index (development only) filters by category"/1
+
+    warning: no route path for HomesiteWeb.Router matches "/dev/faqs"
+    │
+ 21 │       {:ok, view, _html} = live(conn, ~p"/dev/faqs")
+    │                                         ~
+    │
+    └─ test/homesite_web/live/dev_faqs_live/index_test.exs:21: HomesiteWeb.DevFaqsLive.IndexTest."test DEV FAQs Index (development only) shows category filters"/1
+
+    warning: no route path for HomesiteWeb.Router matches "/dev/faqs"
+    │
+ 13 │       {:ok, view, html} = live(conn, ~p"/dev/faqs")
+    │                                        ~
+    │
+    └─ test/homesite_web/live/dev_faqs_live/index_test.exs:13: HomesiteWeb.DevFaqsLive.IndexTest."test DEV FAQs Index (development only) displays DEV FAQs page"/1
+
+    warning: no route path for HomesiteWeb.Router matches "/blog/#{post.slug}"
+    │
+ 85 │     |> visit(~p"/blog/#{post.slug}")
+    │                ~
+    │
+    └─ test/homesite_web/e2e/tag_workflows_test.exs:85: HomesiteWeb.E2E.TagWorkflowsTest."test public post shows tags"/1
+
+....................................................................................................................................................................................................................................................................
+Finished in 1.4 seconds (0.6s async, 0.8s sync)
+297 tests, 0 failures, 11 skipped (3 excluded)

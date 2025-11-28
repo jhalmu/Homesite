@@ -7,7 +7,7 @@ defmodule HomesiteWeb.UserLive.ConfirmationTest do
   alias Homesite.Accounts
 
   setup do
-    %{unconfirmed_user: unconfirmed_user_fixture(), confirmed_user: user_fixture()}
+    %{unconfirmed_user: unconfirmed_user_fixture_no_password(), confirmed_user: user_fixture()}
   end
 
   describe "Confirm user" do

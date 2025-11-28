@@ -33,6 +33,7 @@ defmodule HomesiteWeb.ConnCase do
 
   setup tags do
     Homesite.DataCase.setup_sandbox(tags)
+    Homesite.DataCase.ensure_test_invitation()
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 

@@ -13,9 +13,18 @@ defmodule Homesite.AccountsFixtures do
   def valid_user_password, do: "hello world!"
 
   def valid_user_attributes(attrs \\ %{}) do
-    Enum.into(attrs, %{
-      email: unique_user_email()
-    })
+    # Merge attrs into defaults, ensuring invitation_code is always present
+    # Convert attrs to map in case it's a keyword list
+    attrs = Enum.into(attrs, %{})
+
+    defaults = %{
+      email: unique_user_email(),
+      password: valid_user_password()
+    }
+
+    defaults
+    |> Map.merge(attrs)
+    |> Map.put_new(:invitation_code, "TEST-INVITE")
   end
 
   def unconfirmed_user_fixture(attrs \\ %{}) do
@@ -27,18 +36,26 @@ defmodule Homesite.AccountsFixtures do
     user
   end
 
+  @doc """
+  Creates an unconfirmed user WITHOUT a password (for magic-link only flow).
+  This bypasses the invitation requirement by directly inserting into DB.
+  """
+  def unconfirmed_user_fixture_no_password(attrs \\ %{}) do
+    attrs = Enum.into(attrs, %{email: unique_user_email()})
+
+    %Homesite.Accounts.User{}
+    |> Ecto.Changeset.change(attrs)
+    |> Homesite.Repo.insert!()
+  end
+
   def user_fixture(attrs \\ %{}) do
     user = unconfirmed_user_fixture(attrs)
 
-    token =
-      extract_user_token(fn url ->
-        Accounts.deliver_login_instructions(user, url)
-      end)
-
-    {:ok, {user, _expired_tokens}} =
-      Accounts.login_user_by_magic_link(token)
-
+    # Manually confirm the user (simpler than magic link for password-based users)
+    # Use :second precision to match database schema
     user
+    |> Ecto.Changeset.change(%{confirmed_at: DateTime.utc_now(:second)})
+    |> Homesite.Repo.update!()
   end
 
   def user_scope_fixture do

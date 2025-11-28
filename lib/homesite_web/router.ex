@@ -69,6 +69,9 @@ defmodule HomesiteWeb.Router do
 
       live_dashboard "/dashboard", metrics: HomesiteWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
+
+      # DEV FAQs - development documentation
+      live "/faqs", HomesiteWeb.DevFaqsLive.Index, :index
     end
   end
 
