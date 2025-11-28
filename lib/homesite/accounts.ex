@@ -6,7 +6,7 @@ defmodule Homesite.Accounts do
   import Ecto.Query, warn: false
   alias Homesite.Repo
 
-  alias Homesite.Accounts.{User, UserNotifier, UserToken}
+  alias Homesite.Accounts.{Invitation, User, UserNotifier, UserToken}
 
   ## Database getters
 
@@ -504,6 +504,184 @@ defmodule Homesite.Accounts do
       post_count: post_count,
       tag_count: tag_count
     }
+  end
+
+  ## Invitations
+
+  @doc """
+  Creates an invitation code.
+
+  ## Examples
+
+      iex> create_invitation(%User{id: 1}, %{max_uses: 5, expires_at: ~U[2025-12-31 23:59:59Z]})
+      {:ok, %Invitation{}}
+
+      iex> create_invitation(%User{id: 1}, %{})
+      {:ok, %Invitation{}}
+
+  """
+  def create_invitation(%User{} = creator, attrs \\ %{}) do
+    attrs =
+      attrs
+      |> Map.put_new(:code, Invitation.generate_code())
+      |> Map.put(:created_by_user_id, creator.id)
+
+    %Invitation{}
+    |> Invitation.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Gets an invitation by code.
+
+  Returns `nil` if the invitation does not exist.
+
+  ## Examples
+
+      iex> get_invitation_by_code("ABC123XY")
+      %Invitation{}
+
+      iex> get_invitation_by_code("INVALID")
+      nil
+
+  """
+  def get_invitation_by_code(code) when is_binary(code) do
+    Repo.get_by(Invitation, code: code)
+    |> Repo.preload(:created_by)
+  end
+
+  @doc """
+  Gets a single invitation.
+
+  Raises `Ecto.NoResultsError` if the Invitation does not exist.
+
+  ## Examples
+
+      iex> get_invitation!(123)
+      %Invitation{}
+
+      iex> get_invitation!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_invitation!(id) do
+    Repo.get!(Invitation, id)
+    |> Repo.preload(:created_by)
+  end
+
+  @doc """
+  Validates an invitation code and returns `:ok` or `{:error, reason}`.
+
+  ## Examples
+
+      iex> validate_invitation("ABC123XY")
+      :ok
+
+      iex> validate_invitation("INVALID")
+      {:error, :not_found}
+
+      iex> validate_invitation("EXPIRED")
+      {:error, :expired}
+
+      iex> validate_invitation("EXHAUSTED")
+      {:error, :exhausted}
+
+  """
+  def validate_invitation(code) when is_binary(code) do
+    case get_invitation_by_code(code) do
+      nil ->
+        {:error, :not_found}
+
+      invitation ->
+        cond do
+          not Invitation.not_expired?(invitation) ->
+            {:error, :expired}
+
+          not Invitation.not_exhausted?(invitation) ->
+            {:error, :exhausted}
+
+          true ->
+            :ok
+        end
+    end
+  end
+
+  @doc """
+  Uses an invitation (increments current_uses).
+
+  Returns `{:ok, invitation}` if successful, `{:error, reason}` otherwise.
+
+  ## Examples
+
+      iex> use_invitation("ABC123XY")
+      {:ok, %Invitation{current_uses: 1}}
+
+  """
+  def use_invitation(code) when is_binary(code) do
+    case get_invitation_by_code(code) do
+      nil ->
+        {:error, :not_found}
+
+      invitation ->
+        if Invitation.valid?(invitation) do
+          invitation
+          |> Ecto.Changeset.change(current_uses: invitation.current_uses + 1)
+          |> Repo.update()
+        else
+          {:error, :invalid}
+        end
+    end
+  end
+
+  @doc """
+  Lists all invitations created by a user.
+
+  ## Examples
+
+      iex> list_invitations(%User{id: 1})
+      [%Invitation{}, ...]
+
+  """
+  def list_invitations(%User{} = user) do
+    from(i in Invitation,
+      where: i.created_by_user_id == ^user.id,
+      order_by: [desc: i.inserted_at],
+      preload: [:created_by]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Lists all invitations (admin only).
+
+  ## Examples
+
+      iex> list_all_invitations()
+      [%Invitation{}, ...]
+
+  """
+  def list_all_invitations do
+    from(i in Invitation,
+      order_by: [desc: i.inserted_at],
+      preload: [:created_by]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Deletes an invitation.
+
+  ## Examples
+
+      iex> delete_invitation(invitation)
+      {:ok, %Invitation{}}
+
+      iex> delete_invitation(invitation)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_invitation(%Invitation{} = invitation) do
+    Repo.delete(invitation)
   end
 
   ## Token helper

@@ -42,6 +42,9 @@ config :phoenix_live_view,
 # Use English locale for tests (assertions are written in English)
 config :homesite, HomesiteWeb.Gettext, default_locale: "en"
 
+# Configure Oban for tests (inline mode - no async jobs)
+config :homesite, Oban, testing: :inline
+
 config :phoenix_test,
   otp_app: :homesite,
   endpoint: HomesiteWeb.Endpoint,

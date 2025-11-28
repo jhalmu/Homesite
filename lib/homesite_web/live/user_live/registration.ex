@@ -24,12 +24,25 @@ defmodule HomesiteWeb.UserLive.Registration do
 
         <.form for={@form} id="registration_form" phx-submit="save" phx-change="validate">
           <.input
+            field={@form[:invitation_code]}
+            type="text"
+            label={gettext("Invitation Code")}
+            required
+            phx-mounted={if @invitation_code, do: nil, else: JS.focus()}
+            value={@invitation_code}
+          >
+            <:help>
+              {gettext("Enter the invitation code you received.")}
+            </:help>
+          </.input>
+
+          <.input
             field={@form[:email]}
             type="email"
             label={gettext("Email")}
             autocomplete="username"
             required
-            phx-mounted={JS.focus()}
+            phx-mounted={if @invitation_code, do: JS.focus(), else: nil}
           />
 
           <.input
@@ -61,33 +74,75 @@ defmodule HomesiteWeb.UserLive.Registration do
     {:ok, redirect(socket, to: HomesiteWeb.UserAuth.signed_in_path(socket))}
   end
 
-  def mount(_params, _session, socket) do
+  def mount(params, _session, socket) do
+    # Get invitation code from URL params (e.g., /users/register?invite=ABC123XY)
+    invitation_code = Map.get(params, "invite", "")
+
     changeset = Accounts.change_user_email(%User{}, %{}, validate_unique: false)
 
-    {:ok, assign_form(socket, changeset), temporary_assigns: [form: nil]}
+    socket =
+      socket
+      |> assign(:invitation_code, invitation_code)
+      |> assign_form(changeset)
+
+    {:ok, socket, temporary_assigns: [form: nil]}
   end
 
   @impl true
   def handle_event("save", %{"user" => user_params}, socket) do
-    case Accounts.register_user(user_params) do
-      {:ok, user} ->
-        {:ok, _} =
-          Accounts.deliver_login_instructions(
-            user,
-            &url(~p"/users/log-in/#{&1}")
+    invitation_code = Map.get(user_params, "invitation_code", "")
+
+    # Validate invitation code first
+    case Accounts.validate_invitation(invitation_code) do
+      :ok ->
+        # Proceed with registration
+        case Accounts.register_user(user_params) do
+          {:ok, user} ->
+            # Mark invitation as used
+            Accounts.use_invitation(invitation_code)
+
+            {:ok, _} =
+              Accounts.deliver_login_instructions(
+                user,
+                &url(~p"/users/log-in/#{&1}")
+              )
+
+            {:noreply,
+             socket
+             |> put_flash(
+               :info,
+               gettext("An email was sent to %{email}, please access it to confirm your account.",
+                 email: user.email
+               )
+             )
+             |> push_navigate(to: ~p"/users/log-in")}
+
+          {:error, %Ecto.Changeset{} = changeset} ->
+            {:noreply, assign_form(socket, changeset)}
+        end
+
+      {:error, :not_found} ->
+        changeset =
+          Accounts.change_user_email(%User{}, user_params, validate_unique: false)
+          |> Ecto.Changeset.add_error(:invitation_code, gettext("Invalid invitation code"))
+
+        {:noreply, assign_form(socket, changeset)}
+
+      {:error, :expired} ->
+        changeset =
+          Accounts.change_user_email(%User{}, user_params, validate_unique: false)
+          |> Ecto.Changeset.add_error(:invitation_code, gettext("This invitation has expired"))
+
+        {:noreply, assign_form(socket, changeset)}
+
+      {:error, :exhausted} ->
+        changeset =
+          Accounts.change_user_email(%User{}, user_params, validate_unique: false)
+          |> Ecto.Changeset.add_error(
+            :invitation_code,
+            gettext("This invitation has been used too many times")
           )
 
-        {:noreply,
-         socket
-         |> put_flash(
-           :info,
-           gettext("An email was sent to %{email}, please access it to confirm your account.",
-             email: user.email
-           )
-         )
-         |> push_navigate(to: ~p"/users/log-in")}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}
     end
   end

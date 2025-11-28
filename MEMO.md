@@ -2492,3 +2492,207 @@ Blog system fully functional with:
 - Ready for production use! 🚀
 
 ---
+
+## 2025-11-28 14:30:00
+
+### Session: Update External Feeds Plan with User Feedback
+
+#### Context
+Continuing from previous session where 4 quick-win issues were completed (#26 README, #10 User Management, #6 Dashboard, #27 Playwright). External Feeds Plan (EXTERNAL_FEEDS_PLAN.md) had been created but needed updates based on user feedback.
+
+#### User Feedback Incorporated
+1. **Block-based frontpage UI** - Changed from unified timeline to individual feed blocks
+2. **Additional platforms:**
+   - YouTube and other video platforms (Vimeo, PeerTube)
+   - Instagram (with API limitations noted)
+   - GitHub/GitLab activity feeds
+   - Own photo gallery integration
+3. **Icon system** - Added dedicated section for feed type visual indicators
+4. **No Twitter/X** - Explicitly excluded from plan
+5. **Monetization deferred** - User requested to defer as separate site-wide plan
+
+#### Changes Made to EXTERNAL_FEEDS_PLAN.md
+
+**Database Schema Updates:**
+- Added `youtube`, `instagram`, `github`, `gitlab`, `gallery` to feed_type enum
+- Added `display_order` field for controlling block positions
+- Added `icon` field for emoji/SVG identifiers
+- Added composite index on (user_id, display_order)
+
+**New Adapters Added:**
+- YouTube (RSS-based, no API key needed)
+- Instagram (Basic Display API with limitations noted)
+- GitHub (public events API)
+- GitLab (supports self-hosted instances)
+- Gallery (internal photo integration)
+
+**UI/UX Updates:**
+- Complete redesign of frontpage layout (unified timeline → block-based)
+- Each feed source gets its own card/block
+- Added icon system with emoji defaults
+- Drag-and-drop reordering support
+- Collapsible blocks
+- Mobile-first responsive design
+
+**Implementation Phases Revised:**
+- Phase 1: Foundation (4-6h)
+- Phase 2: Simple Feeds RSS/Atom/JSON (3-4h)
+- Phase 3: Social Media Bluesky/Mastodon (4-5h)
+- Phase 4: Video Platforms YouTube (2-3h)
+- Phase 5: Developer Platforms GitHub/GitLab (3-4h)
+- Phase 6: Instagram (4-6h) - most uncertain
+- Phase 7: Photo Gallery (3-4h)
+- Phase 8: Background Jobs (2-3h)
+- Phase 9: Block-Based Frontpage (5-6h)
+- Phase 10: Icon System (1-2h)
+- Phase 11: Polish & Testing (4-5h)
+- **Total: 35-48 hours (5-6 days)**
+
+**Open Questions Added:**
+- Photo gallery implementation details (schema, storage, uploads)
+- Block layout preferences (single/multi-column, collapsible defaults)
+- Metadata display preferences
+- Archive policy
+- Default feed sources for new users
+
+**Monetization Section:**
+- Added "Monetization Considerations" section
+- Marked as "Deferred for future planning"
+- Listed key questions to revisit
+- Action: Create separate MONETIZATION_PLAN.md later
+
+#### GitHub Issue Created
+- **#30: Monetization Strategy Planning**
+- Captures all monetization questions as separate site-wide plan
+- Medium priority, non-blocking for current development
+
+#### Files Modified
+- EXTERNAL_FEEDS_PLAN.md (589 → ~760 lines)
+  - Updated overview and goals
+  - Expanded platform support
+  - Redesigned UI approach
+  - Added icon system
+  - Revised implementation phases
+  - Added monetization deferral section
+
+#### Summary
+Successfully updated External Feeds Plan to reflect user's vision:
+- ✅ Block-based layout instead of unified timeline
+- ✅ YouTube, Instagram, GitHub, GitLab support planned
+- ✅ Photo gallery integration included
+- ✅ Icon system for visual feed identification
+- ✅ Twitter/X excluded
+- ✅ Monetization deferred to separate planning (#30)
+
+Plan is now comprehensive and ready for review. Key decision needed: Photo gallery implementation approach before starting Phase 1.
+
+#### Next Steps
+1. User to review updated EXTERNAL_FEEDS_PLAN.md
+2. Answer open questions (especially photo gallery details)
+3. Decide on block layout preferences
+4. Begin Phase 1 implementation when ready
+
+#### Notes
+- Previous session completed 4 issues (26, 10, 6, 27) with all tests passing
+- Invitation system fully implemented and working
+- Dashboard enhanced with activity feed
+- Playwright E2E testing foundation in place
+
+---
+
+## 2025-11-28 18:15:00
+
+### Session: External Feeds + Portal Implementation - Phase 1 Started
+
+#### Context
+Completed planning session for External Feeds + Portal feature (3-layer feed aggregation system). User approved comprehensive implementation plan stored in `.claude/plans/delightful-jingling-cherny.md`.
+
+**Key Architectural Decisions:**
+- Extend `Homesite.Content` context (not separate Feeds context)
+- Let users choose any platforms - no artificial "packs" restriction
+- Public feeds are public (respects `allow_embedding` flag)
+- "Secret" ranking algorithm for global frontpage
+- Total estimate: 56-72 hours across 8 phases
+
+#### Phase 1 Progress: Foundation + Simple Feeds (Partial)
+
+**✅ Completed:**
+
+1. **Dependencies Added** (mix.exs):
+   - `{:oban, "~> 2.18"}` - Background job processing
+   - `{:html_sanitize_ex, "~> 1.4"}` - Security
+   - `{:timex, "~> 3.7"}` - Date handling
+   - `{:sweet_xml, "~> 0.7"}` - RSS/Atom parsing (after trying feeder_ex/feed_parser/fast_rss with conflicts)
+
+2. **Oban Configuration**:
+   - `config/config.exs`: Configured queues (default: 10, feeds: 5, analytics: 2)
+   - Added cron jobs: FeedScheduler (every 30min), AlgorithmUpdater (hourly)
+   - `config/test.exs`: Set testing: :inline
+   - `lib/homesite/application.ex`: Added Oban to supervision tree
+
+3. **Database Migrations Created & Run**:
+   - `20251128091224_add_oban_jobs_table.exs` - Oban v12 migration ✅
+   - `20251128091249_create_feed_sources.exs` - User feed sources ✅
+   - `20251128091302_create_feed_items.exs` - Fetched feed items ✅
+
+**feed_sources Schema:**
+- user_id, feed_type, name, url, username
+- enabled, display_order, icon (default: 📰), refresh_interval
+- last_fetched_at, last_error
+- allow_embedding, view_count, share_count (for portal/algorithm)
+- metadata (jsonb)
+
+**feed_items Schema:**
+- feed_source_id, external_id (unique per source)
+- title, content, author_name, author_handle, author_avatar_url
+- published_at, url
+- metadata (jsonb)
+
+#### Technical Challenges Resolved
+
+**Challenge 1: Feed Parser Library Selection**
+- `feeder_ex` - Compilation error (Make version issue with Erlang dependency)
+- `feed_parser` - Package doesn't exist on Hex
+- `fast_rss` - Rustler version conflict with mdex
+- **Solution:** `sweet_xml` - Mature, stable, no conflicts
+
+**Challenge 2: Dependency Conflict**
+- mdex requires rustler ~> 0.32
+- fast_rss requires rustler ~> 0.29.0
+- **Solution:** Avoid rustler-based parsers, use sweet_xml instead
+
+#### Files Modified
+- `mix.exs` - Added 4 new dependencies
+- `config/config.exs` - Oban configuration
+- `config/test.exs` - Oban test mode
+- `lib/homesite/application.ex` - Oban supervisor
+- 3 new migrations (all run successfully)
+
+#### Next Tasks (Phase 1 Continuation)
+1. Create FeedSource schema
+2. Create FeedItem schema
+3. Extend Content context with feed CRUD functions
+4. Implement FeedAdapter behaviour
+5. Implement RSS/Atom/JSON adapters
+6. Create FeedFetcher Oban worker
+7. Create FeedSourceLive LiveViews (Index, Form)
+8. Add routes
+9. Write tests
+10. Verify all tests passing
+
+#### Summary
+Strong start on Phase 1. Infrastructure is ready:
+- ✅ Dependencies installed and compiled
+- ✅ Oban configured for background jobs
+- ✅ Database tables created (feed_sources, feed_items, oban_jobs)
+- ✅ No blocking issues
+
+Ready to continue with schema and context implementation.
+
+#### Stats
+- Phase 1 estimated: 8-10 hours
+- Time spent this session: ~1.5 hours
+- Progress: ~15% of Phase 1
+- Next session: Schema creation → Context functions → Adapters
+
+---

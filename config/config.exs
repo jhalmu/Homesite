@@ -28,6 +28,19 @@ config :homesite,
 config :hammer,
   backend: {Hammer.Backend.ETS, [expiry_ms: 60_000 * 60 * 4, cleanup_interval_ms: 60_000 * 10]}
 
+# Configures Oban background jobs
+config :homesite, Oban,
+  repo: Homesite.Repo,
+  queues: [default: 10, feeds: 5, analytics: 2],
+  plugins: [
+    Oban.Plugins.Pruner,
+    {Oban.Plugins.Cron,
+     crontab: [
+       {"*/30 * * * *", Homesite.Workers.FeedScheduler},
+       {"0 * * * *", Homesite.Workers.AlgorithmUpdater}
+     ]}
+  ]
+
 # Configures the endpoint
 config :homesite, HomesiteWeb.Endpoint,
   url: [host: "localhost"],

@@ -13,6 +13,12 @@
           <div class="stat">
             <div class="stat-title">{gettext("Total Posts")}</div>
             <div class="stat-value text-primary">{@post_count}</div>
+            <div class="stat-desc">
+              {gettext("%{published} published, %{draft} drafts",
+                published: @published_count,
+                draft: @draft_count
+              )}
+            </div>
             <div class="stat-actions">
               <.link navigate={~p"/posts"} class="btn btn-sm btn-primary">
                 {gettext("View all")}
@@ -34,6 +40,34 @@
         </div>
       </div>
     </div>
+
+    <%!-- Recent Activities --%>
+    <%= if length(@activities) > 0 do %>
+      <div class="mb-[clamp(2rem,5vw,3rem)]">
+        <h2 class="text-[clamp(1.5rem,4vw,2rem)] mb-[clamp(1rem,3vw,1.5rem)] font-semibold">
+          {gettext("Recent Activity")}
+        </h2>
+        <div class="space-y-2">
+          <%= for activity <- @activities do %>
+            <div class="alert bg-base-200 shadow-sm">
+              <div>
+                <div class="flex items-center gap-2">
+                  <%= if activity.activity_type == "blog_published" do %>
+                    <.icon name="hero-document-check" class="h-5 w-5 text-success" />
+                  <% else %>
+                    <.icon name="hero-document-text" class="h-5 w-5 text-info" />
+                  <% end %>
+                  <span class="font-medium">{activity.content}</span>
+                </div>
+                <div class="text-sm text-base-content/60 mt-1">
+                  {Calendar.strftime(activity.inserted_at, "%b %d, %Y at %H:%M")}
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
     
 <!-- Quick Actions -->
     <div class="mb-[clamp(2rem,5vw,3rem)]">

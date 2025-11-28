@@ -6,6 +6,7 @@ defmodule Homesite.Content do
   import Ecto.Query, warn: false
 
   alias Homesite.Accounts.Scope
+  alias Homesite.Activities
   alias Homesite.Content.{Post, Tag}
   alias Homesite.Repo
 
@@ -565,13 +566,25 @@ defmodule Homesite.Content do
   """
   def update_post(%Scope{} = scope, %Post{} = post, attrs) do
     true = post.user_id == scope.user.id
+    was_published = not is_nil(post.published_at)
 
-    with {:ok, post = %Post{}} <-
+    with {:ok, updated_post = %Post{}} <-
            post
            |> Post.changeset(attrs, scope)
            |> Repo.update() do
-      broadcast_post(scope, {:updated, post})
-      {:ok, post}
+      broadcast_post(scope, {:updated, updated_post})
+
+      # Track activity if post is being published for the first time
+      if not was_published and updated_post.published_at do
+        Activities.create_activity(
+          scope.user,
+          "blog_published",
+          updated_post,
+          "Published blog post: #{updated_post.title}"
+        )
+      end
+
+      {:ok, updated_post}
     end
   end
 

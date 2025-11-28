@@ -546,4 +546,202 @@ defmodule Homesite.AccountsTest do
       refute inspect(%User{password: "123456"}) =~ "password: \"123456\""
     end
   end
+
+  describe "Invitations" do
+    alias Homesite.Accounts.Invitation
+
+    setup do
+      user = user_fixture()
+      {:ok, user: user}
+    end
+
+    test "create_invitation/2 creates invitation with auto-generated code", %{user: user} do
+      {:ok, invitation} = Accounts.create_invitation(user)
+
+      assert invitation.code != nil
+      assert String.length(invitation.code) == 8
+      assert invitation.created_by_user_id == user.id
+      assert invitation.current_uses == 0
+      assert invitation.default_role == "user"
+      assert is_nil(invitation.max_uses)
+      assert is_nil(invitation.expires_at)
+    end
+
+    test "create_invitation/2 creates invitation with custom code", %{user: user} do
+      {:ok, invitation} = Accounts.create_invitation(user, %{code: "CUSTOM123"})
+
+      assert invitation.code == "CUSTOM123"
+    end
+
+    test "create_invitation/2 creates invitation with max uses", %{user: user} do
+      {:ok, invitation} = Accounts.create_invitation(user, %{max_uses: 5})
+
+      assert invitation.max_uses == 5
+    end
+
+    test "create_invitation/2 creates invitation with expiration", %{user: user} do
+      expires_at = DateTime.utc_now() |> DateTime.add(7, :day) |> DateTime.truncate(:second)
+      {:ok, invitation} = Accounts.create_invitation(user, %{expires_at: expires_at})
+
+      # Compare truncated datetimes since DB stores with second precision
+      assert DateTime.compare(
+               DateTime.truncate(invitation.expires_at, :second),
+               expires_at
+             ) == :eq
+    end
+
+    test "create_invitation/2 creates invitation with admin role", %{user: user} do
+      {:ok, invitation} = Accounts.create_invitation(user, %{default_role: "admin"})
+
+      assert invitation.default_role == "admin"
+    end
+
+    test "create_invitation/2 fails with duplicate code", %{user: user} do
+      {:ok, _invitation} = Accounts.create_invitation(user, %{code: "DUPLICATE"})
+      {:error, changeset} = Accounts.create_invitation(user, %{code: "DUPLICATE"})
+
+      assert "has already been taken" in errors_on(changeset).code
+    end
+
+    test "get_invitation_by_code/1 returns invitation", %{user: user} do
+      {:ok, invitation} = Accounts.create_invitation(user, %{code: "FINDME"})
+
+      found = Accounts.get_invitation_by_code("FINDME")
+
+      assert found.id == invitation.id
+      assert found.created_by.id == user.id
+    end
+
+    test "get_invitation_by_code/1 returns nil for non-existent code" do
+      assert is_nil(Accounts.get_invitation_by_code("NOTEXIST"))
+    end
+
+    test "validate_invitation/1 returns :ok for valid invitation", %{user: user} do
+      {:ok, invitation} = Accounts.create_invitation(user)
+
+      assert :ok == Accounts.validate_invitation(invitation.code)
+    end
+
+    test "validate_invitation/1 returns {:error, :not_found} for invalid code" do
+      assert {:error, :not_found} == Accounts.validate_invitation("INVALID")
+    end
+
+    test "validate_invitation/1 returns {:error, :expired} for expired invitation", %{
+      user: user
+    } do
+      expires_at = DateTime.utc_now() |> DateTime.add(-1, :day)
+      {:ok, invitation} = Accounts.create_invitation(user, %{expires_at: expires_at})
+
+      assert {:error, :expired} == Accounts.validate_invitation(invitation.code)
+    end
+
+    test "validate_invitation/1 returns {:error, :exhausted} for exhausted invitation", %{
+      user: user
+    } do
+      {:ok, invitation} =
+        Accounts.create_invitation(user, %{max_uses: 1, code: "EXHAUSTED"})
+
+      # Use it once
+      {:ok, _} = Accounts.use_invitation(invitation.code)
+
+      # Try to validate it again
+      assert {:error, :exhausted} == Accounts.validate_invitation(invitation.code)
+    end
+
+    test "use_invitation/1 increments current_uses", %{user: user} do
+      {:ok, invitation} = Accounts.create_invitation(user)
+
+      {:ok, updated} = Accounts.use_invitation(invitation.code)
+
+      assert updated.current_uses == 1
+    end
+
+    test "use_invitation/1 can be used multiple times if no max_uses", %{user: user} do
+      {:ok, invitation} = Accounts.create_invitation(user)
+
+      {:ok, _} = Accounts.use_invitation(invitation.code)
+      {:ok, _} = Accounts.use_invitation(invitation.code)
+      {:ok, updated} = Accounts.use_invitation(invitation.code)
+
+      assert updated.current_uses == 3
+    end
+
+    test "use_invitation/1 fails when exhausted", %{user: user} do
+      {:ok, invitation} = Accounts.create_invitation(user, %{max_uses: 1})
+
+      {:ok, _} = Accounts.use_invitation(invitation.code)
+      {:error, :invalid} = Accounts.use_invitation(invitation.code)
+    end
+
+    test "use_invitation/1 fails when expired", %{user: user} do
+      expires_at = DateTime.utc_now() |> DateTime.add(-1, :day)
+      {:ok, invitation} = Accounts.create_invitation(user, %{expires_at: expires_at})
+
+      assert {:error, :invalid} == Accounts.use_invitation(invitation.code)
+    end
+
+    test "list_invitations/1 returns user's invitations", %{user: user} do
+      other_user = user_fixture()
+
+      {:ok, inv1} = Accounts.create_invitation(user, %{code: "USER1"})
+      {:ok, inv2} = Accounts.create_invitation(user, %{code: "USER2"})
+      {:ok, _inv3} = Accounts.create_invitation(other_user, %{code: "OTHER"})
+
+      invitations = Accounts.list_invitations(user)
+
+      assert length(invitations) == 2
+      invitation_ids = Enum.map(invitations, & &1.id)
+      assert inv1.id in invitation_ids
+      assert inv2.id in invitation_ids
+    end
+
+    test "list_all_invitations/0 returns all invitations", %{user: user} do
+      other_user = user_fixture()
+
+      {:ok, inv1} = Accounts.create_invitation(user)
+      {:ok, inv2} = Accounts.create_invitation(other_user)
+
+      invitations = Accounts.list_all_invitations()
+
+      assert length(invitations) >= 2
+      invitation_ids = Enum.map(invitations, & &1.id)
+      assert inv1.id in invitation_ids
+      assert inv2.id in invitation_ids
+    end
+
+    test "delete_invitation/1 deletes invitation", %{user: user} do
+      {:ok, invitation} = Accounts.create_invitation(user)
+
+      {:ok, _deleted} = Accounts.delete_invitation(invitation)
+
+      assert is_nil(Accounts.get_invitation_by_code(invitation.code))
+    end
+
+    test "Invitation.valid?/1 returns true for valid invitation", %{user: user} do
+      {:ok, invitation} = Accounts.create_invitation(user)
+
+      assert Invitation.valid?(invitation)
+    end
+
+    test "Invitation.valid?/1 returns false for expired invitation", %{user: user} do
+      expires_at = DateTime.utc_now() |> DateTime.add(-1, :day)
+      {:ok, invitation} = Accounts.create_invitation(user, %{expires_at: expires_at})
+
+      refute Invitation.valid?(invitation)
+    end
+
+    test "Invitation.valid?/1 returns false for exhausted invitation", %{user: user} do
+      {:ok, invitation} = Accounts.create_invitation(user, %{max_uses: 1})
+      {:ok, updated} = Accounts.use_invitation(invitation.code)
+
+      refute Invitation.valid?(updated)
+    end
+
+    test "Invitation.generate_code/0 generates 8-character code" do
+      code = Invitation.generate_code()
+
+      assert String.length(code) == 8
+      assert String.match?(code, ~r/^[A-Z0-9]+$/)
+    end
+  end
 end

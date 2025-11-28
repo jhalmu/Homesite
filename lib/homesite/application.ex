@@ -12,6 +12,8 @@ defmodule Homesite.Application do
       Homesite.Repo,
       {DNSCluster, query: Application.get_env(:homesite, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Homesite.PubSub},
+      # Start Oban background job processor
+      {Oban, Application.fetch_env!(:homesite, Oban)},
       # Start a worker by calling: Homesite.Worker.start_link(arg)
       # {Homesite.Worker, arg},
       # Start to serve requests, typically the last entry

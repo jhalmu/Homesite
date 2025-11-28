@@ -79,6 +79,12 @@ defmodule Homesite.MixProject do
       {:hammer, "~> 6.2"},
       {:hammer_plug, "~> 3.1"},
 
+      # Background Jobs & Feed Processing
+      {:oban, "~> 2.18"},
+      {:html_sanitize_ex, "~> 1.4"},
+      {:timex, "~> 3.7"},
+      {:sweet_xml, "~> 0.7"},
+
       # Dev and Test
       {:phoenix_test, "0.9.1", only: :test, runtime: false},
       {:phoenix_test_playwright, "0.9.1", only: :test, runtime: false},

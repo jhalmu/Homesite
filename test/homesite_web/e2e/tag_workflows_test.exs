@@ -43,6 +43,7 @@ defmodule HomesiteWeb.E2E.TagWorkflowsTest do
 
   import Homesite.AccountsFixtures
   import Homesite.ContentFixtures
+  import HomesiteWeb.PlaywrightAuthHelper
 
   setup do
     # Create test data for public viewing
@@ -88,7 +89,18 @@ defmodule HomesiteWeb.E2E.TagWorkflowsTest do
     |> assert_has(".badge", text: "Elixir")
   end
 
-  # TODO: Enable these tests once PlaywrightAuthHelper is implemented
+  @tag :playwright
+  test "authenticated user can access new post page", %{conn: conn} do
+    user = user_fixture()
+
+    conn
+    |> playwright_log_in_user(user)
+    |> visit(~p"/posts/new")
+    |> assert_has("body .phx-connected")
+    |> assert_has("h1", text: "New Post")
+  end
+
+  # TODO: Add more authenticated flow tests
   #
   # @tag :playwright
   # test "create post with tag search - would have caught KeyError bug!", %{conn: conn} do
