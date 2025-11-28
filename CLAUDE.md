@@ -30,6 +30,88 @@ Always check AGENTS.md first for project-specific patterns before making archite
 
 **Best practice:** Use `find . -name "*.md" -type f` to discover all documentation files in the project.
 
+## 🤖 Claude Behavioral Rules (MANDATORY)
+
+### Rule 1: Proactive EOD Reminder
+
+**CRITICAL**: Claude MUST proactively remind user about End of Session Checklist in these scenarios:
+
+**Trigger Conditions** (any of these):
+1. After completing a feature AND all tests passing
+2. After logging an insight via Insights Logger
+3. When user asks "what's missing from documentation"
+4. After fixing all test failures (0 failures achieved)
+5. When uncommitted changes exist AND no active task in TodoWrite
+6. After user says phrases indicating session wrap-up:
+   - "Log this insight"
+   - "What's missing from documentation"
+   - "List latest updates"
+   - "Fix all errors always" (meta-instruction)
+
+**Required Response Format**:
+```
+✅ [Feature/Task] complete!
+
+**Should I run the End of Session Checklist now?**
+
+This will:
+- Update MEMO.md with session summary
+- Commit changes to Git
+- Push to GitHub
+- Update GitHub issues (if applicable)
+
+Say **"EOD"** to start, or **"continue"** if more work planned.
+```
+
+**Never assume the session continues** - always ask if unsure.
+
+### Rule 2: EOD Workflow is Mandatory, Not Optional
+
+When user says "EOD", "End of session", or "End of session checklist":
+1. **Don't ask for confirmation** - START IMMEDIATELY
+2. Follow the 8-step Automated EOD Workflow (see below)
+3. Don't skip steps unless user explicitly says "EOD skip [step]"
+4. Execute git commands WITHOUT asking for permission:
+   - `git add .`
+   - `git commit -m "..."`
+   - `git push`
+
+**User has explicitly requested**: Never ask before running git commands during EOD workflow.
+
+### Rule 3: Git Commit Message Format
+
+All commit messages MUST follow this format:
+
+```
+[type]: Short description (50 chars max)
+
+Detailed description:
+- Bullet points for major changes
+- Files created/modified with line counts
+- Test coverage changes
+- Security improvements (if applicable)
+
+Fixes/Closes: #issue_number (if applicable)
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+**Types**: feat, fix, docs, test, refactor, chore, security, perf
+
+### Rule 4: Never Skip Documentation
+
+After completing ANY coding work:
+- ❌ Don't assume documentation will be updated later
+- ✅ Proactively offer to run EOD checklist
+- ✅ Treat missing MEMO.md entry as a bug
+- ✅ Apply "fix all errors always" to documentation gaps
+
+**Documentation is part of the feature**, not an afterthought.
+
+---
+
 ## 🤖 Automated Workflows
 
 ### Insights Logger - Pattern Capture System
