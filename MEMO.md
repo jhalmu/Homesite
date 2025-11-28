@@ -3161,3 +3161,52 @@ ExternalFeeds.schedule_individual_refreshes()
 - `6a9537a` - Phase 5: Oban background jobs
 - `b7988bb` - Complete documentation
 
+
+---
+
+## 2025-11-28 15:30:00 - Monetization Plan + External Feeds Phase 6 (In Progress)
+
+### What Was Accomplished
+
+#### Monetization Plan (Finnish Law Compliant)
+**Created:** `MONETIZATION_PLAN.md` (395 lines)
+- Finnish Fundraising Law (863/2019) compliant
+- Focus on compensated transactions (not donations)
+- Three paid tiers: Managed (€9.90), Professional (€19.90), Team (€49.90)
+- Free tier: Self-hosted with 5 feeds
+- Revenue projections: €500-3,500/month Year 1
+- Implementation roadmap Q4 2025 - Q3 2026
+- Insights from reson.fi article integrated
+
+**Issue #30:** Closed with complete monetization strategy
+
+#### External Feeds Phase 6: LiveView UI (In Progress)
+**Started:** Feed source management interface
+- Created `FeedSourceLive.Index` (list/manage feeds)
+- Created `FeedSourceLive.FormComponent` (create/edit form)
+- Added routes to router (`/feeds`, `/feeds/new`, `/feeds/:id/edit`)
+- Helper functions: `relative_time/1`, `badge/1`
+
+**Status:** Compilation issues with modal component - needs simplification
+
+### Files Created
+- `MONETIZATION_PLAN.md`
+- `lib/homesite_web/live/feed_source_live/index.ex`
+- `lib/homesite_web/live/feed_source_live/index.html.heex`
+- `lib/homesite_web/live/feed_source_live/form_component.ex`
+
+### Files Modified
+- `lib/homesite_web/router.ex` - Added feed routes
+
+### Next Steps
+- Fix modal/form component issues
+- Create Show page for viewing feed and items
+- Create timeline view for all feed items
+- Test UI thoroughly
+- Update documentation
+
+### Notes
+- Modal component exists but needs proper integration
+- Consider using separate pages instead of modal for simplicity
+- Timeline view is key feature for user value
+

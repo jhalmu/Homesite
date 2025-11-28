@@ -1,0 +1,106 @@
+<Layouts.app flash={@flash} current_scope={@current_scope}>
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-3xl">
+      <.header>
+        My Feed Sources
+        <:subtitle>Manage your RSS, Atom, and social media feeds</:subtitle>
+        <:actions>
+          <.link patch={~p"/feeds/new"}>
+            <.button>
+              <.icon name="hero-plus" class="h-4 w-4" /> New Feed Source
+            </.button>
+          </.link>
+        </:actions>
+      </.header>
+
+      <.table
+        id="feed_sources"
+        rows={@streams.feed_sources}
+        row_click={fn {_id, feed_source} -> JS.navigate(~p"/feeds/#{feed_source}") end}
+      >
+        <:col :let={{_id, feed_source}} label="Name">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl"><%= feed_source.icon %></span>
+            <div>
+              <div class="font-medium"><%= feed_source.name %></div>
+              <div class="text-sm text-gray-500">
+                <%= feed_source.feed_type %>
+                <%= if feed_source.url do %>
+                  · <%= String.slice(feed_source.url, 0, 40) %><%= if String.length(feed_source.url) > 40, do: "..." %>
+                <% end %>
+                <%= if feed_source.username do %>
+                  · @<%= feed_source.username %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </:col>
+
+        <:col :let={{_id, feed_source}} label="Status">
+          <.badge color={if feed_source.enabled, do: :green, else: :gray}>
+            <%= if feed_source.enabled, do: "Enabled", else: "Disabled" %>
+          </.badge>
+          <%= if feed_source.last_error do %>
+            <.badge color={:red}>Error</.badge>
+          <% end %>
+        </:col>
+
+        <:col :let={{_id, feed_source}} label="Last Updated">
+          <%= if feed_source.last_fetched_at do %>
+            <%= relative_time(feed_source.last_fetched_at) %>
+          <% else %>
+            <span class="text-gray-400">Never</span>
+          <% end %>
+        </:col>
+
+        <:action :let={{_id, feed_source}}>
+          <.link
+            phx-click={JS.push("toggle_enabled", value: %{id: feed_source.id})}
+            class="text-sm font-semibold"
+          >
+            <%= if feed_source.enabled, do: "Disable", else: "Enable" %>
+          </.link>
+        </:action>
+
+        <:action :let={{_id, feed_source}}>
+          <.link
+            phx-click={JS.push("refresh_now", value: %{id: feed_source.id})}
+            class="text-sm font-semibold"
+          >
+            Refresh
+          </.link>
+        </:action>
+
+        <:action :let={{id, feed_source}}>
+          <.link patch={~p"/feeds/#{feed_source}/edit"}>Edit</.link>
+        </:action>
+
+        <:action :let={{id, feed_source}}>
+          <.link
+            phx-click={JS.push("delete", value: %{id: feed_source.id}) |> hide("##{id}")}
+            data-confirm="Are you sure?"
+          >
+            Delete
+          </.link>
+        </:action>
+      </.table>
+    </div>
+  </div>
+
+  <.modal
+    :if={@live_action in [:new, :edit]}
+    id="feed_source-modal"
+    show
+    on_cancel={JS.patch(~p"/feeds")}
+  >
+    <.live_component
+      module={HomesiteWeb.FeedSourceLive.FormComponent}
+      id={@feed_source.id || :new}
+      title={@page_title}
+      action={@live_action}
+      feed_source={@feed_source}
+      current_scope={@current_scope}
+      patch={~p"/feeds"}
+    />
+  </.modal>
+</Layouts.app>

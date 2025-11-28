@@ -96,6 +96,11 @@ defmodule HomesiteWeb.Router do
       live "/tags/:id/edit", TagLive.Form, :edit
       live "/tags/:id", TagLive.Show, :show
 
+      live "/feeds", FeedSourceLive.Index, :index
+      live "/feeds/new", FeedSourceLive.Index, :new
+      live "/feeds/:id/edit", FeedSourceLive.Index, :edit
+      live "/feeds/:id", FeedSourceLive.Show, :show
+
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
     end
