@@ -327,10 +327,22 @@ defmodule HomesiteWeb.UserLive.Settings do
         # Update the current_scope with the new user data
         scope = %{socket.assigns.current_scope | user: updated_user}
 
+        # Check if avatar was updated to show additional reminder
+        avatar_updated? = Map.has_key?(user_params, "avatar")
+
+        flash_message =
+          if avatar_updated? do
+            gettext(
+              "Profile updated successfully. Remember to also update your display name, bio, and social links to complete your profile!"
+            )
+          else
+            gettext("Profile updated successfully.")
+          end
+
         socket
         |> assign(:current_scope, scope)
         |> assign(:profile_form, to_form(Accounts.change_user_profile(updated_user, %{})))
-        |> put_flash(:info, gettext("Profile updated successfully."))
+        |> put_flash(:info, flash_message)
         |> then(&{:noreply, &1})
 
       {:error, changeset} ->
