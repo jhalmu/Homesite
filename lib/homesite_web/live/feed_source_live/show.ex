@@ -1,57 +1,52 @@
-defmodule HomesiteWeb.FeedSourceLive.Index do
+defmodule HomesiteWeb.FeedSourceLive.Show do
   use HomesiteWeb, :live_view
 
   alias Homesite.ExternalFeeds
 
   @impl true
   def mount(_params, _session, socket) do
-    if connected?(socket) do
-      # Could subscribe to feed updates here if needed
-      :ok
-    end
+    {:ok, socket}
+  end
 
-    {:ok,
+  @impl true
+  def handle_params(%{"id" => id}, _url, socket) do
+    feed_source = ExternalFeeds.get_feed_source!(socket.assigns.current_scope, id)
+
+    # Get feed items for this source
+    feed_items =
+      ExternalFeeds.list_feed_items(socket.assigns.current_scope,
+        feed_source_id: id,
+        limit: 50
+      )
+
+    {:noreply,
      socket
-     |> assign(:page_title, "My Feed Sources")
-     |> stream(:feed_sources, ExternalFeeds.list_feed_sources(socket.assigns.current_scope))}
+     |> assign(:page_title, feed_source.name)
+     |> assign(:feed_source, feed_source)
+     |> assign(:feed_items, feed_items)}
   end
 
   @impl true
-  def handle_params(_params, _url, socket) do
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("delete", %{"id" => id}, socket) do
-    feed_source = ExternalFeeds.get_feed_source!(socket.assigns.current_scope, id)
-    {:ok, _} = ExternalFeeds.delete_feed_source(socket.assigns.current_scope, feed_source)
-
-    {:noreply, stream_delete(socket, :feed_sources, feed_source)}
-  end
-
-  @impl true
-  def handle_event("toggle_enabled", %{"id" => id}, socket) do
-    feed_source = ExternalFeeds.get_feed_source!(socket.assigns.current_scope, id)
-
-    {:ok, updated} =
-      ExternalFeeds.update_feed_source(socket.assigns.current_scope, feed_source, %{
-        enabled: !feed_source.enabled
-      })
-
-    {:noreply, stream_insert(socket, :feed_sources, updated)}
-  end
-
-  @impl true
-  def handle_event("refresh_now", %{"id" => id}, socket) do
-    # Schedule immediate refresh
-    ExternalFeeds.schedule_refresh(id)
+  def handle_event("refresh_now", _params, socket) do
+    ExternalFeeds.schedule_refresh(socket.assigns.feed_source.id)
 
     {:noreply,
      socket
      |> put_flash(:info, "Feed refresh scheduled. Check back in a moment!")}
   end
 
-  # Helper functions for template
+  @impl true
+  def handle_event("toggle_enabled", _params, socket) do
+    {:ok, updated} =
+      ExternalFeeds.update_feed_source(
+        socket.assigns.current_scope,
+        socket.assigns.feed_source,
+        %{enabled: !socket.assigns.feed_source.enabled}
+      )
+
+    {:noreply, assign(socket, :feed_source, updated)}
+  end
+
   defp relative_time(datetime) do
     now = DateTime.utc_now()
     diff_seconds = DateTime.diff(now, datetime)

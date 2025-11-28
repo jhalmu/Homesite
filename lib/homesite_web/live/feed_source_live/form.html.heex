@@ -1,0 +1,69 @@
+<Layouts.app flash={@flash} current_scope={@current_scope}>
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-2xl">
+      <.header>
+        {@page_title}
+        <:subtitle>Configure your feed source settings</:subtitle>
+        <:actions>
+          <.link navigate={~p"/feeds"}>
+            <.button>
+              <.icon name="hero-arrow-left" class="h-4 w-4" /> Back to Feeds
+            </.button>
+          </.link>
+        </:actions>
+      </.header>
+
+      <.form
+        for={@form}
+        id="feed_source-form"
+        phx-change="validate"
+        phx-submit="save"
+        class="mt-8"
+      >
+        <.input
+          field={@form[:feed_type]}
+          type="select"
+          label="Feed Type"
+          options={feed_type_options()}
+        />
+        <.input field={@form[:name]} type="text" label="Name" />
+
+        <div :if={@form[:feed_type].value in ["rss", "atom", "json"]}>
+          <.input
+            field={@form[:url]}
+            type="text"
+            label="Feed URL"
+            placeholder="https://example.com/feed.xml"
+          />
+        </div>
+
+        <div :if={@form[:feed_type].value in ["bluesky", "mastodon"]}>
+          <.input
+            field={@form[:username]}
+            type="text"
+            label="Username"
+            placeholder="user.bsky.social or @user@mastodon.social"
+          />
+        </div>
+
+        <.input field={@form[:icon]} type="text" label="Icon (emoji)" placeholder="📰" />
+        <.input
+          field={@form[:refresh_interval]}
+          type="number"
+          label="Refresh Interval (minutes)"
+          min="5"
+          step="5"
+        />
+        <.input field={@form[:display_order]} type="number" label="Display Order" min="0" />
+        <.input field={@form[:enabled]} type="checkbox" label="Enabled" />
+
+        <div class="mt-6 flex items-center justify-end gap-x-6">
+          <.link navigate={~p"/feeds"} class="text-sm font-semibold text-gray-900">
+            Cancel
+          </.link>
+          <.button phx-disable-with="Saving...">Save Feed Source</.button>
+        </div>
+      </.form>
+    </div>
+  </div>
+</Layouts.app>

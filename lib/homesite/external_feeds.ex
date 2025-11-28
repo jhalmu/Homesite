@@ -24,7 +24,7 @@ defmodule Homesite.ExternalFeeds do
   def list_feed_sources(%Scope{} = scope) do
     FeedSource
     |> where(user_id: ^scope.user.id)
-    |> order_by([f], [asc: f.display_order, asc: f.name])
+    |> order_by([f], asc: f.display_order, asc: f.name)
     |> Repo.all()
   end
 
@@ -35,7 +35,7 @@ defmodule Homesite.ExternalFeeds do
     FeedSource
     |> where(user_id: ^scope.user.id)
     |> where(enabled: true)
-    |> order_by([f], [asc: f.display_order, asc: f.name])
+    |> order_by([f], asc: f.display_order, asc: f.name)
     |> Repo.all()
   end
 

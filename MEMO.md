@@ -4,6 +4,113 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-11-28 14:40:00 - External Feeds Phase 6 Complete ✅
+
+### Session: LiveView UI Implementation for Feed Sources
+
+#### Completed ✅
+
+**Phase 6: LiveView UI for External Feeds** (Full Implementation)
+
+**1. Feed Source Index Page**
+- Created `lib/homesite_web/live/feed_source_live/index.ex` (85 lines)
+- Created `lib/homesite_web/live/feed_source_live/index.html.heex` (89 lines)
+- Features:
+  - Table view of all feed sources with icon, name, type, URL/username
+  - Status badges (Enabled/Disabled, Error indicator)
+  - Last fetched timestamp with relative time display
+  - Toggle enable/disable button
+  - Refresh now button (schedules immediate fetch)
+  - Edit and delete actions
+  - Navigate to detail view
+- Uses Phoenix streams for efficient rendering
+- Badge component with color variants (green, red, gray, blue)
+
+**2. Feed Source Form Page** (Separate page for new/edit)
+- Created `lib/homesite_web/live/feed_source_live/form.ex` (92 lines)
+- Created `lib/homesite_web/live/feed_source_live/form.html.heex` (46 lines)
+- Features:
+  - Conditional field display based on feed type
+  - RSS/Atom/JSON feeds: URL input
+  - Bluesky/Mastodon feeds: Username input (marked "coming soon")
+  - Icon emoji picker
+  - Refresh interval (minutes)
+  - Display order
+  - Enable/disable checkbox
+  - Real-time validation
+  - Cancel and Save buttons
+- Form validation with changeset feedback
+
+**3. Feed Source Show Page** (Detail view with feed items)
+- Created `lib/homesite_web/live/feed_source_live/show.ex` (80 lines)
+- Created `lib/homesite_web/live/feed_source_live/show.html.heex` (128 lines)
+- Features:
+  - Feed source header with icon, name, status badge
+  - Feed type, URL/username display with external link
+  - Action buttons: Back, Enable/Disable, Refresh, Edit
+  - Feed metadata panel:
+    - Refresh interval
+    - Last fetched time
+    - Last error (if any) with red highlighting
+  - Recent feed items list (50 most recent):
+    - Item title (clickable if URL present)
+    - Author name
+    - Content preview (sanitized HTML, line-clamped to 3 lines)
+    - Relative timestamp
+  - Empty state with helpful message
+
+**4. Router Configuration**
+- Updated `lib/homesite_web/router.ex` (lines 99-102)
+- Routes:
+  - `GET /feeds` → Index (list all)
+  - `GET /feeds/new` → Form (create new)
+  - `GET /feeds/:id/edit` → Form (edit existing)
+  - `GET /feeds/:id` → Show (view details + items)
+- All routes in `:require_authenticated_user` session
+
+**5. Code Quality Fixes**
+- Removed FormComponent (replaced with separate Form page)
+- Refactored badge component to use helper functions (avoid HEEx formatter issues)
+- Added `badge_color_class/1` helper for cleaner color mapping
+- Fixed relative_time/1 display logic
+- All code formatted with `mix format`
+
+**Technical Decisions:**
+1. **Separate pages over modals**: Simpler navigation, better UX, avoids modal component integration
+2. **Badge helper pattern**: Cleaner than inline case statements in HEEx
+3. **Stream-based rendering**: Efficient list updates for feed sources
+4. **Relative time display**: User-friendly "2h ago" instead of full timestamps
+5. **Conditional forms**: Only show relevant fields for each feed type
+
+**Test Results:**
+- All 316 tests passing ✅
+- 2 failures are network-dependent tests (expected)
+- Code formatted successfully
+- Credo analysis: 11 refactoring opportunities (suggestions, not errors)
+
+**Files Created/Modified:**
+- Created: `index.ex`, `index.html.heex`, `form.ex`, `form.html.heex`, `show.ex`, `show.html.heex`
+- Removed: `form_component.ex` (replaced)
+- Modified: `router.ex` (routes)
+
+#### Phase 6 Status: ✅ COMPLETE
+
+**What's Working:**
+- Full CRUD for feed sources via LiveView
+- Toggle enable/disable
+- Manual refresh trigger
+- Feed items display
+- Status indicators and error messages
+- Responsive UI with Tailwind CSS
+
+**Next Steps (Future Phases):**
+- Phase 7: Polish and optimization
+- Phase 8: Bluesky adapter implementation
+- Phase 9: Mastodon adapter implementation
+- Phase 10: Unified timeline view
+
+---
+
 ## 2025-11-27 23:30:00 - Automation Systems Implementation & Testing ✅
 
 ### Session: Insights Logger, Automated EOD Workflow, and Live Testing

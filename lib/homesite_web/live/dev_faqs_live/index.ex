@@ -54,18 +54,17 @@ defmodule HomesiteWeb.DevFaqsLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
       <.header>
         <div class="flex items-center gap-2">
-          <.icon name="hero-code-bracket" class="h-8 w-8" />
-          Developer FAQs
+          <.icon name="hero-code-bracket" class="h-8 w-8" /> Developer FAQs
         </div>
         <:subtitle>
           Development environment documentation and quick reference
         </:subtitle>
       </.header>
-
-      <!-- Category Filter -->
+      
+    <!-- Category Filter -->
       <div class="mt-8 flex flex-wrap gap-2">
         <button
           :if={@selected_category}
@@ -90,8 +89,8 @@ defmodule HomesiteWeb.DevFaqsLive.Index do
           {String.capitalize(category)}
         </button>
       </div>
-
-      <!-- Articles -->
+      
+    <!-- Articles -->
       <div class="mt-8 space-y-8">
         <article
           :for={article <- @articles}
@@ -104,11 +103,11 @@ defmodule HomesiteWeb.DevFaqsLive.Index do
             </span>
           </div>
 
-          <%= raw(article.body) %>
+          {raw(article.body)}
         </article>
       </div>
-
-      <!-- Empty State -->
+      
+    <!-- Empty State -->
       <div
         :if={@articles == []}
         class="mt-8 rounded-lg border-2 border-dashed border-gray-300 p-12 text-center"

@@ -37,9 +37,7 @@ defmodule Homesite.ExternalFeeds.FeedFetcher do
     import Ecto.Query
     # Get all enabled feed sources (not scoped to a specific user)
     feed_sources =
-      Homesite.Repo.all(
-        from f in FeedSource, where: f.enabled == true, order_by: [asc: f.id]
-      )
+      Homesite.Repo.all(from f in FeedSource, where: f.enabled == true, order_by: [asc: f.id])
 
     results =
       Enum.map(feed_sources, fn feed_source ->
@@ -51,10 +49,12 @@ defmodule Homesite.ExternalFeeds.FeedFetcher do
 
     success_count = Enum.count(results, fn {status, _, _} -> status == :ok end)
     error_count = Enum.count(results, fn {status, _, _} -> status == :error end)
-    total_items = Enum.reduce(results, 0, fn
-      {:ok, _, count}, acc -> acc + count
-      _, acc -> acc
-    end)
+
+    total_items =
+      Enum.reduce(results, 0, fn
+        {:ok, _, count}, acc -> acc + count
+        _, acc -> acc
+      end)
 
     Logger.info("""
     Feed fetch completed:
@@ -99,10 +99,11 @@ defmodule Homesite.ExternalFeeds.FeedFetcher do
         ExternalFeeds.upsert_feed_item(feed_source_id, item)
       end)
 
-    success_count = Enum.count(results, fn
-      {:ok, _} -> true
-      _ -> false
-    end)
+    success_count =
+      Enum.count(results, fn
+        {:ok, _} -> true
+        _ -> false
+      end)
 
     {:ok, success_count}
   end
