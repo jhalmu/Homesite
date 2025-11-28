@@ -992,32 +992,32 @@ msgstr "Ylläpitäjät"
 #: lib/homesite_web/live/faq_live/form.ex:60
 #, elixir-autogen, elixir-format
 msgid "Answer (English)"
-msgstr ""
+msgstr "Vastaus (englanniksi)"
 
 #: lib/homesite_web/live/faq_live/form.ex:80
 #, elixir-autogen, elixir-format
 msgid "Answer (Finnish)"
-msgstr ""
+msgstr "Vastaus (suomeksi)"
 
 #: lib/homesite_web/live/faq_live/index.ex:73
 #, elixir-autogen, elixir-format
 msgid "Are you sure you want to delete this FAQ?"
-msgstr ""
+msgstr "Haluatko varmasti poistaa tämän UKK:n?"
 
 #: lib/homesite_web/live/faq_live/form.ex:23
 #, elixir-autogen, elixir-format
 msgid "Category"
-msgstr ""
+msgstr "Kategoria"
 
 #: lib/homesite_web/live/faq_live/index.ex:47
 #, elixir-autogen, elixir-format
 msgid "Click 'New FAQ' to create your first FAQ entry."
-msgstr ""
+msgstr "Klikkaa 'Uusi UKK' luodaksesi ensimmäisen UKK-merkinnän."
 
 #: lib/homesite_web/live/faq_live/index.ex:76
 #, elixir-autogen, elixir-format
 msgid "Delete"
-msgstr ""
+msgstr "Poista"
 
 #: lib/homesite_web/live/faq_live/form.ex:40
 #, elixir-autogen, elixir-format, fuzzy
@@ -1037,108 +1037,108 @@ msgstr "Tagi luotu onnistuneesti"
 #: lib/homesite_web/live/faq_live/index.ex:122
 #, elixir-autogen, elixir-format
 msgid "FAQ deleted successfully."
-msgstr ""
+msgstr "UKK poistettu onnistuneesti."
 
 #: lib/homesite_web/live/faq_live/form.ex:170
 #, elixir-autogen, elixir-format, fuzzy
 msgid "FAQ updated successfully."
-msgstr "Tagi päivitetty onnistuneesti"
+msgstr "UKK päivitetty onnistuneesti."
 
 #: lib/homesite_web/components/layouts.ex:185
 #: lib/homesite_web/components/layouts.ex:267
 #: lib/homesite_web/live/faq_live/index.ex:140
 #, elixir-autogen, elixir-format
 msgid "FAQs"
-msgstr ""
+msgstr "UKK"
 
 #: lib/homesite_web/live/faq_live/index.ex:17
 #, elixir-autogen, elixir-format
 msgid "Frequently asked questions"
-msgstr ""
+msgstr "Usein kysytyt kysymykset"
 
 #: lib/homesite_web/live/faq_live/index.ex:16
 #, elixir-autogen, elixir-format
 msgid "Frequently asked questions for administrators"
-msgstr ""
+msgstr "Usein kysytyt kysymykset ylläpitäjille"
 
 #: lib/homesite_web/live/faq_live/form.ex:91
 #, elixir-autogen, elixir-format
 msgid "Inactive FAQs are hidden from users but remain in the database."
-msgstr ""
+msgstr "Epäaktiiviset UKK:t on piilotettu käyttäjiltä, mutta ne säilyvät tietokannassa."
 
 #: lib/homesite_web/live/faq_live/form.ex:44
 #, elixir-autogen, elixir-format
 msgid "Lower numbers appear first. FAQs with same order are sorted by ID."
-msgstr ""
+msgstr "Pienemmät numerot näytetään ensin. Samalla järjestysnumerolla olevat UKK:t järjestetään ID:n mukaan."
 
 #: lib/homesite_web/live/faq_live/form.ex:123
 #: lib/homesite_web/live/faq_live/index.ex:34
 #, elixir-autogen, elixir-format
 msgid "New FAQ"
-msgstr ""
+msgstr "Uusi UKK"
 
 #: lib/homesite_web/live/faq_live/index.ex:44
 #, elixir-autogen, elixir-format
 msgid "No FAQs available yet."
-msgstr ""
+msgstr "UKK:ja ei vielä saatavilla."
 
 #: lib/homesite_web/live/faq_live/form.ex:51
 #, elixir-autogen, elixir-format
 msgid "Question (English)"
-msgstr ""
+msgstr "Kysymys (englanniksi)"
 
 #: lib/homesite_web/live/faq_live/form.ex:71
 #, elixir-autogen, elixir-format
 msgid "Question (Finnish)"
-msgstr ""
+msgstr "Kysymys (suomeksi)"
 
 #: lib/homesite_web/live/faq_live/form.ex:97
 #, elixir-autogen, elixir-format
 msgid "Save FAQ"
-msgstr ""
+msgstr "Tallenna UKK"
 
 #: lib/homesite_web/live/faq_live/form.ex:65
 #, elixir-autogen, elixir-format
 msgid "The answer in English. Supports basic HTML for formatting."
-msgstr ""
+msgstr "Vastaus englanniksi. Tukee yksinkertaista HTML-muotoilua."
 
 #: lib/homesite_web/live/faq_live/form.ex:85
 #, elixir-autogen, elixir-format
 msgid "The answer in Finnish. Supports basic HTML for formatting."
-msgstr ""
+msgstr "Vastaus suomeksi. Tukee yksinkertaista HTML-muotoilua."
 
 #: lib/homesite_web/live/faq_live/form.ex:53
 #, elixir-autogen, elixir-format
 msgid "The question in English. Will be shown to users with English locale."
-msgstr ""
+msgstr "Kysymys englanniksi. Näytetään käyttäjille, joilla on englanninkielinen kieliasetuksisto."
 
 #: lib/homesite_web/live/faq_live/form.ex:73
 #, elixir-autogen, elixir-format
 msgid "The question in Finnish. Will be shown to users with Finnish locale."
-msgstr ""
+msgstr "Kysymys suomeksi. Näytetään käyttäjille, joilla on suomenkielinen kieliasetuksisto."
 
 #: lib/homesite_web/live/faq_live/index.ex:112
 #, elixir-autogen, elixir-format
 msgid "Unauthorized"
-msgstr ""
+msgstr "Ei käyttöoikeutta"
 
 #: lib/homesite_web/live/faq_live/form.ex:15
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Use this form to manage FAQ entries in the database."
-msgstr "Käytä tätä lomaketta tagien hallintaan."
+msgstr "Käytä tätä lomaketta UKK-merkintöjen hallintaan tietokannassa."
 
 #: lib/homesite_web/live/faq_live/form.ex:25
 #, elixir-autogen, elixir-format
 msgid "User FAQ"
-msgstr ""
+msgstr "Käyttäjä-UKK"
 
 #: lib/homesite_web/live/faq_live/index.ex:13
 #: lib/homesite_web/live/faq_live/index.ex:25
 #, elixir-autogen, elixir-format
 msgid "User FAQs"
-msgstr ""
+msgstr "Käyttäjä-UKK:t"
 
 #: lib/homesite_web/live/faq_live/form.ex:31
 #, elixir-autogen, elixir-format
 msgid "User FAQs are visible to everyone. Admin FAQs are only visible to administrators."
-msgstr ""
+msgstr "Käyttäjä-UKK:t ovat kaikkien nähtävissä. Ylläpitäjä-UKK:t ovat vain ylläpitäjien nähtävissä."

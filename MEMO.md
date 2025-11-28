@@ -143,20 +143,25 @@ Session notes and progress tracking for the Homesite project.
 - 2 directories created: `lib/homesite_web/live/faq_live/`, tests
 - Total new code: ~622 lines (FAQ LiveView + tests)
 
-#### Next Steps / TODO:
+#### Completed Follow-up Tasks ✅
 
-1. **Finnish Translations** ⏳
-   - 26 FAQ messages in `fi/LC_MESSAGES/default.po` are empty strings
-   - Need translation for production Finnish users
+1. **Finnish Translations** ✅
+   - Translated all 26 FAQ messages in `fi/LC_MESSAGES/default.po`
+   - Production-ready for Finnish users
+   - Translations include: UKK (FAQ), kysymys (question), vastaus (answer), etc.
 
-2. **Update CLAUDE.md** ⏳
-   - Add "Claude Behavioral Rules" section
-   - Mandate proactive EOD reminders
-   - Ensure Claude asks about EOD after completing features/insights
+2. **CLAUDE.md Behavioral Rules** ✅
+   - Added 4 mandatory behavioral rules
+   - Rule 1: Proactive EOD reminders
+   - Rule 2: Mandatory EOD workflow (no confirmation)
+   - Rule 3: Git commit message format
+   - Rule 4: Never skip documentation
+   - Added explicit rule: Never ask before git/gh commands during EOD
 
-3. **GitHub Issues** ⏳
-   - Close FAQ-related issues (if any exist)
-   - Create completion issue documenting FAQ system
+3. **GitHub Issues** ✅
+   - Created issue #31: "FAQ Management System - Complete ✅"
+   - Closed immediately with completion summary
+   - Documented all features, tests, and commits
 
 #### Session Notes:
 

@@ -71,12 +71,12 @@ When user says "EOD", "End of session", or "End of session checklist":
 1. **Don't ask for confirmation** - START IMMEDIATELY
 2. Follow the 8-step Automated EOD Workflow (see below)
 3. Don't skip steps unless user explicitly says "EOD skip [step]"
-4. Execute git commands WITHOUT asking for permission:
-   - `git add .`
-   - `git commit -m "..."`
-   - `git push`
+4. Execute commands WITHOUT asking for permission:
+   - **Git commands**: `git add .`, `git commit -m "..."`, `git push`
+   - **GitHub CLI commands**: `gh issue create`, `gh issue close`, `gh issue comment`
+   - Never ask before running these during EOD workflow
 
-**User has explicitly requested**: Never ask before running git commands during EOD workflow.
+**User has explicitly requested**: Never ask before running git or gh commands during EOD workflow.
 
 ### Rule 3: Git Commit Message Format
 
