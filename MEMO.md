@@ -172,6 +172,100 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-11-28 16:55:00 - Sample User FAQs Created ✅
+
+### Session: Populate FAQ System with Sample Content
+
+#### Completed ✅
+
+**Sample User FAQs** (7 bilingual FAQs)
+
+**File Created:**
+- `priv/repo/migrations/20251128145206_create_sample_faqs.exs` (267 lines)
+
+**Migration Details:**
+- Created database migration to populate sample FAQs
+- Automatically finds first admin user as creator
+- Inserts 7 user FAQs with full bilingual content
+- Includes rollback support (down/0 function)
+
+**FAQs Created:**
+
+1. **How do I create my first blog post?** (Miten luon ensimmäisen blogikirjoitukseni?)
+   - Getting started guide for new users
+   - Covers drafts, publishing, and tagging
+
+2. **What formatting options are available for my posts?** (Mitä muotoiluvaihtoehtoja kirjoituksilleni on saatavilla?)
+   - Full Markdown support
+   - Lists all formatting options: bold, italic, headers, links, images, code blocks, lists, blockquotes
+
+3. **How do tags work?** (Miten tagit toimivat?)
+   - Tag creation and assignment
+   - Organization and categorization
+   - Custom colors and descriptions
+
+4. **Who can see my posts?** (Kuka voi nähdä kirjoitukseni?)
+   - Privacy and visibility settings
+   - Published vs. draft distinction
+   - Profile information visibility
+
+5. **Can readers subscribe to my blog?** (Voivatko lukijat tilata blogini?)
+   - RSS, Atom, and JSON feed support
+   - Subscription methods
+
+6. **How do I customize my profile?** (Miten mukautan profiiliani?)
+   - Display name, avatar, bio
+   - Social links (Bluesky, Mastodon)
+   - Website URL settings
+
+7. **What are External Feeds?** (Mitä ovat Ulkoiset Syötteet?)
+   - Content aggregation feature
+   - RSS/Atom/JSON support
+   - Future Bluesky/Mastodon integration
+
+**Content Features:**
+- ✅ Bilingual (English/Finnish) for all FAQs
+- ✅ HTML formatted with proper structure (lists, emphasis, paragraphs)
+- ✅ Active status (publicly visible)
+- ✅ Logical ordering (display_order 1-7)
+- ✅ SEO-friendly slugs (auto-generated)
+- ✅ Proper audit trail (created_by_id, updated_by_id)
+
+**Database Stats:**
+- 7 user FAQs inserted
+- All set to `is_active: true`
+- All assigned to first admin user
+- Ready for immediate use at `/faqs`
+
+**Migration Run:**
+```bash
+mix ecto.migrate
+# Successfully migrated in 0.0s
+# 7 rows inserted into faqs table
+```
+
+**Production Ready:**
+- Users can now visit `/faqs` and see helpful content
+- No empty state for new site visitors
+- Covers all major platform features
+- Reduces support burden with self-service answers
+
+#### Next Steps / Future Enhancements:
+
+1. **Admin FAQs** (Optional)
+   - Create admin-specific FAQs for platform management
+   - Cover invitation system, user management, etc.
+
+2. **FAQ Analytics** (Future)
+   - Track which FAQs are most viewed
+   - Identify gaps in documentation
+
+3. **Search Functionality** (Future)
+   - Allow users to search FAQs
+   - Filter by keywords
+
+---
+
 ## 2025-11-28 14:40:00 - External Feeds Phase 6 Complete ✅
 
 ### Session: LiveView UI Implementation for Feed Sources
