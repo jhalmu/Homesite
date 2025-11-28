@@ -124,7 +124,12 @@ defmodule HomesiteWeb.FaqLiveTest do
   describe "Index - Admin users" do
     setup %{conn: conn} do
       admin_scope = admin_scope_fixture()
-      %{conn: log_in_user(conn, admin_scope.user), admin: admin_scope.user, admin_scope: admin_scope}
+
+      %{
+        conn: log_in_user(conn, admin_scope.user),
+        admin: admin_scope.user,
+        admin_scope: admin_scope
+      }
     end
 
     test "renders FAQ page for admin users", %{conn: conn} do
@@ -193,7 +198,12 @@ defmodule HomesiteWeb.FaqLiveTest do
   describe "Form - Create FAQ" do
     setup %{conn: conn} do
       admin_scope = admin_scope_fixture()
-      %{conn: log_in_user(conn, admin_scope.user), admin: admin_scope.user, admin_scope: admin_scope}
+
+      %{
+        conn: log_in_user(conn, admin_scope.user),
+        admin: admin_scope.user,
+        admin_scope: admin_scope
+      }
     end
 
     test "renders new FAQ form", %{conn: conn} do
@@ -254,7 +264,12 @@ defmodule HomesiteWeb.FaqLiveTest do
           answer_en: "Original Answer"
         })
 
-      %{conn: log_in_user(conn, admin_scope.user), admin: admin_scope.user, admin_scope: admin_scope, faq: faq}
+      %{
+        conn: log_in_user(conn, admin_scope.user),
+        admin: admin_scope.user,
+        admin_scope: admin_scope,
+        faq: faq
+      }
     end
 
     test "renders edit FAQ form", %{conn: conn, faq: faq} do

@@ -4,6 +4,77 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-11-28 18:20:00 - Post Form UX Improvements ✅
+
+### Session: Enhanced Post Form Layout and FAQ Content Update
+
+#### Completed ✅
+
+**1. Post Form Date/Time Layout Improvements**
+
+**Changes Made:**
+- `lib/homesite_web/live/post_live/form.ex` (+23 lines)
+  - Date field: Changed to `flex-1 min-w-[140px]` (responsive)
+  - Time field: Changed from `flex-1` to fixed `w-32` (128px, no longer stretches)
+  - Added "Now" button next to time field for one-click current time
+  - Button styled with `btn btn-outline btn-sm mb-2` (DaisyUI)
+  - New event handler `handle_event("set-time-now", ...)` updates form with current UTC time
+  - Fields now sit closer together with minimal gap
+  - Mobile responsive: fields stack on small screens via `flex-wrap`
+
+**2. Body Textarea Enlargement**
+- Changed from browser default (~2-4 lines) to `rows="12"` (~250px height)
+- Much better for writing blog post content
+- Still scrollable for longer content
+
+**3. FAQ Content Accuracy Fix**
+
+**Database Update:**
+- Updated FAQ "How do I create my first blog post?" (ID: 1)
+- Removed misleading "markdown editor" reference
+- Added accurate description: "Fill in your post title and content in the text fields. Your post content supports Markdown formatting (a visual editor is coming soon!)."
+- Added Quick Markdown Reference in both languages:
+  - `**bold**` → **bold**
+  - `*italic*` → *italic*
+  - `[link](url)` → link
+  - `# Heading` → Heading
+- Both English and Finnish versions updated
+
+**4. Translations**
+- `priv/gettext/fi/LC_MESSAGES/default.po` (+1 translation)
+  - "Now" → "Nyt" (Finnish)
+- Extracted and merged gettext translations (2 new messages)
+
+**Technical Details:**
+- Time field width rationale: Browser time inputs display HH:MM in ~90-110px, using `w-32` (128px) provides comfortable space
+- "Now" button uses UTC time via `DateTime.utc_now(:second)`
+- Browser's `<input type="time">` automatically handles locale-specific formatting (24h for Finnish, 12h for English)
+- FAQ updated via IEx with admin scope override (`admin_override?: true`)
+
+**Test Results:**
+- ✅ All 330 tests passing (0 failures)
+- Form layout changes tested manually
+- FAQ content verified in database
+
+**User Experience Improvements:**
+1. ✅ Date and time fields closer together (time field no longer stretches)
+2. ✅ One-click "Now" button for quick time setting
+3. ✅ Larger textarea for comfortable blog post writing
+4. ✅ Accurate FAQ content with Markdown reference
+
+**Files Modified:**
+- `lib/homesite_web/live/post_live/form.ex` (form layout + "Now" button)
+- `priv/gettext/fi/LC_MESSAGES/default.po` (Finnish translation for "Now")
+- Database: `faqs` table, record ID 1 (FAQ content update)
+
+**Notes for Future:**
+- Markdown editor planned (EasyMDE/SimpleMDE/Toast UI/CodeMirror 6)
+- FAQ system scalability improvements needed (search, filtering, pagination)
+- User question submission feature planned (contact form → admin queue)
+- Time format toggle consideration (currently uses browser default)
+
+---
+
 ## 2025-11-28 16:40:00 - FAQ System Complete + Avatar Upload Fix ✅
 
 ### Session: FAQ Management System Implementation & Testing

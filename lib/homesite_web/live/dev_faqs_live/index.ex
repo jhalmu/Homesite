@@ -43,12 +43,12 @@ defmodule HomesiteWeb.DevFaqsLive.Index do
 
   @impl true
   def handle_event("filter_category", %{"category" => category}, socket) do
-    {:noreply, push_patch(socket, to: ~p"/dev/faqs?category=#{category}")}
+    {:noreply, push_patch(socket, to: "/dev/faqs?category=#{category}")}
   end
 
   @impl true
   def handle_event("clear_filter", _params, socket) do
-    {:noreply, push_patch(socket, to: ~p"/dev/faqs")}
+    {:noreply, push_patch(socket, to: "/dev/faqs")}
   end
 
   @impl true

@@ -26,26 +26,35 @@ defmodule HomesiteWeb.PostLive.Form do
             </p>
           <% end %>
         </div>
-        <.input field={@form[:body]} type="textarea" label={gettext("Body")} />
+        <.input field={@form[:body]} type="textarea" label={gettext("Body")} rows="12" />
 
         <div class="form-control mb-4">
           <label class="label">
             <span class="label-text font-semibold">{gettext("Publication Date & Time")}</span>
           </label>
           <div class="flex flex-wrap gap-2">
-            <div class="min-w-[140px] flex-1">
+            <div class="flex-1 min-w-[140px]">
               <.input
                 field={@form[:publish_date]}
                 type="date"
                 value={format_date(@form[:published_at].value)}
               />
             </div>
-            <div class="min-w-[100px] flex-1">
-              <.input
-                field={@form[:publish_time]}
-                type="time"
-                value={format_time(@form[:published_at].value)}
-              />
+            <div class="flex gap-2 items-end">
+              <div class="w-32">
+                <.input
+                  field={@form[:publish_time]}
+                  type="time"
+                  value={format_time(@form[:published_at].value)}
+                />
+              </div>
+              <button
+                type="button"
+                phx-click="set-time-now"
+                class="btn btn-outline btn-sm mb-2"
+              >
+                {gettext("Now")}
+              </button>
             </div>
           </div>
           <p class="text-base-content/70 mt-2 text-sm">
@@ -105,6 +114,7 @@ defmodule HomesiteWeb.PostLive.Form do
           <div class="relative">
             <input
               type="text"
+              name="tag_search"
               value={@tag_search_query}
               phx-keyup="search-tags"
               phx-debounce="300"
@@ -112,9 +122,9 @@ defmodule HomesiteWeb.PostLive.Form do
               autocomplete="off"
               class="input input-bordered w-full"
             />
-            
+
     <!-- Suggestions dropdown -->
-            <%= if @tag_suggestions != [] do %>
+            <%= if @tag_suggestions != [] or @tag_search_query != "" do %>
               <div class="border-base-300 bg-base-100 absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border shadow-lg">
                 <%= for {tag, post_count} <- @tag_suggestions do %>
                   <button
@@ -127,18 +137,35 @@ defmodule HomesiteWeb.PostLive.Form do
                     <span class="text-base-content/60 text-sm">{post_count} posts</span>
                   </button>
                 <% end %>
-                
-    <!-- Create new option -->
-                <%= if @tag_search_query != "" and !exact_match?(@tag_suggestions, @tag_search_query) do %>
-                  <button
-                    type="button"
-                    phx-click="create-and-add-tag"
-                    phx-value-name={@tag_search_query}
-                    class="border-base-300 flex w-full items-center gap-2 border-t px-4 py-2 text-left font-semibold hover:bg-base-200"
-                  >
-                    <.icon name="hero-plus" class="h-4 w-4" />
-                    {gettext("Create")} "{@tag_search_query}"
-                  </button>
+
+    <!-- Add exact match button OR create new option -->
+                <%= cond do %>
+                  <% exact_tag = find_exact_match(@tag_suggestions, @tag_search_query) -> %>
+                    <!-- Show "Add" button for exact match -->
+                    <button
+                      type="button"
+                      phx-click="add-tag"
+                      phx-value-tag-id={exact_tag.id}
+                      class="border-base-300 flex w-full items-center gap-2 border-t px-4 py-2 text-left font-semibold text-primary hover:bg-base-200"
+                    >
+                      <.icon name="hero-check" class="h-4 w-4" />
+                      {gettext("Add")} "{exact_tag.name}"
+                    </button>
+
+                  <% @tag_search_query != "" -> %>
+                    <!-- Show "Create" button for new tag -->
+                    <button
+                      type="button"
+                      phx-click="create-and-add-tag"
+                      phx-value-name={@tag_search_query}
+                      class="border-base-300 flex w-full items-center gap-2 border-t px-4 py-2 text-left font-semibold hover:bg-base-200"
+                    >
+                      <.icon name="hero-plus" class="h-4 w-4" />
+                      {gettext("Create")} "{@tag_search_query}"
+                    </button>
+
+                  <% true -> %>
+                    <!-- Empty query, show nothing -->
                 <% end %>
               </div>
             <% end %>
@@ -324,6 +351,26 @@ defmodule HomesiteWeb.PostLive.Form do
      |> assign(:form, to_form(changeset, action: :validate))}
   end
 
+  def handle_event("set-time-now", _params, socket) do
+    # Get current time in UTC
+    now = DateTime.utc_now(:second)
+
+    # Update form with current date and time
+    post_params = %{
+      "publish_date" => Date.to_string(DateTime.to_date(now)),
+      "publish_time" => now |> DateTime.to_time() |> Time.to_string() |> String.slice(0, 5)
+    }
+
+    # Combine into published_at
+    post_params = combine_datetime(post_params)
+
+    # Update the changeset
+    changeset =
+      Content.change_post(socket.assigns.current_scope, socket.assigns.post, post_params)
+
+    {:noreply, assign(socket, :form, to_form(changeset))}
+  end
+
   def handle_event("save", %{"post" => post_params}, socket) do
     # Combine date and time into published_at before saving
     post_params = combine_datetime(post_params)
@@ -405,12 +452,16 @@ defmodule HomesiteWeb.PostLive.Form do
 
   defp combine_datetime(params), do: params
 
-  # Helper to check if any suggestion exactly matches the query (case-insensitive)
-  defp exact_match?(suggestions, query) do
+  # Find exact matching tag from suggestions (case-insensitive)
+  # Returns the tag struct or nil
+  defp find_exact_match(suggestions, query) do
     query_lower = String.downcase(query)
 
-    Enum.any?(suggestions, fn {tag, _count} ->
-      String.downcase(tag.name) == query_lower
-    end)
+    case Enum.find(suggestions, fn {tag, _count} ->
+           String.downcase(tag.name) == query_lower
+         end) do
+      {tag, _count} -> tag
+      nil -> nil
+    end
   end
 end

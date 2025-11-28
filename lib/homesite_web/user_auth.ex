@@ -251,7 +251,8 @@ defmodule HomesiteWeb.UserAuth do
   def on_mount(:require_admin, _params, session, socket) do
     socket = mount_current_scope(socket, session)
 
-    if socket.assigns.current_scope && Homesite.Accounts.Scope.admin?(socket.assigns.current_scope) do
+    if socket.assigns.current_scope &&
+         Homesite.Accounts.Scope.admin?(socket.assigns.current_scope) do
       {:cont, socket}
     else
       socket =

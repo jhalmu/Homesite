@@ -4,12 +4,14 @@ defmodule Homesite.Repo.Migrations.CreateSampleFaqs do
 
   def up do
     # Get the first admin user to set as creator
-    admin_id = repo().one(
-      from u in "users",
-        where: u.role == "admin",
-        select: u.id,
-        limit: 1
-    )
+    admin_id =
+      repo().one(
+        from(u in "users",
+          where: u.role == "admin",
+          select: u.id,
+          limit: 1
+        )
+      )
 
     # Only insert if we have an admin user
     if admin_id do
@@ -254,14 +256,19 @@ defmodule Homesite.Repo.Migrations.CreateSampleFaqs do
 
   def down do
     # Remove sample FAQs
-    repo().delete_all(from f in "faqs", where: f.slug in [
-      "how-to-create-first-post",
-      "formatting-options",
-      "how-tags-work",
-      "post-privacy",
-      "rss-subscription",
-      "customize-profile",
-      "external-feeds"
-    ])
+    repo().delete_all(
+      from(f in "faqs",
+        where:
+          f.slug in [
+            "how-to-create-first-post",
+            "formatting-options",
+            "how-tags-work",
+            "post-privacy",
+            "rss-subscription",
+            "customize-profile",
+            "external-feeds"
+          ]
+      )
+    )
   end
 end

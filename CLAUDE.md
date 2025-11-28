@@ -74,9 +74,10 @@ When user says "EOD", "End of session", or "End of session checklist":
 4. Execute commands WITHOUT asking for permission:
    - **Git commands**: `git add .`, `git commit -m "..."`, `git push`
    - **GitHub CLI commands**: `gh issue create`, `gh issue close`, `gh issue comment`
+   - **Mix commands**: `mix test`, `mix test.all`, `mix format`, `mix credo`, etc.
    - Never ask before running these during EOD workflow
 
-**User has explicitly requested**: Never ask before running git or gh commands during EOD workflow.
+**User has explicitly requested**: Never ask before running git, gh, or mix commands during EOD workflow or regular development.
 
 ### Rule 3: Git Commit Message Format
 

@@ -46,6 +46,7 @@ defmodule HomesiteWeb.TagLive.Index do
         <div class="mt-4">
           <.input
             type="text"
+            name="query"
             value={@search_query}
             phx-keyup="search"
             phx-debounce="300"
@@ -172,7 +173,7 @@ defmodule HomesiteWeb.TagLive.Index do
      |> stream(:tags, tags, reset: true)}
   end
 
-  def handle_event("search", %{"value" => query}, socket) do
+  def handle_event("search", %{"query" => query}, socket) do
     tags = list_tags(socket.assigns.current_scope, socket.assigns.current_tab, query)
 
     {:noreply,
@@ -214,7 +215,7 @@ defmodule HomesiteWeb.TagLive.Index do
 
     # Convert tuples to maps with post_count field for template access
     Enum.map(tags_with_counts, fn {tag, count} ->
-      Map.put(tag, :post_count, count)
+      Map.put(tag, :post_count, count || 0)
     end)
   end
 end
