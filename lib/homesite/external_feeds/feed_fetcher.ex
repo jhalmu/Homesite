@@ -4,7 +4,7 @@ defmodule Homesite.ExternalFeeds.FeedFetcher do
   """
 
   alias Homesite.ExternalFeeds
-  alias Homesite.ExternalFeeds.{FeedSource, FeedItem}
+  alias Homesite.ExternalFeeds.FeedSource
   alias Homesite.ExternalFeeds.Adapters.RssAdapter
   require Logger
 

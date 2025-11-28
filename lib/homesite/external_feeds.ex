@@ -268,4 +268,28 @@ defmodule Homesite.ExternalFeeds do
     |> FeedSource.changeset(%{share_count: feed_source.share_count + 1})
     |> Repo.update()
   end
+
+  ## Background Job Scheduling
+
+  @doc """
+  Schedules a background job to refresh a specific feed source.
+  """
+  def schedule_refresh(feed_source_id) do
+    Homesite.Workers.FeedRefreshWorker.schedule_refresh(feed_source_id)
+  end
+
+  @doc """
+  Schedules a background job to refresh all enabled feed sources.
+  """
+  def schedule_refresh_all do
+    Homesite.Workers.FeedRefreshWorker.schedule_refresh_all()
+  end
+
+  @doc """
+  Schedules individual background jobs for each enabled feed source.
+  Useful for parallel processing and better error isolation.
+  """
+  def schedule_individual_refreshes do
+    Homesite.Workers.FeedRefreshWorker.schedule_individual_refreshes()
+  end
 end
