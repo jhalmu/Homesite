@@ -24,7 +24,7 @@ defmodule HomesiteWeb.PostLive.Show do
         </:actions>
       </.header>
 
-      <div class="my-[clamp(1rem,3vw,2rem)]">
+      <div class="my-[var(--spacing-md)]">
         <.author_byline user={@post.user} date={@post.published_at} />
         <div class="mt-2 flex items-center gap-2 text-sm opacity-70">
           <.icon name="hero-clock" class="h-4 w-4" />
@@ -43,7 +43,7 @@ defmodule HomesiteWeb.PostLive.Show do
         </div>
       <% end %>
 
-      <div class="my-[clamp(1.5rem,4vw,3rem)] prose prose-slate max-w-none prose-pre:bg-gray-900 prose-pre:text-gray-100 dark:prose-invert">
+      <div class="my-[var(--spacing-lg)] prose prose-slate max-w-none prose-pre:bg-gray-900 prose-pre:text-gray-100 dark:prose-invert">
         {Phoenix.HTML.raw(render_markdown(@post.body))}
       </div>
 
