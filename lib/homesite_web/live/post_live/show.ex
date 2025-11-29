@@ -27,22 +27,21 @@ defmodule HomesiteWeb.PostLive.Show do
 
       <div class="my-[var(--spacing-md)]">
         <.author_byline user={@post.user} date={@post.published_at} />
-        <div class="mt-2 flex items-center gap-2 text-sm opacity-70">
+        <div class="mt-2 flex flex-wrap items-center gap-2 text-sm opacity-70">
           <.icon name="hero-clock" class="h-4 w-4" />
           <span>{@post.read_time_minutes} min read</span>
-        </div>
-      </div>
 
-      <%= if @post.tags && length(@post.tags) > 0 do %>
-        <div class="my-4 flex flex-wrap gap-2">
-          <%= for tag <- @post.tags do %>
-            <.link navigate={~p"/tags/#{tag.slug}"} class="badge badge-lg badge-primary gap-2">
-              <.icon name="hero-tag" class="h-4 w-4" />
-              {tag.name}
-            </.link>
+          <%= if @post.tags && length(@post.tags) > 0 do %>
+            <span>•</span>
+            <%= for tag <- @post.tags do %>
+              <.link navigate={~p"/tags/#{tag.slug}"} class="badge badge-ghost badge-sm gap-1 opacity-60 hover:opacity-100">
+                <.icon name="hero-tag" class="h-3 w-3" />
+                {tag.name}
+              </.link>
+            <% end %>
           <% end %>
         </div>
-      <% end %>
+      </div>
 
       <div class="my-[var(--spacing-lg)] prose prose-slate max-w-none prose-pre:bg-gray-900 prose-pre:text-gray-100 dark:prose-invert">
         {Phoenix.HTML.raw(render_markdown(@post.body))}
