@@ -833,6 +833,57 @@ defmodule Homesite.Content do
     end
   end
 
+  @doc """
+  Search tags by name and slug using PostgreSQL full-text search.
+
+  Returns all tags (not user-scoped) that match the query with trigram
+  similarity or ILIKE matching.
+
+  ## Options
+
+    * `:limit` - Maximum number of results (default: 20)
+
+  ## Examples
+
+      iex> search_tags("elixir")
+      [%Tag{name: "Elixir", slug: "elixir"}, ...]
+
+      iex> search_tags("phoenix", limit: 10)
+      [%Tag{}, ...]
+
+  """
+  def search_tags(query, opts \\ []) when is_binary(query) do
+    case String.trim(query) do
+      "" ->
+        []
+
+      trimmed_query ->
+        limit = Keyword.get(opts, :limit, 20)
+        limit = max(limit, 0)
+
+        from(t in Tag,
+          where:
+            fragment("similarity(?, ?) > 0.1", t.name, ^trimmed_query) or
+              fragment("similarity(?, ?) > 0.1", t.slug, ^trimmed_query) or
+              fragment("? ILIKE ?", t.name, ^"%#{trimmed_query}%") or
+              fragment("? ILIKE ?", t.slug, ^"%#{trimmed_query}%"),
+          order_by: [
+            desc:
+              fragment(
+                "greatest(similarity(?, ?), similarity(?, ?))",
+                t.name,
+                ^trimmed_query,
+                t.slug,
+                ^trimmed_query
+              )
+          ],
+          limit: ^limit,
+          preload: [:user]
+        )
+        |> Repo.all()
+    end
+  end
+
   defp maybe_filter_by_tag(query, nil), do: query
 
   defp maybe_filter_by_tag(query, tag_id) do

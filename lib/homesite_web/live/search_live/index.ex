@@ -1,17 +1,23 @@
 defmodule HomesiteWeb.SearchLive.Index do
   use HomesiteWeb, :live_view
 
-  alias Homesite.Content
+  alias Homesite.Search
 
   @impl true
   def mount(_params, _session, socket) do
+    locale = Gettext.get_locale(HomesiteWeb.Gettext)
+
     {:ok,
      socket
-     |> assign(:page_title, "Search Posts")
+     |> assign(:page_title, "Search")
      |> assign(:query, "")
-     |> assign(:results, [])
+     |> assign(:posts, [])
+     |> assign(:tags, [])
+     |> assign(:faqs, [])
+     |> assign(:total_count, 0)
      |> assign(:searching, false)
-     |> assign(:current_url, "/search")}
+     |> assign(:current_url, "/search")
+     |> assign(:locale, locale)}
   end
 
   @impl true
@@ -37,18 +43,32 @@ defmodule HomesiteWeb.SearchLive.Index do
   end
 
   defp perform_search(socket, "") do
-    assign(socket, results: [], searching: false)
+    socket
+    |> assign(:posts, [])
+    |> assign(:tags, [])
+    |> assign(:faqs, [])
+    |> assign(:total_count, 0)
+    |> assign(:searching, false)
   end
 
   defp perform_search(socket, query) when byte_size(query) < 2 do
-    assign(socket, results: [], searching: false)
+    socket
+    |> assign(:posts, [])
+    |> assign(:tags, [])
+    |> assign(:faqs, [])
+    |> assign(:total_count, 0)
+    |> assign(:searching, false)
   end
 
   defp perform_search(socket, query) do
-    results = Content.search_posts(query, limit: 50)
+    locale = socket.assigns.locale
+    results = Search.search_all(query, limit: 20, locale: locale)
 
     socket
-    |> assign(:results, results)
+    |> assign(:posts, results.posts)
+    |> assign(:tags, results.tags)
+    |> assign(:faqs, results.faqs)
+    |> assign(:total_count, results.total_count)
     |> assign(:searching, true)
   end
 

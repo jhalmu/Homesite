@@ -39,21 +39,4 @@ defmodule Homesite.FaqsFixtures do
   def user_faq_fixture(scope, attrs \\ %{}) do
     faq_fixture(scope, Map.put(attrs, :category, "user"))
   end
-
-  @doc """
-  Create an admin scope for testing.
-  """
-  def admin_scope_fixture do
-    email = "admin#{System.unique_integer()}@example.com"
-
-    {:ok, user} =
-      Homesite.Accounts.register_admin(%{
-        email: email,
-        password: "hello world!",
-        role: "admin",
-        admin_flowers: 5
-      })
-
-    Scope.for_user(user)
-  end
 end

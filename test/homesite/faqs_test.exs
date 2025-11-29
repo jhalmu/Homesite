@@ -6,7 +6,7 @@ defmodule Homesite.FaqsTest do
   describe "faqs" do
     alias Homesite.Faqs.Faq
 
-    import Homesite.AccountsFixtures, only: [user_scope_fixture: 0]
+    import Homesite.AccountsFixtures, only: [user_scope_fixture: 0, admin_scope_fixture: 0]
     import Homesite.FaqsFixtures
 
     @invalid_attrs %{

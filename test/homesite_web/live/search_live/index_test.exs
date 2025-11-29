@@ -33,7 +33,7 @@ defmodule HomesiteWeb.SearchLive.IndexTest do
     test "displays search form", %{conn: conn} do
       {:ok, view, html} = live(conn, ~p"/search")
 
-      assert html =~ "Search Posts"
+      assert html =~ "Search"
       assert has_element?(view, "form#search-form")
       assert has_element?(view, "input[name='query']")
     end

@@ -204,6 +204,80 @@ defmodule Homesite.Faqs do
     Faq.changeset(faq, attrs, scope)
   end
 
+  @doc """
+  Search FAQs by question and answer content using PostgreSQL full-text search.
+
+  Searches both English and Finnish content. Returns active FAQs that match
+  the query with trigram similarity or ILIKE matching.
+
+  ## Options
+
+    * `:limit` - Maximum number of results (default: 20)
+    * `:locale` - Locale for localized content (default: "en")
+    * `:category` - Filter by category ("user" or "admin", optional)
+
+  ## Examples
+
+      iex> search_faqs("how to post")
+      [%Faq{question: "How to create a post?", ...}]
+
+      iex> search_faqs("admin", category: "admin", limit: 10)
+      [%Faq{}, ...]
+
+  """
+  def search_faqs(query, opts \\ []) when is_binary(query) do
+    case String.trim(query) do
+      "" ->
+        []
+
+      trimmed_query ->
+        limit = Keyword.get(opts, :limit, 20)
+        limit = max(limit, 0)
+        locale = Keyword.get(opts, :locale, "en")
+        category = Keyword.get(opts, :category)
+
+        base_query =
+          from(f in Faq,
+            where: f.is_active == true,
+            where:
+              fragment("similarity(?, ?) > 0.1", f.question_en, ^trimmed_query) or
+                fragment("similarity(?, ?) > 0.1", f.answer_en, ^trimmed_query) or
+                fragment("similarity(?, ?) > 0.1", f.question_fi, ^trimmed_query) or
+                fragment("similarity(?, ?) > 0.1", f.answer_fi, ^trimmed_query) or
+                fragment("? ILIKE ?", f.question_en, ^"%#{trimmed_query}%") or
+                fragment("? ILIKE ?", f.answer_en, ^"%#{trimmed_query}%") or
+                fragment("? ILIKE ?", f.question_fi, ^"%#{trimmed_query}%") or
+                fragment("? ILIKE ?", f.answer_fi, ^"%#{trimmed_query}%"),
+            order_by: [
+              desc:
+                fragment(
+                  "greatest(similarity(?, ?), similarity(?, ?), similarity(?, ?), similarity(?, ?))",
+                  f.question_en,
+                  ^trimmed_query,
+                  f.answer_en,
+                  ^trimmed_query,
+                  f.question_fi,
+                  ^trimmed_query,
+                  f.answer_fi,
+                  ^trimmed_query
+                )
+            ],
+            limit: ^limit
+          )
+
+        query_with_category =
+          if category do
+            from(f in base_query, where: f.category == ^category)
+          else
+            base_query
+          end
+
+        query_with_category
+        |> Repo.all()
+        |> Enum.map(&add_localized_content(&1, locale))
+    end
+  end
+
   ## Helpers
 
   @doc """
