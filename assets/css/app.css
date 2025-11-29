@@ -27,7 +27,7 @@
   prefersdark: true;
   color-scheme: "dark";
   --color-base-100: oklch(6.5% 0.012 264.05);
-  --color-base-200: oklch(10% 0.012 264);
+  --color-base-200: oklch(18% 0.012 264);
   --color-base-300: oklch(20% 0.010 264);
   --color-base-content: oklch(85% 0.008 264);
   --color-primary: oklch(65% 0.20 35);
@@ -288,7 +288,7 @@ time {
 
 /* Main content container */
 .technical-main {
-  max-width: 900px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 4rem 2rem;
 }

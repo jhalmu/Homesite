@@ -56,6 +56,18 @@ defmodule HomesiteWeb.PostLive.Index do
                         <.icon name="hero-clock" class="inline h-4 w-4" />
                         {post.read_time_minutes} {gettext("min read")}
                       </div>
+                      <div class="opacity-70">
+                        <span>{post.user.display_name || post.user.email}</span>
+                      </div>
+                      <%= if post.is_public do %>
+                        <div class="opacity-70">
+                          <.link navigate={~p"/posts/#{post.id}"} class="hover:underline inline-flex items-center gap-1">
+                            <.icon name="hero-share" class="h-4 w-4" />
+                            Share this post
+                          </.link>
+                          <span>.</span>
+                        </div>
+                      <% end %>
                     <% else %>
                       <div class="badge badge-warning gap-2">
                         <.icon name="hero-pencil" class="h-3 w-3" />

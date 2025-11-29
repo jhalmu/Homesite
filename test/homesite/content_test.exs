@@ -325,12 +325,12 @@ defmodule Homesite.ContentTest do
       post = post_fixture(scope)
       other_post = post_fixture(other_scope)
 
-      # list_posts preloads tags, so compare with preloaded version
-      post_with_tags = %{post | tags: []}
-      other_post_with_tags = %{other_post | tags: []}
+      # list_posts preloads user and tags, so compare with preloaded version
+      post_with_preloads = %{post | user: scope.user, tags: []}
+      other_post_with_preloads = %{other_post | user: other_scope.user, tags: []}
 
-      assert Content.list_posts(scope) == [post_with_tags]
-      assert Content.list_posts(other_scope) == [other_post_with_tags]
+      assert Content.list_posts(scope) == [post_with_preloads]
+      assert Content.list_posts(other_scope) == [other_post_with_preloads]
     end
 
     test "get_post!/2 returns the post with given id" do

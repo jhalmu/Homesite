@@ -355,7 +355,7 @@ defmodule Homesite.Content do
   def list_posts(%Scope{} = scope) do
     from(p in Post,
       where: p.user_id == ^scope.user.id,
-      preload: [:tags],
+      preload: [:user, :tags],
       order_by: [desc: p.inserted_at]
     )
     |> Repo.all()

@@ -86,7 +86,7 @@ defmodule Homesite.SocialTest do
     end
 
     test "allows all valid platforms", %{post: post} do
-      platforms = ~w(bluesky mastodon twitter facebook linkedin email)
+      platforms = ~w(bluesky mastodon twitter facebook linkedin instagram email webshare)
 
       for platform <- platforms do
         attrs = %{
@@ -98,6 +98,73 @@ defmodule Homesite.SocialTest do
         assert {:ok, share_log} = Social.log_share(attrs)
         assert share_log.platform == platform
       end
+    end
+
+    test "accepts 'webshare' as valid platform", %{post: post} do
+      attrs = %{
+        platform: "webshare",
+        shared_url: "https://example.com/posts/#{post.id}",
+        post_id: post.id
+      }
+
+      assert {:ok, share_log} = Social.log_share(attrs)
+      assert share_log.platform == "webshare"
+    end
+
+    test "tracks webshare with anonymous user (nil user_id)", %{post: post} do
+      attrs = %{
+        platform: "webshare",
+        shared_url: "https://example.com/posts/#{post.id}",
+        post_id: post.id,
+        user_id: nil
+      }
+
+      assert {:ok, share_log} = Social.log_share(attrs)
+      assert share_log.platform == "webshare"
+      assert is_nil(share_log.user_id)
+    end
+
+    test "tracks webshare with clipboard fallback metadata", %{post: post} do
+      attrs = %{
+        platform: "webshare",
+        shared_url: "https://example.com/posts/#{post.id}",
+        post_id: post.id,
+        ip_address: "192.168.1.100",
+        user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"
+      }
+
+      assert {:ok, share_log} = Social.log_share(attrs)
+      assert share_log.platform == "webshare"
+      assert share_log.ip_address == "192.168.1.100"
+      assert String.contains?(share_log.user_agent, "Macintosh")
+    end
+
+    test "accepts 'instagram' as valid platform", %{post: post} do
+      attrs = %{
+        platform: "instagram",
+        shared_url: "https://example.com/posts/#{post.id}",
+        post_id: post.id
+      }
+
+      assert {:ok, share_log} = Social.log_share(attrs)
+      assert share_log.platform == "instagram"
+    end
+
+    test "tracks instagram shares with user info", %{user: user, post: post} do
+      attrs = %{
+        platform: "instagram",
+        shared_url: "https://example.com/posts/#{post.id}",
+        post_id: post.id,
+        user_id: user.id,
+        ip_address: "192.168.1.50",
+        user_agent: "Instagram/1.0"
+      }
+
+      assert {:ok, share_log} = Social.log_share(attrs)
+      assert share_log.platform == "instagram"
+      assert share_log.user_id == user.id
+      assert share_log.ip_address == "192.168.1.50"
+      assert share_log.user_agent == "Instagram/1.0"
     end
   end
 

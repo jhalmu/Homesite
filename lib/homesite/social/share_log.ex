@@ -17,7 +17,7 @@ defmodule Homesite.Social.ShareLog do
     timestamps(type: :utc_datetime, updated_at: false)
   end
 
-  @platforms ~w(bluesky mastodon twitter facebook linkedin email)
+  @platforms ~w(bluesky mastodon twitter facebook linkedin instagram email webshare)
 
   @doc false
   def changeset(share_log, attrs) do

@@ -2,6 +2,7 @@ defmodule HomesiteWeb.PostLive.Show do
   use HomesiteWeb, :live_view
 
   alias Homesite.Content
+  alias Homesite.Social
   alias HomesiteWeb.SEO.JsonLD
   import HomesiteWeb.SocialComponents
 
@@ -47,11 +48,11 @@ defmodule HomesiteWeb.PostLive.Show do
         {Phoenix.HTML.raw(render_markdown(@post.body))}
       </div>
 
-      <%!-- Social sharing buttons --%>
-      <div class="border-base-300 my-8 border-t pt-6">
-        <h3 class="mb-4 text-lg font-semibold">Share this post</h3>
-        <.social_share_buttons url={@current_url} title={@post.title} />
-      </div>
+      <%= if @post.read_time_minutes >= 2 do %>
+        <div class="my-[var(--spacing-lg)] border-t border-base-300 pt-6">
+          <.platform_share_buttons url={@current_url} title={@post.title} />
+        </div>
+      <% end %>
     </Layouts.app>
     """
   end
@@ -124,6 +125,24 @@ defmodule HomesiteWeb.PostLive.Show do
 
   def handle_info({type, %Homesite.Content.Post{}}, socket)
       when type in [:created, :updated, :deleted] do
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("track_share", %{"platform" => platform, "url" => url}, socket) do
+    # Get optional user and IP info
+    user_id = if socket.assigns.current_scope, do: socket.assigns.current_scope.user.id, else: nil
+
+    # Log the share event
+    Social.log_share(%{
+      platform: platform,
+      shared_url: url,
+      post_id: socket.assigns.post.id,
+      user_id: user_id,
+      ip_address: get_connect_params(socket)["remote_ip"],
+      user_agent: get_connect_params(socket)["user_agent"]
+    })
+
     {:noreply, socket}
   end
 end

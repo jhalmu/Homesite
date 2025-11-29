@@ -24,6 +24,7 @@ import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import {hooks as colocatedHooks} from "phoenix-colocated/homesite"
 import topbar from "../vendor/topbar"
+import WebShareApi from "./hooks/webShareApi"
 
 // Custom hooks for date formatting
 const Hooks = {
@@ -117,7 +118,8 @@ const Hooks = {
         clearTimeout(this.timeout)
       }
     }
-  }
+  },
+  WebShareApi
 }
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
