@@ -12,25 +12,25 @@ defmodule HomesiteWeb.UserLive.Profile do
     ~H"""
     <Layouts.app flash={@flash} current_scope={assigns[:current_scope]}>
       <div class="w-[min(95vw,800px)] mx-auto">
-        <div class="gap-[clamp(1rem,3vw,2rem)] my-[clamp(2rem,5vw,4rem)] flex flex-col items-center">
+        <div class="gap-[var(--spacing-card)] my-[var(--spacing-xl)] flex flex-col items-center">
           <.avatar user={@user} class="h-32 w-32" />
 
           <div class="text-center">
-            <h1 class="text-[clamp(1.5rem,4vw,2.5rem)] font-bold">
+            <h1 class="text-[var(--font-size-fluid-xl)] font-bold">
               {@user.display_name || String.split(@user.email, "@") |> List.first()}
             </h1>
           </div>
 
           <p
             :if={@user.bio}
-            class="text-[clamp(1rem,2vw,1.125rem)] max-w-prose whitespace-pre-wrap text-center"
+            class="text-[var(--font-size-fluid-base)] max-w-prose whitespace-pre-wrap text-center"
           >
             {@user.bio}
           </p>
 
           <div
             :if={has_social_links?(@user)}
-            class="gap-[clamp(1rem,3vw,2rem)] flex flex-wrap justify-center"
+            class="gap-[var(--spacing-card)] flex flex-wrap justify-center"
           >
             <.link
               :if={@user.website_url}
@@ -66,18 +66,18 @@ defmodule HomesiteWeb.UserLive.Profile do
 
         <div class="divider"></div>
 
-        <div :if={@posts != []} class="my-[clamp(2rem,5vw,4rem)]">
-          <h2 class="text-[clamp(1.25rem,3vw,2rem)] mb-[clamp(1rem,3vw,2rem)] font-bold">
+        <div :if={@posts != []} class="my-[var(--spacing-xl)]">
+          <h2 class="text-[var(--font-size-fluid-lg)] mb-[var(--spacing-card)] font-bold">
             Published Posts
           </h2>
 
-          <div class="gap-[clamp(1.5rem,4vw,3rem)] grid">
+          <div class="gap-[var(--spacing-lg)] grid">
             <article
               :for={post <- @posts}
               class="card bg-base-100 shadow-lg transition-shadow hover:shadow-xl"
             >
               <div class="card-body">
-                <h3 class="card-title text-[clamp(1.125rem,2.5vw,1.5rem)]">
+                <h3 class="card-title text-[var(--font-size-fluid-lg)]">
                   <.link navigate={~p"/posts/#{post}"} class="hover:underline">
                     {post.title}
                   </.link>
@@ -87,7 +87,7 @@ defmodule HomesiteWeb.UserLive.Profile do
                   {Calendar.strftime(post.published_at, "%B %d, %Y")}
                 </time>
 
-                <p class="text-[clamp(0.875rem,2vw,1rem)] line-clamp-3">
+                <p class="text-[var(--font-size-fluid-sm)] line-clamp-3">
                   {String.slice(post.body, 0..200)}{if String.length(post.body) > 200, do: "..."}
                 </p>
 
@@ -101,8 +101,8 @@ defmodule HomesiteWeb.UserLive.Profile do
           </div>
         </div>
 
-        <div :if={@posts == []} class="my-[clamp(2rem,5vw,4rem)] text-center text-gray-600">
-          <p class="text-[clamp(1rem,2vw,1.125rem)]">No published posts yet.</p>
+        <div :if={@posts == []} class="my-[var(--spacing-xl)] text-center text-gray-600">
+          <p class="text-[var(--font-size-fluid-base)]">No published posts yet.</p>
         </div>
       </div>
     </Layouts.app>
