@@ -2,6 +2,7 @@ defmodule HomesiteWeb.PostLive.Show do
   use HomesiteWeb, :live_view
 
   alias Homesite.Content
+  alias HomesiteWeb.SEO.JsonLD
   import HomesiteWeb.SocialComponents
 
   @impl true
@@ -86,12 +87,17 @@ defmodule HomesiteWeb.PostLive.Show do
     # Check if current user can edit (only if authenticated and is owner)
     can_edit = current_scope && post.user_id == current_scope.user.id
 
+    # Generate JSON-LD for SEO
+    post_url = url(~p"/posts/#{id}")
+    json_ld = JsonLD.article(post, post.user, post_url) |> Jason.encode!()
+
     {:ok,
      socket
      |> assign(:page_title, post.title)
      |> assign(:post, post)
      |> assign(:can_edit, can_edit)
-     |> assign(:current_url, "/posts/#{id}")}
+     |> assign(:current_url, "/posts/#{id}")
+     |> assign(:json_ld, json_ld)}
   end
 
   @impl true

@@ -91,6 +91,12 @@
         window.addEventListener("phx:set-locale", (e) => setLocale(e.target.dataset.phxLocale));
       })();
     </script>
+    <%!-- JSON-LD Structured Data --%>
+    <%= if assigns[:json_ld] do %>
+      <script type="application/ld+json">
+        <%= raw(assigns.json_ld) %>
+      </script>
+    <% end %>
   </head>
   <body>
     <Layouts.navbar current_scope={@current_scope} />

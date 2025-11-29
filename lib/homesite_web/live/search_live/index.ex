@@ -7,6 +7,15 @@ defmodule HomesiteWeb.SearchLive.Index do
   def mount(_params, _session, socket) do
     locale = Gettext.get_locale(HomesiteWeb.Gettext)
 
+    # Store connect info for analytics
+    ip_address =
+      case get_connect_info(socket, :peer_data) do
+        %{address: {a, b, c, d}} -> "#{a}.#{b}.#{c}.#{d}"
+        _ -> nil
+      end
+
+    user_agent = get_connect_info(socket, :user_agent)
+
     {:ok,
      socket
      |> assign(:page_title, "Search")
@@ -17,7 +26,9 @@ defmodule HomesiteWeb.SearchLive.Index do
      |> assign(:total_count, 0)
      |> assign(:searching, false)
      |> assign(:current_url, "/search")
-     |> assign(:locale, locale)}
+     |> assign(:locale, locale)
+     |> assign(:ip_address, ip_address)
+     |> assign(:user_agent, user_agent)}
   end
 
   @impl true
@@ -63,13 +74,13 @@ defmodule HomesiteWeb.SearchLive.Index do
   defp perform_search(socket, query) do
     locale = socket.assigns.locale
 
-    # Prepare analytics options
+    # Prepare analytics options from stored assigns
     analytics_opts = [
       limit: 20,
       locale: locale,
       user_id: get_user_id(socket),
-      ip_address: get_connect_info(socket, :peer_data) |> get_ip_address(),
-      user_agent: get_connect_info(socket, :user_agent)
+      ip_address: socket.assigns.ip_address,
+      user_agent: socket.assigns.user_agent
     ]
 
     results = Search.search_all(query, analytics_opts)
@@ -85,15 +96,6 @@ defmodule HomesiteWeb.SearchLive.Index do
   defp get_user_id(socket) do
     case socket.assigns do
       %{current_scope: %{user: %{id: user_id}}} -> user_id
-      _ -> nil
-    end
-  end
-
-  defp get_ip_address(nil), do: nil
-
-  defp get_ip_address(peer_data) do
-    case peer_data do
-      %{address: {a, b, c, d}} -> "#{a}.#{b}.#{c}.#{d}"
       _ -> nil
     end
   end

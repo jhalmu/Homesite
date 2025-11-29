@@ -87,7 +87,8 @@ defmodule Homesite.Search do
     )
 
     # Record analytics (async, don't block response)
-    if String.trim(query) != "" do
+    # Skip in test environment to avoid database connection issues
+    if String.trim(query) != "" and Mix.env() != :test do
       Task.start(fn ->
         Analytics.record_search(query, results, duration_ms,
           user_id: Keyword.get(opts, :user_id),

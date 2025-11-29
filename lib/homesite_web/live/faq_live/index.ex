@@ -4,6 +4,7 @@ defmodule HomesiteWeb.FaqLive.Index do
   import HomesiteWeb.Gettext
 
   alias Homesite.Faqs
+  alias HomesiteWeb.SEO.JsonLD
 
   @impl true
   def render(assigns) do
@@ -96,7 +97,21 @@ defmodule HomesiteWeb.FaqLive.Index do
     category = Map.get(params, "category", "user")
     faqs = load_faqs(socket, category)
 
-    {:noreply, assign(socket, category: category, faqs: faqs, page_title: page_title(category))}
+    # Generate JSON-LD for user FAQs (public)
+    json_ld =
+      if category == "user" && !Enum.empty?(faqs) do
+        JsonLD.faq_page(faqs) |> Jason.encode!()
+      else
+        nil
+      end
+
+    {:noreply,
+     assign(socket,
+       category: category,
+       faqs: faqs,
+       page_title: page_title(category),
+       json_ld: json_ld
+     )}
   end
 
   @impl true
