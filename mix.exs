@@ -27,9 +27,13 @@ defmodule Homesite.MixProject do
   def application do
     [
       mod: {Homesite.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools],
+      included_applications: included_applications(Mix.env())
     ]
   end
+
+  defp included_applications(:test), do: [:wallaby]
+  defp included_applications(_), do: []
 
   def cli do
     [
@@ -94,7 +98,7 @@ defmodule Homesite.MixProject do
       # Dev and Test
       {:phoenix_test, "0.9.1", only: :test, runtime: false},
       {:phoenix_test_playwright, "0.9.1", only: :test, runtime: false},
-      {:a11y_audit, "0.3.0", only: :test},
+      {:a11y_audit, "0.3.0", only: :test, runtime: false},
       {:esbuild, "0.10.0", runtime: Mix.env() == :dev},
       {:tailwind, "0.4.1", runtime: Mix.env() == :dev},
       {:phoenix_live_reload, "1.6.1", only: :dev},

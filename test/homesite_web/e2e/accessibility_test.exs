@@ -1,0 +1,176 @@
+defmodule HomesiteWeb.E2E.AccessibilityTest do
+  @moduledoc """
+  Accessibility audit tests using axe-core via a11y_audit.
+
+  These tests verify WCAG compliance including color contrast, keyboard navigation,
+  ARIA labels, and other accessibility requirements.
+
+  ## Running These Tests
+
+  1. Ensure Playwright is installed:
+     ```bash
+     npm --prefix assets i -D playwright
+     npm --prefix assets exec -- playwright install chromium --with-deps
+     ```
+
+  2. Run tests:
+     ```bash
+     mix test --include playwright test/homesite_web/e2e/accessibility_test.exs
+     ```
+
+  3. Debug mode (show browser):
+     ```bash
+     PW_HEADLESS=false mix test --include playwright test/homesite_web/e2e/accessibility_test.exs
+     ```
+  """
+  use HomesiteWeb.ConnCase
+  use PhoenixTest.Playwright.Case, async: false
+
+  import HomesiteWeb.PlaywrightAuthHelper
+  import HomesiteWeb.PlaywrightJsHelper
+  import Homesite.AccountsFixtures
+
+  # Helper to run axe-core accessibility audit
+  defp audit_page(session) do
+    # Inject axe-core library
+    session = run_js(session, A11yAudit.JS.axe_core())
+
+    # Run the audit and get results
+    {session, axe_result} = execute_js(session, A11yAudit.JS.await_audit_results())
+
+    results = A11yAudit.Results.from_json(axe_result)
+    {session, results}
+  end
+
+  defp assert_no_violations(session) do
+    {session, results} = audit_page(session)
+    A11yAudit.Assertions.assert_no_violations(results)
+    session
+  end
+
+  describe "Login Page Accessibility" do
+    @tag :playwright
+    test "login page has no accessibility violations", %{conn: conn} do
+      conn
+      |> visit(~p"/users/log-in")
+      |> assert_has("body .phx-connected")
+      |> assert_no_violations()
+    end
+
+    @tag :playwright
+    test "login page has proper contrast ratios", %{conn: conn} do
+      conn
+      |> visit(~p"/users/log-in")
+      |> assert_has("body .phx-connected")
+      |> then(fn session ->
+        {session, results} = audit_page(session)
+
+        # Check specifically for color-contrast violations
+        contrast_violations =
+          Enum.filter(results.violations, fn v ->
+            v.id == "color-contrast"
+          end)
+
+        if length(contrast_violations) > 0 do
+          IO.puts("\n❌ Color Contrast Violations Found:")
+
+          Enum.each(contrast_violations, fn violation ->
+            IO.puts("\n  Issue: #{violation.description}")
+            IO.puts("  Impact: #{violation.impact}")
+            IO.puts("  Help: #{violation.help_url}")
+
+            Enum.each(violation.nodes, fn node ->
+              IO.puts("\n  Element: #{String.slice(node.html, 0..100)}...")
+              IO.puts("  Failure: #{node.failure_summary}")
+            end)
+          end)
+        end
+
+        A11yAudit.Assertions.assert_no_violations(results)
+        session
+      end)
+    end
+  end
+
+  describe "User Settings Page Accessibility" do
+    @tag :playwright
+    test "settings page has no accessibility violations", %{conn: conn} do
+      user = user_fixture()
+
+      conn
+      |> playwright_log_in_user(user)
+      |> visit(~p"/users/settings")
+      |> assert_has("body .phx-connected")
+      |> assert_no_violations()
+    end
+  end
+
+  describe "Dashboard Accessibility" do
+    @tag :playwright
+    test "dashboard has no accessibility violations", %{conn: conn} do
+      user = user_fixture()
+
+      conn
+      |> playwright_log_in_user(user)
+      |> visit(~p"/dashboard")
+      |> assert_has("body .phx-connected")
+      |> assert_no_violations()
+    end
+  end
+
+  describe "Homepage Accessibility" do
+    @tag :playwright
+    test "homepage has no accessibility violations", %{conn: conn} do
+      conn
+      |> visit(~p"/")
+      |> assert_has("body .phx-connected")
+      |> assert_no_violations()
+    end
+  end
+
+  describe "Posts Page Accessibility" do
+    @tag :playwright
+    test "posts list page has no accessibility violations", %{conn: conn} do
+      user = user_fixture()
+
+      conn
+      |> playwright_log_in_user(user)
+      |> visit(~p"/posts")
+      |> assert_has("body .phx-connected")
+      |> assert_no_violations()
+    end
+  end
+
+  describe "Tags Page Accessibility" do
+    @tag :playwright
+    test "tags list page has no accessibility violations", %{conn: conn} do
+      user = user_fixture()
+
+      conn
+      |> playwright_log_in_user(user)
+      |> visit(~p"/tags")
+      |> assert_has("body .phx-connected")
+      |> assert_no_violations()
+    end
+  end
+
+  describe "FAQs Page Accessibility" do
+    @tag :playwright
+    test "public FAQs page has no accessibility violations", %{conn: conn} do
+      conn
+      |> visit(~p"/faqs")
+      |> assert_has("body .phx-connected")
+      |> assert_no_violations()
+    end
+  end
+
+  describe "Search Page Accessibility" do
+    @tag :playwright
+    test "search page has no accessibility violations", %{conn: conn} do
+      conn
+      |> visit(~p"/search")
+      |> assert_has("body .phx-connected")
+      |> assert_no_violations()
+    end
+  end
+end

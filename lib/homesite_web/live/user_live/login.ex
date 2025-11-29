@@ -7,82 +7,134 @@ defmodule HomesiteWeb.UserLive.Login do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="mx-auto max-w-sm space-y-4">
-        <div class="text-center">
-          <.header>
-            <p>{gettext("Log in")}</p>
-            <:subtitle>
-              <%= if @current_scope do %>
-                {gettext("You need to reauthenticate to perform sensitive actions on your account.")}
-              <% else %>
-                <%!-- Registration temporarily disabled during testing phase --%>
-              <% end %>
-            </:subtitle>
-          </.header>
-        </div>
+      <div class="flex min-h-[calc(100vh-200px)] items-center justify-center px-[var(--spacing-card)] py-[var(--spacing-xl)]">
+        <div class="w-full max-w-[var(--card-max-width)]">
+          <%!-- Header --%>
+          <div class="mb-[var(--spacing-lg)] text-center">
+            <h1 class="text-[var(--font-size-fluid-2xl)] font-bold text-base-content">
+              {gettext("Log in")}
+            </h1>
+            <p :if={@current_scope} class="text-[var(--font-size-fluid-sm)] mt-[var(--spacing-sm)] text-base-content/70">
+              {gettext("You need to reauthenticate to perform sensitive actions on your account.")}
+            </p>
+            <p :if={!@current_scope} class="text-[var(--font-size-fluid-sm)] mt-[var(--spacing-sm)] text-base-content/70">
+              {gettext("Welcome back! Please sign in to continue.")}
+            </p>
+          </div>
 
-        <div :if={local_mail_adapter?()} class="alert alert-info">
-          <.icon name="hero-information-circle" class="size-6 shrink-0" />
-          <div>
-            <p>{gettext("You are running the local mail adapter.")}</p>
-            <p>
-              {gettext("To see sent emails, visit")} <.link href="/dev/mailbox" class="underline">{gettext("the mailbox page")}</.link>.
+          <%!-- Dev mail adapter notice --%>
+          <div :if={local_mail_adapter?()} class="alert alert-info mb-[var(--spacing-md)]">
+            <.icon name="hero-information-circle" class="size-6 shrink-0" />
+            <div>
+              <p class="text-[var(--font-size-fluid-sm)] font-semibold">{gettext("Development Mode")}</p>
+              <p class="text-[var(--font-size-fluid-sm)]">
+                {gettext("To see sent emails, visit")} <.link href="/dev/mailbox" class="link link-primary">{gettext("the mailbox page")}</.link>.
+              </p>
+            </div>
+          </div>
+
+          <%!-- Magic Link Login Card --%>
+          <div class="card bg-base-100 shadow-xl mb-[var(--spacing-md)]">
+            <div class="card-body gap-[var(--spacing-card)]">
+              <div>
+                <h2 class="text-[var(--font-size-fluid-lg)] card-title">
+                  <.icon name="hero-envelope" class="h-6 w-6" />
+                  {gettext("Log in with email")}
+                </h2>
+                <p class="text-[var(--font-size-fluid-sm)] mt-[var(--spacing-xs)] text-base-content/70">
+                  {gettext("We'll send you a magic link to sign in instantly")}
+                </p>
+              </div>
+
+              <.form
+                :let={f}
+                for={@form}
+                id="login_form_magic"
+                action={~p"/users/log-in"}
+                phx-submit="submit_magic"
+                class="space-y-4"
+              >
+                <.input
+                  readonly={!!@current_scope}
+                  field={f[:email]}
+                  type="email"
+                  label={gettext("Email")}
+                  autocomplete="username"
+                  required
+                  phx-mounted={JS.focus()}
+                />
+                <.button class="btn btn-primary w-full gap-2">
+                  <.icon name="hero-paper-airplane" class="h-5 w-5" />
+                  {gettext("Send magic link")}
+                </.button>
+              </.form>
+            </div>
+          </div>
+
+          <div class="divider text-[var(--font-size-fluid-sm)] text-base-content/50">
+            {gettext("or sign in with password")}
+          </div>
+
+          <%!-- Password Login Card --%>
+          <div class="card bg-base-100 shadow-xl">
+            <div class="card-body gap-[var(--spacing-card)]">
+              <div>
+                <h2 class="text-[var(--font-size-fluid-lg)] card-title">
+                  <.icon name="hero-lock-closed" class="h-6 w-6" />
+                  {gettext("Password Login")}
+                </h2>
+                <p class="text-[var(--font-size-fluid-sm)] mt-[var(--spacing-xs)] text-base-content/70">
+                  {gettext("Use your email and password")}
+                </p>
+              </div>
+
+              <.form
+                :let={f}
+                for={@form}
+                id="login_form_password"
+                action={~p"/users/log-in"}
+                phx-submit="submit_password"
+                phx-trigger-action={@trigger_submit}
+                class="space-y-4"
+              >
+                <.input
+                  readonly={!!@current_scope}
+                  field={f[:email]}
+                  type="email"
+                  label={gettext("Email")}
+                  autocomplete="username"
+                  required
+                />
+                <.input
+                  field={@form[:password]}
+                  type="password"
+                  label={gettext("Password")}
+                  autocomplete="current-password"
+                  required
+                />
+
+                <div class="space-y-2">
+                  <.button class="btn btn-primary w-full gap-2" name={@form[:remember_me].name} value="true">
+                    <.icon name="hero-clock" class="h-5 w-5" />
+                    {gettext("Stay logged in")}
+                  </.button>
+                  <.button class="btn btn-outline w-full gap-2">
+                    <.icon name="hero-arrow-right-on-rectangle" class="h-5 w-5" />
+                    {gettext("Log in only this time")}
+                  </.button>
+                </div>
+              </.form>
+            </div>
+          </div>
+
+          <%!-- Security note --%>
+          <div class="mt-[var(--spacing-md)] text-center">
+            <p class="text-[var(--font-size-fluid-sm)] text-base-content/50">
+              <.icon name="hero-shield-check" class="inline h-4 w-4" />
+              {gettext("Your connection is secure and encrypted")}
             </p>
           </div>
         </div>
-
-        <.form
-          :let={f}
-          for={@form}
-          id="login_form_magic"
-          action={~p"/users/log-in"}
-          phx-submit="submit_magic"
-        >
-          <.input
-            readonly={!!@current_scope}
-            field={f[:email]}
-            type="email"
-            label={gettext("Email")}
-            autocomplete="username"
-            required
-            phx-mounted={JS.focus()}
-          />
-          <.button class="btn btn-primary w-full">
-            {gettext("Log in with email")} <span aria-hidden="true">→</span>
-          </.button>
-        </.form>
-
-        <div class="divider">{gettext("or")}</div>
-
-        <.form
-          :let={f}
-          for={@form}
-          id="login_form_password"
-          action={~p"/users/log-in"}
-          phx-submit="submit_password"
-          phx-trigger-action={@trigger_submit}
-        >
-          <.input
-            readonly={!!@current_scope}
-            field={f[:email]}
-            type="email"
-            label={gettext("Email")}
-            autocomplete="username"
-            required
-          />
-          <.input
-            field={@form[:password]}
-            type="password"
-            label={gettext("Password")}
-            autocomplete="current-password"
-          />
-          <.button class="btn btn-primary w-full" name={@form[:remember_me].name} value="true">
-            {gettext("Log in and stay logged in")} <span aria-hidden="true">→</span>
-          </.button>
-          <.button class="btn btn-primary btn-soft mt-2 w-full">
-            {gettext("Log in only this time")}
-          </.button>
-        </.form>
       </div>
     </Layouts.app>
     """

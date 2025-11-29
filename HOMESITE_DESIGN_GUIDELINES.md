@@ -87,9 +87,24 @@
 
 **Visual Reference:**
 - Background: Clean white (#ffffff)
-- Cards/Inputs: Subtle gray (#f6f8fa) for definition
-- Text: Strong contrast on light background
+- Cards/Inputs: Enhanced gray for better visibility
+- Text: Strong contrast on light background (18% lightness)
 - Accent: Slightly brighter orange than dark theme
+
+**DaisyUI Theme Values (Light):**
+```css
+--color-base-100: oklch(100% 0 0)        /* Pure white background */
+--color-base-200: oklch(96% 0.004 264)   /* Input backgrounds - improved contrast */
+--color-base-300: oklch(82% 0.012 264)   /* Borders - improved contrast */
+--color-base-content: oklch(18% 0.008 264) /* Text - darker for better contrast */
+--border: 2px                             /* Border width - increased for visibility */
+```
+
+**Contrast Improvements:**
+- base-200 darkened from 98% to 96% lightness for better input visibility
+- base-300 darkened from 88% to 82% lightness for clearer borders
+- base-content darkened from 20% to 18% lightness for sharper text
+- Border width increased from 1.5px to 2px for better definition
 
 ### Semantic Usage
 

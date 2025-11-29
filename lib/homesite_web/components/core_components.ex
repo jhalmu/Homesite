@@ -780,11 +780,11 @@ defmodule HomesiteWeb.CoreComponents do
 
   def listing_container(assigns) do
     ~H"""
-    <main class={["technical-main", @class]}>
+    <div class={["technical-main", @class]}>
       <div class="space-y-6">
         {render_slot(@inner_block)}
       </div>
-    </main>
+    </div>
     """
   end
 

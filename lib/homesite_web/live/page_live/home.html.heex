@@ -1,5 +1,6 @@
 <Layouts.app flash={@flash} current_scope={@current_scope}>
-  <main class="technical-main">
+  <div class="technical-main">
+    <h1 class="sr-only">{gettext("Portal of JH - Blog Homepage")}</h1>
     <div>
       <div :if={length(@posts) == 0} class="alert alert-info mx-auto max-w-4xl">
         <.icon name="hero-information-circle" class="h-6 w-6" />
@@ -106,5 +107,5 @@
         </div>
       <% end %>
     </div>
-  </main>
+  </div>
 </Layouts.app>

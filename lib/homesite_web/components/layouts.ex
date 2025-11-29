@@ -146,7 +146,7 @@ defmodule HomesiteWeb.Layouts do
 
   def navbar(assigns) do
     ~H"""
-    <div class="technical-header">
+    <header class="technical-header" role="banner">
       <div class="header-content">
         <div class="flex-1">
           <.link
@@ -160,13 +160,17 @@ defmodule HomesiteWeb.Layouts do
 
         <%!-- Mobile menu button --%>
         <div class="flex-none lg:hidden">
-          <button class="btn btn-square btn-ghost" onclick="mobile_menu.showModal()">
+          <button
+            class="btn btn-square btn-ghost"
+            onclick="mobile_menu.showModal()"
+            aria-label={gettext("Open menu")}
+          >
             <.icon name="hero-bars-3" class="h-6 w-6" />
           </button>
         </div>
 
         <%!-- Desktop navigation --%>
-        <div class="gap-[var(--spacing-sm)] hidden flex-none lg:flex">
+        <nav class="gap-[var(--spacing-sm)] hidden flex-none lg:flex" role="navigation" aria-label={gettext("Main navigation")}>
           <ul class="menu menu-horizontal gap-[var(--spacing-xs)]">
             <li>
               <.link navigate={~p"/search"}>
@@ -237,15 +241,18 @@ defmodule HomesiteWeb.Layouts do
               <.theme_toggle />
             </li>
           </ul>
-        </div>
+        </nav>
       </div>
-    </div>
+    </header>
 
     <%!-- Mobile navigation modal --%>
     <dialog id="mobile_menu" class="modal">
       <div class="modal-box">
         <form method="dialog">
-          <button class="btn btn-sm btn-circle btn-ghost absolute top-2 right-2">
+          <button
+            class="btn btn-sm btn-circle btn-ghost absolute top-2 right-2"
+            aria-label={gettext("Close menu")}
+          >
             <.icon name="hero-x-mark" class="h-5 w-5" />
           </button>
         </form>
@@ -389,6 +396,7 @@ defmodule HomesiteWeb.Layouts do
         class="flex w-1/3 cursor-pointer p-1"
         phx-click={JS.dispatch("phx:set-theme")}
         data-phx-theme="system"
+        aria-label={gettext("Use system theme")}
       >
         <.icon name="hero-computer-desktop-micro" class="size-3 opacity-75 hover:opacity-100" />
       </button>
@@ -397,6 +405,7 @@ defmodule HomesiteWeb.Layouts do
         class="flex w-1/3 cursor-pointer p-1"
         phx-click={JS.dispatch("phx:set-theme")}
         data-phx-theme="light"
+        aria-label={gettext("Use light theme")}
       >
         <.icon name="hero-sun-micro" class="size-3 opacity-75 hover:opacity-100" />
       </button>
@@ -405,6 +414,7 @@ defmodule HomesiteWeb.Layouts do
         class="flex w-1/3 cursor-pointer p-1"
         phx-click={JS.dispatch("phx:set-theme")}
         data-phx-theme="dark"
+        aria-label={gettext("Use dark theme")}
       >
         <.icon name="hero-moon-micro" class="size-3 opacity-75 hover:opacity-100" />
       </button>

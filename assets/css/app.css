@@ -61,17 +61,17 @@
   default: true;
   prefersdark: false;
   color-scheme: "light";
-  --color-base-100: oklch(100% 0 0);
-  --color-base-200: oklch(98% 0.002 264);
-  --color-base-300: oklch(88% 0.010 264);
-  --color-base-content: oklch(20% 0.006 264);
+  --color-base-100: oklch(100% 0 0);        /* Pure white background */
+  --color-base-200: oklch(96% 0.004 264);   /* Very light gray for input backgrounds */
+  --color-base-300: oklch(60% 0.012 264);   /* Darker gray for borders - IMPROVED contrast */
+  --color-base-content: oklch(15% 0.008 264); /* Very dark text - IMPROVED contrast */
   --color-primary: oklch(62% 0.22 32);
   --color-primary-content: oklch(98% 0.002 32);
   --color-secondary: oklch(62% 0.22 32);
   --color-secondary-content: oklch(98% 0.002 32);
   --color-accent: oklch(62% 0.22 32);
   --color-accent-content: oklch(98% 0.002 32);
-  --color-neutral: oklch(45% 0.010 264);
+  --color-neutral: oklch(30% 0.010 264);     /* Darker neutral - IMPROVED contrast */
   --color-neutral-content: oklch(98% 0 0);
   --color-info: oklch(62% 0.214 259.815);
   --color-info-content: oklch(97% 0.014 254.604);
@@ -86,7 +86,7 @@
   --radius-box: 0.5rem;
   --size-selector: 0.21875rem;
   --size-field: 0.21875rem;
-  --border: 1.5px;
+  --border: 3px;                             /* Slightly thicker borders for better visibility */
   --depth: 1;
   --noise: 0;
 }
