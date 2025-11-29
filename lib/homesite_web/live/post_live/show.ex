@@ -2,6 +2,7 @@ defmodule HomesiteWeb.PostLive.Show do
   use HomesiteWeb, :live_view
 
   alias Homesite.Content
+  import HomesiteWeb.SocialComponents
 
   @impl true
   def render(assigns) do
@@ -39,6 +40,12 @@ defmodule HomesiteWeb.PostLive.Show do
 
       <div class="my-[clamp(1.5rem,4vw,3rem)] prose prose-slate max-w-none prose-pre:bg-gray-900 prose-pre:text-gray-100 dark:prose-invert">
         {Phoenix.HTML.raw(render_markdown(@post.body))}
+      </div>
+
+      <%!-- Social sharing buttons --%>
+      <div class="my-8 border-t border-base-300 pt-6">
+        <h3 class="mb-4 text-lg font-semibold">Share this post</h3>
+        <.social_share_buttons url={@current_url} title={@post.title} />
       </div>
     </Layouts.app>
     """
