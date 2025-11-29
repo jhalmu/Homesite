@@ -1,7 +1,7 @@
 <.header>
   <div class="flex items-center gap-4">
     <.icon name="hero-magnifying-glass" class="h-8 w-8" />
-    <span><%= gettext("Search Posts") %></span>
+    <span>{gettext("Search Posts")}</span>
   </div>
 </.header>
 
@@ -15,11 +15,11 @@
         placeholder={gettext("Search by title or content...")}
         phx-debounce="300"
         autocomplete="off"
-        class="flex-1 input input-bordered"
+        class="input input-bordered flex-1"
       />
       <button type="submit" class="btn btn-primary">
         <.icon name="hero-magnifying-glass" class="h-5 w-5" />
-        <%= gettext("Search") %>
+        {gettext("Search")}
       </button>
       <%= if @query != "" do %>
         <button type="button" phx-click="clear" class="btn btn-ghost">
@@ -34,12 +34,12 @@
       <%= if Enum.empty?(@results) do %>
         <div class="alert alert-info">
           <.icon name="hero-information-circle" class="h-5 w-5" />
-          <span><%= gettext("No results found for") %> "<%= @query %>"</span>
+          <span>{gettext("No results found for")} "{@query}"</span>
         </div>
       <% else %>
         <p>
-          <%= ngettext("1 result found", "%{count} results found", length(@results)) %>
-          <%= gettext("for") %> "<%= @query %>"
+          {ngettext("1 result found", "%{count} results found", length(@results))}
+          {gettext("for")} "{@query}"
         </p>
       <% end %>
     </div>
@@ -48,43 +48,43 @@
   <%= if @searching and not Enum.empty?(@results) do %>
     <div class="space-y-6">
       <%= for post <- @results do %>
-        <article class="card bg-base-100 shadow-md hover:shadow-lg transition-shadow">
+        <article class="card bg-base-100 shadow-md transition-shadow hover:shadow-lg">
           <div class="card-body">
             <h2 class="card-title">
               <.link navigate={~p"/posts/#{post.id}"} class="link link-hover">
-                <%= post.title %>
+                {post.title}
               </.link>
             </h2>
 
             <div class="flex items-center gap-2 text-sm text-gray-600">
               <.icon name="hero-user" class="h-4 w-4" />
-              <span><%= post.user.email %></span>
+              <span>{post.user.email}</span>
               <%= if post.published_at do %>
                 <span>•</span>
                 <.icon name="hero-calendar" class="h-4 w-4" />
                 <time datetime={post.published_at}>
-                  <%= Calendar.strftime(post.published_at, "%B %d, %Y") %>
+                  {Calendar.strftime(post.published_at, "%B %d, %Y")}
                 </time>
               <% end %>
             </div>
 
             <%= if not Enum.empty?(post.tags) do %>
-              <div class="flex flex-wrap gap-2 mt-2">
+              <div class="mt-2 flex flex-wrap gap-2">
                 <%= for tag <- post.tags do %>
                   <.link navigate={~p"/tags/#{tag.slug}"} class="badge badge-primary badge-sm">
-                    <%= tag.name %>
+                    {tag.name}
                   </.link>
                 <% end %>
               </div>
             <% end %>
 
-            <div class="prose prose-sm mt-2 line-clamp-3">
-              <%= raw(truncate_html(post.body, 200)) %>
+            <div class="line-clamp-3 prose prose-sm mt-2">
+              {raw(truncate_html(post.body, 200))}
             </div>
 
-            <div class="card-actions justify-end mt-4">
+            <div class="card-actions mt-4 justify-end">
               <.link navigate={~p"/posts/#{post.id}"} class="btn btn-sm btn-primary">
-                <%= gettext("Read more") %>
+                {gettext("Read more")}
               </.link>
             </div>
           </div>
@@ -93,13 +93,13 @@
     </div>
   <% else %>
     <%= if @query == "" do %>
-      <div class="text-center py-12">
+      <div class="py-12 text-center">
         <.icon name="hero-magnifying-glass" class="mx-auto h-12 w-12 text-gray-400" />
         <h3 class="mt-2 text-sm font-semibold text-gray-900">
-          <%= gettext("Start searching") %>
+          {gettext("Start searching")}
         </h3>
         <p class="mt-1 text-sm text-gray-500">
-          <%= gettext("Enter keywords to search through blog posts") %>
+          {gettext("Enter keywords to search through blog posts")}
         </p>
       </div>
     <% end %>

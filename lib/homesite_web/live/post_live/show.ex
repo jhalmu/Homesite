@@ -43,7 +43,7 @@ defmodule HomesiteWeb.PostLive.Show do
       </div>
 
       <%!-- Social sharing buttons --%>
-      <div class="my-8 border-t border-base-300 pt-6">
+      <div class="border-base-300 my-8 border-t pt-6">
         <h3 class="mb-4 text-lg font-semibold">Share this post</h3>
         <.social_share_buttons url={@current_url} title={@post.title} />
       </div>

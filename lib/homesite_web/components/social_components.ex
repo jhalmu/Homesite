@@ -18,7 +18,7 @@ defmodule HomesiteWeb.SocialComponents do
 
   def social_share_buttons(assigns) do
     ~H"""
-    <div class={"flex flex-wrap gap-2 #{@class}"}>
+    <div class={"#{@class} flex flex-wrap gap-2"}>
       <.share_button platform="bluesky" url={@url} title={@title} />
       <.share_button platform="mastodon" url={@url} title={@title} />
       <.share_button platform="twitter" url={@url} title={@title} />

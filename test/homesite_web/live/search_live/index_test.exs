@@ -100,7 +100,8 @@ defmodule HomesiteWeb.SearchLive.IndexTest do
 
       assert has_element?(view, "button[phx-click='clear']")
 
-      {:ok, cleared_view, html} = view |> element("button[phx-click='clear']") |> render_click() |> follow_redirect(conn)
+      {:ok, cleared_view, html} =
+        view |> element("button[phx-click='clear']") |> render_click() |> follow_redirect(conn)
 
       assert html =~ "Start searching"
       refute html =~ "result"
