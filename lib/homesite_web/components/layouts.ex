@@ -361,10 +361,10 @@ defmodule HomesiteWeb.Layouts do
   def language_toggle(assigns) do
     ~H"""
     <div class="card border-base-300 bg-base-300 relative flex flex-row items-center rounded-full border">
-      <div class="border-1 border-base-200 bg-base-100 [[data-locale=en]_&]:left-0 [[data-locale=fi]_&]:left-1/2 transition-[left] absolute h-full w-1/2 rounded-full brightness-200" />
+      <div class="border-1 border-base-200 bg-base-100 [[data-locale=en]_&]:left-0 [[data-locale=fi]_&]:left-1/2 transition-[left] absolute h-full w-1/2 rounded-full brightness-200 pointer-events-none" />
 
       <button
-        class="flex w-1/2 cursor-pointer items-center justify-center p-1 text-[0.65rem] font-medium opacity-60 hover:opacity-90"
+        class="relative z-10 flex w-1/2 cursor-pointer items-center justify-center p-1 text-[0.65rem] font-medium opacity-60 hover:opacity-90"
         phx-click={JS.dispatch("phx:set-locale")}
         data-phx-locale="en"
       >
@@ -372,7 +372,7 @@ defmodule HomesiteWeb.Layouts do
       </button>
 
       <button
-        class="flex w-1/2 cursor-pointer items-center justify-center p-1 text-[0.65rem] font-semibold opacity-85 hover:opacity-100"
+        class="relative z-10 flex w-1/2 cursor-pointer items-center justify-center p-1 text-[0.65rem] font-semibold opacity-85 hover:opacity-100"
         phx-click={JS.dispatch("phx:set-locale")}
         data-phx-locale="fi"
       >
