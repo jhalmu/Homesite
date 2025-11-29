@@ -22,9 +22,9 @@ defmodule HomesiteWeb.UserLive.Settings do
         phx-submit="update_profile"
         phx-change="validate_profile"
       >
-        <div class="gap-[clamp(1rem,3vw,2rem)] flex flex-col items-center">
+        <div class="gap-[var(--spacing-card)] flex flex-col items-center">
           <div
-            class="gap-[clamp(0.5rem,2vw,1rem)] flex flex-col items-center"
+            class="gap-[var(--spacing-sm)] flex flex-col items-center"
             id="avatar-upload-container"
             phx-hook="AvatarPreview"
           >
