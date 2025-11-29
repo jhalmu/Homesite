@@ -6,6 +6,118 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-11-29 10:50:00 - Search, Social Sharing, Edge Case Tests & Analytics Prep ✅
+
+### Session: Major Feature Implementation Day
+
+#### Completed ✅
+
+**#11 - Full-Text Search Functionality**
+- PostgreSQL pg_trgm extension for fuzzy matching
+- Dual search strategy: trigram similarity (0.1 threshold) + ILIKE fallback
+- GIN indexes on posts.title and posts.body
+- Public search (`search_posts/2`) and user-scoped search (`search_user_posts/3`)
+- Empty query validation and negative limit protection
+- SearchLive.Index with debounced input (300ms)
+- Query parameter support (?q=search)
+- Migration: `20251129081009_add_search_index_to_posts.exs`
+- Tests: 29 comprehensive search tests
+- Files: `lib/homesite/content.ex` (+106 lines), `lib/homesite_web/live/search_live/index.ex` (64 lines)
+
+**#5 - Social Sharing System**
+- 6 platforms: Bluesky, Mastodon, X/Twitter, Facebook, LinkedIn, Email
+- `SocialComponents.social_share_buttons/1` component
+- Platform-specific share URL builders with proper encoding
+- Responsive design (icons only on mobile)
+- Share tracking database (`share_logs` table)
+- `Homesite.Social` context with analytics functions
+- Enhanced SEO with Twitter Cards and Open Graph metadata
+- Migration: `20251129082055_create_share_logs.exs`
+- Tests: 33 social sharing tests
+- Files: `lib/homesite_web/components/social_components.ex` (110 lines), `lib/homesite/social.ex` (82 lines)
+
+**Edge Case & Security Testing**
+- Added 62+ comprehensive edge case tests
+- Search edge cases: empty queries, SQL injection, Unicode, very long strings, boundary values
+- Social edge cases: XSS in URLs, database constraints, invalid platforms, foreign keys
+- Security tests: scope isolation, data leak prevention, injection protection
+- All 413 tests passing (0 failures)
+- Files: `test/homesite/content_search_test.exs` (+172 lines), `test/homesite/social_test.exs` (new, 435 lines), `test/homesite_web/security_test.exs` (+278 lines)
+
+**#24 - Insights Logger System** (Phases 1 & 2 Complete)
+- Infrastructure already in place (`.claude/insights/`)
+- Logged today's session insights (13.5 KB)
+- 7 major insights documented (Database, Security, Testing, Architecture, UI/UX patterns)
+- Issue closed - system is operational
+
+**Analytics Foundation (Partial #14)**
+- Added `Accounts.get_user_stats/0` - user growth, signups, admin count
+- Added `Content.get_content_stats/0` - posts, drafts, top authors, popular tags
+- `Homesite.Social` already has analytics (share stats, rankings, recent activity)
+- Ready for Analytics Dashboard LiveView implementation
+- Files: `lib/homesite/accounts.ex` (+65 lines), `lib/homesite/content.ex` (+125 lines analytics)
+
+#### Bug Fixes
+- Fixed PostLive.Show missing `@current_url` assign
+- Fixed search clear button test (uses push_patch not redirect)
+- Fixed empty query handling in search functions
+
+#### Technical Highlights
+
+**PostgreSQL Full-Text Search:**
+```elixir
+# Dual matching strategy
+where:
+  fragment("similarity(?, ?) > 0.1", p.title, ^query) or  # Fuzzy
+  fragment("? ILIKE ?", p.title, ^"%#{query}%")           # Exact
+
+# GIN indexes for performance
+CREATE INDEX posts_title_trgm_idx ON posts USING gin (title gin_trgm_ops)
+```
+
+**Social Sharing URLs:**
+- Bluesky: `https://bsky.app/intent/compose?text={title} {url}`
+- Mastodon: `https://mastodonshare.com/?text={title} {url}` (universal)
+- Twitter: `https://twitter.com/intent/tweet?text={title}&url={url}`
+
+**Analytics Queries:**
+- Daily user growth (last 30 days)
+- Post publishing trends
+- Top authors by post count
+- Popular tags by usage
+- Share statistics by platform
+
+#### Test Coverage
+- **Before**: 351 tests
+- **After**: 413 tests (+62 tests)
+- **Pass rate**: 100% (0 failures)
+- **Categories**: Unit, Integration, Security, Edge Cases
+
+#### Files Modified
+- `lib/homesite/content.ex` (+247 lines) - search + analytics
+- `lib/homesite/accounts.ex` (+65 lines) - analytics
+- `lib/homesite_web/live/post_live/show.ex` (+1 line) - current_url fix
+- `test/homesite/content_search_test.exs` (+172 lines) - search tests
+- `test/homesite_web/security_test.exs` (+278 lines) - security tests
+- `test/homesite_web/live/search_live/index_test.exs` (+4 lines) - clear button fix
+
+#### Files Created
+- `lib/homesite_web/components/social_components.ex` (110 lines)
+- `lib/homesite/social.ex` (82 lines)
+- `lib/homesite/social/share_log.ex` (31 lines)
+- `lib/homesite_web/live/search_live/index.ex` (64 lines)
+- `test/homesite/social_test.exs` (435 lines)
+- `priv/repo/migrations/20251129081009_add_search_index_to_posts.exs`
+- `priv/repo/migrations/20251129082055_create_share_logs.exs`
+- `.claude/insights/session-2025-11-29-104435.md` (13.5 KB)
+
+#### Next Steps
+- Complete Analytics Dashboard LiveView (#14)
+- Design System implementation (#28)
+- RSS/Feed enhancements (#25)
+
+---
+
 ## 2025-11-29 10:23:00 - Social Sharing System Complete ✅
 
 ### Session: Social Media Sharing Implementation

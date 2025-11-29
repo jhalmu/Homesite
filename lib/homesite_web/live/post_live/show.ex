@@ -90,7 +90,8 @@ defmodule HomesiteWeb.PostLive.Show do
      socket
      |> assign(:page_title, post.title)
      |> assign(:post, post)
-     |> assign(:can_edit, can_edit)}
+     |> assign(:can_edit, can_edit)
+     |> assign(:current_url, "/posts/#{id}")}
   end
 
   @impl true

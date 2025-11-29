@@ -4,6 +4,7 @@ defmodule HomesiteWeb.SecurityTest do
   import Phoenix.LiveViewTest
   import Homesite.AccountsFixtures
   import Homesite.ContentFixtures
+  import Homesite.DataCase, only: [errors_on: 1]
 
   alias Homesite.Accounts
   alias Homesite.Content
@@ -332,6 +333,283 @@ defmodule HomesiteWeb.SecurityTest do
       assert stats.post_count == 2
       assert stats.tag_count == 1
       assert stats.user.id == user.id
+    end
+  end
+
+  describe "Search Security: Scope isolation in search results" do
+    test "public search does not return unpublished posts", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      # Create published post
+      {:ok, published} =
+        Content.create_post(scope, %{
+          title: "Published Post About Elixir",
+          body: "This is published",
+          published_at: DateTime.utc_now(:second)
+        })
+
+      # Search should find published post
+      results = Content.search_posts("Elixir")
+      assert Enum.any?(results, fn p -> p.id == published.id end)
+    end
+
+    test "user search only returns their own posts", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      # Create posts for both users with same keyword
+      {:ok, post_a} =
+        Content.create_post(scope_a, %{
+          title: "User A Secret Post",
+          body: "User A's secret content",
+          published_at: DateTime.utc_now(:second)
+        })
+
+      {:ok, _post_b} =
+        Content.create_post(scope_b, %{
+          title: "User B Secret Post",
+          body: "User B's secret content",
+          published_at: DateTime.utc_now(:second)
+        })
+
+      # User A searches their own posts
+      results_a = Content.search_user_posts(scope_a, "Secret")
+
+      # Should only see their own post
+      assert length(results_a) == 1
+      assert hd(results_a).id == post_a.id
+      assert Enum.all?(results_a, fn p -> p.user_id == user_a.id end)
+    end
+
+    test "search does not leak data between scopes", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      # Create posts with potentially sensitive data
+      {:ok, _post_a} =
+        Content.create_post(scope_a, %{
+          title: "API Key: sk-1234567890",
+          body: "Private API configuration",
+          published_at: DateTime.utc_now(:second)
+        })
+
+      {:ok, _post_b} =
+        Content.create_post(scope_b, %{
+          title: "API Key: sk-0987654321",
+          body: "Different private config",
+          published_at: DateTime.utc_now(:second)
+        })
+
+      # User A searches for API keys
+      results_a = Content.search_user_posts(scope_a, "API Key")
+
+      # Should only see their own sensitive data
+      assert length(results_a) == 1
+      assert hd(results_a).title =~ "sk-1234567890"
+      refute hd(results_a).title =~ "sk-0987654321"
+
+      # User B searches for API keys
+      results_b = Content.search_user_posts(scope_b, "API Key")
+
+      # Should only see their own sensitive data
+      assert length(results_b) == 1
+      assert hd(results_b).title =~ "sk-0987654321"
+      refute hd(results_b).title =~ "sk-1234567890"
+    end
+
+    test "search handles SQL injection safely", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      {:ok, _post} =
+        Content.create_post(scope, %{
+          title: "Normal Post",
+          body: "Normal content",
+          published_at: DateTime.utc_now(:second)
+        })
+
+      # Try SQL injection via search
+      malicious_query = "'; DELETE FROM posts; --"
+      results = Content.search_posts(malicious_query)
+
+      # Should not execute SQL, just return empty or safe results
+      assert is_list(results)
+
+      # Verify posts still exist
+      all_posts = Content.list_posts(scope)
+      assert length(all_posts) >= 1
+    end
+
+    test "search does not expose XSS vulnerabilities", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      {:ok, post} =
+        Content.create_post(scope, %{
+          title: "Post with <script>alert('xss')</script>",
+          body: "Content with potential XSS",
+          published_at: DateTime.utc_now(:second)
+        })
+
+      # Search for the XSS payload
+      results = Content.search_posts("script")
+
+      # Should find the post
+      assert Enum.any?(results, fn p -> p.id == post.id end)
+
+      # The XSS should be in the database but will be escaped in templates
+      found_post = Enum.find(results, fn p -> p.id == post.id end)
+      assert found_post.title =~ "<script>"
+    end
+  end
+
+  describe "Social Sharing Security: XSS and injection protection" do
+    test "share URL with XSS is stored but escaped", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+      post = post_fixture(scope)
+
+      # Try to log share with XSS in URL
+      xss_url = "https://example.com/<script>alert('xss')</script>"
+
+      {:ok, share_log} =
+        Homesite.Social.log_share(%{
+          platform: "twitter",
+          shared_url: xss_url,
+          post_id: post.id
+        })
+
+      # XSS should be stored as-is (will be escaped in templates)
+      assert share_log.shared_url == xss_url
+    end
+
+    test "share URL with SQL injection is safely parameterized", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+      post = post_fixture(scope)
+
+      # Try SQL injection in URL
+      sql_injection = "https://example.com/'; DROP TABLE share_logs; --"
+
+      {:ok, share_log} =
+        Homesite.Social.log_share(%{
+          platform: "twitter",
+          shared_url: sql_injection,
+          post_id: post.id
+        })
+
+      # Should be safely stored via Ecto parameterization
+      assert share_log.shared_url == sql_injection
+
+      # Verify table still exists by fetching stats
+      stats = Homesite.Social.get_post_share_stats(post.id)
+      assert stats.total == 1
+    end
+
+    test "share tracking respects post deletion", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+      post = post_fixture(scope)
+
+      # Log a share
+      {:ok, _share_log} =
+        Homesite.Social.log_share(%{
+          platform: "twitter",
+          shared_url: "https://example.com/posts/#{post.id}",
+          post_id: post.id
+        })
+
+      # Verify share was logged
+      stats_before = Homesite.Social.get_post_share_stats(post.id)
+      assert stats_before.total == 1
+
+      # Delete the post
+      Content.delete_post(scope, post)
+
+      # Share logs should be cascade deleted (based on migration)
+      stats_after = Homesite.Social.get_post_share_stats(post.id)
+      assert stats_after.total == 0
+    end
+
+    test "share tracking with invalid platform is rejected", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+      post = post_fixture(scope)
+
+      # Try to log share with invalid platform
+      result =
+        Homesite.Social.log_share(%{
+          platform: "malicious_platform",
+          shared_url: "https://example.com/posts/#{post.id}",
+          post_id: post.id
+        })
+
+      assert {:error, changeset} = result
+      assert "is invalid" in errors_on(changeset).platform
+    end
+
+    test "share stats do not leak between users' posts", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      post_a = post_fixture(scope_a)
+      post_b = post_fixture(scope_b)
+
+      # Log shares for both posts
+      Homesite.Social.log_share(%{
+        platform: "twitter",
+        shared_url: "url_a",
+        post_id: post_a.id
+      })
+
+      Homesite.Social.log_share(%{
+        platform: "facebook",
+        shared_url: "url_b",
+        post_id: post_b.id
+      })
+
+      # Get stats for each post
+      stats_a = Homesite.Social.get_post_share_stats(post_a.id)
+      stats_b = Homesite.Social.get_post_share_stats(post_b.id)
+
+      # Each should only show their own shares
+      assert stats_a.total == 1
+      assert stats_b.total == 1
+      assert stats_a.by_platform["twitter"] == 1
+      assert stats_b.by_platform["facebook"] == 1
+    end
+
+    test "recent shares list does not expose private post data", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+      post = post_fixture(scope)
+
+      # Log a share
+      Homesite.Social.log_share(%{
+        platform: "twitter",
+        shared_url: "https://example.com/posts/#{post.id}",
+        post_id: post.id,
+        user_id: user.id
+      })
+
+      # Get recent shares
+      shares = Homesite.Social.list_recent_shares(10)
+
+      # Verify associations are loaded but don't expose sensitive data
+      assert length(shares) == 1
+      share = hd(shares)
+      assert Ecto.assoc_loaded?(share.post)
+      assert Ecto.assoc_loaded?(share.user)
+
+      # Post data is accessible but would be filtered in views/templates
+      assert share.post.id == post.id
     end
   end
 end

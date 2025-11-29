@@ -722,36 +722,45 @@ defmodule Homesite.Content do
 
   """
   def search_posts(query, opts \\ []) when is_binary(query) do
-    limit = Keyword.get(opts, :limit, 20)
-    tag_id = Keyword.get(opts, :tag_id)
-    user_id = Keyword.get(opts, :user_id)
+    # Return empty list for empty or whitespace-only queries
+    case String.trim(query) do
+      "" ->
+        []
 
-    base_query =
-      from(p in Post,
-        where: not is_nil(p.published_at) and p.is_public == true,
-        where:
-          fragment("similarity(?, ?) > 0.1", p.title, ^query) or
-            fragment("similarity(?, ?) > 0.1", p.body, ^query) or
-            fragment("? ILIKE ?", p.title, ^"%#{query}%") or
-            fragment("? ILIKE ?", p.body, ^"%#{query}%"),
-        order_by: [
-          desc:
-            fragment(
-              "greatest(similarity(?, ?), similarity(?, ?))",
-              p.title,
-              ^query,
-              p.body,
-              ^query
-            )
-        ],
-        limit: ^limit,
-        preload: [:user, :tags]
-      )
+      trimmed_query ->
+        limit = Keyword.get(opts, :limit, 20)
+        # Ensure limit is non-negative
+        limit = max(limit, 0)
+        tag_id = Keyword.get(opts, :tag_id)
+        user_id = Keyword.get(opts, :user_id)
 
-    base_query
-    |> maybe_filter_by_tag(tag_id)
-    |> maybe_filter_by_user(user_id)
-    |> Repo.all()
+        base_query =
+          from(p in Post,
+            where: not is_nil(p.published_at) and p.is_public == true,
+            where:
+              fragment("similarity(?, ?) > 0.1", p.title, ^trimmed_query) or
+                fragment("similarity(?, ?) > 0.1", p.body, ^trimmed_query) or
+                fragment("? ILIKE ?", p.title, ^"%#{trimmed_query}%") or
+                fragment("? ILIKE ?", p.body, ^"%#{trimmed_query}%"),
+            order_by: [
+              desc:
+                fragment(
+                  "greatest(similarity(?, ?), similarity(?, ?))",
+                  p.title,
+                  ^trimmed_query,
+                  p.body,
+                  ^trimmed_query
+                )
+            ],
+            limit: ^limit,
+            preload: [:user, :tags]
+          )
+
+        base_query
+        |> maybe_filter_by_tag(tag_id)
+        |> maybe_filter_by_user(user_id)
+        |> Repo.all()
+    end
   end
 
   @doc """
@@ -766,29 +775,38 @@ defmodule Homesite.Content do
 
   """
   def search_user_posts(%Scope{} = scope, query, opts \\ []) when is_binary(query) do
-    limit = Keyword.get(opts, :limit, 20)
+    # Return empty list for empty or whitespace-only queries
+    case String.trim(query) do
+      "" ->
+        []
 
-    from(p in Post,
-      where: p.user_id == ^scope.user.id,
-      where:
-        fragment("similarity(?, ?) > 0.1", p.title, ^query) or
-          fragment("similarity(?, ?) > 0.1", p.body, ^query) or
-          fragment("? ILIKE ?", p.title, ^"%#{query}%") or
-          fragment("? ILIKE ?", p.body, ^"%#{query}%"),
-      order_by: [
-        desc:
-          fragment(
-            "greatest(similarity(?, ?), similarity(?, ?))",
-            p.title,
-            ^query,
-            p.body,
-            ^query
-          )
-      ],
-      limit: ^limit,
-      preload: [:user, :tags]
-    )
-    |> Repo.all()
+      trimmed_query ->
+        limit = Keyword.get(opts, :limit, 20)
+        # Ensure limit is non-negative
+        limit = max(limit, 0)
+
+        from(p in Post,
+          where: p.user_id == ^scope.user.id,
+          where:
+            fragment("similarity(?, ?) > 0.1", p.title, ^trimmed_query) or
+              fragment("similarity(?, ?) > 0.1", p.body, ^trimmed_query) or
+              fragment("? ILIKE ?", p.title, ^"%#{trimmed_query}%") or
+              fragment("? ILIKE ?", p.body, ^"%#{trimmed_query}%"),
+          order_by: [
+            desc:
+              fragment(
+                "greatest(similarity(?, ?), similarity(?, ?))",
+                p.title,
+                ^trimmed_query,
+                p.body,
+                ^trimmed_query
+              )
+          ],
+          limit: ^limit,
+          preload: [:user, :tags]
+        )
+        |> Repo.all()
+    end
   end
 
   defp maybe_filter_by_tag(query, nil), do: query
@@ -805,5 +823,130 @@ defmodule Homesite.Content do
 
   defp maybe_filter_by_user(query, user_id) do
     from(p in query, where: p.user_id == ^user_id)
+  end
+
+  ## Analytics
+
+  @doc """
+  Returns comprehensive content statistics for the analytics dashboard.
+
+  Returns a map with:
+  - `total_posts`: Total published posts
+  - `total_drafts`: Total unpublished posts
+  - `posts_7d`: Posts published in last 7 days
+  - `posts_30d`: Posts published in last 30 days
+  - `total_tags`: Total tags created
+  - `avg_post_length`: Average post body length in characters
+  - `post_growth`: List of daily post counts for last 30 days
+  - `top_authors`: List of most active authors with post counts
+  - `popular_tags`: List of most used tags with usage counts
+
+  ## Examples
+
+      iex> get_content_stats()
+      %{
+        total_posts: 250,
+        total_drafts: 15,
+        posts_7d: 8,
+        posts_30d: 35,
+        ...
+      }
+
+  """
+  def get_content_stats do
+    now = DateTime.utc_now(:second)
+    seven_days_ago = DateTime.add(now, -7, :day)
+    thirty_days_ago = DateTime.add(now, -30, :day)
+
+    total_posts =
+      from(p in Post, where: not is_nil(p.published_at))
+      |> Repo.aggregate(:count, :id)
+
+    total_drafts =
+      from(p in Post, where: is_nil(p.published_at))
+      |> Repo.aggregate(:count, :id)
+
+    posts_7d =
+      from(p in Post,
+        where: not is_nil(p.published_at) and p.published_at >= ^seven_days_ago
+      )
+      |> Repo.aggregate(:count, :id)
+
+    posts_30d =
+      from(p in Post,
+        where: not is_nil(p.published_at) and p.published_at >= ^thirty_days_ago
+      )
+      |> Repo.aggregate(:count, :id)
+
+    total_tags = Repo.aggregate(Tag, :count, :id)
+
+    # Average post length
+    avg_post_length =
+      from(p in Post,
+        where: not is_nil(p.published_at),
+        select: avg(fragment("LENGTH(?)", p.body))
+      )
+      |> Repo.one()
+      |> case do
+        nil -> 0
+        avg -> round(avg)
+      end
+
+    # Post growth - daily post counts for last 30 days
+    post_growth =
+      from(p in Post,
+        where: not is_nil(p.published_at) and p.published_at >= ^thirty_days_ago,
+        group_by: fragment("DATE(?)", p.published_at),
+        select: %{
+          date: fragment("DATE(?)", p.published_at),
+          count: count(p.id)
+        },
+        order_by: fragment("DATE(?) ASC", p.published_at)
+      )
+      |> Repo.all()
+
+    # Top authors by post count
+    top_authors =
+      from(p in Post,
+        join: u in assoc(p, :user),
+        where: not is_nil(p.published_at),
+        group_by: [p.user_id, u.email],
+        select: %{
+          user_id: p.user_id,
+          email: u.email,
+          post_count: count(p.id)
+        },
+        order_by: [desc: count(p.id)],
+        limit: 10
+      )
+      |> Repo.all()
+
+    # Popular tags by usage count
+    popular_tags =
+      from(t in Tag,
+        left_join: pt in "post_tags",
+        on: pt.tag_id == t.id,
+        group_by: [t.id, t.name],
+        select: %{
+          tag_id: t.id,
+          name: t.name,
+          usage_count: count(pt.post_id)
+        },
+        order_by: [desc: count(pt.post_id)],
+        limit: 15
+      )
+      |> Repo.all()
+
+    %{
+      total_posts: total_posts,
+      total_drafts: total_drafts,
+      posts_7d: posts_7d,
+      posts_30d: posts_30d,
+      total_tags: total_tags,
+      avg_post_length: avg_post_length,
+      post_growth: post_growth,
+      top_authors: top_authors,
+      popular_tags: popular_tags
+    }
   end
 end

@@ -138,4 +138,176 @@ defmodule Homesite.ContentSearchTest do
       assert Enum.all?(results, fn post -> post.user_id != scope2.user.id end)
     end
   end
+
+  describe "search_posts/2 edge cases" do
+    setup do
+      user = user_fixture()
+      scope = Homesite.Accounts.Scope.for_user(user)
+
+      {:ok, post1} =
+        Content.create_post(scope, %{
+          title: "Test Post with Special Chars!@#$%",
+          body: "Content with unicode: héllo wörld 你好",
+          published_at: DateTime.utc_now(:second)
+        })
+
+      {:ok, _post2} =
+        Content.create_post(scope, %{
+          title: "SQL Injection Test",
+          body: "Normal content here",
+          published_at: DateTime.utc_now(:second)
+        })
+
+      %{scope: scope, post1: post1}
+    end
+
+    test "handles empty query string" do
+      results = Content.search_posts("")
+
+      assert results == []
+    end
+
+    test "handles whitespace-only query" do
+      results = Content.search_posts("   ")
+
+      assert results == []
+    end
+
+    test "handles very long query strings" do
+      long_query = String.duplicate("a", 1000)
+      results = Content.search_posts(long_query)
+
+      # Should not crash, returns empty or partial results
+      assert is_list(results)
+    end
+
+    test "handles special characters in query" do
+      results = Content.search_posts("!@#$%")
+
+      # Should not crash, may or may not return results
+      assert is_list(results)
+    end
+
+    test "handles SQL injection attempts" do
+      # Common SQL injection patterns
+      results = Content.search_posts("'; DROP TABLE posts; --")
+
+      # Should be safely escaped by Ecto, returns empty list
+      assert is_list(results)
+    end
+
+    test "handles unicode characters in search" do
+      results = Content.search_posts("héllo")
+
+      # Should handle unicode safely
+      assert is_list(results)
+    end
+
+    test "handles case sensitivity correctly" do
+      results_lower = Content.search_posts("special")
+      results_upper = Content.search_posts("SPECIAL")
+
+      # Should be case-insensitive
+      assert length(results_lower) == length(results_upper)
+    end
+
+    test "handles queries with multiple spaces" do
+      results = Content.search_posts("Test    Post")
+
+      # Should handle multiple spaces gracefully
+      assert is_list(results)
+    end
+
+    test "handles queries with newlines" do
+      results = Content.search_posts("Test\nPost")
+
+      # Should handle newlines safely
+      assert is_list(results)
+    end
+
+    test "handles queries with tabs" do
+      results = Content.search_posts("Test\tPost")
+
+      # Should handle tabs safely
+      assert is_list(results)
+    end
+
+    test "handles single character queries" do
+      results = Content.search_posts("a")
+
+      # May or may not return results, but should not crash
+      assert is_list(results)
+    end
+
+    test "handles numeric-only queries" do
+      results = Content.search_posts("12345")
+
+      # Should handle numeric queries
+      assert is_list(results)
+    end
+
+    test "handles limit of 0" do
+      results = Content.search_posts("Test", limit: 0)
+
+      assert results == []
+    end
+
+    test "handles negative limit (should be treated as no limit or 0)" do
+      results = Content.search_posts("Test", limit: -1)
+
+      # Should handle gracefully
+      assert is_list(results)
+    end
+
+    test "handles very large limit values" do
+      results = Content.search_posts("Test", limit: 999_999)
+
+      # Should not crash
+      assert is_list(results)
+    end
+  end
+
+  describe "search_user_posts/3 edge cases" do
+    setup do
+      user = user_fixture()
+      scope = Homesite.Accounts.Scope.for_user(user)
+
+      {:ok, _post} =
+        Content.create_post(scope, %{
+          title: "Edge Case Post",
+          body: "Testing edge cases",
+          published_at: DateTime.utc_now(:second)
+        })
+
+      %{scope: scope}
+    end
+
+    test "handles empty query string", %{scope: scope} do
+      results = Content.search_user_posts(scope, "")
+
+      assert results == []
+    end
+
+    test "handles very long query", %{scope: scope} do
+      long_query = String.duplicate("test", 500)
+      results = Content.search_user_posts(scope, long_query)
+
+      # Should not crash
+      assert is_list(results)
+    end
+
+    test "handles SQL injection in scoped search", %{scope: scope} do
+      results = Content.search_user_posts(scope, "'; DROP TABLE posts; --")
+
+      # Should be safely escaped
+      assert is_list(results)
+    end
+
+    test "handles unicode in scoped search", %{scope: scope} do
+      results = Content.search_user_posts(scope, "你好")
+
+      # Should handle unicode safely
+      assert is_list(results)
+    end
+  end
 end

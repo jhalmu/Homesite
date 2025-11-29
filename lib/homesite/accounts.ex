@@ -740,6 +740,71 @@ defmodule Homesite.Accounts do
     Repo.delete(invitation)
   end
 
+  ## Analytics
+
+  @doc """
+  Returns comprehensive user statistics for the analytics dashboard.
+
+  Returns a map with:
+  - `total_users`: Total registered users
+  - `new_users_7d`: New signups in last 7 days
+  - `new_users_30d`: New signups in last 30 days
+  - `admin_count`: Number of admin users
+  - `user_growth`: List of daily signup counts for last 30 days
+
+  ## Examples
+
+      iex> get_user_stats()
+      %{
+        total_users: 150,
+        new_users_7d: 12,
+        new_users_30d: 45,
+        admin_count: 3,
+        user_growth: [...]
+      }
+
+  """
+  def get_user_stats do
+    now = DateTime.utc_now(:second)
+    seven_days_ago = DateTime.add(now, -7, :day)
+    thirty_days_ago = DateTime.add(now, -30, :day)
+
+    total_users = Repo.aggregate(User, :count, :id)
+
+    new_users_7d =
+      from(u in User, where: u.inserted_at >= ^seven_days_ago)
+      |> Repo.aggregate(:count, :id)
+
+    new_users_30d =
+      from(u in User, where: u.inserted_at >= ^thirty_days_ago)
+      |> Repo.aggregate(:count, :id)
+
+    admin_count =
+      from(u in User, where: u.role == "admin")
+      |> Repo.aggregate(:count, :id)
+
+    # User growth - daily signups for last 30 days
+    user_growth =
+      from(u in User,
+        where: u.inserted_at >= ^thirty_days_ago,
+        group_by: fragment("DATE(?)", u.inserted_at),
+        select: %{
+          date: fragment("DATE(?)", u.inserted_at),
+          count: count(u.id)
+        },
+        order_by: fragment("DATE(?) ASC", u.inserted_at)
+      )
+      |> Repo.all()
+
+    %{
+      total_users: total_users,
+      new_users_7d: new_users_7d,
+      new_users_30d: new_users_30d,
+      admin_count: admin_count,
+      user_growth: user_growth
+    }
+  end
+
   ## Token helper
 
   defp update_user_and_delete_all_tokens(changeset) do
