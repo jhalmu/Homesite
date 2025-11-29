@@ -151,7 +151,7 @@ defmodule HomesiteWeb.Layouts do
         <div class="flex-1">
           <.link
             navigate={~p"/"}
-            class="btn btn-ghost text-[clamp(1rem,2.5vw,1.5rem)] gap-[clamp(0.5rem,2vw,1rem)] items-center"
+            class="btn btn-ghost text-[var(--font-size-fluid-lg)] gap-[var(--spacing-sm)] items-center"
           >
             <.pegasus class="h-20 w-20" />
             <span class="font-display">Portal of JH</span>
@@ -166,8 +166,8 @@ defmodule HomesiteWeb.Layouts do
         </div>
 
         <%!-- Desktop navigation --%>
-        <div class="gap-[clamp(0.5rem,2vw,1rem)] hidden flex-none lg:flex">
-          <ul class="menu menu-horizontal gap-[clamp(0.25rem,1vw,0.5rem)]">
+        <div class="gap-[var(--spacing-sm)] hidden flex-none lg:flex">
+          <ul class="menu menu-horizontal gap-[var(--spacing-xs)]">
             <li>
               <.link navigate={~p"/search"}>
                 <.icon name="hero-magnifying-glass" class="h-5 w-5" />
