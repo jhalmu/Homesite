@@ -364,7 +364,7 @@ defmodule HomesiteWeb.Layouts do
       <div class="border-1 border-base-200 bg-base-300 [[data-locale=en]_&]:left-0 [[data-locale=fi]_&]:left-1/2 transition-[left] absolute h-full w-1/2 rounded-full" />
 
       <button
-        class="flex w-1/2 cursor-pointer items-center justify-center p-1 text-xs font-semibold"
+        class="flex w-1/2 cursor-pointer items-center justify-center p-1 text-xs [[data-locale=en]_&]:font-bold [[data-locale=fi]_&]:font-normal [[data-locale=en]_&]:opacity-100 [[data-locale=fi]_&]:opacity-60"
         phx-click={JS.dispatch("phx:set-locale")}
         data-phx-locale="en"
       >
@@ -372,7 +372,7 @@ defmodule HomesiteWeb.Layouts do
       </button>
 
       <button
-        class="flex w-1/2 cursor-pointer items-center justify-center p-1 text-xs font-semibold"
+        class="flex w-1/2 cursor-pointer items-center justify-center p-1 text-xs [[data-locale=en]_&]:font-normal [[data-locale=fi]_&]:font-bold [[data-locale=en]_&]:opacity-60 [[data-locale=fi]_&]:opacity-100"
         phx-click={JS.dispatch("phx:set-locale")}
         data-phx-locale="fi"
       >
