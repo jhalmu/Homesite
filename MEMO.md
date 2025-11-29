@@ -6,6 +6,143 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-11-29 18:30:00 - Design System Plan Enhancement ✅
+
+### Session: Design System Documentation with Testability Framework
+
+#### Completed ✅
+
+**Design System Plan Enhancement**
+- ✅ Integrated MODERN_CSS_GUIDE.md patterns into DESIGN_SYSTEM_PLAN.md
+- ✅ Added Step 3.5: Design Tokens Implementation section with CSS custom properties
+- ✅ Added comprehensive Testing Strategy section (visual, component, regression testing)
+- ✅ Added Testable Implementation Checklist with 6 phases (0-6)
+- ✅ Added Best Practices section with DO/DON'T guidelines
+- ✅ Enhanced Tailwind v4 specifics with @theme directive examples
+
+**Research Integration**
+- ✅ Researched Claude Skills best practices (2025 guidelines)
+- ✅ Researched testable design system methodologies
+- ✅ Researched Tailwind CSS v4 design tokens strategies
+- ✅ Integrated findings with proper source attribution
+
+**Content Added**
+- **Design Tokens**: CSS custom properties from MODERN_CSS_GUIDE.md (fluid typography, responsive spacing, layout constraints)
+- **Component Patterns**: HEEx examples (blog cards, responsive grids, navigation)
+- **Container Queries**: Component-level responsiveness patterns
+- **Testing Strategy**: Visual testing, component testing, regression testing frameworks
+- **Automated Testing**: Bash scripts for visual regression, Elixir tests for contrast ratios
+- **Implementation Checklist**: Step-by-step testable workflow with success criteria
+- **Best Practices**: Performance guidelines, accessibility requirements, component design patterns
+- **Tailwind v4 @theme**: Complete implementation guide with semantic token naming
+
+**Code Validation**
+- ✅ Verified all HEEx syntax against existing project files
+- ✅ Corrected file paths (form_component.ex → form.ex)
+- ✅ Updated @import syntax to match project (`source(none)`)
+- ✅ Validated CSS examples against assets/css/app.css
+- ✅ Confirmed DaisyUI integration patterns
+
+#### Test Results
+- **276 tests passing (0 failures)**
+- No regressions introduced
+- Credo warnings only (no errors)
+
+#### Files Modified (1 file, +680 lines)
+
+**DESIGN_SYSTEM_PLAN.md**:
+- Lines 241-359: Step 3.5 - Design Tokens Implementation (118 lines)
+- Lines 447-649: Testing Strategy (202 lines)
+- Lines 756-945: Testable Implementation Checklist (189 lines)
+- Lines 1009-1336: Best Practices for Using the Design System (327 lines)
+- Lines 672-695: Enhanced Tailwind v4 Specifics (23 lines)
+- Total additions: ~859 lines
+
+**Enhancement Details**:
+
+1. **Design Tokens Section** (118 lines):
+   - CSS custom properties (layout, typography, spacing)
+   - Component patterns from MODERN_CSS_GUIDE.md
+   - Container query examples
+   - Why modern CSS matters
+
+2. **Testing Strategy** (202 lines):
+   - Visual testing (breakpoints, typography, contrast, container queries)
+   - Component testing (unit tests, integration tests, accessibility, cross-browser)
+   - Regression testing (screenshots, layout shift, performance budgets)
+   - Automated testing scripts (bash, Elixir)
+
+3. **Testable Implementation Checklist** (189 lines):
+   - Phase 0: Pre-implementation (15 min)
+   - Phase 1: Design token definition (30 min)
+   - Phase 2: Component documentation (1 hour)
+   - Phase 3: Component implementation (2-3 hours)
+   - Phase 4: Testing & validation (1 hour)
+   - Phase 5: Documentation & finalization (30 min)
+   - Phase 6: Merge & deploy
+   - Each phase has success criteria and test commands
+
+4. **Best Practices** (327 lines):
+   - Code quality standards (DO/DON'T lists)
+   - Performance guidelines (CSS optimization, nesting limits)
+   - Accessibility requirements (WCAG AA, keyboard nav, screen readers)
+   - Component design patterns (typography, spacing, layout)
+   - Tailwind v4 @theme directive (complete implementation)
+   - Integration with MODERN_CSS_GUIDE.md
+   - Sources and references (6 research articles, 3 internal docs)
+
+#### Key Insights
+
+**Design System Patterns**:
+- Modern CSS functions (clamp, min, max) eliminate most media queries
+- Container queries enable component-level responsiveness
+- CSS custom properties provide single source of truth
+- Tailwind v4 @theme directive integrates seamlessly with DaisyUI
+
+**Testability**:
+- Visual regression testing at 4 breakpoints (375px, 768px, 1440px, 1920px)
+- Automated contrast ratio validation (WCAG AA compliance)
+- Performance budgets (CSS < 50KB, CLS < 0.1)
+- Accessibility-first approach (Lighthouse ≥ 90)
+
+**Implementation Strategy**:
+- Phased approach with clear success criteria
+- Test-first mentality (validate before moving forward)
+- Documentation as code (examples tested and working)
+- Iterative refinement (Phase 3 refinement built into timeline)
+
+#### Sources Referenced
+
+**External Research**:
+1. [Claude Blog - Improving Frontend Design Through Skills](https://www.claude.com/blog/improving-frontend-design-through-skills)
+2. [Nathan Onn - Claude Skill Design System Guide](https://www.nathanonn.com/claude-skill-design-system-reusable-frontend/)
+3. [Microsoft Learn - Design For Testability](https://learn.microsoft.com/en-us/archive/msdn-magazine/2008/december/patterns-in-practice-design-for-testability)
+4. [Tailwind CSS 4 @theme: The Future of Design Tokens](https://medium.com/@sureshdotariya/tailwind-css-4-theme-the-future-of-design-tokens-at-2025-guide-48305a26af06)
+5. [DEV Community - Testability in System Design](https://dev.to/sardarmudassaralikhan/testability-in-system-design-and-architecture-1hlg)
+6. [Tailwind CSS Official Documentation - Theme Variables](https://tailwindcss.com/docs/theme)
+
+**Internal Documentation**:
+- MODERN_CSS_GUIDE.md (fluid typography, container queries, responsive patterns)
+- CLAUDE.md (project guidelines, build commands, EOD workflow)
+- AGENTS.md (Phoenix/LiveView patterns, testing strategies)
+
+#### Next Steps (Optional)
+
+**If Implementing Design System**:
+1. Follow Testable Implementation Checklist (Phase 0-6)
+2. Start with Phase 1: Design Token Definition (30 min)
+3. Document in HOMESITE_DESIGN_GUIDELINES.md as you go
+4. Test at each phase before proceeding
+5. Package as Claude Skill (optional)
+
+**Current State**:
+- DESIGN_SYSTEM_PLAN.md is now a complete, actionable guide
+- All code examples validated against project structure
+- Testability framework ensures quality implementation
+- Ready for future implementation when design system is prioritized
+
+---
+
 ## 2025-11-29 11:48:00 - Analytics, SEO & Admin Dashboard ✅
 
 ### Session: Performance Monitoring, SEO Enhancements, and Admin Tools
