@@ -4,10 +4,13 @@ defmodule Homesite.Search do
 
   Provides a single search interface that queries Posts, Tags, and FAQs
   in parallel and returns categorized results.
+
+  Includes telemetry events and analytics tracking.
   """
 
   alias Homesite.Content
   alias Homesite.Faqs
+  alias Homesite.Analytics
 
   @doc """
   Search across all content types (Posts, Tags, FAQs).
@@ -43,31 +46,58 @@ defmodule Homesite.Search do
 
   """
   def search_all(query, opts \\ []) when is_binary(query) do
-    case String.trim(query) do
-      "" ->
-        empty_results()
+    start_time = System.monotonic_time(:millisecond)
 
-      trimmed_query ->
-        limit = Keyword.get(opts, :limit, 10)
-        locale = Keyword.get(opts, :locale, "en")
+    results =
+      case String.trim(query) do
+        "" ->
+          empty_results()
 
-        # Execute searches in parallel
-        post_task = Task.async(fn -> Content.search_posts(trimmed_query, limit: limit) end)
-        tag_task = Task.async(fn -> Content.search_tags(trimmed_query, limit: limit) end)
-        faq_task = Task.async(fn -> Faqs.search_faqs(trimmed_query, limit: limit, locale: locale) end)
+        trimmed_query ->
+          limit = Keyword.get(opts, :limit, 10)
+          locale = Keyword.get(opts, :locale, "en")
 
-        # Await all results
-        posts = Task.await(post_task)
-        tags = Task.await(tag_task)
-        faqs = Task.await(faq_task)
+          # Execute searches in parallel
+          post_task = Task.async(fn -> Content.search_posts(trimmed_query, limit: limit) end)
+          tag_task = Task.async(fn -> Content.search_tags(trimmed_query, limit: limit) end)
 
-        %{
-          posts: posts,
-          tags: tags,
-          faqs: faqs,
-          total_count: length(posts) + length(tags) + length(faqs)
-        }
+          faq_task =
+            Task.async(fn -> Faqs.search_faqs(trimmed_query, limit: limit, locale: locale) end)
+
+          # Await all results
+          posts = Task.await(post_task)
+          tags = Task.await(tag_task)
+          faqs = Task.await(faq_task)
+
+          %{
+            posts: posts,
+            tags: tags,
+            faqs: faqs,
+            total_count: length(posts) + length(tags) + length(faqs)
+          }
+      end
+
+    # Calculate duration and emit telemetry
+    duration_ms = System.monotonic_time(:millisecond) - start_time
+
+    :telemetry.execute(
+      [:homesite, :search, :execute],
+      %{duration_ms: duration_ms, result_count: results.total_count},
+      %{query: query}
+    )
+
+    # Record analytics (async, don't block response)
+    if String.trim(query) != "" do
+      Task.start(fn ->
+        Analytics.record_search(query, results, duration_ms,
+          user_id: Keyword.get(opts, :user_id),
+          ip_address: Keyword.get(opts, :ip_address),
+          user_agent: Keyword.get(opts, :user_agent)
+        )
+      end)
     end
+
+    results
   end
 
   @doc """

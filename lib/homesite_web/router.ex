@@ -41,6 +41,9 @@ defmodule HomesiteWeb.Router do
   scope "/", HomesiteWeb do
     pipe_through :browser
 
+    # SEO routes
+    get "/sitemap.xml", SitemapController, :index
+
     live_session :public,
       on_mount: [
         {HomesiteWeb.UserAuth, :mount_current_scope},

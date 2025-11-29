@@ -62,7 +62,17 @@ defmodule HomesiteWeb.SearchLive.Index do
 
   defp perform_search(socket, query) do
     locale = socket.assigns.locale
-    results = Search.search_all(query, limit: 20, locale: locale)
+
+    # Prepare analytics options
+    analytics_opts = [
+      limit: 20,
+      locale: locale,
+      user_id: get_user_id(socket),
+      ip_address: get_connect_info(socket, :peer_data) |> get_ip_address(),
+      user_agent: get_connect_info(socket, :user_agent)
+    ]
+
+    results = Search.search_all(query, analytics_opts)
 
     socket
     |> assign(:posts, results.posts)
@@ -70,6 +80,22 @@ defmodule HomesiteWeb.SearchLive.Index do
     |> assign(:faqs, results.faqs)
     |> assign(:total_count, results.total_count)
     |> assign(:searching, true)
+  end
+
+  defp get_user_id(socket) do
+    case socket.assigns do
+      %{current_scope: %{user: %{id: user_id}}} -> user_id
+      _ -> nil
+    end
+  end
+
+  defp get_ip_address(nil), do: nil
+
+  defp get_ip_address(peer_data) do
+    case peer_data do
+      %{address: {a, b, c, d}} -> "#{a}.#{b}.#{c}.#{d}"
+      _ -> nil
+    end
   end
 
   defp truncate_html(html, length) do

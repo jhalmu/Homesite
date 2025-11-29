@@ -46,6 +46,14 @@ defmodule Homesite.Content do
   end
 
   @doc """
+  Returns all tags across all users (for sitemap).
+  """
+  def list_all_tags do
+    from(t in Tag, order_by: [desc: t.updated_at], preload: [:user])
+    |> Repo.all()
+  end
+
+  @doc """
   Gets a single tag.
 
   Raises `Ecto.NoResultsError` if the Tag does not exist.
