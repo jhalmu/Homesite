@@ -99,6 +99,39 @@
 /* Use the data attribute for dark mode  */
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
+/* ============================================================================
+   CUSTOM THEME UTILITIES
+   Make design tokens available as Tailwind utilities
+   ============================================================================ */
+
+@theme {
+  /* Typography scale */
+  --font-size-fluid-xs: var(--text-xs);
+  --font-size-fluid-sm: var(--text-sm);
+  --font-size-fluid-base: var(--text-base);
+  --font-size-fluid-lg: var(--text-lg);
+  --font-size-fluid-xl: var(--text-xl);
+  --font-size-fluid-2xl: var(--text-2xl);
+
+  /* Spacing scale */
+  --spacing-xs: var(--space-xs);
+  --spacing-sm: var(--space-sm);
+  --spacing-md: var(--space-md);
+  --spacing-lg: var(--space-lg);
+  --spacing-xl: var(--space-xl);
+
+  /* Component spacing */
+  --spacing-card: var(--card-padding);
+  --spacing-section: var(--section-gap);
+  --spacing-inline: var(--inline-gap);
+
+  /* Layout constraints */
+  --width-content: var(--content-max-width);
+  --width-article: var(--article-max-width);
+  --width-card: var(--card-max-width);
+  --width-sidebar: var(--sidebar-width);
+}
+
 /* Make LiveView wrapper divs transparent for layout */
 [data-phx-session], [data-phx-teleported-src] { display: contents }
 
@@ -140,6 +173,83 @@ body {
   line-height: 1.6;
   background: var(--bg);
   color: var(--text);
+}
+
+/* ============================================================================
+   FORM INPUT OVERRIDES
+   Override DaisyUI defaults with design-e-technical variables for contrast
+   ============================================================================ */
+
+/* Base input styling - text, email, password, number, url, etc. */
+.input {
+  background-color: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-color: var(--accent);
+}
+
+/* Textarea styling */
+.textarea {
+  background-color: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+  min-height: 8rem;
+}
+
+.textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-color: var(--accent);
+}
+
+/* Select dropdown styling */
+.select {
+  background-color: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-color: var(--accent);
+}
+
+/* Disabled state */
+.input:disabled,
+.textarea:disabled,
+.select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--surface);
+}
+
+/* Error state */
+.input-error {
+  border-color: #f85149;
+  background-color: rgba(248, 81, 73, 0.05);
+}
+
+/* File input styling */
+.file-input {
+  background-color: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.file-input::file-selector-button {
+  background-color: var(--accent);
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  margin-right: 1rem;
+  cursor: pointer;
 }
 
 /* Monospace font for code, dates, and technical metadata */
@@ -245,6 +355,66 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Post footer with separator */
 .post-footer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-family: 'SF Mono', 'Consolas', monospace;
+}
+
+/* ============================================================================
+   UNIFIED LISTING SYSTEM
+   Semantic aliases for content listings (posts, tags, faqs, etc.)
+   ============================================================================ */
+
+/* Base listing card - maps to post-card */
+.listing-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Listing metadata - maps to post-meta */
+.listing-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.listing-meta time {
+  font-family: 'SF Mono', 'Consolas', monospace;
+}
+
+/* Listing title - maps to post-title */
+.listing-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.875rem;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  color: var(--text);
+}
+
+.listing-title:hover {
+  color: var(--accent);
+}
+
+/* Listing content/excerpt - maps to post-excerpt */
+.listing-content {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+/* Listing footer - maps to post-footer */
+.listing-footer {
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -406,27 +576,25 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  background-color: oklch(30.33% 0.016 252.42);
+  background-color: var(--code-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1rem;
   overflow-x: auto;
-  font-weight: 400;
-  font-size: 0.875em;
-  line-height: 1.7142857;
-  margin-top: 1.7142857em;
-  margin-bottom: 1.7142857em;
-  border-radius: 0.375rem;
-  padding: 0.8571429em 1.1428571em;
+  font-family: 'SF Mono', 'Consolas', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 1.5rem 0;
 }
 
 .prose :where(pre code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   background-color: transparent;
-  border-width: 0;
-  border-radius: 0;
+  border: none;
   padding: 0;
-  font-weight: inherit;
-  color: inherit;
   font-size: inherit;
+  color: inherit;
   font-family: inherit;
-  line-height: inherit;
 }
 
 .prose :where(table):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -487,8 +655,4 @@ h1, h2, h3, h4, h5, h6 {
 
 .prose:where([data-theme=dark], [data-theme=dark] *) :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   color: oklch(var(--color-primary));
-}
-
-.prose:where([data-theme=dark], [data-theme=dark] *) :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  background-color: oklch(20.15% 0.012 254.09);
 }
