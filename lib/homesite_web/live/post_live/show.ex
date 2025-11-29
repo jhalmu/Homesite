@@ -14,7 +14,7 @@ defmodule HomesiteWeb.PostLive.Show do
         {@post.title}
         <:subtitle>Published post</:subtitle>
         <:actions>
-          <.button navigate={~p"/posts"}>
+          <.button navigate={~p"/"}>
             <.icon name="hero-arrow-left" />
           </.button>
           <%= if @can_edit do %>
