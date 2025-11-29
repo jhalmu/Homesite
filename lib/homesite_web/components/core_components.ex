@@ -522,7 +522,7 @@ defmodule HomesiteWeb.CoreComponents do
       alt={"#{@user.display_name || @user.email} avatar"}
       class={[
         "rounded-full object-cover",
-        if(@class, do: @class, else: "w-[clamp(2rem,8vw,3rem)] h-[clamp(2rem,8vw,3rem)]")
+        if(@class, do: @class, else: "w-[var(--spacing-section)] h-[var(--spacing-section)]")
       ]}
       {@rest}
     />
@@ -559,10 +559,10 @@ defmodule HomesiteWeb.CoreComponents do
     assigns = assign(assigns, :locale, locale)
 
     ~H"""
-    <div class={["gap-[clamp(0.5rem,2vw,1rem)] flex items-center", @class]} {@rest}>
+    <div class={["gap-[var(--spacing-sm)] flex items-center", @class]} {@rest}>
       <.avatar user={@user} class="h-10 w-10" />
       <div class="flex flex-col">
-        <span class="text-[clamp(0.875rem,2vw,1rem)] font-medium">
+        <span class="text-[var(--font-size-fluid-sm)] font-medium">
           {@user.display_name || String.split(@user.email, "@") |> List.first()}
         </span>
         <time
@@ -760,6 +760,98 @@ defmodule HomesiteWeb.CoreComponents do
         </div>
       </div>
     </div>
+    """
+  end
+
+  @doc """
+  Renders a listing container with consistent width and spacing.
+
+  Use this for all listing pages (posts, tags, search results, etc.)
+  to ensure consistent layout.
+
+  ## Examples
+
+      <.listing_container>
+        <article class="listing-card">...</article>
+      </.listing_container>
+  """
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+
+  def listing_container(assigns) do
+    ~H"""
+    <main class={["technical-main", @class]}>
+      <div class="space-y-6">
+        {render_slot(@inner_block)}
+      </div>
+    </main>
+    """
+  end
+
+  @doc """
+  Renders an empty state message for listing pages.
+
+  ## Examples
+
+      <.empty_state
+        icon="hero-folder-open"
+        message={gettext("No items yet")}
+      />
+
+      <.empty_state
+        icon="hero-document-text"
+        message={gettext("No posts found")}
+        action={gettext("Create your first post to get started")}
+      />
+  """
+  attr :icon, :string, required: true
+  attr :message, :string, required: true
+  attr :action, :string, default: nil
+
+  def empty_state(assigns) do
+    ~H"""
+    <div class="post-card text-center">
+      <.icon name={@icon} class="mx-auto h-12 w-12 text-gray-400" />
+      <p class="text-secondary mt-4">{@message}</p>
+      <%= if @action do %>
+        <p class="text-secondary/70 text-sm mt-2">{@action}</p>
+      <% end %>
+    </div>
+    """
+  end
+
+  @doc """
+  Renders a section header with optional icon and count badge.
+
+  ## Examples
+
+      <.section_header
+        icon="hero-document-text"
+        title={gettext("Posts")}
+        count={length(@posts)}
+      />
+
+      <.section_header
+        icon="hero-tag"
+        title={gettext("Tags")}
+        count={5}
+        badge_class="badge-secondary"
+      />
+  """
+  attr :icon, :string, required: true
+  attr :title, :string, required: true
+  attr :count, :integer, default: nil
+  attr :badge_class, :string, default: "badge-primary"
+
+  def section_header(assigns) do
+    ~H"""
+    <h2 class="mb-4 flex items-center gap-2 text-xl font-semibold">
+      <.icon name={@icon} class="h-6 w-6" />
+      {@title}
+      <%= if @count do %>
+        <span class={["badge", @badge_class]}>{@count}</span>
+      <% end %>
+    </h2>
     """
   end
 end
