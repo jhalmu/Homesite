@@ -360,8 +360,8 @@ defmodule HomesiteWeb.Layouts do
   """
   def language_toggle(assigns) do
     ~H"""
-    <div class="card border-base-300 bg-base-300 relative flex flex-row items-center rounded-full border">
-      <div class="border-1 border-base-200 bg-base-100 [[data-locale=en]_&]:left-0 [[data-locale=fi]_&]:left-1/2 transition-[left] absolute h-full w-1/2 rounded-full brightness-200" />
+    <div class="card border-base-300 bg-base-100 relative flex flex-row items-center rounded-full border">
+      <div class="border-1 border-base-200 bg-base-300 [[data-locale=en]_&]:left-0 [[data-locale=fi]_&]:left-1/2 transition-[left] absolute h-full w-1/2 rounded-full" />
 
       <button
         class="flex w-1/2 cursor-pointer items-center justify-center p-1 text-xs font-semibold"
