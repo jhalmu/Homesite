@@ -732,4 +732,34 @@ defmodule HomesiteWeb.CoreComponents do
   def translate_errors(errors, field) when is_list(errors) do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
   end
+
+  @doc """
+  Renders a statistics card for analytics dashboard.
+
+  ## Examples
+
+      <.stat_card title="Total Users" value={150} icon="hero-users" color="bg-blue-100 text-blue-800" />
+  """
+  attr :title, :string, required: true
+  attr :value, :any, required: true
+  attr :icon, :string, default: "hero-chart-bar"
+  attr :color, :string, default: "bg-gray-100 text-gray-800"
+
+  def stat_card(assigns) do
+    ~H"""
+    <div class="card bg-base-100 shadow-sm border border-base-300">
+      <div class="card-body">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-base-content/60"><%= @title %></p>
+            <p class="text-3xl font-bold mt-1"><%= @value %></p>
+          </div>
+          <div class={"rounded-full p-3 #{@color}"}>
+            <.icon name={@icon} class="h-6 w-6" />
+          </div>
+        </div>
+      </div>
+    </div>
+    """
+  end
 end

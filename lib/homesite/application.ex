@@ -14,6 +14,8 @@ defmodule Homesite.Application do
       {Phoenix.PubSub, name: Homesite.PubSub},
       # Start Oban background job processor
       {Oban, Application.fetch_env!(:homesite, Oban)},
+      # Start FeedCache for RSS/Atom/JSON feed caching
+      Homesite.FeedCache,
       # Start a worker by calling: Homesite.Worker.start_link(arg)
       # {Homesite.Worker, arg},
       # Start to serve requests, typically the last entry

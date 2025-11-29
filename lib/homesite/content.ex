@@ -548,6 +548,12 @@ defmodule Homesite.Content do
            |> Post.changeset(attrs, scope)
            |> Repo.insert() do
       broadcast_post(scope, {:created, post})
+
+      # Invalidate feed caches if post is published
+      if post.published_at do
+        invalidate_feed_caches(post)
+      end
+
       {:ok, post}
     end
   end
@@ -584,6 +590,11 @@ defmodule Homesite.Content do
         )
       end
 
+      # Invalidate feed caches if post was or is published
+      if was_published or updated_post.published_at do
+        invalidate_feed_caches(updated_post)
+      end
+
       {:ok, updated_post}
     end
   end
@@ -603,10 +614,20 @@ defmodule Homesite.Content do
   def delete_post(%Scope{} = scope, %Post{} = post) do
     true = post.user_id == scope.user.id
 
-    with {:ok, post = %Post{}} <-
+    # Load tags before deletion for cache invalidation
+    post_with_tags = Repo.preload(post, :tags)
+
+    with {:ok, deleted_post = %Post{}} <-
            Repo.delete(post) do
-      broadcast_post(scope, {:deleted, post})
-      {:ok, post}
+      broadcast_post(scope, {:deleted, deleted_post})
+
+      # Invalidate feed caches if post was published
+      if deleted_post.published_at do
+        # Use the preloaded tags from before deletion
+        invalidate_feed_caches(%{deleted_post | tags: post_with_tags.tags})
+      end
+
+      {:ok, deleted_post}
     end
   end
 
@@ -640,11 +661,12 @@ defmodule Homesite.Content do
       [%Post{}, ...]
 
   """
-  def list_public_posts_for_feed(limit \\ 20) do
+  def list_public_posts_for_feed(limit \\ 20, offset \\ 0) do
     from(p in Post,
       where: not is_nil(p.published_at),
       order_by: [desc: p.published_at],
       limit: ^limit,
+      offset: ^offset,
       preload: [:user, :tags]
     )
     |> Repo.all()
@@ -663,11 +685,12 @@ defmodule Homesite.Content do
       [%Post{}, ...]
 
   """
-  def list_user_posts_for_feed(user_id, limit \\ 20) do
+  def list_user_posts_for_feed(user_id, limit \\ 20, offset \\ 0) do
     from(p in Post,
       where: p.user_id == ^user_id and not is_nil(p.published_at),
       order_by: [desc: p.published_at],
       limit: ^limit,
+      offset: ^offset,
       preload: [:user, :tags]
     )
     |> Repo.all()
@@ -687,12 +710,13 @@ defmodule Homesite.Content do
       [%Post{}, ...]
 
   """
-  def list_tag_posts_for_feed(tag_slug, limit \\ 20) do
+  def list_tag_posts_for_feed(tag_slug, limit \\ 20, offset \\ 0) do
     from(p in Post,
       join: t in assoc(p, :tags),
       where: t.slug == ^tag_slug and not is_nil(p.published_at),
       order_by: [desc: p.published_at],
       limit: ^limit,
+      offset: ^offset,
       preload: [:user, :tags]
     )
     |> Repo.all()
@@ -948,5 +972,26 @@ defmodule Homesite.Content do
       top_authors: top_authors,
       popular_tags: popular_tags
     }
+  end
+
+  # Private Functions
+
+  defp invalidate_feed_caches(%Post{} = post) do
+    # Clear site-wide feeds (always affected by any post change)
+    Homesite.FeedCache.clear_site_wide_feeds()
+
+    # Clear user-specific feeds
+    Homesite.FeedCache.clear_user_feeds(post.user_id)
+
+    # Clear tag-specific feeds if tags are loaded
+    case post do
+      %{tags: tags} when is_list(tags) ->
+        Enum.each(tags, fn tag ->
+          Homesite.FeedCache.clear_tag_feeds(tag.slug)
+        end)
+
+      _ ->
+        :ok
+    end
   end
 end
