@@ -1,13 +1,13 @@
 <Layouts.app flash={@flash} current_scope={@current_scope}>
-  <div class="px-[clamp(1rem,4vw,2rem)] py-[clamp(1.5rem,5vw,3rem)] container mx-auto">
+  <div class="px-[var(--spacing-card)] py-[var(--spacing-lg)] container mx-auto">
     <!-- Header with Flowers -->
-    <div class="gap-[clamp(1rem,3vw,1.5rem)] mb-[clamp(2rem,5vw,3rem)] flex flex-col">
-      <div class="gap-[clamp(1rem,3vw,1.5rem)] flex items-center">
-        <h1 class="text-[clamp(2rem,6vw,3rem)] font-bold">
+    <div class="gap-[var(--spacing-md)] mb-[var(--spacing-section)] flex flex-col">
+      <div class="gap-[var(--spacing-md)] flex items-center">
+        <h1 class="text-[var(--font-size-fluid-2xl)] font-bold">
           {gettext("Admin Dashboard")}
         </h1>
         <div
-          class="text-[clamp(2rem,5vw,3rem)]"
+          class="text-[var(--font-size-fluid-2xl)]"
           title={gettext("Admin Level %{level}", level: @flower_count)}
         >
           {@flowers}
@@ -27,14 +27,14 @@
         </div>
       </div>
     </div>
-    
+
 <!-- Stats Overview -->
-    <div class="mb-[clamp(2rem,5vw,3rem)]">
-      <h2 class="text-[clamp(1.5rem,4vw,2rem)] mb-[clamp(1rem,3vw,1.5rem)] font-semibold">
+    <div class="mb-[var(--spacing-section)]">
+      <h2 class="text-[var(--font-size-fluid-xl)] mb-[var(--spacing-md)] font-semibold">
         {gettext("System Overview")}
       </h2>
 
-      <div class="gap-[clamp(1rem,3vw,1.5rem)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <div class="gap-[var(--spacing-md)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         <!-- Total Users -->
         <div class="stats bg-base-200 shadow">
           <div class="stat">
@@ -63,7 +63,7 @@
         <div class="stats bg-base-200 shadow">
           <div class="stat">
             <div class="stat-figure text-accent">
-              <span class="text-[clamp(1.5rem,4vw,2rem)]">🌸</span>
+              <span class="text-[var(--font-size-fluid-xl)]">🌸</span>
             </div>
             <div class="stat-title">{gettext("Your Level")}</div>
             <div class="stat-value text-accent">{@flower_count}</div>
@@ -74,12 +74,12 @@
     </div>
     
 <!-- Quick Actions -->
-    <div class="mb-[clamp(2rem,5vw,3rem)]">
-      <h2 class="text-[clamp(1.5rem,4vw,2rem)] mb-[clamp(1rem,3vw,1.5rem)] font-semibold">
+    <div class="mb-[var(--spacing-section)]">
+      <h2 class="text-[var(--font-size-fluid-xl)] mb-[var(--spacing-md)] font-semibold">
         {gettext("Admin Actions")}
       </h2>
 
-      <div class="gap-[clamp(0.75rem,2vw,1rem)] flex flex-wrap">
+      <div class="gap-[var(--spacing-sm)] flex flex-wrap">
         <.link navigate={~p"/dashboard"} class="btn btn-outline gap-2">
           <.icon name="hero-home" class="h-5 w-5" /> {gettext("Back to User Dashboard")}
         </.link>
