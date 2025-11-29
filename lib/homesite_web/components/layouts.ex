@@ -372,7 +372,7 @@ defmodule HomesiteWeb.Layouts do
       </button>
 
       <button
-        class="flex w-1/2 cursor-pointer items-center justify-center p-1 text-xs font-semibold opacity-75 hover:opacity-100"
+        class="flex w-1/2 cursor-pointer items-center justify-center p-1 text-[0.65rem] font-semibold opacity-85 hover:opacity-100"
         phx-click={JS.dispatch("phx:set-locale")}
         data-phx-locale="fi"
       >
