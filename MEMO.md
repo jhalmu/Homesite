@@ -6,6 +6,176 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-11-30 00:00:00 - Critical Layout Fix: Confirmation & Registration Pages 🔧
+
+### Session: Fix Broken Layout on Magic Link Confirmation Page
+
+#### Problem
+Magic link confirmation page (`/users/log-in/:token`) and registration page had completely broken layout:
+- Text wrapping on every single word (vertical stacking)
+- Buttons appearing as tiny orange boxes
+- Issue present in both Chrome and Safari
+- Persisted even in incognito mode (not a cache issue)
+
+#### Root Cause
+Container was using `mx-auto max-w-sm` without proper flex parent container. This caused the container width to collapse, making text wrap on every character and buttons shrink to minimum size.
+
+#### Solution
+Restructured both pages to match the login page pattern:
+1. Added outer flex container with `items-center justify-center`
+2. Used CSS variables instead of hardcoded Tailwind classes
+3. Changed from `max-w-sm` to `max-w-[var(--card-max-width)]`
+4. Proper spacing with `px-[var(--spacing-card)]` and `py-[var(--spacing-xl)]`
+
+#### Changes Made
+
+**Confirmation Page** (`lib/homesite_web/live/user_live/confirmation.ex`)
+```diff
+- <div class="mx-auto max-w-sm">
+-   <div class="text-center">
++ <div class="flex min-h-[calc(100vh-200px)] items-center justify-center px-[var(--spacing-card)] py-[var(--spacing-xl)]">
++   <div class="w-full max-w-[var(--card-max-width)]">
++     <div class="mb-[var(--spacing-lg)] text-center">
+```
+
+**Registration Page** (`lib/homesite_web/live/user_live/registration.ex`)
+- Applied same flex container structure
+- Consistent with login page layout pattern
+
+**Language Toggle** (`lib/homesite_web/components/layouts.ex`)
+- Minor cleanup: Simplified opacity from conditional to constant `opacity-75`
+
+#### Testing Process
+1. Initial fix: Added `px-4 py-8` padding → didn't work
+2. Second attempt: Added `w-full` → still broken
+3. Final fix: Copied login page flex container structure → **FIXED**
+
+#### Key Learning
+When container layout is completely broken (text wrapping on every word), the issue is usually:
+- Missing flex parent container
+- Width collapsing to minimum content width
+- Need proper `display: flex` with `items-center justify-center`
+
+Simply adding padding or `w-full` won't fix width collapse - need the proper container structure.
+
+#### Commit
+- `8f474fc` - fix: Fix broken layout on confirmation and registration pages
+
+#### Next Session
+- Monitor for similar layout issues on other pages
+- Consider auditing all pages that use `max-w-sm` pattern
+- Ensure consistent use of CSS variables across all auth pages
+
+---
+
+## 2025-11-29 23:25:00 - UI/UX Improvements: Tags, Navigation & Language Toggle 🎨
+
+### Session: Homepage UI Polish & Language Toggle Redesign
+
+#### Completed ✅
+
+**Tag Badge Styling** (Commits: eb8824a, 69d66a2)
+- ✅ Reduced orange tag color intensity (chroma 0.20→0.12 dark, 0.22→0.14 light)
+- ✅ Reduced brightness (65%→58% both themes)
+- ✅ Improved badge padding (base: 8×14px, large: 10×16px, small: 6×10px)
+- ✅ Tags now more subtle and easier on eyes in both themes
+
+**Post Tags Layout** (Commit: 69d66a2)
+- ✅ Moved tags inline with read time on post show page
+- ✅ Changed from large orange badges to small ghost badges
+- ✅ Added bullet separator (•) between read time and tags
+- ✅ Tags: `badge-ghost badge-sm` with `opacity-60 hover:opacity-100`
+- ✅ Icon size reduced to h-3 w-3 for inline context
+
+**Back Button Navigation** (Commit: ec8f4b4)
+- ✅ Fixed back button redirect for public posts
+- ✅ Changed navigation from `/posts` (requires auth) to `/` (public homepage)
+- ✅ Public users no longer redirected to login when navigating back
+
+**Conditional Share Buttons** (Commit: e9545f1)
+- ✅ Posts ≥2 min: Show platform share buttons
+- ✅ Posts <2 min: No share buttons
+- ✅ Homepage: Widened content area (900px→1200px)
+- ✅ Homepage: Removed share buttons from first 4 articles
+- ✅ Homepage: Increased preview text (latest: 200→300, grid: 100→150 chars)
+
+**Language Toggle Redesign** (Multiple iterations: 4556bbf→43877e9)
+- ✅ Initial attempt: Inverted colors (active darker, inactive lighter) - didn't work well
+- ✅ Added font weight + opacity for visibility - still had issues
+- ✅ **Final solution**: Redesigned to match theme toggle pattern
+- ✅ Bright slider (`brightness-200`) indicates active language
+- ✅ Both languages visible with conditional opacity:
+  - Active language: `opacity-85` (bright)
+  - Inactive language: `opacity-60` (dimmed)
+- ✅ Equal brightness regardless of which language is selected
+- ✅ Same size as theme toggle (`text-xs`, `p-1` padding)
+- ✅ Fixed hover flickering with `pointer-events-none` on slider
+- ✅ Proper centering with `relative z-10` on buttons
+
+#### Key Technical Decisions
+
+**DaisyUI Color System Understanding**
+- Light theme: base-100 (100%) > base-200 (96%) > base-300 (60%)
+- Dark theme: base-300 (20%) > base-200 (18%) > base-100 (6.5%)
+- **Key insight**: Color hierarchy inverts between themes!
+
+**Language Toggle Evolution**
+1. Started with color inversion (active=darker) - text not visible
+2. Tried conditional font-weight + opacity - complexity issues
+3. Tried different background combinations - contrast problems
+4. **Final**: Matched theme toggle pattern - clean, simple, works
+
+**Toggle Consistency**
+- Language toggle now matches theme toggle structure
+- Both use bright slider with `brightness-200`
+- Both use same padding (`p-1`)
+- Both use same size content (text-xs = 12px, icon size-3 = 12px)
+- Both use `opacity-75 hover:opacity-100` pattern
+
+#### Files Modified
+- `assets/css/app.css` - Tag colors, content width, badge padding
+- `lib/homesite_web/components/social_components.ex` - Platform-only share buttons
+- `lib/homesite_web/live/page_live/home.html.heex` - Layout, preview text, conditional shares
+- `lib/homesite_web/live/post_live/index.ex` - Share link with icon
+- `lib/homesite_web/live/post_live/show.ex` - Inline tags, back button, conditional shares
+- `lib/homesite_web/components/layouts.ex` - Language toggle redesign (multiple iterations)
+- `lib/homesite/content.ex` - User preloading fix
+- `test/homesite/content_test.exs` - Updated test expectations
+
+#### Test Results
+- ✅ 461 tests, 0 failures
+- ✅ All LiveView tests passing
+- ✅ No regressions
+
+#### Commits (10 total)
+1. `ec8f4b4` - fix: Back button redirects to homepage for public posts
+2. `e9545f1` - feat: Improve homepage UX and share button logic
+3. `eb8824a` - fix: Tone down tag badge colors and improve padding
+4. `69d66a2` - feat: Move tags inline with read time, use dimmed ghost style
+5. `4556bbf` - feat: Invert language toggle colors for better UX
+6. `4666908` - fix: Add font weight and opacity to language toggle for clarity
+7. `5664ba9` - fix: Improve language toggle contrast in dark theme
+8. `9e323d7` - refactor: Redesign language toggle to match theme toggle pattern
+9. `fa0f81e` - feat: Make both languages smaller with FI brighter
+10. `02d1263` - feat: Make EN smaller and dimmer to emphasize FI as primary
+11. `25abb42` - fix: Prevent hover flickering on language toggle
+12. `504b909` - fix: Equal brightness for active language and better centering
+13. `43877e9` - fix: Match language toggle size and centering to theme toggle
+
+#### Key Learnings
+- **Simpler is better**: Complex conditional classes led to visibility issues
+- **Consistency wins**: Matching existing patterns (theme toggle) provided best UX
+- **Test iterations**: Sometimes the best solution emerges after trying multiple approaches
+- **User feedback**: Direct user testing revealed issues not visible in code review
+- **DaisyUI theming**: Understanding color hierarchy inversion between themes is crucial
+
+#### Next Session Focus
+- Consider adding more languages to toggle (Swedish, German) - now easy with current design
+- Monitor user feedback on new tag/share button layout
+- Potential: Add language preference persistence beyond just locale cookie
+
+---
+
 ## 2025-11-29 20:40:00 - Accessibility Audit Complete ♿
 
 ### Session: Full Accessibility Audit with axe-core + Playwright
