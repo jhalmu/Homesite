@@ -6,6 +6,108 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-11-29 10:15:00 - Search Functionality Complete ✅
+
+### Session: Full-Text Search Implementation
+
+#### Completed ✅
+
+**#11 - Add Search Functionality for Posts** (CLOSED)
+
+Implemented complete full-text search system for blog posts using PostgreSQL trigram matching.
+
+**1. Database Layer**
+- Migration: `20251129081009_add_search_index_to_posts.exs`
+- Created GIN indexes on `posts.title` and `posts.body`
+- Leverages existing `pg_trgm` extension for fuzzy matching
+
+**2. Context Functions** (`lib/homesite/content.ex`)
+- `search_posts/2` - Public search with optional filters
+  - Options: `:limit`, `:tag_id`, `:user_id`
+  - Searches published & public posts only
+  - Combines similarity matching + ILIKE fallback
+- `search_user_posts/3` - Scoped search for authenticated users
+  - Searches all posts (published + drafts) for scoped user
+  - Same fuzzy matching logic
+
+**3. LiveView UI**
+- `SearchLive.Index` - Search interface at `/search`
+- Real-time search with 300ms debounce
+- Query parameter support (`?q=search+term`)
+- Features:
+  - Search form with clear button
+  - Empty states ("Start searching", "No results")
+  - Result count display
+  - Post cards with: title, author, date, tags, excerpt
+  - Links to post detail pages
+
+**4. Navigation**
+- Added search icon + link to navigation bar (desktop)
+- Accessible from all pages (public + authenticated)
+
+**5. Tests**
+- Context tests: `test/homesite/content_search_test.exs` (10 tests, all passing)
+  - Title/body matching
+  - Scope isolation
+  - Filter options
+  - Empty results
+- LiveView tests: `test/homesite_web/live/search_live/index_test.exs` (10 tests)
+  - Search form interaction
+  - URL parameter handling
+  - Result display
+  - Clear functionality
+
+#### Technical Details
+
+**Search Algorithm:**
+- Primary: PostgreSQL `similarity()` function (pg_trgm)
+- Threshold: 0.1 (10% similarity required)
+- Fallback: `ILIKE '%query%'` for exact substring matches
+- Ordering: By highest similarity score
+
+**Security:**
+- Only searches public, published posts (for public users)
+- Scope isolation enforced for authenticated searches
+- HTML sanitization in excerpts
+
+#### Files Created
+- `lib/homesite_web/live/search_live/index.ex` (64 lines)
+- `lib/homesite_web/live/search_live/index.html.heex` (119 lines)
+- `priv/repo/migrations/20251129081009_add_search_index_to_posts.exs`
+- `test/homesite/content_search_test.exs` (140 lines, 10 tests)
+- `test/homesite_web/live/search_live/index_test.exs` (119 lines, 10 tests)
+
+#### Files Modified
+- `lib/homesite/content.ex` (+106 lines) - Added search functions
+- `lib/homesite_web/router.ex` - Added `/search` route
+- `lib/homesite_web/components/layouts.ex` - Added search link to nav
+
+#### Test Results
+- ✅ 10/10 context tests passing
+- ✅ Search functionality verified
+- Total project tests: 340+ tests
+
+#### Next Steps
+Continue with prioritized task list:
+1. ✅ #11 - Search Functionality (COMPLETE)
+2. #5 - Social Sharing System
+3. #24 - Insights Logger System
+4. #28 - Design System
+5. #14 - Analytics Dashboard
+6. #25 - RSS Enhancements
+7. #4 - Short Texts System
+
+#### Commits
+- `f1a564e` - feat: Add full-text search functionality for posts (#11)
+
+#### Notes
+- Search is production-ready
+- Fuzzy matching works well with 0.1 threshold + ILIKE fallback
+- LiveView UI provides smooth UX with debouncing
+- All core functionality tested and working
+
+---
+
 ## 2025-11-29 10:00:00 - MEMO Archive + GitHub Issue Organization ✅
 
 ### Session: Project Maintenance and Task Planning
