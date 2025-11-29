@@ -360,11 +360,11 @@ defmodule HomesiteWeb.Layouts do
   """
   def language_toggle(assigns) do
     ~H"""
-    <div class="card border-base-300 bg-base-200 relative flex flex-row items-center rounded-full border">
-      <div class="border-1 border-base-300 bg-base-100 [[data-locale=en]_&]:left-0 [[data-locale=fi]_&]:left-1/2 transition-[left] absolute h-full w-1/2 rounded-full" />
+    <div class="card border-base-300 bg-base-300 relative flex flex-row items-center rounded-full border">
+      <div class="border-1 border-base-200 bg-base-100 [[data-locale=en]_&]:left-0 [[data-locale=fi]_&]:left-1/2 transition-[left] absolute h-full w-1/2 rounded-full brightness-200" />
 
       <button
-        class="flex w-1/2 cursor-pointer items-center justify-center p-1 text-xs [[data-locale=en]_&]:font-bold [[data-locale=fi]_&]:font-normal [[data-locale=en]_&]:opacity-100 [[data-locale=fi]_&]:opacity-60"
+        class="flex w-1/2 cursor-pointer items-center justify-center p-1 text-xs font-semibold opacity-75 hover:opacity-100"
         phx-click={JS.dispatch("phx:set-locale")}
         data-phx-locale="en"
       >
@@ -372,7 +372,7 @@ defmodule HomesiteWeb.Layouts do
       </button>
 
       <button
-        class="flex w-1/2 cursor-pointer items-center justify-center p-1 text-xs [[data-locale=en]_&]:font-normal [[data-locale=fi]_&]:font-bold [[data-locale=en]_&]:opacity-60 [[data-locale=fi]_&]:opacity-100"
+        class="flex w-1/2 cursor-pointer items-center justify-center p-1 text-xs font-semibold opacity-75 hover:opacity-100"
         phx-click={JS.dispatch("phx:set-locale")}
         data-phx-locale="fi"
       >
