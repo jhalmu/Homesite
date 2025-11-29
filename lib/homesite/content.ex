@@ -697,4 +697,113 @@ defmodule Homesite.Content do
     )
     |> Repo.all()
   end
+
+  # Search functions
+
+  @doc """
+  Search public posts by title and body content using PostgreSQL full-text search.
+
+  Uses trigram similarity for fuzzy matching. Returns posts that match the query
+  with a similarity threshold of 0.3 or higher.
+
+  ## Options
+
+    * `:limit` - Maximum number of results (default: 20)
+    * `:tag_id` - Filter by tag ID (optional)
+    * `:user_id` - Filter by user ID (optional)
+
+  ## Examples
+
+      iex> search_posts("elixir")
+      [%Post{}, ...]
+
+      iex> search_posts("phoenix", limit: 10, tag_id: 5)
+      [%Post{}, ...]
+
+  """
+  def search_posts(query, opts \\ []) when is_binary(query) do
+    limit = Keyword.get(opts, :limit, 20)
+    tag_id = Keyword.get(opts, :tag_id)
+    user_id = Keyword.get(opts, :user_id)
+
+    base_query =
+      from(p in Post,
+        where: not is_nil(p.published_at) and p.is_public == true,
+        where:
+          fragment("similarity(?, ?) > 0.1", p.title, ^query) or
+            fragment("similarity(?, ?) > 0.1", p.body, ^query) or
+            fragment("? ILIKE ?", p.title, ^"%#{query}%") or
+            fragment("? ILIKE ?", p.body, ^"%#{query}%"),
+        order_by: [
+          desc:
+            fragment(
+              "greatest(similarity(?, ?), similarity(?, ?))",
+              p.title,
+              ^query,
+              p.body,
+              ^query
+            )
+        ],
+        limit: ^limit,
+        preload: [:user, :tags]
+      )
+
+    base_query
+    |> maybe_filter_by_tag(tag_id)
+    |> maybe_filter_by_user(user_id)
+    |> Repo.all()
+  end
+
+  @doc """
+  Search posts within a user's own posts (authenticated search).
+
+  Searches both published and unpublished posts for the scoped user.
+
+  ## Examples
+
+      iex> search_user_posts(scope, "elixir")
+      [%Post{}, ...]
+
+  """
+  def search_user_posts(%Scope{} = scope, query, opts \\ []) when is_binary(query) do
+    limit = Keyword.get(opts, :limit, 20)
+
+    from(p in Post,
+      where: p.user_id == ^scope.user.id,
+      where:
+        fragment("similarity(?, ?) > 0.1", p.title, ^query) or
+          fragment("similarity(?, ?) > 0.1", p.body, ^query) or
+          fragment("? ILIKE ?", p.title, ^"%#{query}%") or
+          fragment("? ILIKE ?", p.body, ^"%#{query}%"),
+      order_by: [
+        desc:
+          fragment(
+            "greatest(similarity(?, ?), similarity(?, ?))",
+            p.title,
+            ^query,
+            p.body,
+            ^query
+          )
+      ],
+      limit: ^limit,
+      preload: [:user, :tags]
+    )
+    |> Repo.all()
+  end
+
+  defp maybe_filter_by_tag(query, nil), do: query
+
+  defp maybe_filter_by_tag(query, tag_id) do
+    from(p in query,
+      join: pt in "post_tags",
+      on: pt.post_id == p.id,
+      where: pt.tag_id == ^tag_id
+    )
+  end
+
+  defp maybe_filter_by_user(query, nil), do: query
+
+  defp maybe_filter_by_user(query, user_id) do
+    from(p in query, where: p.user_id == ^user_id)
+  end
 end

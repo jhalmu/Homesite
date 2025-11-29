@@ -167,6 +167,12 @@ defmodule HomesiteWeb.Layouts do
       <%!-- Desktop navigation --%>
       <div class="gap-[clamp(0.5rem,2vw,1rem)] hidden flex-none lg:flex">
         <ul class="menu menu-horizontal gap-[clamp(0.25rem,1vw,0.5rem)]">
+          <li>
+            <.link navigate={~p"/search"}>
+              <.icon name="hero-magnifying-glass" class="h-5 w-5" />
+              {gettext("Search")}
+            </.link>
+          </li>
           <%= if @current_scope do %>
             <li>
               <.link navigate={~p"/dashboard"}>{gettext("Dashboard")}</.link>

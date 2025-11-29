@@ -50,6 +50,9 @@ defmodule HomesiteWeb.Router do
 
       # Public FAQ viewing
       live "/faqs", FaqLive.Index, :index
+
+      # Public search
+      live "/search", SearchLive.Index, :index
     end
   end
 

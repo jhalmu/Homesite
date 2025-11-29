@@ -120,7 +120,7 @@ defmodule HomesiteWeb.PostLive.Form do
               autocomplete="off"
               class="input input-bordered w-full"
             />
-
+            
     <!-- Suggestions dropdown -->
             <%= if @tag_suggestions != [] or @tag_search_query != "" do %>
               <div class="border-base-300 bg-base-100 absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border shadow-lg">
@@ -135,7 +135,7 @@ defmodule HomesiteWeb.PostLive.Form do
                     <span class="text-base-content/60 text-sm">{post_count} posts</span>
                   </button>
                 <% end %>
-
+                
     <!-- Add exact match button OR create new option -->
                 <%= cond do %>
                   <% exact_tag = find_exact_match(@tag_suggestions, @tag_search_query) -> %>
@@ -144,12 +144,11 @@ defmodule HomesiteWeb.PostLive.Form do
                       type="button"
                       phx-click="add-tag"
                       phx-value-tag-id={exact_tag.id}
-                      class="border-base-300 flex w-full items-center gap-2 border-t px-4 py-2 text-left font-semibold text-primary hover:bg-base-200"
+                      class="border-base-300 text-primary flex w-full items-center gap-2 border-t px-4 py-2 text-left font-semibold hover:bg-base-200"
                     >
                       <.icon name="hero-check" class="h-4 w-4" />
                       {gettext("Add")} "{exact_tag.name}"
                     </button>
-
                   <% @tag_search_query != "" -> %>
                     <!-- Show "Create" button for new tag -->
                     <button
@@ -161,7 +160,6 @@ defmodule HomesiteWeb.PostLive.Form do
                       <.icon name="hero-plus" class="h-4 w-4" />
                       {gettext("Create")} "{@tag_search_query}"
                     </button>
-
                   <% true -> %>
                     <!-- Empty query, show nothing -->
                 <% end %>
