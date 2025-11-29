@@ -8,9 +8,10 @@ defmodule HomesiteWeb.UserLive.Registration do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="mx-auto max-w-sm">
-        <div class="text-center">
-          <.header>
+      <div class="flex min-h-[calc(100vh-200px)] items-center justify-center px-[var(--spacing-card)] py-[var(--spacing-xl)]">
+        <div class="w-full max-w-[var(--card-max-width)]">
+          <div class="mb-[var(--spacing-lg)] text-center">
+            <.header>
             {gettext("Register for an account")}
             <:subtitle>
               {gettext("Already registered?")}
@@ -63,6 +64,7 @@ defmodule HomesiteWeb.UserLive.Registration do
             {gettext("Create an account")}
           </.button>
         </.form>
+        </div>
       </div>
     </Layouts.app>
     """

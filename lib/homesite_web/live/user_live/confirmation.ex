@@ -7,10 +7,11 @@ defmodule HomesiteWeb.UserLive.Confirmation do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="mx-auto max-w-sm">
-        <div class="text-center">
-          <.header>Welcome {@user.email}</.header>
-        </div>
+      <div class="flex min-h-[calc(100vh-200px)] items-center justify-center px-[var(--spacing-card)] py-[var(--spacing-xl)]">
+        <div class="w-full max-w-[var(--card-max-width)]">
+          <div class="mb-[var(--spacing-lg)] text-center">
+            <.header>Welcome {@user.email}</.header>
+          </div>
 
         <.form
           :if={!@user.confirmed_at}
@@ -64,9 +65,10 @@ defmodule HomesiteWeb.UserLive.Confirmation do
           <% end %>
         </.form>
 
-        <p :if={!@user.confirmed_at} class="alert alert-outline mt-8">
-          Tip: If you prefer passwords, you can enable them in the user settings.
-        </p>
+          <p :if={!@user.confirmed_at} class="alert alert-outline mt-[var(--spacing-lg)]">
+            Tip: If you prefer passwords, you can enable them in the user settings.
+          </p>
+        </div>
       </div>
     </Layouts.app>
     """
