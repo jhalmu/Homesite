@@ -1,13 +1,13 @@
 <Layouts.app flash={@flash} current_scope={@current_scope}>
-  <div class="px-[clamp(1rem,4vw,2rem)] py-[clamp(1.5rem,5vw,3rem)] container mx-auto">
+  <div class="px-[var(--spacing-card)] py-[var(--spacing-lg)] container mx-auto">
     <!-- Header -->
-    <div class="gap-[clamp(1rem,3vw,1.5rem)] mb-[clamp(2rem,5vw,3rem)] flex flex-col">
-      <h1 class="text-[clamp(2rem,6vw,3rem)] font-bold">
+    <div class="gap-[var(--spacing-md)] mb-[var(--spacing-section)] flex flex-col">
+      <h1 class="text-[var(--font-size-fluid-2xl)] font-bold">
         {gettext("Welcome back")}, {@current_scope.user.display_name ||
           String.split(@current_scope.user.email, "@") |> List.first()}!
       </h1>
 
-      <div class="gap-[clamp(1rem,3vw,1.5rem)] flex flex-wrap">
+      <div class="gap-[var(--spacing-md)] flex flex-wrap">
         <!-- Stats Cards -->
         <div class="stats bg-base-200 shadow">
           <div class="stat">
@@ -43,8 +43,8 @@
 
     <%!-- Recent Activities --%>
     <%= if length(@activities) > 0 do %>
-      <div class="mb-[clamp(2rem,5vw,3rem)]">
-        <h2 class="text-[clamp(1.5rem,4vw,2rem)] mb-[clamp(1rem,3vw,1.5rem)] font-semibold">
+      <div class="mb-[var(--spacing-section)]">
+        <h2 class="text-[var(--font-size-fluid-xl)] mb-[var(--spacing-md)] font-semibold">
           {gettext("Recent Activity")}
         </h2>
         <div class="space-y-2">
@@ -68,13 +68,13 @@
         </div>
       </div>
     <% end %>
-    
+
 <!-- Quick Actions -->
-    <div class="mb-[clamp(2rem,5vw,3rem)]">
-      <h2 class="text-[clamp(1.5rem,4vw,2rem)] mb-[clamp(1rem,3vw,1.5rem)] font-semibold">
+    <div class="mb-[var(--spacing-section)]">
+      <h2 class="text-[var(--font-size-fluid-xl)] mb-[var(--spacing-md)] font-semibold">
         {gettext("Quick Actions")}
       </h2>
-      <div class="gap-[clamp(0.75rem,2vw,1rem)] flex flex-wrap">
+      <div class="gap-[var(--spacing-sm)] flex flex-wrap">
         <.link navigate={~p"/posts/new"} class="btn btn-primary gap-2">
           <.icon name="hero-plus" class="h-5 w-5" /> {gettext("New Post")}
         </.link>
@@ -88,9 +88,9 @@
     </div>
     
 <!-- Recent Posts -->
-    <div class="mb-[clamp(2rem,5vw,3rem)]">
-      <div class="mb-[clamp(1rem,3vw,1.5rem)] flex items-center justify-between">
-        <h2 class="text-[clamp(1.5rem,4vw,2rem)] font-semibold">
+    <div class="mb-[var(--spacing-section)]">
+      <div class="mb-[var(--spacing-md)] flex items-center justify-between">
+        <h2 class="text-[var(--font-size-fluid-xl)] font-semibold">
           {gettext("Recent Posts")}
         </h2>
         <.link navigate={~p"/posts"} class="link link-primary">
@@ -151,8 +151,8 @@
     
 <!-- Recent Tags -->
     <div>
-      <div class="mb-[clamp(1rem,3vw,1.5rem)] flex items-center justify-between">
-        <h2 class="text-[clamp(1.5rem,4vw,2rem)] font-semibold">
+      <div class="mb-[var(--spacing-md)] flex items-center justify-between">
+        <h2 class="text-[var(--font-size-fluid-xl)] font-semibold">
           {gettext("Your Tags")}
         </h2>
         <.link navigate={~p"/tags"} class="link link-primary">
@@ -172,9 +172,8 @@
 
       <div :if={@tag_count > 0} class="flex flex-wrap gap-2">
         <%= for tag <- Enum.take(@tags, 10) do %>
-          <.link navigate={~p"/tags/#{tag}"} class="badge badge-lg badge-primary gap-2">
+          <.link navigate={~p"/tags/#{tag}"} class="badge badge-lg badge-primary px-4 py-3">
             {tag.name}
-            <span class="badge badge-sm">{tag.slug}</span>
           </.link>
         <% end %>
       </div>
