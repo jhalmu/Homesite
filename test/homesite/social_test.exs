@@ -413,8 +413,11 @@ defmodule Homesite.SocialTest do
       scope = Homesite.Accounts.Scope.for_user(user)
       post = post_fixture(scope)
 
-      {:ok, _first} = Social.log_share(%{platform: "twitter", shared_url: "url1", post_id: post.id})
-      {:ok, _second} = Social.log_share(%{platform: "facebook", shared_url: "url2", post_id: post.id})
+      {:ok, _first} =
+        Social.log_share(%{platform: "twitter", shared_url: "url1", post_id: post.id})
+
+      {:ok, _second} =
+        Social.log_share(%{platform: "facebook", shared_url: "url2", post_id: post.id})
 
       shares = Social.list_recent_shares()
 
@@ -431,7 +434,12 @@ defmodule Homesite.SocialTest do
       scope = Homesite.Accounts.Scope.for_user(user)
       post = post_fixture(scope)
 
-      Social.log_share(%{platform: "twitter", shared_url: "url", post_id: post.id, user_id: user.id})
+      Social.log_share(%{
+        platform: "twitter",
+        shared_url: "url",
+        post_id: post.id,
+        user_id: user.id
+      })
 
       shares = Social.list_recent_shares()
 

@@ -47,9 +47,9 @@ defmodule HomesiteWeb.Layouts do
         <div>
           <.pegasus class="h-20 w-20" />
           <p class="font-semibold">
-            homesite <br />
+            Portal of JH <br />
             <span class="text-sm font-normal opacity-70">
-              {gettext("Personal blogging platform")}
+              {gettext("Your personal space on the web")}
             </span>
           </p>
         </div>
@@ -81,7 +81,7 @@ defmodule HomesiteWeb.Layouts do
         </div>
       </div>
       <div class="border-base-300 bg-base-200/50 border-t px-4 py-4 text-center text-sm opacity-70">
-        <p>© {Date.utc_today().year} Homesite. {gettext("Built with ❤️ and Elixir.")}</p>
+        <p>© {Date.utc_today().year} Portal of JH. {gettext("Built with ❤️ and Elixir.")}</p>
       </div>
     </footer>
 
@@ -146,94 +146,98 @@ defmodule HomesiteWeb.Layouts do
 
   def navbar(assigns) do
     ~H"""
-    <div class="navbar from-base-200 to-base-100 border-base-300 px-[clamp(1rem,5vw,4rem)] mt-4 border-b bg-gradient-to-r py-4 shadow-sm">
-      <div class="flex-1">
-        <.link
-          navigate={~p"/"}
-          class="btn btn-ghost text-[clamp(1rem,2.5vw,1.5rem)] gap-[clamp(0.5rem,2vw,1rem)] items-center"
-        >
-          <.pegasus class="h-20 w-20" />
-          <span class="font-display">homesite</span>
-        </.link>
-      </div>
+    <div class="technical-header">
+      <div class="header-content">
+        <div class="flex-1">
+          <.link
+            navigate={~p"/"}
+            class="btn btn-ghost text-[clamp(1rem,2.5vw,1.5rem)] gap-[clamp(0.5rem,2vw,1rem)] items-center"
+          >
+            <.pegasus class="h-20 w-20" />
+            <span class="font-display">Portal of JH</span>
+          </.link>
+        </div>
 
-      <%!-- Mobile menu button --%>
-      <div class="flex-none lg:hidden">
-        <button class="btn btn-square btn-ghost" onclick="mobile_menu.showModal()">
-          <.icon name="hero-bars-3" class="h-6 w-6" />
-        </button>
-      </div>
+        <%!-- Mobile menu button --%>
+        <div class="flex-none lg:hidden">
+          <button class="btn btn-square btn-ghost" onclick="mobile_menu.showModal()">
+            <.icon name="hero-bars-3" class="h-6 w-6" />
+          </button>
+        </div>
 
-      <%!-- Desktop navigation --%>
-      <div class="gap-[clamp(0.5rem,2vw,1rem)] hidden flex-none lg:flex">
-        <ul class="menu menu-horizontal gap-[clamp(0.25rem,1vw,0.5rem)]">
-          <li>
-            <.link navigate={~p"/search"}>
-              <.icon name="hero-magnifying-glass" class="h-5 w-5" />
-              {gettext("Search")}
-            </.link>
-          </li>
-          <%= if @current_scope do %>
+        <%!-- Desktop navigation --%>
+        <div class="gap-[clamp(0.5rem,2vw,1rem)] hidden flex-none lg:flex">
+          <ul class="menu menu-horizontal gap-[clamp(0.25rem,1vw,0.5rem)]">
             <li>
-              <.link navigate={~p"/dashboard"}>{gettext("Dashboard")}</.link>
+              <.link navigate={~p"/search"}>
+                <.icon name="hero-magnifying-glass" class="h-5 w-5" />
+                {gettext("Search")}
+              </.link>
             </li>
-            <li>
-              <.link navigate={~p"/posts"}>{gettext("Posts")}</.link>
-            </li>
-            <li>
-              <.link navigate={~p"/tags"}>{gettext("Tags")}</.link>
-            </li>
-            <li>
-              <.link navigate={~p"/faqs"}>{gettext("FAQs")}</.link>
-            </li>
-            <%= if Homesite.Accounts.Scope.admin?(@current_scope) do %>
+            <%= if @current_scope do %>
               <li>
-                <.link navigate={~p"/admin"}>{gettext("Admin")}</.link>
+                <.link navigate={~p"/dashboard"}>{gettext("Dashboard")}</.link>
+              </li>
+              <li>
+                <.link navigate={~p"/posts"}>{gettext("Posts")}</.link>
+              </li>
+              <li>
+                <.link navigate={~p"/tags"}>{gettext("Tags")}</.link>
+              </li>
+              <li>
+                <.link navigate={~p"/faqs"}>{gettext("FAQs")}</.link>
+              </li>
+              <%= if Homesite.Accounts.Scope.admin?(@current_scope) do %>
+                <li>
+                  <.link navigate={~p"/admin"}>{gettext("Admin")}</.link>
+                </li>
+              <% end %>
+              <li>
+                <details>
+                  <summary class="flex items-center gap-2">
+                    <.avatar user={@current_scope.user} class="h-8 w-8" />
+                    <span>{@current_scope.user.display_name || @current_scope.user.email}</span>
+                  </summary>
+                  <ul class="bg-base-100 z-50 rounded-t-none p-2">
+                    <li>
+                      <.link navigate={~p"/users/settings"}>
+                        <.icon name="hero-cog-6-tooth" class="h-4 w-4" /> {gettext("Settings")}
+                      </.link>
+                    </li>
+                    <li>
+                      <.link href={~p"/users/log-out"} method="delete">
+                        <.icon name="hero-arrow-right-on-rectangle" class="h-4 w-4" /> {gettext(
+                          "Log out"
+                        )}
+                      </.link>
+                    </li>
+                  </ul>
+                </details>
+              </li>
+            <% else %>
+              <li>
+                <.link navigate={~p"/faqs"}>{gettext("FAQs")}</.link>
+              </li>
+              <%!-- Registration disabled for testing phase --%>
+              <%!-- <li>
+              <.link navigate={~p"/users/register"}>{gettext("Register")}</.link>
+            </li> --%>
+              <li>
+                <.link navigate={~p"/users/log-in"} class="btn btn-primary">
+                  {gettext("Log in")}
+                </.link>
+              </li>
+            <% end %>
+            <%= if !@current_scope do %>
+              <li>
+                <.language_toggle />
               </li>
             <% end %>
             <li>
-              <details>
-                <summary class="flex items-center gap-2">
-                  <.avatar user={@current_scope.user} class="h-8 w-8" />
-                  <span>{@current_scope.user.display_name || @current_scope.user.email}</span>
-                </summary>
-                <ul class="bg-base-100 z-50 rounded-t-none p-2">
-                  <li>
-                    <.link navigate={~p"/users/settings"}>
-                      <.icon name="hero-cog-6-tooth" class="h-4 w-4" /> {gettext("Settings")}
-                    </.link>
-                  </li>
-                  <li>
-                    <.link href={~p"/users/log-out"} method="delete">
-                      <.icon name="hero-arrow-right-on-rectangle" class="h-4 w-4" /> {gettext(
-                        "Log out"
-                      )}
-                    </.link>
-                  </li>
-                </ul>
-              </details>
+              <.theme_toggle />
             </li>
-          <% else %>
-            <li>
-              <.link navigate={~p"/faqs"}>{gettext("FAQs")}</.link>
-            </li>
-            <%!-- Registration disabled for testing phase --%>
-            <%!-- <li>
-              <.link navigate={~p"/users/register"}>{gettext("Register")}</.link>
-            </li> --%>
-            <li>
-              <.link navigate={~p"/users/log-in"} class="btn btn-primary">{gettext("Log in")}</.link>
-            </li>
-          <% end %>
-          <%= if !@current_scope do %>
-            <li>
-              <.language_toggle />
-            </li>
-          <% end %>
-          <li>
-            <.theme_toggle />
-          </li>
-        </ul>
+          </ul>
+        </div>
       </div>
     </div>
 

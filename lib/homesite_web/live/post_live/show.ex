@@ -26,6 +26,10 @@ defmodule HomesiteWeb.PostLive.Show do
 
       <div class="my-[clamp(1rem,3vw,2rem)]">
         <.author_byline user={@post.user} date={@post.published_at} />
+        <div class="mt-2 flex items-center gap-2 text-sm opacity-70">
+          <.icon name="hero-clock" class="h-4 w-4" />
+          <span>{@post.read_time_minutes} min read</span>
+        </div>
       </div>
 
       <%= if @post.tags && length(@post.tags) > 0 do %>

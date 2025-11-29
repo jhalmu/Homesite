@@ -8,7 +8,7 @@
 </div>
 
 <div class="mt-8">
-  <form id="search-form" phx-submit="search" class="mb-8 mx-auto max-w-3xl">
+  <form id="search-form" phx-submit="search" class="mx-auto mb-8 max-w-3xl">
     <div class="flex gap-2">
       <input
         type="text"
@@ -52,8 +52,8 @@
       <%!-- Posts Section --%>
       <%= if not Enum.empty?(@posts) do %>
         <section>
-          <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
-            <.icon name="hero-document-text" class="h-6 w-6 text-primary" />
+          <h2 class="mb-4 flex items-center gap-2 text-xl font-semibold">
+            <.icon name="hero-document-text" class="text-primary h-6 w-6" />
             {gettext("Posts")}
             <span class="badge badge-primary">{length(@posts)}</span>
           </h2>
@@ -82,7 +82,10 @@
                   <%= if not Enum.empty?(post.tags) do %>
                     <div class="mt-2 flex flex-wrap gap-2">
                       <%= for tag <- post.tags do %>
-                        <.link navigate={~p"/tags/#{tag.slug}"} class="badge badge-primary badge-sm">
+                        <.link
+                          navigate={~p"/tags/#{tag.slug}"}
+                          class="badge badge-primary badge-sm"
+                        >
                           {tag.name}
                         </.link>
                       <% end %>
@@ -107,8 +110,8 @@
       <%!-- Tags Section --%>
       <%= if not Enum.empty?(@tags) do %>
         <section>
-          <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
-            <.icon name="hero-tag" class="h-6 w-6 text-secondary" />
+          <h2 class="mb-4 flex items-center gap-2 text-xl font-semibold">
+            <.icon name="hero-tag" class="text-secondary h-6 w-6" />
             {gettext("Tags")}
             <span class="badge badge-secondary">{length(@tags)}</span>
           </h2>
@@ -116,7 +119,7 @@
             <%= for tag <- @tags do %>
               <.link
                 navigate={~p"/tags/#{tag.slug}"}
-                class="badge badge-lg badge-secondary gap-2 hover:badge-primary transition-colors"
+                class="badge badge-lg badge-secondary gap-2 transition-colors hover:badge-primary"
               >
                 <.icon name="hero-tag" class="h-4 w-4" />
                 {tag.name}
@@ -128,8 +131,8 @@
       <%!-- FAQs Section --%>
       <%= if not Enum.empty?(@faqs) do %>
         <section>
-          <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
-            <.icon name="hero-question-mark-circle" class="h-6 w-6 text-accent" />
+          <h2 class="mb-4 flex items-center gap-2 text-xl font-semibold">
+            <.icon name="hero-question-mark-circle" class="text-accent h-6 w-6" />
             {gettext("FAQs")}
             <span class="badge badge-accent">{length(@faqs)}</span>
           </h2>
@@ -138,13 +141,13 @@
               <div class="card bg-base-100 shadow-md">
                 <div class="card-body">
                   <h3 class="card-title text-lg">
-                    <.icon name="hero-chat-bubble-left-right" class="h-5 w-5 text-accent" />
+                    <.icon name="hero-chat-bubble-left-right" class="text-accent h-5 w-5" />
                     {faq.question}
                   </h3>
                   <div class="prose prose-sm mt-2">
                     {raw(truncate_html(faq.answer, 200))}
                   </div>
-                  <div class="card-actions mt-4 justify-between items-center">
+                  <div class="card-actions mt-4 items-center justify-between">
                     <span class="badge badge-sm">{String.upcase(faq.category)}</span>
                     <.link navigate={~p"/faqs"} class="btn btn-sm btn-ghost">
                       {gettext("View all FAQs")}

@@ -12,12 +12,12 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
         <:subtitle>System overview and analytics</:subtitle>
       </.header>
 
-      <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <%!-- Search Stats Card --%>
         <div class="card bg-primary text-primary-content">
           <div class="card-body">
             <h3 class="card-title text-sm">Total Searches</h3>
-            <p class="text-3xl font-bold"><%= @search_stats.total_searches || 0 %></p>
+            <p class="text-3xl font-bold">{@search_stats.total_searches || 0}</p>
             <p class="text-xs opacity-75">Last 7 days</p>
           </div>
         </div>
@@ -27,9 +27,9 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
           <div class="card-body">
             <h3 class="card-title text-sm">Avg Search Time</h3>
             <p class="text-3xl font-bold">
-              <%= if @search_stats.avg_duration_ms,
+              {if @search_stats.avg_duration_ms,
                 do: "#{Float.round(@search_stats.avg_duration_ms, 1)}ms",
-                else: "N/A" %>
+                else: "N/A"}
             </p>
             <p class="text-xs opacity-75">Response time</p>
           </div>
@@ -40,9 +40,9 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
           <div class="card-body">
             <h3 class="card-title text-sm">No Results</h3>
             <p class="text-3xl font-bold">
-              <%= if @search_stats.zero_results_pct,
+              {if @search_stats.zero_results_pct,
                 do: "#{@search_stats.zero_results_pct}%",
-                else: "0%" %>
+                else: "0%"}
             </p>
             <p class="text-xs opacity-75">Of searches</p>
           </div>
@@ -53,20 +53,20 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
           <div class="card-body">
             <h3 class="card-title text-sm">Avg Results</h3>
             <p class="text-3xl font-bold">
-              <%= if @search_stats.avg_results, do: Float.round(@search_stats.avg_results, 1), else: 0 %>
+              {if @search_stats.avg_results, do: Float.round(@search_stats.avg_results, 1), else: 0}
             </p>
             <p class="text-xs opacity-75">Per search</p>
           </div>
         </div>
       </div>
 
-      <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
         <%!-- Popular Searches --%>
         <div class="card bg-base-200">
           <div class="card-body">
             <h3 class="card-title">Popular Searches</h3>
             <div class="overflow-x-auto">
-              <table class="table table-sm">
+              <table class="table-sm table">
                 <thead>
                   <tr>
                     <th>Query</th>
@@ -77,10 +77,10 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
                 <tbody>
                   <%= for search <- @popular_searches do %>
                     <tr>
-                      <td class="font-mono text-sm"><%= search.query %></td>
-                      <td class="text-right"><%= search.count %></td>
+                      <td class="font-mono text-sm">{search.query}</td>
+                      <td class="text-right">{search.count}</td>
                       <td class="text-right">
-                        <%= if search.avg_results, do: Float.round(search.avg_results, 1), else: 0 %>
+                        {if search.avg_results, do: Float.round(search.avg_results, 1), else: 0}
                       </td>
                     </tr>
                   <% end %>
@@ -94,9 +94,9 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
         <div class="card bg-base-200">
           <div class="card-body">
             <h3 class="card-title">Searches With No Results</h3>
-            <p class="text-sm text-base-content/60 mb-4">Content gaps to address</p>
+            <p class="text-base-content/60 mb-4 text-sm">Content gaps to address</p>
             <div class="overflow-x-auto">
-              <table class="table table-sm">
+              <table class="table-sm table">
                 <thead>
                   <tr>
                     <th>Query</th>
@@ -106,8 +106,8 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
                 <tbody>
                   <%= for search <- @no_result_searches do %>
                     <tr>
-                      <td class="font-mono text-sm"><%= search.query %></td>
-                      <td class="text-right"><%= search.count %></td>
+                      <td class="font-mono text-sm">{search.query}</td>
+                      <td class="text-right">{search.count}</td>
                     </tr>
                   <% end %>
                 </tbody>
@@ -123,7 +123,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
           <div class="card-body">
             <h3 class="card-title">Recent Activity</h3>
             <div class="overflow-x-auto">
-              <table class="table table-sm">
+              <table class="table-sm table">
                 <thead>
                   <tr>
                     <th>Time</th>
@@ -136,16 +136,16 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
                   <%= for log <- @activity_logs do %>
                     <tr>
                       <td class="text-xs">
-                        <%= Calendar.strftime(log.inserted_at, "%Y-%m-%d %H:%M") %>
+                        {Calendar.strftime(log.inserted_at, "%Y-%m-%d %H:%M")}
                       </td>
-                      <td><%= log.user && log.user.email || "Unknown" %></td>
+                      <td>{(log.user && log.user.email) || "Unknown"}</td>
                       <td>
-                        <span class="badge badge-sm"><%= log.action %></span>
+                        <span class="badge badge-sm">{log.action}</span>
                       </td>
                       <td>
-                        <%= log.resource_type %> <%= if log.resource_id,
+                        {log.resource_type} {if log.resource_id,
                           do: "##{log.resource_id}",
-                          else: "" %>
+                          else: ""}
                       </td>
                     </tr>
                   <% end %>

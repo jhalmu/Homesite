@@ -12,6 +12,7 @@ defmodule Homesite.Content.Post do
     field :slug, :string
     field :published_at, :utc_datetime
     field :is_public, :boolean, default: true
+    field :read_time_minutes, :integer, default: 1
     # field :user_id, :id
 
     belongs_to :user, Homesite.Accounts.User
@@ -31,6 +32,7 @@ defmodule Homesite.Content.Post do
     |> validate_length(:title, min: 3, max: 200)
     |> validate_length(:body, min: 10)
     |> generate_slug()
+    |> calculate_read_time()
     |> validate_required([:slug])
     |> unique_constraint(:slug)
     |> foreign_key_constraint(:user_id)
@@ -107,5 +109,48 @@ defmodule Homesite.Content.Post do
     |> String.replace(~r/\p{Mn}+/u, "")
     # Remove any remaining non-ASCII characters
     |> String.replace(~r/[^\x00-\x7F]+/, "")
+  end
+
+  # Calculate reading time based on body content
+  # Uses standard 200 words per minute reading speed
+  # Minimum 1 minute to avoid showing "0 min read"
+  defp calculate_read_time(changeset) do
+    case get_change(changeset, :body) do
+      nil ->
+        changeset
+
+      body ->
+        text = strip_markdown(body)
+        word_count = text |> String.split(~r/\s+/) |> Enum.reject(&(&1 == "")) |> length()
+        read_time = max(1, ceil(word_count / 200))
+        put_change(changeset, :read_time_minutes, read_time)
+    end
+  end
+
+  # Strip markdown formatting to count actual words
+  # Removes: headers, links, images, code blocks, emphasis, lists
+  defp strip_markdown(markdown) do
+    markdown
+    # Remove code blocks
+    |> String.replace(~r/```[\s\S]*?```/m, "")
+    |> String.replace(~r/`[^`]+`/, "")
+    # Remove images
+    |> String.replace(~r/!\[([^\]]*)\]\([^\)]+\)/, "\\1")
+    # Remove links (keep text)
+    |> String.replace(~r/\[([^\]]+)\]\([^\)]+\)/, "\\1")
+    # Remove headers
+    |> String.replace(~r/^[#]{1,6}\s+/m, "")
+    # Remove emphasis
+    |> String.replace(~r/\*\*([^\*]+)\*\*/, "\\1")
+    |> String.replace(~r/__([^_]+)__/, "\\1")
+    |> String.replace(~r/\*([^\*]+)\*/, "\\1")
+    |> String.replace(~r/_([^_]+)_/, "\\1")
+    # Remove list markers
+    |> String.replace(~r/^[\*\-\+]\s+/m, "")
+    |> String.replace(~r/^\d+\.\s+/m, "")
+    # Remove blockquotes
+    |> String.replace(~r/^>\s+/m, "")
+    # Remove horizontal rules
+    |> String.replace(~r/^[\*\-_]{3,}$/m, "")
   end
 end

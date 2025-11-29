@@ -215,7 +215,9 @@ defmodule Homesite.FeedCache do
 
   defp cleanup_expired_entries do
     now = System.monotonic_time(:millisecond)
-    expired_count = :ets.select_delete(@table_name, [{{:_, :_, :"$1"}, [{:<, :"$1", now}], [true]}])
+
+    expired_count =
+      :ets.select_delete(@table_name, [{{:_, :_, :"$1"}, [{:<, :"$1", now}], [true]}])
 
     if expired_count > 0 do
       Logger.info("FeedCache: Cleaned up #{expired_count} expired entries")

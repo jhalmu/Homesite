@@ -73,7 +73,9 @@ defmodule Homesite.SearchTest do
       assert Enum.any?(results.faqs, &(&1.id == faq.id))
 
       # Total count should be sum of all results
-      assert results.total_count == length(results.posts) + length(results.tags) + length(results.faqs)
+      assert results.total_count ==
+               length(results.posts) + length(results.tags) + length(results.faqs)
+
       assert results.total_count >= 3
     end
 

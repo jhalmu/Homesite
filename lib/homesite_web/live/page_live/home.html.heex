@@ -1,100 +1,110 @@
 <Layouts.app flash={@flash} current_scope={@current_scope}>
-  <div class="px-[clamp(1rem,4vw,2rem)] py-[clamp(1.5rem,5vw,3rem)] container mx-auto">
-    <!-- Hero Section -->
-    <div class="hero min-h-[clamp(20rem,40vh,30rem)] bg-base-200 rounded-box mb-[clamp(2rem,5vw,3rem)]">
-      <div class="hero-content text-center">
-        <div class="max-w-md">
-          <h1 class="text-[clamp(2.5rem,7vw,4rem)] font-bold">
-            {gettext("Welcome to Homesite")}
-          </h1>
-          <p class="text-[clamp(1rem,3vw,1.25rem)] py-6">
-            {gettext("A personal blogging platform for sharing ideas and stories.")}
-          </p>
-          <%= if @current_scope do %>
-            <.link navigate={~p"/dashboard"} class="btn btn-primary btn-lg gap-2">
-              <.icon name="hero-home" class="h-6 w-6" /> {gettext("Go to Dashboard")}
-            </.link>
-          <% end %>
-        </div>
-      </div>
-    </div>
-    
-<!-- Recent Posts -->
+  <main class="technical-main">
     <div>
-      <h2 class="mb-8 text-center text-3xl font-bold">
-        {gettext("Recent Posts")}
-      </h2>
-
       <div :if={length(@posts) == 0} class="alert alert-info mx-auto max-w-4xl">
         <.icon name="hero-information-circle" class="h-6 w-6" />
         <span>{gettext("No published posts yet. Be the first to share something!")}</span>
       </div>
 
       <%= if length(@posts) > 0 do %>
-        <% {featured_posts, rest_posts} = Enum.split(@posts, 3) %>
+        <% [latest_post | rest_posts] = @posts %>
+        <% {next_three, older_posts} = Enum.split(rest_posts, 3) %>
         
-<!-- Featured Posts (Newest 3) -->
-        <div
-          :if={length(featured_posts) > 0}
-          class="mb-16 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
-        >
-          <%= for post <- featured_posts do %>
-            <.link navigate={~p"/posts/#{post.id}"} class="group">
-              <article class="card bg-base-200 h-full shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl">
-                <div class="card-body">
-                  <h3 class="card-title text-xl transition-colors group-hover:text-primary">
-                    {post.title}
-                  </h3>
+<!-- Latest Post (Featured) -->
+        <article class="post-card">
+          <div class="post-meta mb-4">
+            <time datetime={latest_post.published_at}>
+              {Calendar.strftime(latest_post.published_at, "%Y-%m-%d")}
+            </time>
+            <span>•</span>
+            <%= if latest_post.tags && length(latest_post.tags) > 0 do %>
+              <%= for tag <- Enum.take(latest_post.tags, 2) do %>
+                <span class="tag-technical">{tag.name}</span>
+              <% end %>
+            <% end %>
+          </div>
 
-                  <.author_byline user={post.user} date={post.published_at} class="mb-3" />
+          <.link navigate={~p"/posts/#{latest_post.id}"} class="group">
+            <h2 class="post-title transition-colors group-hover:text-primary">
+              {latest_post.title}
+            </h2>
+          </.link>
 
-                  <p :if={post.body} class="line-clamp-3 text-sm opacity-80">
-                    {markdown_preview(post.body, 150)}
-                  </p>
+          <p :if={latest_post.body} class="post-excerpt">
+            {markdown_preview(latest_post.body, 200)}
+          </p>
 
-                  <div class="card-actions mt-4 justify-end">
-                    <span class="text-primary text-sm opacity-0 transition-opacity group-hover:opacity-100">
-                      {gettext("Read more")} →
-                    </span>
-                  </div>
-                </div>
-              </article>
-            </.link>
+          <div class="post-footer">
+            <span>{latest_post.read_time_minutes} min {gettext("read time")}</span>
+            <span>•</span>
+            <span>{latest_post.user.display_name || latest_post.user.email}</span>
+          </div>
+        </article>
+        
+<!-- Next 3 Posts in Grid -->
+        <div :if={length(next_three) > 0} class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+          <%= for post <- next_three do %>
+            <article class="post-card">
+              <div class="post-meta mb-3">
+                <time datetime={post.published_at}>
+                  {Calendar.strftime(post.published_at, "%Y-%m-%d")}
+                </time>
+              </div>
+
+              <.link navigate={~p"/posts/#{post.id}"} class="group">
+                <h3 class="post-title text-lg transition-colors group-hover:text-primary">
+                  {post.title}
+                </h3>
+              </.link>
+
+              <p :if={post.body} class="post-excerpt text-sm">
+                {markdown_preview(post.body, 100)}
+              </p>
+
+              <div class="post-footer text-xs">
+                <span>{post.read_time_minutes} min</span>
+              </div>
+            </article>
           <% end %>
         </div>
         
 <!-- Older Posts (List View) -->
-        <div :if={length(rest_posts) > 0} class="mx-auto max-w-4xl">
-          <h3 class="mb-6 text-center text-2xl font-bold">
-            {gettext("More Posts")}
-          </h3>
+        <div :if={length(older_posts) > 0} class="mt-12 space-y-6">
+          <div class="space-y-6">
+            <%= for post <- older_posts do %>
+              <article class="post-card">
+                <div class="post-meta mb-4">
+                  <time datetime={post.published_at}>
+                    {Calendar.strftime(post.published_at, "%Y-%m-%d")}
+                  </time>
+                  <span>•</span>
+                  <%= if post.tags && length(post.tags) > 0 do %>
+                    <%= for tag <- Enum.take(post.tags, 2) do %>
+                      <span class="tag-technical">{tag.name}</span>
+                    <% end %>
+                  <% end %>
+                </div>
 
-          <div class="space-y-8">
-            <%= for post <- rest_posts do %>
-              <article class="border-base-300 border-b pb-8 last:border-b-0">
-                <.link navigate={~p"/posts/#{post.id}"} class="group block">
-                  <h4 class="mb-2 text-2xl font-bold transition-colors group-hover:text-primary">
+                <.link navigate={~p"/posts/#{post.id}"} class="group">
+                  <h2 class="post-title transition-colors group-hover:text-primary">
                     {post.title}
-                  </h4>
+                  </h2>
                 </.link>
 
-                <.author_byline user={post.user} date={post.published_at} class="mb-4" />
-
-                <p :if={post.body} class="text-base-content/80 mb-4 leading-relaxed">
-                  {markdown_preview(post.body, 300)}
+                <p :if={post.body} class="post-excerpt">
+                  {markdown_preview(post.body, 200)}
                 </p>
 
-                <.link
-                  navigate={~p"/posts/#{post.id}"}
-                  class="text-primary inline-flex items-center gap-2 transition-colors hover:text-primary-focus"
-                >
-                  {gettext("Read more")} <.icon name="hero-arrow-right" class="h-4 w-4" />
-                </.link>
+                <div class="post-footer">
+                  <span>{post.read_time_minutes} min {gettext("read time")}</span>
+                  <span>•</span>
+                  <span>{post.user.display_name || post.user.email}</span>
+                </div>
               </article>
             <% end %>
           </div>
         </div>
       <% end %>
     </div>
-  </div>
+  </main>
 </Layouts.app>

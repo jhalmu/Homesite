@@ -2659,3 +2659,164 @@ ExternalFeeds.schedule_individual_refreshes()
 - Consider using separate pages instead of modal for simplicity
 - Timeline view is key feature for user value
 
+
+---
+
+## 2025-11-29 23:29:00 - Portal of JH Redesign: Design-e-Technical Implementation ✅
+
+### Session: GitHub-Inspired Technical Design with Read-Time Feature
+
+#### Completed ✅
+
+**Phase 1A: Design-e-Technical Colors & Branding**
+- ✅ Applied exact hex colors from design-e-technical.html as CSS custom properties
+- ✅ Dark theme: #0d1117 (bg), #161b22 (surface), #30363d (border), #c9d1d9 (text), #FF6B35 (accent)
+- ✅ Light theme: #ffffff (bg), #f6f8fa (surface), #d0d7de (border), #24292f (text), #FD4F00 (accent)
+- ✅ Applied system font stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans'
+- ✅ Applied monospace fonts for technical elements: 'SF Mono', 'Consolas'
+- ✅ Changed branding from "Homesite" to "Portal of JH" (navbar, footer, page titles, feeds)
+- ✅ Updated Finnish translation: "Tervetuloa JH:n Portaaliin"
+- ✅ Styled technical header with sticky positioning and GitHub-style borders
+
+**Phase 1B: Read-Time Calculation Feature**
+- ✅ Created migration `20251129125009_add_read_time_to_posts.exs`
+- ✅ Added `read_time_minutes` field to Post schema (integer, default: 1)
+- ✅ Implemented markdown stripping function (removes code blocks, images, links, headers, emphasis)
+- ✅ Implemented word counting algorithm (200 words/minute, minimum 1 minute)
+- ✅ Created backfill task `mix backfill_read_time` for existing posts
+- ✅ Backfilled 302 existing posts with calculated read times
+- ✅ Updated templates: PostLive.Index, PostLive.Show, homepage
+- ✅ Added translations: "read time" → "lukuaika" (Finnish)
+- ✅ Fixed regex syntax error in header matching pattern
+
+**Homepage Layout Redesign**
+- ✅ Removed welcome hero banner
+- ✅ Implemented magazine layout: 1 featured post + 3-post grid + older posts list
+- ✅ Featured latest post with full metadata (date, tags, excerpt, read time, author)
+- ✅ Next 3 posts in responsive grid (1 col mobile, 3 cols desktop)
+- ✅ Older posts in vertical list view
+- ✅ Applied design-e-technical visual styles (post cards, tags, metadata)
+- ✅ Added `.technical-main` container (max-width 900px, centered)
+
+**Bug Fixes**
+- ✅ Fixed tags not loading on homepage (added `:tags` to preload in `list_all_published_posts`)
+- ✅ Fixed template tag mismatch (changed `</div>` to `</main>`)
+- ✅ Updated homepage test (changed assertion from "Welcome to Homesite" to "Portal of JH")
+
+#### Files Modified (21 files)
+
+**CSS & Design:**
+- `assets/css/app.css` (+230 lines) - Design-e-technical colors, header styling, post cards, technical tags
+- Deleted: `priv/static/images/logo.svg`
+
+**Backend:**
+- `lib/homesite/content.ex` - Added `:tags` to preload
+- `lib/homesite/content/post.ex` (+45 lines) - Read-time calculation, markdown stripping
+- `lib/mix/tasks/backfill_read_time.ex` (new) - Backfill task for existing posts
+- `priv/repo/migrations/20251129125009_add_read_time_to_posts.exs` (new) - Database migration
+
+**Templates & Components:**
+- `lib/homesite_web/components/layouts.ex` - Branding changes, technical header class
+- `lib/homesite_web/components/layouts/root.html.heex` - Page titles, feed titles
+- `lib/homesite_web/components/core_components.ex` - Minor updates
+- `lib/homesite_web/live/page_live/home.html.heex` - New magazine layout
+- `lib/homesite_web/live/post_live/index.ex` - Read-time display
+- `lib/homesite_web/live/post_live/show.ex` - Read-time display
+- `lib/homesite_web/live/search_live/index.html.heex` - Minor updates
+- `lib/homesite_web/live/admin_live/analytics/index.html.heex` - Minor updates
+- `lib/homesite_web/live/admin_live/dashboard.ex` - Minor updates
+
+**Translations:**
+- `priv/gettext/default.pot` - Updated message catalog
+- `priv/gettext/en/LC_MESSAGES/default.po` - English translations
+- `priv/gettext/fi/LC_MESSAGES/default.po` - Finnish translations ("lukuaika", "min", "Tervetuloa JH:n Portaaliin")
+
+**Feeds:**
+- `lib/homesite/feed_cache.ex` - Minor updates
+- `lib/homesite_web/controllers/feed_controller.ex` (+54 lines) - Branding updates
+
+**Tests:**
+- `test/homesite_web/controllers/page_controller_test.exs` - Updated homepage assertion
+- `test/homesite/search_test.exs` - Minor updates
+- `test/homesite/social_test.exs` - Minor updates
+
+#### Test Results
+- **456 tests, 0 failures**
+- All tests passing after homepage test fix
+- Pre-existing warnings only (no new issues)
+
+#### Technical Implementation Details
+
+**Read-Time Calculation Algorithm:**
+```elixir
+# Strip markdown syntax
+text = strip_markdown(body)
+
+# Count words (split on whitespace, reject empty)
+word_count = text |> String.split(~r/\s+/) |> Enum.reject(&(&1 == "")) |> length()
+
+# Calculate read time (200 words/min, minimum 1 min)
+read_time = max(1, ceil(word_count / 200))
+```
+
+**Markdown Stripping (Handles):**
+- Code blocks (` ```...``` ` and inline `` `code` ``)
+- Images (`![alt](url)`)
+- Links (`[text](url)`)
+- Headers (`# ## ###`)
+- Emphasis (`**bold**`, `*italic*`, `__bold__`, `_italic_`)
+- List markers (`* - +`, `1. 2. 3.`)
+- Blockquotes (`> text`)
+- Horizontal rules (`---`)
+
+**CSS Custom Properties (Design-e-Technical):**
+```css
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --border: #30363d;
+  --text: #c9d1d9;
+  --text-secondary: #8b949e;
+  --accent: #FF6B35;
+}
+
+:root[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --border: #d0d7de;
+  --text: #24292f;
+  --text-secondary: #57606a;
+  --accent: #FD4F00;
+}
+```
+
+#### Next Steps (Pending)
+
+**Phase 1C: Create Demo Pages**
+- Create `/priv/static/demo/` directory
+- Create `portal-dashboard.html` (Portal landing page)
+- Create `juhahalmu-preview.html` (personal website example)
+- Create `index.html` (navigation between demos)
+
+**Phase 1D: Add Username Routing Foundation**
+- Create migration for unique display_name constraint
+- Update User schema with username_slug helper
+- Add reserved username validation
+- Add get_user_by_username function
+
+#### Session Notes
+
+This session focused on implementing the exact design from design-e-technical.html, which required precision in color matching and visual styling. Key challenges included:
+
+1. **Color Accuracy**: Initially used oklch() conversions, but user emphasized need for exact hex values. Resolved by creating CSS custom properties with exact colors.
+
+2. **Association Preloading**: Homepage crashed when trying to access `post.tags` because association wasn't loaded. Fixed by adding `:tags` to preload in query.
+
+3. **Read-Time Precision**: Implemented comprehensive markdown stripping to ensure accurate word counts. Fixed regex syntax error with header matching.
+
+4. **Template Structure**: Fixed tag mismatch (missing `</main>` closing tag) and updated test expectations for new homepage layout.
+
+The result is a clean, GitHub-inspired technical blog design with functional read-time calculations and a magazine-style homepage layout.
+
+**Time Investment**: ~2 hours (design implementation, read-time feature, testing, bug fixes)
+

@@ -52,6 +52,10 @@ defmodule HomesiteWeb.PostLive.Index do
                           {Calendar.strftime(post.published_at, "%B %d, %Y")}
                         </time>
                       </div>
+                      <div class="opacity-70">
+                        <.icon name="hero-clock" class="inline h-4 w-4" />
+                        {post.read_time_minutes} {gettext("min read")}
+                      </div>
                     <% else %>
                       <div class="badge badge-warning gap-2">
                         <.icon name="hero-pencil" class="h-3 w-3" />

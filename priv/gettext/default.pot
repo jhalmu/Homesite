@@ -69,11 +69,6 @@ msgstr ""
 msgid "Menu"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:52
-#, elixir-autogen, elixir-format
-msgid "Personal blogging platform"
-msgstr ""
-
 #: lib/homesite_web/components/layouts.ex:57
 #, elixir-autogen, elixir-format
 msgid "Platform"
@@ -103,7 +98,7 @@ msgstr ""
 #: lib/homesite_web/components/layouts.ex:184
 #: lib/homesite_web/components/layouts.ex:265
 #: lib/homesite_web/live/post_live/form.ex:86
-#: lib/homesite_web/live/search_live/index.html.heex:112
+#: lib/homesite_web/live/search_live/index.html.heex:115
 #, elixir-autogen, elixir-format
 msgid "Tags"
 msgstr ""
@@ -123,7 +118,7 @@ msgstr ""
 msgid "close"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/index.ex:100
+#: lib/homesite_web/live/post_live/index.ex:104
 #: lib/homesite_web/live/tag_live/index.ex:112
 #, elixir-autogen, elixir-format
 msgid "Are you sure?"
@@ -154,7 +149,7 @@ msgid "Edit Post"
 msgstr ""
 
 #: lib/homesite_web/live/post_live/index.ex:14
-#: lib/homesite_web/live/post_live/index.ex:135
+#: lib/homesite_web/live/post_live/index.ex:139
 #, elixir-autogen, elixir-format
 msgid "Listing Posts"
 msgstr ""
@@ -344,7 +339,7 @@ msgid "Display Name"
 msgstr ""
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:132
-#: lib/homesite_web/live/post_live/index.ex:58
+#: lib/homesite_web/live/post_live/index.ex:62
 #: lib/homesite_web/live/tag_live/show.ex:77
 #, elixir-autogen, elixir-format
 msgid "Draft"
@@ -483,7 +478,7 @@ msgstr ""
 msgid "Preferred Language"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/index.ex:70
+#: lib/homesite_web/live/post_live/index.ex:74
 #: lib/homesite_web/live/tag_live/index.ex:89
 #: lib/homesite_web/live/tag_live/show.ex:30
 #, elixir-autogen, elixir-format
@@ -495,7 +490,7 @@ msgstr ""
 msgid "Profile updated successfully."
 msgstr ""
 
-#: lib/homesite_web/live/post_live/index.ex:65
+#: lib/homesite_web/live/post_live/index.ex:69
 #: lib/homesite_web/live/tag_live/index.ex:84
 #: lib/homesite_web/live/tag_live/show.ex:28
 #, elixir-autogen, elixir-format
@@ -743,26 +738,14 @@ msgstr ""
 msgid "Language"
 msgstr ""
 
-#: lib/homesite_web/live/page_live/home.html.heex:69
-#, elixir-autogen, elixir-format
-msgid "More Posts"
-msgstr ""
-
 #: lib/homesite_web/live/page_live/home.html.heex:30
 #, elixir-autogen, elixir-format
 msgid "No published posts yet. Be the first to share something!"
 msgstr ""
 
-#: lib/homesite_web/live/page_live/home.html.heex:57
-#: lib/homesite_web/live/page_live/home.html.heex:91
-#: lib/homesite_web/live/search_live/index.html.heex:98
+#: lib/homesite_web/live/search_live/index.html.heex:101
 #, elixir-autogen, elixir-format
 msgid "Read more"
-msgstr ""
-
-#: lib/homesite_web/live/page_live/home.html.heex:8
-#, elixir-autogen, elixir-format
-msgid "Welcome to Homesite"
 msgstr ""
 
 #: lib/homesite_web/live/user_live/settings.ex:188
@@ -842,7 +825,7 @@ msgstr ""
 msgid "Subscribe"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/index.ex:116
+#: lib/homesite_web/live/post_live/index.ex:120
 #, elixir-autogen, elixir-format
 msgid "No posts yet. Create your first post to get started!"
 msgstr ""
@@ -1051,7 +1034,7 @@ msgstr ""
 #: lib/homesite_web/components/layouts.ex:270
 #: lib/homesite_web/components/layouts.ex:308
 #: lib/homesite_web/live/faq_live/index.ex:152
-#: lib/homesite_web/live/search_live/index.html.heex:133
+#: lib/homesite_web/live/search_live/index.html.heex:136
 #, elixir-autogen, elixir-format
 msgid "FAQs"
 msgstr ""
@@ -1170,7 +1153,7 @@ msgstr[1] ""
 msgid "Analytics"
 msgstr ""
 
-#: lib/homesite_web/live/search_live/index.html.heex:168
+#: lib/homesite_web/live/search_live/index.html.heex:171
 #, elixir-autogen, elixir-format
 msgid "Enter keywords to search through blog posts"
 msgstr ""
@@ -1192,12 +1175,12 @@ msgstr ""
 msgid "Search by title or content..."
 msgstr ""
 
-#: lib/homesite_web/live/search_live/index.html.heex:165
+#: lib/homesite_web/live/search_live/index.html.heex:168
 #, elixir-autogen, elixir-format
 msgid "Start searching"
 msgstr ""
 
-#: lib/homesite_web/live/search_live/index.html.heex:150
+#: lib/homesite_web/live/search_live/index.html.heex:153
 #, elixir-autogen, elixir-format
 msgid "View all FAQs"
 msgstr ""
@@ -1205,4 +1188,25 @@ msgstr ""
 #: lib/homesite_web/live/search_live/index.html.heex:44
 #, elixir-autogen, elixir-format
 msgid "for"
+msgstr ""
+
+#: lib/homesite_web/components/layouts.ex:52
+#, elixir-autogen, elixir-format
+msgid "Your personal space on the web"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/index.ex:57
+#, elixir-autogen, elixir-format
+msgid "min read"
+msgstr ""
+
+#: lib/homesite_web/live/page_live/home.html.heex:8
+#, elixir-autogen, elixir-format
+msgid "Welcome to Portal of JH"
+msgstr ""
+
+#: lib/homesite_web/live/page_live/home.html.heex:66
+#: lib/homesite_web/live/page_live/home.html.heex:102
+#, elixir-autogen, elixir-format
+msgid "read time"
 msgstr ""

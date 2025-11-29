@@ -747,14 +747,14 @@ defmodule HomesiteWeb.CoreComponents do
 
   def stat_card(assigns) do
     ~H"""
-    <div class="card bg-base-100 shadow-sm border border-base-300">
+    <div class="card bg-base-100 border-base-300 border shadow-sm">
       <div class="card-body">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm text-base-content/60"><%= @title %></p>
-            <p class="text-3xl font-bold mt-1"><%= @value %></p>
+            <p class="text-base-content/60 text-sm">{@title}</p>
+            <p class="mt-1 text-3xl font-bold">{@value}</p>
           </div>
-          <div class={"rounded-full p-3 #{@color}"}>
+          <div class={"#{@color} rounded-full p-3"}>
             <.icon name={@icon} class="h-6 w-6" />
           </div>
         </div>

@@ -134,13 +134,34 @@ defmodule HomesiteWeb.FeedController do
 
         case format do
           :rss ->
-            generate_rss_feed(posts, title, description, link, url(~p"/users/#{user_id}/rss.xml"), full_content)
+            generate_rss_feed(
+              posts,
+              title,
+              description,
+              link,
+              url(~p"/users/#{user_id}/rss.xml"),
+              full_content
+            )
 
           :json ->
-            generate_json_feed(posts, title, description, link, url(~p"/users/#{user_id}/feed.json"), full_content)
+            generate_json_feed(
+              posts,
+              title,
+              description,
+              link,
+              url(~p"/users/#{user_id}/feed.json"),
+              full_content
+            )
 
           :atom ->
-            generate_atom_feed(posts, title, description, link, url(~p"/users/#{user_id}/feed.xml"), full_content)
+            generate_atom_feed(
+              posts,
+              title,
+              description,
+              link,
+              url(~p"/users/#{user_id}/feed.xml"),
+              full_content
+            )
         end
       end)
 
@@ -188,13 +209,34 @@ defmodule HomesiteWeb.FeedController do
 
         case format do
           :rss ->
-            generate_rss_feed(posts, title, description, link, url(~p"/tags/#{slug}/rss.xml"), full_content)
+            generate_rss_feed(
+              posts,
+              title,
+              description,
+              link,
+              url(~p"/tags/#{slug}/rss.xml"),
+              full_content
+            )
 
           :json ->
-            generate_json_feed(posts, title, description, link, url(~p"/tags/#{slug}/feed.json"), full_content)
+            generate_json_feed(
+              posts,
+              title,
+              description,
+              link,
+              url(~p"/tags/#{slug}/feed.json"),
+              full_content
+            )
 
           :atom ->
-            generate_atom_feed(posts, title, description, link, url(~p"/tags/#{slug}/feed.xml"), full_content)
+            generate_atom_feed(
+              posts,
+              title,
+              description,
+              link,
+              url(~p"/tags/#{slug}/feed.xml"),
+              full_content
+            )
         end
       end)
 

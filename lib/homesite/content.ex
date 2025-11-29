@@ -465,7 +465,7 @@ defmodule Homesite.Content do
     from(p in Post,
       where: not is_nil(p.published_at),
       order_by: [desc: p.published_at],
-      preload: [:user],
+      preload: [:user, :tags],
       limit: 20
     )
     |> Repo.all()

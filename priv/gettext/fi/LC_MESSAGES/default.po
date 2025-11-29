@@ -70,11 +70,6 @@ msgstr "Kirjaudu ulos"
 msgid "Menu"
 msgstr "Valikko"
 
-#: lib/homesite_web/components/layouts.ex:52
-#, elixir-autogen, elixir-format
-msgid "Personal blogging platform"
-msgstr "Henkilökohtainen bloggausalusta"
-
 #: lib/homesite_web/components/layouts.ex:57
 #, elixir-autogen, elixir-format
 msgid "Platform"
@@ -104,7 +99,7 @@ msgstr "Jokin meni pieleen!"
 #: lib/homesite_web/components/layouts.ex:184
 #: lib/homesite_web/components/layouts.ex:265
 #: lib/homesite_web/live/post_live/form.ex:86
-#: lib/homesite_web/live/search_live/index.html.heex:112
+#: lib/homesite_web/live/search_live/index.html.heex:115
 #, elixir-autogen, elixir-format
 msgid "Tags"
 msgstr "Tagit"
@@ -124,7 +119,7 @@ msgstr "Internet-yhteyttä ei löydy"
 msgid "close"
 msgstr "sulje"
 
-#: lib/homesite_web/live/post_live/index.ex:100
+#: lib/homesite_web/live/post_live/index.ex:104
 #: lib/homesite_web/live/tag_live/index.ex:112
 #, elixir-autogen, elixir-format
 msgid "Are you sure?"
@@ -155,7 +150,7 @@ msgid "Edit Post"
 msgstr "Muokkaa kirjoitusta"
 
 #: lib/homesite_web/live/post_live/index.ex:14
-#: lib/homesite_web/live/post_live/index.ex:135
+#: lib/homesite_web/live/post_live/index.ex:139
 #, elixir-autogen, elixir-format
 msgid "Listing Posts"
 msgstr "Kirjoitusten listaus"
@@ -345,7 +340,7 @@ msgid "Display Name"
 msgstr "Näyttönimi"
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:132
-#: lib/homesite_web/live/post_live/index.ex:58
+#: lib/homesite_web/live/post_live/index.ex:62
 #: lib/homesite_web/live/tag_live/show.ex:77
 #, elixir-autogen, elixir-format
 msgid "Draft"
@@ -484,7 +479,7 @@ msgstr "Salasana"
 msgid "Preferred Language"
 msgstr "Ensisijainen kieli"
 
-#: lib/homesite_web/live/post_live/index.ex:70
+#: lib/homesite_web/live/post_live/index.ex:74
 #: lib/homesite_web/live/tag_live/index.ex:89
 #: lib/homesite_web/live/tag_live/show.ex:30
 #, elixir-autogen, elixir-format
@@ -496,7 +491,7 @@ msgstr "Yksityinen"
 msgid "Profile updated successfully."
 msgstr "Profiili päivitetty onnistuneesti."
 
-#: lib/homesite_web/live/post_live/index.ex:65
+#: lib/homesite_web/live/post_live/index.ex:69
 #: lib/homesite_web/live/tag_live/index.ex:84
 #: lib/homesite_web/live/tag_live/show.ex:28
 #, elixir-autogen, elixir-format
@@ -744,27 +739,15 @@ msgstr "Siirry kojelaudalle"
 msgid "Language"
 msgstr "Kieli"
 
-#: lib/homesite_web/live/page_live/home.html.heex:69
-#, elixir-autogen, elixir-format
-msgid "More Posts"
-msgstr "Lisää kirjoituksia"
-
 #: lib/homesite_web/live/page_live/home.html.heex:30
 #, elixir-autogen, elixir-format
 msgid "No published posts yet. Be the first to share something!"
 msgstr "Ei vielä julkaistuja kirjoituksia. Ole ensimmäinen jakamassa jotain!"
 
-#: lib/homesite_web/live/page_live/home.html.heex:57
-#: lib/homesite_web/live/page_live/home.html.heex:91
-#: lib/homesite_web/live/search_live/index.html.heex:98
+#: lib/homesite_web/live/search_live/index.html.heex:101
 #, elixir-autogen, elixir-format
 msgid "Read more"
 msgstr "Lue lisää"
-
-#: lib/homesite_web/live/page_live/home.html.heex:8
-#, elixir-autogen, elixir-format
-msgid "Welcome to Homesite"
-msgstr "Tervetuloa Homesitelle"
 
 #: lib/homesite_web/live/user_live/settings.ex:188
 #, elixir-autogen, elixir-format
@@ -843,7 +826,7 @@ msgstr "RSS-syöte"
 msgid "Subscribe"
 msgstr "Tilaa"
 
-#: lib/homesite_web/live/post_live/index.ex:116
+#: lib/homesite_web/live/post_live/index.ex:120
 #, elixir-autogen, elixir-format
 msgid "No posts yet. Create your first post to get started!"
 msgstr "Ei vielä kirjoituksia. Luo ensimmäinen kirjoitus päästäksesi alkuun!"
@@ -1052,7 +1035,7 @@ msgstr "UKK päivitetty onnistuneesti."
 #: lib/homesite_web/components/layouts.ex:270
 #: lib/homesite_web/components/layouts.ex:308
 #: lib/homesite_web/live/faq_live/index.ex:152
-#: lib/homesite_web/live/search_live/index.html.heex:133
+#: lib/homesite_web/live/search_live/index.html.heex:136
 #, elixir-autogen, elixir-format
 msgid "FAQs"
 msgstr "UKK"
@@ -1171,7 +1154,7 @@ msgstr[1] ""
 msgid "Analytics"
 msgstr ""
 
-#: lib/homesite_web/live/search_live/index.html.heex:168
+#: lib/homesite_web/live/search_live/index.html.heex:171
 #, elixir-autogen, elixir-format
 msgid "Enter keywords to search through blog posts"
 msgstr ""
@@ -1193,12 +1176,12 @@ msgstr ""
 msgid "Search by title or content..."
 msgstr ""
 
-#: lib/homesite_web/live/search_live/index.html.heex:165
+#: lib/homesite_web/live/search_live/index.html.heex:168
 #, elixir-autogen, elixir-format
 msgid "Start searching"
 msgstr ""
 
-#: lib/homesite_web/live/search_live/index.html.heex:150
+#: lib/homesite_web/live/search_live/index.html.heex:153
 #, elixir-autogen, elixir-format, fuzzy
 msgid "View all FAQs"
 msgstr "Näytä kaikki"
@@ -1207,3 +1190,24 @@ msgstr "Näytä kaikki"
 #, elixir-autogen, elixir-format
 msgid "for"
 msgstr ""
+
+#: lib/homesite_web/components/layouts.ex:52
+#, elixir-autogen, elixir-format
+msgid "Your personal space on the web"
+msgstr "Henkilökohtainen tilasi verkossa"
+
+#: lib/homesite_web/live/post_live/index.ex:57
+#, elixir-autogen, elixir-format
+msgid "min read"
+msgstr "min"
+
+#: lib/homesite_web/live/page_live/home.html.heex:8
+#, elixir-autogen, elixir-format
+msgid "Welcome to Portal of JH"
+msgstr "Tervetuloa JH:n Portaaliin"
+
+#: lib/homesite_web/live/page_live/home.html.heex:66
+#: lib/homesite_web/live/page_live/home.html.heex:102
+#, elixir-autogen, elixir-format
+msgid "read time"
+msgstr "lukuaika"
