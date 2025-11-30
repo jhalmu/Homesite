@@ -1,5 +1,5 @@
 <Layouts.app flash={@flash} current_scope={@current_scope}>
-  <div class="technical-main">
+  <main class="technical-main">
     <h1 class="sr-only">{gettext("Portal of JH - Blog Homepage")}</h1>
     <div>
       <div :if={length(@posts) == 0} class="alert alert-info mx-auto max-w-4xl">
@@ -10,10 +10,10 @@
       <%= if length(@posts) > 0 do %>
         <% [latest_post | rest_posts] = @posts %>
         <% {next_three, older_posts} = Enum.split(rest_posts, 3) %>
-        
+
 <!-- Latest Post (Featured) -->
         <article class="post-card">
-          <div class="post-meta mb-4">
+          <div class="post-meta mb-[var(--spacing-md)]">
             <time datetime={latest_post.published_at}>
               {Calendar.strftime(latest_post.published_at, "%Y-%m-%d")}
             </time>
@@ -26,7 +26,7 @@
           </div>
 
           <.link navigate={~p"/posts/#{latest_post.id}"} class="group">
-            <h2 class="post-title transition-colors group-hover:text-primary">
+            <h2 class="post-title transition-colors duration-[var(--duration-normal)] group-hover:text-primary">
               {latest_post.title}
             </h2>
           </.link>
@@ -41,40 +41,40 @@
             <span>{latest_post.user.display_name || latest_post.user.email}</span>
           </div>
         </article>
-        
+
 <!-- Next 3 Posts in Grid -->
-        <div :if={length(next_three) > 0} class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div :if={length(next_three) > 0} class="mt-[var(--spacing-md)] grid grid-cols-1 gap-[var(--spacing-md)] md:grid-cols-3">
           <%= for post <- next_three do %>
             <article class="post-card">
-              <div class="post-meta mb-3">
+              <div class="post-meta mb-[var(--spacing-sm)]">
                 <time datetime={post.published_at}>
                   {Calendar.strftime(post.published_at, "%Y-%m-%d")}
                 </time>
               </div>
 
               <.link navigate={~p"/posts/#{post.id}"} class="group">
-                <h3 class="post-title text-lg transition-colors group-hover:text-primary">
+                <h3 class="post-title text-[var(--font-size-fluid-lg)] transition-colors duration-[var(--duration-normal)] group-hover:text-primary">
                   {post.title}
                 </h3>
               </.link>
 
-              <p :if={post.body} class="post-excerpt text-sm">
+              <p :if={post.body} class="post-excerpt text-[var(--text-sm)]">
                 {markdown_preview(post.body, 150)}
               </p>
 
-              <div class="post-footer text-xs">
+              <div class="post-footer text-[var(--text-xs)]">
                 <span>{post.read_time_minutes} min</span>
               </div>
             </article>
           <% end %>
         </div>
-        
+
 <!-- Older Posts (List View) -->
-        <div :if={length(older_posts) > 0} class="mt-12 space-y-6">
-          <div class="space-y-6">
+        <div :if={length(older_posts) > 0} class="mt-[var(--spacing-section)] space-y-[var(--spacing-md)]">
+          <div class="space-y-[var(--spacing-md)]">
             <%= for post <- older_posts do %>
               <article class="post-card">
-                <div class="post-meta mb-4">
+                <div class="post-meta mb-[var(--spacing-md)]">
                   <time datetime={post.published_at}>
                     {Calendar.strftime(post.published_at, "%Y-%m-%d")}
                   </time>
@@ -87,9 +87,9 @@
                 </div>
 
                 <.link navigate={~p"/posts/#{post.id}"} class="group">
-                  <h2 class="post-title transition-colors group-hover:text-primary">
+                  <h3 class="post-title transition-colors duration-[var(--duration-normal)] group-hover:text-primary">
                     {post.title}
-                  </h2>
+                  </h3>
                 </.link>
 
                 <p :if={post.body} class="post-excerpt">
@@ -104,7 +104,7 @@
 
                 <%!-- Share buttons --%>
                 <%= if post.read_time_minutes >= 2 do %>
-                  <div class="mt-4 border-t border-base-300 pt-4">
+                  <div class="border-base-300 mt-[var(--spacing-md)] border-t pt-[var(--spacing-md)]">
                     <.platform_share_buttons url={url(~p"/posts/#{post.id}")} title={post.title} />
                   </div>
                 <% end %>
@@ -114,5 +114,5 @@
         </div>
       <% end %>
     </div>
-  </div>
+  </main>
 </Layouts.app>

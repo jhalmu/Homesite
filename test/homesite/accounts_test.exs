@@ -749,4 +749,177 @@ defmodule Homesite.AccountsTest do
       assert String.match?(code, ~r/^[A-Z0-9]+$/)
     end
   end
+
+  describe "get_user_by_username/1" do
+    test "returns nil if username does not exist" do
+      refute Accounts.get_user_by_username("nonexistent")
+    end
+
+    test "returns the user if the username exists" do
+      user = user_fixture()
+      {:ok, updated_user} = Accounts.update_user_username(user, %{username: "testuser"})
+
+      found_user = Accounts.get_user_by_username("testuser")
+      assert found_user.id == updated_user.id
+      assert found_user.username == "testuser"
+    end
+
+    test "is case-insensitive due to citext" do
+      user = user_fixture()
+      {:ok, _updated_user} = Accounts.update_user_username(user, %{username: "testuser"})
+
+      # All variations should find the user
+      assert Accounts.get_user_by_username("testuser")
+      assert Accounts.get_user_by_username("TestUser")
+      assert Accounts.get_user_by_username("TESTUSER")
+    end
+  end
+
+  describe "get_user_by_identifier/1" do
+    test "returns nil for invalid identifier" do
+      refute Accounts.get_user_by_identifier("invalid")
+      refute Accounts.get_user_by_identifier(nil)
+    end
+
+    test "returns user by ID string" do
+      user = user_fixture()
+      found = Accounts.get_user_by_identifier(Integer.to_string(user.id))
+
+      assert found.id == user.id
+    end
+
+    test "returns user by ID integer" do
+      user = user_fixture()
+      found = Accounts.get_user_by_identifier(user.id)
+
+      assert found.id == user.id
+    end
+
+    test "returns user by @username" do
+      user = user_fixture()
+      {:ok, _updated} = Accounts.update_user_username(user, %{username: "testuser"})
+
+      found = Accounts.get_user_by_identifier("@testuser")
+      assert found.id == user.id
+    end
+
+    test "returns nil for non-existent @username" do
+      refute Accounts.get_user_by_identifier("@nonexistent")
+    end
+
+    test "returns nil for non-existent ID" do
+      refute Accounts.get_user_by_identifier("999999")
+      refute Accounts.get_user_by_identifier(999_999)
+    end
+  end
+
+  describe "update_user_username/2" do
+    test "updates username successfully" do
+      user = user_fixture()
+
+      assert {:ok, updated_user} = Accounts.update_user_username(user, %{username: "newname"})
+      assert updated_user.username == "newname"
+    end
+
+    test "validates username format" do
+      user = user_fixture()
+
+      # Too short
+      assert {:error, changeset} = Accounts.update_user_username(user, %{username: "ab"})
+      assert "should be at least 3 character(s)" in errors_on(changeset).username
+
+      # Too long
+      long_name = String.duplicate("a", 31)
+      assert {:error, changeset} = Accounts.update_user_username(user, %{username: long_name})
+      assert "should be at most 30 character(s)" in errors_on(changeset).username
+
+      # Invalid format - starts with number
+      assert {:error, changeset} = Accounts.update_user_username(user, %{username: "1invalid"})
+
+      assert "must start with letter, lowercase alphanumeric/underscore only" in errors_on(
+               changeset
+             ).username
+
+      # Invalid format - uppercase
+      assert {:error, changeset} = Accounts.update_user_username(user, %{username: "Invalid"})
+
+      assert "must start with letter, lowercase alphanumeric/underscore only" in errors_on(
+               changeset
+             ).username
+
+      # Invalid format - special characters
+      assert {:error, changeset} =
+               Accounts.update_user_username(user, %{username: "invalid-name"})
+
+      assert "must start with letter, lowercase alphanumeric/underscore only" in errors_on(
+               changeset
+             ).username
+    end
+
+    test "validates username uniqueness" do
+      user1 = user_fixture()
+      user2 = user_fixture()
+
+      {:ok, _} = Accounts.update_user_username(user1, %{username: "taken"})
+
+      assert {:error, changeset} = Accounts.update_user_username(user2, %{username: "taken"})
+      assert "has already been taken" in errors_on(changeset).username
+    end
+
+    test "validates reserved usernames" do
+      user = user_fixture()
+
+      assert {:error, changeset} = Accounts.update_user_username(user, %{username: "admin"})
+      assert "is reserved and cannot be used" in errors_on(changeset).username
+
+      assert {:error, changeset} = Accounts.update_user_username(user, %{username: "api"})
+      assert "is reserved and cannot be used" in errors_on(changeset).username
+
+      assert {:error, changeset} = Accounts.update_user_username(user, %{username: "system"})
+      assert "is reserved and cannot be used" in errors_on(changeset).username
+    end
+
+    test "allows clearing username by setting to nil" do
+      user = user_fixture()
+      {:ok, user} = Accounts.update_user_username(user, %{username: "testuser"})
+      assert user.username == "testuser"
+
+      {:ok, updated} = Accounts.update_user_username(user, %{username: nil})
+      assert updated.username == nil
+    end
+
+    test "accepts valid usernames" do
+      user = user_fixture()
+
+      # Valid lowercase letters
+      assert {:ok, _} = Accounts.update_user_username(user, %{username: "abc"})
+
+      # Valid with numbers
+      assert {:ok, _} = Accounts.update_user_username(user, %{username: "user123"})
+
+      # Valid with underscores
+      assert {:ok, _} = Accounts.update_user_username(user, %{username: "user_name"})
+
+      # Valid combination
+      assert {:ok, _} = Accounts.update_user_username(user, %{username: "test_user_123"})
+    end
+  end
+
+  describe "change_user_username/2" do
+    test "returns a user changeset" do
+      user = user_fixture()
+      changeset = Accounts.change_user_username(user, %{})
+
+      assert %Ecto.Changeset{} = changeset
+      assert changeset.data == user
+    end
+
+    test "validates username in changeset" do
+      user = user_fixture()
+      changeset = Accounts.change_user_username(user, %{username: "ab"})
+
+      refute changeset.valid?
+      assert "should be at least 3 character(s)" in errors_on(changeset).username
+    end
+  end
 end

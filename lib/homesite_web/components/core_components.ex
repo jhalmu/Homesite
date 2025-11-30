@@ -359,6 +359,72 @@ defmodule HomesiteWeb.CoreComponents do
   end
 
   @doc """
+  Renders a page header with H1 for top-level page titles.
+
+  Use this component for the main page title (only one per page).
+
+  ## Examples
+
+      <.page_header>
+        Dashboard
+        <:subtitle>Welcome to your dashboard</:subtitle>
+      </.page_header>
+
+  """
+  slot :inner_block, required: true
+  slot :subtitle
+  slot :actions
+
+  def page_header(assigns) do
+    ~H"""
+    <header class={[@actions != [] && "flex items-center justify-between gap-6", "mb-6"]}>
+      <div>
+        <h1 class="text-[var(--font-size-fluid-xl)] font-bold">
+          {render_slot(@inner_block)}
+        </h1>
+        <p :if={@subtitle != []} class="text-base-content/70 text-[var(--font-size-fluid-sm)] mt-2">
+          {render_slot(@subtitle)}
+        </p>
+      </div>
+      <div :if={@actions != []} class="flex-none">{render_slot(@actions)}</div>
+    </header>
+    """
+  end
+
+  @doc """
+  Renders a section header with H2 for major sections within a page.
+
+  Use this component for section titles that subdivide page content.
+
+  ## Examples
+
+      <.section_header>
+        Recent Activity
+        <:subtitle>Your latest posts and updates</:subtitle>
+      </.section_header>
+
+  """
+  slot :inner_block, required: true
+  slot :subtitle
+  slot :actions
+
+  def section_header(assigns) do
+    ~H"""
+    <header class={[@actions != [] && "flex items-center justify-between gap-6", "mb-4"]}>
+      <div>
+        <h2 class="text-[var(--font-size-fluid-lg)] font-semibold">
+          {render_slot(@inner_block)}
+        </h2>
+        <p :if={@subtitle != []} class="text-base-content/70 text-[var(--font-size-fluid-sm)] mt-1">
+          {render_slot(@subtitle)}
+        </p>
+      </div>
+      <div :if={@actions != []} class="flex-none">{render_slot(@actions)}</div>
+    </header>
+    """
+  end
+
+  @doc """
   Renders a table with generic styling.
 
   ## Examples
@@ -814,7 +880,7 @@ defmodule HomesiteWeb.CoreComponents do
       <.icon name={@icon} class="mx-auto h-12 w-12 text-gray-400" />
       <p class="text-secondary mt-4">{@message}</p>
       <%= if @action do %>
-        <p class="text-secondary/70 text-sm mt-2">{@action}</p>
+        <p class="text-secondary/70 mt-2 text-sm">{@action}</p>
       <% end %>
     </div>
     """
@@ -831,7 +897,7 @@ defmodule HomesiteWeb.CoreComponents do
         count={length(@posts)}
       />
 
-      <.section_header
+      <.badge_section_header
         icon="hero-tag"
         title={gettext("Tags")}
         count={5}
@@ -843,7 +909,7 @@ defmodule HomesiteWeb.CoreComponents do
   attr :count, :integer, default: nil
   attr :badge_class, :string, default: "badge-primary"
 
-  def section_header(assigns) do
+  def badge_section_header(assigns) do
     ~H"""
     <h2 class="mb-4 flex items-center gap-2 text-xl font-semibold">
       <.icon name={@icon} class="h-6 w-6" />

@@ -10,9 +10,8 @@ defmodule HomesiteWeb.TagLive.Show do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="px-[var(--spacing-card)] py-[var(--spacing-lg)] container mx-auto">
-        <!-- Header -->
-        <div class="gap-[var(--spacing-md)] mb-[var(--spacing-section)] flex flex-col">
+      <main class="px-[var(--spacing-card)] py-[var(--spacing-lg)] container mx-auto">
+        <header class="gap-[var(--spacing-md)] mb-[var(--spacing-section)] flex flex-col">
           <div class="flex flex-wrap items-center justify-between gap-4">
             <div class="flex items-center gap-4">
               <.link navigate={~p"/tags"} class="btn btn-circle btn-ghost">
@@ -38,16 +37,15 @@ defmodule HomesiteWeb.TagLive.Show do
               </.link>
             <% end %>
           </div>
-        </div>
 
-        <%= if @tag.description && @can_edit do %>
-          <div class="mb-[var(--spacing-section)]">
-            <p class="text-base-content/70">{@tag.description}</p>
-          </div>
-        <% end %>
+          <%= if @tag.description && @can_edit do %>
+            <div>
+              <p class="text-base-content/70">{@tag.description}</p>
+            </div>
+          <% end %>
+        </header>
 
-    <!-- User's Posts with this Tag -->
-        <div class="mb-[var(--spacing-section)]">
+        <section class="mb-[var(--spacing-section)]">
           <h2 class="text-[var(--font-size-fluid-xl)] mb-[var(--spacing-md)] font-semibold">
             {gettext("Your Posts")}
           </h2>
@@ -65,33 +63,32 @@ defmodule HomesiteWeb.TagLive.Show do
                     {post.title}
                   </.link>
                 </h3>
-                  <p :if={post.body} class="line-clamp-2 text-sm">
-                    {String.slice(post.body, 0, 150)}{if String.length(post.body) > 150, do: "..."}
-                  </p>
-                  <div class="card-actions items-center justify-between">
-                    <div class="text-sm text-gray-600 dark:text-gray-400">
-                      <%= if post.published_at do %>
-                        {Calendar.strftime(post.published_at, "%B %d, %Y")}
-                      <% else %>
-                        <span class="badge badge-ghost">{gettext("Draft")}</span>
-                      <% end %>
-                    </div>
-                    <div class="flex gap-2">
-                      <.link navigate={~p"/posts/#{post}"} class="btn btn-sm btn-ghost">
-                        {gettext("View")}
-                      </.link>
-                      <.link navigate={~p"/posts/#{post}/edit"} class="btn btn-sm btn-primary">
-                        {gettext("Edit")}
-                      </.link>
-                    </div>
+                <p :if={post.body} class="line-clamp-2 text-sm">
+                  {String.slice(post.body, 0, 150)}{if String.length(post.body) > 150, do: "..."}
+                </p>
+                <div class="card-actions items-center justify-between">
+                  <div class="text-sm text-gray-600 dark:text-gray-400">
+                    <%= if post.published_at do %>
+                      {Calendar.strftime(post.published_at, "%B %d, %Y")}
+                    <% else %>
+                      <span class="badge badge-ghost">{gettext("Draft")}</span>
+                    <% end %>
                   </div>
+                  <div class="flex gap-2">
+                    <.link navigate={~p"/posts/#{post}"} class="btn btn-sm btn-ghost">
+                      {gettext("View")}
+                    </.link>
+                    <.link navigate={~p"/posts/#{post}/edit"} class="btn btn-sm btn-primary">
+                      {gettext("Edit")}
+                    </.link>
+                  </div>
+                </div>
               </div>
             <% end %>
           </div>
-        </div>
+        </section>
 
-    <!-- Public Posts from Others -->
-        <div :if={length(@public_posts) > 0}>
+        <section :if={length(@public_posts) > 0}>
           <h2 class="text-[var(--font-size-fluid-xl)] mb-[var(--spacing-md)] font-semibold">
             {gettext("Community Posts")}
           </h2>
@@ -106,22 +103,22 @@ defmodule HomesiteWeb.TagLive.Show do
                         {post.title}
                       </.link>
                     </h3>
-                      <.author_byline user={post.user} date={post.published_at} class="mt-2" />
-                    </div>
+                    <.author_byline user={post.user} date={post.published_at} class="mt-2" />
                   </div>
-                  <p :if={post.body} class="line-clamp-2 mt-2 text-sm">
-                    {String.slice(post.body, 0, 150)}{if String.length(post.body) > 150, do: "..."}
-                  </p>
-                  <div class="card-actions justify-end">
-                    <.link navigate={~p"/users/#{post.user.id}"} class="btn btn-sm btn-ghost">
-                      {gettext("View Profile")}
-                    </.link>
-                  </div>
+                </div>
+                <p :if={post.body} class="line-clamp-2 mt-2 text-sm">
+                  {String.slice(post.body, 0, 150)}{if String.length(post.body) > 150, do: "..."}
+                </p>
+                <div class="card-actions justify-end">
+                  <.link navigate={~p"/users/#{post.user.id}"} class="btn btn-sm btn-ghost">
+                    {gettext("View Profile")}
+                  </.link>
+                </div>
               </div>
             <% end %>
           </div>
-        </div>
-      </div>
+        </section>
+      </main>
     </Layouts.app>
     """
   end

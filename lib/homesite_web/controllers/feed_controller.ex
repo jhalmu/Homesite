@@ -15,6 +15,7 @@ defmodule HomesiteWeb.FeedController do
 
   use HomesiteWeb, :controller
 
+  alias Homesite.Accounts
   alias Homesite.Content
   alias Homesite.FeedCache
 
@@ -96,84 +97,90 @@ defmodule HomesiteWeb.FeedController do
   @doc """
   Generates per-user feed of recent public posts.
 
-  GET /users/:id/feed.xml
-  GET /users/:id/rss.xml
-  GET /users/:id/feed.json
+  GET /users/:user_identifier/feed.xml
+  GET /users/:user_identifier/rss.xml
+  GET /users/:user_identifier/feed.json
 
   Query Parameters:
   - page: Page number for pagination (default: 1)
   - full: Include full post content (default: false, uses excerpt)
   """
-  def user(conn, %{"id" => user_id} = params) do
-    format = determine_feed_format(conn.request_path)
-    # Parse user_id to integer for cache key
-    user_id_int = String.to_integer(user_id)
-    page = String.to_integer(params["page"] || "1")
-    full_content = params["full"] == "true"
+  def user(conn, %{"user_identifier" => user_identifier} = params) do
+    # Get user by identifier (ID or @username)
+    user = Accounts.get_user_by_identifier(user_identifier)
 
-    # Calculate offset from page number
-    limit = 20
-    offset = (page - 1) * limit
+    if user == nil do
+      conn
+      |> put_status(:not_found)
+      |> put_resp_content_type("text/plain")
+      |> send_resp(404, "User not found")
+    else
+      format = determine_feed_format(conn.request_path)
+      page = String.to_integer(params["page"] || "1")
+      full_content = params["full"] == "true"
 
-    cache_key = {:user, format, user_id_int, page, full_content}
+      # Calculate offset from page number
+      limit = 20
+      offset = (page - 1) * limit
 
-    feed =
-      FeedCache.fetch(cache_key, fn ->
-        posts = Content.list_user_posts_for_feed(user_id, limit, offset)
+      # Use user.id for cache key consistency (whether accessed via ID or username)
+      cache_key = {:user, format, user.id, page, full_content}
 
-        # Get user display name from first post if available
-        user_name =
-          case posts do
-            [first_post | _] -> first_post.user.display_name || first_post.user.email
-            [] -> "User ##{user_id}"
+      feed =
+        FeedCache.fetch(cache_key, fn ->
+          posts = Content.list_user_posts_for_feed(user.id, limit, offset)
+
+          user_name = user.display_name || user.email
+
+          title = "#{user_name} - Posts"
+          description = "Recent posts by #{user_name}"
+          # Prefer username in URLs if available
+          user_path = if user.username, do: "@#{user.username}", else: user.id
+          link = url(~p"/users/#{user_path}")
+
+          case format do
+            :rss ->
+              generate_rss_feed(
+                posts,
+                title,
+                description,
+                link,
+                url(~p"/users/#{user_path}/rss.xml"),
+                full_content
+              )
+
+            :json ->
+              generate_json_feed(
+                posts,
+                title,
+                description,
+                link,
+                url(~p"/users/#{user_path}/feed.json"),
+                full_content
+              )
+
+            :atom ->
+              generate_atom_feed(
+                posts,
+                title,
+                description,
+                link,
+                url(~p"/users/#{user_path}/feed.xml"),
+                full_content
+              )
           end
+        end)
 
-        title = "#{user_name} - Posts"
-        description = "Recent posts by #{user_name}"
-        link = url(~p"/users/#{user_id}")
+      case format do
+        :rss ->
+          conn |> put_resp_content_type("application/rss+xml") |> send_resp(200, feed)
 
-        case format do
-          :rss ->
-            generate_rss_feed(
-              posts,
-              title,
-              description,
-              link,
-              url(~p"/users/#{user_id}/rss.xml"),
-              full_content
-            )
+        :json ->
+          json(conn, feed)
 
-          :json ->
-            generate_json_feed(
-              posts,
-              title,
-              description,
-              link,
-              url(~p"/users/#{user_id}/feed.json"),
-              full_content
-            )
-
-          :atom ->
-            generate_atom_feed(
-              posts,
-              title,
-              description,
-              link,
-              url(~p"/users/#{user_id}/feed.xml"),
-              full_content
-            )
-        end
-      end)
-
-    case format do
-      :rss ->
-        conn |> put_resp_content_type("application/rss+xml") |> send_resp(200, feed)
-
-      :json ->
-        json(conn, feed)
-
-      :atom ->
-        conn |> put_resp_content_type("application/atom+xml") |> send_resp(200, feed)
+        :atom ->
+          conn |> put_resp_content_type("application/atom+xml") |> send_resp(200, feed)
+      end
     end
   end
 
@@ -312,7 +319,7 @@ defmodule HomesiteWeb.FeedController do
 
     # Build RSS items
     items =
-      Enum.map(posts, fn post ->
+      Enum.map_join(posts, "\n", fn post ->
         pub_date = format_rfc822_date(post.published_at || post.inserted_at)
         post_url = url(~p"/posts/#{post.id}")
         content = if full_content, do: post.body, else: truncate_html(post.body, 500)
@@ -328,7 +335,6 @@ defmodule HomesiteWeb.FeedController do
             </item>
         """
       end)
-      |> Enum.join("\n")
 
     last_build_date = format_rfc822_date(latest_date)
 
@@ -352,6 +358,8 @@ defmodule HomesiteWeb.FeedController do
     items =
       Enum.map(posts, fn post ->
         content = if full_content, do: post.body, else: truncate_html(post.body, 500)
+        # Prefer username in URLs if available
+        user_path = if post.user.username, do: "@#{post.user.username}", else: post.user.id
 
         %{
           id: url(~p"/posts/#{post.id}"),
@@ -362,7 +370,7 @@ defmodule HomesiteWeb.FeedController do
           date_published: DateTime.to_iso8601(post.published_at || post.inserted_at),
           author: %{
             name: post.user.display_name || post.user.email,
-            url: url(~p"/users/#{post.user.id}")
+            url: url(~p"/users/#{user_path}")
           }
         }
       end)

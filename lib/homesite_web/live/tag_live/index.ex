@@ -10,135 +10,137 @@ defmodule HomesiteWeb.TagLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <.header>
-        {gettext("Listing Tags")}
-        <:actions>
-          <.button variant="primary" navigate={~p"/tags/new"}>
-            <.icon name="hero-plus" /> {gettext("New Tag")}
-          </.button>
-        </:actions>
-      </.header>
-      
+      <main>
+        <.header>
+          {gettext("Listing Tags")}
+          <:actions>
+            <.button variant="primary" navigate={~p"/tags/new"}>
+              <.icon name="hero-plus" /> {gettext("New Tag")}
+            </.button>
+          </:actions>
+        </.header>
+        
     <!-- Tabs -->
-      <div role="tablist" class="tabs tabs-boxed mt-6">
-        <button
-          role="tab"
-          class={["tab", @current_tab == "my" && "tab-active"]}
-          phx-click="switch-tab"
-          phx-value-tab="my"
-        >
-          <.icon name="hero-user" class="mr-2 h-4 w-4" />
-          {gettext("My Tags")}
-        </button>
-        <button
-          role="tab"
-          class={["tab", @current_tab == "all" && "tab-active"]}
-          phx-click="switch-tab"
-          phx-value-tab="all"
-        >
-          <.icon name="hero-globe-alt" class="mr-2 h-4 w-4" />
-          {gettext("All Tags")}
-        </button>
-      </div>
-      
-    <!-- Search bar (only in All Tags tab) -->
-      <%= if @current_tab == "all" do %>
-        <div class="mt-4">
-          <.input
-            type="text"
-            name="query"
-            value={@search_query}
-            phx-keyup="search"
-            phx-debounce="300"
-            placeholder={gettext("Search tags...")}
-          />
-        </div>
-      <% end %>
-
-      <div class="mt-8 space-y-4" id="tags" phx-update="stream">
-        <%= for {id, tag} <- @streams.tags do %>
-          <article
-            id={id}
-            class="card bg-base-200 shadow-lg transition-shadow hover:shadow-xl"
+        <div role="tablist" class="tabs tabs-boxed mt-6">
+          <button
+            role="tab"
+            class={["tab", @current_tab == "my" && "tab-active"]}
+            phx-click="switch-tab"
+            phx-value-tab="my"
           >
-            <div class="card-body">
-              <div class="flex items-start justify-between gap-4">
-                <div class="min-w-0 flex-1">
-                  <.link navigate={~p"/tags/#{tag}"} class="group">
-                    <h3 class="card-title mb-2 text-xl transition-colors group-hover:text-primary">
-                      {tag.name}
-                    </h3>
-                  </.link>
+            <.icon name="hero-user" class="mr-2 h-4 w-4" />
+            {gettext("My Tags")}
+          </button>
+          <button
+            role="tab"
+            class={["tab", @current_tab == "all" && "tab-active"]}
+            phx-click="switch-tab"
+            phx-value-tab="all"
+          >
+            <.icon name="hero-globe-alt" class="mr-2 h-4 w-4" />
+            {gettext("All Tags")}
+          </button>
+        </div>
+        
+    <!-- Search bar (only in All Tags tab) -->
+        <%= if @current_tab == "all" do %>
+          <div class="mt-4">
+            <.input
+              type="text"
+              name="query"
+              value={@search_query}
+              phx-keyup="search"
+              phx-debounce="300"
+              placeholder={gettext("Search tags...")}
+            />
+          </div>
+        <% end %>
 
-                  <%= if tag.description && @current_tab == "my" do %>
-                    <p class="line-clamp-2 mb-3 text-sm opacity-70">
-                      {tag.description}
-                    </p>
-                  <% end %>
+        <div class="mt-8 space-y-4" id="tags" phx-update="stream">
+          <%= for {id, tag} <- @streams.tags do %>
+            <article
+              id={id}
+              class="card bg-base-200 shadow-lg transition-shadow hover:shadow-xl"
+            >
+              <div class="card-body">
+                <div class="flex items-start justify-between gap-4">
+                  <div class="min-w-0 flex-1">
+                    <.link navigate={~p"/tags/#{tag}"} class="group">
+                      <h2 class="card-title mb-2 text-xl transition-colors group-hover:text-primary">
+                        {tag.name}
+                      </h2>
+                    </.link>
 
-                  <div class="flex flex-wrap gap-3 text-sm">
-                    <%= if @current_tab == "my" do %>
-                      <%= if tag.is_public do %>
-                        <div class="badge badge-ghost gap-2">
-                          <.icon name="hero-globe-alt" class="h-3 w-3" />
-                          {gettext("Public")}
-                        </div>
+                    <%= if tag.description && @current_tab == "my" do %>
+                      <p class="line-clamp-2 mb-3 text-sm opacity-70">
+                        {tag.description}
+                      </p>
+                    <% end %>
+
+                    <div class="flex flex-wrap gap-3 text-sm">
+                      <%= if @current_tab == "my" do %>
+                        <%= if tag.is_public do %>
+                          <div class="badge badge-ghost gap-2">
+                            <.icon name="hero-globe-alt" class="h-3 w-3" />
+                            {gettext("Public")}
+                          </div>
+                        <% else %>
+                          <div class="badge badge-ghost gap-2">
+                            <.icon name="hero-lock-closed" class="h-3 w-3" />
+                            {gettext("Private")}
+                          </div>
+                        <% end %>
                       <% else %>
-                        <div class="badge badge-ghost gap-2">
-                          <.icon name="hero-lock-closed" class="h-3 w-3" />
-                          {gettext("Private")}
+                        <!-- Show post count in All Tags tab -->
+                        <div class="badge badge-neutral gap-2">
+                          <.icon name="hero-document-text" class="h-3 w-3" />
+                          {tag.post_count} {ngettext("post", "posts", tag.post_count)}
                         </div>
                       <% end %>
-                    <% else %>
-                      <!-- Show post count in All Tags tab -->
-                      <div class="badge badge-neutral gap-2">
-                        <.icon name="hero-document-text" class="h-3 w-3" />
-                        {tag.post_count} {ngettext("post", "posts", tag.post_count)}
-                      </div>
-                    <% end %>
+                    </div>
                   </div>
+
+                  <%= if @current_tab == "my" do %>
+                    <div class="flex flex-shrink-0 gap-2">
+                      <.link navigate={~p"/tags/#{tag}"} class="btn btn-sm btn-ghost">
+                        <.icon name="hero-eye" class="h-4 w-4" />
+                      </.link>
+                      <.link navigate={~p"/tags/#{tag}/edit"} class="btn btn-sm btn-ghost">
+                        <.icon name="hero-pencil-square" class="h-4 w-4" />
+                      </.link>
+                      <.link
+                        phx-click={JS.push("delete", value: %{id: tag.id}) |> hide("##{id}")}
+                        data-confirm={gettext("Are you sure?")}
+                        class="btn btn-sm btn-ghost text-error"
+                      >
+                        <.icon name="hero-trash" class="h-4 w-4" />
+                      </.link>
+                    </div>
+                  <% else %>
+                    <div class="flex flex-shrink-0">
+                      <.link navigate={~p"/tags/#{tag}"} class="btn btn-sm btn-primary">
+                        {gettext("View Posts")}
+                        <.icon name="hero-arrow-right" class="h-4 w-4" />
+                      </.link>
+                    </div>
+                  <% end %>
                 </div>
-
-                <%= if @current_tab == "my" do %>
-                  <div class="flex flex-shrink-0 gap-2">
-                    <.link navigate={~p"/tags/#{tag}"} class="btn btn-sm btn-ghost">
-                      <.icon name="hero-eye" class="h-4 w-4" />
-                    </.link>
-                    <.link navigate={~p"/tags/#{tag}/edit"} class="btn btn-sm btn-ghost">
-                      <.icon name="hero-pencil-square" class="h-4 w-4" />
-                    </.link>
-                    <.link
-                      phx-click={JS.push("delete", value: %{id: tag.id}) |> hide("##{id}")}
-                      data-confirm={gettext("Are you sure?")}
-                      class="btn btn-sm btn-ghost text-error"
-                    >
-                      <.icon name="hero-trash" class="h-4 w-4" />
-                    </.link>
-                  </div>
-                <% else %>
-                  <div class="flex flex-shrink-0">
-                    <.link navigate={~p"/tags/#{tag}"} class="btn btn-sm btn-primary">
-                      {gettext("View Posts")}
-                      <.icon name="hero-arrow-right" class="h-4 w-4" />
-                    </.link>
-                  </div>
-                <% end %>
               </div>
-            </div>
-          </article>
-        <% end %>
-      </div>
-
-      <%= if not @has_tags do %>
-        <div class="alert alert-info mt-8">
-          <.icon name="hero-information-circle" class="h-6 w-6" />
-          <%= if @current_tab == "my" do %>
-            <span>{gettext("No tags yet. Create your first tag to get started!")}</span>
-          <% else %>
-            <span>{gettext("No tags found.")}</span>
+            </article>
           <% end %>
         </div>
-      <% end %>
+
+        <%= if not @has_tags do %>
+          <div class="alert alert-info mt-8">
+            <.icon name="hero-information-circle" class="h-6 w-6" />
+            <%= if @current_tab == "my" do %>
+              <span>{gettext("No tags yet. Create your first tag to get started!")}</span>
+            <% else %>
+              <span>{gettext("No tags found.")}</span>
+            <% end %>
+          </div>
+        <% end %>
+      </main>
     </Layouts.app>
     """
   end

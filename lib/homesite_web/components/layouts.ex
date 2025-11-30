@@ -38,17 +38,19 @@ defmodule HomesiteWeb.Layouts do
 
   def app(assigns) do
     ~H"""
-    <main class="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
-      <div class="mx-auto max-w-7xl space-y-4">{render_slot(@inner_block)}</div>
-    </main>
+    <div class="min-h-screen px-[var(--spacing-card)] py-[var(--spacing-lg)]">
+      <div class="mx-auto max-w-[var(--content-max-width)] space-y-[var(--spacing-md)]">
+        {render_slot(@inner_block)}
+      </div>
+    </div>
 
-    <footer class="from-base-200 to-base-300 border-base-300 mt-16 border-t bg-gradient-to-r">
-      <div class="footer mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <footer class="from-base-200 to-base-300 border-base-300 mt-[var(--spacing-section)] border-t bg-gradient-to-r">
+      <div class="footer mx-auto max-w-[var(--content-max-width)] px-[var(--spacing-card)] py-[var(--spacing-lg)]">
         <div>
           <.pegasus class="h-20 w-20" />
           <p class="font-semibold">
             Portal of JH <br />
-            <span class="text-sm font-normal opacity-70">
+            <span class="text-[var(--text-sm)] font-normal opacity-70">
               {gettext("Your personal space on the web")}
             </span>
           </p>
@@ -64,23 +66,23 @@ defmodule HomesiteWeb.Layouts do
         </div>
         <div>
           <span class="footer-title">{gettext("Built with")}</span>
-          <p class="text-sm opacity-70">Phoenix Framework</p>
-          <p class="text-sm opacity-70">Elixir</p>
-          <p class="text-sm opacity-70">Tailwind CSS & DaisyUI</p>
+          <p class="text-[var(--text-sm)] opacity-70">Phoenix Framework</p>
+          <p class="text-[var(--text-sm)] opacity-70">Elixir</p>
+          <p class="text-[var(--text-sm)] opacity-70">Tailwind CSS & DaisyUI</p>
         </div>
         <div>
           <span class="footer-title">{gettext("Subscribe")}</span>
-          <.link href={~p"/rss.xml"} class="link-hover link flex items-center gap-2">
+          <.link href={~p"/rss.xml"} class="link-hover link flex items-center gap-[var(--spacing-inline)]">
             <.icon name="hero-rss" class="h-4 w-4" />
             {gettext("RSS Feed")}
           </.link>
-          <.link href={~p"/feed.json"} class="link-hover link flex items-center gap-2">
+          <.link href={~p"/feed.json"} class="link-hover link flex items-center gap-[var(--spacing-inline)]">
             <.icon name="hero-code-bracket" class="h-4 w-4" />
             {gettext("JSON Feed")}
           </.link>
         </div>
       </div>
-      <div class="border-base-300 bg-base-200/50 border-t px-4 py-4 text-center text-sm opacity-70">
+      <div class="border-base-300 bg-base-200/50 border-t px-[var(--spacing-card)] py-[var(--spacing-md)] text-center text-[var(--text-sm)] opacity-70">
         <p>© {Date.utc_today().year} Portal of JH. {gettext("Built with ❤️ and Elixir.")}</p>
       </div>
     </footer>
@@ -170,7 +172,11 @@ defmodule HomesiteWeb.Layouts do
         </div>
 
         <%!-- Desktop navigation --%>
-        <nav class="gap-[var(--spacing-sm)] hidden flex-none lg:flex" role="navigation" aria-label={gettext("Main navigation")}>
+        <nav
+          class="gap-[var(--spacing-sm)] hidden flex-none lg:flex"
+          role="navigation"
+          aria-label={gettext("Main navigation")}
+        >
           <ul class="menu menu-horizontal gap-[var(--spacing-xs)]">
             <li>
               <.link navigate={~p"/search"}>
@@ -361,7 +367,7 @@ defmodule HomesiteWeb.Layouts do
   def language_toggle(assigns) do
     ~H"""
     <div class="card border-base-300 bg-base-300 relative flex flex-row items-center rounded-full border">
-      <div class="border-1 border-base-200 bg-base-100 [[data-locale=en]_&]:left-0 [[data-locale=fi]_&]:left-1/2 transition-[left] absolute h-full w-1/2 rounded-full brightness-200 pointer-events-none" />
+      <div class="border-1 border-base-200 bg-base-100 [[data-locale=en]_&]:left-0 [[data-locale=fi]_&]:left-1/2 transition-[left] pointer-events-none absolute h-full w-1/2 rounded-full brightness-200" />
 
       <button
         class="relative z-10 flex w-1/2 cursor-pointer items-center justify-center p-1 text-xs font-semibold opacity-75 hover:opacity-100"

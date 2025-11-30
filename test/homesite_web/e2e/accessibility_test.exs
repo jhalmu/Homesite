@@ -142,6 +142,25 @@ defmodule HomesiteWeb.E2E.AccessibilityTest do
       |> assert_has("body .phx-connected")
       |> assert_no_violations()
     end
+
+    @tag :playwright
+    test "post show page has no accessibility violations", %{conn: conn} do
+      user = user_fixture()
+      {:ok, post} = Homesite.Content.create_post(
+        %Homesite.Accounts.Scope{user: user},
+        %{
+          title: "Test Post for A11y",
+          body: "This is a test post for accessibility testing.",
+          is_public: true,
+          published_at: DateTime.utc_now(:second)
+        }
+      )
+
+      conn
+      |> visit(~p"/posts/#{post}")
+      |> assert_has("body .phx-connected")
+      |> assert_no_violations()
+    end
   end
 
   describe "Tags Page Accessibility" do
@@ -152,6 +171,24 @@ defmodule HomesiteWeb.E2E.AccessibilityTest do
       conn
       |> playwright_log_in_user(user)
       |> visit(~p"/tags")
+      |> assert_has("body .phx-connected")
+      |> assert_no_violations()
+    end
+
+    @tag :playwright
+    test "tag show page has no accessibility violations", %{conn: conn} do
+      user = user_fixture()
+      {:ok, tag} = Homesite.Content.create_tag(
+        %Homesite.Accounts.Scope{user: user},
+        %{
+          name: "Accessibility",
+          description: "Posts about accessibility",
+          is_public: true
+        }
+      )
+
+      conn
+      |> visit(~p"/tags/#{tag.slug}")
       |> assert_has("body .phx-connected")
       |> assert_no_violations()
     end

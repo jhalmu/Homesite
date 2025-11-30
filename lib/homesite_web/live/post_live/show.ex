@@ -10,48 +10,55 @@ defmodule HomesiteWeb.PostLive.Show do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <.header>
-        {@post.title}
-        <:subtitle>Published post</:subtitle>
-        <:actions>
-          <.button navigate={~p"/"}>
-            <.icon name="hero-arrow-left" />
-          </.button>
-          <%= if @can_edit do %>
-            <.button variant="primary" navigate={~p"/posts/#{@post}/edit?return_to=show"}>
-              <.icon name="hero-pencil-square" /> Edit post
-            </.button>
+      <main>
+        <article>
+          <.header>
+            {@post.title}
+            <:subtitle>Published post</:subtitle>
+            <:actions>
+              <.button navigate={~p"/"}>
+                <.icon name="hero-arrow-left" />
+              </.button>
+              <%= if @can_edit do %>
+                <.button variant="primary" navigate={~p"/posts/#{@post}/edit?return_to=show"}>
+                  <.icon name="hero-pencil-square" /> Edit post
+                </.button>
+              <% end %>
+            </:actions>
+          </.header>
+
+          <div class="my-[var(--spacing-md)]">
+            <.author_byline user={@post.user} date={@post.published_at} />
+            <div class="mt-2 flex flex-wrap items-center gap-2 text-sm opacity-70">
+              <.icon name="hero-clock" class="h-4 w-4" />
+              <span>{@post.read_time_minutes} min read</span>
+
+              <%= if @post.tags && length(@post.tags) > 0 do %>
+                <span>•</span>
+                <%= for tag <- @post.tags do %>
+                  <.link
+                    navigate={~p"/tags/#{tag.slug}"}
+                    class="badge badge-ghost badge-sm gap-1 opacity-60 hover:opacity-100"
+                  >
+                    <.icon name="hero-tag" class="h-3 w-3" />
+                    {tag.name}
+                  </.link>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+
+          <div class="my-[var(--spacing-lg)] prose prose-slate max-w-none prose-pre:bg-gray-900 prose-pre:text-gray-100 dark:prose-invert">
+            {Phoenix.HTML.raw(render_markdown(@post.body))}
+          </div>
+
+          <%= if @post.read_time_minutes >= 2 do %>
+            <div class="my-[var(--spacing-lg)] border-base-300 border-t pt-6">
+              <.platform_share_buttons url={@current_url} title={@post.title} />
+            </div>
           <% end %>
-        </:actions>
-      </.header>
-
-      <div class="my-[var(--spacing-md)]">
-        <.author_byline user={@post.user} date={@post.published_at} />
-        <div class="mt-2 flex flex-wrap items-center gap-2 text-sm opacity-70">
-          <.icon name="hero-clock" class="h-4 w-4" />
-          <span>{@post.read_time_minutes} min read</span>
-
-          <%= if @post.tags && length(@post.tags) > 0 do %>
-            <span>•</span>
-            <%= for tag <- @post.tags do %>
-              <.link navigate={~p"/tags/#{tag.slug}"} class="badge badge-ghost badge-sm gap-1 opacity-60 hover:opacity-100">
-                <.icon name="hero-tag" class="h-3 w-3" />
-                {tag.name}
-              </.link>
-            <% end %>
-          <% end %>
-        </div>
-      </div>
-
-      <div class="my-[var(--spacing-lg)] prose prose-slate max-w-none prose-pre:bg-gray-900 prose-pre:text-gray-100 dark:prose-invert">
-        {Phoenix.HTML.raw(render_markdown(@post.body))}
-      </div>
-
-      <%= if @post.read_time_minutes >= 2 do %>
-        <div class="my-[var(--spacing-lg)] border-t border-base-300 pt-6">
-          <.platform_share_buttons url={@current_url} title={@post.title} />
-        </div>
-      <% end %>
+        </article>
+      </main>
     </Layouts.app>
     """
   end

@@ -33,11 +33,12 @@ defmodule HomesiteWeb.PlaywrightJsHelper do
     frame_id = get_frame_id(session)
 
     # Wrap in async function if code contains await or bare return statements
-    wrapped_js = if needs_wrapping?(javascript) do
-      "(async () => { #{javascript} })()"
-    else
-      javascript
-    end
+    wrapped_js =
+      if needs_wrapping?(javascript) do
+        "(async () => { #{javascript} })()"
+      else
+        javascript
+      end
 
     case Frame.evaluate(frame_id, wrapped_js) do
       {:ok, result} -> {session, result}
@@ -48,7 +49,7 @@ defmodule HomesiteWeb.PlaywrightJsHelper do
   # Check if JavaScript needs wrapping in an async function
   defp needs_wrapping?(javascript) do
     String.contains?(javascript, "await ") or
-    (String.contains?(javascript, "return ") and not String.contains?(javascript, "function"))
+      (String.contains?(javascript, "return ") and not String.contains?(javascript, "function"))
   end
 
   @doc """

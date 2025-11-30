@@ -8,9 +8,9 @@ defmodule Homesite.Search do
   Includes telemetry events and analytics tracking.
   """
 
+  alias Homesite.Analytics
   alias Homesite.Content
   alias Homesite.Faqs
-  alias Homesite.Analytics
 
   @doc """
   Search across all content types (Posts, Tags, FAQs).

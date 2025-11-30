@@ -60,5 +60,4 @@ config :wallaby,
   driver: Wallaby.Chrome,
   hackney_options: [timeout: :infinity]
 
-config :wallaby, :chromedriver,
-  path: "/tmp/chromedriver_bin/chromedriver"
+config :wallaby, :chromedriver, path: "/tmp/chromedriver_bin/chromedriver"

@@ -5,9 +5,9 @@ defmodule Homesite.ExternalFeeds do
   """
 
   import Ecto.Query, warn: false
-  alias Homesite.Repo
   alias Homesite.Accounts.Scope
   alias Homesite.ExternalFeeds.{FeedSource, FeedItem}
+  alias Homesite.Repo
 
   ## Feed Sources
 

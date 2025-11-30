@@ -184,9 +184,9 @@ defmodule HomesiteWeb.Router do
     get "/feed.xml", FeedController, :index
     get "/feed.json", FeedController, :index
 
-    get "/users/:id/rss.xml", FeedController, :user
-    get "/users/:id/feed.xml", FeedController, :user
-    get "/users/:id/feed.json", FeedController, :user
+    get "/users/:user_identifier/rss.xml", FeedController, :user
+    get "/users/:user_identifier/feed.xml", FeedController, :user
+    get "/users/:user_identifier/feed.json", FeedController, :user
 
     get "/tags/:slug/rss.xml", FeedController, :tag
     get "/tags/:slug/feed.xml", FeedController, :tag
@@ -197,7 +197,7 @@ defmodule HomesiteWeb.Router do
         {HomesiteWeb.UserAuth, :mount_current_scope},
         {HomesiteWeb.SetLocaleHook, :default}
       ] do
-      live "/users/:id", UserLive.Profile, :show
+      live "/users/:user_identifier", UserLive.Profile, :show
       live "/posts/:id", PostLive.Show, :show
     end
 

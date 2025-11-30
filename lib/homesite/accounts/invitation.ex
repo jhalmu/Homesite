@@ -63,8 +63,6 @@ defmodule Homesite.Accounts.Invitation do
     chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
     char_list = String.graphemes(chars)
 
-    1..8
-    |> Enum.map(fn _ -> Enum.random(char_list) end)
-    |> Enum.join()
+    Enum.map_join(1..8, "", fn _ -> Enum.random(char_list) end)
   end
 end

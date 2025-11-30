@@ -10,73 +10,75 @@ defmodule HomesiteWeb.FaqLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <.header>
-        {if @category == "admin", do: gettext("Admin FAQs"), else: gettext("User FAQs")}
-        <:subtitle>
-          {if @category == "admin",
-            do: gettext("Frequently asked questions for administrators"),
-            else: gettext("Frequently asked questions")}
-        </:subtitle>
-        <:actions>
-          <%= if @is_admin do %>
-            <.link navigate={~p"/faqs?category=user"} class="btn">
-              {gettext("User FAQs")}
-            </.link>
-            <.link navigate={~p"/faqs?category=admin"} class="btn">
-              {gettext("Admin FAQs")}
-            </.link>
-            <.button variant="primary" navigate={~p"/faqs/new"}>
-              <.icon name="hero-plus" /> {gettext("New FAQ")}
-            </.button>
-          <% end %>
-        </:actions>
-      </.header>
+      <main>
+        <.header>
+          {if @category == "admin", do: gettext("Admin FAQs"), else: gettext("User FAQs")}
+          <:subtitle>
+            {if @category == "admin",
+              do: gettext("Frequently asked questions for administrators"),
+              else: gettext("Frequently asked questions")}
+          </:subtitle>
+          <:actions>
+            <%= if @is_admin do %>
+              <.link navigate={~p"/faqs?category=user"} class="btn">
+                {gettext("User FAQs")}
+              </.link>
+              <.link navigate={~p"/faqs?category=admin"} class="btn">
+                {gettext("Admin FAQs")}
+              </.link>
+              <.button variant="primary" navigate={~p"/faqs/new"}>
+                <.icon name="hero-plus" /> {gettext("New FAQ")}
+              </.button>
+            <% end %>
+          </:actions>
+        </.header>
 
-      <div class="mt-8 space-y-4">
-        <%= if Enum.empty?(@faqs) do %>
-          <div class="card bg-base-200">
-            <div class="card-body text-center">
-              <p class="text-base-content/60">{gettext("No FAQs available yet.")}</p>
-              <%= if @is_admin do %>
-                <p class="text-base-content/40 text-sm">
-                  {gettext("Click 'New FAQ' to create your first FAQ entry.")}
-                </p>
-              <% end %>
-            </div>
-          </div>
-        <% else %>
-          <%= for faq <- @faqs do %>
-            <div class="card bg-base-200 shadow-md" id={"faq-#{faq.id}"}>
-              <div class="card-body">
-                <h2 class="card-title">
-                  <.icon name="hero-question-mark-circle" class="h-6 w-6" />
-                  {faq.question}
-                </h2>
-                <div class="prose prose-sm max-w-none">
-                  {raw(faq.answer)}
-                </div>
+        <div class="mt-8 space-y-4">
+          <%= if Enum.empty?(@faqs) do %>
+            <div class="card bg-base-200">
+              <div class="card-body text-center">
+                <p class="text-base-content/60">{gettext("No FAQs available yet.")}</p>
                 <%= if @is_admin do %>
-                  <div class="card-actions mt-4 justify-end">
-                    <.link navigate={~p"/faqs/#{faq}/edit"} class="btn btn-sm">
-                      <.icon name="hero-pencil" class="h-4 w-4" />
-                      {gettext("Edit")}
-                    </.link>
-                    <button
-                      class="btn btn-sm btn-ghost"
-                      phx-click="delete"
-                      phx-value-id={faq.id}
-                      data-confirm={gettext("Are you sure you want to delete this FAQ?")}
-                    >
-                      <.icon name="hero-trash" class="h-4 w-4" />
-                      {gettext("Delete")}
-                    </button>
-                  </div>
+                  <p class="text-base-content/40 text-sm">
+                    {gettext("Click 'New FAQ' to create your first FAQ entry.")}
+                  </p>
                 <% end %>
               </div>
             </div>
+          <% else %>
+            <%= for faq <- @faqs do %>
+              <div class="card bg-base-200 shadow-md" id={"faq-#{faq.id}"}>
+                <div class="card-body">
+                  <h2 class="card-title">
+                    <.icon name="hero-question-mark-circle" class="h-6 w-6" />
+                    {faq.question}
+                  </h2>
+                  <div class="prose prose-sm max-w-none">
+                    {raw(faq.answer)}
+                  </div>
+                  <%= if @is_admin do %>
+                    <div class="card-actions mt-4 justify-end">
+                      <.link navigate={~p"/faqs/#{faq}/edit"} class="btn btn-sm">
+                        <.icon name="hero-pencil" class="h-4 w-4" />
+                        {gettext("Edit")}
+                      </.link>
+                      <button
+                        class="btn btn-sm btn-ghost"
+                        phx-click="delete"
+                        phx-value-id={faq.id}
+                        data-confirm={gettext("Are you sure you want to delete this FAQ?")}
+                      >
+                        <.icon name="hero-trash" class="h-4 w-4" />
+                        {gettext("Delete")}
+                      </button>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
           <% end %>
-        <% end %>
-      </div>
+        </div>
+      </main>
     </Layouts.app>
     """
   end

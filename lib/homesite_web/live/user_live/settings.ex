@@ -54,6 +54,18 @@ defmodule HomesiteWeb.UserLive.Settings do
           </:help>
         </.input>
         <.input
+          field={@profile_form[:username]}
+          type="text"
+          label={gettext("Username")}
+          placeholder="johndoe"
+        >
+          <:help>
+            {gettext(
+              "Your unique username for your profile URL (e.g., /users/@johndoe). Must be 3-30 characters, start with a letter, and contain only lowercase letters, numbers, and underscores. Leave empty to use your user ID in URLs."
+            )}
+          </:help>
+        </.input>
+        <.input
           field={@profile_form[:bio]}
           type="textarea"
           label={gettext("Bio")}

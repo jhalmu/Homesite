@@ -39,7 +39,8 @@ defmodule HomesiteWeb.PageLive.Home do
       |> String.to_integer()
 
     # Get optional user info
-    user_id = if socket.assigns[:current_scope], do: socket.assigns.current_scope.user.id, else: nil
+    user_id =
+      if socket.assigns[:current_scope], do: socket.assigns.current_scope.user.id, else: nil
 
     # Log the share event
     Social.log_share(%{

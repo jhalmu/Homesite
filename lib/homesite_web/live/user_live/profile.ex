@@ -110,15 +110,23 @@ defmodule HomesiteWeb.UserLive.Profile do
   end
 
   @impl true
-  def mount(%{"id" => id}, _session, socket) do
-    user = Accounts.get_user!(id)
-    posts = Content.list_published_posts_for_user(user.id)
+  def mount(%{"user_identifier" => user_identifier}, _session, socket) do
+    case Accounts.get_user_by_identifier(user_identifier) do
+      nil ->
+        {:ok,
+         socket
+         |> put_flash(:error, "User not found")
+         |> redirect(to: ~p"/")}
 
-    {:ok,
-     socket
-     |> assign(:page_title, user.display_name || "User Profile")
-     |> assign(:user, user)
-     |> assign(:posts, posts)}
+      user ->
+        posts = Content.list_published_posts_for_user(user.id)
+
+        {:ok,
+         socket
+         |> assign(:page_title, user.display_name || "User Profile")
+         |> assign(:user, user)
+         |> assign(:posts, posts)}
+    end
   end
 
   defp has_social_links?(user) do

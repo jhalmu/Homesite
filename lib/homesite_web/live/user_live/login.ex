@@ -7,17 +7,23 @@ defmodule HomesiteWeb.UserLive.Login do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="flex min-h-[calc(100vh-200px)] items-center justify-center px-[var(--spacing-card)] py-[var(--spacing-xl)]">
-        <div class="w-full max-w-[var(--card-max-width)]">
+      <div class="min-h-[calc(100vh-200px)] px-[var(--spacing-card)] py-[var(--spacing-xl)] flex items-center justify-center">
+        <div class="max-w-[var(--card-max-width)] w-full">
           <%!-- Header --%>
           <div class="mb-[var(--spacing-lg)] text-center">
-            <h1 class="text-[var(--font-size-fluid-2xl)] font-bold text-base-content">
+            <h1 class="text-[var(--font-size-fluid-2xl)] text-base-content font-bold">
               {gettext("Log in")}
             </h1>
-            <p :if={@current_scope} class="text-[var(--font-size-fluid-sm)] mt-[var(--spacing-sm)] text-base-content/70">
+            <p
+              :if={@current_scope}
+              class="text-[var(--font-size-fluid-sm)] mt-[var(--spacing-sm)] text-base-content/70"
+            >
               {gettext("You need to reauthenticate to perform sensitive actions on your account.")}
             </p>
-            <p :if={!@current_scope} class="text-[var(--font-size-fluid-sm)] mt-[var(--spacing-sm)] text-base-content/70">
+            <p
+              :if={!@current_scope}
+              class="text-[var(--font-size-fluid-sm)] mt-[var(--spacing-sm)] text-base-content/70"
+            >
               {gettext("Welcome back! Please sign in to continue.")}
             </p>
           </div>
@@ -26,15 +32,20 @@ defmodule HomesiteWeb.UserLive.Login do
           <div :if={local_mail_adapter?()} class="alert alert-info mb-[var(--spacing-md)]">
             <.icon name="hero-information-circle" class="size-6 shrink-0" />
             <div>
-              <p class="text-[var(--font-size-fluid-sm)] font-semibold">{gettext("Development Mode")}</p>
+              <p class="text-[var(--font-size-fluid-sm)] font-semibold">
+                {gettext("Development Mode")}
+              </p>
               <p class="text-[var(--font-size-fluid-sm)]">
-                {gettext("To see sent emails, visit")} <.link href="/dev/mailbox" class="link link-primary">{gettext("the mailbox page")}</.link>.
+                {gettext("To see sent emails, visit")} <.link
+                  href="/dev/mailbox"
+                  class="link link-primary"
+                >{gettext("the mailbox page")}</.link>.
               </p>
             </div>
           </div>
 
           <%!-- Magic Link Login Card --%>
-          <div class="card bg-base-100 shadow-xl mb-[var(--spacing-md)]">
+          <div class="card bg-base-100 mb-[var(--spacing-md)] shadow-xl">
             <div class="card-body gap-[var(--spacing-card)]">
               <div>
                 <h2 class="text-[var(--font-size-fluid-lg)] card-title">
@@ -114,7 +125,11 @@ defmodule HomesiteWeb.UserLive.Login do
                 />
 
                 <div class="space-y-2">
-                  <.button class="btn btn-primary w-full gap-2" name={@form[:remember_me].name} value="true">
+                  <.button
+                    class="btn btn-primary w-full gap-2"
+                    name={@form[:remember_me].name}
+                    value="true"
+                  >
                     <.icon name="hero-clock" class="h-5 w-5" />
                     {gettext("Stay logged in")}
                   </.button>

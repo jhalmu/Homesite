@@ -1,7 +1,7 @@
 <Layouts.app flash={@flash} current_scope={@current_scope}>
-  <div class="px-[var(--spacing-card)] py-[var(--spacing-lg)] container mx-auto">
+  <main class="px-[var(--spacing-card)] py-[var(--spacing-lg)] container mx-auto">
     <!-- Header -->
-    <div class="gap-[var(--spacing-md)] mb-[var(--spacing-section)] flex flex-col">
+    <header class="gap-[var(--spacing-md)] mb-[var(--spacing-section)] flex flex-col">
       <h1 class="text-[var(--font-size-fluid-2xl)] font-bold">
         {gettext("Welcome back")}, {@current_scope.user.display_name ||
           String.split(@current_scope.user.email, "@") |> List.first()}!
@@ -39,11 +39,11 @@
           </div>
         </div>
       </div>
-    </div>
+    </header>
 
     <%!-- Recent Activities --%>
     <%= if length(@activities) > 0 do %>
-      <div class="mb-[var(--spacing-section)]">
+      <section class="mb-[var(--spacing-section)]">
         <h2 class="text-[var(--font-size-fluid-xl)] mb-[var(--spacing-md)] font-semibold">
           {gettext("Recent Activity")}
         </h2>
@@ -66,11 +66,11 @@
             </div>
           <% end %>
         </div>
-      </div>
+      </section>
     <% end %>
-
+    
 <!-- Quick Actions -->
-    <div class="mb-[var(--spacing-section)]">
+    <section class="mb-[var(--spacing-section)]">
       <h2 class="text-[var(--font-size-fluid-xl)] mb-[var(--spacing-md)] font-semibold">
         {gettext("Quick Actions")}
       </h2>
@@ -85,10 +85,10 @@
           <.icon name="hero-cog-6-tooth" class="h-5 w-5" /> {gettext("Settings")}
         </.link>
       </div>
-    </div>
+    </section>
     
 <!-- Recent Posts -->
-    <div class="mb-[var(--spacing-section)]">
+    <section class="mb-[var(--spacing-section)]">
       <div class="mb-[var(--spacing-md)] flex items-center justify-between">
         <h2 class="text-[var(--font-size-fluid-xl)] font-semibold">
           {gettext("Recent Posts")}
@@ -147,10 +147,10 @@
           </tbody>
         </table>
       </div>
-    </div>
+    </section>
     
 <!-- Recent Tags -->
-    <div>
+    <section>
       <div class="mb-[var(--spacing-md)] flex items-center justify-between">
         <h2 class="text-[var(--font-size-fluid-xl)] font-semibold">
           {gettext("Your Tags")}
@@ -177,6 +177,6 @@
           </.link>
         <% end %>
       </div>
-    </div>
-  </div>
+    </section>
+  </main>
 </Layouts.app>

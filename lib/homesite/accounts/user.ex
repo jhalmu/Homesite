@@ -5,6 +5,12 @@ defmodule Homesite.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @reserved_usernames ~w[
+    admin api app auth blog dashboard dev docs feed feeds help
+    home login logout new posts public register rss search settings
+    signup staff static support system tags test user users www
+  ]
+
   schema "users" do
     field :email, :string
     field :password, :string, virtual: true, redact: true
@@ -26,6 +32,9 @@ defmodule Homesite.Accounts.User do
 
     # Localization
     field :preferred_language, :string, default: "en"
+
+    # Username for URL routing (optional)
+    field :username, :string
 
     has_many :posts, Homesite.Content.Post
     has_many :tags, Homesite.Content.Tag
@@ -161,7 +170,8 @@ defmodule Homesite.Accounts.User do
       :website_url,
       :bluesky_handle,
       :mastodon_handle,
-      :preferred_language
+      :preferred_language,
+      :username
     ])
     |> validate_length(:display_name, max: 100)
     |> validate_length(:bio, max: 500)
@@ -169,6 +179,39 @@ defmodule Homesite.Accounts.User do
     |> validate_social_handle(:bluesky_handle)
     |> validate_social_handle(:mastodon_handle)
     |> validate_inclusion(:preferred_language, ["en", "fi"])
+    |> validate_username()
+  end
+
+  @doc """
+  A user changeset for updating username.
+
+  Validates username format, uniqueness, and reserved names.
+  """
+  def username_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:username])
+    |> validate_username()
+  end
+
+  defp validate_username(changeset) do
+    changeset
+    |> validate_length(:username, min: 3, max: 30)
+    |> validate_format(:username, ~r/^[a-z][a-z0-9_]{2,29}$/,
+      message: "must start with letter, lowercase alphanumeric/underscore only"
+    )
+    |> validate_not_reserved(:username)
+    |> unsafe_validate_unique(:username, Homesite.Repo)
+    |> unique_constraint(:username)
+  end
+
+  defp validate_not_reserved(changeset, field) do
+    username = get_change(changeset, field)
+
+    if username && username in @reserved_usernames do
+      add_error(changeset, field, "is reserved and cannot be used")
+    else
+      changeset
+    end
   end
 
   defp validate_url(changeset, field) do

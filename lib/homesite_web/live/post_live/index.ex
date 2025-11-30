@@ -10,128 +10,133 @@ defmodule HomesiteWeb.PostLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <.header>
-        {gettext("Listing Posts")}
-        <:actions>
-          <%= if @current_scope do %>
-            <.button variant="primary" navigate={~p"/posts/new"}>
-              <.icon name="hero-plus" /> {gettext("New Post")}
-            </.button>
-          <% end %>
-        </:actions>
-      </.header>
+      <main>
+        <.header>
+          {gettext("Listing Posts")}
+          <:actions>
+            <%= if @current_scope do %>
+              <.button variant="primary" navigate={~p"/posts/new"}>
+                <.icon name="hero-plus" /> {gettext("New Post")}
+              </.button>
+            <% end %>
+          </:actions>
+        </.header>
 
-      <div class="mt-8 space-y-4" id="posts" phx-update="stream">
-        <%= for {id, post} <- @streams.posts do %>
-          <article
-            id={id}
-            class="card bg-base-200 shadow-lg transition-shadow hover:shadow-xl"
-          >
-            <div class="card-body">
-              <div class="flex items-start justify-between gap-4">
-                <div class="min-w-0 flex-1">
-                  <.link navigate={~p"/posts/#{post}"} class="group">
-                    <h3 class="card-title mb-2 text-xl transition-colors group-hover:text-primary">
-                      {post.title}
-                    </h3>
-                  </.link>
+        <div class="mt-[var(--spacing-lg)] space-y-[var(--spacing-md)]" id="posts" phx-update="stream">
+          <%= for {id, post} <- @streams.posts do %>
+            <article
+              id={id}
+              class="card bg-base-200 shadow-lg transition-shadow duration-[var(--duration-normal)] hover:shadow-xl"
+            >
+              <div class="card-body">
+                <div class="flex items-start justify-between gap-[var(--spacing-md)]">
+                  <div class="min-w-0 flex-1">
+                    <.link navigate={~p"/posts/#{post}"} class="group">
+                      <h2 class="card-title mb-[var(--spacing-sm)] text-[var(--font-size-fluid-xl)] transition-colors duration-[var(--duration-normal)] group-hover:text-primary">
+                        {post.title}
+                      </h2>
+                    </.link>
 
-                  <p class="line-clamp-2 mb-3 text-sm opacity-70">
-                    {preview_text(post.body)}
-                  </p>
+                    <p class="line-clamp-2 mb-[var(--spacing-sm)] text-[var(--text-sm)] opacity-70">
+                      {preview_text(post.body)}
+                    </p>
 
-                  <div class="flex flex-wrap gap-3 text-sm">
-                    <%= if post.published_at do %>
-                      <div class="badge badge-success gap-2">
-                        <.icon name="hero-check-circle" class="h-3 w-3" />
-                        {gettext("Published")}
-                      </div>
-                      <div class="opacity-70">
-                        <.icon name="hero-calendar" class="inline h-4 w-4" />
-                        <time datetime={post.published_at}>
-                          {Calendar.strftime(post.published_at, "%B %d, %Y")}
-                        </time>
-                      </div>
-                      <div class="opacity-70">
-                        <.icon name="hero-clock" class="inline h-4 w-4" />
-                        {post.read_time_minutes} {gettext("min read")}
-                      </div>
-                      <div class="opacity-70">
-                        <span>{post.user.display_name || post.user.email}</span>
-                      </div>
-                      <%= if post.is_public do %>
+                    <div class="flex flex-wrap gap-[var(--spacing-sm)] text-[var(--text-sm)]">
+                      <%= if post.published_at do %>
+                        <div class="badge badge-success gap-[var(--spacing-inline)]">
+                          <.icon name="hero-check-circle" class="h-3 w-3" />
+                          {gettext("Published")}
+                        </div>
                         <div class="opacity-70">
-                          <.link navigate={~p"/posts/#{post.id}"} class="hover:underline inline-flex items-center gap-1">
-                            <.icon name="hero-share" class="h-4 w-4" />
-                            Share this post
-                          </.link>
-                          <span>.</span>
+                          <.icon name="hero-calendar" class="inline h-4 w-4" />
+                          <time datetime={post.published_at}>
+                            {Calendar.strftime(post.published_at, "%B %d, %Y")}
+                          </time>
+                        </div>
+                        <div class="opacity-70">
+                          <.icon name="hero-clock" class="inline h-4 w-4" />
+                          {post.read_time_minutes} {gettext("min read")}
+                        </div>
+                        <div class="opacity-70">
+                          <span>{post.user.display_name || post.user.email}</span>
+                        </div>
+                        <%= if post.is_public do %>
+                          <div class="opacity-70">
+                            <.link
+                              navigate={~p"/posts/#{post.id}"}
+                              class="inline-flex items-center gap-[var(--spacing-inline)] transition-colors duration-[var(--duration-fast)] hover:underline"
+                            >
+                              <.icon name="hero-share" class="h-4 w-4" /> Share this post
+                            </.link>
+                            <span>.</span>
+                          </div>
+                        <% end %>
+                      <% else %>
+                        <div class="badge badge-warning gap-[var(--spacing-inline)]">
+                          <.icon name="hero-pencil" class="h-3 w-3" />
+                          {gettext("Draft")}
                         </div>
                       <% end %>
-                    <% else %>
-                      <div class="badge badge-warning gap-2">
-                        <.icon name="hero-pencil" class="h-3 w-3" />
-                        {gettext("Draft")}
-                      </div>
-                    <% end %>
 
-                    <%= if post.is_public do %>
-                      <div class="badge badge-ghost gap-2">
-                        <.icon name="hero-globe-alt" class="h-3 w-3" />
-                        {gettext("Public")}
-                      </div>
-                    <% else %>
-                      <div class="badge badge-ghost gap-2">
-                        <.icon name="hero-lock-closed" class="h-3 w-3" />
-                        {gettext("Private")}
+                      <%= if post.is_public do %>
+                        <div class="badge badge-ghost gap-[var(--spacing-inline)]">
+                          <.icon name="hero-globe-alt" class="h-3 w-3" />
+                          {gettext("Public")}
+                        </div>
+                      <% else %>
+                        <div class="badge badge-ghost gap-[var(--spacing-inline)]">
+                          <.icon name="hero-lock-closed" class="h-3 w-3" />
+                          {gettext("Private")}
+                        </div>
+                      <% end %>
+                    </div>
+
+                    <%= if post.tags && length(post.tags) > 0 do %>
+                      <div class="mt-[var(--spacing-sm)] flex flex-wrap gap-[var(--spacing-inline)]">
+                        <%= for tag <- post.tags do %>
+                          <.link
+                            navigate={~p"/tags/#{tag.slug}"}
+                            class="badge badge-sm badge-primary gap-[var(--spacing-inline)] transition-colors duration-[var(--duration-fast)] hover:brightness-110"
+                          >
+                            <.icon name="hero-tag" class="h-3 w-3" />
+                            {tag.name}
+                          </.link>
+                        <% end %>
                       </div>
                     <% end %>
                   </div>
 
-                  <%= if post.tags && length(post.tags) > 0 do %>
-                    <div class="mt-2 flex flex-wrap gap-2">
-                      <%= for tag <- post.tags do %>
-                        <.link
-                          navigate={~p"/tags/#{tag.slug}"}
-                          class="badge badge-sm badge-primary gap-1"
-                        >
-                          <.icon name="hero-tag" class="h-3 w-3" />
-                          {tag.name}
-                        </.link>
-                      <% end %>
+                  <%= if @current_scope && post.user_id == @current_scope.user.id do %>
+                    <div class="flex flex-shrink-0 gap-[var(--spacing-inline)]">
+                      <.link navigate={~p"/posts/#{post}"} class="btn btn-sm btn-ghost" aria-label={gettext("View post")}>
+                        <.icon name="hero-eye" class="h-4 w-4" />
+                      </.link>
+                      <.link navigate={~p"/posts/#{post}/edit"} class="btn btn-sm btn-ghost" aria-label={gettext("Edit post")}>
+                        <.icon name="hero-pencil-square" class="h-4 w-4" />
+                      </.link>
+                      <.link
+                        phx-click={JS.push("delete", value: %{id: post.id}) |> hide("##{id}")}
+                        data-confirm={gettext("Are you sure?")}
+                        class="btn btn-sm btn-ghost text-error"
+                        aria-label={gettext("Delete post")}
+                      >
+                        <.icon name="hero-trash" class="h-4 w-4" />
+                      </.link>
                     </div>
                   <% end %>
                 </div>
-
-                <%= if @current_scope && post.user_id == @current_scope.user.id do %>
-                  <div class="flex flex-shrink-0 gap-2">
-                    <.link navigate={~p"/posts/#{post}"} class="btn btn-sm btn-ghost">
-                      <.icon name="hero-eye" class="h-4 w-4" />
-                    </.link>
-                    <.link navigate={~p"/posts/#{post}/edit"} class="btn btn-sm btn-ghost">
-                      <.icon name="hero-pencil-square" class="h-4 w-4" />
-                    </.link>
-                    <.link
-                      phx-click={JS.push("delete", value: %{id: post.id}) |> hide("##{id}")}
-                      data-confirm={gettext("Are you sure?")}
-                      class="btn btn-sm btn-ghost text-error"
-                    >
-                      <.icon name="hero-trash" class="h-4 w-4" />
-                    </.link>
-                  </div>
-                <% end %>
               </div>
-            </div>
-          </article>
-        <% end %>
-      </div>
-
-      <%= if not @has_posts do %>
-        <div class="alert alert-info mt-8">
-          <.icon name="hero-information-circle" class="h-6 w-6" />
-          <span>{gettext("No posts yet. Create your first post to get started!")}</span>
+            </article>
+          <% end %>
         </div>
-      <% end %>
+
+        <%= if not @has_posts do %>
+          <div class="alert alert-info mt-[var(--spacing-lg)]">
+            <.icon name="hero-information-circle" class="h-6 w-6" />
+            <span>{gettext("No posts yet. Create your first post to get started!")}</span>
+          </div>
+        <% end %>
+      </main>
     </Layouts.app>
     """
   end

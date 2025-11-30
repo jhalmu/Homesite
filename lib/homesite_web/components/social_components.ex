@@ -34,7 +34,7 @@ defmodule HomesiteWeb.SocialComponents do
         type="button"
         class="btn btn-ghost btn-sm gap-2"
       >
-        <%= share_icon(%{class: "h-5 w-5"}) %>
+        {share_icon(%{class: "h-5 w-5"})}
         <span>Share this post</span>
       </button>
     </div>
@@ -60,7 +60,7 @@ defmodule HomesiteWeb.SocialComponents do
       <.web_share_button title={@title} url={@url} class="mb-4" />
 
       <%!-- Platform Share Buttons (alternative options) --%>
-      <div class="text-xs opacity-40 mb-2">Share:</div>
+      <div class="mb-2 text-xs opacity-40">Share:</div>
       <div class="flex flex-wrap gap-2">
         <.share_button platform="bluesky" url={@url} title={@title} />
         <.share_button platform="mastodon" url={@url} title={@title} />
@@ -88,7 +88,7 @@ defmodule HomesiteWeb.SocialComponents do
   def platform_share_buttons(assigns) do
     ~H"""
     <div class="flex flex-wrap gap-2">
-      <div class="text-xs opacity-40 mb-2 w-full">Share:</div>
+      <div class="mb-2 w-full text-xs opacity-40">Share:</div>
       <.share_button platform="bluesky" url={@url} title={@title} />
       <.share_button platform="mastodon" url={@url} title={@title} />
       <.share_button platform="twitter" url={@url} title={@title} />
@@ -123,7 +123,7 @@ defmodule HomesiteWeb.SocialComponents do
       class="btn btn-sm btn-ghost gap-2"
       title={"Share on #{@label}"}
     >
-      <%= apply(__MODULE__, @icon_function, [%{class: "h-4 w-4"}]) %>
+      {apply(__MODULE__, @icon_function, [%{class: "h-4 w-4"}])}
       <span class="hidden sm:inline">{@label}</span>
     </a>
     """
@@ -237,16 +237,38 @@ defmodule HomesiteWeb.SocialComponents do
 
   def email_icon(assigns) do
     ~H"""
-    <svg viewBox="0 0 24 24" aria-hidden="true" class={@class} fill="none" stroke="currentColor" stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      class={@class}
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
+      />
     </svg>
     """
   end
 
   def share_icon(assigns) do
     ~H"""
-    <svg viewBox="0 0 24 24" aria-hidden="true" class={@class} fill="none" stroke="currentColor" stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185z" />
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      class={@class}
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185z"
+      />
     </svg>
     """
   end

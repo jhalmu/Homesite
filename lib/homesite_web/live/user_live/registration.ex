@@ -8,62 +8,62 @@ defmodule HomesiteWeb.UserLive.Registration do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="flex min-h-[calc(100vh-200px)] items-center justify-center px-[var(--spacing-card)] py-[var(--spacing-xl)]">
-        <div class="w-full max-w-[var(--card-max-width)]">
+      <div class="min-h-[calc(100vh-200px)] px-[var(--spacing-card)] py-[var(--spacing-xl)] flex items-center justify-center">
+        <div class="max-w-[var(--card-max-width)] w-full">
           <div class="mb-[var(--spacing-lg)] text-center">
             <.header>
-            {gettext("Register for an account")}
-            <:subtitle>
-              {gettext("Already registered?")}
-              <.link navigate={~p"/users/log-in"} class="text-brand font-semibold hover:underline">
-                {gettext("Log in")}
-              </.link>
-              {gettext("to your account now.")}
-            </:subtitle>
-          </.header>
-        </div>
+              {gettext("Register for an account")}
+              <:subtitle>
+                {gettext("Already registered?")}
+                <.link navigate={~p"/users/log-in"} class="text-brand font-semibold hover:underline">
+                  {gettext("Log in")}
+                </.link>
+                {gettext("to your account now.")}
+              </:subtitle>
+            </.header>
+          </div>
 
-        <.form for={@form} id="registration_form" phx-submit="save" phx-change="validate">
-          <.input
-            field={@form[:invitation_code]}
-            type="text"
-            label={gettext("Invitation Code")}
-            required
-            phx-mounted={if @invitation_code, do: nil, else: JS.focus()}
-            value={@invitation_code}
-          >
-            <:help>
-              {gettext("Enter the invitation code you received.")}
-            </:help>
-          </.input>
+          <.form for={@form} id="registration_form" phx-submit="save" phx-change="validate">
+            <.input
+              field={@form[:invitation_code]}
+              type="text"
+              label={gettext("Invitation Code")}
+              required
+              phx-mounted={if @invitation_code, do: nil, else: JS.focus()}
+              value={@invitation_code}
+            >
+              <:help>
+                {gettext("Enter the invitation code you received.")}
+              </:help>
+            </.input>
 
-          <.input
-            field={@form[:email]}
-            type="email"
-            label={gettext("Email")}
-            autocomplete="username"
-            required
-            phx-mounted={if @invitation_code, do: JS.focus(), else: nil}
-          />
+            <.input
+              field={@form[:email]}
+              type="email"
+              label={gettext("Email")}
+              autocomplete="username"
+              required
+              phx-mounted={if @invitation_code, do: JS.focus(), else: nil}
+            />
 
-          <.input
-            field={@form[:preferred_language]}
-            type="select"
-            label={gettext("Preferred Language")}
-            options={[{gettext("English"), "en"}, {gettext("Finnish"), "fi"}]}
-            value={@form[:preferred_language].value || "en"}
-          >
-            <:help>
-              {gettext(
-                "Choose your preferred language for the user interface. This can be changed later in Settings."
-              )}
-            </:help>
-          </.input>
+            <.input
+              field={@form[:preferred_language]}
+              type="select"
+              label={gettext("Preferred Language")}
+              options={[{gettext("English"), "en"}, {gettext("Finnish"), "fi"}]}
+              value={@form[:preferred_language].value || "en"}
+            >
+              <:help>
+                {gettext(
+                  "Choose your preferred language for the user interface. This can be changed later in Settings."
+                )}
+              </:help>
+            </.input>
 
-          <.button phx-disable-with={gettext("Creating account...")} class="btn btn-primary w-full">
-            {gettext("Create an account")}
-          </.button>
-        </.form>
+            <.button phx-disable-with={gettext("Creating account...")} class="btn btn-primary w-full">
+              {gettext("Create an account")}
+            </.button>
+          </.form>
         </div>
       </div>
     </Layouts.app>

@@ -1,0 +1,20 @@
+{
+  "name": "homesite-design-system",
+  "version": "1.0.0",
+  "description": "Homesite design system with Tailwind CSS v4, DaisyUI, and technical aesthetic",
+  "author": "Homesite Team",
+  "tags": ["design-system", "tailwind", "daisyui", "phoenix", "accessibility"],
+  "files": [
+    "design-system.md",
+    "components.md",
+    "tokens.md"
+  ],
+  "metadata": {
+    "framework": "Phoenix LiveView",
+    "css": "Tailwind CSS v4",
+    "components": "DaisyUI",
+    "theme": "Design-E-Technical (GitHub-inspired)",
+    "accessibility": "WCAG 2.1 Level AA",
+    "i18n": "English + Finnish"
+  }
+}

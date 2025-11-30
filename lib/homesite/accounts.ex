@@ -298,6 +298,132 @@ defmodule Homesite.Accounts do
   end
 
   @doc """
+  Gets a user by username.
+
+  ## Examples
+
+      iex> get_user_by_username("johndoe")
+      %User{}
+
+      iex> get_user_by_username("nonexistent")
+      nil
+
+  """
+  def get_user_by_username(username) when is_binary(username) do
+    # Convert to lowercase for case-insensitive lookup (citext handles this at DB level)
+    Repo.get_by(User, username: String.downcase(username))
+  end
+
+  @doc """
+  Gets a user by identifier (either numeric ID or @username).
+
+  Supports two formats:
+  - Numeric ID: "123" or 123
+  - Username with @ prefix: "@johndoe"
+
+  ## Examples
+
+      iex> get_user_by_identifier("123")
+      %User{id: 123}
+
+      iex> get_user_by_identifier("@johndoe")
+      %User{username: "johndoe"}
+
+      iex> get_user_by_identifier("@nonexistent")
+      nil
+
+  """
+  def get_user_by_identifier("@" <> username) do
+    get_user_by_username(username)
+  end
+
+  def get_user_by_identifier(id) when is_binary(id) do
+    case Integer.parse(id) do
+      {int_id, ""} -> Repo.get(User, int_id)
+      _ -> nil
+    end
+  end
+
+  def get_user_by_identifier(id) when is_integer(id) do
+    Repo.get(User, id)
+  end
+
+  def get_user_by_identifier(_), do: nil
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for changing the username.
+
+  ## Examples
+
+      iex> change_user_username(user)
+      %Ecto.Changeset{data: %User{}}
+
+  """
+  def change_user_username(user, attrs \\ %{}) do
+    User.username_changeset(user, attrs)
+  end
+
+  @doc """
+  Updates the user's username.
+
+  ## Examples
+
+      iex> update_user_username(user, %{username: "johndoe"})
+      {:ok, %User{}}
+
+      iex> update_user_username(user, %{username: "a"})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_user_username(user, attrs, opts \\ []) do
+    old_username = user.username
+    changeset = User.username_changeset(user, attrs)
+
+    with {:ok, updated_user} <- Repo.update(changeset),
+         new_username when new_username != old_username <- updated_user.username do
+      # Log username change
+      log_username_change(updated_user, old_username, new_username, opts)
+      {:ok, updated_user}
+    else
+      {:error, _} = error -> error
+      _ -> {:ok, changeset |> Ecto.Changeset.apply_changes()}
+    end
+  end
+
+  defp log_username_change(user, old_username, new_username, opts) do
+    attrs = %{
+      user_id: user.id,
+      old_username: old_username,
+      new_username: new_username,
+      changed_at: DateTime.utc_now(:second),
+      ip_address: Keyword.get(opts, :ip_address),
+      user_agent: Keyword.get(opts, :user_agent)
+    }
+
+    %Homesite.Accounts.UsernameChange{}
+    |> Homesite.Accounts.UsernameChange.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Lists username change history for a user.
+
+  Returns changes ordered by most recent first.
+
+  ## Examples
+
+      iex> list_username_changes(user_id)
+      [%UsernameChange{}, ...]
+
+  """
+  def list_username_changes(user_id) do
+    Homesite.Accounts.UsernameChange
+    |> where([c], c.user_id == ^user_id)
+    |> order_by([c], desc: c.changed_at)
+    |> Repo.all()
+  end
+
+  @doc """
   Deletes an avatar file from disk.
 
   ## Examples

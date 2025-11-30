@@ -1,176 +1,176 @@
-<div class="mt-8">
-  <.header>
+<main class="mt-8">
+  <.page_header>
     <div class="flex items-center justify-center gap-4">
       <.icon name="hero-magnifying-glass" class="h-8 w-8" />
       <span>{gettext("Search")}</span>
     </div>
-  </.header>
-</div>
+  </.page_header>
 
-<div class="mt-8">
-  <form id="search-form" phx-submit="search" class="mx-auto mb-8 max-w-3xl">
-    <div class="flex gap-2">
-      <input
-        type="text"
-        name="query"
-        value={@query}
-        placeholder={gettext("Search by title or content...")}
-        phx-debounce="300"
-        autocomplete="off"
-        class="input input-bordered flex-1"
-      />
-      <button type="submit" class="btn btn-primary">
-        <.icon name="hero-magnifying-glass" class="h-5 w-5" />
-        {gettext("Search")}
-      </button>
-      <%= if @query != "" do %>
-        <button type="button" phx-click="clear" class="btn btn-ghost">
-          <.icon name="hero-x-mark" class="h-5 w-5" />
+  <div class="mt-8">
+    <form id="search-form" phx-submit="search" class="mx-auto mb-8 max-w-3xl">
+      <div class="flex gap-2">
+        <input
+          type="text"
+          name="query"
+          value={@query}
+          placeholder={gettext("Search by title or content...")}
+          phx-debounce="300"
+          autocomplete="off"
+          class="input input-bordered flex-1"
+        />
+        <button type="submit" class="btn btn-primary">
+          <.icon name="hero-magnifying-glass" class="h-5 w-5" />
+          {gettext("Search")}
         </button>
-      <% end %>
-    </div>
-  </form>
+        <%= if @query != "" do %>
+          <button type="button" phx-click="clear" class="btn btn-ghost">
+            <.icon name="hero-x-mark" class="h-5 w-5" />
+          </button>
+        <% end %>
+      </div>
+    </form>
 
-  <%= if @searching and @query != "" do %>
-    <div class="mb-4 text-sm text-gray-600">
-      <%= if @total_count == 0 do %>
-        <div class="alert alert-info">
-          <.icon name="hero-information-circle" class="h-5 w-5" />
-          <span>{gettext("No results found for")} "{@query}"</span>
-        </div>
-      <% else %>
-        <p>
-          {ngettext("1 result found", "%{count} results found", @total_count)}
-          {gettext("for")} "{@query}"
-        </p>
-      <% end %>
-    </div>
-  <% end %>
-
-  <%= if @searching and @total_count > 0 do %>
-    <div class="space-y-8">
-      <%!-- Posts Section --%>
-      <%= if not Enum.empty?(@posts) do %>
-        <section>
-          <h2 class="mb-4 flex items-center gap-2 text-xl font-semibold">
-            <.icon name="hero-document-text" class="text-primary h-6 w-6" />
-            {gettext("Posts")}
-            <span class="badge badge-primary">{length(@posts)}</span>
-          </h2>
-          <div class="space-y-4">
-            <%= for post <- @posts do %>
-              <article class="card bg-base-100 shadow-md transition-shadow hover:shadow-lg">
-                <div class="card-body">
-                  <h3 class="card-title">
-                    <.link navigate={~p"/posts/#{post.id}"} class="link link-hover">
-                      {post.title}
-                    </.link>
-                  </h3>
-
-                  <div class="flex items-center gap-2 text-sm text-gray-600">
-                    <.icon name="hero-user" class="h-4 w-4" />
-                    <span>{post.user.email}</span>
-                    <%= if post.published_at do %>
-                      <span>•</span>
-                      <.icon name="hero-calendar" class="h-4 w-4" />
-                      <time datetime={post.published_at}>
-                        {Calendar.strftime(post.published_at, "%B %d, %Y")}
-                      </time>
-                    <% end %>
-                  </div>
-
-                  <%= if not Enum.empty?(post.tags) do %>
-                    <div class="mt-2 flex flex-wrap gap-2">
-                      <%= for tag <- post.tags do %>
-                        <.link
-                          navigate={~p"/tags/#{tag.slug}"}
-                          class="badge badge-primary badge-sm"
-                        >
-                          {tag.name}
-                        </.link>
-                      <% end %>
-                    </div>
-                  <% end %>
-
-                  <div class="line-clamp-3 prose prose-sm mt-2">
-                    {raw(truncate_html(post.body, 200))}
-                  </div>
-
-                  <div class="card-actions mt-4 justify-end">
-                    <.link navigate={~p"/posts/#{post.id}"} class="btn btn-sm btn-primary">
-                      {gettext("Read more")}
-                    </.link>
-                  </div>
-                </div>
-              </article>
-            <% end %>
+    <%= if @searching and @query != "" do %>
+      <div class="mb-4 text-sm text-gray-600">
+        <%= if @total_count == 0 do %>
+          <div class="alert alert-info">
+            <.icon name="hero-information-circle" class="h-5 w-5" />
+            <span>{gettext("No results found for")} "{@query}"</span>
           </div>
-        </section>
-      <% end %>
-      <%!-- Tags Section --%>
-      <%= if not Enum.empty?(@tags) do %>
-        <section>
-          <h2 class="mb-4 flex items-center gap-2 text-xl font-semibold">
-            <.icon name="hero-tag" class="text-secondary h-6 w-6" />
-            {gettext("Tags")}
-            <span class="badge badge-secondary">{length(@tags)}</span>
-          </h2>
-          <div class="flex flex-wrap gap-3">
-            <%= for tag <- @tags do %>
-              <.link
-                navigate={~p"/tags/#{tag.slug}"}
-                class="badge badge-lg badge-secondary gap-2 transition-colors hover:badge-primary"
-              >
-                <.icon name="hero-tag" class="h-4 w-4" />
-                {tag.name}
-              </.link>
-            <% end %>
-          </div>
-        </section>
-      <% end %>
-      <%!-- FAQs Section --%>
-      <%= if not Enum.empty?(@faqs) do %>
-        <section>
-          <h2 class="mb-4 flex items-center gap-2 text-xl font-semibold">
-            <.icon name="hero-question-mark-circle" class="text-accent h-6 w-6" />
-            {gettext("FAQs")}
-            <span class="badge badge-accent">{length(@faqs)}</span>
-          </h2>
-          <div class="space-y-4">
-            <%= for faq <- @faqs do %>
-              <div class="card bg-base-100 shadow-md">
-                <div class="card-body">
-                  <h3 class="card-title text-lg">
-                    <.icon name="hero-chat-bubble-left-right" class="text-accent h-5 w-5" />
-                    {faq.question}
-                  </h3>
-                  <div class="prose prose-sm mt-2">
-                    {raw(truncate_html(faq.answer, 200))}
-                  </div>
-                  <div class="card-actions mt-4 items-center justify-between">
-                    <span class="badge badge-sm">{String.upcase(faq.category)}</span>
-                    <.link navigate={~p"/faqs"} class="btn btn-sm btn-ghost">
-                      {gettext("View all FAQs")}
-                    </.link>
-                  </div>
-                </div>
-              </div>
-            <% end %>
-          </div>
-        </section>
-      <% end %>
-    </div>
-  <% else %>
-    <%= if @query == "" do %>
-      <div class="py-12 text-center">
-        <.icon name="hero-magnifying-glass" class="mx-auto h-12 w-12 text-gray-400" />
-        <h3 class="mt-2 text-sm font-semibold text-gray-900">
-          {gettext("Start searching")}
-        </h3>
-        <p class="mt-1 text-sm text-gray-500">
-          {gettext("Enter keywords to search through blog posts")}
-        </p>
+        <% else %>
+          <p>
+            {ngettext("1 result found", "%{count} results found", @total_count)}
+            {gettext("for")} "{@query}"
+          </p>
+        <% end %>
       </div>
     <% end %>
-  <% end %>
-</div>
+
+    <%= if @searching and @total_count > 0 do %>
+      <div class="space-y-8">
+        <%!-- Posts Section --%>
+        <%= if not Enum.empty?(@posts) do %>
+          <section>
+            <h2 class="mb-4 flex items-center gap-2 text-xl font-semibold">
+              <.icon name="hero-document-text" class="text-primary h-6 w-6" />
+              {gettext("Posts")}
+              <span class="badge badge-primary">{length(@posts)}</span>
+            </h2>
+            <div class="space-y-4">
+              <%= for post <- @posts do %>
+                <article class="card bg-base-100 shadow-md transition-shadow hover:shadow-lg">
+                  <div class="card-body">
+                    <h3 class="card-title">
+                      <.link navigate={~p"/posts/#{post.id}"} class="link link-hover">
+                        {post.title}
+                      </.link>
+                    </h3>
+
+                    <div class="flex items-center gap-2 text-sm text-gray-600">
+                      <.icon name="hero-user" class="h-4 w-4" />
+                      <span>{post.user.email}</span>
+                      <%= if post.published_at do %>
+                        <span>•</span>
+                        <.icon name="hero-calendar" class="h-4 w-4" />
+                        <time datetime={post.published_at}>
+                          {Calendar.strftime(post.published_at, "%B %d, %Y")}
+                        </time>
+                      <% end %>
+                    </div>
+
+                    <%= if not Enum.empty?(post.tags) do %>
+                      <div class="mt-2 flex flex-wrap gap-2">
+                        <%= for tag <- post.tags do %>
+                          <.link
+                            navigate={~p"/tags/#{tag.slug}"}
+                            class="badge badge-primary badge-sm"
+                          >
+                            {tag.name}
+                          </.link>
+                        <% end %>
+                      </div>
+                    <% end %>
+
+                    <div class="line-clamp-3 prose prose-sm mt-2">
+                      {raw(truncate_html(post.body, 200))}
+                    </div>
+
+                    <div class="card-actions mt-4 justify-end">
+                      <.link navigate={~p"/posts/#{post.id}"} class="btn btn-sm btn-primary">
+                        {gettext("Read more")}
+                      </.link>
+                    </div>
+                  </div>
+                </article>
+              <% end %>
+            </div>
+          </section>
+        <% end %>
+        <%!-- Tags Section --%>
+        <%= if not Enum.empty?(@tags) do %>
+          <section>
+            <h2 class="mb-4 flex items-center gap-2 text-xl font-semibold">
+              <.icon name="hero-tag" class="text-secondary h-6 w-6" />
+              {gettext("Tags")}
+              <span class="badge badge-secondary">{length(@tags)}</span>
+            </h2>
+            <div class="flex flex-wrap gap-3">
+              <%= for tag <- @tags do %>
+                <.link
+                  navigate={~p"/tags/#{tag.slug}"}
+                  class="badge badge-lg badge-secondary gap-2 transition-colors hover:badge-primary"
+                >
+                  <.icon name="hero-tag" class="h-4 w-4" />
+                  {tag.name}
+                </.link>
+              <% end %>
+            </div>
+          </section>
+        <% end %>
+        <%!-- FAQs Section --%>
+        <%= if not Enum.empty?(@faqs) do %>
+          <section>
+            <h2 class="mb-4 flex items-center gap-2 text-xl font-semibold">
+              <.icon name="hero-question-mark-circle" class="text-accent h-6 w-6" />
+              {gettext("FAQs")}
+              <span class="badge badge-accent">{length(@faqs)}</span>
+            </h2>
+            <div class="space-y-4">
+              <%= for faq <- @faqs do %>
+                <div class="card bg-base-100 shadow-md">
+                  <div class="card-body">
+                    <h3 class="card-title text-lg">
+                      <.icon name="hero-chat-bubble-left-right" class="text-accent h-5 w-5" />
+                      {faq.question}
+                    </h3>
+                    <div class="prose prose-sm mt-2">
+                      {raw(truncate_html(faq.answer, 200))}
+                    </div>
+                    <div class="card-actions mt-4 items-center justify-between">
+                      <span class="badge badge-sm">{String.upcase(faq.category)}</span>
+                      <.link navigate={~p"/faqs"} class="btn btn-sm btn-ghost">
+                        {gettext("View all FAQs")}
+                      </.link>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </section>
+        <% end %>
+      </div>
+    <% else %>
+      <%= if @query == "" do %>
+        <div class="py-12 text-center">
+          <.icon name="hero-magnifying-glass" class="mx-auto h-12 w-12 text-gray-400" />
+          <h2 class="mt-2 text-sm font-semibold text-gray-900">
+            {gettext("Start searching")}
+          </h2>
+          <p class="mt-1 text-sm text-gray-500">
+            {gettext("Enter keywords to search through blog posts")}
+          </p>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</main>
