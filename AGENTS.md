@@ -50,6 +50,602 @@ This is a web application written using the Phoenix web framework.
 
 **Note:** If memory/context is running out, commit anyway to preserve work
 
+---
+
+## Patterns from Practice
+
+The following patterns have been discovered and validated through actual development sessions. These are project-specific best practices that extend the general guidelines below.
+
+### Architecture Patterns
+
+#### Pattern: Context Separation for Analytics
+
+**Rule**: Create dedicated contexts for features that will need analytics or reporting, even if they could be added to existing contexts.
+
+**Why**: Separating concerns like social sharing, activity logging, or metrics into their own contexts provides:
+- **Clean boundaries**: New features don't mix with core domain logic
+- **Analytics foundation**: Share logs and event tracking ready for future dashboards
+- **Flexibility**: Can track events for multiple entity types without coupling
+- **Privacy controls**: Optional tracking fields (IP, user agent) in one place
+
+**Example** (`lib/homesite/social.ex`):
+```elixir
+defmodule Homesite.Social do
+  # Core function - log share events
+  def log_share(attrs \\ %{}) do
+    %ShareLog{}
+    |> ShareLog.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  # Analytics functions
+  def get_post_share_stats(post_id)  # Per-post stats
+  def get_all_share_stats()          # Site-wide rankings
+  def list_recent_shares(limit)       # Activity feed
+end
+```
+
+**When to use**: Creating features for social actions, notifications, activity feeds, usage tracking, or any feature that will benefit from historical data and analytics.
+
+<!-- Integrated from .claude/insights sessions on 2025-11-30 -->
+
+---
+
+#### Pattern: Database Filtering Requires Separate Function Calls
+
+**Rule**: When you need different database WHERE clauses, call different context functions instead of filtering query results in Elixir.
+
+**Why**: Database filtering (WHERE clauses) happens before Elixir receives the data. You cannot filter out results that were already excluded by the query.
+
+**Example** (FAQ category loading):
+```elixir
+# WRONG - Trying to filter already-filtered results
+def load_faqs(socket, category) do
+  Faqs.list_admin_faqs(scope, locale)
+  |> Enum.filter(&(&1.category == category))  # Won't work if category="user"!
+end
+
+# CORRECT - Call the right function for the category
+defp load_faqs(socket, category) do
+  case category do
+    "admin" -> Faqs.list_admin_faqs(socket.assigns.current_scope, socket.assigns.locale)
+    "user" -> Faqs.list_user_faqs(socket.assigns.locale)
+    _ -> []
+  end
+end
+```
+
+**Reference**: `lib/homesite_web/live/faq_live/index.ex:120-134`
+
+<!-- Integrated from .claude/insights sessions on 2025-11-30 -->
+
+---
+
+### Database Patterns
+
+#### Pattern: Dual Search Strategy (Trigram + ILIKE)
+
+**Rule**: Combine PostgreSQL trigram similarity with ILIKE fallback for robust full-text search that handles both typos and exact matches.
+
+**Implementation**:
+```elixir
+# Migration - Enable pg_trgm and create GIN indexes
+execute "CREATE EXTENSION IF NOT EXISTS pg_trgm"
+execute "CREATE INDEX posts_title_trgm_idx ON posts USING gin (title gin_trgm_ops)"
+execute "CREATE INDEX posts_body_trgm_idx ON posts USING gin (body gin_trgm_ops)"
+
+# Query - Dual matching strategy
+from(p in Post,
+  where: not is_nil(p.published_at) and p.is_public == true,
+  where:
+    fragment("similarity(?, ?) > 0.1", p.title, ^query) or
+    fragment("similarity(?, ?) > 0.1", p.body, ^query) or
+    fragment("? ILIKE ?", p.title, ^"%#{query}%") or
+    fragment("? ILIKE ?", p.body, ^"%#{query}%"),
+  order_by: [
+    desc: fragment(
+      "greatest(similarity(?, ?), similarity(?, ?))",
+      p.title, ^query, p.body, ^query
+    )
+  ]
+)
+```
+
+**Why this works**:
+- **Trigram similarity (0.1 threshold)**: Catches typos, partial matches, fuzzy queries
+- **ILIKE fallback**: Ensures exact substring matches are never missed
+- **GIN indexes**: Fast for both similarity and ILIKE operations
+- **Ordered by similarity**: Most relevant results first
+
+**When to use**: Any text search scenario. Works for titles, content, names, descriptions, etc.
+
+**Reference**: `lib/homesite/content.ex:724-764`, `priv/repo/migrations/20251129081009_add_search_index_to_posts.exs`
+
+<!-- Integrated from .claude/insights sessions on 2025-11-30 -->
+
+---
+
+### Security Patterns
+
+#### Pattern: Admin Authorization Requires Dedicated on_mount Hook
+
+**Rule**: Create a separate `on_mount(:require_admin)` hook for admin-only LiveViews. Don't rely on `:require_authenticated` alone.
+
+**Implementation**:
+```elixir
+# In lib/homesite_web/user_auth.ex
+def on_mount(:require_admin, _params, session, socket) do
+  socket = mount_current_scope(socket, session)
+
+  if socket.assigns.current_scope && Homesite.Accounts.Scope.admin?(socket.assigns.current_scope) do
+    {:cont, socket}
+  else
+    socket =
+      socket
+      |> Phoenix.LiveView.put_flash(:error, "You must be an administrator to access this page.")
+      |> Phoenix.LiveView.redirect(to: ~p"/")
+
+    {:halt, socket}
+  end
+end
+
+# In router.ex
+live_session :require_admin,
+  on_mount: [
+    {HomesiteWeb.UserAuth, :require_authenticated},
+    {HomesiteWeb.UserAuth, :require_admin},  # Layered security
+    {HomesiteWeb.SetLocaleHook, :default}
+  ] do
+  live "/faqs/new", FaqLive.Index, :new
+  live "/faqs/:id/edit", FaqLive.Index, :edit
+end
+```
+
+**Why**: LiveView `on_mount` hooks run before every mount. Multiple hooks can be chained for layered security: first check auth, then check role.
+
+**Security test**:
+```elixir
+test "regular users cannot access FAQ creation form", %{conn: conn} do
+  user = user_fixture()
+  conn = log_in_user(conn, user)
+
+  assert {:error, {:redirect, %{to: _}}} = live(conn, ~p"/faqs/new")
+end
+```
+
+**Reference**: `lib/homesite_web/user_auth.ex:251-264`
+
+<!-- Integrated from .claude/insights sessions on 2025-11-30 -->
+
+---
+
+#### Pattern: Empty Query Validation Prevents DoS
+
+**Rule**: Validate search queries before database access. Return empty results for empty/whitespace queries and validate numeric parameters.
+
+**Implementation**:
+```elixir
+def search_posts(query, opts \\ []) when is_binary(query) do
+  # Return empty list for empty or whitespace-only queries
+  case String.trim(query) do
+    "" -> []
+    trimmed_query ->
+      limit = Keyword.get(opts, :limit, 20)
+      limit = max(limit, 0)  # Ensure non-negative
+
+      # ... perform search with trimmed_query and validated limit
+  end
+end
+```
+
+**Why**:
+- **Security**: Prevents returning entire database on empty query (DoS vector)
+- **Performance**: Avoids expensive queries for meaningless input
+- **UX**: Empty search = no results is intuitive behavior
+- **Database safety**: PostgreSQL raises error on negative LIMIT
+
+**Always validate**:
+1. Empty/whitespace queries → return []
+2. Numeric parameters (limits, offsets) → ensure non-negative
+3. Special characters → proper escaping (Ecto does this automatically for params)
+
+**Reference**: `lib/homesite/content.ex:726-728`
+
+<!-- Integrated from .claude/insights sessions on 2025-11-30 -->
+
+---
+
+#### Pattern: Scope Isolation Testing is Mandatory
+
+**Rule**: Every new feature that uses scopes MUST have dedicated security tests verifying users cannot access other users' data.
+
+**Implementation**:
+```elixir
+describe "Search Security: Scope isolation in search results" do
+  test "user search only returns their own posts" do
+    # Create posts for two users with same keyword
+    {:ok, post_a} = Content.create_post(scope_a, %{title: "Secret Post"})
+    {:ok, _post_b} = Content.create_post(scope_b, %{title: "Secret Post"})
+
+    # User A searches
+    results_a = Content.search_user_posts(scope_a, "Secret")
+
+    # Should only see their own post
+    assert length(results_a) == 1
+    assert hd(results_a).id == post_a.id
+    assert Enum.all?(results_a, fn p -> p.user_id == user_a.id end)
+  end
+
+  test "search does not leak data between scopes" do
+    # Create posts with sensitive data
+    {:ok, _post_a} = Content.create_post(scope_a, %{title: "API Key: sk-1234"})
+    {:ok, _post_b} = Content.create_post(scope_b, %{title: "API Key: sk-5678"})
+
+    # User A searches
+    results_a = Content.search_user_posts(scope_a, "API Key")
+
+    # Should only see their own API key
+    assert hd(results_a).title =~ "sk-1234"
+    refute hd(results_a).title =~ "sk-5678"
+  end
+end
+```
+
+**Security testing checklist for new features**:
+1. ✅ Users cannot access other users' data
+2. ✅ SQL injection is prevented (test with `'; DROP TABLE --`)
+3. ✅ XSS payloads are handled safely (test with `<script>alert('xss')</script>`)
+4. ✅ Scope checks exist in context functions (`true = record.user_id == scope.user.id`)
+5. ✅ Public vs private data is correctly filtered
+
+**Why**: Search features are particularly prone to cross-user data leaks. Testing with realistic sensitive data (API keys, passwords) ensures isolation works.
+
+**Reference**: `test/homesite_web/security_test.exs:338-468`
+
+<!-- Integrated from .claude/insights sessions on 2025-11-30 -->
+
+---
+
+### Testing Patterns
+
+#### Pattern: Zero-Tolerance Testing Policy
+
+**Rule**: Fix ALL failing tests immediately before considering a feature complete. Never commit code with failing tests.
+
+**Workflow**:
+```bash
+# After implementing feature
+mix test test/path/to/feature_test.exs  # Run feature tests
+# If failures: FIX THEM IMMEDIATELY
+# Repeat until: 0 failures
+mix test  # Run full suite
+# If failures: FIX THEM IMMEDIATELY
+# Only then: git commit
+```
+
+**Exception**: Only commit with failing tests if running out of context/memory and need to preserve work. Must fix in next session.
+
+**Why this matters**:
+- **Quality**: Failing tests indicate broken functionality
+- **Regression Prevention**: Unfixed errors compound over time
+- **Code Health**: Each skipped error makes the next one easier to ignore
+- **Trust**: Test suite must be trusted to catch real issues
+- **Documentation**: Tests document expected behavior - failures are lies
+
+**This principle applies to ALL features**:
+- Security tests MUST pass (auth, scope isolation)
+- Edge case tests MUST pass (empty states, validation)
+- Integration tests MUST pass (LiveView interactions)
+
+<!-- Integrated from .claude/insights sessions on 2025-11-30 -->
+
+---
+
+#### Pattern: Verify Implementation Before Closing GitHub Issues
+
+**Rule**: Before closing any GitHub issue, verify the feature actually exists in the codebase.
+
+**Verification steps**:
+1. Search codebase for expected files/routes
+2. Check database for expected tables/schemas
+3. Verify functionality actually exists
+4. Use git log to find implementation commits
+5. Only close if verified
+
+**Example verification**:
+```bash
+# Check if route exists
+grep -r "/admin/users" lib/homesite_web/router.ex
+
+# Check if module exists
+find lib -name "*admin*users*"
+
+# Check if table exists
+grep "create table(:activities" priv/repo/migrations/*
+
+# Check git history
+git log --all --grep="user management"
+```
+
+**Why**: GitHub issues should accurately reflect reality. Closing without verification leads to confusion and wasted time in future sessions when you discover the feature was never actually implemented.
+
+<!-- Integrated from .claude/insights sessions on 2025-11-30 -->
+
+---
+
+#### Pattern: Database Constraints Require assert_raise
+
+**Rule**: When testing database constraints (VARCHAR limits, NOT NULL, etc.), use `assert_raise` instead of expecting changeset errors.
+
+**Implementation**:
+```elixir
+test "handles very long URLs" do
+  # URLs longer than 255 chars will fail due to database constraint
+  long_url = "https://example.com/" <> String.duplicate("a", 300)
+
+  attrs = %{
+    platform: "twitter",
+    shared_url: long_url,
+    post_id: post.id
+  }
+
+  # Should raise database error (URL column is VARCHAR(255))
+  assert_raise Postgrex.Error, fn ->
+    Social.log_share(attrs)
+  end
+end
+```
+
+**Why the difference**:
+- **Changeset validations** (`validate_length`) → Returns `{:error, changeset}`
+- **Database constraints** (VARCHAR, NOT NULL) → Raises exceptions
+- Test assertions must match actual error handling
+
+**Validation layers**:
+1. **Schema validation**: `validates_length(:field, max: 255)` → Changeset error
+2. **Database constraint**: `VARCHAR(255)` → Exception
+3. **Foreign key constraint**: `references(:table)` → Can use `foreign_key_constraint/3` for changeset error
+
+**Reference**: `test/homesite/social_test.exs:113-127`
+
+<!-- Integrated from .claude/insights sessions on 2025-11-30 -->
+
+---
+
+#### Pattern: Comprehensive Edge Case Testing
+
+**Rule**: Test edge cases, injection attempts, and boundary conditions for every public-facing feature.
+
+**Edge cases to always test**:
+- Empty/whitespace input
+- Very long strings (1000+ chars)
+- SQL injection attempts (`'; DROP TABLE posts; --`)
+- XSS payloads (`<script>alert('xss')</script>`)
+- Unicode characters (`héllo`, `你好`)
+- Special characters, newlines, tabs
+- Single character input
+- Boundary values (0, -1, negative numbers, MAX values)
+- Invalid foreign keys
+- Empty required fields
+
+**Example**:
+```elixir
+test "handles SQL injection safely" do
+  results = Content.search_posts("'; DROP TABLE posts; --")
+  assert is_list(results)  # Doesn't crash
+
+  # Verify posts still exist
+  all_posts = Content.list_posts(scope)
+  assert length(all_posts) >= 1
+end
+
+test "handles very long URLs" do
+  long_url = "https://example.com/" <> String.duplicate("a", 300)
+
+  # Should raise database error (VARCHAR(255) constraint)
+  assert_raise Postgrex.Error, fn ->
+    Social.log_share(%{platform: "twitter", shared_url: long_url})
+  end
+end
+```
+
+**Why**: Edge case testing catches issues before production. In practice, these tests found 3 bugs before deployment:
+1. Empty queries returned all posts (fixed)
+2. Negative limits crashed (fixed)
+3. Missing required assigns (fixed)
+
+**Reference**: `test/homesite/content_search_test.exs:142-268`, `test/homesite/social_test.exs:105-285`
+
+<!-- Integrated from .claude/insights sessions on 2025-11-30 -->
+
+---
+
+### Common Mistakes
+
+#### Mistake: DaisyUI Button Component Has Limited Variant Support
+
+**Problem**: The Phoenix `<.button>` component only supports `variant="primary"` or `variant=nil`. Using other variants like `ghost`, `outline`, `link` will cause a KeyError.
+
+**Wrong**:
+```heex
+<.button variant="ghost" navigate={~p"/faqs?category=user"}>
+  {gettext("User FAQs")}
+</.button>
+```
+
+**Error**:
+```
+KeyError at GET /faqs
+key "ghost" not found in: %{nil => "btn-primary btn-soft", "primary" => "btn-primary"}
+```
+
+**Correct**:
+```heex
+<.link navigate={~p"/faqs?category=user"} class="btn btn-ghost">
+  {gettext("User FAQs")}
+</.link>
+```
+
+**Rule**:
+- Check `lib/homesite_web/components/core_components.ex` for supported variants
+- Use `<.button>` only for primary CTAs (call-to-action buttons)
+- Use `<.link class="btn btn-{variant}">` for all DaisyUI button variants
+
+**Reference**: `lib/homesite_web/live/faq_live/index.ex:21-26`
+
+<!-- Integrated from .claude/insights sessions on 2025-11-30 -->
+
+---
+
+#### Mistake: Context Functions Require Scope-First Argument Order
+
+**Problem**: Scope-first is the pattern for ALL context functions in this app. Pipe operator changes natural argument flow and causes function clause errors.
+
+**Wrong**:
+```elixir
+# Piped faq becomes first argument
+socket.assigns.faq
+|> Faqs.change_faq(socket.assigns.current_scope, faq_params)
+
+# But function expects: change_faq(scope, faq, attrs)
+```
+
+**Error**:
+```
+** (FunctionClauseError) no function clause matching in Homesite.Faqs.change_faq/3
+```
+
+**Correct**:
+```elixir
+# Scope is always first
+Faqs.change_faq(socket.assigns.current_scope, socket.assigns.faq, faq_params)
+```
+
+**Rule**: Scope-first pattern applies to ALL context functions:
+```elixir
+# Correct pattern throughout app
+Content.get_post!(scope, id)
+Content.create_post(scope, attrs)
+Content.update_post(scope, post, attrs)
+Content.change_post(scope, post, attrs)
+
+Faqs.get_faq!(scope, id)
+Faqs.create_faq(scope, attrs)
+Faqs.update_faq(scope, faq, attrs)
+Faqs.change_faq(scope, faq, attrs)
+```
+
+**Avoid pipe-first when context functions need scope**:
+```elixir
+# Don't do this
+post |> Content.update_post(scope, attrs)
+
+# Do this
+Content.update_post(scope, post, attrs)
+```
+
+**Reference**: `lib/homesite_web/live/faq_live/form.ex:141`
+
+<!-- Integrated from .claude/insights sessions on 2025-11-30 -->
+
+---
+
+### UI/UX Patterns
+
+#### Pattern: Responsive Social Share Buttons with Platform-Specific URLs
+
+**Rule**: Build reusable components with platform-specific URL builders, mobile-first responsive design, and proper security attributes.
+
+**Implementation**:
+```elixir
+def social_share_buttons(assigns) do
+  ~H"""
+  <div class={"#{@class} flex flex-wrap gap-2"}>
+    <.share_button platform="bluesky" url={@url} title={@title} />
+    <.share_button platform="mastodon" url={@url} title={@title} />
+    <.share_button platform="twitter" url={@url} title={@title} />
+    <!-- ... more platforms -->
+  </div>
+  """
+end
+
+defp share_button(assigns) do
+  ~H"""
+  <a href={@share_url} target="_blank" rel="noopener noreferrer"
+     class="btn btn-sm btn-outline gap-2">
+    <.icon name={@icon_name} class="h-4 w-4" />
+    <span class="hidden sm:inline">{@label}</span>
+  </a>
+  """
+end
+
+# Platform-specific URL construction
+defp build_share_url("bluesky", url, title) do
+  text = URI.encode_www_form("#{title} #{url}")
+  "https://bsky.app/intent/compose?text=#{text}"
+end
+
+defp build_share_url("mastodon", url, title) do
+  text = URI.encode_www_form("#{title} #{url}")
+  "https://mastodonshare.com/?text=#{text}"  # Universal Mastodon share
+end
+```
+
+**Key principles**:
+1. **Mobile-first**: `hidden sm:inline` shows labels only on larger screens (icons-only on mobile)
+2. **Security**: `noopener noreferrer` prevents window.opener attacks
+3. **Flexibility**: Easy to add new platforms (just add URL builder)
+4. **Encoding**: Proper URL encoding prevents injection
+5. **Decentralized social**: Mastodon uses mastodonshare.com for instance selection
+
+**Usage anywhere**:
+```heex
+<.social_share_buttons url={@current_url} title={@post.title} />
+```
+
+**Reference**: `lib/homesite_web/components/social_components.ex`
+
+<!-- Integrated from .claude/insights sessions on 2025-11-30 -->
+
+---
+
+### Dependency Patterns
+
+#### Pattern: GitHub CLI for Issue Management
+
+**Rule**: Use GitHub CLI (`gh`) for all issue operations instead of the web interface.
+
+**Commands**:
+```bash
+# Close with comment
+gh issue close 22 --comment "Fixed RSS feed autodiscovery. Tested with multiple readers."
+
+# Reopen with comment
+gh issue reopen 10 --comment "Found regression in user scope isolation."
+
+# Create new issue
+gh issue create --title "title" --body "body"
+gh issue create --title "title" --body-file file.md
+
+# List all issues
+gh issue list --limit 50 --json number,title,state
+
+# Add comment to existing issue
+gh issue comment 15 --body "✅ Completed: Language switcher, locale persistence."
+```
+
+**Why**:
+- **Scriptable**: CLI commands can be automated in EOD workflow
+- **Faster**: No context switching to browser
+- **Better documentation**: Commands appear in MEMO.md showing exact actions
+- **Batch operations**: Can script multiple issue updates
+
+**Integration**: All issue operations in EOD workflow and during development use `gh` commands.
+
+<!-- Integrated from .claude/insights sessions on 2025-11-30 -->
+
+---
+
 ### Phoenix v1.8 guidelines
 
 - **Always** begin your LiveView templates with `<Layouts.app flash={@flash} ...>` which wraps all inner content

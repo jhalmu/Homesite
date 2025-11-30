@@ -6,6 +6,182 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-11-30 15:26:07 - Complete Insights Logger Implementation 🚀
+
+### Session: Implementing Phases 3-7 of Insights Logger System
+
+#### What Was Built
+Completed full implementation of the Insights Logger - a system for capturing, organizing, and integrating coding patterns discovered during development.
+
+**Phases Implemented**:
+- **Phase 3**: Review Workflow - Parse sessions, categorize insights, present for selection
+- **Phase 4**: Integration System - Generalize patterns, insert into AGENTS.md/CLAUDE.md
+- **Phase 5**: Archive System - Preserve sessions with full traceability
+- **Phase 6**: Keyword Detection - Auto-capture with trigger keywords
+- **Phase 7**: Cross-References - Tag system for filtering and searching
+
+#### Results
+
+**Documentation Enhanced**:
+- `AGENTS.md`: +596 lines (15 patterns across 7 categories)
+  - Architecture Patterns (3)
+  - Database Patterns (1)
+  - Security Patterns (3)
+  - Testing Patterns (4)
+  - Common Mistakes (2)
+  - UI/UX Patterns (1)
+  - Dependency Patterns (1)
+- `CLAUDE.md`: +169 lines (keyword detection, tag system, archive workflow)
+
+**Files Created**:
+- `.claude/insights/QUICK_REFERENCE.md` (323 lines) - Quick reference guide
+- `.claude/insights/archive/ARCHIVE_INDEX.md` (205 lines) - Traceability index
+- `.claude/insights/session-2025-11-30-152607.md` - Today's session file
+- `.claude/insights/archive/` - Archive directory with 3 processed sessions
+
+**Insights Processed**:
+- 16 insights from 3 sessions (2025-11-27, 2025-11-28, 2025-11-29)
+- 100% integration rate (all valuable insights integrated)
+- Full traceability maintained (session ↔ documentation)
+
+#### System Capabilities
+
+**Capture Methods**:
+1. Manual: `"Log this insight: [description]"`
+2. Auto-capture: Keyword triggers (`"Gotcha:"`, `"Important pattern:"`, etc.)
+3. Minimal capture: Quick notes expanded during review
+4. Full capture: Complete problem/solution/rationale
+
+**Organization**:
+- 8 categories (Architecture, Database, Security, Testing, Bugs, UI/UX, Dependencies, Documentation)
+- Tag system (severity, type, domain, technology)
+- File references with line numbers
+- Integration markers for traceability
+
+**Review & Integration**:
+- Full review: `"Review insights"`
+- Filtered review: `"Review insights #security #critical"`
+- Selective integration (all/category/individual)
+- Automatic archiving with bidirectional references
+
+#### Pattern Categories Integrated
+
+**Architecture** → AGENTS.md:
+- Context Separation for Analytics
+- Database Filtering Requires Separate Function Calls
+
+**Database** → AGENTS.md:
+- Dual Search Strategy (Trigram + ILIKE)
+
+**Security** → AGENTS.md:
+- Admin Authorization Requires Dedicated on_mount Hook
+- Empty Query Validation Prevents DoS
+- Scope Isolation Testing is Mandatory
+
+**Testing** → AGENTS.md:
+- Zero-Tolerance Testing Policy
+- Verify Implementation Before Closing GitHub Issues
+- Database Constraints Require assert_raise
+- Comprehensive Edge Case Testing
+
+**Common Mistakes** → AGENTS.md:
+- DaisyUI Button Component Has Limited Variant Support
+- Context Functions Require Scope-First Argument Order
+
+**UI/UX** → AGENTS.md:
+- Responsive Social Share Buttons with Platform-Specific URLs
+
+**Dependencies** → AGENTS.md:
+- GitHub CLI for Issue Management
+
+**Documentation** → CLAUDE.md:
+- Documentation Organization Pattern
+
+#### Archive System
+
+**Structure**:
+```
+.claude/insights/
+├── session-2025-11-30-152607.md    # Current session
+├── template.md                      # Template
+├── QUICK_REFERENCE.md               # User guide
+└── archive/
+    ├── ARCHIVE_INDEX.md             # Traceability index
+    ├── session-2025-11-27-220000.md # Archived (4 insights)
+    ├── session-2025-11-28-161913.md # Archived (6 insights)
+    └── session-2025-11-29-104435.md # Archived (7 insights)
+```
+
+**Traceability**:
+- ARCHIVE_INDEX.md tracks all integrations
+- Shows which insights went to which documentation files
+- Bidirectional references (session ↔ docs)
+- Integration statistics (100% rate)
+
+#### Keyword Detection System
+
+**Trigger Keywords**:
+- `"Gotcha: [desc]"` → Bugs category
+- `"Important pattern: [desc]"` → Architecture category
+- `"Tricky: [desc]"` → Bugs category
+- `"Security note: [desc]"` → Security category
+- `"Performance: [desc]"` → Performance/Database
+- `"Testing pattern: [desc]"` → Testing category
+- `"UI note: [desc]"` → UI/UX category
+
+**Workflow**: User says trigger → Claude detects category → Offers minimal/full capture → Saves to session file
+
+#### Tag System for Cross-References
+
+**Tag Categories**:
+- Severity: `#critical`, `#important`, `#nice-to-know`
+- Type: `#pattern`, `#gotcha`, `#bug`, `#optimization`
+- Domain: `#security`, `#performance`, `#ui`, `#database`, `#testing`
+- Technology: `#ecto`, `#liveview`, `#postgresql`, `#phoenix`, `#daisyui`
+
+**Tag-Based Review**: Filter insights by tags for targeted reviews
+- Example: `"Review insights #security #critical"` shows only critical security patterns
+
+#### Impact
+
+**Knowledge Preservation**:
+- 16 battle-tested patterns now in documentation
+- No knowledge loss between sessions
+- Future Claude sessions can reference patterns
+- New developers can learn from captured insights
+
+**Living Documentation**:
+- AGENTS.md evolves with project
+- Patterns based on real development experience
+- Easy to update and refine over time
+
+**Low Friction**:
+- Keyword triggers make capture fast
+- Minimal capture mode for speed
+- Expand details during review
+
+#### Files Modified
+
+```
+AGENTS.md                                  | +596 lines
+CLAUDE.md                                  | +169 lines
+.claude/insights/QUICK_REFERENCE.md        | +323 lines (new)
+.claude/insights/archive/ARCHIVE_INDEX.md  | +205 lines (new)
+.claude/insights/session-2025-11-30-*.md   | new
+```
+
+#### Next Steps
+
+System is fully operational! Can now:
+1. Use keyword triggers during development
+2. Review insights anytime with `"Review insights"` or filtered by tags
+3. Browse integrated patterns in AGENTS.md "Patterns from Practice" section
+4. Reference archived sessions for full context
+
+The system will grow organically as more insights are captured!
+
+---
+
 ## 2025-11-30 00:00:00 - Critical Layout Fix: Confirmation & Registration Pages 🔧
 
 ### Session: Fix Broken Layout on Magic Link Confirmation Page

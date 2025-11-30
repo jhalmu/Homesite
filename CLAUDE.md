@@ -130,9 +130,55 @@ After completing ANY coding work:
    ```
 
 2. **Keyword Detection** (Automatic):
-   - Say "Gotcha: [description]" → Auto-captures as insight
-   - Say "Important pattern: [description]" → Auto-captures
-   - Say "Tricky: [description]" → Auto-captures
+   When user uses trigger keywords, Claude should auto-capture insights with minimal friction.
+
+   **Trigger Keywords & Categories**:
+   - "Gotcha: [description]" → **Bugs** category
+   - "Important pattern: [description]" → **Architecture** category
+   - "Tricky: [description]" → **Bugs** category
+   - "Security note: [description]" → **Security** category
+   - "Performance: [description]" → **Performance** category (Database if DB-specific)
+   - "Testing pattern: [description]" → **Testing** category
+   - "UI note: [description]" → **UI/UX** category
+
+   **Auto-Capture Workflow**:
+   ```
+   User: "Gotcha: DaisyUI buttons don't support ghost variant"
+
+   Claude: 📝 Auto-captured as Bugs insight!
+
+   Category: Bugs (detected from "Gotcha")
+   Title: DaisyUI Button Variant Support
+
+   Would you like to:
+   1. Add details now (file path, solution, tags)
+   2. Minimal note (expand during review)
+   3. Skip
+
+   User: 2
+
+   Claude: ✅ Minimal note saved in current session under "Bugs"
+   ```
+
+   **Minimal Capture Format**:
+   ```markdown
+   ## Category: Bugs
+
+   ### Insight: DaisyUI Button Variant Support
+   **Tags**: #quicknote #ui #daisyui
+   **Captured**: 2025-11-30 14:45:00
+
+   **Note**: DaisyUI buttons don't support ghost variant - use <.link> instead.
+
+   **TODO**: Expand during next review (add file path, full solution, why it matters).
+   ```
+
+   **Full Capture** (if user chooses option 1):
+   Ask for:
+   - File path and line numbers
+   - Full solution/workaround
+   - Why it matters (impact, when to apply)
+   - Additional tags (#critical, #security, etc.)
 
 3. **Session File Format**:
    - File: `.claude/insights/session-YYYY-MM-DD-HHMMSS.md`
@@ -160,6 +206,130 @@ Claude: Reads all session files, categorizes, presents for selection
 User: Selects valuable insights
 Claude: Integrates into CLAUDE.md/AGENTS.md, archives processed files
 ```
+
+4. **Tag System for Cross-References**:
+
+   **Tag Categories**:
+   - **Severity**: `#critical`, `#important`, `#nice-to-know`
+   - **Type**: `#pattern`, `#gotcha`, `#bug`, `#optimization`, `#quicknote`
+   - **Domain**: `#security`, `#performance`, `#ui`, `#database`, `#testing`
+   - **Technology**: `#ecto`, `#liveview`, `#postgresql`, `#phoenix`, `#daisyui`
+
+   **Tag Usage in Insights**:
+   ```markdown
+   ### Insight: Admin Authorization Hook
+   **Tags**: #security #auth #liveview #critical #pattern
+   **File**: `lib/homesite_web/user_auth.ex:251-264`
+
+   **Problem**: Regular users could access admin routes...
+   ```
+
+   **Tag-Based Review**:
+   ```
+   User: "Review insights #security #critical"
+
+   Claude: ## Security Insights (Critical Priority)
+
+   Found 3 critical security insights:
+
+   1. [Session 2025-11-28] Admin Authorization Hook
+      Tags: #security #auth #liveview #critical
+      File: lib/homesite_web/user_auth.ex:251-264
+
+   2. [Session 2025-11-29] Empty Query Validation
+      Tags: #security #validation #critical
+      File: lib/homesite/content.ex:726-728
+
+   3. [Session 2025-11-29] Scope Isolation Testing
+      Tags: #security #testing #scope #critical
+      Reference: test/homesite_web/security_test.exs:338-468
+
+   Would you like to:
+   1. Integrate all 3 insights
+   2. Review individually
+   3. Export summary
+   ```
+
+   **Common Tag Queries**:
+   - `"Review insights #critical"` - High-priority patterns
+   - `"Review insights #security"` - All security-related patterns
+   - `"Review insights #postgresql #performance"` - Database optimization patterns
+   - `"Review insights #gotcha"` - Common mistakes and pitfalls
+   - `"Review insights #liveview #pattern"` - LiveView best practices
+
+   **Tag Best Practices**:
+   - Always include severity tag (#critical, #important, #nice-to-know)
+   - Add 1-2 domain tags (#security, #performance, etc.)
+   - Include technology tags for library-specific patterns
+   - Use `#pattern` for reusable solutions, `#gotcha` for pitfalls
+
+5. **Archive and Traceability**:
+
+   After integration, sessions are archived to `.claude/insights/archive/` with:
+   - Full session files preserved
+   - `ARCHIVE_INDEX.md` tracking all integrations
+   - Bidirectional references (session ↔ documentation)
+   - Integration statistics and date stamps
+
+   **Finding Original Context**:
+   ```
+   User: "Where did the 'Scope Isolation Testing' pattern come from?"
+
+   Claude: [Checks ARCHIVE_INDEX.md]
+
+   Pattern: Scope Isolation Testing
+   Source: Session 2025-11-29 10:44:35
+   File: .claude/insights/archive/session-2025-11-29-104435.md
+   Integrated: AGENTS.md - Security Patterns section
+   Context: Full-text search implementation with 62+ edge case tests
+
+   [Can read archived session for full context]
+   ```
+
+---
+
+### Documentation Organization Pattern
+
+**Purpose**: Systematically evaluate and organize documentation files instead of deleting them.
+
+**Evaluation Framework**:
+
+1. **Essential** - Primary guidelines that define project patterns
+   - Examples: AGENTS.md, CLAUDE.md, MODERN_CSS_GUIDE.md
+   - Keep in root, update regularly
+
+2. **Important** - Feature documentation and strategy decisions
+   - Examples: REGISTRATION_STRATEGY.md, EXTERNAL_FEEDS.md
+   - Keep in root, maintain as features evolve
+
+3. **Valuable** - Planning documents and implementation notes
+   - Examples: Detailed planning docs (400+ lines of thinking)
+   - Archive to `archived_docs/` with README explaining organization
+   - Preserve for historical reference and context
+
+4. **Keep & Update** - Documents that need enhancement
+   - Examples: README.md missing critical information
+   - Identify gaps, update proactively
+
+**Rule**: Rather than deleting documentation, organize and index it. Even planning documents for unimplemented features represent valuable thinking and can be referenced later.
+
+**Why**: Comprehensive documentation aids onboarding and prevents rediscovering the same solutions. Clear indexing makes all documentation discoverable. Creates knowledge continuity across sessions.
+
+**Archive Structure**:
+```
+archived_docs/
+├── README.md                    # Explains what's archived and why
+├── COMPLETED_PLAN.md            # Superseded by current implementation
+├── IMPLEMENTATION_SUMMARY.md   # Historical implementation notes
+└── FUTURE_PLANNING.md           # Deferred features
+```
+
+**Best Practice**: Create `archived_docs/README.md` explaining:
+- What files were archived and when
+- What superseded each archived file
+- Where to find current active documentation
+
+<!-- Integrated from .claude/insights sessions on 2025-11-30 -->
 
 ---
 
