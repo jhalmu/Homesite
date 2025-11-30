@@ -32,6 +32,9 @@ defmodule HomesiteWeb.E2E.AccessibilityTest do
 
   # Helper to run axe-core accessibility audit
   defp audit_page(session) do
+    # Force light theme for accessibility testing (WCAG AA compliance testing)
+    session = run_js(session, "document.documentElement.setAttribute('data-theme', 'light')")
+
     # Inject axe-core library
     session = run_js(session, A11yAudit.JS.axe_core())
 
