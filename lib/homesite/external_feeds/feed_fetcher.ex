@@ -6,8 +6,14 @@ defmodule Homesite.ExternalFeeds.FeedFetcher do
   alias Homesite.ExternalFeeds
   alias Homesite.ExternalFeeds.FeedSource
 
-  alias Homesite.ExternalFeeds.Adapters.{BlueskyAdapter, InstagramAdapter, MastodonAdapter,
-                                          RssAdapter, TwitterAdapter, YoutubeAdapter}
+  alias Homesite.ExternalFeeds.Adapters.{
+    BlueskyAdapter,
+    InstagramAdapter,
+    MastodonAdapter,
+    RssAdapter,
+    TwitterAdapter,
+    YoutubeAdapter
+  }
 
   require Logger
 

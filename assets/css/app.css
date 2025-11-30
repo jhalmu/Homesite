@@ -14,7 +14,7 @@
    curl -sLO https://github.com/saadeghi/daisyui/releases/latest/download/daisyui.js
    Make sure to look at the daisyUI changelog: https://daisyui.com/docs/changelog/ */
 @plugin "../vendor/daisyui" {
-  themes: false;
+    themes: false;
 }
 
 /* daisyUI theme plugin. You can update this file by fetching the latest version with:
@@ -22,73 +22,81 @@
   We ship with two themes, a light one inspired on Phoenix colors and a dark one inspired
   on Elixir colors. Build your own at: https://daisyui.com/theme-generator/ */
 @plugin "../vendor/daisyui-theme" {
-  name: "dark";
-  default: false;
-  prefersdark: true;
-  color-scheme: "dark";
-  --color-base-100: oklch(6.5% 0.012 264.05);
-  --color-base-200: oklch(18% 0.012 264);
-  --color-base-300: oklch(20% 0.010 264);
-  --color-base-content: oklch(85% 0.008 264);
-  --color-primary: oklch(58% 0.12 35);
-  --color-primary-content: oklch(98% 0.002 35);
-  --color-secondary: oklch(58% 0.12 35);
-  --color-secondary-content: oklch(98% 0.002 35);
-  --color-accent: oklch(58% 0.12 35);
-  --color-accent-content: oklch(98% 0.002 35);
-  --color-neutral: oklch(20% 0.010 264);
-  --color-neutral-content: oklch(85% 0.008 264);
-  --color-info: oklch(58% 0.158 241.966);
-  --color-info-content: oklch(97% 0.013 236.62);
-  --color-success: oklch(60% 0.118 184.704);
-  --color-success-content: oklch(98% 0.014 180.72);
-  --color-warning: oklch(66% 0.179 58.318);
-  --color-warning-content: oklch(98% 0.022 95.277);
-  --color-error: oklch(58% 0.253 17.585);
-  --color-error-content: oklch(96% 0.015 12.422);
-  --radius-selector: 0.25rem;
-  --radius-field: 0.25rem;
-  --radius-box: 0.5rem;
-  --size-selector: 0.21875rem;
-  --size-field: 0.21875rem;
-  --border: 1.5px;
-  --depth: 1;
-  --noise: 0;
+    name: "dark";
+    default: false;
+    prefersdark: true;
+    color-scheme: "dark";
+    --color-base-100: oklch(6.5% 0.012 264.05);
+    --color-base-200: oklch(18% 0.012 264);
+    --color-base-300: oklch(20% 0.01 264);
+    --color-base-content: oklch(85% 0.008 264);
+    --color-primary: oklch(58% 0.12 35);
+    --color-primary-content: oklch(98% 0.002 35);
+    --color-secondary: oklch(58% 0.12 35);
+    --color-secondary-content: oklch(98% 0.002 35);
+    --color-accent: oklch(58% 0.12 35);
+    --color-accent-content: oklch(98% 0.002 35);
+    --color-neutral: oklch(20% 0.01 264);
+    --color-neutral-content: oklch(85% 0.008 264);
+    --color-info: oklch(58% 0.158 241.966);
+    --color-info-content: oklch(97% 0.013 236.62);
+    --color-success: oklch(60% 0.118 184.704);
+    --color-success-content: oklch(98% 0.014 180.72);
+    --color-warning: oklch(66% 0.179 58.318);
+    --color-warning-content: oklch(98% 0.022 95.277);
+    --color-error: oklch(58% 0.253 17.585);
+    --color-error-content: oklch(96% 0.015 12.422);
+    --radius-selector: 0.25rem;
+    --radius-field: 0.25rem;
+    --radius-box: 0.5rem;
+    --size-selector: 0.21875rem;
+    --size-field: 0.21875rem;
+    --border: 1.5px;
+    --depth: 1;
+    --noise: 0;
 }
 
 @plugin "../vendor/daisyui-theme" {
-  name: "light";
-  default: true;
-  prefersdark: false;
-  color-scheme: "light";
-  --color-base-100: oklch(100% 0 0);        /* Pure white background */
-  --color-base-200: oklch(96% 0.004 264);   /* Very light gray for input backgrounds */
-  --color-base-300: oklch(92% 0.004 264);   /* Much lighter gray - WCAG AA contrast for buttons */
-  --color-base-content: oklch(15% 0.008 264); /* Very dark text - IMPROVED contrast */
-  --color-primary: oklch(58% 0.14 32);
-  --color-primary-content: oklch(98% 0.002 32);
-  --color-secondary: oklch(58% 0.14 32);
-  --color-secondary-content: oklch(98% 0.002 32);
-  --color-accent: oklch(58% 0.14 32);
-  --color-accent-content: oklch(98% 0.002 32);
-  --color-neutral: oklch(25% 0.010 264);     /* Even darker neutral - WCAG AA contrast */
-  --color-neutral-content: oklch(98% 0 0);
-  --color-info: oklch(62% 0.214 259.815);
-  --color-info-content: oklch(97% 0.014 254.604);
-  --color-success: oklch(70% 0.14 182.503);
-  --color-success-content: oklch(98% 0.014 180.72);
-  --color-warning: oklch(66% 0.179 58.318);
-  --color-warning-content: oklch(98% 0.022 95.277);
-  --color-error: oklch(58% 0.253 17.585);
-  --color-error-content: oklch(96% 0.015 12.422);
-  --radius-selector: 0.25rem;
-  --radius-field: 0.25rem;
-  --radius-box: 0.5rem;
-  --size-selector: 0.21875rem;
-  --size-field: 0.21875rem;
-  --border: 3px;                             /* Slightly thicker borders for better visibility */
-  --depth: 1;
-  --noise: 0;
+    name: "light";
+    default: true;
+    prefersdark: false;
+    color-scheme: "light";
+    --color-base-100: oklch(100% 0 0); /* Pure white background */
+    --color-base-200: oklch(
+        96% 0.004 264
+    ); /* Very light gray for input backgrounds */
+    --color-base-300: oklch(
+        92% 0.004 264
+    ); /* Much lighter gray - WCAG AA contrast for buttons */
+    --color-base-content: oklch(
+        15% 0.008 264
+    ); /* Very dark text - IMPROVED contrast */
+    --color-primary: oklch(58% 0.14 32);
+    --color-primary-content: oklch(98% 0.002 32);
+    --color-secondary: oklch(58% 0.14 32);
+    --color-secondary-content: oklch(98% 0.002 32);
+    --color-accent: oklch(58% 0.14 32);
+    --color-accent-content: oklch(98% 0.002 32);
+    --color-neutral: oklch(
+        25% 0.01 264
+    ); /* Even darker neutral - WCAG AA contrast */
+    --color-neutral-content: oklch(98% 0 0);
+    --color-info: oklch(62% 0.214 259.815);
+    --color-info-content: oklch(97% 0.014 254.604);
+    --color-success: oklch(70% 0.14 182.503);
+    --color-success-content: oklch(98% 0.014 180.72);
+    --color-warning: oklch(66% 0.179 58.318);
+    --color-warning-content: oklch(98% 0.022 95.277);
+    --color-error: oklch(58% 0.253 17.585);
+    --color-error-content: oklch(96% 0.015 12.422);
+    --radius-selector: 0.25rem;
+    --radius-field: 0.25rem;
+    --radius-box: 0.5rem;
+    --size-selector: 0.21875rem;
+    --size-field: 0.21875rem;
+    --border: 3px; /* Slightly thicker borders for better visibility */
+    --depth: 1;
+    --noise: 0;
 }
 
 /* Add variants based on LiveView classes */
@@ -105,35 +113,38 @@
    ============================================================================ */
 
 @theme {
-  /* Typography scale */
-  --font-size-fluid-xs: var(--text-xs);
-  --font-size-fluid-sm: var(--text-sm);
-  --font-size-fluid-base: var(--text-base);
-  --font-size-fluid-lg: var(--text-lg);
-  --font-size-fluid-xl: var(--text-xl);
-  --font-size-fluid-2xl: var(--text-2xl);
+    /* Typography scale */
+    --font-size-fluid-xs: var(--text-xs);
+    --font-size-fluid-sm: var(--text-sm);
+    --font-size-fluid-base: var(--text-base);
+    --font-size-fluid-lg: var(--text-lg);
+    --font-size-fluid-xl: var(--text-xl);
+    --font-size-fluid-2xl: var(--text-2xl);
 
-  /* Spacing scale */
-  --spacing-xs: var(--space-xs);
-  --spacing-sm: var(--space-sm);
-  --spacing-md: var(--space-md);
-  --spacing-lg: var(--space-lg);
-  --spacing-xl: var(--space-xl);
+    /* Spacing scale */
+    --spacing-xs: var(--space-xs);
+    --spacing-sm: var(--space-sm);
+    --spacing-md: var(--space-md);
+    --spacing-lg: var(--space-lg);
+    --spacing-xl: var(--space-xl);
 
-  /* Component spacing */
-  --spacing-card: var(--card-padding);
-  --spacing-section: var(--section-gap);
-  --spacing-inline: var(--inline-gap);
+    /* Component spacing */
+    --spacing-card: var(--card-padding);
+    --spacing-section: var(--section-gap);
+    --spacing-inline: var(--inline-gap);
 
-  /* Layout constraints */
-  --width-content: var(--content-max-width);
-  --width-article: var(--article-max-width);
-  --width-card: var(--card-max-width);
-  --width-sidebar: var(--sidebar-width);
+    /* Layout constraints */
+    --width-content: var(--content-max-width);
+    --width-article: var(--article-max-width);
+    --width-card: var(--card-max-width);
+    --width-sidebar: var(--sidebar-width);
 }
 
 /* Make LiveView wrapper divs transparent for layout */
-[data-phx-session], [data-phx-teleported-src] { display: contents }
+[data-phx-session],
+[data-phx-teleported-src] {
+    display: contents;
+}
 
 /* This file is for your main application CSS */
 
@@ -143,36 +154,40 @@
    ============================================================================ */
 
 :root {
-  /* Dark theme colors (default) */
-  --bg: #0d1117;
-  --surface: #161b22;
-  --border: #30363d;
-  --text: #c9d1d9;
-  --text-secondary: #8b949e;
-  --accent: #FF6B35;
-  --code-bg: #161b22;
+    /* Dark theme colors (default) */
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text: #c9d1d9;
+    --text-secondary: #8b949e;
+    --accent: #ff6b35;
+    --code-bg: #161b22;
 }
 
 :root[data-theme="light"] {
-  /* Light theme colors */
-  --bg: #ffffff;
-  --surface: #f6f8fa;
-  --border: #c0c0c0;  /* Slightly darker for visibility against lighter backgrounds */
-  --text: #24292f;
-  --text-secondary: #595959;  /* Improved contrast: 7.0:1 (was #57606a at 2.55:1) */
-  --accent: #FD4F00;
-  --code-bg: #f6f8fa;
+    /* Light theme colors */
+    --bg: #ffffff;
+    --surface: #f6f8fa;
+    --border: #c0c0c0; /* Slightly darker for visibility against lighter backgrounds */
+    --text: #24292f;
+    --text-secondary: #595959; /* Improved contrast: 7.0:1 (was #57606a at 2.55:1) */
+    --accent: #fd4f00;
+    --code-bg: #f6f8fa;
 }
 
 /* Apply colors to body */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
-  font-feature-settings: 'kern' 1, 'liga' 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  line-height: 1.6;
-  background: var(--bg);
-  color: var(--text);
+    font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica,
+        Arial, sans-serif;
+    font-feature-settings:
+        "kern" 1,
+        "liga" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.6;
+    background: var(--bg);
+    color: var(--text);
 }
 
 /* ============================================================================
@@ -182,19 +197,39 @@ body {
 
 /* Label styling for WCAG AA compliance */
 .label {
-  color: var(--text);  /* Use full text color, not muted */
+    color: var(--text); /* Use full text color, not muted */
 }
 
 /* Divider text - ensure WCAG AA compliance */
 .divider {
-  color: var(--text-secondary);  /* Use properly contrasted secondary color */
+    color: var(--text-secondary); /* Use properly contrasted secondary color */
 }
 
 /* Override opacity-based text colors for WCAG AA compliance */
 .text-base-content\/50,
 .text-base-content\/60 {
-  color: var(--text-secondary) !important;  /* Use properly contrasted secondary color */
-  opacity: 1 !important;  /* Override opacity for contrast */
+    color: var(
+        --text-secondary
+    ) !important; /* Use properly contrasted secondary color */
+    opacity: 1 !important; /* Override opacity for contrast */
+}
+
+/* Semantic text color utilities - WCAG AA compliant */
+.text-secondary {
+    color: var(--text-secondary) !important;
+    opacity: 1 !important;
+}
+
+/* Override DaisyUI stat default opacity for WCAG AA compliance */
+.stat-title,
+.stat-desc {
+    color: var(--text-secondary);
+    opacity: 1;
+}
+
+/* Lighten main background in dark theme for better contrast */
+body {
+    background-color: oklch(var(--b2));
 }
 
 /* Navigation menu links - WCAG AA contrast compliance with theme-specific accent colors */
@@ -211,8 +246,8 @@ header a[href="/dashboard"],
 .menu a,
 .menu li a,
 .menu-horizontal a {
-  color: var(--accent) !important;  /* Use theme-specific accent color */
-  transition: opacity 0.2s ease;
+    color: var(--accent) !important; /* Use theme-specific accent color */
+    transition: opacity 0.2s ease;
 }
 
 .technical-header nav a *,
@@ -221,7 +256,7 @@ header .menu a span,
 header .menu a svg,
 header a[href="/search"] span,
 header a[href="/faqs"] span {
-  color: inherit !important;  /* Ensure icon colors match text */
+    color: inherit !important; /* Ensure icon colors match text */
 }
 
 .technical-header nav a:hover,
@@ -233,97 +268,95 @@ header .menu-horizontal a:hover,
 .menu a:hover,
 .menu li a:hover,
 .menu-horizontal a:hover {
-  opacity: 0.8;  /* Subtle hover effect */
+    opacity: 0.8; /* Subtle hover effect */
 }
 
 .technical-header nav a:focus,
 .technical-header .menu a:focus,
 header .menu a:focus {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
 }
 
 /* Language toggle buttons - WCAG AA contrast compliance */
 .card.border-base-300.bg-base-300 button {
-  color: var(--text);  /* Use full text color for proper contrast */
-  opacity: 1 !important;  /* Override opacity-75 for contrast */
+    color: var(--text); /* Use full text color for proper contrast */
+    opacity: 1 !important; /* Override opacity-75 for contrast */
 }
 
 .card.border-base-300.bg-base-300 button:hover {
-  opacity: 1 !important;  /* Keep full opacity on hover */
-  text-decoration: underline;  /* Visual feedback for hover state */
+    opacity: 1 !important; /* Keep full opacity on hover */
+    text-decoration: underline; /* Visual feedback for hover state */
 }
 
 /* Base input styling - text, email, password, number, url, etc. */
 .input {
-  background-color: var(--surface);
-  border-color: var(--border);
-  color: var(--text);
+    background-color: var(--surface);
+    border-color: var(--border);
+    color: var(--text);
 }
 
 .input:focus {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-  border-color: var(--accent);
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-color: var(--accent);
 }
 
 /* Textarea styling */
 .textarea {
-  background-color: var(--surface);
-  border-color: var(--border);
-  color: var(--text);
-  min-height: 8rem;
+    background-color: var(--surface);
+    border-color: var(--border);
+    color: var(--text);
+    min-height: 8rem;
 }
 
 .textarea:focus {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-  border-color: var(--accent);
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-color: var(--accent);
 }
 
 /* Select dropdown styling */
 .select {
-  background-color: var(--surface);
-  border-color: var(--border);
-  color: var(--text);
+    background-color: var(--surface);
+    border-color: var(--border);
+    color: var(--text);
 }
 
 .select:focus {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-  border-color: var(--accent);
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-color: var(--accent);
 }
 
 /* Disabled state */
 .input:disabled,
 .textarea:disabled,
 .select:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background-color: var(--surface);
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--surface);
 }
 
 /* Error state */
 .input-error {
-  border-color: #f85149;
-  background-color: rgba(248, 81, 73, 0.05);
+    border-color: #f85149;
+    background-color: rgba(248, 81, 73, 0.05);
 }
 
 /* File input styling */
 .file-input {
-  background-color: var(--surface);
-  border-color: var(--border);
-  color: var(--text);
+    background-color: var(--surface);
+    border-color: var(--border);
+    color: var(--text);
+    border-radius: 15px;
 }
 
 .file-input::file-selector-button {
-  background-color: var(--accent);
-  color: #ffffff;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  margin-right: 1rem;
-  cursor: pointer;
+    background-color: var(--accent);
+    color: #ffffff;
+    cursor: pointer;
+    border-radius: 15px;
 }
 
 /* Monospace font for code, dates, and technical metadata */
@@ -333,7 +366,7 @@ kbd,
 pre,
 samp,
 time {
-  font-family: 'SF Mono', 'Consolas', 'Liberation Mono', 'Menlo', monospace;
+    font-family: "SF Mono", "Consolas", "Liberation Mono", "Menlo", monospace;
 }
 
 /* ============================================================================
@@ -343,115 +376,120 @@ time {
 
 /* Header styling from design-e-technical.html */
 .technical-header {
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
-  padding: 1.25rem 0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    padding: 1.25rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .header-content {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 /* Main content container */
 .technical-main {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 4rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
 }
 
 /* Headings with technical letter-spacing */
-h1, h2, h3, h4, h5, h6 {
-  letter-spacing: -0.01em;
-  font-weight: 600;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    letter-spacing: -0.01em;
+    font-weight: 600;
 }
 
 /* Post metadata styling */
 .post-meta {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 0.875rem;
-  color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
 }
 
 .post-meta time {
-  font-family: 'SF Mono', 'Consolas', monospace;
+    font-family: "SF Mono", "Consolas", monospace;
 }
 
 /* Technical tags */
 .tag-technical {
-  background: var(--code-bg);
-  color: var(--accent);
-  padding: 0.25rem 0.625rem;
-  border-radius: 3px;
-  font-size: 0.75rem;
-  font-family: 'SF Mono', 'Consolas', monospace;
-  font-weight: 500;
+    background: var(--code-bg);
+    color: var(--accent);
+    padding: 0.25rem 0.625rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-family: "SF Mono", "Consolas", monospace;
+    font-weight: 500;
 }
 
 /* Badge padding improvements */
 .badge {
-  padding: 0.5rem 0.875rem;
+    padding: 0.5rem 0.875rem;
 }
 
 .badge-lg {
-  padding: 0.625rem 1rem;
-  font-size: 0.875rem;
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
 }
 
 .badge-sm {
-  padding: 0.375rem 0.625rem;
-  font-size: 0.75rem;
+    padding: 0.375rem 0.625rem;
+    font-size: 0.75rem;
 }
 
 /* Post cards with technical borders */
 .post-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 2rem;
-  margin-bottom: 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 /* Post title styling */
 .post-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 0.875rem;
-  letter-spacing: -0.01em;
-  line-height: 1.3;
-  color: var(--text);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.875rem;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    color: var(--text);
 }
 
 .post-title:hover {
-  color: var(--accent);
+    color: var(--accent);
 }
 
 /* Post excerpt */
 .post-excerpt {
-  color: var(--text-secondary);
-  line-height: 1.7;
-  margin-bottom: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 1rem;
 }
 
 /* Post footer with separator */
 .post-footer {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  padding-top: 1rem;
-  border-top: 1px solid var(--border);
-  font-family: 'SF Mono', 'Consolas', monospace;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-family: "SF Mono", "Consolas", monospace;
 }
 
 /* ============================================================================
@@ -461,57 +499,57 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Base listing card - maps to post-card */
 .listing-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 2rem;
-  margin-bottom: 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 /* Listing metadata - maps to post-meta */
 .listing-meta {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 0.875rem;
-  color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
 }
 
 .listing-meta time {
-  font-family: 'SF Mono', 'Consolas', monospace;
+    font-family: "SF Mono", "Consolas", monospace;
 }
 
 /* Listing title - maps to post-title */
 .listing-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 0.875rem;
-  letter-spacing: -0.01em;
-  line-height: 1.3;
-  color: var(--text);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.875rem;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    color: var(--text);
 }
 
 .listing-title:hover {
-  color: var(--accent);
+    color: var(--accent);
 }
 
 /* Listing content/excerpt - maps to post-excerpt */
 .listing-content {
-  color: var(--text-secondary);
-  line-height: 1.7;
-  margin-bottom: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 1rem;
 }
 
 /* Listing footer - maps to post-footer */
 .listing-footer {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  padding-top: 1rem;
-  border-top: 1px solid var(--border);
-  font-family: 'SF Mono', 'Consolas', monospace;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-family: "SF Mono", "Consolas", monospace;
 }
 
 /* ============================================================================
@@ -521,78 +559,83 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Subtle grid texture for background */
 .technical-main::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  opacity: 0.015;  /* 1.5% opacity - barely visible */
-  z-index: -1;
-  background-image:
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0, 0, 0, 0.03) 2px,
-      rgba(0, 0, 0, 0.03) 4px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 2px,
-      rgba(0, 0, 0, 0.03) 2px,
-      rgba(0, 0, 0, 0.03) 4px
-    );
-  background-size: 4px 4px;
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.015; /* 1.5% opacity - barely visible */
+    z-index: -1;
+    background-image:
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 0, 0, 0.03) 2px,
+            rgba(0, 0, 0, 0.03) 4px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 0, 0, 0.03) 2px,
+            rgba(0, 0, 0, 0.03) 4px
+        );
+    background-size: 4px 4px;
 }
 
 [data-theme="dark"] .technical-main::before {
-  background-image:
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(255, 255, 255, 0.02) 2px,
-      rgba(255, 255, 255, 0.02) 4px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 2px,
-      rgba(255, 255, 255, 0.02) 2px,
-      rgba(255, 255, 255, 0.02) 4px
-    );
+    background-image:
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(255, 255, 255, 0.02) 2px,
+            rgba(255, 255, 255, 0.02) 4px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 2px,
+            rgba(255, 255, 255, 0.02) 2px,
+            rgba(255, 255, 255, 0.02) 4px
+        );
 }
 
 /* Accent border on featured post */
 .post-card:first-child {
-  border-left: 3px solid var(--accent);
+    border-left: 3px solid var(--accent);
 }
 
 /* Subtle hover lift effect */
 .post-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .post-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 [data-theme="dark"] .post-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* Accent on code blocks */
 .prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  border-left: 2px solid var(--accent);
-  transition: border-color 0.2s ease;
+    border-left: 2px solid var(--accent);
+    transition: border-color 0.2s ease;
 }
 
-.prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)):hover {
-  border-left-width: 3px;
+.prose
+    :where(pre):not(
+        :where([class~="not-prose"], [class~="not-prose"] *)
+    ):hover {
+    border-left-width: 3px;
 }
 
 /* ============================================================================
@@ -601,228 +644,240 @@ h1, h2, h3, h4, h5, h6 {
    ============================================================================ */
 
 :root {
-  /* Layout Constraints - use with w-[var(--content-max-width)] */
-  --content-max-width: min(95vw, 1400px);
-  --article-max-width: min(90vw, 800px);
-  --card-max-width: min(90vw, 600px);
-  --sidebar-width: max(250px, 20vw);
+    /* Layout Constraints - use with w-[var(--content-max-width)] */
+    --content-max-width: min(95vw, 1400px);
+    --article-max-width: min(90vw, 800px);
+    --card-max-width: min(90vw, 600px);
+    --sidebar-width: max(250px, 20vw);
 
-  /* Fluid Typography - use with text-[var(--text-base)] */
-  --text-xs: clamp(0.75rem, 1vw, 0.875rem);
-  --text-sm: clamp(0.875rem, 1.5vw, 1rem);
-  --text-base: clamp(1rem, 2vw, 1.25rem);
-  --text-lg: clamp(1.125rem, 2.5vw, 1.5rem);
-  --text-xl: clamp(1.25rem, 3vw, 2rem);
-  --text-2xl: clamp(1.5rem, 4vw, 3rem);
+    /* Fluid Typography - use with text-[var(--text-base)] */
+    --text-xs: clamp(0.75rem, 1vw, 0.875rem);
+    --text-sm: clamp(0.875rem, 1.5vw, 1rem);
+    --text-base: clamp(1rem, 2vw, 1.25rem);
+    --text-lg: clamp(1.125rem, 2.5vw, 1.5rem);
+    --text-xl: clamp(1.25rem, 3vw, 2rem);
+    --text-2xl: clamp(1.5rem, 4vw, 3rem);
 
-  /* Responsive Spacing - use with gap-[var(--space-md)] */
-  --space-xs: clamp(0.25rem, 1vw, 0.5rem);
-  --space-sm: clamp(0.5rem, 2vw, 1rem);
-  --space-md: clamp(1rem, 3vw, 2rem);
-  --space-lg: clamp(2rem, 5vw, 4rem);
-  --space-xl: clamp(3rem, 8vw, 6rem);
+    /* Responsive Spacing - use with gap-[var(--space-md)] */
+    --space-xs: clamp(0.25rem, 1vw, 0.5rem);
+    --space-sm: clamp(0.5rem, 2vw, 1rem);
+    --space-md: clamp(1rem, 3vw, 2rem);
+    --space-lg: clamp(2rem, 5vw, 4rem);
+    --space-xl: clamp(3rem, 8vw, 6rem);
 
-  /* Component-Specific Spacing */
-  --card-padding: clamp(1rem, 3vw, 2rem);
-  --section-gap: clamp(2rem, 5vw, 4rem);
-  --inline-gap: clamp(0.25rem, 1vw, 0.5rem);
+    /* Component-Specific Spacing */
+    --card-padding: clamp(1rem, 3vw, 2rem);
+    --section-gap: clamp(2rem, 5vw, 4rem);
+    --inline-gap: clamp(0.25rem, 1vw, 0.5rem);
 }
 
 /* Custom display font for branding */
 .font-display {
-  font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+    font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
 }
 
 /* Field with help - responsive layout */
 .field-with-help {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  margin-bottom: 0.5rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .field-with-help .field-input {
-  min-width: 0; /* Prevent grid overflow */
+    min-width: 0; /* Prevent grid overflow */
 }
 
 .field-with-help .field-help {
-  min-width: 0;
+    min-width: 0;
 }
 
 /* Desktop: side-by-side layout */
 @media (min-width: 1024px) {
-  .field-with-help {
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    align-items: start;
-  }
+    .field-with-help {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        align-items: start;
+    }
 }
 
 /* Markdown Prose Styling */
 .prose {
-  color: var(--color-base-content);
-  max-width: 65ch;
+    color: var(--color-base-content);
+    max-width: 65ch;
 }
 
 .prose :where(h1):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  font-size: 2.25em;
-  font-weight: 800;
-  line-height: 1.1111111;
-  margin-top: 0;
-  margin-bottom: 0.8888889em;
+    font-size: 2.25em;
+    font-weight: 800;
+    line-height: 1.1111111;
+    margin-top: 0;
+    margin-bottom: 0.8888889em;
 }
 
 .prose :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  font-size: 1.5em;
-  font-weight: 700;
-  line-height: 1.3333333;
-  margin-top: 2em;
-  margin-bottom: 1em;
+    font-size: 1.5em;
+    font-weight: 700;
+    line-height: 1.3333333;
+    margin-top: 2em;
+    margin-bottom: 1em;
 }
 
 .prose :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  font-size: 1.25em;
-  font-weight: 600;
-  line-height: 1.6;
-  margin-top: 1.6em;
-  margin-bottom: 0.6em;
+    font-size: 1.25em;
+    font-weight: 600;
+    line-height: 1.6;
+    margin-top: 1.6em;
+    margin-bottom: 0.6em;
 }
 
 .prose :where(h4):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  font-weight: 600;
-  line-height: 1.5;
-  margin-top: 1.5em;
-  margin-bottom: 0.5em;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
 }
 
 .prose :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  margin-top: 1.25em;
-  margin-bottom: 1.25em;
-  line-height: 1.75;
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+    line-height: 1.75;
 }
 
 .prose :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  color: oklch(var(--color-primary));
-  text-decoration: underline;
-  font-weight: 500;
+    color: oklch(var(--color-primary));
+    text-decoration: underline;
+    font-weight: 500;
 }
 
-.prose :where(strong):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  font-weight: 600;
+.prose
+    :where(strong):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    font-weight: 600;
 }
 
 .prose :where(ul):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  list-style-type: disc;
-  margin-top: 1.25em;
-  margin-bottom: 1.25em;
-  padding-left: 1.625em;
+    list-style-type: disc;
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+    padding-left: 1.625em;
 }
 
 .prose :where(ol):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  list-style-type: decimal;
-  margin-top: 1.25em;
-  margin-bottom: 1.25em;
-  padding-left: 1.625em;
+    list-style-type: decimal;
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+    padding-left: 1.625em;
 }
 
 .prose :where(li):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
 }
 
 .prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  font-weight: 600;
-  font-size: 0.875em;
+    font-weight: 600;
+    font-size: 0.875em;
 }
 
-.prose :where(:not(pre) > code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  color: oklch(var(--color-primary));
-  background-color: oklch(var(--color-base-200));
-  padding: 0.125rem 0.375rem;
-  border-radius: 0.25rem;
-  font-weight: 600;
+.prose
+    :where(:not(pre) > code):not(
+        :where([class~="not-prose"], [class~="not-prose"] *)
+    ) {
+    color: oklch(var(--color-primary));
+    background-color: oklch(var(--color-base-200));
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-weight: 600;
 }
 
 .prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  background-color: var(--code-bg);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 1rem;
-  overflow-x: auto;
-  font-family: 'SF Mono', 'Consolas', monospace;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  margin: 1.5rem 0;
+    background-color: var(--code-bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem;
+    overflow-x: auto;
+    font-family: "SF Mono", "Consolas", monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin: 1.5rem 0;
 }
 
-.prose :where(pre code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  background-color: transparent;
-  border: none;
-  padding: 0;
-  font-size: inherit;
-  color: inherit;
-  font-family: inherit;
+.prose
+    :where(pre code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+    color: inherit;
+    font-family: inherit;
 }
 
 .prose :where(table):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  width: 100%;
-  table-layout: auto;
-  text-align: left;
-  margin-top: 2em;
-  margin-bottom: 2em;
-  font-size: 0.875em;
-  line-height: 1.7142857;
+    width: 100%;
+    table-layout: auto;
+    text-align: left;
+    margin-top: 2em;
+    margin-bottom: 2em;
+    font-size: 0.875em;
+    line-height: 1.7142857;
 }
 
 .prose :where(thead):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  border-bottom-width: 1px;
-  border-bottom-color: oklch(var(--color-base-300));
+    border-bottom-width: 1px;
+    border-bottom-color: oklch(var(--color-base-300));
 }
 
-.prose :where(thead th):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  font-weight: 600;
-  vertical-align: bottom;
-  padding-right: 0.5714286em;
-  padding-bottom: 0.5714286em;
-  padding-left: 0.5714286em;
+.prose
+    :where(thead th):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    font-weight: 600;
+    vertical-align: bottom;
+    padding-right: 0.5714286em;
+    padding-bottom: 0.5714286em;
+    padding-left: 0.5714286em;
 }
 
-.prose :where(tbody tr):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  border-bottom-width: 1px;
-  border-bottom-color: oklch(var(--color-base-200));
+.prose
+    :where(tbody tr):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    border-bottom-width: 1px;
+    border-bottom-color: oklch(var(--color-base-200));
 }
 
-.prose :where(tbody td):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  vertical-align: baseline;
-  padding: 0.5714286em;
+.prose
+    :where(tbody td):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    vertical-align: baseline;
+    padding: 0.5714286em;
 }
 
-.prose :where(blockquote):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  font-weight: 500;
-  font-style: italic;
-  border-left-width: 0.25rem;
-  border-left-color: oklch(var(--color-base-300));
-  quotes: "\201C""\201D""\2018""\2019";
-  margin-top: 1.6em;
-  margin-bottom: 1.6em;
-  padding-left: 1em;
+.prose
+    :where(blockquote):not(
+        :where([class~="not-prose"], [class~="not-prose"] *)
+    ) {
+    font-weight: 500;
+    font-style: italic;
+    border-left-width: 0.25rem;
+    border-left-color: oklch(var(--color-base-300));
+    quotes: "\201C" "\201D" "\2018" "\2019";
+    margin-top: 1.6em;
+    margin-bottom: 1.6em;
+    padding-left: 1em;
 }
 
 .prose :where(hr):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  border-color: oklch(var(--color-base-300));
-  border-top-width: 1px;
-  margin-top: 3em;
-  margin-bottom: 3em;
+    border-color: oklch(var(--color-base-300));
+    border-top-width: 1px;
+    margin-top: 3em;
+    margin-bottom: 3em;
 }
 
 /* Dark mode adjustments */
-.prose:where([data-theme=dark], [data-theme=dark] *) {
-  color: oklch(var(--color-base-content));
+.prose:where([data-theme="dark"], [data-theme="dark"] *) {
+    color: oklch(var(--color-base-content));
 }
 
-.prose:where([data-theme=dark], [data-theme=dark] *) :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  color: oklch(var(--color-primary));
+.prose:where([data-theme="dark"], [data-theme="dark"] *)
+    :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    color: oklch(var(--color-primary));
 }

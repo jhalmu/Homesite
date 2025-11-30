@@ -26,18 +26,18 @@
   default: false;
   prefersdark: true;
   color-scheme: "dark";
-  --color-base-100: oklch(30.33% 0.016 252.42);
-  --color-base-200: oklch(25.26% 0.014 253.1);
-  --color-base-300: oklch(20.15% 0.012 254.09);
-  --color-base-content: oklch(97.807% 0.029 256.847);
-  --color-primary: oklch(58% 0.233 277.117);
-  --color-primary-content: oklch(96% 0.018 272.314);
-  --color-secondary: oklch(58% 0.233 277.117);
-  --color-secondary-content: oklch(96% 0.018 272.314);
-  --color-accent: oklch(60% 0.25 292.717);
-  --color-accent-content: oklch(96% 0.016 293.756);
-  --color-neutral: oklch(37% 0.044 257.287);
-  --color-neutral-content: oklch(98% 0.003 247.858);
+  --color-base-100: oklch(6.5% 0.012 264.05);
+  --color-base-200: oklch(18% 0.012 264);
+  --color-base-300: oklch(20% 0.010 264);
+  --color-base-content: oklch(85% 0.008 264);
+  --color-primary: oklch(58% 0.12 35);
+  --color-primary-content: oklch(98% 0.002 35);
+  --color-secondary: oklch(58% 0.12 35);
+  --color-secondary-content: oklch(98% 0.002 35);
+  --color-accent: oklch(58% 0.12 35);
+  --color-accent-content: oklch(98% 0.002 35);
+  --color-neutral: oklch(20% 0.010 264);
+  --color-neutral-content: oklch(85% 0.008 264);
   --color-info: oklch(58% 0.158 241.966);
   --color-info-content: oklch(97% 0.013 236.62);
   --color-success: oklch(60% 0.118 184.704);
@@ -61,17 +61,17 @@
   default: true;
   prefersdark: false;
   color-scheme: "light";
-  --color-base-100: oklch(98% 0 0);
-  --color-base-200: oklch(96% 0.001 286.375);
-  --color-base-300: oklch(92% 0.004 286.32);
-  --color-base-content: oklch(21% 0.006 285.885);
-  --color-primary: oklch(70% 0.213 47.604);
-  --color-primary-content: oklch(98% 0.016 73.684);
-  --color-secondary: oklch(55% 0.027 264.364);
-  --color-secondary-content: oklch(98% 0.002 247.839);
-  --color-accent: oklch(0% 0 0);
-  --color-accent-content: oklch(100% 0 0);
-  --color-neutral: oklch(44% 0.017 285.786);
+  --color-base-100: oklch(100% 0 0);        /* Pure white background */
+  --color-base-200: oklch(96% 0.004 264);   /* Very light gray for input backgrounds */
+  --color-base-300: oklch(92% 0.004 264);   /* Much lighter gray - WCAG AA contrast for buttons */
+  --color-base-content: oklch(15% 0.008 264); /* Very dark text - IMPROVED contrast */
+  --color-primary: oklch(58% 0.14 32);
+  --color-primary-content: oklch(98% 0.002 32);
+  --color-secondary: oklch(58% 0.14 32);
+  --color-secondary-content: oklch(98% 0.002 32);
+  --color-accent: oklch(58% 0.14 32);
+  --color-accent-content: oklch(98% 0.002 32);
+  --color-neutral: oklch(25% 0.010 264);     /* Even darker neutral - WCAG AA contrast */
   --color-neutral-content: oklch(98% 0 0);
   --color-info: oklch(62% 0.214 259.815);
   --color-info-content: oklch(97% 0.014 254.604);
@@ -86,7 +86,7 @@
   --radius-box: 0.5rem;
   --size-selector: 0.21875rem;
   --size-field: 0.21875rem;
-  --border: 1.5px;
+  --border: 3px;                             /* Slightly thicker borders for better visibility */
   --depth: 1;
   --noise: 0;
 }
@@ -99,10 +99,445 @@
 /* Use the data attribute for dark mode  */
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
+/* ============================================================================
+   CUSTOM THEME UTILITIES
+   Make design tokens available as Tailwind utilities
+   ============================================================================ */
+
+@theme {
+  /* Typography scale */
+  --font-size-fluid-xs: var(--text-xs);
+  --font-size-fluid-sm: var(--text-sm);
+  --font-size-fluid-base: var(--text-base);
+  --font-size-fluid-lg: var(--text-lg);
+  --font-size-fluid-xl: var(--text-xl);
+  --font-size-fluid-2xl: var(--text-2xl);
+
+  /* Spacing scale */
+  --spacing-xs: var(--space-xs);
+  --spacing-sm: var(--space-sm);
+  --spacing-md: var(--space-md);
+  --spacing-lg: var(--space-lg);
+  --spacing-xl: var(--space-xl);
+
+  /* Component spacing */
+  --spacing-card: var(--card-padding);
+  --spacing-section: var(--section-gap);
+  --spacing-inline: var(--inline-gap);
+
+  /* Layout constraints */
+  --width-content: var(--content-max-width);
+  --width-article: var(--article-max-width);
+  --width-card: var(--card-max-width);
+  --width-sidebar: var(--sidebar-width);
+}
+
 /* Make LiveView wrapper divs transparent for layout */
 [data-phx-session], [data-phx-teleported-src] { display: contents }
 
 /* This file is for your main application CSS */
+
+/* ============================================================================
+   DESIGN-E-TECHNICAL EXACT COLORS
+   Direct hex values from design-e-technical.html
+   ============================================================================ */
+
+:root {
+  /* Dark theme colors (default) */
+  --bg: #0d1117;
+  --surface: #161b22;
+  --border: #30363d;
+  --text: #c9d1d9;
+  --text-secondary: #8b949e;
+  --accent: #FF6B35;
+  --code-bg: #161b22;
+}
+
+:root[data-theme="light"] {
+  /* Light theme colors */
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --border: #c0c0c0;  /* Slightly darker for visibility against lighter backgrounds */
+  --text: #24292f;
+  --text-secondary: #595959;  /* Improved contrast: 7.0:1 (was #57606a at 2.55:1) */
+  --accent: #FD4F00;
+  --code-bg: #f6f8fa;
+}
+
+/* Apply colors to body */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ============================================================================
+   FORM INPUT OVERRIDES
+   Override DaisyUI defaults with design-e-technical variables for contrast
+   ============================================================================ */
+
+/* Label styling for WCAG AA compliance */
+.label {
+  color: var(--text);  /* Use full text color, not muted */
+}
+
+/* Divider text - ensure WCAG AA compliance */
+.divider {
+  color: var(--text-secondary);  /* Use properly contrasted secondary color */
+}
+
+/* Override opacity-based text colors for WCAG AA compliance */
+.text-base-content\/50,
+.text-base-content\/60 {
+  color: var(--text-secondary) !important;  /* Use properly contrasted secondary color */
+  opacity: 1 !important;  /* Override opacity for contrast */
+}
+
+/* Navigation menu links - WCAG AA contrast compliance */
+.technical-header nav a,
+.technical-header .menu a,
+.technical-header .menu li a,
+.technical-header .menu-horizontal li a,
+header .menu a,
+header .menu li a,
+header .menu-horizontal a,
+header a[href="/search"],
+header a[href="/faqs"],
+header a[href="/dashboard"],
+.menu a,
+.menu li a,
+.menu-horizontal a {
+  color: #24292f !important;  /* Use exact text color for proper contrast */
+}
+
+.technical-header nav a *,
+.technical-header .menu a *,
+header .menu a span,
+header .menu a svg,
+header a[href="/search"] span,
+header a[href="/faqs"] span {
+  color: inherit !important;  /* Ensure icon colors match text */
+}
+
+.technical-header nav a:hover,
+.technical-header .menu a:hover,
+.technical-header .menu li a:hover,
+header .menu a:hover,
+header .menu li a:hover,
+header .menu-horizontal a:hover,
+.menu a:hover,
+.menu li a:hover,
+.menu-horizontal a:hover {
+  color: #24292f !important;  /* Maintain contrast on hover */
+}
+
+/* Language toggle buttons - WCAG AA contrast compliance */
+.card.border-base-300.bg-base-300 button {
+  color: var(--text);  /* Use full text color for proper contrast */
+  opacity: 1 !important;  /* Override opacity-75 for contrast */
+}
+
+.card.border-base-300.bg-base-300 button:hover {
+  opacity: 1 !important;  /* Keep full opacity on hover */
+  text-decoration: underline;  /* Visual feedback for hover state */
+}
+
+/* Base input styling - text, email, password, number, url, etc. */
+.input {
+  background-color: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-color: var(--accent);
+}
+
+/* Textarea styling */
+.textarea {
+  background-color: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+  min-height: 8rem;
+}
+
+.textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-color: var(--accent);
+}
+
+/* Select dropdown styling */
+.select {
+  background-color: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-color: var(--accent);
+}
+
+/* Disabled state */
+.input:disabled,
+.textarea:disabled,
+.select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--surface);
+}
+
+/* Error state */
+.input-error {
+  border-color: #f85149;
+  background-color: rgba(248, 81, 73, 0.05);
+}
+
+/* File input styling */
+.file-input {
+  background-color: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.file-input::file-selector-button {
+  background-color: var(--accent);
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  margin-right: 1rem;
+  cursor: pointer;
+}
+
+/* Monospace font for code, dates, and technical metadata */
+.font-mono,
+code,
+kbd,
+pre,
+samp,
+time {
+  font-family: 'SF Mono', 'Consolas', 'Liberation Mono', 'Menlo', monospace;
+}
+
+/* ============================================================================
+   DESIGN-E-TECHNICAL VISUAL STYLE
+   GitHub-inspired minimalist aesthetic
+   ============================================================================ */
+
+/* Header styling from design-e-technical.html */
+.technical-header {
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Main content container */
+.technical-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+}
+
+/* Headings with technical letter-spacing */
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.01em;
+  font-weight: 600;
+}
+
+/* Post metadata styling */
+.post-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.post-meta time {
+  font-family: 'SF Mono', 'Consolas', monospace;
+}
+
+/* Technical tags */
+.tag-technical {
+  background: var(--code-bg);
+  color: var(--accent);
+  padding: 0.25rem 0.625rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-family: 'SF Mono', 'Consolas', monospace;
+  font-weight: 500;
+}
+
+/* Badge padding improvements */
+.badge {
+  padding: 0.5rem 0.875rem;
+}
+
+.badge-lg {
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+}
+
+.badge-sm {
+  padding: 0.375rem 0.625rem;
+  font-size: 0.75rem;
+}
+
+/* Post cards with technical borders */
+.post-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Post title styling */
+.post-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.875rem;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  color: var(--text);
+}
+
+.post-title:hover {
+  color: var(--accent);
+}
+
+/* Post excerpt */
+.post-excerpt {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+/* Post footer with separator */
+.post-footer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-family: 'SF Mono', 'Consolas', monospace;
+}
+
+/* ============================================================================
+   UNIFIED LISTING SYSTEM
+   Semantic aliases for content listings (posts, tags, faqs, etc.)
+   ============================================================================ */
+
+/* Base listing card - maps to post-card */
+.listing-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Listing metadata - maps to post-meta */
+.listing-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.listing-meta time {
+  font-family: 'SF Mono', 'Consolas', monospace;
+}
+
+/* Listing title - maps to post-title */
+.listing-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.875rem;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  color: var(--text);
+}
+
+.listing-title:hover {
+  color: var(--accent);
+}
+
+/* Listing content/excerpt - maps to post-excerpt */
+.listing-content {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+/* Listing footer - maps to post-footer */
+.listing-footer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-family: 'SF Mono', 'Consolas', monospace;
+}
+
+/* ============================================================================
+   DESIGN SYSTEM TOKENS
+   Based on MODERN_CSS_GUIDE.md and DESIGN_SYSTEM_PLAN.md
+   ============================================================================ */
+
+:root {
+  /* Layout Constraints - use with w-[var(--content-max-width)] */
+  --content-max-width: min(95vw, 1400px);
+  --article-max-width: min(90vw, 800px);
+  --card-max-width: min(90vw, 600px);
+  --sidebar-width: max(250px, 20vw);
+
+  /* Fluid Typography - use with text-[var(--text-base)] */
+  --text-xs: clamp(0.75rem, 1vw, 0.875rem);
+  --text-sm: clamp(0.875rem, 1.5vw, 1rem);
+  --text-base: clamp(1rem, 2vw, 1.25rem);
+  --text-lg: clamp(1.125rem, 2.5vw, 1.5rem);
+  --text-xl: clamp(1.25rem, 3vw, 2rem);
+  --text-2xl: clamp(1.5rem, 4vw, 3rem);
+
+  /* Responsive Spacing - use with gap-[var(--space-md)] */
+  --space-xs: clamp(0.25rem, 1vw, 0.5rem);
+  --space-sm: clamp(0.5rem, 2vw, 1rem);
+  --space-md: clamp(1rem, 3vw, 2rem);
+  --space-lg: clamp(2rem, 5vw, 4rem);
+  --space-xl: clamp(3rem, 8vw, 6rem);
+
+  /* Component-Specific Spacing */
+  --card-padding: clamp(1rem, 3vw, 2rem);
+  --section-gap: clamp(2rem, 5vw, 4rem);
+  --inline-gap: clamp(0.25rem, 1vw, 0.5rem);
+}
 
 /* Custom display font for branding */
 .font-display {
@@ -222,27 +657,25 @@
 }
 
 .prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  background-color: oklch(30.33% 0.016 252.42);
+  background-color: var(--code-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1rem;
   overflow-x: auto;
-  font-weight: 400;
-  font-size: 0.875em;
-  line-height: 1.7142857;
-  margin-top: 1.7142857em;
-  margin-bottom: 1.7142857em;
-  border-radius: 0.375rem;
-  padding: 0.8571429em 1.1428571em;
+  font-family: 'SF Mono', 'Consolas', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 1.5rem 0;
 }
 
 .prose :where(pre code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   background-color: transparent;
-  border-width: 0;
-  border-radius: 0;
+  border: none;
   padding: 0;
-  font-weight: inherit;
-  color: inherit;
   font-size: inherit;
+  color: inherit;
   font-family: inherit;
-  line-height: inherit;
 }
 
 .prose :where(table):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -303,8 +736,4 @@
 
 .prose:where([data-theme=dark], [data-theme=dark] *) :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   color: oklch(var(--color-primary));
-}
-
-.prose:where([data-theme=dark], [data-theme=dark] *) :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  background-color: oklch(20.15% 0.012 254.09);
 }

@@ -10,7 +10,7 @@
       <%= if length(@posts) > 0 do %>
         <% [latest_post | rest_posts] = @posts %>
         <% {next_three, older_posts} = Enum.split(rest_posts, 3) %>
-
+        
 <!-- Latest Post (Featured) -->
         <article class="post-card">
           <div class="post-meta mb-[var(--spacing-md)]">
@@ -26,7 +26,7 @@
           </div>
 
           <.link navigate={~p"/posts/#{latest_post.id}"} class="group">
-            <h2 class="post-title transition-colors duration-[var(--duration-normal)] group-hover:text-primary">
+            <h2 class="post-title duration-[var(--duration-normal)] transition-colors group-hover:text-primary">
               {latest_post.title}
             </h2>
           </.link>
@@ -41,9 +41,12 @@
             <span>{latest_post.user.display_name || latest_post.user.email}</span>
           </div>
         </article>
-
+        
 <!-- Next 3 Posts in Grid -->
-        <div :if={length(next_three) > 0} class="mt-[var(--spacing-md)] grid grid-cols-1 gap-[var(--spacing-md)] md:grid-cols-3">
+        <div
+          :if={length(next_three) > 0}
+          class="mt-[var(--spacing-md)] gap-[var(--spacing-md)] grid grid-cols-1 md:grid-cols-3"
+        >
           <%= for post <- next_three do %>
             <article class="post-card">
               <div class="post-meta mb-[var(--spacing-sm)]">
@@ -53,7 +56,7 @@
               </div>
 
               <.link navigate={~p"/posts/#{post.id}"} class="group">
-                <h3 class="post-title text-[var(--font-size-fluid-lg)] transition-colors duration-[var(--duration-normal)] group-hover:text-primary">
+                <h3 class="post-title text-[var(--font-size-fluid-lg)] duration-[var(--duration-normal)] transition-colors group-hover:text-primary">
                   {post.title}
                 </h3>
               </.link>
@@ -68,9 +71,12 @@
             </article>
           <% end %>
         </div>
-
+        
 <!-- Older Posts (List View) -->
-        <div :if={length(older_posts) > 0} class="mt-[var(--spacing-section)] space-y-[var(--spacing-md)]">
+        <div
+          :if={length(older_posts) > 0}
+          class="mt-[var(--spacing-section)] space-y-[var(--spacing-md)]"
+        >
           <div class="space-y-[var(--spacing-md)]">
             <%= for post <- older_posts do %>
               <article class="post-card">
@@ -87,7 +93,7 @@
                 </div>
 
                 <.link navigate={~p"/posts/#{post.id}"} class="group">
-                  <h3 class="post-title transition-colors duration-[var(--duration-normal)] group-hover:text-primary">
+                  <h3 class="post-title duration-[var(--duration-normal)] transition-colors group-hover:text-primary">
                     {post.title}
                   </h3>
                 </.link>
@@ -104,7 +110,7 @@
 
                 <%!-- Share buttons --%>
                 <%= if post.read_time_minutes >= 2 do %>
-                  <div class="border-base-300 mt-[var(--spacing-md)] border-t pt-[var(--spacing-md)]">
+                  <div class="border-base-300 mt-[var(--spacing-md)] pt-[var(--spacing-md)] border-t">
                     <.platform_share_buttons url={url(~p"/posts/#{post.id}")} title={post.title} />
                   </div>
                 <% end %>
@@ -126,24 +132,24 @@
             </.link>
           </div>
 
-          <div class="grid grid-cols-1 gap-[var(--spacing-md)] md:grid-cols-2 lg:grid-cols-3">
+          <div class="gap-[var(--spacing-md)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             <%= for item <- @feed_items do %>
-              <article class="card bg-base-200 shadow-lg transition-shadow duration-[var(--duration-normal)] hover:shadow-xl">
+              <article class="card bg-base-200 duration-[var(--duration-normal)] shadow-lg transition-shadow hover:shadow-xl">
                 <div class="card-body p-[var(--spacing-card)]">
                   <%!-- Feed source badge --%>
-                  <div class="mb-[var(--spacing-sm)] flex items-center gap-[var(--spacing-inline)]">
+                  <div class="mb-[var(--spacing-sm)] gap-[var(--spacing-inline)] flex items-center">
                     <span class="text-[var(--font-size-fluid-lg)]">{item.feed_source.icon}</span>
                     <span class="badge badge-sm badge-ghost">{item.feed_source.name}</span>
                   </div>
 
                   <%!-- Item title --%>
-                  <h3 class="mb-[var(--spacing-sm)] text-[var(--font-size-fluid-lg)] font-semibold line-clamp-2">
+                  <h3 class="mb-[var(--spacing-sm)] text-[var(--font-size-fluid-lg)] line-clamp-2 font-semibold">
                     <%= if item.link do %>
                       <a
                         href={item.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="transition-colors duration-[var(--duration-normal)] hover:text-primary"
+                        class="duration-[var(--duration-normal)] transition-colors hover:text-primary"
                       >
                         {item.title}
                       </a>
@@ -154,14 +160,14 @@
 
                   <%!-- Item summary --%>
                   <%= if item.summary do %>
-                    <p class="text-[var(--text-sm)] opacity-70 line-clamp-3 mb-[var(--spacing-sm)]">
+                    <p class="text-[var(--text-sm)] line-clamp-3 mb-[var(--spacing-sm)] opacity-70">
                       {String.slice(item.summary, 0, 150)}
-                      <%= if String.length(item.summary) > 150, do: "..." %>
+                      {if String.length(item.summary) > 150, do: "..."}
                     </p>
                   <% end %>
 
                   <%!-- Item metadata --%>
-                  <div class="text-[var(--text-xs)] opacity-70 flex items-center gap-[var(--spacing-inline)]">
+                  <div class="text-[var(--text-xs)] gap-[var(--spacing-inline)] flex items-center opacity-70">
                     <%= if item.published_at do %>
                       <time datetime={item.published_at}>
                         {Calendar.strftime(item.published_at, "%B %d, %Y")}
@@ -175,7 +181,7 @@
 
                   <%!-- External link indicator --%>
                   <%= if item.link do %>
-                    <div class="mt-[var(--spacing-sm)] pt-[var(--spacing-sm)] border-t border-base-300">
+                    <div class="mt-[var(--spacing-sm)] pt-[var(--spacing-sm)] border-base-300 border-t">
                       <a
                         href={item.link}
                         target="_blank"

@@ -813,21 +813,92 @@ defmodule HomesiteWeb.CoreComponents do
 
   def stat_card(assigns) do
     ~H"""
-    <div class="card bg-base-100 border-base-300 border shadow-sm">
-      <div class="card-body">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-base-content/60 text-sm">{@title}</p>
-            <p class="mt-1 text-3xl font-bold">{@value}</p>
-          </div>
-          <div class={"#{@color} rounded-full p-3"}>
-            <.icon name={@icon} class="h-6 w-6" />
-          </div>
+    <.dashboard_card variant="stat">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-secondary text-sm">{@title}</p>
+          <p class="mt-1 text-3xl font-bold">{@value}</p>
         </div>
+        <div class={"#{@color} rounded-full p-3"}>
+          <.icon name={@icon} class="h-6 w-6" />
+        </div>
+      </div>
+    </.dashboard_card>
+    """
+  end
+
+  @doc """
+  Renders a dashboard card with WCAG AA compliant borders and shadows.
+
+  Use this for all dashboard content (stats, activities, info boxes) to ensure
+  consistent visual separation and accessibility compliance.
+
+  ## Examples
+
+      <!-- Stat card with metrics -->
+      <.dashboard_card variant="stat">
+        <div class="stat">
+          <div class="stat-title">Total Users</div>
+          <div class="stat-value text-primary">42</div>
+        </div>
+      </.dashboard_card>
+
+      <!-- Content card -->
+      <.dashboard_card variant="content">
+        <h3 class="card-title">Recent Posts</h3>
+        <ul>...</ul>
+      </.dashboard_card>
+
+      <!-- Activity feed item -->
+      <.dashboard_card variant="activity">
+        <div class="flex items-center gap-2">
+          <.icon name="hero-document-check" class="text-success h-5 w-5" />
+          <span>Blog post published</span>
+        </div>
+      </.dashboard_card>
+
+      <!-- Important info with accent border -->
+      <.dashboard_card variant="info" border_accent>
+        <h2 class="card-title">Admin Permissions</h2>
+        <p>You have level 5 access...</p>
+      </.dashboard_card>
+  """
+  attr :variant, :string,
+    default: "stat",
+    values: ~w(stat content activity info),
+    doc:
+      "Card variant determining shadow depth: stat (sm), content (base), activity (sm), info (lg)"
+
+  attr :class, :string, default: nil, doc: "Additional CSS classes"
+  attr :border_accent, :boolean, default: false, doc: "Add primary color accent border on left"
+  attr :id, :string, default: nil, doc: "DOM ID for testing"
+  slot :inner_block, required: true
+
+  def dashboard_card(assigns) do
+    ~H"""
+    <div
+      id={@id}
+      class={[
+        "card bg-base-300",
+        "border-neutral border",
+        shadow_class(@variant),
+        @border_accent && "border-l-primary border-l-4",
+        @variant in ["content"] && "transition-shadow hover:shadow-lg",
+        @class
+      ]}
+    >
+      <div class="card-body">
+        {render_slot(@inner_block)}
       </div>
     </div>
     """
   end
+
+  # Private helper for shadow hierarchy
+  defp shadow_class("stat"), do: "shadow-sm"
+  defp shadow_class("content"), do: "shadow"
+  defp shadow_class("activity"), do: "shadow-sm"
+  defp shadow_class("info"), do: "shadow-lg"
 
   @doc """
   Renders a listing container with consistent width and spacing.

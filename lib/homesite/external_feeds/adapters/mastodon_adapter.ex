@@ -17,11 +17,13 @@ defmodule Homesite.ExternalFeeds.Adapters.MastodonAdapter do
   @default_limit 20
 
   @impl true
-  def validate_source(%FeedSource{username: username, metadata: metadata}) when is_binary(username) and username != "" and is_map(metadata) do
+  def validate_source(%FeedSource{username: username, metadata: metadata})
+      when is_binary(username) and username != "" and is_map(metadata) do
     instance = Map.get(metadata, "instance") || Map.get(metadata, :instance)
 
     if is_nil(instance) or instance == "" do
-      {:error, "Mastodon feeds require 'instance' in metadata (e.g., mastodon.social, fosstodon.org)"}
+      {:error,
+       "Mastodon feeds require 'instance' in metadata (e.g., mastodon.social, fosstodon.org)"}
     else
       :ok
     end
@@ -34,7 +36,8 @@ defmodule Homesite.ExternalFeeds.Adapters.MastodonAdapter do
 
     cond do
       is_nil(instance) or instance == "" ->
-        {:error, "Mastodon feeds require 'instance' in metadata (e.g., mastodon.social, fosstodon.org)"}
+        {:error,
+         "Mastodon feeds require 'instance' in metadata (e.g., mastodon.social, fosstodon.org)"}
 
       is_nil(username) or username == "" ->
         {:error, "Mastodon feeds require 'username' field (e.g., @user or user)"}
@@ -47,9 +50,12 @@ defmodule Homesite.ExternalFeeds.Adapters.MastodonAdapter do
   def validate_source(_), do: {:error, "Mastodon feeds require username and instance"}
 
   @impl true
-  def fetch_items(%FeedSource{username: username, metadata: metadata} = feed_source) when is_binary(username) do
+  def fetch_items(%FeedSource{username: username, metadata: metadata} = feed_source)
+      when is_binary(username) do
     instance = Map.get(metadata || %{}, "instance") || Map.get(metadata || %{}, :instance)
-    limit = Map.get(metadata || %{}, "limit") || Map.get(metadata || %{}, :limit) || @default_limit
+
+    limit =
+      Map.get(metadata || %{}, "limit") || Map.get(metadata || %{}, :limit) || @default_limit
 
     # Clean username (remove @ if present)
     clean_username = String.trim_leading(username, "@")

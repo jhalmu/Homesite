@@ -24,16 +24,17 @@ defmodule HomesiteWeb.UserLive.Settings do
       >
         <div class="gap-[var(--spacing-card)] flex flex-col items-center">
           <div
-            class="gap-[var(--spacing-sm)] flex flex-col items-center"
+            class="gap-[var(--spacing-md)] flex flex-col items-center"
             id="avatar-upload-container"
             phx-hook="AvatarPreview"
           >
             <.avatar user={@current_scope.user} class="h-24 w-24" id="avatar-preview" />
             <.live_file_input
               upload={@uploads.avatar}
-              class="file-input file-input-bordered w-full max-w-md"
+              class="file-input file-input-bordered"
+              style="min-width: 20rem;"
             />
-            <p class="text-sm text-gray-600 dark:text-gray-400">
+            <p class="mb-[var(--spacing-md)] text-sm text-gray-600 dark:text-gray-400">
               {gettext(
                 "Upload a new avatar (JPG, PNG, max 5MB) or leave empty for auto-generated avatar"
               )}

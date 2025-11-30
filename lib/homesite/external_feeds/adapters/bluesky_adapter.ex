@@ -17,7 +17,8 @@ defmodule Homesite.ExternalFeeds.Adapters.BlueskyAdapter do
   @default_limit 25
 
   @impl true
-  def validate_source(%FeedSource{username: username}) when is_binary(username) and username != "" do
+  def validate_source(%FeedSource{username: username})
+      when is_binary(username) and username != "" do
     :ok
   end
 
@@ -35,8 +36,10 @@ defmodule Homesite.ExternalFeeds.Adapters.BlueskyAdapter do
   def validate_source(_), do: {:error, "Bluesky feeds require a username"}
 
   @impl true
-  def fetch_items(%FeedSource{username: username, metadata: metadata} = feed_source) when is_binary(username) do
-    limit = Map.get(metadata || %{}, "limit") || Map.get(metadata || %{}, :limit) || @default_limit
+  def fetch_items(%FeedSource{username: username, metadata: metadata} = feed_source)
+      when is_binary(username) do
+    limit =
+      Map.get(metadata || %{}, "limit") || Map.get(metadata || %{}, :limit) || @default_limit
 
     Logger.info("Fetching Bluesky feed for user: #{username}")
 

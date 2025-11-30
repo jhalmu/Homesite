@@ -43,7 +43,10 @@ defmodule Homesite.ExternalFeeds.Adapters.YoutubeAdapter do
 
     with {:ok, response} <- fetch_feed(url),
          {:ok, items} <- parse_youtube_feed(response.body, feed_source, channel_id) do
-      Logger.info("Successfully fetched #{length(items)} items from YouTube channel #{channel_id}")
+      Logger.info(
+        "Successfully fetched #{length(items)} items from YouTube channel #{channel_id}"
+      )
+
       {:ok, items}
     else
       {:error, reason} = error ->
@@ -91,7 +94,9 @@ defmodule Homesite.ExternalFeeds.Adapters.YoutubeAdapter do
         )
         |> Enum.map(fn item ->
           video_id = item.video_id
-          video_url = if video_id != "", do: "https://www.youtube.com/watch?v=#{video_id}", else: item.link
+
+          video_url =
+            if video_id != "", do: "https://www.youtube.com/watch?v=#{video_id}", else: item.link
 
           %{
             external_id: video_id || generate_id_from_url(item.link),
@@ -108,7 +113,8 @@ defmodule Homesite.ExternalFeeds.Adapters.YoutubeAdapter do
               video_id: video_id,
               channel_id: channel_id,
               thumbnail_url: item.media_thumbnail,
-              embed_url: if(video_id != "", do: "https://www.youtube.com/embed/#{video_id}", else: nil)
+              embed_url:
+                if(video_id != "", do: "https://www.youtube.com/embed/#{video_id}", else: nil)
             }
           }
         end)

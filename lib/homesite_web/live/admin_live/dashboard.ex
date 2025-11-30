@@ -14,29 +14,29 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
 
       <div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <%!-- Search Stats Card --%>
-        <div class="card bg-primary text-primary-content">
+        <div class="card border-base-300 bg-primary text-primary-content border shadow-sm">
           <div class="card-body">
             <h3 class="card-title text-sm">Total Searches</h3>
             <p class="text-3xl font-bold">{@search_stats.total_searches || 0}</p>
-            <p class="text-xs opacity-75">Last 7 days</p>
+            <p class="text-xs opacity-90">Last 7 days</p>
           </div>
         </div>
 
         <%!-- Avg Search Duration --%>
-        <div class="card bg-secondary text-secondary-content">
+        <div class="card border-base-300 bg-secondary text-secondary-content border shadow-sm">
           <div class="card-body">
             <h3 class="card-title text-sm">Avg Search Time</h3>
             <p class="text-3xl font-bold">
               {if @search_stats.avg_duration_ms,
-                do: "#{Float.round(@search_stats.avg_duration_ms, 1)}ms",
+                do: "#{@search_stats.avg_duration_ms |> Decimal.to_float() |> Float.round(1)}ms",
                 else: "N/A"}
             </p>
-            <p class="text-xs opacity-75">Response time</p>
+            <p class="text-xs opacity-90">Response time</p>
           </div>
         </div>
 
         <%!-- Zero Results % --%>
-        <div class="card bg-accent text-accent-content">
+        <div class="card border-base-300 bg-accent text-accent-content border shadow-sm">
           <div class="card-body">
             <h3 class="card-title text-sm">No Results</h3>
             <p class="text-3xl font-bold">
@@ -44,116 +44,114 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
                 do: "#{@search_stats.zero_results_pct}%",
                 else: "0%"}
             </p>
-            <p class="text-xs opacity-75">Of searches</p>
+            <p class="text-xs opacity-90">Of searches</p>
           </div>
         </div>
 
         <%!-- Avg Results --%>
-        <div class="card bg-info text-info-content">
+        <div class="card border-base-300 bg-info text-info-content border shadow-sm">
           <div class="card-body">
             <h3 class="card-title text-sm">Avg Results</h3>
             <p class="text-3xl font-bold">
-              {if @search_stats.avg_results, do: Float.round(@search_stats.avg_results, 1), else: 0}
+              {if @search_stats.avg_results,
+                do: @search_stats.avg_results |> Decimal.to_float() |> Float.round(1),
+                else: 0}
             </p>
-            <p class="text-xs opacity-75">Per search</p>
+            <p class="text-xs opacity-90">Per search</p>
           </div>
         </div>
       </div>
 
       <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
         <%!-- Popular Searches --%>
-        <div class="card bg-base-200">
-          <div class="card-body">
-            <h3 class="card-title">Popular Searches</h3>
-            <div class="overflow-x-auto">
-              <table class="table-sm table">
-                <thead>
+        <.dashboard_card variant="content">
+          <h3 class="card-title">Popular Searches</h3>
+          <div class="overflow-x-auto">
+            <table class="table-sm table">
+              <thead>
+                <tr>
+                  <th>Query</th>
+                  <th class="text-right">Count</th>
+                  <th class="text-right">Avg Results</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= for search <- @popular_searches do %>
                   <tr>
-                    <th>Query</th>
-                    <th class="text-right">Count</th>
-                    <th class="text-right">Avg Results</th>
+                    <td class="font-mono text-sm">{search.query}</td>
+                    <td class="text-right">{search.count}</td>
+                    <td class="text-right">
+                      {if search.avg_results,
+                        do: search.avg_results |> Decimal.to_float() |> Float.round(1),
+                        else: 0}
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  <%= for search <- @popular_searches do %>
-                    <tr>
-                      <td class="font-mono text-sm">{search.query}</td>
-                      <td class="text-right">{search.count}</td>
-                      <td class="text-right">
-                        {if search.avg_results, do: Float.round(search.avg_results, 1), else: 0}
-                      </td>
-                    </tr>
-                  <% end %>
-                </tbody>
-              </table>
-            </div>
+                <% end %>
+              </tbody>
+            </table>
           </div>
-        </div>
+        </.dashboard_card>
 
         <%!-- No Result Searches --%>
-        <div class="card bg-base-200">
-          <div class="card-body">
-            <h3 class="card-title">Searches With No Results</h3>
-            <p class="text-base-content/60 mb-4 text-sm">Content gaps to address</p>
-            <div class="overflow-x-auto">
-              <table class="table-sm table">
-                <thead>
+        <.dashboard_card variant="content">
+          <h3 class="card-title">Searches With No Results</h3>
+          <p class="text-secondary mb-4 text-sm">Content gaps to address</p>
+          <div class="overflow-x-auto">
+            <table class="table-sm table">
+              <thead>
+                <tr>
+                  <th>Query</th>
+                  <th class="text-right">Attempts</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= for search <- @no_result_searches do %>
                   <tr>
-                    <th>Query</th>
-                    <th class="text-right">Attempts</th>
+                    <td class="font-mono text-sm">{search.query}</td>
+                    <td class="text-right">{search.count}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  <%= for search <- @no_result_searches do %>
-                    <tr>
-                      <td class="font-mono text-sm">{search.query}</td>
-                      <td class="text-right">{search.count}</td>
-                    </tr>
-                  <% end %>
-                </tbody>
-              </table>
-            </div>
+                <% end %>
+              </tbody>
+            </table>
           </div>
-        </div>
+        </.dashboard_card>
       </div>
 
       <%!-- Recent Activity --%>
       <div class="mt-8">
-        <div class="card bg-base-200">
-          <div class="card-body">
-            <h3 class="card-title">Recent Activity</h3>
-            <div class="overflow-x-auto">
-              <table class="table-sm table">
-                <thead>
+        <.dashboard_card variant="content">
+          <h3 class="card-title">Recent Activity</h3>
+          <div class="overflow-x-auto">
+            <table class="table-sm table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>User</th>
+                  <th>Action</th>
+                  <th>Resource</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= for log <- @activity_logs do %>
                   <tr>
-                    <th>Time</th>
-                    <th>User</th>
-                    <th>Action</th>
-                    <th>Resource</th>
+                    <td class="text-xs">
+                      {Calendar.strftime(log.inserted_at, "%B %d, %Y at %H:%M")}
+                    </td>
+                    <td>{(log.user && log.user.email) || "Unknown"}</td>
+                    <td>
+                      <span class="badge badge-sm">{log.action}</span>
+                    </td>
+                    <td>
+                      {log.resource_type} {if log.resource_id,
+                        do: "##{log.resource_id}",
+                        else: ""}
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  <%= for log <- @activity_logs do %>
-                    <tr>
-                      <td class="text-xs">
-                        {Calendar.strftime(log.inserted_at, "%B %d, %Y at %H:%M")}
-                      </td>
-                      <td>{(log.user && log.user.email) || "Unknown"}</td>
-                      <td>
-                        <span class="badge badge-sm">{log.action}</span>
-                      </td>
-                      <td>
-                        {log.resource_type} {if log.resource_id,
-                          do: "##{log.resource_id}",
-                          else: ""}
-                      </td>
-                    </tr>
-                  <% end %>
-                </tbody>
-              </table>
-            </div>
+                <% end %>
+              </tbody>
+            </table>
           </div>
-        </div>
+        </.dashboard_card>
       </div>
     </Layouts.app>
     """

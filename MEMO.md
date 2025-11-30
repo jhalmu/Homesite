@@ -6,6 +6,82 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-11-30 22:45:00 - Dark Theme Contrast & File Input Button Improvements
+
+### Session: Dashboard Contrast Fixes and Avatar Upload UX Polish
+
+#### What Was Accomplished
+
+Fixed dark theme contrast issues and improved file input button styling in account settings through iterative refinement based on user feedback.
+
+**Dark Theme Improvements**:
+- **Dashboard cards**: Changed from `bg-base-100` (very dark/black) to `bg-base-300` (lighter gray)
+- **Body background**: Set to `bg-base-200` (oklch(var(--b2)))  for better contrast hierarchy
+- **Borders**: Changed from `border-base-300` to `border-neutral` for visibility against lighter cards
+- **Visual hierarchy**: Body (base-200) → Cards (base-300) → Borders (neutral)
+
+**File Input Button Improvements** (`lib/homesite_web/live/user_live/settings.ex:32-41`):
+- Added `style="min-width: 20rem;"` to file input to prevent text truncation
+- Increased container spacing from `gap-[var(--spacing-sm)]` to `gap-[var(--spacing-md)]`
+- Added bottom margin to help text: `mb-[var(--spacing-md)]`
+- Fixed button text display from showing "Se" to full text
+
+**CSS Refinements** (`assets/css/app.css:337-360`):
+- Removed all custom file-selector-button styling (padding, border, etc.)
+- Simplified to just background color and cursor with rounded corners
+- Set file-input border-radius to 15px for consistent rounded appearance
+- Let browser handle natural button sizing and text rendering
+
+#### Files Modified (4 total)
+
+1. **lib/homesite_web/components/core_components.ex** (lines 880-884)
+   - Dashboard card: `bg-base-100` → `bg-base-300`, `border-base-300` → `border-neutral`
+
+2. **assets/css/app.css**
+   - Body background: Added `background-color: oklch(var(--b2));` (line 232)
+   - File input styling: Simplified button styles, added 15px border-radius (lines 348-360)
+   - Formatted and cleaned up CSS indentation (entire file auto-formatted)
+
+3. **lib/homesite_web/live/user_live/settings.ex** (lines 27-41)
+   - Container: `gap-[var(--spacing-sm)]` → `gap-[var(--spacing-md)]`
+   - File input: Added `style="min-width: 20rem;"`
+   - Help text: Added `mb-[var(--spacing-md)]` class
+
+4. **Other files**: Auto-formatted by linter (no functional changes)
+
+#### Problem-Solution Pattern
+
+**Problem 1**: Dashboard cards appeared completely black in dark theme
+- **Root cause**: Using `bg-base-100` (oklch(6.5%)) - too dark
+- **Solution**: Multi-level approach:
+  1. Changed cards to `bg-base-300` (oklch(20%)) - lighter
+  2. Set body to `bg-base-200` (oklch(18%)) - creates contrast
+  3. Used `border-neutral` for visible borders
+
+**Problem 2**: File input button showed truncated text ("Se" instead of full text)
+- **Root cause**: Flex container with `items-center` causing width collapse (same issue as previous login button shrinking)
+- **Failed attempts**:
+  1. Adding `!important` to CSS min-width - didn't work
+  2. Adding container width constraints - made layout too narrow
+  3. Increasing padding and line-height - still truncated
+- **Solution**: Added inline `style="min-width: 20rem;"` directly to file input element
+
+**Problem 3**: File input button text too close to bottom edge
+- **Attempted**: Padding increases, line-height adjustments, min-height properties
+- **Final solution**: Removed all custom styling, let browser handle natural centering with flexbox
+
+#### Key Learnings
+
+1. **Dark theme contrast hierarchy**: Don't use base-100 for cards in dark theme - too dark. Use base-300 for cards, base-200 for body.
+2. **Flex shrinking pattern**: When buttons/inputs show truncated text in flex containers, it's usually due to parent `items-center` causing width collapse. Solution: Add explicit min-width to the element itself (inline style if CSS isn't working).
+3. **Simplify when possible**: Sometimes removing custom styling and letting the browser handle defaults produces better results than fighting with CSS overrides.
+
+#### Test Status
+- ✅ All tests passing: 276 tests, 0 failures
+- ✅ Credo warnings present but non-blocking (20 refactoring opportunities, 21 code readability issues, 36 design suggestions)
+
+---
+
 ## 2025-11-30 19:35:00 - UI Refinements: Navigation, Dates, and Subtle Decorations ✨
 
 ### Session: Complete UI Polish with Accessibility Focus

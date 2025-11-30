@@ -9,7 +9,7 @@
 
       <div class="gap-[var(--spacing-md)] flex flex-wrap">
         <!-- Stats Cards -->
-        <div class="stats bg-base-200 shadow">
+        <.dashboard_card variant="stat" class="stats">
           <div class="stat">
             <div class="stat-title">{gettext("Total Posts")}</div>
             <div class="stat-value text-primary">{@post_count}</div>
@@ -25,9 +25,9 @@
               </.link>
             </div>
           </div>
-        </div>
+        </.dashboard_card>
 
-        <div class="stats bg-base-200 shadow">
+        <.dashboard_card variant="stat" class="stats">
           <div class="stat">
             <div class="stat-title">{gettext("Total Tags")}</div>
             <div class="stat-value text-secondary">{@tag_count}</div>
@@ -37,7 +37,7 @@
               </.link>
             </div>
           </div>
-        </div>
+        </.dashboard_card>
       </div>
     </header>
 
@@ -49,21 +49,19 @@
         </h2>
         <div class="space-y-2">
           <%= for activity <- @activities do %>
-            <div class="alert bg-base-200 shadow-sm">
-              <div>
-                <div class="flex items-center gap-2">
-                  <%= if activity.activity_type == "blog_published" do %>
-                    <.icon name="hero-document-check" class="text-success h-5 w-5" />
-                  <% else %>
-                    <.icon name="hero-document-text" class="text-info h-5 w-5" />
-                  <% end %>
-                  <span class="font-medium">{activity.content}</span>
-                </div>
-                <div class="text-base-content/60 mt-1 text-sm">
-                  {Calendar.strftime(activity.inserted_at, "%B %d, %Y at %H:%M")}
-                </div>
+            <.dashboard_card variant="activity">
+              <div class="flex items-center gap-2">
+                <%= if activity.activity_type == "blog_published" do %>
+                  <.icon name="hero-document-check" class="text-success h-5 w-5" />
+                <% else %>
+                  <.icon name="hero-document-text" class="text-info h-5 w-5" />
+                <% end %>
+                <span class="font-medium">{activity.content}</span>
               </div>
-            </div>
+              <div class="text-secondary mt-1 text-sm">
+                {Calendar.strftime(activity.inserted_at, "%B %d, %Y at %H:%M")}
+              </div>
+            </.dashboard_card>
           <% end %>
         </div>
       </section>

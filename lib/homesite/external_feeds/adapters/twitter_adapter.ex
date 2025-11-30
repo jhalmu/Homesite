@@ -70,7 +70,9 @@ defmodule Homesite.ExternalFeeds.Adapters.TwitterAdapter do
             end)
           end)
 
-        Logger.info("Successfully fetched #{length(enhanced_items)} items from Twitter @#{username} (DORMANT MODE)")
+        Logger.info(
+          "Successfully fetched #{length(enhanced_items)} items from Twitter @#{username} (DORMANT MODE)"
+        )
 
         {:ok, enhanced_items}
 

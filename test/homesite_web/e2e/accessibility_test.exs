@@ -200,15 +200,17 @@ defmodule HomesiteWeb.E2E.AccessibilityTest do
     @tag :playwright
     test "post show page has no accessibility violations", %{conn: conn} do
       user = user_fixture()
-      {:ok, post} = Homesite.Content.create_post(
-        %Homesite.Accounts.Scope{user: user},
-        %{
-          title: "Test Post for A11y",
-          body: "This is a test post for accessibility testing.",
-          is_public: true,
-          published_at: DateTime.utc_now(:second)
-        }
-      )
+
+      {:ok, post} =
+        Homesite.Content.create_post(
+          %Homesite.Accounts.Scope{user: user},
+          %{
+            title: "Test Post for A11y",
+            body: "This is a test post for accessibility testing.",
+            is_public: true,
+            published_at: DateTime.utc_now(:second)
+          }
+        )
 
       conn
       |> visit(~p"/posts/#{post}")
@@ -232,14 +234,16 @@ defmodule HomesiteWeb.E2E.AccessibilityTest do
     @tag :playwright
     test "tag show page has no accessibility violations", %{conn: conn} do
       user = user_fixture()
-      {:ok, tag} = Homesite.Content.create_tag(
-        %Homesite.Accounts.Scope{user: user},
-        %{
-          name: "Accessibility",
-          description: "Posts about accessibility",
-          is_public: true
-        }
-      )
+
+      {:ok, tag} =
+        Homesite.Content.create_tag(
+          %Homesite.Accounts.Scope{user: user},
+          %{
+            name: "Accessibility",
+            description: "Posts about accessibility",
+            is_public: true
+          }
+        )
 
       conn
       |> visit(~p"/tags/#{tag.slug}")

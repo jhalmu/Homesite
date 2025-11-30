@@ -26,13 +26,13 @@ defmodule HomesiteWeb.PostLive.Index do
           <%= for {id, post} <- @streams.posts do %>
             <article
               id={id}
-              class="card bg-base-200 shadow-lg transition-shadow duration-[var(--duration-normal)] hover:shadow-xl"
+              class="card bg-base-200 duration-[var(--duration-normal)] shadow-lg transition-shadow hover:shadow-xl"
             >
               <div class="card-body">
-                <div class="flex items-start justify-between gap-[var(--spacing-md)]">
+                <div class="gap-[var(--spacing-md)] flex items-start justify-between">
                   <div class="min-w-0 flex-1">
                     <.link navigate={~p"/posts/#{post}"} class="group">
-                      <h2 class="card-title mb-[var(--spacing-sm)] text-[var(--font-size-fluid-xl)] transition-colors duration-[var(--duration-normal)] group-hover:text-primary">
+                      <h2 class="card-title mb-[var(--spacing-sm)] text-[var(--font-size-fluid-xl)] duration-[var(--duration-normal)] transition-colors group-hover:text-primary">
                         {post.title}
                       </h2>
                     </.link>
@@ -41,7 +41,7 @@ defmodule HomesiteWeb.PostLive.Index do
                       {preview_text(post.body)}
                     </p>
 
-                    <div class="flex flex-wrap gap-[var(--spacing-sm)] text-[var(--text-sm)]">
+                    <div class="gap-[var(--spacing-sm)] text-[var(--text-sm)] flex flex-wrap">
                       <%= if post.published_at do %>
                         <div class="badge badge-success gap-[var(--spacing-inline)]">
                           <.icon name="hero-check-circle" class="h-3 w-3" />
@@ -64,7 +64,7 @@ defmodule HomesiteWeb.PostLive.Index do
                           <div class="opacity-70">
                             <.link
                               navigate={~p"/posts/#{post.id}"}
-                              class="inline-flex items-center gap-[var(--spacing-inline)] transition-colors duration-[var(--duration-fast)] hover:underline"
+                              class="gap-[var(--spacing-inline)] duration-[var(--duration-fast)] inline-flex items-center transition-colors hover:underline"
                             >
                               <.icon name="hero-share" class="h-4 w-4" /> Share this post
                             </.link>
@@ -92,11 +92,11 @@ defmodule HomesiteWeb.PostLive.Index do
                     </div>
 
                     <%= if post.tags && length(post.tags) > 0 do %>
-                      <div class="mt-[var(--spacing-sm)] flex flex-wrap gap-[var(--spacing-inline)]">
+                      <div class="mt-[var(--spacing-sm)] gap-[var(--spacing-inline)] flex flex-wrap">
                         <%= for tag <- post.tags do %>
                           <.link
                             navigate={~p"/tags/#{tag.slug}"}
-                            class="badge badge-sm badge-primary gap-[var(--spacing-inline)] transition-colors duration-[var(--duration-fast)] hover:brightness-110"
+                            class="badge badge-sm badge-primary gap-[var(--spacing-inline)] duration-[var(--duration-fast)] transition-colors hover:brightness-110"
                           >
                             <.icon name="hero-tag" class="h-3 w-3" />
                             {tag.name}
@@ -107,11 +107,19 @@ defmodule HomesiteWeb.PostLive.Index do
                   </div>
 
                   <%= if @current_scope && post.user_id == @current_scope.user.id do %>
-                    <div class="flex flex-shrink-0 gap-[var(--spacing-inline)]">
-                      <.link navigate={~p"/posts/#{post}"} class="btn btn-sm btn-ghost" aria-label={gettext("View post")}>
+                    <div class="gap-[var(--spacing-inline)] flex flex-shrink-0">
+                      <.link
+                        navigate={~p"/posts/#{post}"}
+                        class="btn btn-sm btn-ghost"
+                        aria-label={gettext("View post")}
+                      >
                         <.icon name="hero-eye" class="h-4 w-4" />
                       </.link>
-                      <.link navigate={~p"/posts/#{post}/edit"} class="btn btn-sm btn-ghost" aria-label={gettext("Edit post")}>
+                      <.link
+                        navigate={~p"/posts/#{post}/edit"}
+                        class="btn btn-sm btn-ghost"
+                        aria-label={gettext("Edit post")}
+                      >
                         <.icon name="hero-pencil-square" class="h-4 w-4" />
                       </.link>
                       <.link

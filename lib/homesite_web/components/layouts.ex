@@ -38,14 +38,14 @@ defmodule HomesiteWeb.Layouts do
 
   def app(assigns) do
     ~H"""
-    <div class="min-h-screen px-[var(--spacing-card)] py-[var(--spacing-lg)]">
-      <div class="mx-auto max-w-[var(--content-max-width)] space-y-[var(--spacing-md)]">
+    <div class="px-[var(--spacing-card)] py-[var(--spacing-lg)] min-h-screen">
+      <div class="max-w-[var(--content-max-width)] space-y-[var(--spacing-md)] mx-auto">
         {render_slot(@inner_block)}
       </div>
     </div>
 
     <footer class="from-base-200 to-base-300 border-base-300 mt-[var(--spacing-section)] border-t bg-gradient-to-r">
-      <div class="footer mx-auto max-w-[var(--content-max-width)] px-[var(--spacing-card)] py-[var(--spacing-lg)]">
+      <div class="footer max-w-[var(--content-max-width)] px-[var(--spacing-card)] py-[var(--spacing-lg)] mx-auto">
         <div>
           <.pegasus class="h-20 w-20" />
           <p class="font-semibold">
@@ -72,17 +72,23 @@ defmodule HomesiteWeb.Layouts do
         </div>
         <div>
           <span class="footer-title">{gettext("Subscribe")}</span>
-          <.link href={~p"/rss.xml"} class="link-hover link flex items-center gap-[var(--spacing-inline)]">
+          <.link
+            href={~p"/rss.xml"}
+            class="link-hover link gap-[var(--spacing-inline)] flex items-center"
+          >
             <.icon name="hero-rss" class="h-4 w-4" />
             {gettext("RSS Feed")}
           </.link>
-          <.link href={~p"/feed.json"} class="link-hover link flex items-center gap-[var(--spacing-inline)]">
+          <.link
+            href={~p"/feed.json"}
+            class="link-hover link gap-[var(--spacing-inline)] flex items-center"
+          >
             <.icon name="hero-code-bracket" class="h-4 w-4" />
             {gettext("JSON Feed")}
           </.link>
         </div>
       </div>
-      <div class="border-base-300 bg-base-200/50 border-t px-[var(--spacing-card)] py-[var(--spacing-md)] text-center text-[var(--text-sm)] opacity-70">
+      <div class="border-base-300 bg-base-200/50 px-[var(--spacing-card)] py-[var(--spacing-md)] text-[var(--text-sm)] border-t text-center opacity-70">
         <p>© {Date.utc_today().year} Portal of JH. {gettext("Built with ❤️ and Elixir.")}</p>
       </div>
     </footer>
@@ -208,7 +214,7 @@ defmodule HomesiteWeb.Layouts do
                     <.avatar user={@current_scope.user} class="h-8 w-8" />
                     <span>{@current_scope.user.display_name || @current_scope.user.email}</span>
                   </summary>
-                  <ul class="bg-base-200 border border-base-300 shadow-lg z-50 rounded-t-none p-2">
+                  <ul class="bg-base-200 border-base-300 z-50 rounded-t-none border p-2 shadow-lg">
                     <li>
                       <.link navigate={~p"/users/settings"}>
                         <.icon name="hero-cog-6-tooth" class="h-4 w-4" /> {gettext("Settings")}
