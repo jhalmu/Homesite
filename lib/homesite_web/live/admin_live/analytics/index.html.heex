@@ -159,7 +159,7 @@
                   <td><span class="badge">{share.platform}</span></td>
                   <td>{if share.post, do: share.post.title, else: "N/A"}</td>
                   <td class="text-sm text-gray-600">
-                    {Calendar.strftime(share.inserted_at, "%Y-%m-%d %H:%M")}
+                    {Calendar.strftime(share.inserted_at, "%B %d, %Y at %H:%M")}
                   </td>
                 </tr>
               <% end %>

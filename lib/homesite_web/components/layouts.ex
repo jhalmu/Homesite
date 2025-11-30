@@ -208,7 +208,7 @@ defmodule HomesiteWeb.Layouts do
                     <.avatar user={@current_scope.user} class="h-8 w-8" />
                     <span>{@current_scope.user.display_name || @current_scope.user.email}</span>
                   </summary>
-                  <ul class="bg-base-100 z-50 rounded-t-none p-2">
+                  <ul class="bg-base-200 border border-base-300 shadow-lg z-50 rounded-t-none p-2">
                     <li>
                       <.link navigate={~p"/users/settings"}>
                         <.icon name="hero-cog-6-tooth" class="h-4 w-4" /> {gettext("Settings")}

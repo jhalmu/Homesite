@@ -60,7 +60,7 @@
                   <span class="font-medium">{activity.content}</span>
                 </div>
                 <div class="text-base-content/60 mt-1 text-sm">
-                  {Calendar.strftime(activity.inserted_at, "%b %d, %Y at %H:%M")}
+                  {Calendar.strftime(activity.inserted_at, "%B %d, %Y at %H:%M")}
                 </div>
               </div>
             </div>
@@ -127,7 +127,7 @@
                 </td>
                 <td>
                   <%= if post.published_at do %>
-                    {Calendar.strftime(post.published_at, "%b %d, %Y")}
+                    {Calendar.strftime(post.published_at, "%B %d, %Y")}
                   <% else %>
                     <span class="badge badge-ghost">{gettext("Draft")}</span>
                   <% end %>

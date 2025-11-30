@@ -31,7 +31,7 @@ defmodule HomesiteWeb.UserLive.Settings do
             <.avatar user={@current_scope.user} class="h-24 w-24" id="avatar-preview" />
             <.live_file_input
               upload={@uploads.avatar}
-              class="file-input file-input-bordered w-full max-w-xs"
+              class="file-input file-input-bordered w-full max-w-md"
             />
             <p class="text-sm text-gray-600 dark:text-gray-400">
               {gettext(

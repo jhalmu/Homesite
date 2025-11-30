@@ -136,7 +136,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
                   <%= for log <- @activity_logs do %>
                     <tr>
                       <td class="text-xs">
-                        {Calendar.strftime(log.inserted_at, "%Y-%m-%d %H:%M")}
+                        {Calendar.strftime(log.inserted_at, "%B %d, %Y at %H:%M")}
                       </td>
                       <td>{(log.user && log.user.email) || "Unknown"}</td>
                       <td>

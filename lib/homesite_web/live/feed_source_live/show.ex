@@ -56,7 +56,7 @@ defmodule HomesiteWeb.FeedSourceLive.Show do
       diff_seconds < 3600 -> "#{div(diff_seconds, 60)}m ago"
       diff_seconds < 86400 -> "#{div(diff_seconds, 3600)}h ago"
       diff_seconds < 604_800 -> "#{div(diff_seconds, 86400)}d ago"
-      true -> Calendar.strftime(datetime, "%b %d, %Y")
+      true -> Calendar.strftime(datetime, "%B %d, %Y")
     end
   end
 

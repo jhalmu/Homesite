@@ -51,6 +51,26 @@ defmodule HomesiteWeb.E2E.AccessibilityTest do
     session
   end
 
+  defp audit_page_dark_theme(session) do
+    # Force dark theme for accessibility testing
+    session = run_js(session, "document.documentElement.setAttribute('data-theme', 'dark')")
+
+    # Inject axe-core library
+    session = run_js(session, A11yAudit.JS.axe_core())
+
+    # Run the audit and get results
+    {session, axe_result} = execute_js(session, A11yAudit.JS.await_audit_results())
+
+    results = A11yAudit.Results.from_json(axe_result)
+    {session, results}
+  end
+
+  defp assert_no_violations_dark(session) do
+    {session, results} = audit_page_dark_theme(session)
+    A11yAudit.Assertions.assert_no_violations(results)
+    session
+  end
+
   describe "Login Page Accessibility" do
     @tag :playwright
     test "login page has no accessibility violations", %{conn: conn} do
@@ -76,6 +96,40 @@ defmodule HomesiteWeb.E2E.AccessibilityTest do
 
         if length(contrast_violations) > 0 do
           IO.puts("\n❌ Color Contrast Violations Found:")
+
+          Enum.each(contrast_violations, fn violation ->
+            IO.puts("\n  Issue: #{violation.description}")
+            IO.puts("  Impact: #{violation.impact}")
+            IO.puts("  Help: #{violation.help_url}")
+
+            Enum.each(violation.nodes, fn node ->
+              IO.puts("\n  Element: #{String.slice(node.html, 0..100)}...")
+              IO.puts("  Failure: #{node.failure_summary}")
+            end)
+          end)
+        end
+
+        A11yAudit.Assertions.assert_no_violations(results)
+        session
+      end)
+    end
+
+    @tag :playwright
+    test "login page has proper contrast ratios in DARK theme", %{conn: conn} do
+      conn
+      |> visit(~p"/users/log-in")
+      |> assert_has("body .phx-connected")
+      |> then(fn session ->
+        {session, results} = audit_page_dark_theme(session)
+
+        # Check specifically for color-contrast violations
+        contrast_violations =
+          Enum.filter(results.violations, fn v ->
+            v.id == "color-contrast"
+          end)
+
+        if length(contrast_violations) > 0 do
+          IO.puts("\n❌ Color Contrast Violations Found (DARK THEME):")
 
           Enum.each(contrast_violations, fn violation ->
             IO.puts("\n  Issue: #{violation.description}")

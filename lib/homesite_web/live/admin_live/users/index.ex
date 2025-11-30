@@ -103,7 +103,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
                     </td>
                     <td>
                       <span class="text-sm">
-                        {Calendar.strftime(user.inserted_at, "%Y-%m-%d")}
+                        {Calendar.strftime(user.inserted_at, "%B %d, %Y")}
                       </span>
                     </td>
                     <td>

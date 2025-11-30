@@ -119,7 +119,7 @@
                   </td>
                   <td>
                     <%= if invitation.expires_at do %>
-                      {Calendar.strftime(invitation.expires_at, "%Y-%m-%d %H:%M")}
+                      {Calendar.strftime(invitation.expires_at, "%B %d, %Y at %H:%M")}
                     <% else %>
                       Never
                     <% end %>

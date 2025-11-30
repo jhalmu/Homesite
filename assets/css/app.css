@@ -197,7 +197,7 @@ body {
   opacity: 1 !important;  /* Override opacity for contrast */
 }
 
-/* Navigation menu links - WCAG AA contrast compliance */
+/* Navigation menu links - WCAG AA contrast compliance with theme-specific accent colors */
 .technical-header nav a,
 .technical-header .menu a,
 .technical-header .menu li a,
@@ -211,7 +211,8 @@ header a[href="/dashboard"],
 .menu a,
 .menu li a,
 .menu-horizontal a {
-  color: #24292f !important;  /* Use exact text color for proper contrast */
+  color: var(--accent) !important;  /* Use theme-specific accent color */
+  transition: opacity 0.2s ease;
 }
 
 .technical-header nav a *,
@@ -232,7 +233,14 @@ header .menu-horizontal a:hover,
 .menu a:hover,
 .menu li a:hover,
 .menu-horizontal a:hover {
-  color: #24292f !important;  /* Maintain contrast on hover */
+  opacity: 0.8;  /* Subtle hover effect */
+}
+
+.technical-header nav a:focus,
+.technical-header .menu a:focus,
+header .menu a:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 /* Language toggle buttons - WCAG AA contrast compliance */
@@ -504,6 +512,87 @@ h1, h2, h3, h4, h5, h6 {
   padding-top: 1rem;
   border-top: 1px solid var(--border);
   font-family: 'SF Mono', 'Consolas', monospace;
+}
+
+/* ============================================================================
+   SUBTLE DECORATIVE ELEMENTS (~3-4% ornamental)
+   Maintains minimalist aesthetic while adding visual polish
+   ============================================================================ */
+
+/* Subtle grid texture for background */
+.technical-main::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.015;  /* 1.5% opacity - barely visible */
+  z-index: -1;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.03) 2px,
+      rgba(0, 0, 0, 0.03) 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.03) 2px,
+      rgba(0, 0, 0, 0.03) 4px
+    );
+  background-size: 4px 4px;
+}
+
+[data-theme="dark"] .technical-main::before {
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.02) 2px,
+      rgba(255, 255, 255, 0.02) 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.02) 2px,
+      rgba(255, 255, 255, 0.02) 4px
+    );
+}
+
+/* Accent border on featured post */
+.post-card:first-child {
+  border-left: 3px solid var(--accent);
+}
+
+/* Subtle hover lift effect */
+.post-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .post-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Accent on code blocks */
+.prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  border-left: 2px solid var(--accent);
+  transition: border-color 0.2s ease;
+}
+
+.prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)):hover {
+  border-left-width: 3px;
 }
 
 /* ============================================================================

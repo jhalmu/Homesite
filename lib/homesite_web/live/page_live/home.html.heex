@@ -15,7 +15,7 @@
         <article class="post-card">
           <div class="post-meta mb-[var(--spacing-md)]">
             <time datetime={latest_post.published_at}>
-              {Calendar.strftime(latest_post.published_at, "%Y-%m-%d")}
+              {Calendar.strftime(latest_post.published_at, "%B %d, %Y")}
             </time>
             <span>•</span>
             <%= if latest_post.tags && length(latest_post.tags) > 0 do %>
@@ -48,7 +48,7 @@
             <article class="post-card">
               <div class="post-meta mb-[var(--spacing-sm)]">
                 <time datetime={post.published_at}>
-                  {Calendar.strftime(post.published_at, "%Y-%m-%d")}
+                  {Calendar.strftime(post.published_at, "%B %d, %Y")}
                 </time>
               </div>
 
@@ -76,7 +76,7 @@
               <article class="post-card">
                 <div class="post-meta mb-[var(--spacing-md)]">
                   <time datetime={post.published_at}>
-                    {Calendar.strftime(post.published_at, "%Y-%m-%d")}
+                    {Calendar.strftime(post.published_at, "%B %d, %Y")}
                   </time>
                   <span>•</span>
                   <%= if post.tags && length(post.tags) > 0 do %>
@@ -164,7 +164,7 @@
                   <div class="text-[var(--text-xs)] opacity-70 flex items-center gap-[var(--spacing-inline)]">
                     <%= if item.published_at do %>
                       <time datetime={item.published_at}>
-                        {Calendar.strftime(item.published_at, "%Y-%m-%d")}
+                        {Calendar.strftime(item.published_at, "%B %d, %Y")}
                       </time>
                     <% end %>
                     <%= if item.author do %>
