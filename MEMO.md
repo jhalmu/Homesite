@@ -3580,3 +3580,135 @@ The design system is now a **living, documented, tested, and applied reality** t
 Future developers can reference `.claude/skills/design-system/` for instant access to all design patterns, component examples, and token references.
 
 **Status:** ✅ Complete and production-ready
+
+---
+
+## 2025-11-30 14:30:00 - Social Media Feed Adapters Implementation 🦋
+
+### Session: Complete External Feeds System with Social Media Support
+
+#### Accomplishments
+
+Implemented comprehensive social media feed adapters to extend the External Feeds system beyond RSS/Atom feeds.
+
+**New Adapters Created** (5 total):
+1. **BlueskyAdapter** - Uses AT Protocol public API
+   - Fetches user posts from Bluesky
+   - Pattern matches on username field
+   - Supports post metadata (likes, reposts, replies)
+   - File: `lib/homesite/external_feeds/adapters/bluesky_adapter.ex` (236 lines)
+
+2. **MastodonAdapter** - Uses Mastodon/Fediverse public API
+   - Requires instance + username configuration
+   - Two-step fetch: account lookup then statuses
+   - Supports HTML content with media attachments
+   - File: `lib/homesite/external_feeds/adapters/mastodon_adapter.ex` (267 lines)
+
+3. **YouTubeAdapter** - Uses YouTube RSS feeds (no API key)
+   - Fetches channel videos via XML feed
+   - Metadata includes view counts, thumbnails
+   - File: `lib/homesite/external_feeds/adapters/youtube_adapter.ex` (156 lines)
+
+4. **InstagramAdapter** - Delegates to RSS bridge services
+   - Validates RSS bridge URLs
+   - Enhances items with Instagram-specific metadata
+   - File: `lib/homesite/external_feeds/adapters/instagram_adapter.ex` (82 lines)
+
+5. **TwitterAdapter** - Dormant mode (API restrictions)
+   - Fully implemented but inactive
+   - Delegates to RSS bridge with dormant flag
+   - File: `lib/homesite/external_feeds/adapters/twitter_adapter.ex` (98 lines)
+
+**Testing Coverage** (31 new tests):
+- `test/homesite/external_feeds/adapters/bluesky_adapter_test.exs` (6 tests)
+- `test/homesite/external_feeds/adapters/mastodon_adapter_test.exs` (6 tests)
+- `test/homesite/external_feeds/adapters/youtube_adapter_test.exs` (6 tests)
+- `test/homesite/external_feeds/adapters/instagram_adapter_test.exs` (6 tests)
+- `test/homesite/external_feeds/adapters/twitter_adapter_test.exs` (7 tests)
+- All tests validate source configuration and error handling
+- External API tests tagged with `:external` (excluded by default)
+
+**Schema Updates**:
+- Added `youtube`, `instagram`, `twitter` to allowed feed types in `FeedSource`
+- Added default icons for all social media types (🦋 🐘 📺 📸 🐦)
+- Updated validation to handle different requirements per type:
+  - RSS/Atom/JSON: require `url`
+  - Bluesky/Mastodon: require `username`
+  - YouTube: uses `metadata.channel_id` only
+
+**Seeds Updated**:
+Successfully created 9 feed examples:
+- 6 RSS/Atom feeds (Hacker News, Phoenix Blog, Elixir Forum, Reddit, The Verge, GitHub)
+- 3 Social media feeds:
+  - Bluesky Official (`bsky.app`)
+  - Mastodon Creator (`Gargron@mastodon.social`)
+  - Linus Tech Tips (YouTube)
+
+**Documentation**:
+- Created `EXTERNAL_FEEDS.md` (comprehensive system documentation)
+- Created `lib/mix/tasks/feeds.refresh.ex` (mix task for manual refresh)
+
+#### Technical Details
+
+**Adapter Pattern**:
+All adapters implement the `FeedAdapter` behaviour:
+```elixir
+@callback validate_source(FeedSource.t()) :: :ok | {:error, String.t()}
+@callback fetch_items(FeedSource.t()) :: {:ok, [map()]} | {:error, String.t()}
+```
+
+**Key Design Decisions**:
+1. **Schema fields vs metadata**: Core fields (url, username) in schema, adapter-specific config in metadata JSONB
+2. **Backwards compatibility**: Adapters read from both schema and metadata
+3. **Error handling**: All adapters use consistent retry logic and error messages
+4. **Dormant mode**: Twitter adapter fully implemented but inactive (logged with warnings)
+
+**Feed Fetcher Routing**:
+```elixir
+defp get_adapter("bluesky"), do: BlueskyAdapter
+defp get_adapter("mastodon"), do: MastodonAdapter
+defp get_adapter("youtube"), do: YoutubeAdapter
+defp get_adapter("instagram"), do: InstagramAdapter
+defp get_adapter("twitter"), do: TwitterAdapter
+defp get_adapter(_), do: RssAdapter
+```
+
+#### Files Changed
+
+**Modified** (7 files):
+- `lib/homesite/external_feeds/feed_fetcher.ex` (+23 lines) - Added adapter routing
+- `lib/homesite/external_feeds/feed_source.ex` (+13 lines) - Added feed types and validation
+- `lib/homesite_web/live/page_live/home.ex` (+10 lines) - Feed block display
+- `lib/homesite_web/live/page_live/home.html.heex` (+80 lines) - Feed UI
+- `priv/repo/seeds.exs` (+167 lines) - Social media feed examples
+- `priv/gettext/default.pot` - Extracted strings
+- `priv/gettext/fi/LC_MESSAGES/default.po` - Finnish translations
+
+**New Files** (11 files):
+- 5 adapter implementations
+- 5 test files
+- 1 comprehensive documentation file
+- 1 mix task for manual feed refresh
+
+**Test Results**:
+```
+531 tests, 0 failures, 11 skipped
+```
+
+#### Impact
+
+The External Feeds system now supports:
+- ✅ RSS/Atom feeds (existing)
+- ✅ Bluesky social network
+- ✅ Mastodon/Fediverse instances
+- ✅ YouTube channels (no API key required)
+- ✅ Instagram (via RSS bridges)
+- ✅ Twitter/X (dormant but ready)
+
+**Next Steps**:
+- Consider adding LinkedIn, GitHub user activity feeds
+- Implement feed item caching/deduplication
+- Add UI for managing feed sources
+- Consider rate limiting for external API calls
+
+**Status**: ✅ Complete and fully tested

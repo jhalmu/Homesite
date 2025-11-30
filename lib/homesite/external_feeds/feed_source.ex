@@ -9,13 +9,16 @@ defmodule Homesite.ExternalFeeds.FeedSource do
   alias Homesite.Accounts.User
   alias Homesite.ExternalFeeds.FeedItem
 
-  @feed_types ~w(rss atom json bluesky mastodon)
+  @feed_types ~w(rss atom json bluesky mastodon youtube instagram twitter)
   @default_icons %{
     "rss" => "📰",
     "atom" => "📰",
     "json" => "📰",
     "bluesky" => "🦋",
-    "mastodon" => "🐘"
+    "mastodon" => "🐘",
+    "youtube" => "📺",
+    "instagram" => "📸",
+    "twitter" => "🐦"
   }
 
   schema "feed_sources" do
@@ -72,11 +75,15 @@ defmodule Homesite.ExternalFeeds.FeedSource do
   # Validate that the required fields for each feed type are present
   defp validate_feed_type_requirements(changeset) do
     case get_field(changeset, :feed_type) do
-      feed_type when feed_type in ["rss", "atom", "json"] ->
+      feed_type when feed_type in ["rss", "atom", "json", "instagram", "twitter"] ->
         validate_required(changeset, [:url])
 
       feed_type when feed_type in ["bluesky", "mastodon"] ->
         validate_required(changeset, [:username])
+
+      "youtube" ->
+        # YouTube uses metadata.channel_id, no required field at schema level
+        changeset
 
       _ ->
         changeset

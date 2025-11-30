@@ -2,6 +2,7 @@ defmodule HomesiteWeb.PageLive.Home do
   use HomesiteWeb, :live_view
 
   alias Homesite.Content
+  alias Homesite.ExternalFeeds
   alias Homesite.Social
 
   import HomesiteWeb.SocialComponents
@@ -10,10 +11,19 @@ defmodule HomesiteWeb.PageLive.Home do
   def mount(_params, _session, socket) do
     posts = Content.list_all_published_posts()
 
+    # Fetch feed items if user is authenticated
+    feed_items =
+      if socket.assigns[:current_scope] do
+        ExternalFeeds.list_feed_items(socket.assigns.current_scope, limit: 10)
+      else
+        []
+      end
+
     socket =
       socket
       |> assign(:page_title, "Welcome")
       |> assign(:posts, posts)
+      |> assign(:feed_items, feed_items)
 
     {:ok, socket}
   end

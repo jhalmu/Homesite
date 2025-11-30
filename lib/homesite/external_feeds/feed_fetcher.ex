@@ -5,7 +5,10 @@ defmodule Homesite.ExternalFeeds.FeedFetcher do
 
   alias Homesite.ExternalFeeds
   alias Homesite.ExternalFeeds.FeedSource
-  alias Homesite.ExternalFeeds.Adapters.RssAdapter
+
+  alias Homesite.ExternalFeeds.Adapters.{BlueskyAdapter, InstagramAdapter, MastodonAdapter,
+                                          RssAdapter, TwitterAdapter, YoutubeAdapter}
+
   require Logger
 
   @doc """
@@ -79,13 +82,23 @@ defmodule Homesite.ExternalFeeds.FeedFetcher do
   end
 
   defp get_adapter("bluesky") do
-    # Placeholder for future Bluesky adapter
-    raise "Bluesky adapter not yet implemented"
+    BlueskyAdapter
   end
 
   defp get_adapter("mastodon") do
-    # Placeholder for future Mastodon adapter
-    raise "Mastodon adapter not yet implemented"
+    MastodonAdapter
+  end
+
+  defp get_adapter("youtube") do
+    YoutubeAdapter
+  end
+
+  defp get_adapter("instagram") do
+    InstagramAdapter
+  end
+
+  defp get_adapter("twitter") do
+    TwitterAdapter
   end
 
   defp get_adapter(type) do

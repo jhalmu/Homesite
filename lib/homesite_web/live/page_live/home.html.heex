@@ -113,6 +113,86 @@
           </div>
         </div>
       <% end %>
+
+      <%!-- External Feeds Section --%>
+      <%= if @current_scope && length(@feed_items) > 0 do %>
+        <div class="mt-[var(--spacing-section)] space-y-[var(--spacing-md)]">
+          <div class="flex items-center justify-between">
+            <h2 class="text-[var(--font-size-fluid-xl)] font-bold">
+              {gettext("Recent from Feeds")}
+            </h2>
+            <.link navigate={~p"/feeds"} class="btn btn-sm btn-ghost">
+              {gettext("View all feeds")} →
+            </.link>
+          </div>
+
+          <div class="grid grid-cols-1 gap-[var(--spacing-md)] md:grid-cols-2 lg:grid-cols-3">
+            <%= for item <- @feed_items do %>
+              <article class="card bg-base-200 shadow-lg transition-shadow duration-[var(--duration-normal)] hover:shadow-xl">
+                <div class="card-body p-[var(--spacing-card)]">
+                  <%!-- Feed source badge --%>
+                  <div class="mb-[var(--spacing-sm)] flex items-center gap-[var(--spacing-inline)]">
+                    <span class="text-[var(--font-size-fluid-lg)]">{item.feed_source.icon}</span>
+                    <span class="badge badge-sm badge-ghost">{item.feed_source.name}</span>
+                  </div>
+
+                  <%!-- Item title --%>
+                  <h3 class="mb-[var(--spacing-sm)] text-[var(--font-size-fluid-lg)] font-semibold line-clamp-2">
+                    <%= if item.link do %>
+                      <a
+                        href={item.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="transition-colors duration-[var(--duration-normal)] hover:text-primary"
+                      >
+                        {item.title}
+                      </a>
+                    <% else %>
+                      {item.title}
+                    <% end %>
+                  </h3>
+
+                  <%!-- Item summary --%>
+                  <%= if item.summary do %>
+                    <p class="text-[var(--text-sm)] opacity-70 line-clamp-3 mb-[var(--spacing-sm)]">
+                      {String.slice(item.summary, 0, 150)}
+                      <%= if String.length(item.summary) > 150, do: "..." %>
+                    </p>
+                  <% end %>
+
+                  <%!-- Item metadata --%>
+                  <div class="text-[var(--text-xs)] opacity-70 flex items-center gap-[var(--spacing-inline)]">
+                    <%= if item.published_at do %>
+                      <time datetime={item.published_at}>
+                        {Calendar.strftime(item.published_at, "%Y-%m-%d")}
+                      </time>
+                    <% end %>
+                    <%= if item.author do %>
+                      <span>•</span>
+                      <span>{item.author}</span>
+                    <% end %>
+                  </div>
+
+                  <%!-- External link indicator --%>
+                  <%= if item.link do %>
+                    <div class="mt-[var(--spacing-sm)] pt-[var(--spacing-sm)] border-t border-base-300">
+                      <a
+                        href={item.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="btn btn-xs btn-ghost gap-[var(--spacing-inline)]"
+                      >
+                        <.icon name="hero-arrow-top-right-on-square" class="h-3 w-3" />
+                        {gettext("Read more")}
+                      </a>
+                    </div>
+                  <% end %>
+                </div>
+              </article>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
     </div>
   </main>
 </Layouts.app>
