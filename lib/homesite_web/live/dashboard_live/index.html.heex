@@ -38,6 +38,24 @@
             </div>
           </div>
         </.dashboard_card>
+
+        <.dashboard_card variant="stat" class="stats">
+          <div class="stat">
+            <div class="stat-title">{gettext("Feed Sources")}</div>
+            <div class="stat-value text-accent">{@feed_count}</div>
+            <div class="stat-desc">
+              {gettext("%{enabled} enabled, %{disabled} disabled",
+                enabled: @enabled_feeds,
+                disabled: @disabled_feeds
+              )}
+            </div>
+            <div class="stat-actions">
+              <.link navigate={~p"/feeds"} class="btn btn-sm btn-accent">
+                {gettext("View all")}
+              </.link>
+            </div>
+          </div>
+        </.dashboard_card>
       </div>
     </header>
 
@@ -78,6 +96,12 @@
         </.link>
         <.link navigate={~p"/tags/new"} class="btn btn-secondary gap-2">
           <.icon name="hero-plus" class="h-5 w-5" /> {gettext("New Tag")}
+        </.link>
+        <.link navigate={~p"/feeds/new"} class="btn btn-accent gap-2">
+          <.icon name="hero-rss" class="h-5 w-5" /> {gettext("New Feed Source")}
+        </.link>
+        <.link navigate={~p"/feeds"} class="btn btn-outline gap-2">
+          <.icon name="hero-list-bullet" class="h-5 w-5" /> {gettext("View Feeds")}
         </.link>
         <.link navigate={~p"/users/settings"} class="btn btn-outline gap-2">
           <.icon name="hero-cog-6-tooth" class="h-5 w-5" /> {gettext("Settings")}
@@ -146,7 +170,87 @@
         </table>
       </div>
     </section>
-    
+
+<!-- Feed Sources -->
+    <section class="mb-[var(--spacing-section)]">
+      <div class="mb-[var(--spacing-md)] flex items-center justify-between">
+        <h2 class="text-[var(--font-size-fluid-xl)] font-semibold">
+          {gettext("Your Feed Sources")}
+        </h2>
+        <.link navigate={~p"/feeds"} class="link link-primary">
+          {gettext("View all")} →
+        </.link>
+      </div>
+
+      <div :if={@feed_count == 0} class="alert alert-info">
+        <.icon name="hero-information-circle" class="h-6 w-6" />
+        <span>
+          {gettext("You haven't added any feed sources yet.")} <.link
+            navigate={~p"/feeds/new"}
+            class="link"
+          >{gettext("Add your first feed source")}</.link>!
+        </span>
+      </div>
+
+      <div :if={@feed_count > 0} class="overflow-x-auto">
+        <table class="table-zebra table">
+          <thead>
+            <tr>
+              <th>{gettext("Name")}</th>
+              <th>{gettext("Type")}</th>
+              <th>{gettext("Status")}</th>
+              <th>{gettext("Last Updated")}</th>
+              <th>{gettext("Actions")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <%= for feed <- Enum.take(@feed_sources, 5) do %>
+              <tr>
+                <td>
+                  <div class="flex items-center gap-2">
+                    <span class="text-2xl">{feed.icon}</span>
+                    <.link navigate={~p"/feeds/#{feed}"} class="link link-hover font-medium">
+                      {feed.name}
+                    </.link>
+                  </div>
+                </td>
+                <td>
+                  <span class="badge badge-outline">{feed.feed_type}</span>
+                </td>
+                <td>
+                  <%= if feed.enabled do %>
+                    <span class="badge badge-success">{gettext("Enabled")}</span>
+                  <% else %>
+                    <span class="badge badge-ghost">{gettext("Disabled")}</span>
+                  <% end %>
+                  <%= if feed.last_error do %>
+                    <span class="badge badge-error">{gettext("Error")}</span>
+                  <% end %>
+                </td>
+                <td>
+                  <%= if feed.last_fetched_at do %>
+                    {Calendar.strftime(feed.last_fetched_at, "%B %d, %Y")}
+                  <% else %>
+                    <span class="text-gray-400">{gettext("Never")}</span>
+                  <% end %>
+                </td>
+                <td>
+                  <div class="flex gap-2">
+                    <.link navigate={~p"/feeds/#{feed}"} class="btn btn-ghost btn-xs">
+                      {gettext("View")}
+                    </.link>
+                    <.link navigate={~p"/feeds/#{feed}/edit"} class="btn btn-ghost btn-xs">
+                      {gettext("Edit")}
+                    </.link>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
 <!-- Recent Tags -->
     <section>
       <div class="mb-[var(--spacing-md)] flex items-center justify-between">
