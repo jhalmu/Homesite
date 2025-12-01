@@ -6,6 +6,105 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-01 21:00:00 - Dark Theme CSS Variable Compatibility (CRITICAL FIX)
+
+### Session: DaisyUI 5.0 Migration Completion
+
+#### Problem
+After implementing JavaScript theme switching, dark theme still didn't work. Colors remained light regardless of `data-theme="dark"` attribute being set correctly. User reported: "No it wont work. Check css-files are there dark numbers for dark theme."
+
+#### Root Cause Analysis
+Two critical issues prevented dark theme from working:
+
+1. **CSS Variable Naming Mismatch (DaisyUI 4.x → 5.0)**
+   - App CSS used old shorthand variables: `--b1`, `--b2`, `--b3`, `--bc`, `--p`, `--a`
+   - DaisyUI 5.0 generates full names: `--color-base-100`, `--color-base-200`, `--color-base-300`, `--color-base-content`, `--color-primary`, `--color-accent`
+   - Result: All custom CSS referenced non-existent variables
+
+2. **Incorrect Theme Configuration Syntax (Tailwind CSS v4)**
+   - Used: `themes: "light dark business corporate cyberpunk";` (string)
+   - Correct: `themes: light --default, dark --prefersdark, business, corporate, cyberpunk;` (comma-separated with flags)
+   - Result: Only light theme was generated in compiled CSS
+
+#### Solution Implemented
+
+**1. Updated All CSS Variables (106 lines changed)**
+
+Replaced all shorthand variables with DaisyUI 5.0 full names throughout `assets/css/app.css`:
+
+| Old Shorthand | New Full Name | Usage |
+|--------------|---------------|--------|
+| `oklch(var(--b1))` | `var(--color-base-100)` | Background colors |
+| `oklch(var(--b2))` | `var(--color-base-200)` | Secondary surfaces |
+| `oklch(var(--b3))` | `var(--color-base-300)` | Borders |
+| `oklch(var(--bc))` | `var(--color-base-content)` | Text colors |
+| `oklch(var(--p))` | `var(--color-primary)` | Primary links/buttons |
+| `oklch(var(--a))` | `var(--color-accent)` | Accent colors |
+
+**Note**: Also removed `oklch()` wrapper since DaisyUI provides full OKLCH values.
+
+**2. Fixed DaisyUI Configuration**
+
+Updated plugin configuration in `assets/css/app.css`:
+```css
+@plugin "../vendor/daisyui" {
+  themes: light --default, dark --prefersdark, business, corporate, cyberpunk;
+}
+```
+
+Flags used:
+- `--default`: Sets light as default theme
+- `--prefersdark`: Enables dark theme when `prefers-color-scheme: dark`
+
+#### Files Modified
+1. **assets/css/app.css** (106 lines changed: 53 insertions, 53 deletions)
+   - Lines 17: Fixed DaisyUI theme configuration syntax
+   - Lines 68-70: HTML/body background and text colors
+   - Lines 86-131: Form inputs (.input, .textarea, .select, .file-input)
+   - Lines 161-262: Technical header, post metadata, tags, cards, titles
+   - Lines 273-324: Listing system (unified content display)
+   - Lines 380-401: Decorative elements and accent borders
+   - Lines 481-613: Prose/markdown styling (links, code blocks, tables)
+
+2. **MEMO.md** - This entry
+
+#### Verification
+Confirmed dark theme colors now exist in compiled CSS (`priv/static/assets/css/app.css`):
+
+```css
+[data-theme=dark] {
+  color-scheme: dark;
+  --color-base-100: oklch(25.33% 0.016 252.42);      /* Dark background */
+  --color-base-200: oklch(23.26% 0.014 253.1);       /* Darker surface */
+  --color-base-300: oklch(21.15% 0.012 254.09);      /* Darkest borders */
+  --color-base-content: oklch(97.807% 0.029 256.847); /* Light text */
+  --color-primary: oklch(58% 0.233 277.117);         /* Primary accent */
+  --color-accent: oklch(77% 0.152 181.912);          /* Accent color */
+  /* ... all other theme colors ... */
+}
+```
+
+All 5 themes now properly generated:
+- ✅ Light (default) - `[data-theme=light]`
+- ✅ Dark (prefers-dark) - `[data-theme=dark]`
+- ✅ Business - `[data-theme=business]`
+- ✅ Corporate - `[data-theme=corporate]`
+- ✅ Cyberpunk - `[data-theme=cyberpunk]`
+
+#### GitHub Issue
+- Created issue #43: "Fix Dark Theme CSS Variable Compatibility"
+- Closed with completion summary
+- Labels: bug, priority:high
+
+#### Impact
+**Before**: JavaScript theme switcher worked, but no colors changed (CSS variables didn't exist)
+**After**: Full dark theme functionality - backgrounds are dark, text is light, all colors properly themed
+
+#### Status
+✅ **RESOLVED** - Dark theme CSS now fully compatible with DaisyUI 5.0 and Tailwind CSS v4
+
+---
+
 ## 2025-12-01 18:30:00 - Dark Theme Implementation (CRITICAL FIX)
 
 ### Session: Intelligent System Preference Detection

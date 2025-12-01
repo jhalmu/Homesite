@@ -14,7 +14,7 @@
    curl -sLO https://github.com/saadeghi/daisyui/releases/latest/download/daisyui.js
    Make sure to look at the daisyUI changelog: https://daisyui.com/docs/changelog/ */
 @plugin "../vendor/daisyui" {
-  themes: "light dark business corporate cyberpunk";
+  themes: light --default, dark --prefersdark, business, corporate, cyberpunk;
 }
 
 /* Import design tokens */
@@ -65,8 +65,8 @@
 /* Apply theme colors to entire page */
 html,
 body {
-  background-color: oklch(var(--b1));
-  color: oklch(var(--bc));
+  background-color: var(--color-base-100);
+  color: var(--color-base-content);
   min-height: 100vh;
 }
 
@@ -83,42 +83,42 @@ body {
 
 /* Base input styling - text, email, password, number, url, etc. */
 .input {
-  background-color: oklch(var(--b1));
-  border-color: oklch(var(--b3));
-  color: oklch(var(--bc));
+  background-color: var(--color-base-100);
+  border-color: var(--color-base-300);
+  color: var(--color-base-content);
 }
 
 .input:focus {
-  outline: 2px solid oklch(var(--a));
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
-  border-color: oklch(var(--a));
+  border-color: var(--color-accent);
 }
 
 /* Textarea styling */
 .textarea {
-  background-color: oklch(var(--b1));
-  border-color: oklch(var(--b3));
-  color: oklch(var(--bc));
+  background-color: var(--color-base-100);
+  border-color: var(--color-base-300);
+  color: var(--color-base-content);
   min-height: 8rem;
 }
 
 .textarea:focus {
-  outline: 2px solid oklch(var(--a));
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
-  border-color: oklch(var(--a));
+  border-color: var(--color-accent);
 }
 
 /* Select dropdown styling */
 .select {
-  background-color: oklch(var(--b1));
-  border-color: oklch(var(--b3));
-  color: oklch(var(--bc));
+  background-color: var(--color-base-100);
+  border-color: var(--color-base-300);
+  color: var(--color-base-content);
 }
 
 .select:focus {
-  outline: 2px solid oklch(var(--a));
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
-  border-color: oklch(var(--a));
+  border-color: var(--color-accent);
 }
 
 /* Disabled state */
@@ -127,7 +127,7 @@ body {
 .select:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  background-color: oklch(var(--b1));
+  background-color: var(--color-base-100);
 }
 
 /* Error state */
@@ -138,14 +138,14 @@ body {
 
 /* File input styling */
 .file-input {
-  background-color: oklch(var(--b1));
-  border-color: oklch(var(--b3));
-  color: oklch(var(--bc));
+  background-color: var(--color-base-100);
+  border-color: var(--color-base-300);
+  color: var(--color-base-content);
   border-radius: 15px;
 }
 
 .file-input::file-selector-button {
-  background-color: oklch(var(--a));
+  background-color: var(--color-accent);
   color: #ffffff;
   cursor: pointer;
   border-radius: 15px;
@@ -158,8 +158,8 @@ body {
 
 /* Header styling from design-e-technical.html */
 .technical-header {
-  border-bottom: 1px solid oklch(var(--b3));
-  background: oklch(var(--b1));
+  border-bottom: 1px solid var(--color-base-300);
+  background: var(--color-base-100);
   padding: 1.25rem 0;
   position: sticky;
   top: 0;
@@ -188,7 +188,7 @@ body {
   align-items: center;
   gap: 0.75rem;
   font-size: 0.875rem;
-  color: oklch(from var(--bc) l c h / 0.6);
+  color: oklch(from var(--color-base-content) l c h / 0.6);
 }
 
 .post-meta time {
@@ -197,8 +197,8 @@ body {
 
 /* Technical tags */
 .tag-technical {
-  background: oklch(var(--b2));
-  color: oklch(var(--a));
+  background: var(--color-base-200);
+  color: var(--color-accent);
   padding: 0.25rem 0.625rem;
   border-radius: 3px;
   font-size: 0.75rem;
@@ -223,8 +223,8 @@ body {
 
 /* Post cards with technical borders */
 .post-card {
-  background: oklch(var(--b1));
-  border: 1px solid oklch(var(--b3));
+  background: var(--color-base-100);
+  border: 1px solid var(--color-base-300);
   border-radius: 6px;
   padding: 2rem;
   margin-bottom: 1.5rem;
@@ -237,16 +237,16 @@ body {
   margin-bottom: 0.875rem;
   letter-spacing: -0.01em;
   line-height: 1.3;
-  color: oklch(var(--bc));
+  color: var(--color-base-content);
 }
 
 .post-title:hover {
-  color: oklch(var(--a));
+  color: var(--color-accent);
 }
 
 /* Post excerpt */
 .post-excerpt {
-  color: oklch(from var(--bc) l c h / 0.6);
+  color: oklch(from var(--color-base-content) l c h / 0.6);
   line-height: 1.7;
   margin-bottom: 1rem;
 }
@@ -257,9 +257,9 @@ body {
   align-items: center;
   gap: 1rem;
   font-size: 0.875rem;
-  color: oklch(from var(--bc) l c h / 0.6);
+  color: oklch(from var(--color-base-content) l c h / 0.6);
   padding-top: 1rem;
-  border-top: 1px solid oklch(var(--b3));
+  border-top: 1px solid var(--color-base-300);
   font-family: "SF Mono", "Consolas", monospace;
 }
 
@@ -270,8 +270,8 @@ body {
 
 /* Base listing card - maps to post-card */
 .listing-card {
-  background: oklch(var(--b1));
-  border: 1px solid oklch(var(--b3));
+  background: var(--color-base-100);
+  border: 1px solid var(--color-base-300);
   border-radius: 6px;
   padding: 2rem;
   margin-bottom: 1.5rem;
@@ -283,7 +283,7 @@ body {
   align-items: center;
   gap: 0.75rem;
   font-size: 0.875rem;
-  color: oklch(from var(--bc) l c h / 0.6);
+  color: oklch(from var(--color-base-content) l c h / 0.6);
 }
 
 .listing-meta time {
@@ -297,16 +297,16 @@ body {
   margin-bottom: 0.875rem;
   letter-spacing: -0.01em;
   line-height: 1.3;
-  color: oklch(var(--bc));
+  color: var(--color-base-content);
 }
 
 .listing-title:hover {
-  color: oklch(var(--a));
+  color: var(--color-accent);
 }
 
 /* Listing content/excerpt - maps to post-excerpt */
 .listing-content {
-  color: oklch(from var(--bc) l c h / 0.6);
+  color: oklch(from var(--color-base-content) l c h / 0.6);
   line-height: 1.7;
   margin-bottom: 1rem;
 }
@@ -317,9 +317,9 @@ body {
   align-items: center;
   gap: 1rem;
   font-size: 0.875rem;
-  color: oklch(from var(--bc) l c h / 0.6);
+  color: oklch(from var(--color-base-content) l c h / 0.6);
   padding-top: 1rem;
-  border-top: 1px solid oklch(var(--b3));
+  border-top: 1px solid var(--color-base-300);
   font-family: "SF Mono", "Consolas", monospace;
 }
 
@@ -377,7 +377,7 @@ body {
 
 /* Accent border on featured post */
 .post-card:first-child {
-  border-left: 3px solid oklch(var(--a));
+  border-left: 3px solid var(--color-accent);
 }
 
 /* Subtle hover lift effect */
@@ -398,7 +398,7 @@ body {
 
 /* Accent on code blocks */
 .prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  border-left: 2px solid oklch(var(--a));
+  border-left: 2px solid var(--color-accent);
   transition: border-color 0.2s ease;
 }
 
@@ -478,7 +478,7 @@ body {
 }
 
 .prose :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  color: oklch(var(--p));
+  color: var(--color-primary);
   text-decoration: underline;
   font-weight: 500;
 }
@@ -516,17 +516,17 @@ body {
   :where(:not(pre) > code):not(
     :where([class~="not-prose"], [class~="not-prose"] *)
   ) {
-  color: oklch(var(--p));
-  background-color: oklch(var(--color-base-200));
+  color: var(--color-primary);
+  background-color: var(--color-base-200);
   padding: 0.125rem 0.375rem;
   border-radius: 0.25rem;
   font-weight: 600;
 }
 
 .prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  background-color: oklch(var(--b2));
-  color: oklch(var(--bc));
-  border: 1px solid oklch(var(--b3));
+  background-color: var(--color-base-200);
+  color: var(--color-base-content);
+  border: 1px solid var(--color-base-300);
   border-radius: 6px;
   padding: 1rem;
   overflow-x: auto;
@@ -605,10 +605,10 @@ body {
 
 /* Dark mode adjustments */
 .prose:where([data-theme="dark"], [data-theme="dark"] *) {
-  color: oklch(var(--color-base-content));
+  color: var(--color-base-content);
 }
 
 .prose:where([data-theme="dark"], [data-theme="dark"] *)
   :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  color: oklch(var(--p));
+  color: var(--color-primary);
 }
