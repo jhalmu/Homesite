@@ -6,6 +6,62 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-01 18:30:00 - Dark Theme Implementation (CRITICAL FIX)
+
+### Session: Intelligent System Preference Detection
+
+#### Problem
+Theme system was forcing light theme on new users despite OS dark mode preference. User reported frustration with theme switcher "not working" and urgently needing dark theme.
+
+#### Root Cause
+1. **No `prefers-color-scheme` detection** - App ignored OS preference entirely
+2. **"System" theme removed `data-theme` attribute** - Caused DaisyUI to fall back to light theme
+3. **Poor UX** - Dark mode users were "blasted with light theme" on first visit
+4. **Misleading "System" option** - Didn't actually detect or follow system preference
+
+#### Solution Implemented
+- ✅ **Intelligent theme detection** using `window.matchMedia('(prefers-color-scheme: dark)')`
+- ✅ **Always sets `data-theme` attribute** (never removes it)
+- ✅ **New users automatically get dark theme** if their OS is dark
+- ✅ **"System" option now actually works** - detects and follows OS preference
+- ✅ **Auto-switching** - listens for OS theme changes and updates automatically
+- ✅ **Improved theme switcher icon** - sun/moon instead of generic swatch icon
+
+#### Files Modified
+1. **lib/homesite_web/components/layouts/root.html.heex** (lines 38-89)
+   - Complete rewrite of theme initialization script
+   - Added `getSystemTheme()` function using `matchMedia`
+   - Modified `setTheme()` to always set attribute, detect system preference
+   - Added OS theme change listener
+   - New users get intelligent default (matches OS)
+
+2. **lib/homesite_web/components/layouts.ex** (lines 405-410)
+   - Replaced generic swatch icon with sun/moon icons
+   - Sun icon visible in light theme, moon icon in dark theme
+   - Better visual feedback for current theme state
+
+3. **MEMO.md** - This entry
+
+#### Testing Performed
+All theme scenarios verified:
+- ✅ New user with dark OS → sees dark theme immediately
+- ✅ New user with light OS → sees light theme immediately
+- ✅ User clicks "Dark" → stays dark (persists across refresh)
+- ✅ User clicks "Light" → stays light (persists across refresh)
+- ✅ User clicks "System" → matches OS and auto-switches when OS changes
+- ✅ All 5 themes work: light, dark, business, corporate, cyberpunk
+- ✅ Theme syncs across multiple tabs
+- ✅ Theme switcher icon changes based on current theme
+
+#### Impact
+**Before**: User frustration, forced light theme, poor first impression
+**After**: Intelligent system that "just works", professional polished experience
+
+#### Status
+✅ **RESOLVED** - Dark theme now works intelligently as default based on system preference
+
+---
+
 ## 2025-12-01 15:00:00 - Complete DaisyUI Theme System Rebuild
 
 ### Session: Clean Rebuild with Professional Themes

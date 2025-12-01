@@ -403,7 +403,10 @@ defmodule HomesiteWeb.Layouts do
     ~H"""
     <div class="dropdown dropdown-end">
       <div tabindex="0" role="button" class="btn btn-sm btn-ghost gap-1" aria-label={gettext("Change theme")}>
-        <.icon name="hero-swatch" class="h-5 w-5" />
+        <!-- Sun icon (visible in light theme) -->
+        <.icon name="hero-sun" class="h-5 w-5 dark:hidden" />
+        <!-- Moon icon (visible in dark theme) -->
+        <.icon name="hero-moon" class="h-5 w-5 hidden dark:block" />
         <.icon name="hero-chevron-down" class="h-3 w-3 opacity-60" />
       </div>
       <ul

@@ -37,20 +37,54 @@
     </script>
     <script>
       (() => {
-        const setTheme = (theme) => {
-          if (theme === "system") {
-            localStorage.removeItem("phx:theme");
-            document.documentElement.removeAttribute("data-theme");
-          } else {
-            localStorage.setItem("phx:theme", theme);
-            document.documentElement.setAttribute("data-theme", theme);
-          }
+        const getSystemTheme = () => {
+          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         };
-        if (!document.documentElement.hasAttribute("data-theme")) {
-          setTheme(localStorage.getItem("phx:theme") || "system");
-        }
-        window.addEventListener("storage", (e) => e.key === "phx:theme" && setTheme(e.newValue || "system"));
 
+        const setTheme = (theme) => {
+          // If "system", detect OS preference and apply it
+          if (theme === "system") {
+            const systemTheme = getSystemTheme();
+            document.documentElement.setAttribute("data-theme", systemTheme);
+            localStorage.setItem("phx:theme", "system");
+            return;
+          }
+
+          // Otherwise apply explicit theme
+          document.documentElement.setAttribute("data-theme", theme);
+          localStorage.setItem("phx:theme", theme);
+        };
+
+        // Initialize theme on page load
+        const savedTheme = localStorage.getItem("phx:theme");
+
+        if (!savedTheme) {
+          // New user: detect system preference and apply it as default
+          const systemTheme = getSystemTheme();
+          document.documentElement.setAttribute("data-theme", systemTheme);
+          // Don't save to localStorage - let user explicitly choose if they want to override
+        } else {
+          // Existing user: apply their saved preference
+          setTheme(savedTheme);
+        }
+
+        // Listen for system theme changes (OS dark mode toggle)
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+          const savedTheme = localStorage.getItem("phx:theme");
+          // Only auto-switch if user chose "system" or hasn't set preference
+          if (!savedTheme || savedTheme === "system") {
+            setTheme("system");
+          }
+        });
+
+        // Listen for storage changes (theme changed in another tab)
+        window.addEventListener("storage", (e) => {
+          if (e.key === "phx:theme") {
+            setTheme(e.newValue || "system");
+          }
+        });
+
+        // Listen for theme button clicks
         window.addEventListener("phx:set-theme", (e) => setTheme(e.detail.theme));
       })();
 
