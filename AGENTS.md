@@ -646,6 +646,136 @@ gh issue comment 15 --body "✅ Completed: Language switcher, locale persistence
 
 ---
 
+#### Pattern: Component Organization and Extraction
+
+**Rule**: Organize Phoenix Components into specialized modules based on their purpose and reuse them consistently across the application.
+
+**Component Module Structure**:
+```
+lib/homesite_web/components/
+├── core_components.ex        # Base UI primitives (buttons, icons, alerts, etc.)
+├── form_components.ex         # Specialized form inputs (tag_input, datetime_input, etc.)
+├── content_components.ex      # Content display components (post_card, tag_card, etc.)
+└── layouts.ex                # Application layouts
+```
+
+**When to Extract Components**:
+1. **Duplication**: Code appears in 2+ LiveViews with minimal variation
+2. **Complexity**: UI pattern is >50 lines and has internal logic
+3. **Reusability**: Pattern will be used across multiple features
+4. **Consistency**: Need uniform behavior/styling across the app
+
+**Component Module Definitions**:
+
+```elixir
+# lib/homesite_web/components/form_components.ex
+defmodule HomesiteWeb.FormComponents do
+  use Phoenix.Component
+  use Gettext, backend: HomesiteWeb.Gettext
+  import HomesiteWeb.CoreComponents  # Import base components
+
+  # Specialized form inputs that combine multiple base components
+  def tag_input(assigns)         # Tag search/selection with autocomplete
+  def datetime_input(assigns)    # Date + time picker with "Now" button
+  def similar_items_alert(assigns) # Warning for duplicate items
+end
+
+# lib/homesite_web/components/content_components.ex
+defmodule HomesiteWeb.ContentComponents do
+  use Phoenix.Component
+  use Gettext, backend: HomesiteWeb.Gettext
+
+  # Import verified routes for ~p sigil
+  use Phoenix.VerifiedRoutes,
+    endpoint: HomesiteWeb.Endpoint,
+    router: HomesiteWeb.Router,
+    statics: HomesiteWeb.static_paths()
+
+  import HomesiteWeb.CoreComponents
+
+  # Content display components
+  def post_card(assigns)         # Full post display with metadata
+  def tag_card(assigns)          # Tag display with post count
+  def divider(assigns)           # Horizontal divider with optional text
+end
+```
+
+**Component Best Practices**:
+
+1. **Attributes**:
+   ```elixir
+   attr :items, :list, required: true, doc: "list of items to display"
+   attr :show_actions, :boolean, default: true, doc: "show edit/delete buttons"
+   attr :class, :string, default: nil, doc: "additional CSS classes"
+   ```
+
+2. **Default Values**:
+   ```elixir
+   def component(assigns) do
+     message = assigns[:message] || gettext("Default message")
+     assigns = assign(assigns, :message, message)
+     # ...
+   end
+   ```
+
+3. **Verified Routes**:
+   - Always add `use Phoenix.VerifiedRoutes` when using `~p` sigil
+   - Required for components that generate links
+
+4. **Import Base Components**:
+   - Always `import HomesiteWeb.CoreComponents` to use icons, buttons, etc.
+   - Avoid duplicating functionality from core_components.ex
+
+**Testing Components**:
+
+```elixir
+defmodule HomesiteWeb.FormComponentsTest do
+  use HomesiteWeb.ConnCase, async: true
+
+  import Phoenix.Component       # For ~H sigil
+  import Phoenix.LiveViewTest    # For rendered_to_string/1
+  import HomesiteWeb.FormComponents
+
+  test "renders component with props" do
+    assigns = %{items: [%{id: 1, name: "Test"}]}
+    html = rendered_to_string(~H"<.component {assigns} />")
+
+    assert html =~ "Test"
+    assert html =~ ~s(phx-value-id="1")
+  end
+
+  test "escapes HTML to prevent XSS" do
+    assigns = %{items: [%{id: 1, name: "<script>alert('xss')</script>"}]}
+    html = rendered_to_string(~H"<.component {assigns} />")
+
+    refute html =~ "<script>"
+    assert html =~ "&lt;script&gt;"
+  end
+end
+```
+
+**Edge Cases to Test**:
+- Empty states (no items, nil values)
+- XSS prevention (HTML escaping)
+- Special characters (C++, &, etc.)
+- Accessibility attributes (aria-label, role)
+- Action button visibility (owner vs non-owner)
+- Custom CSS classes
+- Long text truncation
+
+**Why This Pattern**:
+- **DRY**: Eliminates ~200+ lines of duplicated code across LiveViews
+- **Consistency**: UI patterns behave identically everywhere
+- **Testability**: Components tested in isolation with edge cases
+- **Maintainability**: Changes in one place update all usages
+- **Performance**: Smaller LiveView modules, faster compilation
+
+**Integration**: Components are used in LiveViews via `<.component_name />` syntax. No explicit imports needed due to `use HomesiteWeb, :live_view` which includes component imports.
+
+<!-- Integrated from Phase 1 design system work on 2025-12-01 -->
+
+---
+
 ### Phoenix v1.8 guidelines
 
 - **Always** begin your LiveView templates with `<Layouts.app flash={@flash} ...>` which wraps all inner content

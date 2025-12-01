@@ -1,0 +1,55 @@
+/* ============================================================================
+   TYPOGRAPHY SYSTEM
+   Fluid typography scale using clamp() for responsive sizing
+   ============================================================================ */
+
+:root {
+  /* Fluid Typography - scales with viewport */
+  --text-xs: clamp(0.75rem, 1vw, 0.875rem);
+  --text-sm: clamp(0.875rem, 1.5vw, 1rem);
+  --text-base: clamp(1rem, 2vw, 1.25rem);
+  --text-lg: clamp(1.125rem, 2.5vw, 1.5rem);
+  --text-xl: clamp(1.25rem, 3vw, 2rem);
+  --text-2xl: clamp(1.5rem, 4vw, 3rem);
+}
+
+/* Font families */
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica,
+    Arial, sans-serif;
+  font-feature-settings:
+    "kern" 1,
+    "liga" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+}
+
+/* Monospace font for code, dates, and technical metadata */
+.font-mono,
+code,
+kbd,
+pre,
+samp,
+time {
+  font-family: "SF Mono", "Consolas", "Liberation Mono", "Menlo", monospace;
+}
+
+/* Custom display font for branding */
+.font-display {
+  font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* Headings with technical letter-spacing */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  letter-spacing: -0.01em;
+  font-weight: 600;
+}

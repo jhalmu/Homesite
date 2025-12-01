@@ -1,0 +1,29 @@
+/* ============================================================================
+   SPACING SYSTEM
+   Responsive spacing scale using clamp() for fluid sizing
+   ============================================================================ */
+
+:root {
+  /* Responsive Spacing - scales with viewport */
+  --space-xs: clamp(0.25rem, 1vw, 0.5rem);
+  --space-sm: clamp(0.5rem, 2vw, 1rem);
+  --space-md: clamp(1rem, 3vw, 2rem);
+  --space-lg: clamp(2rem, 5vw, 4rem);
+  --space-xl: clamp(3rem, 8vw, 6rem);
+
+  /* Component-Specific Spacing */
+  --card-padding: clamp(1rem, 3vw, 2rem);
+  --section-gap: clamp(2rem, 5vw, 4rem);
+  --inline-gap: clamp(0.25rem, 1vw, 0.5rem);
+
+  /* Layout Constraints - use with w-[var(--content-max-width)] */
+  --content-max-width: min(95vw, 1400px);
+  --article-max-width: min(90vw, 800px);
+  --card-max-width: min(90vw, 600px);
+  --sidebar-width: max(250px, 20vw);
+
+  /* Duration tokens for transitions */
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+}

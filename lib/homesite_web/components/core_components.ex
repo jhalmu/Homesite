@@ -991,4 +991,188 @@ defmodule HomesiteWeb.CoreComponents do
     </h2>
     """
   end
+
+  @doc """
+  Renders a collapsible/accordion section using DaisyUI collapse.
+
+  ## Examples
+
+      <.collapse title="Click to expand">
+        Hidden content goes here
+      </.collapse>
+
+      <.collapse title="With arrow" arrow={true} open={true}>
+        This is open by default
+      </.collapse>
+
+  """
+  attr :title, :string, required: true, doc: "the title shown in the collapse header"
+  attr :arrow, :boolean, default: true, doc: "show arrow indicator"
+  attr :open, :boolean, default: false, doc: "whether collapse is open by default"
+  attr :class, :string, default: nil, doc: "additional CSS classes"
+  slot :inner_block, required: true
+
+  def collapse(assigns) do
+    ~H"""
+    <div class={["collapse bg-base-200", @arrow && "collapse-arrow", @class]}>
+      <input type="checkbox" checked={@open} />
+      <div class="collapse-title text-xl font-medium">
+        {@title}
+      </div>
+      <div class="collapse-content">
+        {render_slot(@inner_block)}
+      </div>
+    </div>
+    """
+  end
+
+  @doc """
+  Renders a tooltip using DaisyUI tooltip.
+
+  ## Examples
+
+      <.tooltip text="This is helpful info">
+        <button>Hover me</button>
+      </.tooltip>
+
+      <.tooltip text="Error info" position="top" color="error">
+        <.icon name="hero-exclamation-triangle" />
+      </.tooltip>
+
+  """
+  attr :text, :string, required: true, doc: "tooltip text content"
+
+  attr :position, :string,
+    default: "top",
+    values: ~w(top bottom left right),
+    doc: "tooltip position"
+
+  attr :color, :string,
+    default: nil,
+    doc: "tooltip color variant (primary, secondary, accent, info, success, warning, error)"
+
+  attr :class, :string, default: nil, doc: "additional CSS classes"
+  slot :inner_block, required: true
+
+  def tooltip(assigns) do
+    ~H"""
+    <div
+      class={["tooltip", "tooltip-#{@position}", @color && "tooltip-#{@color}", @class]}
+      data-tip={@text}
+    >
+      {render_slot(@inner_block)}
+    </div>
+    """
+  end
+
+  @doc """
+  Renders breadcrumb navigation using DaisyUI breadcrumbs.
+
+  ## Examples
+
+      <.breadcrumbs items={[
+        %{label: "Home", path: ~p"/"},
+        %{label: "Posts", path: ~p"/posts"},
+        %{label: "Edit", path: nil}
+      ]} />
+
+  """
+  attr :items, :list, required: true, doc: "list of breadcrumb items with :label and :path"
+  attr :class, :string, default: nil, doc: "additional CSS classes"
+
+  def breadcrumbs(assigns) do
+    ~H"""
+    <div class={["breadcrumbs text-sm", @class]}>
+      <ul>
+        <%= for item <- @items do %>
+          <li>
+            <%= if item[:path] do %>
+              <.link navigate={item.path}>{item.label}</.link>
+            <% else %>
+              {item.label}
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+    """
+  end
+
+  @doc """
+  Renders a loading spinner or skeleton.
+
+  ## Examples
+
+      <.loading type="spinner" />
+      <.loading type="dots" />
+      <.loading type="ring" size="lg" />
+
+  """
+  attr :type, :string,
+    default: "spinner",
+    values: ~w(spinner dots ring ball bars infinity),
+    doc: "loading animation type"
+
+  attr :size, :string,
+    default: "md",
+    values: ~w(xs sm md lg),
+    doc: "loading size"
+
+  attr :class, :string, default: nil, doc: "additional CSS classes"
+
+  def loading(assigns) do
+    ~H"""
+    <span class={["loading", "loading-#{@type}", "loading-#{@size}", @class]}></span>
+    """
+  end
+
+  @doc """
+  Renders a drawer component for mobile navigation.
+
+  ## Examples
+
+      <.drawer id="mobile-menu" side="left">
+        <:trigger>
+          <button class="btn btn-square btn-ghost">
+            <.icon name="hero-bars-3" />
+          </button>
+        </:trigger>
+        <:content>
+          <ul class="menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/posts">Posts</a></li>
+          </ul>
+        </:content>
+      </.drawer>
+
+  """
+  attr :id, :string, required: true, doc: "unique id for drawer"
+
+  attr :side, :string,
+    default: "left",
+    values: ~w(left right),
+    doc: "which side drawer opens from"
+
+  attr :class, :string, default: nil, doc: "additional CSS classes"
+  slot :trigger, required: true, doc: "button or element that opens drawer"
+  slot :content, required: true, doc: "drawer content"
+
+  def drawer(assigns) do
+    ~H"""
+    <div class={["drawer", "drawer-#{@side}", @class]}>
+      <input id={@id} type="checkbox" class="drawer-toggle" />
+      <div class="drawer-content">
+        <label for={@id} class="cursor-pointer">
+          {render_slot(@trigger)}
+        </label>
+      </div>
+      <div class="drawer-side">
+        <label for={@id} aria-label="close sidebar" class="drawer-overlay"></label>
+        <div class="menu bg-base-200 min-h-full w-80 p-4">
+          {render_slot(@content)}
+        </div>
+      </div>
+    </div>
+    """
+  end
 end

@@ -239,7 +239,7 @@ defmodule HomesiteWeb.Layouts do
               <.link navigate={~p"/users/register"}>{gettext("Register")}</.link>
             </li> --%>
               <li>
-                <.link navigate={~p"/users/log-in"} class="btn btn-primary">
+                <.link navigate={~p"/users/log-in"}>
                   {gettext("Log in")}
                 </.link>
               </li>
