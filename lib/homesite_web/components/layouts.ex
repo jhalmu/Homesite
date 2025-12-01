@@ -395,41 +395,72 @@ defmodule HomesiteWeb.Layouts do
   end
 
   @doc """
-  Provides dark vs light theme toggle based on themes defined in app.css.
+  Provides theme switcher dropdown with all available DaisyUI themes.
 
   See <head> in root.html.heex which applies the theme before page load.
   """
   def theme_toggle(assigns) do
     ~H"""
-    <div class="card border-base-300 bg-base-300 relative flex flex-row items-center rounded-full border">
-      <div class="border-1 border-base-200 bg-base-100 [[data-theme=light]_&]:left-1/3 [[data-theme=dark]_&]:left-2/3 transition-[left] absolute left-0 h-full w-1/3 rounded-full brightness-200" />
-
-      <button
-        class="flex w-1/3 cursor-pointer p-1"
-        phx-click={JS.dispatch("phx:set-theme")}
-        data-phx-theme="system"
-        aria-label={gettext("Use system theme")}
+    <div class="dropdown dropdown-end">
+      <div tabindex="0" role="button" class="btn btn-sm btn-ghost gap-1" aria-label={gettext("Change theme")}>
+        <.icon name="hero-swatch" class="h-5 w-5" />
+        <.icon name="hero-chevron-down" class="h-3 w-3 opacity-60" />
+      </div>
+      <ul
+        tabindex="0"
+        class="dropdown-content menu bg-base-200 rounded-box z-[1] mt-2 w-52 p-2 shadow-lg border border-base-300"
       >
-        <.icon name="hero-computer-desktop-micro" class="size-3 opacity-75 hover:opacity-100" />
-      </button>
-
-      <button
-        class="flex w-1/3 cursor-pointer p-1"
-        phx-click={JS.dispatch("phx:set-theme")}
-        data-phx-theme="light"
-        aria-label={gettext("Use light theme")}
-      >
-        <.icon name="hero-sun-micro" class="size-3 opacity-75 hover:opacity-100" />
-      </button>
-
-      <button
-        class="flex w-1/3 cursor-pointer p-1"
-        phx-click={JS.dispatch("phx:set-theme")}
-        data-phx-theme="dark"
-        aria-label={gettext("Use dark theme")}
-      >
-        <.icon name="hero-moon-micro" class="size-3 opacity-75 hover:opacity-100" />
-      </button>
+        <li>
+          <button
+            class="flex items-center gap-2"
+            phx-click={JS.dispatch("phx:set-theme")}
+            data-phx-theme="light"
+          >
+            <.icon name="hero-sun" class="h-4 w-4" />
+            <span>{gettext("Light")}</span>
+          </button>
+        </li>
+        <li>
+          <button
+            class="flex items-center gap-2"
+            phx-click={JS.dispatch("phx:set-theme")}
+            data-phx-theme="dark"
+          >
+            <.icon name="hero-moon" class="h-4 w-4" />
+            <span>{gettext("Dark")}</span>
+          </button>
+        </li>
+        <li>
+          <button
+            class="flex items-center gap-2"
+            phx-click={JS.dispatch("phx:set-theme")}
+            data-phx-theme="business"
+          >
+            <.icon name="hero-briefcase" class="h-4 w-4" />
+            <span>{gettext("Business")}</span>
+          </button>
+        </li>
+        <li>
+          <button
+            class="flex items-center gap-2"
+            phx-click={JS.dispatch("phx:set-theme")}
+            data-phx-theme="corporate"
+          >
+            <.icon name="hero-building-office" class="h-4 w-4" />
+            <span>{gettext("Corporate")}</span>
+          </button>
+        </li>
+        <li>
+          <button
+            class="flex items-center gap-2"
+            phx-click={JS.dispatch("phx:set-theme")}
+            data-phx-theme="cyberpunk"
+          >
+            <.icon name="hero-bolt" class="h-4 w-4" />
+            <span>{gettext("Cyberpunk")}</span>
+          </button>
+        </li>
+      </ul>
     </div>
     """
   end
