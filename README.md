@@ -33,6 +33,8 @@
 - ✅ **Atom Feeds** - Standards-compliant syndication
 - ✅ **JSON Feed** - Modern feed format
 - ✅ **Autodiscovery** - Automatic feed detection
+- ✅ **External Feed Adapters** - Aggregate from Mastodon, Bluesky, YouTube, RSS
+- ✅ **Username Routing** - Custom @username URLs for profiles and feeds
 
 ### Internationalization
 - ✅ **Multi-language** - English and Finnish support
@@ -295,6 +297,12 @@ mix test test/homesite_web/security_test.exs
 
 Comprehensive documentation is available in the repository:
 
+### User Guides
+- **[Social Media Feed Adapters](docs/guides/SOCIAL_MEDIA_FEEDS.md)** - How to aggregate external feeds
+- **[Username Routing System](docs/guides/USERNAME_ROUTING.md)** - Custom @username URLs guide
+- **[Documentation Index](docs/README.md)** - Complete guide directory
+
+### Developer Documentation
 - **[CLAUDE.md](CLAUDE.md)** - Project guidelines for Claude Code
 - **[AGENTS.md](AGENTS.md)** - Phoenix/LiveView/Elixir patterns
 - **[REGISTRATION_STRATEGY.md](REGISTRATION_STRATEGY.md)** - Auth system documentation
@@ -432,6 +440,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Admin dashboard with flower permissions
 - RSS/Atom/JSON feeds
 - Internationalization (EN/FI)
+- External feed aggregation (#29) - Mastodon, Bluesky, YouTube, RSS
+- Username routing system - Custom @username URLs
 
 ### In Progress 🚧
 - User management UI (#10)
@@ -439,7 +449,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Playwright E2E test expansion (#27)
 
 ### Planned 📋
-- External feed aggregation (#29) - Bluesky, Mastodon, RSS
 - Search functionality (#11)
 - Analytics dashboard (#14)
 - Email notifications (#13)

@@ -13,6 +13,15 @@ defmodule HomesiteWeb.UserLive.Settings do
         <.header>
           {gettext("Account Settings")}
           <:subtitle>{gettext("Manage your profile, email address and password settings")}</:subtitle>
+          <:actions>
+            <.link
+              href="https://github.com/jhalmu/Homesite/blob/main/docs/guides/USERNAME_ROUTING.md"
+              target="_blank"
+              class="text-sm font-semibold text-zinc-900 hover:text-zinc-700 dark:text-zinc-100 dark:hover:text-zinc-300"
+            >
+              <.icon name="hero-question-mark-circle" class="h-5 w-5" /> {gettext("Username Help")}
+            </.link>
+          </:actions>
         </.header>
       </div>
 
