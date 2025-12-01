@@ -413,8 +413,7 @@ defmodule HomesiteWeb.Layouts do
         <li>
           <button
             class="flex items-center gap-2"
-            phx-click={JS.dispatch("phx:set-theme")}
-            data-phx-theme="light"
+            phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "light"})}
           >
             <.icon name="hero-sun" class="h-4 w-4" />
             <span>{gettext("Light")}</span>
@@ -423,8 +422,7 @@ defmodule HomesiteWeb.Layouts do
         <li>
           <button
             class="flex items-center gap-2"
-            phx-click={JS.dispatch("phx:set-theme")}
-            data-phx-theme="dark"
+            phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "dark"})}
           >
             <.icon name="hero-moon" class="h-4 w-4" />
             <span>{gettext("Dark")}</span>
@@ -433,8 +431,7 @@ defmodule HomesiteWeb.Layouts do
         <li>
           <button
             class="flex items-center gap-2"
-            phx-click={JS.dispatch("phx:set-theme")}
-            data-phx-theme="business"
+            phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "business"})}
           >
             <.icon name="hero-briefcase" class="h-4 w-4" />
             <span>{gettext("Business")}</span>
@@ -443,8 +440,7 @@ defmodule HomesiteWeb.Layouts do
         <li>
           <button
             class="flex items-center gap-2"
-            phx-click={JS.dispatch("phx:set-theme")}
-            data-phx-theme="corporate"
+            phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "corporate"})}
           >
             <.icon name="hero-building-office" class="h-4 w-4" />
             <span>{gettext("Corporate")}</span>
@@ -453,8 +449,7 @@ defmodule HomesiteWeb.Layouts do
         <li>
           <button
             class="flex items-center gap-2"
-            phx-click={JS.dispatch("phx:set-theme")}
-            data-phx-theme="cyberpunk"
+            phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "cyberpunk"})}
           >
             <.icon name="hero-bolt" class="h-4 w-4" />
             <span>{gettext("Cyberpunk")}</span>
