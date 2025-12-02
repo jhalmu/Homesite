@@ -4387,3 +4387,176 @@ The External Feeds system now supports:
 - Consider rate limiting for external API calls
 
 **Status**: ✅ Complete and fully tested
+
+## 2025-12-02 12:12:00 - Feed System Phase 1: Unified Feed with Interactions
+
+### Session: Feed System Enhancement - Phase 1 of 5
+
+#### Objective
+Implement unified feed view with read/unread tracking and bookmarks as the foundation for comprehensive feed system improvements.
+
+#### Context
+Following the comprehensive feed system improvement plan created earlier, this session completed Phase 1, implementing the critical UX improvements that transform feed items from background storage into a prominent user-facing feature.
+
+#### Changes Made
+
+**1. Database Schema**
+- Created `feed_item_interactions` table with:
+  - `user_id` and `feed_item_id` foreign keys (cascade delete)
+  - `read_at`, `bookmarked_at`, `archived_at` timestamps
+  - Unique constraint on [user_id, feed_item_id]
+  - Performance indexes for common queries
+  - Partial index for unread items (`WHERE read_at IS NULL`)
+
+**2. Schema Module** (`lib/homesite/external_feeds/feed_item_interaction.ex`)
+- FeedItemInteraction schema with helper methods:
+  - `mark_as_read/1`, `mark_as_unread/1`
+  - `toggle_bookmark/1`
+  - `archive/1`, `unarchive/1`
+  - Changeset validation with unique constraint
+
+**3. Context Functions** (`lib/homesite/external_feeds.ex` +172 lines)
+- `list_feed_items_unified/2` - Main function returning items with interaction data
+  - Supports filtering: unread_only, bookmarked_only, feed_source_id
+  - Pagination: limit, offset
+  - Left joins interactions to show read/unread status
+- `mark_item_as_read/2`, `mark_item_as_unread/2`
+- `bookmark_item/2` - Toggles bookmark status
+- `get_unread_count/1` - Efficient count query using partial index
+- `list_bookmarked_items/2` - Wrapper around unified with bookmarked_only filter
+- `mark_all_as_read_for_source/2` - Bulk operation for feed sources
+- `archive_item/2`, `unarchive_item/2` - For future archive feature
+- `get_or_create_interaction/2` - Helper for creating interactions
+
+**4. Unified Feed LiveView** (`lib/homesite_web/live/feed_live/`)
+- Created `/feed` route with full LiveView implementation
+- Features:
+  - Chronological feed item list (newest first)
+  - Filter tabs: All, Unread (with badge), Bookmarks
+  - Platform-specific rendering:
+    - YouTube: thumbnails + duration
+    - Bluesky/Mastodon: avatars + handles
+    - Generic RSS: title + description
+  - Relative time formatting (just now, X minutes ago, etc.)
+  - Actions per item: mark read/unread, bookmark, open link
+  - Visual indicators: bold for unread, colored border, opacity for read
+  - Infinite scroll with "Load More" button
+  - Empty states with helpful messages
+
+**5. Navigation & UI**
+- Added "Feed" link to desktop navigation (after Dashboard)
+- Added "Feed" link to mobile menu with RSS icon
+- Integrated into authenticated user navigation flow
+- Added unread count badge in Unread filter tab
+
+**6. Tests** (+192 lines, 14 new tests)
+All tests passing (598 tests total, up from 584):
+- Scope isolation (user A cannot access user B's interactions)
+- Read/unread marking and counting
+- Bookmark toggle (on → off → on)
+- Filter tests (unread_only, bookmarked_only, feed_source_id)
+- Pagination with limit and offset
+- Bulk operations (mark_all_as_read_for_source)
+- Archive/unarchive functionality
+- Security: MatchError when accessing other user's items
+
+#### Files Modified/Created
+
+**Created:**
+- `priv/repo/migrations/20251202100502_create_feed_item_interactions.exs` (27 lines)
+- `lib/homesite/external_feeds/feed_item_interaction.ex` (68 lines)
+- `lib/homesite_web/live/feed_live/index.ex` (258 lines)
+- `lib/homesite_web/live/feed_live/index.html.heex` (148 lines)
+
+**Modified:**
+- `lib/homesite/external_feeds.ex` (+172 lines - interaction functions)
+- `lib/homesite_web/router.ex` (+1 line - /feed route)
+- `lib/homesite_web/components/layouts.ex` (+6 lines - navigation links)
+- `test/homesite/external_feeds_test.exs` (+192 lines - 14 new tests)
+
+**Total:** 8 files changed, 964 insertions(+), 1 deletion(-)
+
+#### Technical Decisions
+
+**1. Interaction Data Structure**
+- Opted for separate `feed_item_interactions` table rather than denormalized columns on feed_items
+- Rationale: Better performance for user-specific queries, no migration needed when adding users
+
+**2. Partial Index for Unread Items**
+- Created partial index on `WHERE read_at IS NULL` for most common query
+- Result: Unread count queries use index scan, not sequential scan
+
+**3. Left Join for Unified View**
+- Used left join in `list_feed_items_unified` to show items even without interactions
+- Pattern: `%{feed_item: %FeedItem{}, interaction: %FeedItemInteraction{} | nil}`
+- Allows conditional rendering without N+1 queries
+
+**4. LiveView Event Handlers**
+- Implemented optimistic UI updates (update local state immediately)
+- Reload interaction data after each action to ensure consistency
+- Use integer string IDs in events to prevent type issues
+
+#### Test Results
+- **598 tests, 0 failures** (14 new tests added)
+- Migration applied successfully
+- All existing tests still passing
+- New tests cover:
+  - Scope isolation (security)
+  - CRUD operations for interactions
+  - Filtering and pagination
+  - Edge cases (toggle bookmark 3x, mark all as read)
+
+#### Performance Notes
+- Partial index on unread items significantly improves `get_unread_count` query
+- Left join pattern avoids N+1 queries in unified view
+- Pagination ready for large feed lists (tested with limit/offset)
+
+#### User Experience Improvements
+- Feed items now prominently displayed at `/feed`
+- Visual feedback for read/unread status (bold text, colored border, opacity)
+- Unread count badge provides instant feedback
+- Platform-specific rendering makes items recognizable (YouTube thumbnails, avatars)
+- Relative timestamps ("2 hours ago") more readable than ISO dates
+
+#### Security & Scope Isolation
+- All interaction functions enforce scope ownership via `get_feed_item!`
+- Tests verify user A cannot interact with user B's items
+- Pattern: `true = feed_item.feed_source.user_id == scope.user.id`
+- Results in MatchError if user tries to access other user's data
+
+#### Next Steps (Phases 2-5)
+
+**Phase 2 (P1 - 2 weeks):** Organization & Advanced Features
+- Feed folders/categories
+- Full-text search across feed items
+- Bookmarks page (separate route)
+
+**Phase 3 (P1-P2 - 1 week):** New Platform Adapters
+- Reddit adapter (native RSS support)
+- TikTok adapter (via RSS bridge)
+- Twitter/X reactivation via Nitter
+
+**Phase 4 (P1-P2 - 1 week):** Performance & Scaling
+- Streaming XML parser for large feeds (Saxy)
+- Additional performance indexes
+- Feed cleanup worker (delete old items)
+
+**Phase 5 (P2 - 1 week):** Integration & Advanced Features
+- Unified timeline (external items + own blog posts)
+- OPML import/export
+- Analytics dashboard
+
+#### Impact
+- **UX Transformation**: Feed items now prominent user-facing feature
+- **Engagement Foundation**: Read tracking enables future analytics
+- **Scalability**: Performance indexes and pagination ready for large feeds
+- **Security**: Scope isolation rigorously tested and enforced
+- **Test Coverage**: 14 new tests ensure reliability
+
+#### Commit
+- Commit: `7eda05c` - feat: Phase 1 - Feed system with read/unread tracking and bookmarks
+- Pushed to GitHub: `main` branch
+- Clean build with all 598 tests passing
+
+---
+
