@@ -13,6 +13,8 @@ Session notes and progress tracking for the Homesite project.
 #### Objectives Completed
 Implemented reusable Table of Contents component with sidebar navigation and active section tracking for FAQ and blog pages.
 
+**UPDATE (21:45:00):** Fixed FAQ TOC to use question titles instead of answer headings - FAQs and blog posts have different structures requiring different TOC approaches.
+
 #### Changes Made (This Session)
 
 **1. Table of Contents Component** (NEW)

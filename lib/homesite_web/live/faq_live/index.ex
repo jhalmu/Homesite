@@ -172,11 +172,15 @@ defmodule HomesiteWeb.FaqLive.Index do
   defp page_title("admin"), do: gettext("Admin FAQs")
   defp page_title(_), do: gettext("FAQs")
 
-  # Extract headings from all FAQs' answers
+  # Build TOC from FAQ question titles (not from answer content)
   defp extract_all_headings(faqs) do
-    faqs
-    |> Enum.flat_map(fn faq ->
-      TableOfContents.extract_headings(faq.answer)
+    Enum.map(faqs, fn faq ->
+      %{
+        level: 2,
+        text: faq.question,
+        id: "faq-#{faq.id}",
+        children: []
+      }
     end)
   end
 end
