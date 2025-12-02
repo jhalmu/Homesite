@@ -219,6 +219,17 @@ defmodule HomesiteWeb.Layouts do
                   </summary>
                   <ul class="bg-base-200 border-base-300 z-50 rounded-t-none border p-2 shadow-lg">
                     <li>
+                      <.link
+                        navigate={
+                          if @current_scope.user.username,
+                            do: ~p"/users/@#{@current_scope.user.username}",
+                            else: ~p"/users/#{@current_scope.user.id}"
+                        }
+                      >
+                        <.icon name="hero-user-circle" class="h-4 w-4" /> {gettext("My Profile")}
+                      </.link>
+                    </li>
+                    <li>
                       <.link navigate={~p"/users/settings"}>
                         <.icon name="hero-cog-6-tooth" class="h-4 w-4" /> {gettext("Settings")}
                       </.link>
@@ -323,6 +334,18 @@ defmodule HomesiteWeb.Layouts do
               </div>
             </li>
 
+            <li>
+              <.link
+                navigate={
+                  if @current_scope.user.username,
+                    do: ~p"/users/@#{@current_scope.user.username}",
+                    else: ~p"/users/#{@current_scope.user.id}"
+                }
+                class="text-base"
+              >
+                <.icon name="hero-user-circle" class="h-5 w-5" /> {gettext("My Profile")}
+              </.link>
+            </li>
             <li>
               <.link navigate={~p"/users/settings"} class="text-base">
                 <.icon name="hero-cog-6-tooth" class="h-5 w-5" /> {gettext("Settings")}

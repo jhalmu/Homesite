@@ -119,6 +119,42 @@ const Hooks = {
       }
     }
   },
+  CopyToClipboard: {
+    mounted() {
+      this.handleEvent("copy-to-clipboard", ({text}) => {
+        navigator.clipboard.writeText(text).then(() => {
+          console.log("Copied to clipboard:", text)
+        }).catch((err) => {
+          console.error("Failed to copy to clipboard:", err)
+        })
+      })
+    }
+  },
+  Share: {
+    mounted() {
+      this.handleEvent("share", async ({title, text, url}) => {
+        if (navigator.share) {
+          try {
+            await navigator.share({title, text, url})
+            console.log("Shared successfully:", url)
+          } catch (err) {
+            // User cancelled or error - fallback to copy
+            if (err.name !== 'AbortError') {
+              console.log("Share failed, copying to clipboard:", err)
+              navigator.clipboard.writeText(url)
+            }
+          }
+        } else {
+          // Fallback: copy to clipboard
+          navigator.clipboard.writeText(url).then(() => {
+            console.log("Link copied to clipboard:", url)
+          }).catch((err) => {
+            console.error("Failed to copy:", err)
+          })
+        }
+      })
+    }
+  },
   WebShareApi
 }
 

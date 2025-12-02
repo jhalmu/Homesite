@@ -11,7 +11,8 @@
 7. [Changing Your Username](#changing-your-username)
 8. [Reserved Usernames](#reserved-usernames)
 9. [Username Discovery](#username-discovery)
-10. [Technical Details (For Developers)](#technical-details-for-developers)
+10. [User Interface Features](#user-interface-features)
+11. [Technical Details (For Developers)](#technical-details-for-developers)
 
 ---
 
@@ -493,6 +494,140 @@ Potential future features (not yet implemented):
 
 ---
 
+## User Interface Features
+
+### Dashboard Profile Card
+
+**Location:** Dashboard page (`/dashboard`)
+
+A prominent "Your Public Profile" card displays at the top of your dashboard to promote the username feature.
+
+**With Username Claimed:**
+- ✅ Displays your profile URL prominently
+- ✅ **Copy** button - copies URL to clipboard
+- ✅ **View** button - opens your public profile
+- ✅ Profile stats: Published posts, Total views, Subscribers
+- ✅ Gradient background for visual prominence
+
+**Without Username:**
+- 🎉 Encourages username claiming
+- ✅ Lists benefits (memorable URL, professional appearance, custom RSS)
+- ✅ **Claim Your Username** button - links to settings
+- ✅ Visual indicators with checkmarks
+
+**Feed Analytics (If You Have Feed Sources):**
+- Shows feed consumption metrics below profile card
+- Total items, unread count, read today/this week
+- Bookmarked items count
+- Top 3 feed sources by engagement
+- Quick link to main feed page
+
+### Profile Page Enhancements
+
+**Location:** Your public profile (`/users/@yourusername`)
+
+The profile page now includes additional features to make it a compelling personal homepage:
+
+**Stats Section:**
+- 📝 **Published Posts** - Total post count + total word count
+- ⏱️ **Avg Read Time** - Average minutes per post
+- 📅 **Member Since** - Month and year you joined
+
+**Subscribe Section:**
+- 📡 RSS, Atom, and JSON feed links
+- Prominent call-to-action for visitors
+- Encourages subscription to your content
+- Clean card design with feed icons
+
+**Share Buttons:**
+- 📤 **Share Profile** - Native Web Share API (on supported devices)
+  - Falls back to clipboard copy if Web Share not available
+- 📋 **Copy Link** - Copies profile URL to clipboard
+- Convenient one-click sharing to social media
+
+### Navigation Integration
+
+**Desktop Navigation:**
+- 👤 **My Profile** link added to user dropdown menu
+- Located above Settings, below avatar
+- Uses username URL if available, falls back to numeric ID
+- Consistent with existing navigation patterns
+
+**Mobile Navigation:**
+- 👤 **My Profile** link in mobile menu
+- Same fallback behavior as desktop
+- Positioned in user section with Settings and Log out
+- Maintains consistent ordering across devices
+
+### Username Celebration Modal
+
+**Triggered:** When you claim a username for the first time (not on updates)
+
+**Features:**
+- 🎉 Celebratory message: "Congratulations! Your Username is Live!"
+- Displays your new profile URL prominently
+- **Share** button - Web Share API with fallback
+- **Copy** button - Copies URL to clipboard
+- **Close** button - Dismisses modal
+- Encourages immediate sharing of new homepage
+
+**When It Appears:**
+- Only shown when username changes from nil → value
+- Not shown when updating existing username
+- Appears immediately after saving in settings
+- Non-intrusive (can be closed and continue)
+
+### Copy-to-Clipboard Functionality
+
+**Available Throughout Application:**
+- Dashboard profile card (copy profile URL)
+- Profile page (copy profile link)
+- Settings page (celebration modal copy button)
+
+**Technical Details:**
+- Uses modern Clipboard API
+- Shows flash notification on success
+- Works across all modern browsers
+- Progressive enhancement approach
+
+### Web Share API Integration
+
+**Share Buttons Support:**
+- Native share dialog on mobile devices
+- Fallback to clipboard copy on desktop
+- Supports: URL, title, and text
+- Pre-populated share messages
+
+**Share Locations:**
+- Profile page: "Share Profile" button
+- Settings celebration modal: "Share" button
+
+**Share Content:**
+- **Profile sharing**: "Check out [Name]'s Blog" + profile URL
+- **Username claiming**: "I just set up my personal homepage at [URL]"
+
+### Benefits Summary
+
+**For Users Without Username:**
+- 🎯 Prominent discovery via dashboard card
+- ✅ Clear benefits explanation
+- 🚀 One-click path to claiming username
+
+**For Users With Username:**
+- 📊 Profile stats make page more compelling
+- 📤 Easy sharing encourages profile promotion
+- 🔗 Quick access via navbar
+- 📡 RSS/feed subscription options visible
+
+**Overall UX Improvements:**
+- Username feature now prominent (not hidden)
+- Profile page worthy of being "independent homepage"
+- Dashboard becomes actionable control center
+- Celebration encourages immediate sharing
+- Consistent patterns across all interfaces
+
+---
+
 ## Technical Details (For Developers)
 
 ### Database Schema
@@ -773,5 +908,5 @@ For issues or questions:
 
 ---
 
-**Last Updated:** December 1, 2025
-**Version:** 1.0
+**Last Updated:** December 2, 2025
+**Version:** 1.1 - Added User Interface Features section

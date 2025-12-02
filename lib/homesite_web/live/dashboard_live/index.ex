@@ -22,6 +22,21 @@ defmodule HomesiteWeb.DashboardLive.Index do
     enabled_feeds = Enum.count(feed_sources, fn feed -> feed.enabled end)
     disabled_feeds = Enum.count(feed_sources, fn feed -> not feed.enabled end)
 
+    # Profile stats for "Your Public Profile" card
+    profile_stats = %{
+      published_count: published_count,
+      total_views: get_total_views(scope),
+      subscribers: nil  # Future feature
+    }
+
+    # Feed analytics (if user has feeds)
+    feed_stats =
+      if has_feed_sources?(scope) do
+        ExternalFeeds.Analytics.get_analytics_summary(scope)
+      else
+        %{total_feeds: 0}
+      end
+
     socket =
       socket
       |> assign(:page_title, "Dashboard")
@@ -36,7 +51,30 @@ defmodule HomesiteWeb.DashboardLive.Index do
       |> assign(:feed_count, length(feed_sources))
       |> assign(:enabled_feeds, enabled_feeds)
       |> assign(:disabled_feeds, disabled_feeds)
+      |> assign(:profile_stats, profile_stats)
+      |> assign(:feed_stats, feed_stats)
 
     {:ok, socket}
+  end
+
+  @impl true
+  def handle_event("copy_profile_url", _params, socket) do
+    username = socket.assigns.current_scope.user.username
+    profile_url = url(~p"/users/@#{username}")
+
+    {:noreply,
+     socket
+     |> put_flash(:info, "Profile URL copied to clipboard!")
+     |> push_event("copy-to-clipboard", %{text: profile_url})}
+  end
+
+  defp has_feed_sources?(scope) do
+    ExternalFeeds.list_feed_sources(scope) |> length() > 0
+  end
+
+  defp get_total_views(_scope) do
+    # Placeholder - implement view tracking in future
+    # For now, return nil
+    nil
   end
 end

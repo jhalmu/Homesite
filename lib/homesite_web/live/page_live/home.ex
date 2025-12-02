@@ -9,7 +9,12 @@ defmodule HomesiteWeb.PageLive.Home do
 
   @impl true
   def mount(_params, _session, socket) do
-    posts = Content.list_all_published_posts()
+    posts =
+      Content.list_all_published_posts()
+      |> Enum.map(fn post ->
+        # Add absolute URL for share buttons
+        Map.put(post, :absolute_url, url(~p"/posts/#{post}"))
+      end)
 
     # Fetch feed items if user is authenticated
     feed_items =

@@ -7,6 +7,94 @@
           String.split(@current_scope.user.email, "@") |> List.first()}!
       </h1>
 
+      <!-- Your Public Profile Card -->
+      <div class="card bg-gradient-to-br from-primary/10 to-secondary/10 border-2 border-primary/20 mb-[var(--spacing-md)]">
+        <div class="card-body">
+          <h2 class="card-title text-2xl">
+            <.icon name="hero-user-circle" class="w-8 h-8" />
+            {gettext("Your Public Profile")}
+          </h2>
+
+          <%= if @current_scope.user.username do %>
+            <!-- Has Username -->
+            <div class="space-y-4">
+              <p class="text-base-content/70">
+                {gettext("Your personal homepage is live! Share it with the world.")}
+              </p>
+
+              <div class="bg-base-100 rounded-lg p-4 border border-base-300">
+                <div class="flex items-center gap-3">
+                  <code class="flex-1 text-sm overflow-x-auto">
+                    {url(~p"/users/@#{@current_scope.user.username}")}
+                  </code>
+                  <button type="button" phx-click="copy_profile_url" class="btn btn-sm btn-primary">
+                    <.icon name="hero-clipboard" class="w-4 h-4" />
+                    {gettext("Copy")}
+                  </button>
+                  <.link
+                    navigate={~p"/users/@#{@current_scope.user.username}"}
+                    class="btn btn-sm btn-outline"
+                  >
+                    <.icon name="hero-eye" class="w-4 h-4" />
+                    {gettext("View")}
+                  </.link>
+                </div>
+              </div>
+
+              <!-- Profile Stats -->
+              <div class="stats stats-horizontal shadow w-full">
+                <div class="stat">
+                  <div class="stat-title">{gettext("Published Posts")}</div>
+                  <div class="stat-value text-2xl">{@profile_stats.published_count}</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-title">{gettext("Total Views")}</div>
+                  <div class="stat-value text-2xl">
+                    {if @profile_stats.total_views, do: @profile_stats.total_views, else: "N/A"}
+                  </div>
+                </div>
+                <div class="stat">
+                  <div class="stat-title">{gettext("RSS Subscribers")}</div>
+                  <div class="stat-value text-2xl">
+                    {if @profile_stats.subscribers, do: @profile_stats.subscribers, else: "N/A"}
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% else %>
+            <!-- No Username -->
+            <div class="space-y-4">
+              <p class="text-lg">
+                🎉 {gettext("Claim your username to create your personal homepage!")}
+              </p>
+
+              <ul class="space-y-2 text-base-content/70">
+                <li class="flex items-start gap-2">
+                  <.icon name="hero-check-circle" class="w-5 h-5 text-success mt-0.5" />
+                  <span>
+                    {gettext("Get a memorable URL like")}
+                    <code>yoursite.com/users/@yourname</code>
+                  </span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <.icon name="hero-check-circle" class="w-5 h-5 text-success mt-0.5" />
+                  <span>{gettext("Share your blog with a professional link")}</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <.icon name="hero-check-circle" class="w-5 h-5 text-success mt-0.5" />
+                  <span>{gettext("RSS feeds with your custom username")}</span>
+                </li>
+              </ul>
+
+              <.link navigate={~p"/users/settings"} class="btn btn-primary btn-block">
+                <.icon name="hero-sparkles" class="w-5 h-5" />
+                {gettext("Claim Your Username")}
+              </.link>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
       <div class="gap-[var(--spacing-md)] flex flex-wrap">
         <!-- Stats Cards -->
         <.dashboard_card variant="stat" class="stats">
@@ -84,7 +172,65 @@
         </div>
       </section>
     <% end %>
-    
+
+    <%!-- Feed Analytics Section --%>
+    <%= if @feed_stats.total_feeds > 0 do %>
+      <section class="mb-[var(--spacing-section)]">
+        <div class="flex items-center justify-between mb-[var(--spacing-md)]">
+          <h2 class="text-[var(--font-size-fluid-xl)] font-semibold">
+            {gettext("Feed Analytics")}
+          </h2>
+          <.link navigate={~p"/feed"} class="link link-primary">
+            {gettext("View Feed")} →
+          </.link>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[var(--spacing-sm)]">
+          <div class="stat bg-base-200 rounded-lg">
+            <div class="stat-title">{gettext("Total Items")}</div>
+            <div class="stat-value text-primary">{@feed_stats.total_items}</div>
+            <div class="stat-desc">{@feed_stats.unread_count} {gettext("unread")}</div>
+          </div>
+
+          <div class="stat bg-base-200 rounded-lg">
+            <div class="stat-title">{gettext("Read Today")}</div>
+            <div class="stat-value text-secondary">{@feed_stats.read_today}</div>
+            <div class="stat-desc">{@feed_stats.read_this_week} {gettext("this week")}</div>
+          </div>
+
+          <div class="stat bg-base-200 rounded-lg">
+            <div class="stat-title">{gettext("Bookmarks")}</div>
+            <div class="stat-value text-accent">{@feed_stats.bookmarked_count}</div>
+          </div>
+
+          <div class="stat bg-base-200 rounded-lg">
+            <div class="stat-title">{gettext("Active Sources")}</div>
+            <div class="stat-value">{@feed_stats.total_feeds}</div>
+          </div>
+        </div>
+
+        <%!-- Top Sources --%>
+        <%= if length(@feed_stats.top_sources) > 0 do %>
+          <div class="mt-[var(--spacing-md)]">
+            <h3 class="text-lg font-semibold mb-2">{gettext("Top Sources")}</h3>
+            <div class="space-y-2">
+              <%= for source <- Enum.take(@feed_stats.top_sources, 3) do %>
+                <div class="flex items-center justify-between p-3 bg-base-200 rounded-lg">
+                  <div class="flex items-center gap-3">
+                    <.icon name="hero-rss" class="w-5 h-5" />
+                    <span class="font-medium">{source.source.name}</span>
+                  </div>
+                  <div class="text-sm text-base-content/70">
+                    {source.read_count} {gettext("read")} · {source.bookmark_count} {gettext("bookmarked")}
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </section>
+    <% end %>
+
 <!-- Quick Actions -->
     <section class="mb-[var(--spacing-section)]">
       <h2 class="text-[var(--font-size-fluid-xl)] mb-[var(--spacing-md)] font-semibold">

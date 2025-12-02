@@ -9,6 +9,17 @@ defmodule Homesite.ExternalFeeds do
   alias Homesite.ExternalFeeds.{FeedSource, FeedItem, FeedItemInteraction, FeedFolder}
   alias Homesite.Repo
 
+  # Helper: Check if map has string keys (for form params)
+  # Returns true if map is empty or has at least one string key
+  defp is_binary_map?(map) when is_map(map) and map_size(map) == 0, do: false
+  defp is_binary_map?(map) when is_map(map) do
+    # Check if first key is a string (most reliable for consistent maps)
+    map
+    |> Map.keys()
+    |> List.first()
+    |> is_binary()
+  end
+
   ## Feed Folders
 
   @doc """
@@ -36,7 +47,9 @@ defmodule Homesite.ExternalFeeds do
   Creates a feed folder.
   """
   def create_feed_folder(%Scope{} = scope, attrs \\ %{}) do
-    attrs = Map.put(attrs, :user_id, scope.user.id)
+    # Use the same key type as attrs (string or atom)
+    user_id_key = if Map.has_key?(attrs, "user_id") or is_binary_map?(attrs), do: "user_id", else: :user_id
+    attrs = Map.put(attrs, user_id_key, scope.user.id)
 
     %FeedFolder{}
     |> FeedFolder.changeset(attrs)
@@ -159,7 +172,9 @@ defmodule Homesite.ExternalFeeds do
 
   """
   def create_feed_source(%Scope{} = scope, attrs \\ %{}) do
-    attrs = Map.put(attrs, :user_id, scope.user.id)
+    # Use the same key type as attrs (string or atom)
+    user_id_key = if Map.has_key?(attrs, "user_id") or is_binary_map?(attrs), do: "user_id", else: :user_id
+    attrs = Map.put(attrs, user_id_key, scope.user.id)
 
     %FeedSource{}
     |> FeedSource.changeset(attrs)

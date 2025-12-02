@@ -228,6 +228,46 @@ defmodule HomesiteWeb.UserLive.Settings do
           {gettext("Save Password")}
         </.button>
       </.form>
+
+      <%!-- Username Celebration Modal --%>
+      <%= if assigns[:show_celebration] && @show_celebration do %>
+        <div class="modal modal-open">
+          <div class="modal-box max-w-2xl">
+            <h3 class="font-bold text-2xl mb-4">
+              🎉 {gettext("Congratulations! Your Username is Live!")}
+            </h3>
+
+            <p class="text-lg mb-6">
+              {gettext("Your personal homepage is now available at:")}
+            </p>
+
+            <div class="bg-base-200 rounded-lg p-4 mb-6">
+              <code class="text-lg break-all">
+                {url(~p"/users/@#{@current_scope.user.username}")}
+              </code>
+            </div>
+
+            <p class="mb-6">{gettext("Share your new homepage with the world!")}</p>
+
+            <div class="flex gap-3 mb-4">
+              <button type="button" phx-click="share_username" class="btn btn-primary flex-1">
+                <.icon name="hero-share" class="w-5 h-5" />
+                {gettext("Share")}
+              </button>
+              <button type="button" phx-click="copy_username_url" class="btn btn-outline">
+                <.icon name="hero-clipboard" class="w-5 h-5" />
+                {gettext("Copy")}
+              </button>
+            </div>
+
+            <div class="modal-action">
+              <button type="button" phx-click="close_celebration" class="btn">
+                {gettext("Close")}
+              </button>
+            </div>
+          </div>
+        </div>
+      <% end %>
     </Layouts.app>
     """
   end
@@ -260,6 +300,7 @@ defmodule HomesiteWeb.UserLive.Settings do
       |> assign(:profile_form, to_form(profile_changeset))
       |> assign(:trigger_submit, false)
       |> assign(:avatar_pending, false)
+      |> assign(:show_celebration, false)
       |> allow_upload(:avatar,
         accept: ~w(.jpg .jpeg .png),
         max_entries: 1,
@@ -363,6 +404,7 @@ defmodule HomesiteWeb.UserLive.Settings do
   def handle_event("update_profile", params, socket) do
     %{"user" => user_params} = params
     user = socket.assigns.current_scope.user
+    old_username = user.username
 
     # Handle avatar upload and track if one was uploaded
     {user_params, avatar_uploaded?} =
@@ -388,6 +430,9 @@ defmodule HomesiteWeb.UserLive.Settings do
         # Update the current_scope with the new user data
         scope = %{socket.assigns.current_scope | user: updated_user}
 
+        # Detect if username was just claimed (not just updated)
+        show_celebration = old_username == nil && updated_user.username != nil
+
         # Show reminder if avatar was uploaded
         flash_message =
           if avatar_uploaded? do
@@ -402,11 +447,39 @@ defmodule HomesiteWeb.UserLive.Settings do
         |> assign(:current_scope, scope)
         |> assign(:profile_form, to_form(Accounts.change_user_profile(updated_user, %{})))
         |> assign(:avatar_pending, false)
+        |> assign(:show_celebration, show_celebration)
         |> put_flash(:info, flash_message)
         |> then(&{:noreply, &1})
 
       {:error, changeset} ->
         {:noreply, assign(socket, profile_form: to_form(changeset, action: :insert))}
     end
+  end
+
+  def handle_event("close_celebration", _params, socket) do
+    {:noreply, assign(socket, show_celebration: false)}
+  end
+
+  def handle_event("share_username", _params, socket) do
+    user = socket.assigns.current_scope.user
+    profile_url = url(~p"/users/@#{user.username}")
+    title = "Check out my new homepage!"
+
+    {:noreply,
+     push_event(socket, "share", %{
+       title: title,
+       text: "I just set up my personal homepage at #{profile_url}",
+       url: profile_url
+     })}
+  end
+
+  def handle_event("copy_username_url", _params, socket) do
+    user = socket.assigns.current_scope.user
+    profile_url = url(~p"/users/@#{user.username}")
+
+    {:noreply,
+     socket
+     |> put_flash(:info, "Profile URL copied to clipboard!")
+     |> push_event("copy-to-clipboard", %{text: profile_url})}
   end
 end

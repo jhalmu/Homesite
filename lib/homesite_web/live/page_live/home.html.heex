@@ -111,7 +111,7 @@
                 <%!-- Share buttons --%>
                 <%= if post.read_time_minutes >= 2 do %>
                   <div class="border-base-300 mt-[var(--spacing-md)] pt-[var(--spacing-md)] border-t">
-                    <.platform_share_buttons url={url(~p"/posts/#{post.id}")} title={post.title} />
+                    <.platform_share_buttons url={post.absolute_url} title={post.title} />
                   </div>
                 <% end %>
               </article>

@@ -121,6 +121,56 @@ end
 
 ---
 
+#### Pattern: String Keys for Form Params in Context Functions
+
+**Rule**: When adding scope-derived fields (like `user_id`) to form params in context functions, use **string keys**, not atom keys.
+
+**Why**: Phoenix LiveView forms send params with string keys. Mixing atom and string keys causes `Ecto.CastError`:
+```
+expected params to be a map with atoms or string keys,
+got a map with mixed keys: %{:user_id => 17, "name" => "..."}
+```
+
+**Examples**:
+
+```elixir
+# ❌ WRONG - Creates mixed-key map
+def create_feed_source(%Scope{} = scope, attrs \\ %{}) do
+  attrs = Map.put(attrs, :user_id, scope.user.id)  # Atom key!
+
+  %FeedSource{}
+  |> FeedSource.changeset(attrs)  # Will crash if attrs has string keys
+  |> Repo.insert()
+end
+
+# ✅ CORRECT - Uses string key
+def create_feed_source(%Scope{} = scope, attrs \\ %{}) do
+  attrs = Map.put(attrs, "user_id", scope.user.id)  # String key
+
+  %FeedSource{}
+  |> FeedSource.changeset(attrs)
+  |> Repo.insert()
+end
+```
+
+**When atom keys are OK**: When attrs come from code (not forms), like background jobs:
+```elixir
+# Background job with atom-keyed map
+def upsert_feed_item(feed_source_id, attrs) do
+  # attrs already has atom keys from adapter
+  attrs = Map.put(attrs, :feed_source_id, feed_source_id)  # OK!
+  # ...
+end
+```
+
+**Detection**: Always test LiveView form submissions with integration tests to catch mixed-key errors.
+
+**Reference**: Fixed in `lib/homesite/external_feeds.ex:39,162` (2025-12-02)
+
+<!-- Integrated from debugging session on 2025-12-02 -->
+
+---
+
 ### Database Patterns
 
 #### Pattern: Dual Search Strategy (Trigram + ILIKE)
