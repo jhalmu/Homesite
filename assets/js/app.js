@@ -182,8 +182,18 @@ const Hooks = {
           const target = document.getElementById(targetId)
 
           if (target) {
-            // Scroll with offset - let CSS scroll-margin-top handle spacing
-            target.scrollIntoView({behavior: 'smooth', block: 'nearest'})
+            // Get scroll-margin-top from element's computed style
+            const style = window.getComputedStyle(target)
+            const scrollMarginTop = parseInt(style.scrollMarginTop) || 96
+
+            // Calculate target position with offset
+            const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - scrollMarginTop
+
+            // Smooth scroll to position
+            window.scrollTo({
+              top: targetPosition,
+              behavior: 'smooth'
+            })
 
             // Update URL hash without jumping
             if (history.pushState) {
