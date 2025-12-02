@@ -7,7 +7,7 @@ defmodule Homesite.ExternalFeeds.FeedSource do
   import Ecto.Changeset
 
   alias Homesite.Accounts.User
-  alias Homesite.ExternalFeeds.FeedItem
+  alias Homesite.ExternalFeeds.{FeedItem, FeedFolder}
 
   @feed_types ~w(rss atom json bluesky mastodon youtube instagram twitter)
   @default_icons %{
@@ -38,6 +38,7 @@ defmodule Homesite.ExternalFeeds.FeedSource do
     field :metadata, :map, default: %{}
 
     belongs_to :user, User
+    belongs_to :folder, FeedFolder
     has_many :feed_items, FeedItem, on_delete: :delete_all
 
     timestamps(type: :utc_datetime)
@@ -61,7 +62,8 @@ defmodule Homesite.ExternalFeeds.FeedSource do
       :view_count,
       :share_count,
       :metadata,
-      :user_id
+      :user_id,
+      :folder_id
     ])
     |> validate_required([:feed_type, :name, :user_id])
     |> validate_inclusion(:feed_type, @feed_types)

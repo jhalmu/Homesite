@@ -6,8 +6,96 @@ defmodule Homesite.ExternalFeeds do
 
   import Ecto.Query, warn: false
   alias Homesite.Accounts.Scope
-  alias Homesite.ExternalFeeds.{FeedSource, FeedItem, FeedItemInteraction}
+  alias Homesite.ExternalFeeds.{FeedSource, FeedItem, FeedItemInteraction, FeedFolder}
   alias Homesite.Repo
+
+  ## Feed Folders
+
+  @doc """
+  Returns the list of feed folders for a user.
+  Ordered by display_order and name.
+  """
+  def list_feed_folders(%Scope{} = scope) do
+    FeedFolder
+    |> where(user_id: ^scope.user.id)
+    |> order_by([f], asc: f.display_order, asc: f.name)
+    |> Repo.all()
+  end
+
+  @doc """
+  Gets a single feed folder.
+  Raises if the folder doesn't exist or doesn't belong to the user.
+  """
+  def get_feed_folder!(%Scope{} = scope, id) do
+    folder = Repo.get!(FeedFolder, id)
+    true = folder.user_id == scope.user.id
+    folder
+  end
+
+  @doc """
+  Creates a feed folder.
+  """
+  def create_feed_folder(%Scope{} = scope, attrs \\ %{}) do
+    attrs = Map.put(attrs, :user_id, scope.user.id)
+
+    %FeedFolder{}
+    |> FeedFolder.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a feed folder.
+  Enforces user ownership.
+  """
+  def update_feed_folder(%Scope{} = scope, %FeedFolder{} = folder, attrs) do
+    true = folder.user_id == scope.user.id
+
+    folder
+    |> FeedFolder.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a feed folder.
+  Enforces user ownership.
+  Feed sources in this folder will have folder_id set to nil.
+  """
+  def delete_feed_folder(%Scope{} = scope, %FeedFolder{} = folder) do
+    true = folder.user_id == scope.user.id
+    Repo.delete(folder)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking feed folder changes.
+  """
+  def change_feed_folder(%FeedFolder{} = folder, attrs \\ %{}) do
+    FeedFolder.changeset(folder, attrs)
+  end
+
+  @doc """
+  Assigns a feed source to a folder.
+  """
+  def assign_feed_to_folder(%Scope{} = scope, feed_source_id, folder_id) do
+    feed_source = get_feed_source!(scope, feed_source_id)
+
+    # Verify folder belongs to same user if folder_id is not nil
+    if folder_id do
+      folder = get_feed_folder!(scope, folder_id)
+      true = folder.user_id == scope.user.id
+    end
+
+    update_feed_source(scope, feed_source, %{folder_id: folder_id})
+  end
+
+  @doc """
+  Returns feed items for all sources in a specific folder.
+  """
+  def list_feed_items_by_folder(%Scope{} = scope, folder_id, opts \\ []) do
+    # Verify user owns this folder
+    _folder = get_feed_folder!(scope, folder_id)
+
+    list_feed_items_unified(scope, Keyword.put(opts, :folder_id, folder_id))
+  end
 
   ## Feed Sources
 
@@ -184,6 +272,7 @@ defmodule Homesite.ExternalFeeds do
     unread_only = Keyword.get(opts, :unread_only, false)
     bookmarked_only = Keyword.get(opts, :bookmarked_only, false)
     feed_source_id = Keyword.get(opts, :feed_source_id)
+    folder_id = Keyword.get(opts, :folder_id)
 
     # Get user's enabled feed sources
     feed_source_ids =
@@ -191,6 +280,7 @@ defmodule Homesite.ExternalFeeds do
       |> where(user_id: ^scope.user.id)
       |> where(enabled: true)
       |> maybe_filter_by_source(feed_source_id)
+      |> maybe_filter_by_folder(folder_id)
       |> select([f], f.id)
       |> Repo.all()
 
@@ -214,6 +304,9 @@ defmodule Homesite.ExternalFeeds do
 
   defp maybe_filter_by_source(query, nil), do: query
   defp maybe_filter_by_source(query, source_id), do: where(query, id: ^source_id)
+
+  defp maybe_filter_by_folder(query, nil), do: query
+  defp maybe_filter_by_folder(query, folder_id), do: where(query, folder_id: ^folder_id)
 
   defp maybe_filter_unread(query, false), do: query
 
