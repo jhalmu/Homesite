@@ -10,6 +10,7 @@ defmodule Homesite.ExternalFeeds.FeedFetcher do
     BlueskyAdapter,
     InstagramAdapter,
     MastodonAdapter,
+    RedditAdapter,
     RssAdapter,
     TwitterAdapter,
     YoutubeAdapter
@@ -105,6 +106,10 @@ defmodule Homesite.ExternalFeeds.FeedFetcher do
 
   defp get_adapter("twitter") do
     TwitterAdapter
+  end
+
+  defp get_adapter("reddit") do
+    RedditAdapter
   end
 
   defp get_adapter(type) do

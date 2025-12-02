@@ -9,7 +9,7 @@ defmodule Homesite.ExternalFeeds.FeedSource do
   alias Homesite.Accounts.User
   alias Homesite.ExternalFeeds.{FeedItem, FeedFolder}
 
-  @feed_types ~w(rss atom json bluesky mastodon youtube instagram twitter)
+  @feed_types ~w(rss atom json bluesky mastodon youtube instagram twitter reddit)
   @default_icons %{
     "rss" => "📰",
     "atom" => "📰",
@@ -18,7 +18,8 @@ defmodule Homesite.ExternalFeeds.FeedSource do
     "mastodon" => "🐘",
     "youtube" => "📺",
     "instagram" => "📸",
-    "twitter" => "🐦"
+    "twitter" => "🐦",
+    "reddit" => "🤖"
   }
 
   schema "feed_sources" do

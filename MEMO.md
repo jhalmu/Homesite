@@ -6,6 +6,61 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-02 14:50:00 - Phase 3: Reddit Adapter Implementation
+
+### Session: Reddit Feed Support via Native RSS
+
+#### Objectives Completed
+Implemented Reddit adapter for fetching subreddit and user post feeds using Reddit's native RSS support.
+
+#### Changes Made
+
+**1. Reddit Adapter**
+- **NEW FILE**: `lib/homesite/external_feeds/adapters/reddit_adapter.ex` (86 lines)
+  - Validates subreddit OR username in metadata
+  - Subreddit format: 1-21 alphanumeric characters or underscores
+  - Username format: 3-20 alphanumeric, underscores, or hyphens
+  - Builds RSS URLs:
+    - Subreddit: `https://www.reddit.com/r/{subreddit}/.rss`
+    - User: `https://www.reddit.com/user/{username}/submitted/.rss`
+  - Delegates to RssAdapter for parsing (no API key needed)
+
+**2. Test Coverage**
+- **NEW FILE**: `test/homesite/external_feeds/adapters/reddit_adapter_test.exs` (202 lines)
+  - 18 comprehensive tests
+  - Validation: subreddit/username format, length, special chars
+  - Edge cases: both specified, neither specified, empty strings
+  - Non-string values, non-map metadata
+  - External fetch tests (tagged :external)
+
+**3. Schema Integration**
+- **MODIFIED**: `lib/homesite/external_feeds/feed_source.ex`
+  - Added "reddit" to @feed_types list
+  - Added Reddit icon: "🤖"
+
+**4. Fetcher Integration**
+- **MODIFIED**: `lib/homesite/external_feeds/feed_fetcher.ex`
+  - Added RedditAdapter to alias list
+  - Added get_adapter("reddit") case
+
+#### Test Results
+- **Total tests**: 642 (up from 624)
+- **New tests**: 18 for Reddit adapter
+- **Status**: All tests passing (0 failures)
+
+#### Phase 3 Progress: 33% Complete
+
+**Completed:**
+- ✅ Reddit adapter (P1 - high priority)
+
+**Remaining:**
+- ⏳ TikTok adapter (P2)
+- ⏳ Twitter/X reactivation via Nitter (P2)
+
+🎯 **Next:** TikTok adapter implementation (requires RSS bridge similar to Instagram)
+
+---
+
 ## 2025-12-02 14:30:00 - Phase 2: FeedFolderLive UI Completion
 
 ### Session: Feed Folder Management User Interface
