@@ -219,13 +219,11 @@ defmodule HomesiteWeb.Layouts do
                   </summary>
                   <ul class="bg-base-200 border-base-300 z-50 rounded-t-none border p-2 shadow-lg">
                     <li>
-                      <.link
-                        navigate={
-                          if @current_scope.user.username,
-                            do: ~p"/users/@#{@current_scope.user.username}",
-                            else: ~p"/users/#{@current_scope.user.id}"
-                        }
-                      >
+                      <.link navigate={
+                        if @current_scope.user.username,
+                          do: ~p"/users/@#{@current_scope.user.username}",
+                          else: ~p"/users/#{@current_scope.user.id}"
+                      }>
                         <.icon name="hero-user-circle" class="h-4 w-4" /> {gettext("My Profile")}
                       </.link>
                     </li>
@@ -433,16 +431,21 @@ defmodule HomesiteWeb.Layouts do
   def theme_toggle(assigns) do
     ~H"""
     <div class="dropdown dropdown-end">
-      <div tabindex="0" role="button" class="btn btn-sm btn-ghost gap-1" aria-label={gettext("Change theme")}>
+      <div
+        tabindex="0"
+        role="button"
+        class="btn btn-sm btn-ghost gap-1"
+        aria-label={gettext("Change theme")}
+      >
         <!-- Sun icon (visible in light theme) -->
         <.icon name="hero-sun" class="h-5 w-5 dark:hidden" />
         <!-- Moon icon (visible in dark theme) -->
-        <.icon name="hero-moon" class="h-5 w-5 hidden dark:block" />
+        <.icon name="hero-moon" class="hidden h-5 w-5 dark:block" />
         <.icon name="hero-chevron-down" class="h-3 w-3 opacity-60" />
       </div>
       <ul
         tabindex="0"
-        class="dropdown-content menu bg-base-200 rounded-box z-[1] mt-2 w-52 p-2 shadow-lg border border-base-300"
+        class="dropdown-content menu bg-base-200 rounded-box z-[1] border-base-300 mt-2 w-52 border p-2 shadow-lg"
       >
         <li>
           <button

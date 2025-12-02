@@ -134,7 +134,7 @@
 
           <div class="gap-[var(--spacing-md)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             <%= for item <- @feed_items do %>
-              <article class="card bg-base-200 duration-[var(--duration-normal)] shadow-lg transition-shadow hover:shadow-xl border border-base-300">
+              <article class="card bg-base-200 duration-[var(--duration-normal)] border-base-300 border shadow-lg transition-shadow hover:shadow-xl">
                 <div class="card-body p-[var(--spacing-card)]">
                   <%!-- Feed source badge --%>
                   <div class="mb-[var(--spacing-sm)] gap-[var(--spacing-inline)] flex items-center">
@@ -160,7 +160,7 @@
 
                   <%!-- Item summary (remove images to avoid broken icons) --%>
                   <%= if item.content do %>
-                    <div class="text-[var(--text-sm)] line-clamp-3 mb-[var(--spacing-sm)] opacity-70 [&_img]:hidden">
+                    <div class="text-[var(--text-sm)] line-clamp-3 mb-[var(--spacing-sm)] [&_img]:hidden opacity-70">
                       {raw(item.content)}
                     </div>
                   <% end %>

@@ -21,8 +21,8 @@ defmodule Homesite.Repo.Migrations.CreateFeedItemInteractions do
 
     # Partial index for unread items (most common query)
     create index(:feed_item_interactions, [:user_id, :feed_item_id],
-      where: "read_at IS NULL",
-      name: :feed_item_interactions_unread_idx
-    )
+             where: "read_at IS NULL",
+             name: :feed_item_interactions_unread_idx
+           )
   end
 end

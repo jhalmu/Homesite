@@ -204,7 +204,8 @@ defmodule Homesite.ExternalFeeds.AnalyticsTest do
       assert top_source.total_items == 5
       assert top_source.read_count == 3
       assert top_source.bookmark_count == 2
-      assert top_source.engagement_score == 9  # 3*1 + 2*3 = 9
+      # 3*1 + 2*3 = 9
+      assert top_source.engagement_score == 9
     end
 
     test "respects limit option", %{scope: scope} do
@@ -242,7 +243,8 @@ defmodule Homesite.ExternalFeeds.AnalyticsTest do
     test "returns trend for specified number of days", %{scope: scope} do
       trend = Analytics.get_reading_trend(scope, days: 7)
 
-      assert length(trend) == 8  # 7 days + today
+      # 7 days + today
+      assert length(trend) == 8
       assert Enum.all?(trend, fn day -> Map.has_key?(day, :date) end)
       assert Enum.all?(trend, fn day -> Map.has_key?(day, :read_count) end)
       assert Enum.all?(trend, fn day -> Map.has_key?(day, :bookmark_count) end)
@@ -251,7 +253,8 @@ defmodule Homesite.ExternalFeeds.AnalyticsTest do
     test "shows zeros for days with no activity", %{scope: scope} do
       trend = Analytics.get_reading_trend(scope, days: 1)
 
-      assert length(trend) == 2  # yesterday + today
+      # yesterday + today
+      assert length(trend) == 2
       assert Enum.all?(trend, fn day -> day.read_count == 0 end)
       assert Enum.all?(trend, fn day -> day.bookmark_count == 0 end)
     end
@@ -315,8 +318,10 @@ defmodule Homesite.ExternalFeeds.AnalyticsTest do
       assert perf.read_count == 6
       assert perf.bookmark_count == 2
       assert perf.unread_count == 4
-      assert perf.read_rate == 0.6    # 6/10 = 0.6
-      assert perf.bookmark_rate == 0.2  # 2/10 = 0.2
+      # 6/10 = 0.6
+      assert perf.read_rate == 0.6
+      # 2/10 = 0.2
+      assert perf.bookmark_rate == 0.2
     end
 
     test "handles source with no items", %{scope: scope, feed_source: feed_source} do

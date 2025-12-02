@@ -1,35 +1,35 @@
 <Layouts.app flash={@flash} current_scope={@current_scope}>
-  <div class="max-w-4xl mx-auto px-4 py-8">
+  <div class="mx-auto max-w-4xl px-4 py-8">
     <.header>
-      <%= gettext("Feed") %>
+      {gettext("Feed")}
       <:subtitle>
-        <%= ngettext("1 unread item", "%{count} unread items", @unread_count) %>
+        {ngettext("1 unread item", "%{count} unread items", @unread_count)}
       </:subtitle>
       <:actions>
         <.link navigate={~p"/feeds"} class="btn btn-ghost btn-sm">
-          <.icon name="hero-cog-6-tooth" class="w-5 h-5" />
-          <%= gettext("Manage Sources") %>
+          <.icon name="hero-cog-6-tooth" class="h-5 w-5" />
+          {gettext("Manage Sources")}
         </.link>
       </:actions>
     </.header>
-
-    <!-- Filter tabs -->
+    
+<!-- Filter tabs -->
     <div class="tabs tabs-boxed my-6">
       <button
         phx-click="filter_change"
         phx-value-filter="all"
         class={["tab", @filter == "all" && "tab-active"]}
       >
-        <%= gettext("All") %>
+        {gettext("All")}
       </button>
       <button
         phx-click="filter_change"
         phx-value-filter="unread"
         class={["tab", @filter == "unread" && "tab-active"]}
       >
-        <%= gettext("Unread") %>
+        {gettext("Unread")}
         <%= if @unread_count > 0 do %>
-          <span class="badge badge-primary badge-sm ml-2"><%= @unread_count %></span>
+          <span class="badge badge-primary badge-sm ml-2">{@unread_count}</span>
         <% end %>
       </button>
       <button
@@ -37,23 +37,23 @@
         phx-value-filter="bookmarks"
         class={["tab", @filter == "bookmarks" && "tab-active"]}
       >
-        <%= gettext("Bookmarks") %>
+        {gettext("Bookmarks")}
       </button>
     </div>
-
-    <!-- Feed items list -->
+    
+<!-- Feed items list -->
     <div class="space-y-4" id="feed-items-list">
       <%= if Enum.empty?(@items) do %>
         <div class="alert">
-          <.icon name="hero-information-circle" class="w-6 h-6" />
+          <.icon name="hero-information-circle" class="h-6 w-6" />
           <span>
             <%= if @filter == "unread" do %>
-              <%= gettext("No unread items. Great job!") %>
+              {gettext("No unread items. Great job!")}
             <% else %>
               <%= if @filter == "bookmarks" do %>
-                <%= gettext("No bookmarked items yet.") %>
+                {gettext("No bookmarked items yet.")}
               <% else %>
-                <%= gettext("No feed items found. Add some feed sources to get started.") %>
+                {gettext("No feed items found. Add some feed sources to get started.")}
               <% end %>
             <% end %>
           </span>
@@ -63,52 +63,49 @@
           <div
             id={"feed-item-#{item.feed_item.id}"}
             class={[
-              "card bg-base-100 shadow-sm border",
+              "card bg-base-100 border shadow-sm",
               is_read?(item) && "opacity-60",
               !is_read?(item) && "border-primary border-l-4"
             ]}
           >
             <div class="card-body">
               <!-- Feed source badge -->
-              <div class="flex items-center gap-2 text-sm text-base-content/70">
+              <div class="text-base-content/70 flex items-center gap-2 text-sm">
                 <span class="badge badge-ghost badge-sm">
-                  <%= item.feed_item.feed_source.name %>
+                  {item.feed_item.feed_source.name}
                 </span>
                 <span>•</span>
                 <time datetime={item.feed_item.published_at}>
-                  <%= format_relative_time(item.feed_item.published_at) %>
+                  {format_relative_time(item.feed_item.published_at)}
                 </time>
               </div>
-
-              <!-- Title -->
-              <h2 class={[
-                "card-title",
-                !is_read?(item) && "font-bold"
-              ]}>
+              
+<!-- Title -->
+              <h2 class={["card-title", !is_read?(item) && "font-bold"]}>
                 <a
                   href={item.feed_item.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   class="link link-hover"
                 >
-                  <%= item.feed_item.title %>
+                  {item.feed_item.title}
                 </a>
               </h2>
-
-              <!-- Description/Summary -->
+              
+<!-- Description/Summary -->
               <%= if item.feed_item.content do %>
                 <div class="text-base-content/80 line-clamp-3 prose prose-sm max-w-none">
-                  <%= raw(item.feed_item.content) %>
+                  {raw(item.feed_item.content)}
                 </div>
               <% end %>
-
-              <!-- Platform-specific metadata -->
+              
+<!-- Platform-specific metadata -->
               <%= if item.feed_item.metadata do %>
-                <%= render_metadata(item.feed_item) %>
+                {render_metadata(item.feed_item)}
               <% end %>
-
-              <!-- Actions -->
-              <div class="card-actions justify-end mt-4">
+              
+<!-- Actions -->
+              <div class="card-actions mt-4 justify-end">
                 <%= if is_read?(item) do %>
                   <button
                     phx-click="mark_unread"
@@ -116,7 +113,7 @@
                     class="btn btn-ghost btn-sm"
                     title={gettext("Mark as unread")}
                   >
-                    <.icon name="hero-envelope" class="w-4 h-4" />
+                    <.icon name="hero-envelope" class="h-4 w-4" />
                   </button>
                 <% else %>
                   <button
@@ -125,17 +122,14 @@
                     class="btn btn-ghost btn-sm"
                     title={gettext("Mark as read")}
                   >
-                    <.icon name="hero-envelope-open" class="w-4 h-4" />
+                    <.icon name="hero-envelope-open" class="h-4 w-4" />
                   </button>
                 <% end %>
 
                 <button
                   phx-click="toggle_bookmark"
                   phx-value-id={item.feed_item.id}
-                  class={[
-                    "btn btn-ghost btn-sm",
-                    is_bookmarked?(item) && "text-warning"
-                  ]}
+                  class={["btn btn-ghost btn-sm", is_bookmarked?(item) && "text-warning"]}
                   title={
                     if is_bookmarked?(item),
                       do: gettext("Remove bookmark"),
@@ -143,9 +137,9 @@
                   }
                 >
                   <%= if is_bookmarked?(item) do %>
-                    <.icon name="hero-star-solid" class="w-4 h-4" />
+                    <.icon name="hero-star-solid" class="h-4 w-4" />
                   <% else %>
-                    <.icon name="hero-star" class="w-4 h-4" />
+                    <.icon name="hero-star" class="h-4 w-4" />
                   <% end %>
                 </button>
 
@@ -155,8 +149,8 @@
                   rel="noopener noreferrer"
                   class="btn btn-primary btn-sm"
                 >
-                  <%= gettext("Open") %>
-                  <.icon name="hero-arrow-top-right-on-square" class="w-4 h-4" />
+                  {gettext("Open")}
+                  <.icon name="hero-arrow-top-right-on-square" class="h-4 w-4" />
                 </a>
               </div>
             </div>
@@ -164,12 +158,12 @@
         <% end %>
       <% end %>
     </div>
-
-    <!-- Load more button -->
+    
+<!-- Load more button -->
     <%= if @has_more do %>
-      <div class="text-center mt-8">
+      <div class="mt-8 text-center">
         <button phx-click="load_more" class="btn btn-outline">
-          <%= gettext("Load More") %>
+          {gettext("Load More")}
         </button>
       </div>
     <% end %>

@@ -213,18 +213,18 @@ defmodule HomesiteWeb.FeedLive.Index do
         assigns = %{metadata: metadata}
 
         ~H"""
-        <div class="flex gap-4 my-2">
+        <div class="my-2 flex gap-4">
           <%= if @metadata["thumbnail_url"] do %>
             <img
               src={@metadata["thumbnail_url"]}
               alt="Video thumbnail"
-              class="w-32 h-20 object-cover rounded"
+              class="h-20 w-32 rounded object-cover"
             />
           <% end %>
           <%= if @metadata["duration"] do %>
-            <div class="text-sm text-base-content/70">
-              <.icon name="hero-play-circle" class="w-4 h-4 inline" />
-              <%= @metadata["duration"] %>
+            <div class="text-base-content/70 text-sm">
+              <.icon name="hero-play-circle" class="inline h-4 w-4" />
+              {@metadata["duration"]}
             </div>
           <% end %>
         </div>
@@ -235,17 +235,17 @@ defmodule HomesiteWeb.FeedLive.Index do
         assigns = %{metadata: metadata}
 
         ~H"""
-        <div class="flex items-center gap-2 text-sm my-2">
+        <div class="my-2 flex items-center gap-2 text-sm">
           <%= if @metadata["author_avatar"] do %>
             <img
               src={@metadata["author_avatar"]}
               alt={@metadata["author_name"]}
-              class="w-8 h-8 rounded-full"
+              class="h-8 w-8 rounded-full"
             />
           <% end %>
           <div>
-            <div class="font-semibold"><%= @metadata["author_name"] %></div>
-            <div class="text-base-content/70">@<%= @metadata["author_handle"] %></div>
+            <div class="font-semibold">{@metadata["author_name"]}</div>
+            <div class="text-base-content/70">@{@metadata["author_handle"]}</div>
           </div>
         </div>
         """

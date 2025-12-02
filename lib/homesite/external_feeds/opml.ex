@@ -194,8 +194,8 @@ defmodule Homesite.ExternalFeeds.OPML do
 
     {imported, skipped, errors, _folder_cache} =
       Enum.reduce(outlines, {imported, skipped, errors, folder_cache}, fn outline,
-                                                                           {imp, skip, err,
-                                                                            folders} ->
+                                                                          {imp, skip, err,
+                                                                           folders} ->
         import_outline(scope, outline, existing_urls, create_folders, folders, imp, skip, err)
       end)
 

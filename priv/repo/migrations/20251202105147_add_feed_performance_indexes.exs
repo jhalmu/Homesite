@@ -28,10 +28,10 @@ defmodule Homesite.Repo.Migrations.AddFeedPerformanceIndexes do
     # Significantly reduces index size and improves query performance
     # Used by: list_feed_items_unified with unread_only: true
     create_if_not_exists index(
-      :feed_item_interactions,
-      [:user_id, :feed_item_id],
-      where: "read_at IS NULL",
-      name: :feed_item_interactions_unread_idx
-    )
+                           :feed_item_interactions,
+                           [:user_id, :feed_item_id],
+                           where: "read_at IS NULL",
+                           name: :feed_item_interactions_unread_idx
+                         )
   end
 end

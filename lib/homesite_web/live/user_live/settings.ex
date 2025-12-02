@@ -233,29 +233,29 @@ defmodule HomesiteWeb.UserLive.Settings do
       <%= if assigns[:show_celebration] && @show_celebration do %>
         <div class="modal modal-open">
           <div class="modal-box max-w-2xl">
-            <h3 class="font-bold text-2xl mb-4">
+            <h3 class="mb-4 text-2xl font-bold">
               🎉 {gettext("Congratulations! Your Username is Live!")}
             </h3>
 
-            <p class="text-lg mb-6">
+            <p class="mb-6 text-lg">
               {gettext("Your personal homepage is now available at:")}
             </p>
 
-            <div class="bg-base-200 rounded-lg p-4 mb-6">
-              <code class="text-lg break-all">
+            <div class="bg-base-200 mb-6 rounded-lg p-4">
+              <code class="break-all text-lg">
                 {url(~p"/users/@#{@current_scope.user.username}")}
               </code>
             </div>
 
             <p class="mb-6">{gettext("Share your new homepage with the world!")}</p>
 
-            <div class="flex gap-3 mb-4">
+            <div class="mb-4 flex gap-3">
               <button type="button" phx-click="share_username" class="btn btn-primary flex-1">
-                <.icon name="hero-share" class="w-5 h-5" />
+                <.icon name="hero-share" class="h-5 w-5" />
                 {gettext("Share")}
               </button>
               <button type="button" phx-click="copy_username_url" class="btn btn-outline">
-                <.icon name="hero-clipboard" class="w-5 h-5" />
+                <.icon name="hero-clipboard" class="h-5 w-5" />
                 {gettext("Copy")}
               </button>
             </div>

@@ -26,7 +26,8 @@ defmodule HomesiteWeb.DashboardLive.Index do
     profile_stats = %{
       published_count: published_count,
       total_views: get_total_views(scope),
-      subscribers: nil  # Future feature
+      # Future feature
+      subscribers: nil
     }
 
     # Feed analytics (if user has feeds)

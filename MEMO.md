@@ -5356,3 +5356,77 @@ Implemented Analytics module for feed consumption tracking and engagement metric
 **Documentation**: Complete for all phases
 
 ---
+
+## 2025-12-02 17:15:00 - Dark Mode Fix for Feed Display Pages
+
+### Session: DaisyUI Theme Integration for Feed UI
+
+#### Objectives Completed
+Fixed dark mode display issues across all feed-related pages by converting hardcoded Tailwind colors to DaisyUI's theme-aware color system.
+
+#### Problem
+Multiple pages were using hardcoded Tailwind colors (`bg-white`, `bg-gray-50`, `text-gray-*`, `text-blue-600`) that don't adapt to DaisyUI's `data-theme` attribute, causing light backgrounds and poor contrast in dark mode.
+
+#### Solution
+Replaced all hardcoded colors with DaisyUI's theme-aware equivalents:
+- `bg-white` → `bg-base-100`
+- `bg-gray-50` → `bg-base-200`
+- `border-gray-200` → `border-base-300`
+- `text-gray-*` → `opacity-*` (adapts to theme text color)
+- `text-blue-600` → `link link-primary`
+- `text-red-600` → `text-error`
+- Added `[&_img]:hidden` to hide broken image tags in feed content
+
+**Key Learning**: Removed incorrect `dark:bg-base-200` usage - DaisyUI uses `data-theme` attribute, not Tailwind's `dark:` prefix. DaisyUI colors automatically adapt via CSS variables.
+
+#### Files Modified
+
+**1. Homepage Feed Section**
+- **File**: `lib/homesite_web/live/page_live/home.html.heex`
+- **Changes**: 
+  - Line 137: `bg-base-200` (removed `dark:` prefix)
+  - Line 163: Added `[&_img]:hidden` to hide broken images
+  - All feed item cards now theme-aware
+
+**2. Individual Feed Source Page**
+- **File**: `lib/homesite_web/live/feed_source_live/show.html.heex`
+- **Changes**:
+  - Line 57: Info section `bg-gray-50` → `bg-base-200`
+  - Line 68: Empty state text `text-gray-400` → `opacity-50`
+  - Line 74-75: Error text `text-red-600` → `text-error`
+  - Line 85-86: Empty state icon `text-gray-400` → `opacity-50`
+  - Line 99: Feed items `bg-white` → `bg-base-100`, `border-gray-200` → `border-base-300`
+  - Line 104: Links `text-blue-600` → `link link-primary`
+  - Line 112: Author text `text-gray-600` → `opacity-70`
+  - Line 115: Content `text-gray-700` → `opacity-80`, added `[&_img]:hidden`
+  - Line 120: Timestamp `text-gray-500` → `opacity-60`
+
+**3. Auto-Formatter Changes**
+- **Multiple files**: CSS class reordering by mix format/heex formatter
+- No functional changes, just ordering (e.g., `border border-base-300` → `border-base-300 border`)
+
+#### Commits
+1. `51788af` - fix: Feed items dark mode background and broken images (initial attempt)
+2. `01daa4b` - fix: Use DaisyUI theme colors for feed items (remove Tailwind dark prefix)
+3. `8736713` - fix: Convert feed source show page to use DaisyUI theme colors
+
+#### Testing
+- **Manual testing**: Verified both light and dark themes on:
+  - `/` (homepage feed section)
+  - `/feeds/22` (individual feed source page)
+- **Automated tests**: 703 passing (1 pre-existing OPML test failure unrelated to changes)
+
+#### Known Issues
+- **OPML Import Test Failure** (pre-existing, unrelated to this session):
+  - Test: `import_from_opml/2 creates folders from OPML categories`
+  - Issue: Import returns 0 items instead of 2
+  - Location: `test/homesite/external_feeds/opml_test.exs:246`
+  - Impact: Does not affect dark mode functionality
+  - Cause: OPML folder creation logic, not template changes
+
+#### Next Steps
+- Consider auditing other pages for hardcoded Tailwind colors
+- Document DaisyUI color patterns in AGENTS.md (if not already documented)
+- Investigate OPML test failure separately
+
+---

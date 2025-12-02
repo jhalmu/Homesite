@@ -1,24 +1,26 @@
 <Layouts.app flash={@flash} current_scope={@current_scope}>
-  <div class="max-w-4xl mx-auto px-4 py-8">
+  <div class="mx-auto max-w-4xl px-4 py-8">
     <.header>
-      <%= gettext("Feed Folders") %>
+      {gettext("Feed Folders")}
       <:subtitle>
-        <%= gettext("Organize your feed sources into folders") %>
+        {gettext("Organize your feed sources into folders")}
       </:subtitle>
       <:actions>
         <button phx-click="new_folder" class="btn btn-primary btn-sm">
-          <.icon name="hero-folder-plus" class="w-5 h-5" />
-          <%= gettext("New Folder") %>
+          <.icon name="hero-folder-plus" class="h-5 w-5" />
+          {gettext("New Folder")}
         </button>
       </:actions>
     </.header>
-
-    <!-- New/Edit Folder Form -->
+    
+<!-- New/Edit Folder Form -->
     <%= if @editing_folder_id do %>
-      <div class="card bg-base-100 shadow-md my-6">
+      <div class="card bg-base-100 my-6 shadow-md">
         <div class="card-body">
           <h3 class="card-title">
-            <%= if @editing_folder_id == :new, do: gettext("New Folder"), else: gettext("Edit Folder") %>
+            {if @editing_folder_id == :new,
+              do: gettext("New Folder"),
+              else: gettext("Edit Folder")}
           </h3>
 
           <.form for={@form} phx-submit="save_folder" class="space-y-4">
@@ -55,38 +57,38 @@
 
             <div class="card-actions justify-end gap-2">
               <button type="button" phx-click="cancel_edit" class="btn btn-ghost">
-                <%= gettext("Cancel") %>
+                {gettext("Cancel")}
               </button>
               <button type="submit" class="btn btn-primary">
-                <%= gettext("Save") %>
+                {gettext("Save")}
               </button>
             </div>
           </.form>
         </div>
       </div>
     <% end %>
-
-    <!-- Folders List -->
-    <div class="space-y-4 mt-6">
+    
+<!-- Folders List -->
+    <div class="mt-6 space-y-4">
       <%= if Enum.empty?(@folders) do %>
         <div class="alert">
-          <.icon name="hero-information-circle" class="w-6 h-6" />
+          <.icon name="hero-information-circle" class="h-6 w-6" />
           <span>
-            <%= gettext("No folders yet. Create one to organize your feed sources!") %>
+            {gettext("No folders yet. Create one to organize your feed sources!")}
           </span>
         </div>
       <% else %>
         <%= for folder <- @folders do %>
-          <div class="card bg-base-100 shadow-sm border border-base-300">
+          <div class="card bg-base-100 border-base-300 border shadow-sm">
             <div class="card-body">
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                  <span class="text-3xl"><%= folder.icon || "📁" %></span>
+                  <span class="text-3xl">{folder.icon || "📁"}</span>
                   <div>
-                    <h3 class="card-title text-lg"><%= folder.name %></h3>
+                    <h3 class="card-title text-lg">{folder.name}</h3>
                     <%= if folder.color do %>
-                      <span class={"badge badge-#{folder.color} badge-sm"}>
-                        <%= folder.color %>
+                      <span class={"badge-#{folder.color} badge badge-sm"}>
+                        {folder.color}
                       </span>
                     <% end %>
                   </div>
@@ -99,7 +101,7 @@
                     class="btn btn-ghost btn-sm"
                     title={gettext("Edit folder")}
                   >
-                    <.icon name="hero-pencil" class="w-4 h-4" />
+                    <.icon name="hero-pencil" class="h-4 w-4" />
                   </button>
 
                   <button
@@ -109,15 +111,15 @@
                     class="btn btn-ghost btn-sm text-error"
                     title={gettext("Delete folder")}
                   >
-                    <.icon name="hero-trash" class="w-4 h-4" />
+                    <.icon name="hero-trash" class="h-4 w-4" />
                   </button>
                 </div>
               </div>
-
-              <!-- Display order badge -->
+              
+<!-- Display order badge -->
               <%= if folder.display_order != 0 do %>
-                <div class="text-sm text-base-content/60">
-                  <%= gettext("Order: %{order}", order: folder.display_order) %>
+                <div class="text-base-content/60 text-sm">
+                  {gettext("Order: %{order}", order: folder.display_order)}
                 </div>
               <% end %>
             </div>
@@ -125,12 +127,12 @@
         <% end %>
       <% end %>
     </div>
-
-    <!-- Back to Feeds link -->
+    
+<!-- Back to Feeds link -->
     <div class="mt-8">
       <.link navigate={~p"/feeds"} class="btn btn-ghost btn-sm">
-        <.icon name="hero-arrow-left" class="w-4 h-4" />
-        <%= gettext("Back to Feed Sources") %>
+        <.icon name="hero-arrow-left" class="h-4 w-4" />
+        {gettext("Back to Feed Sources")}
       </.link>
     </div>
   </div>
