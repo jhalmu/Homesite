@@ -6,6 +6,59 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-02 12:33:00 - Phase 2: Full-Text Search Implementation
+
+### Session: PostgreSQL Full-Text Search for Feed Items
+
+#### Objectives Completed
+Implemented PostgreSQL tsvector-based full-text search with relevance ranking for feed items.
+
+#### Changes Made
+
+**1. Database Migration - Full-Text Search**
+- **NEW MIGRATION**: `priv/repo/migrations/20251202102631_add_search_to_feed_items.exs`
+  - Added search_vector column (tsvector type) to feed_items table
+  - Created GIN index for fast full-text search queries
+  - Created trigger function `feed_items_search_vector_update()` for auto-updating
+  - Trigger combines: title (weight A), content (weight B), author_name + author_handle (weight C)
+  - Backfilled existing data with search vectors
+
+**2. Context Function**
+- **MODIFIED**: `lib/homesite/external_feeds.ex` (+64 lines)
+  - Added `search_feed_items/3` function with PostgreSQL ts_query
+  - Results ordered by ts_rank (relevance) then published_at
+  - AND query support: "elixir phoenix" requires both terms
+  - Reuses existing filters: unread_only, bookmarked_only, folder_id, feed_source_id
+  - Enforces scope isolation (User A cannot search User B's items)
+
+**3. Testing**
+- **MODIFIED**: `test/homesite/external_feeds_test.exs` (+294 lines)
+  - Added 11 comprehensive search tests in "search_feed_items/3" describe block
+  - Title, content, author_name search coverage
+  - Relevance ranking verification (title > content > author weights)
+  - AND queries with multiple words
+  - Scope isolation testing
+  - Filter combinations (unread, bookmarked, feed_source, limit/offset)
+  - Empty result handling
+
+#### Test Results
+- **Total tests**: 624 (up from 613)
+- **New tests**: 11 for full-text search functionality
+- **Status**: All tests passing (0 failures)
+
+#### Phase 2 Backend Summary
+✅ **Completed:**
+- Feed folders (database, context, 15 tests)
+- Full-text search (tsvector, context, 11 tests)
+
+⏳ **Remaining UI Work:**
+- Bookmarks page route and UI
+- FeedFolderLive UI for folder management
+
+🎯 **Next Phase:** Phase 3 (new platform adapters: Reddit, TikTok, Twitter/Nitter)
+
+---
+
 ## 2025-12-02 12:24:00 - Phase 2: Feed Folder Organization
 
 ### Session: Feed System - Folder Organization Implementation
