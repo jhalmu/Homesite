@@ -35,6 +35,9 @@
 - ✅ **Autodiscovery** - Automatic feed detection
 - ✅ **External Feed Adapters** - Aggregate from Mastodon, Bluesky, YouTube, RSS
 - ✅ **Username Routing** - Custom @username URLs for profiles and feeds
+- ✅ **Feed Aggregation** - Unified feed view with read/unread tracking (Phase 1)
+- ✅ **Feed Folders** - Organize feed sources into folders/categories (Phase 2)
+- ✅ **Bookmark System** - Save important feed items for later reading
 
 ### Internationalization
 - ✅ **Multi-language** - English and Finnish support
@@ -42,7 +45,7 @@
 - ✅ **User Preferences** - Per-user language selection
 
 ### Developer Experience
-- ✅ **584 Tests** - All passing (ExUnit + Phoenix.LiveViewTest)
+- ✅ **613 Tests** - All passing (ExUnit + Phoenix.LiveViewTest)
 - ✅ **Playwright E2E** - End-to-end testing foundation
 - ✅ **Credo** - Code quality analysis
 - ✅ **Sobelow** - Security scanning

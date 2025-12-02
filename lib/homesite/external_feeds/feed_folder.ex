@@ -29,6 +29,6 @@ defmodule Homesite.ExternalFeeds.FeedFolder do
     |> validate_length(:icon, max: 10)
     |> validate_length(:color, max: 20)
     |> foreign_key_constraint(:user_id)
-    |> unique_constraint([:user_id, :name])
+    |> unique_constraint(:name, name: :feed_folders_user_id_name_index)
   end
 end

@@ -6,6 +6,61 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-02 12:24:00 - Phase 2: Feed Folder Organization
+
+### Session: Feed System - Folder Organization Implementation
+
+#### Objectives Completed
+Phase 2 of the Feed System Improvement Plan - added folder/category organization for feed sources.
+
+#### Changes Made
+
+**1. Database Schema - Feed Folders**
+- **NEW MIGRATION**: `priv/repo/migrations/20251202101339_create_feed_folders.exs`
+  - Created `feed_folders` table with user_id, name, icon, color, display_order
+  - Unique constraint on [user_id, name] - users can't have duplicate folder names
+  - Index on [user_id, display_order] for ordering
+- **NEW MIGRATION**: `priv/repo/migrations/20251202101354_add_folder_to_feed_sources.exs`
+  - Added folder_id to feed_sources (nullable, on_delete: nilify_all)
+  - Preserves feed sources when folders are deleted
+
+**2. Schema & Context**
+- **NEW FILE**: `lib/homesite/external_feeds/feed_folder.ex` (35 lines)
+  - FeedFolder schema with belongs_to :user, has_many :feed_sources
+  - Validations: name (required, 1-100 chars), icon (max 10 chars), color (max 20 chars)
+  - Unique constraint on name per user (error attached to :name field)
+- **MODIFIED**: `lib/homesite/external_feeds/feed_source.ex`
+  - Added belongs_to :folder, FeedFolder relationship
+  - Added folder_id to changeset cast
+- **MODIFIED**: `lib/homesite/external_feeds.ex` (+95 lines)
+  - Folder CRUD: list_feed_folders/1, get_feed_folder!/2, create_feed_folder/2, update_feed_folder/3, delete_feed_folder/2
+  - Folder assignment: assign_feed_to_folder/3 (can assign or unassign with nil)
+  - Filtering: list_feed_items_by_folder/3, updated list_feed_items_unified/2 with folder_id option
+  - All functions enforce scope isolation pattern
+
+**3. Testing**
+- **MODIFIED**: `test/homesite/external_feeds_test.exs` (+191 lines)
+  - Added 15 new tests in "feed_folders" describe block
+  - CRUD operations: list, get, create, update, delete
+  - Scope isolation: User A cannot access/modify User B's folders
+  - Folder assignment: Assign feeds to folders, unassign with nil
+  - Filtering: Feed items by folder, unified feed respects folder_id
+  - Fixed unique constraint test - error now correctly attached to :name field
+
+#### Test Results
+- **Total tests**: 613 (up from 598)
+- **New tests**: 15 for Phase 2 folder functionality
+- **Status**: All tests passing (0 failures)
+
+#### Next Steps
+Phase 2 backend is complete. Remaining work:
+- Full-text search implementation (PostgreSQL tsvector)
+- Bookmarks page route and UI
+- FeedFolderLive UI for folder management
+- Continue to Phase 3 (new platform adapters) or complete remaining Phase 2 UI
+
+---
+
 ## 2025-12-02 11:30:00 - Code Quality & Security Improvements
 
 ### Session: Bug Fixes, Code Quality, and Security Enhancements

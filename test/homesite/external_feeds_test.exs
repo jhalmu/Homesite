@@ -480,4 +480,195 @@ defmodule Homesite.ExternalFeedsTest do
       assert Enum.all?(items, fn item -> item.feed_item.feed_source_id == feed_source1.id end)
     end
   end
+
+  describe "feed_folders" do
+    alias Homesite.ExternalFeeds.FeedFolder
+
+    import Homesite.AccountsFixtures
+
+    @valid_folder_attrs %{
+      name: "Tech News",
+      icon: "📰",
+      color: "#3b82f6"
+    }
+
+    setup do
+      user1 = user_fixture(email: "user1@example.com")
+      user2 = user_fixture(email: "user2@example.com")
+      scope1 = Accounts.Scope.for_user(user1)
+      scope2 = Accounts.Scope.for_user(user2)
+
+      %{scope1: scope1, scope2: scope2}
+    end
+
+    test "list_feed_folders/1 returns all folders for a user", %{scope1: scope1} do
+      {:ok, folder1} = ExternalFeeds.create_feed_folder(scope1, @valid_folder_attrs)
+      {:ok, folder2} = ExternalFeeds.create_feed_folder(scope1, %{@valid_folder_attrs | name: "Personal"})
+
+      folders = ExternalFeeds.list_feed_folders(scope1)
+      assert length(folders) == 2
+      assert Enum.any?(folders, &(&1.id == folder1.id))
+      assert Enum.any?(folders, &(&1.id == folder2.id))
+    end
+
+    test "list_feed_folders/1 respects scope isolation", %{scope1: scope1, scope2: scope2} do
+      {:ok, _folder} = ExternalFeeds.create_feed_folder(scope1, @valid_folder_attrs)
+
+      folders = ExternalFeeds.list_feed_folders(scope2)
+      assert Enum.empty?(folders)
+    end
+
+    test "get_feed_folder!/2 returns the folder", %{scope1: scope1} do
+      {:ok, folder} = ExternalFeeds.create_feed_folder(scope1, @valid_folder_attrs)
+      assert ExternalFeeds.get_feed_folder!(scope1, folder.id).id == folder.id
+    end
+
+    test "get_feed_folder!/2 raises when accessing other user's folder", %{scope1: scope1, scope2: scope2} do
+      {:ok, folder} = ExternalFeeds.create_feed_folder(scope1, @valid_folder_attrs)
+
+      assert_raise MatchError, fn ->
+        ExternalFeeds.get_feed_folder!(scope2, folder.id)
+      end
+    end
+
+    test "create_feed_folder/2 with valid data creates a folder", %{scope1: scope1} do
+      assert {:ok, %FeedFolder{} = folder} =
+               ExternalFeeds.create_feed_folder(scope1, @valid_folder_attrs)
+
+      assert folder.name == "Tech News"
+      assert folder.icon == "📰"
+      assert folder.color == "#3b82f6"
+      assert folder.user_id == scope1.user.id
+    end
+
+    test "create_feed_folder/2 with invalid data returns error changeset", %{scope1: scope1} do
+      assert {:error, %Ecto.Changeset{}} =
+               ExternalFeeds.create_feed_folder(scope1, %{name: nil})
+    end
+
+    test "create_feed_folder/2 enforces unique names per user", %{scope1: scope1} do
+      {:ok, _folder} = ExternalFeeds.create_feed_folder(scope1, @valid_folder_attrs)
+
+      assert {:error, changeset} = ExternalFeeds.create_feed_folder(scope1, @valid_folder_attrs)
+      assert "has already been taken" in errors_on(changeset).name
+    end
+
+    test "update_feed_folder/3 with valid data updates the folder", %{scope1: scope1} do
+      {:ok, folder} = ExternalFeeds.create_feed_folder(scope1, @valid_folder_attrs)
+
+      assert {:ok, %FeedFolder{} = updated} =
+               ExternalFeeds.update_feed_folder(scope1, folder, %{name: "Updated Name"})
+
+      assert updated.name == "Updated Name"
+    end
+
+    test "update_feed_folder/3 prevents updating other user's folder", %{scope1: scope1, scope2: scope2} do
+      {:ok, folder} = ExternalFeeds.create_feed_folder(scope1, @valid_folder_attrs)
+
+      assert_raise MatchError, fn ->
+        ExternalFeeds.update_feed_folder(scope2, folder, %{name: "Hacked"})
+      end
+    end
+
+    test "delete_feed_folder/2 deletes the folder", %{scope1: scope1} do
+      {:ok, folder} = ExternalFeeds.create_feed_folder(scope1, @valid_folder_attrs)
+      assert {:ok, %FeedFolder{}} = ExternalFeeds.delete_feed_folder(scope1, folder)
+      assert_raise Ecto.NoResultsError, fn -> ExternalFeeds.get_feed_folder!(scope1, folder.id) end
+    end
+
+    test "delete_feed_folder/2 prevents deleting other user's folder", %{scope1: scope1, scope2: scope2} do
+      {:ok, folder} = ExternalFeeds.create_feed_folder(scope1, @valid_folder_attrs)
+
+      assert_raise MatchError, fn ->
+        ExternalFeeds.delete_feed_folder(scope2, folder)
+      end
+    end
+
+    test "assign_feed_to_folder/3 assigns feed source to folder", %{scope1: scope1} do
+      {:ok, folder} = ExternalFeeds.create_feed_folder(scope1, @valid_folder_attrs)
+      {:ok, feed_source} = ExternalFeeds.create_feed_source(scope1, %{
+        feed_type: "rss",
+        name: "Test Feed",
+        url: "https://example.com/feed.xml"
+      })
+
+      {:ok, updated_feed} = ExternalFeeds.assign_feed_to_folder(scope1, feed_source.id, folder.id)
+      assert updated_feed.folder_id == folder.id
+    end
+
+    test "assign_feed_to_folder/3 can unassign by passing nil", %{scope1: scope1} do
+      {:ok, folder} = ExternalFeeds.create_feed_folder(scope1, @valid_folder_attrs)
+      {:ok, feed_source} = ExternalFeeds.create_feed_source(scope1, %{
+        feed_type: "rss",
+        name: "Test Feed",
+        url: "https://example.com/feed.xml",
+        folder_id: folder.id
+      })
+
+      {:ok, updated_feed} = ExternalFeeds.assign_feed_to_folder(scope1, feed_source.id, nil)
+      assert is_nil(updated_feed.folder_id)
+    end
+
+    test "list_feed_items_by_folder/3 returns items for folder's sources", %{scope1: scope1} do
+      {:ok, folder} = ExternalFeeds.create_feed_folder(scope1, @valid_folder_attrs)
+      {:ok, feed_source} = ExternalFeeds.create_feed_source(scope1, %{
+        feed_type: "rss",
+        name: "Test Feed",
+        url: "https://example.com/feed.xml",
+        folder_id: folder.id,
+        enabled: true
+      })
+
+      {:ok, _item} = ExternalFeeds.upsert_feed_item(feed_source.id, %{
+        external_id: "test-1",
+        title: "Test Item",
+        content: "Test content",
+        url: "https://example.com/item1",
+        published_at: DateTime.utc_now()
+      })
+
+      items = ExternalFeeds.list_feed_items_by_folder(scope1, folder.id)
+      assert length(items) == 1
+      assert hd(items).feed_item.feed_source_id == feed_source.id
+    end
+
+    test "list_feed_items_unified respects folder_id filter", %{scope1: scope1} do
+      {:ok, folder} = ExternalFeeds.create_feed_folder(scope1, @valid_folder_attrs)
+      {:ok, feed_source1} = ExternalFeeds.create_feed_source(scope1, %{
+        feed_type: "rss",
+        name: "In Folder",
+        url: "https://example.com/feed1.xml",
+        folder_id: folder.id,
+        enabled: true
+      })
+
+      {:ok, feed_source2} = ExternalFeeds.create_feed_source(scope1, %{
+        feed_type: "rss",
+        name: "Not In Folder",
+        url: "https://example.com/feed2.xml",
+        enabled: true
+      })
+
+      {:ok, _item1} = ExternalFeeds.upsert_feed_item(feed_source1.id, %{
+        external_id: "test-1",
+        title: "In Folder",
+        content: "Test",
+        url: "https://example.com/item1",
+        published_at: DateTime.utc_now()
+      })
+
+      {:ok, _item2} = ExternalFeeds.upsert_feed_item(feed_source2.id, %{
+        external_id: "test-2",
+        title: "Not In Folder",
+        content: "Test",
+        url: "https://example.com/item2",
+        published_at: DateTime.utc_now()
+      })
+
+      # Filter by folder should only return items from folder's sources
+      items = ExternalFeeds.list_feed_items_unified(scope1, folder_id: folder.id)
+      assert length(items) == 1
+      assert hd(items).feed_item.title == "In Folder"
+    end
+  end
 end
