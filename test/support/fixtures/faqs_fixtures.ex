@@ -4,7 +4,6 @@ defmodule Homesite.FaqsFixtures do
   entities via the `Homesite.Faqs` context.
   """
 
-  alias Homesite.Accounts.Scope
   alias Homesite.Faqs
 
   @doc """

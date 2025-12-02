@@ -4,10 +4,10 @@ defmodule Homesite.Activities do
   """
 
   import Ecto.Query, warn: false
-  alias Homesite.Repo
 
-  alias Homesite.Activities.Activity
   alias Homesite.Accounts.User
+  alias Homesite.Activities.Activity
+  alias Homesite.Repo
 
   @doc """
   Creates an activity.

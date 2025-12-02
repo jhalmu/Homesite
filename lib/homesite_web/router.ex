@@ -10,6 +10,7 @@ defmodule HomesiteWeb.Router do
     plug :put_root_layout, html: {HomesiteWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug HomesiteWeb.Plugs.ContentSecurityPolicy
     plug :fetch_current_scope_for_user
     plug HomesiteWeb.Plugs.SetLocale
   end

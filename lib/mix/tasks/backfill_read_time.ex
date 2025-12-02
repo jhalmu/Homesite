@@ -7,9 +7,10 @@ defmodule Mix.Tasks.BackfillReadTime do
   """
   use Mix.Task
 
-  alias Homesite.Repo
-  alias Homesite.Content.Post
   import Ecto.Query
+
+  alias Homesite.Content.Post
+  alias Homesite.Repo
 
   @shortdoc "Backfills read_time_minutes for all posts"
   def run(_args) do

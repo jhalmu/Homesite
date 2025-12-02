@@ -106,7 +106,7 @@ defmodule HomesiteWeb.SEO.JsonLD do
     }
   end
 
-  defp maybe_add_image(json_ld, post) do
+  defp maybe_add_image(json_ld, _post) do
     # TODO: Add image field to posts schema
     # For now, use default OG image
     Map.put(json_ld, "image", "https://example.com/og-default.jpg")

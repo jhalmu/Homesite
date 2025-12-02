@@ -12,14 +12,7 @@ defmodule HomesiteWeb.AdminLive.Invitations.Index do
     scope = socket.assigns.current_scope
 
     # Verify admin access
-    unless Accounts.Scope.admin?(scope) do
-      socket =
-        socket
-        |> put_flash(:error, "You must be an admin to access this page.")
-        |> redirect(to: ~p"/dashboard")
-
-      {:ok, socket}
-    else
+    if Accounts.Scope.admin?(scope) do
       invitations = Accounts.list_all_invitations()
 
       socket =
@@ -27,6 +20,13 @@ defmodule HomesiteWeb.AdminLive.Invitations.Index do
         |> assign(:page_title, "Manage Invitations")
         |> assign(:invitations, invitations)
         |> assign(:form, nil)
+
+      {:ok, socket}
+    else
+      socket =
+        socket
+        |> put_flash(:error, "You must be an admin to access this page.")
+        |> redirect(to: ~p"/dashboard")
 
       {:ok, socket}
     end

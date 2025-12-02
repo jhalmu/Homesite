@@ -24,9 +24,10 @@ defmodule Homesite.ExternalFeeds.Adapters.TwitterAdapter do
 
   @behaviour Homesite.ExternalFeeds.Adapters.FeedAdapter
 
-  alias Homesite.ExternalFeeds.FeedSource
-  alias Homesite.ExternalFeeds.Adapters.RssAdapter
   require Logger
+
+  alias Homesite.ExternalFeeds.Adapters.RssAdapter
+  alias Homesite.ExternalFeeds.FeedSource
 
   @impl true
   def validate_source(%FeedSource{url: url}) when is_binary(url) and url != "" do

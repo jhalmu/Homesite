@@ -119,9 +119,7 @@ defmodule HomesiteWeb.FaqLive.Index do
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     # Only admins can delete
-    unless socket.assigns.is_admin do
-      {:noreply, put_flash(socket, :error, gettext("Unauthorized"))}
-    else
+    if socket.assigns.is_admin do
       faq = Faqs.get_faq_for_management!(socket.assigns.current_scope, String.to_integer(id))
       {:ok, _} = Faqs.delete_faq(socket.assigns.current_scope, faq)
 
@@ -131,6 +129,8 @@ defmodule HomesiteWeb.FaqLive.Index do
        socket
        |> assign(:faqs, faqs)
        |> put_flash(:info, gettext("FAQ deleted successfully."))}
+    else
+      {:noreply, put_flash(socket, :error, gettext("Unauthorized"))}
     end
   end
 

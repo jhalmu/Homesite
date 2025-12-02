@@ -1,7 +1,7 @@
 defmodule HomesiteWeb.AdminLive.Dashboard do
   use HomesiteWeb, :live_view
 
-  alias Homesite.{Analytics, Accounts}
+  alias Homesite.{Accounts, Analytics}
 
   @impl true
   def render(assigns) do

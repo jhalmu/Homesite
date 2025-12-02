@@ -42,9 +42,10 @@
 - ✅ **User Preferences** - Per-user language selection
 
 ### Developer Experience
-- ✅ **234 Tests** - All passing (ExUnit + Phoenix.LiveViewTest)
+- ✅ **584 Tests** - All passing (ExUnit + Phoenix.LiveViewTest)
 - ✅ **Playwright E2E** - End-to-end testing foundation
 - ✅ **Credo** - Code quality analysis
+- ✅ **Sobelow** - Security scanning
 - ✅ **Format** - Consistent code formatting
 - ✅ **Comprehensive Docs** - CLAUDE.md, AGENTS.md, guides
 
@@ -269,6 +270,7 @@ All interactive pages use Phoenix LiveView:
 - ✅ **Scope isolation** - Enforced at context level
 - ✅ **CSRF protection** - Phoenix built-in
 - ✅ **XSS prevention** - Automatic HTML escaping
+- ✅ **Content-Security-Policy** - Restricts resource loading
 - ✅ **Argon2 hashing** - Secure password storage
 - ✅ **Rate limiting** - Login (5/min), Registration (3/hr)
 - ✅ **Security headers** - `put_secure_browser_headers`
@@ -315,7 +317,7 @@ Comprehensive documentation is available in the repository:
 
 ### Test Suite Overview
 
-- **234 ExUnit tests** - All passing
+- **584 ExUnit tests** - All passing
 - **23 Invitation tests** - Full coverage of invite system
 - **Security tests** - Scope isolation, authorization
 - **LiveView tests** - User interactions, form submissions

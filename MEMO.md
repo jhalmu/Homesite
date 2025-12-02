@@ -6,6 +6,91 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-02 11:30:00 - Code Quality & Security Improvements
+
+### Session: Bug Fixes, Code Quality, and Security Enhancements
+
+#### Objectives Completed
+Comprehensive code quality review and improvements focusing on:
+1. Fixing compiler warnings
+2. Improving code readability (Credo)
+3. Enhancing security (Sobelow)
+4. Updating documentation
+
+#### Changes Made
+
+**1. Compiler Warnings Fixed (2 issues)**
+- `lib/homesite_web/seo/json_ld.ex:109` - Prefixed unused parameter `_post` in `maybe_add_image/2`
+- `test/support/fixtures/faqs_fixtures.ex:7` - Removed unused alias `Homesite.Accounts.Scope`
+
+**2. Code Readability - Alias Ordering (5 files)**
+Fixed alphabetical ordering of imports and aliases per Elixir style guide:
+- `lib/mix/tasks/backfill_read_time.ex` - Moved import before aliases, alphabetized
+- `lib/homesite_web/live/admin_live/dashboard.ex` - Fixed inline alias `{Accounts, Analytics}`
+- `lib/homesite/external_feeds/adapters/twitter_adapter.ex` - Reordered RssAdapter/FeedSource
+- `lib/homesite/external_feeds/adapters/instagram_adapter.ex` - Reordered RssAdapter/FeedSource
+- `lib/homesite/activities.ex` - Alphabetized User/Activity/Repo aliases
+
+**3. Refactoring - Unless/Else to If (4 files)**
+Converted `unless...else` blocks to `if` statements (Elixir best practice):
+- `lib/homesite_web/live/faq_live/index.ex:122` - Admin delete authorization
+- `lib/homesite_web/live/admin_live/users/index.ex:223` - Admin access check
+- `lib/homesite_web/live/admin_live/invitations/index.ex:15` - Admin access check
+- `lib/homesite_web/live/admin_live/index.ex:11` - Admin access check
+
+**4. Security Enhancement - Content-Security-Policy**
+- **NEW FILE**: `lib/homesite_web/plugs/content_security_policy.ex`
+  - Custom plug for CSP headers
+  - LiveView-compatible configuration (WebSocket, inline scripts/styles)
+  - Restricts resource loading: script-src, style-src, connect-src, frame-ancestors
+- **MODIFIED**: `lib/homesite_web/router.ex`
+  - Added CSP plug to browser pipeline
+  - Addresses Sobelow high-confidence security warning
+
+**5. Documentation Updates**
+- `README.md` - Updated test counts (234 → 584), added CSP and Sobelow mentions
+
+#### Test Results
+- **584 tests, 0 failures** - All passing
+- **Credo improvements**: 77 → 68 issues (-9 fixed)
+  - Refactoring opportunities: 20 → 16 (-4)
+  - Code readability: 21 → 16 (-5)
+  - Design suggestions: 36 (unchanged)
+- **Dependencies**: No vulnerabilities (mix deps.audit)
+
+#### Files Modified
+```
+13 files changed, 43 insertions(+), 38 deletions(-)
++ lib/homesite_web/plugs/content_security_policy.ex (NEW)
+M README.md
+M lib/homesite/activities.ex
+M lib/homesite/external_feeds/adapters/instagram_adapter.ex
+M lib/homesite/external_feeds/adapters/twitter_adapter.ex
+M lib/homesite_web/live/admin_live/dashboard.ex
+M lib/homesite_web/live/admin_live/index.ex
+M lib/homesite_web/live/admin_live/invitations/index.ex
+M lib/homesite_web/live/admin_live/users/index.ex
+M lib/homesite_web/live/faq_live/index.ex
+M lib/homesite_web/router.ex
+M lib/homesite_web/seo/json_ld.ex
+M lib/mix/tasks/backfill_read_time.ex
+M test/support/fixtures/faqs_fixtures.ex
+```
+
+#### Impact
+- **Code quality**: Cleaner, more maintainable codebase with fewer linter warnings
+- **Security**: Enhanced with Content-Security-Policy headers to prevent XSS and resource injection
+- **Documentation**: Accurate test counts and feature list
+- **Maintainability**: Consistent code style following Elixir conventions
+
+#### Next Steps
+- Consider addressing remaining Credo design suggestions (complex functions, deep nesting)
+- Review and potentially tighten CSP policy for production
+- Continue monitoring security with regular Sobelow scans
+
+---
+
+
 ## 2025-12-01 21:00:00 - Dark Theme CSS Variable Compatibility (CRITICAL FIX)
 
 ### Session: DaisyUI 5.0 Migration Completion

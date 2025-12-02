@@ -220,12 +220,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
   @impl true
   def mount(_params, _session, socket) do
     # Verify admin access
-    unless Accounts.Scope.admin?(socket.assigns.current_scope) do
-      {:ok,
-       socket
-       |> put_flash(:error, "You must be an admin to access this page")
-       |> redirect(to: ~p"/")}
-    else
+    if Accounts.Scope.admin?(socket.assigns.current_scope) do
       # Check minimum flower level (3 for user management)
       if socket.assigns.current_scope.flower_count < 3 do
         {:ok,
@@ -242,6 +237,11 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
          |> assign(:form, nil)
          |> load_users()}
       end
+    else
+      {:ok,
+       socket
+       |> put_flash(:error, "You must be an admin to access this page")
+       |> redirect(to: ~p"/")}
     end
   end
 

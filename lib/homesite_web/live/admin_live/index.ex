@@ -8,14 +8,7 @@ defmodule HomesiteWeb.AdminLive.Index do
     scope = socket.assigns.current_scope
 
     # Verify admin access
-    unless Accounts.Scope.admin?(scope) do
-      socket =
-        socket
-        |> put_flash(:error, "You must be an admin to access this page.")
-        |> redirect(to: ~p"/dashboard")
-
-      {:ok, socket}
-    else
+    if Accounts.Scope.admin?(scope) do
       # Get admin stats
       all_users = Accounts.list_users()
       admin_users = Enum.filter(all_users, &Accounts.User.admin?/1)
@@ -27,6 +20,13 @@ defmodule HomesiteWeb.AdminLive.Index do
         |> assign(:admin_count, length(admin_users))
         |> assign(:flowers, String.duplicate("🌸", scope.flower_count))
         |> assign(:flower_count, scope.flower_count)
+
+      {:ok, socket}
+    else
+      socket =
+        socket
+        |> put_flash(:error, "You must be an admin to access this page.")
+        |> redirect(to: ~p"/dashboard")
 
       {:ok, socket}
     end
