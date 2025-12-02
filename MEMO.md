@@ -6,6 +6,127 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-02 23:45:00 - Production Deployment Strategy Planning
+
+### Session: Comprehensive Deployment Documentation
+
+#### Objectives Completed
+Created complete deployment guides for home server production deployment with multiple strategy options.
+
+#### Changes Made (This Session)
+
+**Documentation Created** (2 comprehensive guides)
+
+1. **TAILSCALE_DEPLOYMENT.md** (516 lines)
+   - Complete guide for Tailscale + own domain deployment
+   - Why Tailscale is excellent for home servers (zero public exposure, free HTTPS)
+   - Installation and configuration steps (60 minutes total)
+   - DNS configuration with MagicDNS and custom domain
+   - Database strategy options (Docker PostgreSQL, External PostgreSQL)
+   - Security advantages over port forwarding
+   - Dynamic DNS options (Cloudflare Tunnel, DuckDNS, custom script)
+   - Router configuration and troubleshooting
+   - Cost analysis: $60-115/year (domain + electricity)
+
+2. **COOLIFY_TAILSCALE_DEPLOYMENT.md** (680 lines) ⭐ **RECOMMENDED APPROACH**
+   - Combines Coolify (self-hosted PaaS) with Tailscale security
+   - One-command installation for both tools
+   - Beautiful web UI for deployment and management
+   - Automatic deployments from Git (push to deploy)
+   - Built-in PostgreSQL with automatic backups
+   - Real-time logs and monitoring dashboard
+   - One-click rollbacks and environment management
+   - Complete implementation checklist
+   - Same cost: $60-115/year (both tools free for personal use)
+
+**Planning Documents Referenced**
+
+3. **Updated `.claude/plans/declarative-juggling-quail.md`** (1,366 lines)
+   - Added Phase 2.5: Database Configuration Strategy
+   - Detailed external PostgreSQL setup guide
+   - DuckDB evaluation and why it's NOT suitable (OLAP vs OLTP)
+   - Advanced Caddy configuration (since user chose Caddy)
+   - Enhanced security headers, rate limiting, monitoring
+   - DNS and Dynamic DNS configuration options
+   - Comprehensive troubleshooting guides
+
+#### Key Technical Decisions Documented
+
+**Database Strategy:**
+- ✅ Docker PostgreSQL: Simplest, zero config (default in docker-compose.yml)
+- ✅ External PostgreSQL: Better for dedicated database server, easier upgrades
+- ❌ DuckDB: Not suitable - it's an analytical database (OLAP), Phoenix needs transactional database (OLTP), Oban requires PostgreSQL-specific features
+
+**Deployment Approach:**
+- Option A: Manual Docker + Tailscale (documented in TAILSCALE_DEPLOYMENT.md)
+- Option B: Coolify + Tailscale (documented in COOLIFY_TAILSCALE_DEPLOYMENT.md) ⭐ **RECOMMENDED**
+  - Eliminates 90% of deployment complexity
+  - Web UI for everything (no command line needed for daily tasks)
+  - Automatic backups, monitoring, rollbacks
+
+**Email Strategy Options:**
+- SendGrid free tier: 100 emails/day, $0/month (recommended)
+- Password-only: No email service needed
+- SMTP: Gmail or other provider
+- Current hybrid approach works with any option
+
+**Security Architecture:**
+- Tailscale provides: Zero public exposure, WireGuard encryption, no port forwarding
+- Coolify provides: Container isolation, secret management, resource limits
+- Phoenix provides: Authentication, rate limiting (Hammer), CSRF protection
+- Result: Enterprise-grade security at personal project cost
+
+#### Session Insights
+
+**User Requirements Gathered:**
+1. Want to use **Tailscale** for secure networking (excellent choice!)
+2. Want to use **own domain** (not subdomain)
+3. Want to use **Coolify** for software management (even better choice!)
+4. Concerns about cost, complexity, and security (all addressed)
+
+**Why Coolify + Tailscale is Perfect:**
+- **Security**: Tailscale = zero attack surface, no public ports
+- **Ease of Use**: Coolify = one-click deployments, web UI for everything
+- **Cost**: $60-115/year total (domain + electricity, both tools free)
+- **Professional**: Same UX as Heroku/Render but self-hosted
+- **Scalable**: Easy to add more services (Redis, additional apps, staging environment)
+
+#### Files Created
+
+**Created (2 documentation files):**
+- `TAILSCALE_DEPLOYMENT.md` (516 lines) - Manual deployment approach
+- `COOLIFY_TAILSCALE_DEPLOYMENT.md` (680 lines) - Recommended Coolify approach
+
+**Total Documentation:** 1,196 lines of comprehensive deployment guides
+
+#### Next Steps
+
+**Ready for Implementation** (when user decides to proceed):
+1. Install Tailscale on home server (10 min)
+2. Install Coolify (15 min)
+3. Create PostgreSQL database in Coolify UI (5 min)
+4. Deploy Phoenix app from Git (20 min)
+5. Configure custom domain with Tailscale (20 min)
+6. Test and verify (15 min)
+**Total time:** ~90 minutes to production-ready deployment
+
+**User Actions Needed:**
+- Review deployment guides
+- Choose email strategy (SendGrid free tier recommended)
+- Decide on database approach (Docker PostgreSQL default, or external if available)
+- Schedule 2 hours for implementation when ready
+
+#### Technical Notes
+
+- Both deployment guides include complete implementation checklists
+- All commands provided with explanations
+- Troubleshooting sections for common issues
+- Cost comparisons with cloud alternatives (home server is competitive!)
+- Security considerations and firewall configurations
+- Backup strategies and monitoring setup
+
+---
+
 ## 2025-12-02 19:00:00 - User Profile & Dashboard UX Enhancement
 
 ### Session: Comprehensive UX Improvement Plan Implementation
