@@ -113,6 +113,8 @@ defmodule HomesiteWeb.Router do
       live "/feeds/:id/edit", FeedSourceLive.Form, :edit
       live "/feeds/:id", FeedSourceLive.Show, :show
 
+      live "/folders", FeedFolderLive.Index, :index
+
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
     end
