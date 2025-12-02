@@ -96,10 +96,10 @@
               </h2>
 
               <!-- Description/Summary -->
-              <%= if item.feed_item.description do %>
-                <p class="text-base-content/80 line-clamp-3">
-                  <%= item.feed_item.description %>
-                </p>
+              <%= if item.feed_item.content do %>
+                <div class="text-base-content/80 line-clamp-3 prose prose-sm max-w-none">
+                  <%= raw(item.feed_item.content) %>
+                </div>
               <% end %>
 
               <!-- Platform-specific metadata -->

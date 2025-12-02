@@ -144,9 +144,9 @@
 
                   <%!-- Item title --%>
                   <h3 class="mb-[var(--spacing-sm)] text-[var(--font-size-fluid-lg)] line-clamp-2 font-semibold">
-                    <%= if item.link do %>
+                    <%= if item.url do %>
                       <a
-                        href={item.link}
+                        href={item.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         class="duration-[var(--duration-normal)] transition-colors hover:text-primary"
@@ -159,11 +159,11 @@
                   </h3>
 
                   <%!-- Item summary --%>
-                  <%= if item.summary do %>
-                    <p class="text-[var(--text-sm)] line-clamp-3 mb-[var(--spacing-sm)] opacity-70">
-                      {String.slice(item.summary, 0, 150)}
-                      {if String.length(item.summary) > 150, do: "..."}
-                    </p>
+                  <%= if item.content do %>
+                    <div class="text-[var(--text-sm)] line-clamp-3 mb-[var(--spacing-sm)] opacity-70 prose prose-sm max-w-none">
+                      {raw(String.slice(item.content, 0, 250))}
+                      {if String.length(item.content) > 250, do: "..."}
+                    </div>
                   <% end %>
 
                   <%!-- Item metadata --%>
@@ -180,10 +180,10 @@
                   </div>
 
                   <%!-- External link indicator --%>
-                  <%= if item.link do %>
+                  <%= if item.url do %>
                     <div class="mt-[var(--spacing-sm)] pt-[var(--spacing-sm)] border-base-300 border-t">
                       <a
-                        href={item.link}
+                        href={item.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         class="btn btn-xs btn-ghost gap-[var(--spacing-inline)]"
