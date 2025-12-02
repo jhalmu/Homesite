@@ -160,9 +160,8 @@
 
                   <%!-- Item summary --%>
                   <%= if item.content do %>
-                    <div class="text-[var(--text-sm)] line-clamp-3 mb-[var(--spacing-sm)] opacity-70 prose prose-sm max-w-none">
-                      {raw(String.slice(item.content, 0, 250))}
-                      {if String.length(item.content) > 250, do: "..."}
+                    <div class="text-[var(--text-sm)] line-clamp-3 mb-[var(--spacing-sm)] opacity-70 prose prose-sm max-w-none dark:prose-invert [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded">
+                      {raw(item.content)}
                     </div>
                   <% end %>
 
