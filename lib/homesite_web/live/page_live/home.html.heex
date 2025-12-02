@@ -173,9 +173,9 @@
                         {Calendar.strftime(item.published_at, "%B %d, %Y")}
                       </time>
                     <% end %>
-                    <%= if item.author do %>
+                    <%= if item.author_name do %>
                       <span>•</span>
-                      <span>{item.author}</span>
+                      <span>{item.author_name}</span>
                     <% end %>
                   </div>
 
