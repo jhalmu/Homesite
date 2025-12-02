@@ -204,22 +204,58 @@ const Hooks = {
     setupObserver() {
       const options = {
         root: null,
-        rootMargin: '-20% 0px -35% 0px',
-        threshold: [0, 0.25, 0.5, 0.75, 1]
+        rootMargin: '-10% 0px -80% 0px', // Trigger when section enters top 10% of viewport
+        threshold: 0
       }
 
       this.observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            this.setActiveLink(entry.target.id)
-          }
-        })
+        // Find all currently intersecting sections
+        const intersectingSections = this.sections
+          .filter(section => {
+            const rect = section.element.getBoundingClientRect()
+            const windowHeight = window.innerHeight
+            // Section is visible if its top is above 10% viewport and bottom is below 10%
+            return rect.top < windowHeight * 0.1 && rect.bottom > windowHeight * 0.1
+          })
+
+        // Pick the topmost intersecting section
+        if (intersectingSections.length > 0) {
+          const topmost = intersectingSections.reduce((top, current) => {
+            const topRect = top.element.getBoundingClientRect()
+            const currentRect = current.element.getBoundingClientRect()
+            return currentRect.top < topRect.top ? current : top
+          })
+
+          this.setActiveLink(topmost.id)
+        }
       }, options)
 
       // Observe all sections
       this.sections.forEach(section => {
         this.observer.observe(section.element)
       })
+
+      // Also update on scroll (for smoother tracking)
+      this.scrollHandler = () => {
+        const intersectingSections = this.sections
+          .filter(section => {
+            const rect = section.element.getBoundingClientRect()
+            const windowHeight = window.innerHeight
+            return rect.top < windowHeight * 0.1 && rect.bottom > windowHeight * 0.1
+          })
+
+        if (intersectingSections.length > 0) {
+          const topmost = intersectingSections.reduce((top, current) => {
+            const topRect = top.element.getBoundingClientRect()
+            const currentRect = current.element.getBoundingClientRect()
+            return currentRect.top < topRect.top ? current : top
+          })
+
+          this.setActiveLink(topmost.id)
+        }
+      }
+
+      window.addEventListener('scroll', this.scrollHandler, {passive: true})
     },
 
     setActiveLink(targetId) {
@@ -240,6 +276,9 @@ const Hooks = {
     destroyed() {
       if (this.observer) {
         this.observer.disconnect()
+      }
+      if (this.scrollHandler) {
+        window.removeEventListener('scroll', this.scrollHandler)
       }
     }
   }
