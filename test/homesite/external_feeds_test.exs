@@ -287,4 +287,197 @@ defmodule Homesite.ExternalFeedsTest do
       assert length(items) == 1
     end
   end
+
+  describe "feed_item_interactions" do
+    alias Homesite.ExternalFeeds.FeedItemInteraction
+
+    import Homesite.AccountsFixtures
+
+    @valid_item_attrs %{
+      external_id: "interaction-test-1",
+      title: "Interaction Test Post",
+      content: "This is a test post for interactions.",
+      url: "https://example.com/interaction-test",
+      published_at: ~U[2025-12-02 10:00:00Z]
+    }
+
+    setup do
+      user1 = user_fixture(email: "user1@example.com")
+      user2 = user_fixture(email: "user2@example.com")
+      scope1 = Accounts.Scope.for_user(user1)
+      scope2 = Accounts.Scope.for_user(user2)
+
+      # Create feed source for user1
+      {:ok, feed_source1} =
+        ExternalFeeds.create_feed_source(scope1, %{
+          feed_type: "rss",
+          name: "Test Feed 1",
+          url: "https://example.com/feed.xml",
+          enabled: true
+        })
+
+      # Create feed items for user1's source
+      {:ok, item1} = ExternalFeeds.upsert_feed_item(feed_source1.id, @valid_item_attrs)
+
+      {:ok, item2} =
+        ExternalFeeds.upsert_feed_item(feed_source1.id, %{
+          @valid_item_attrs
+          | external_id: "interaction-test-2",
+            published_at: DateTime.add(~U[2025-12-02 10:00:00Z], -3600, :second)
+        })
+
+      %{
+        scope1: scope1,
+        scope2: scope2,
+        feed_source1: feed_source1,
+        item1: item1,
+        item2: item2
+      }
+    end
+
+    test "list_feed_items_unified returns items with interaction data", %{scope1: scope1} do
+      items = ExternalFeeds.list_feed_items_unified(scope1)
+
+      assert length(items) == 2
+      assert Enum.all?(items, fn item -> Map.has_key?(item, :feed_item) end)
+      assert Enum.all?(items, fn item -> Map.has_key?(item, :interaction) end)
+      # Initially, no interactions exist, so they should be nil
+      assert Enum.all?(items, fn item -> is_nil(item.interaction) end)
+    end
+
+    test "list_feed_items_unified respects scope isolation", %{scope2: scope2} do
+      # User2 has no feed sources, so should see no items
+      items = ExternalFeeds.list_feed_items_unified(scope2)
+      assert Enum.empty?(items)
+    end
+
+    test "mark_item_as_read creates interaction and marks as read", %{scope1: scope1, item1: item1} do
+      {:ok, interaction} = ExternalFeeds.mark_item_as_read(scope1, item1.id)
+
+      assert interaction.user_id == scope1.user.id
+      assert interaction.feed_item_id == item1.id
+      assert not is_nil(interaction.read_at)
+      assert is_nil(interaction.bookmarked_at)
+    end
+
+    test "mark_item_as_unread removes read_at timestamp", %{scope1: scope1, item1: item1} do
+      {:ok, _} = ExternalFeeds.mark_item_as_read(scope1, item1.id)
+      {:ok, interaction} = ExternalFeeds.mark_item_as_unread(scope1, item1.id)
+
+      assert is_nil(interaction.read_at)
+    end
+
+    test "bookmark_item toggles bookmark status", %{scope1: scope1, item1: item1} do
+      # First bookmark
+      {:ok, interaction1} = ExternalFeeds.bookmark_item(scope1, item1.id)
+      assert not is_nil(interaction1.bookmarked_at)
+
+      # Toggle off
+      {:ok, interaction2} = ExternalFeeds.bookmark_item(scope1, item1.id)
+      assert is_nil(interaction2.bookmarked_at)
+
+      # Toggle back on
+      {:ok, interaction3} = ExternalFeeds.bookmark_item(scope1, item1.id)
+      assert not is_nil(interaction3.bookmarked_at)
+    end
+
+    test "get_unread_count returns correct count", %{scope1: scope1, item1: item1, item2: item2} do
+      # Initially all items are unread
+      assert ExternalFeeds.get_unread_count(scope1) == 2
+
+      # Mark one as read
+      {:ok, _} = ExternalFeeds.mark_item_as_read(scope1, item1.id)
+      assert ExternalFeeds.get_unread_count(scope1) == 1
+
+      # Mark another as read
+      {:ok, _} = ExternalFeeds.mark_item_as_read(scope1, item2.id)
+      assert ExternalFeeds.get_unread_count(scope1) == 0
+    end
+
+    test "list_feed_items_unified with unread_only filter", %{scope1: scope1, item1: item1} do
+      # Mark one item as read
+      {:ok, _} = ExternalFeeds.mark_item_as_read(scope1, item1.id)
+
+      # List only unread items
+      items = ExternalFeeds.list_feed_items_unified(scope1, unread_only: true)
+      assert length(items) == 1
+      assert hd(items).feed_item.id != item1.id
+    end
+
+    test "list_bookmarked_items returns only bookmarked items", %{scope1: scope1, item1: item1} do
+      # Initially no bookmarks
+      items = ExternalFeeds.list_bookmarked_items(scope1)
+      assert Enum.empty?(items)
+
+      # Bookmark one item
+      {:ok, _} = ExternalFeeds.bookmark_item(scope1, item1.id)
+
+      # Should return the bookmarked item
+      items = ExternalFeeds.list_bookmarked_items(scope1)
+      assert length(items) == 1
+      assert hd(items).feed_item.id == item1.id
+      assert not is_nil(hd(items).interaction.bookmarked_at)
+    end
+
+    test "mark_all_as_read_for_source marks all items as read", %{
+      scope1: scope1,
+      feed_source1: feed_source1
+    } do
+      # Initially all unread
+      assert ExternalFeeds.get_unread_count(scope1) == 2
+
+      # Mark all as read
+      {:ok, count} = ExternalFeeds.mark_all_as_read_for_source(scope1, feed_source1.id)
+      assert count == 2
+
+      # Verify all are read
+      assert ExternalFeeds.get_unread_count(scope1) == 0
+    end
+
+    test "archive_item archives a feed item", %{scope1: scope1, item1: item1} do
+      {:ok, interaction} = ExternalFeeds.archive_item(scope1, item1.id)
+      assert not is_nil(interaction.archived_at)
+    end
+
+    test "unarchive_item unarchives a feed item", %{scope1: scope1, item1: item1} do
+      {:ok, _} = ExternalFeeds.archive_item(scope1, item1.id)
+      {:ok, interaction} = ExternalFeeds.unarchive_item(scope1, item1.id)
+      assert is_nil(interaction.archived_at)
+    end
+
+    test "user cannot interact with another user's feed items", %{
+      scope2: scope2,
+      item1: item1
+    } do
+      # User2 tries to mark User1's item as read
+      # This should raise because get_feed_item! enforces scope ownership
+      assert_raise MatchError, fn ->
+        ExternalFeeds.mark_item_as_read(scope2, item1.id)
+      end
+    end
+
+    test "pagination with limit and offset", %{scope1: scope1} do
+      # Get first page (1 item)
+      page1 = ExternalFeeds.list_feed_items_unified(scope1, limit: 1, offset: 0)
+      assert length(page1) == 1
+
+      # Get second page (1 item)
+      page2 = ExternalFeeds.list_feed_items_unified(scope1, limit: 1, offset: 1)
+      assert length(page2) == 1
+
+      # Ensure they're different items
+      assert hd(page1).feed_item.id != hd(page2).feed_item.id
+    end
+
+    test "list_feed_items_unified with filter by feed_source_id", %{
+      scope1: scope1,
+      feed_source1: feed_source1
+    } do
+      items =
+        ExternalFeeds.list_feed_items_unified(scope1, feed_source_id: feed_source1.id)
+
+      assert length(items) == 2
+      assert Enum.all?(items, fn item -> item.feed_item.feed_source_id == feed_source1.id end)
+    end
+  end
 end

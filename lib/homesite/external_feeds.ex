@@ -6,7 +6,7 @@ defmodule Homesite.ExternalFeeds do
 
   import Ecto.Query, warn: false
   alias Homesite.Accounts.Scope
-  alias Homesite.ExternalFeeds.{FeedSource, FeedItem}
+  alias Homesite.ExternalFeeds.{FeedSource, FeedItem, FeedItemInteraction}
   alias Homesite.Repo
 
   ## Feed Sources
@@ -161,6 +161,73 @@ defmodule Homesite.ExternalFeeds do
   end
 
   @doc """
+  Returns the list of feed items with interaction data (read/unread, bookmarks).
+  This is the main function for the unified feed view.
+
+  ## Options
+
+    * `:limit` - Maximum number of items to return (default: 50)
+    * `:offset` - Number of items to skip (default: 0)
+    * `:unread_only` - Only return unread items (default: false)
+    * `:bookmarked_only` - Only return bookmarked items (default: false)
+    * `:feed_source_id` - Filter by specific feed source (optional)
+
+  ## Examples
+
+      iex> list_feed_items_unified(scope, limit: 20, unread_only: true)
+      [%{feed_item: %FeedItem{}, interaction: %FeedItemInteraction{}}, ...]
+
+  """
+  def list_feed_items_unified(%Scope{} = scope, opts \\ []) do
+    limit = Keyword.get(opts, :limit, 50)
+    offset = Keyword.get(opts, :offset, 0)
+    unread_only = Keyword.get(opts, :unread_only, false)
+    bookmarked_only = Keyword.get(opts, :bookmarked_only, false)
+    feed_source_id = Keyword.get(opts, :feed_source_id)
+
+    # Get user's enabled feed sources
+    feed_source_ids =
+      FeedSource
+      |> where(user_id: ^scope.user.id)
+      |> where(enabled: true)
+      |> maybe_filter_by_source(feed_source_id)
+      |> select([f], f.id)
+      |> Repo.all()
+
+    # Build query for feed items with interactions
+    query =
+      FeedItem
+      |> where([i], i.feed_source_id in ^feed_source_ids)
+      |> join(:left, [i], inter in FeedItemInteraction,
+        on: inter.feed_item_id == i.id and inter.user_id == ^scope.user.id
+      )
+      |> maybe_filter_unread(unread_only)
+      |> maybe_filter_bookmarked(bookmarked_only)
+      |> order_by([i, inter], desc: i.published_at)
+      |> limit(^limit)
+      |> offset(^offset)
+      |> preload(:feed_source)
+      |> select([i, inter], %{feed_item: i, interaction: inter})
+
+    Repo.all(query)
+  end
+
+  defp maybe_filter_by_source(query, nil), do: query
+  defp maybe_filter_by_source(query, source_id), do: where(query, id: ^source_id)
+
+  defp maybe_filter_unread(query, false), do: query
+
+  defp maybe_filter_unread(query, true) do
+    where(query, [_i, inter], is_nil(inter.read_at))
+  end
+
+  defp maybe_filter_bookmarked(query, false), do: query
+
+  defp maybe_filter_bookmarked(query, true) do
+    where(query, [_i, inter], not is_nil(inter.bookmarked_at))
+  end
+
+  @doc """
   Returns feed items for a specific feed source.
   Enforces user ownership of the feed source.
   """
@@ -185,6 +252,166 @@ defmodule Homesite.ExternalFeeds do
     feed_item = Repo.get!(FeedItem, id) |> Repo.preload(:feed_source)
     true = feed_item.feed_source.user_id == scope.user.id
     feed_item
+  end
+
+  ## Feed Item Interactions
+
+  @doc """
+  Gets or creates an interaction record for a feed item.
+  """
+  def get_or_create_interaction(%Scope{} = scope, feed_item_id) do
+    # Verify user owns this feed item through feed source
+    feed_item = get_feed_item!(scope, feed_item_id)
+
+    case Repo.get_by(FeedItemInteraction,
+           user_id: scope.user.id,
+           feed_item_id: feed_item.id
+         ) do
+      nil ->
+        %FeedItemInteraction{}
+        |> FeedItemInteraction.changeset(%{
+          user_id: scope.user.id,
+          feed_item_id: feed_item.id
+        })
+        |> Repo.insert()
+
+      interaction ->
+        {:ok, interaction}
+    end
+  end
+
+  @doc """
+  Marks a feed item as read.
+
+  ## Examples
+
+      iex> mark_item_as_read(scope, feed_item_id)
+      {:ok, %FeedItemInteraction{}}
+
+  """
+  def mark_item_as_read(%Scope{} = scope, feed_item_id) do
+    with {:ok, interaction} <- get_or_create_interaction(scope, feed_item_id) do
+      interaction
+      |> FeedItemInteraction.mark_as_read()
+      |> Repo.update()
+    end
+  end
+
+  @doc """
+  Marks a feed item as unread.
+  """
+  def mark_item_as_unread(%Scope{} = scope, feed_item_id) do
+    with {:ok, interaction} <- get_or_create_interaction(scope, feed_item_id) do
+      interaction
+      |> FeedItemInteraction.mark_as_unread()
+      |> Repo.update()
+    end
+  end
+
+  @doc """
+  Toggles bookmark status for a feed item.
+
+  ## Examples
+
+      iex> bookmark_item(scope, feed_item_id)
+      {:ok, %FeedItemInteraction{}}
+
+  """
+  def bookmark_item(%Scope{} = scope, feed_item_id) do
+    with {:ok, interaction} <- get_or_create_interaction(scope, feed_item_id) do
+      interaction
+      |> FeedItemInteraction.toggle_bookmark()
+      |> Repo.update()
+    end
+  end
+
+  @doc """
+  Archives a feed item.
+  """
+  def archive_item(%Scope{} = scope, feed_item_id) do
+    with {:ok, interaction} <- get_or_create_interaction(scope, feed_item_id) do
+      interaction
+      |> FeedItemInteraction.archive()
+      |> Repo.update()
+    end
+  end
+
+  @doc """
+  Unarchives a feed item.
+  """
+  def unarchive_item(%Scope{} = scope, feed_item_id) do
+    with {:ok, interaction} <- get_or_create_interaction(scope, feed_item_id) do
+      interaction
+      |> FeedItemInteraction.unarchive()
+      |> Repo.update()
+    end
+  end
+
+  @doc """
+  Returns the count of unread feed items for a user.
+
+  ## Examples
+
+      iex> get_unread_count(scope)
+      42
+
+  """
+  def get_unread_count(%Scope{} = scope) do
+    # Get user's enabled feed sources
+    feed_source_ids =
+      FeedSource
+      |> where(user_id: ^scope.user.id)
+      |> where(enabled: true)
+      |> select([f], f.id)
+      |> Repo.all()
+
+    # Count items that either have no interaction record or have read_at as nil
+    subquery =
+      FeedItem
+      |> where([i], i.feed_source_id in ^feed_source_ids)
+      |> join(:left, [i], inter in FeedItemInteraction,
+        on: inter.feed_item_id == i.id and inter.user_id == ^scope.user.id
+      )
+      |> where([_i, inter], is_nil(inter.id) or is_nil(inter.read_at))
+      |> select([i, _inter], count(i.id))
+
+    Repo.one(subquery)
+  end
+
+  @doc """
+  Returns all bookmarked feed items for a user.
+
+  ## Options
+
+    * `:limit` - Maximum number of items to return (default: 50)
+    * `:offset` - Number of items to skip (default: 0)
+
+  ## Examples
+
+      iex> list_bookmarked_items(scope, limit: 20)
+      [%{feed_item: %FeedItem{}, interaction: %FeedItemInteraction{}}, ...]
+
+  """
+  def list_bookmarked_items(%Scope{} = scope, opts \\ []) do
+    list_feed_items_unified(scope, Keyword.put(opts, :bookmarked_only, true))
+  end
+
+  @doc """
+  Marks all feed items from a specific source as read.
+  """
+  def mark_all_as_read_for_source(%Scope{} = scope, feed_source_id) do
+    # Verify user owns this feed source
+    _feed_source = get_feed_source!(scope, feed_source_id)
+
+    # Get all unread items for this source
+    items = list_feed_items_unified(scope, feed_source_id: feed_source_id, unread_only: true)
+
+    # Mark each as read
+    Enum.each(items, fn %{feed_item: item} ->
+      mark_item_as_read(scope, item.id)
+    end)
+
+    {:ok, length(items)}
   end
 
   @doc """

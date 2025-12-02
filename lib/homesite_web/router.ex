@@ -106,6 +106,8 @@ defmodule HomesiteWeb.Router do
       live "/tags/:id/edit", TagLive.Form, :edit
       live "/tags/:id", TagLive.Show, :show
 
+      live "/feed", FeedLive.Index, :index
+
       live "/feeds", FeedSourceLive.Index, :index
       live "/feeds/new", FeedSourceLive.Form, :new
       live "/feeds/:id/edit", FeedSourceLive.Form, :edit
