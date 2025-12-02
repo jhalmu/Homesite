@@ -56,8 +56,8 @@ defmodule HomesiteWeb.PostLive.Show do
               {Phoenix.HTML.raw(@rendered_html)}
             </div>
 
-          <!-- Sidebar with TOC (only for longer posts) -->
-            <%= if @post.read_time_minutes >= 3 && @headings != [] do %>
+          <!-- Sidebar with TOC (posts with 2+ min read time and headings) -->
+            <%= if @post.read_time_minutes >= 2 && @headings != [] do %>
               <aside class="hidden lg:block lg:w-64">
                 <TableOfContents.table_of_contents
                   headings={@headings}

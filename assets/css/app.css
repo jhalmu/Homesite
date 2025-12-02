@@ -612,3 +612,13 @@ body {
   :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   color: var(--color-primary);
 }
+
+/* ============================================================================
+   TABLE OF CONTENTS SCROLL OFFSET
+   Add breathing room when scrolling to headings via TOC links
+   ============================================================================ */
+
+/* All headings with IDs (linked from TOC) get scroll offset */
+.prose :where(h2[id], h3[id], h4[id]):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  scroll-margin-top: 6rem; /* 96px - matches scroll-mt-24 */
+}
