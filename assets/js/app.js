@@ -182,7 +182,8 @@ const Hooks = {
           const target = document.getElementById(targetId)
 
           if (target) {
-            target.scrollIntoView({behavior: 'smooth', block: 'start'})
+            // Scroll with offset - let CSS scroll-margin-top handle spacing
+            target.scrollIntoView({behavior: 'smooth', block: 'nearest'})
 
             // Update URL hash without jumping
             if (history.pushState) {
