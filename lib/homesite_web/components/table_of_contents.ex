@@ -159,7 +159,7 @@ defmodule HomesiteWeb.Components.TableOfContents do
         id="table-of-contents"
         phx-hook="TableOfContents"
         class={[
-          "rounded-lg border border-base-300 bg-base-200 p-4",
+          "border-base-300 bg-base-200 rounded-lg border p-4",
           @sticky && "sticky top-4",
           !@show_mobile && "hidden lg:block",
           @class
@@ -186,14 +186,14 @@ defmodule HomesiteWeb.Components.TableOfContents do
     <li>
       <a
         href={"##{@heading.id}"}
-        class="toc-link rounded-md px-3 py-1.5 text-sm opacity-70 hover:opacity-100 hover:bg-base-300"
+        class="toc-link rounded-md px-3 py-1.5 text-sm opacity-70 hover:bg-base-300 hover:opacity-100"
         data-target={@heading.id}
       >
         {@heading.text}
       </a>
 
       <%= if @heading.children != [] do %>
-        <ul class="ml-4 mt-1">
+        <ul class="mt-1 ml-4">
           <.toc_item :for={child <- @heading.children} heading={child} />
         </ul>
       <% end %>

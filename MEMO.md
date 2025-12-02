@@ -15,6 +15,8 @@ Implemented reusable Table of Contents component with sidebar navigation and act
 
 **UPDATE (21:45:00):** Fixed FAQ TOC to use question titles instead of answer headings - FAQs and blog posts have different structures requiring different TOC approaches.
 
+**UPDATE (22:00:00):** Fixed scroll offset issues for TOC anchor links - headings were scrolling to top and getting hidden. Implemented dynamic scroll-margin-top calculation in JavaScript, lowered post TOC threshold to 2min (Emma's post now has TOC).
+
 #### Changes Made (This Session)
 
 **1. Table of Contents Component** (NEW)

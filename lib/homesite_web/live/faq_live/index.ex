@@ -36,52 +36,52 @@ defmodule HomesiteWeb.FaqLive.Index do
 
         <div class="mt-8 flex gap-8">
           <div class="flex-1 space-y-4">
-          <%= if Enum.empty?(@faqs) do %>
-            <div class="card bg-base-200">
-              <div class="card-body text-center">
-                <p class="text-base-content/60">{gettext("No FAQs available yet.")}</p>
-                <%= if @is_admin do %>
-                  <p class="text-base-content/40 text-sm">
-                    {gettext("Click 'New FAQ' to create your first FAQ entry.")}
-                  </p>
-                <% end %>
-              </div>
-            </div>
-          <% else %>
-            <%= for faq <- @faqs do %>
-              <div class="card bg-base-200 shadow-md scroll-mt-24" id={"faq-#{faq.id}"}>
-                <div class="card-body">
-                  <h2 class="card-title">
-                    <.icon name="hero-question-mark-circle" class="h-6 w-6" />
-                    {faq.question}
-                  </h2>
-                  <div class="prose prose-sm max-w-none">
-                    {raw(TableOfContents.add_heading_ids(faq.answer))}
-                  </div>
+            <%= if Enum.empty?(@faqs) do %>
+              <div class="card bg-base-200">
+                <div class="card-body text-center">
+                  <p class="text-base-content/60">{gettext("No FAQs available yet.")}</p>
                   <%= if @is_admin do %>
-                    <div class="card-actions mt-4 justify-end">
-                      <.link navigate={~p"/faqs/#{faq}/edit"} class="btn btn-sm">
-                        <.icon name="hero-pencil" class="h-4 w-4" />
-                        {gettext("Edit")}
-                      </.link>
-                      <button
-                        class="btn btn-sm btn-ghost"
-                        phx-click="delete"
-                        phx-value-id={faq.id}
-                        data-confirm={gettext("Are you sure you want to delete this FAQ?")}
-                      >
-                        <.icon name="hero-trash" class="h-4 w-4" />
-                        {gettext("Delete")}
-                      </button>
-                    </div>
+                    <p class="text-base-content/40 text-sm">
+                      {gettext("Click 'New FAQ' to create your first FAQ entry.")}
+                    </p>
                   <% end %>
                 </div>
               </div>
+            <% else %>
+              <%= for faq <- @faqs do %>
+                <div class="card bg-base-200 scroll-mt-24 shadow-md" id={"faq-#{faq.id}"}>
+                  <div class="card-body">
+                    <h2 class="card-title">
+                      <.icon name="hero-question-mark-circle" class="h-6 w-6" />
+                      {faq.question}
+                    </h2>
+                    <div class="prose prose-sm max-w-none">
+                      {raw(TableOfContents.add_heading_ids(faq.answer))}
+                    </div>
+                    <%= if @is_admin do %>
+                      <div class="card-actions mt-4 justify-end">
+                        <.link navigate={~p"/faqs/#{faq}/edit"} class="btn btn-sm">
+                          <.icon name="hero-pencil" class="h-4 w-4" />
+                          {gettext("Edit")}
+                        </.link>
+                        <button
+                          class="btn btn-sm btn-ghost"
+                          phx-click="delete"
+                          phx-value-id={faq.id}
+                          data-confirm={gettext("Are you sure you want to delete this FAQ?")}
+                        >
+                          <.icon name="hero-trash" class="h-4 w-4" />
+                          {gettext("Delete")}
+                        </button>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
             <% end %>
-          <% end %>
           </div>
-
-          <!-- Sidebar with TOC -->
+          
+    <!-- Sidebar with TOC -->
           <%= if !Enum.empty?(@faqs) && @headings != [] do %>
             <aside class="hidden lg:block lg:w-64">
               <TableOfContents.table_of_contents

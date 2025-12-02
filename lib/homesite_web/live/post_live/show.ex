@@ -48,15 +48,15 @@ defmodule HomesiteWeb.PostLive.Show do
               <% end %>
             </div>
           </div>
-
-        <!-- Main Content with Sidebar -->
+          
+    <!-- Main Content with Sidebar -->
           <div class="my-[var(--spacing-lg)] flex gap-8">
             <!-- Article Content -->
-            <div class="flex-1 prose prose-slate max-w-none prose-pre:bg-gray-900 prose-pre:text-gray-100 dark:prose-invert">
+            <div class="prose prose-slate max-w-none flex-1 prose-pre:bg-gray-900 prose-pre:text-gray-100 dark:prose-invert">
               {Phoenix.HTML.raw(@rendered_html)}
             </div>
-
-          <!-- Sidebar with TOC (posts with 2+ min read time and headings) -->
+            
+    <!-- Sidebar with TOC (posts with 2+ min read time and headings) -->
             <%= if @post.read_time_minutes >= 2 && @headings != [] do %>
               <aside class="hidden lg:block lg:w-64">
                 <TableOfContents.table_of_contents

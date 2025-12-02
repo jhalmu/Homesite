@@ -73,7 +73,7 @@ defmodule HomesiteWeb.DevFaqsLive.Index do
           Development environment documentation and quick reference
         </:subtitle>
       </.header>
-
+      
     <!-- Category Filter -->
       <div class="mt-8 flex flex-wrap gap-2">
         <button
@@ -96,7 +96,7 @@ defmodule HomesiteWeb.DevFaqsLive.Index do
           {String.capitalize(category)}
         </button>
       </div>
-
+      
     <!-- Main Content with Sidebar -->
       <div class="mt-8 flex gap-8">
         <!-- Main Content -->
@@ -104,7 +104,7 @@ defmodule HomesiteWeb.DevFaqsLive.Index do
           <article
             :for={article <- @articles}
             id={"article-#{article.id}"}
-            class="prose prose-slate max-w-none rounded-lg border border-base-300 bg-base-100 p-6 shadow-sm dark:prose-invert"
+            class="border-base-300 bg-base-100 prose prose-slate max-w-none rounded-lg border p-6 shadow-sm dark:prose-invert"
           >
             <div class="not-prose mb-4 flex items-center gap-2">
               <span class="badge badge-primary badge-sm">
@@ -114,11 +114,11 @@ defmodule HomesiteWeb.DevFaqsLive.Index do
 
             {raw(article.body)}
           </article>
-
-        <!-- Empty State -->
+          
+    <!-- Empty State -->
           <div
             :if={@articles == []}
-            class="rounded-lg border-2 border-dashed border-base-300 p-12 text-center"
+            class="border-base-300 rounded-lg border-2 border-dashed p-12 text-center"
           >
             <.icon name="hero-document-text" class="mx-auto h-12 w-12 opacity-50" />
             <h3 class="mt-2 text-sm font-semibold">No articles found</h3>
@@ -127,8 +127,8 @@ defmodule HomesiteWeb.DevFaqsLive.Index do
             </p>
           </div>
         </div>
-
-      <!-- Sidebar with TOC -->
+        
+    <!-- Sidebar with TOC -->
         <aside class="hidden lg:block lg:w-64">
           <TableOfContents.table_of_contents
             headings={@headings}
