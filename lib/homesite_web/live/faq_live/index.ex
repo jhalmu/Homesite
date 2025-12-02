@@ -49,7 +49,7 @@ defmodule HomesiteWeb.FaqLive.Index do
             </div>
           <% else %>
             <%= for faq <- @faqs do %>
-              <div class="card bg-base-200 shadow-md" id={"faq-#{faq.id}"}>
+              <div class="card bg-base-200 shadow-md scroll-mt-24" id={"faq-#{faq.id}"}>
                 <div class="card-body">
                   <h2 class="card-title">
                     <.icon name="hero-question-mark-circle" class="h-6 w-6" />
