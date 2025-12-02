@@ -321,6 +321,80 @@ defmodule Homesite.ExternalFeeds do
   end
 
   @doc """
+  Searches feed items using PostgreSQL full-text search.
+  Returns results ordered by relevance (ts_rank) and published_at.
+
+  ## Options
+    * `:limit` - Number of results to return (default: 50)
+    * `:offset` - Number of results to skip (default: 0)
+    * `:unread_only` - Filter to unread items only (default: false)
+    * `:bookmarked_only` - Filter to bookmarked items only (default: false)
+    * `:feed_source_id` - Filter to specific feed source (default: all)
+    * `:folder_id` - Filter to specific folder (default: all)
+
+  ## Examples
+
+      iex> search_feed_items(scope, "elixir phoenix", limit: 10)
+      [%{feed_item: %FeedItem{}, interaction: %FeedItemInteraction{}}, ...]
+
+  """
+  def search_feed_items(%Scope{} = scope, query_string, opts \\ []) do
+    limit = Keyword.get(opts, :limit, 50)
+    offset = Keyword.get(opts, :offset, 0)
+    unread_only = Keyword.get(opts, :unread_only, false)
+    bookmarked_only = Keyword.get(opts, :bookmarked_only, false)
+    feed_source_id = Keyword.get(opts, :feed_source_id)
+    folder_id = Keyword.get(opts, :folder_id)
+
+    # Convert search query to tsquery format
+    # Replace spaces with '&' for AND queries, handle special chars
+    tsquery =
+      query_string
+      |> String.trim()
+      |> String.replace(~r/\s+/, " & ")
+
+    # Get user's enabled feed sources
+    feed_source_ids =
+      FeedSource
+      |> where(user_id: ^scope.user.id)
+      |> where(enabled: true)
+      |> maybe_filter_by_source(feed_source_id)
+      |> maybe_filter_by_folder(folder_id)
+      |> select([f], f.id)
+      |> Repo.all()
+
+    # Build query with full-text search
+    query =
+      FeedItem
+      |> where([i], i.feed_source_id in ^feed_source_ids)
+      |> where(
+        [i],
+        fragment("? @@ to_tsquery('english', ?)", i.search_vector, ^tsquery)
+      )
+      |> join(:left, [i], inter in FeedItemInteraction,
+        on: inter.feed_item_id == i.id and inter.user_id == ^scope.user.id
+      )
+      |> maybe_filter_unread(unread_only)
+      |> maybe_filter_bookmarked(bookmarked_only)
+      |> order_by(
+        [i, inter],
+        desc:
+          fragment(
+            "ts_rank(?, to_tsquery('english', ?))",
+            i.search_vector,
+            ^tsquery
+          ),
+        desc: i.published_at
+      )
+      |> limit(^limit)
+      |> offset(^offset)
+      |> preload(:feed_source)
+      |> select([i, inter], %{feed_item: i, interaction: inter})
+
+    Repo.all(query)
+  end
+
+  @doc """
   Returns feed items for a specific feed source.
   Enforces user ownership of the feed source.
   """

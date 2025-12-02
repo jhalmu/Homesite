@@ -671,4 +671,298 @@ defmodule Homesite.ExternalFeedsTest do
       assert hd(items).feed_item.title == "In Folder"
     end
   end
+
+  describe "search_feed_items/3" do
+    import Homesite.AccountsFixtures
+
+    setup do
+      # Create two users for scope isolation testing
+      user1 = user_fixture()
+      user2 = user_fixture()
+      scope1 = Accounts.Scope.for_user(user1)
+      scope2 = Accounts.Scope.for_user(user2)
+
+      # Create feed sources for user1
+      {:ok, feed_source1} =
+        ExternalFeeds.create_feed_source(scope1, %{
+          feed_type: "rss",
+          name: "Tech Blog",
+          url: "https://techblog.com/feed.xml"
+        })
+
+      {:ok, feed_source2} =
+        ExternalFeeds.create_feed_source(scope1, %{
+          feed_type: "rss",
+          name: "Elixir News",
+          url: "https://elixirnews.com/feed.xml"
+        })
+
+      # Create feed source for user2
+      {:ok, _feed_source3} =
+        ExternalFeeds.create_feed_source(scope2, %{
+          feed_type: "rss",
+          name: "Other User Feed",
+          url: "https://other.com/feed.xml"
+        })
+
+      %{
+        scope1: scope1,
+        scope2: scope2,
+        feed_source1: feed_source1,
+        feed_source2: feed_source2
+      }
+    end
+
+    test "finds items matching search query in title", %{scope1: scope1, feed_source1: feed_source} do
+      {:ok, _item1} =
+        ExternalFeeds.upsert_feed_item(feed_source.id, %{
+          external_id: "elixir-1",
+          title: "Getting Started with Elixir",
+          content: "Learn Phoenix framework",
+          url: "https://example.com/elixir",
+          published_at: DateTime.utc_now()
+        })
+
+      {:ok, _item2} =
+        ExternalFeeds.upsert_feed_item(feed_source.id, %{
+          external_id: "python-1",
+          title: "Python Basics",
+          content: "Some content",
+          url: "https://example.com/python",
+          published_at: DateTime.utc_now()
+        })
+
+      # Search for "elixir" should find the first item
+      results = ExternalFeeds.search_feed_items(scope1, "elixir")
+      assert length(results) == 1
+      assert hd(results).feed_item.title == "Getting Started with Elixir"
+    end
+
+    test "finds items matching search query in content", %{scope1: scope1, feed_source1: feed_source} do
+      {:ok, _item} =
+        ExternalFeeds.upsert_feed_item(feed_source.id, %{
+          external_id: "phoenix-1",
+          title: "Web Development",
+          content: "Phoenix is a web framework for Elixir",
+          url: "https://example.com/phoenix",
+          published_at: DateTime.utc_now()
+        })
+
+      # Search for "phoenix" should find item via content
+      results = ExternalFeeds.search_feed_items(scope1, "phoenix")
+      assert length(results) == 1
+      assert hd(results).feed_item.title == "Web Development"
+    end
+
+    test "finds items matching search query in author_name", %{
+      scope1: scope1,
+      feed_source1: feed_source
+    } do
+      {:ok, _item} =
+        ExternalFeeds.upsert_feed_item(feed_source.id, %{
+          external_id: "author-1",
+          title: "Blog Post",
+          content: "Some content",
+          author_name: "José Valim",
+          url: "https://example.com/jose",
+          published_at: DateTime.utc_now()
+        })
+
+      # Search for author name
+      results = ExternalFeeds.search_feed_items(scope1, "Valim")
+      assert length(results) == 1
+      assert hd(results).feed_item.author_name == "José Valim"
+    end
+
+    test "ranks results by relevance", %{scope1: scope1, feed_source1: feed_source} do
+      # Item with "elixir" in title (weight A) should rank higher
+      {:ok, _item1} =
+        ExternalFeeds.upsert_feed_item(feed_source.id, %{
+          external_id: "title-match",
+          title: "Elixir Programming Language",
+          content: "Some other content",
+          url: "https://example.com/1",
+          published_at: ~U[2025-01-01 10:00:00Z]
+        })
+
+      # Item with "elixir" only in content (weight B) should rank lower
+      {:ok, _item2} =
+        ExternalFeeds.upsert_feed_item(feed_source.id, %{
+          external_id: "content-match",
+          title: "Web Development",
+          content: "Using Elixir for backend",
+          url: "https://example.com/2",
+          published_at: ~U[2025-01-01 11:00:00Z]
+        })
+
+      results = ExternalFeeds.search_feed_items(scope1, "elixir")
+      assert length(results) == 2
+
+      # Higher ranked result should come first despite being older
+      assert hd(results).feed_item.title == "Elixir Programming Language"
+    end
+
+    test "supports AND queries with multiple words", %{scope1: scope1, feed_source1: feed_source} do
+      {:ok, _item1} =
+        ExternalFeeds.upsert_feed_item(feed_source.id, %{
+          external_id: "both",
+          title: "Elixir Phoenix Tutorial",
+          content: "Learn web development",
+          url: "https://example.com/1",
+          published_at: DateTime.utc_now()
+        })
+
+      {:ok, _item2} =
+        ExternalFeeds.upsert_feed_item(feed_source.id, %{
+          external_id: "elixir-only",
+          title: "Elixir Basics",
+          content: "Language fundamentals",
+          url: "https://example.com/2",
+          published_at: DateTime.utc_now()
+        })
+
+      # Search for "elixir phoenix" should only find item1
+      results = ExternalFeeds.search_feed_items(scope1, "elixir phoenix")
+      assert length(results) == 1
+      assert hd(results).feed_item.title == "Elixir Phoenix Tutorial"
+    end
+
+    test "respects scope isolation", %{
+      scope1: scope1,
+      scope2: scope2,
+      feed_source1: feed_source1
+    } do
+      {:ok, _item} =
+        ExternalFeeds.upsert_feed_item(feed_source1.id, %{
+          external_id: "user1-item",
+          title: "User 1 Elixir Post",
+          content: "Some content",
+          url: "https://example.com/user1",
+          published_at: DateTime.utc_now()
+        })
+
+      # User 1 can find their item
+      results1 = ExternalFeeds.search_feed_items(scope1, "elixir")
+      assert length(results1) == 1
+
+      # User 2 cannot find user 1's item
+      results2 = ExternalFeeds.search_feed_items(scope2, "elixir")
+      assert results2 == []
+    end
+
+    test "supports limit and offset options", %{scope1: scope1, feed_source1: feed_source} do
+      # Create 5 items
+      for i <- 1..5 do
+        {:ok, _} =
+          ExternalFeeds.upsert_feed_item(feed_source.id, %{
+            external_id: "item-#{i}",
+            title: "Elixir Post #{i}",
+            content: "Content",
+            url: "https://example.com/#{i}",
+            published_at: DateTime.add(DateTime.utc_now(), -i, :hour)
+          })
+      end
+
+      # Limit to 2 results
+      results = ExternalFeeds.search_feed_items(scope1, "elixir", limit: 2)
+      assert length(results) == 2
+
+      # Offset by 2
+      results_offset = ExternalFeeds.search_feed_items(scope1, "elixir", limit: 2, offset: 2)
+      assert length(results_offset) == 2
+      assert hd(results_offset).feed_item.id != hd(results).feed_item.id
+    end
+
+    test "filters by unread_only option", %{scope1: scope1, feed_source1: feed_source} do
+      {:ok, item1} =
+        ExternalFeeds.upsert_feed_item(feed_source.id, %{
+          external_id: "unread",
+          title: "Unread Elixir Post",
+          content: "Content",
+          url: "https://example.com/unread",
+          published_at: DateTime.utc_now()
+        })
+
+      {:ok, item2} =
+        ExternalFeeds.upsert_feed_item(feed_source.id, %{
+          external_id: "read",
+          title: "Read Elixir Post",
+          content: "Content",
+          url: "https://example.com/read",
+          published_at: DateTime.utc_now()
+        })
+
+      # Mark item2 as read
+      {:ok, _} = ExternalFeeds.mark_item_as_read(scope1, item2.id)
+
+      # Search with unread_only should only find item1
+      results = ExternalFeeds.search_feed_items(scope1, "elixir", unread_only: true)
+      assert length(results) == 1
+      assert hd(results).feed_item.id == item1.id
+    end
+
+    test "filters by bookmarked_only option", %{scope1: scope1, feed_source1: feed_source} do
+      {:ok, item1} =
+        ExternalFeeds.upsert_feed_item(feed_source.id, %{
+          external_id: "bookmarked",
+          title: "Bookmarked Elixir Post",
+          content: "Content",
+          url: "https://example.com/bookmarked",
+          published_at: DateTime.utc_now()
+        })
+
+      {:ok, _item2} =
+        ExternalFeeds.upsert_feed_item(feed_source.id, %{
+          external_id: "not-bookmarked",
+          title: "Regular Elixir Post",
+          content: "Content",
+          url: "https://example.com/regular",
+          published_at: DateTime.utc_now()
+        })
+
+      # Bookmark item1
+      {:ok, _} = ExternalFeeds.bookmark_item(scope1, item1.id)
+
+      # Search with bookmarked_only should only find item1
+      results = ExternalFeeds.search_feed_items(scope1, "elixir", bookmarked_only: true)
+      assert length(results) == 1
+      assert hd(results).feed_item.id == item1.id
+    end
+
+    test "filters by feed_source_id option", %{
+      scope1: scope1,
+      feed_source1: feed_source1,
+      feed_source2: feed_source2
+    } do
+      {:ok, _} =
+        ExternalFeeds.upsert_feed_item(feed_source1.id, %{
+          external_id: "source1",
+          title: "Elixir from Source 1",
+          content: "Content",
+          url: "https://example.com/source1",
+          published_at: DateTime.utc_now()
+        })
+
+      {:ok, _} =
+        ExternalFeeds.upsert_feed_item(feed_source2.id, %{
+          external_id: "source2",
+          title: "Elixir from Source 2",
+          content: "Content",
+          url: "https://example.com/source2",
+          published_at: DateTime.utc_now()
+        })
+
+      # Search filtered by feed_source1
+      results =
+        ExternalFeeds.search_feed_items(scope1, "elixir", feed_source_id: feed_source1.id)
+
+      assert length(results) == 1
+      assert hd(results).feed_item.title == "Elixir from Source 1"
+    end
+
+    test "returns empty list when no matches found", %{scope1: scope1} do
+      results = ExternalFeeds.search_feed_items(scope1, "nonexistent query xyz123")
+      assert results == []
+    end
+  end
 end
