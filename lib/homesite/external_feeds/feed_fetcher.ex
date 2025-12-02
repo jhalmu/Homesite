@@ -12,6 +12,7 @@ defmodule Homesite.ExternalFeeds.FeedFetcher do
     MastodonAdapter,
     RedditAdapter,
     RssAdapter,
+    TiktokAdapter,
     TwitterAdapter,
     YoutubeAdapter
   }
@@ -110,6 +111,10 @@ defmodule Homesite.ExternalFeeds.FeedFetcher do
 
   defp get_adapter("reddit") do
     RedditAdapter
+  end
+
+  defp get_adapter("tiktok") do
+    TiktokAdapter
   end
 
   defp get_adapter(type) do

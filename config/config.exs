@@ -41,6 +41,20 @@ config :homesite, Oban,
      ]}
   ]
 
+# Configures external feed adapters
+config :homesite, :external_feeds,
+  # Recommended Nitter instances for Twitter/X RSS feeds
+  # Note: Twitter adapter is DORMANT but can be activated with Nitter
+  # Nitter provides RSS feeds for Twitter without requiring API keys
+  # Usage: https://{instance}/username/rss
+  nitter_instances: [
+    "nitter.net",
+    "nitter.poast.org",
+    "nitter.privacydev.net",
+    "nitter.cz",
+    "nitter.unixfox.eu"
+  ]
+
 # Configures the endpoint
 config :homesite, HomesiteWeb.Endpoint,
   url: [host: "localhost"],

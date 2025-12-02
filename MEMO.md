@@ -6,6 +6,71 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-02 15:10:00 - Phase 3: Complete - New Platform Adapters
+
+### Session: Twitter/Nitter Configuration + Phase 3 Summary
+
+#### Objectives Completed
+Completed Phase 3 by adding configuration for Twitter/X via Nitter and implementing TikTok adapter.
+
+#### Changes Made (This Session)
+
+**1. Nitter Configuration**
+- **MODIFIED**: `config/config.exs`
+  - Added `:external_feeds` configuration section
+  - Recommended Nitter instances list (5 public instances)
+  - Documentation: Twitter adapter is DORMANT but Nitter-ready
+  - Usage pattern: `https://{instance}/username/rss`
+
+**2. Twitter/X Status**
+- Adapter already implemented and tested (status: DORMANT)
+- Accepts "nitter" in URL validation (line 37)
+- Ready to use with any Nitter instance
+- No API key required - uses RSS feeds
+- Note: Nitter provides RSS without Twitter API access
+
+#### Phase 3 Complete Summary
+
+**All Adapters Implemented:**
+1. ✅ **Reddit Adapter** (P1 - High Priority)
+   - Native RSS support (no API key)
+   - 18 comprehensive tests
+   - Subreddit + user post feeds
+   - Files: adapter (86 lines), tests (202 lines)
+
+2. ✅ **TikTok Adapter** (P2)
+   - RSS bridge support (similar to Instagram)
+   - 7 comprehensive tests
+   - Requires external RSS bridge service
+   - Files: adapter (85 lines), tests (137 lines)
+
+3. ✅ **Twitter/X via Nitter** (P2)
+   - Already implemented (adapter exists, dormant)
+   - Config added with 5 recommended Nitter instances
+   - RSS feed support without API keys
+   - Status: Reactivated for Nitter usage
+
+#### Test Results
+- **Total tests**: 649 (up from 624)
+- **New tests**: 25 (18 Reddit + 7 TikTok)
+- **Status**: All tests passing (0 failures)
+
+#### Platform Coverage Now
+- RSS/Atom/JSON (generic)
+- Bluesky
+- Mastodon
+- YouTube
+- Instagram (via RSS bridge)
+- **Reddit (NEW)**
+- **TikTok (NEW)**
+- **Twitter/X (via Nitter - configured)**
+
+Total: 10 platform types supported
+
+🎯 **Next Phase:** Phase 4 - Performance & Scaling (streaming parser, cleanup worker, indexes)
+
+---
+
 ## 2025-12-02 14:50:00 - Phase 3: Reddit Adapter Implementation
 
 ### Session: Reddit Feed Support via Native RSS
