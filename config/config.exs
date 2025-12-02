@@ -37,7 +37,9 @@ config :homesite, Oban,
     {Oban.Plugins.Cron,
      crontab: [
        # Refresh all feeds every 30 minutes
-       {"*/30 * * * *", Homesite.Workers.FeedRefreshWorker, args: %{refresh_all: true}}
+       {"*/30 * * * *", Homesite.Workers.FeedRefreshWorker, args: %{refresh_all: true}},
+       # Clean up old feed items daily at 2 AM
+       {"0 2 * * *", Homesite.Workers.FeedCleanupWorker}
      ]}
   ]
 
