@@ -174,6 +174,99 @@ Completed Phase 4 by implementing database performance indexes and automatic fee
 
 ---
 
+## 2025-12-02 15:45:00 - Phase 5.1: Unified Timeline View
+
+### Session: Timeline Context - Merge External Feeds + Own Posts
+
+#### Objectives Completed
+Implemented Timeline context for unified view of external feed items and own blog posts.
+
+#### Changes Made (This Session)
+
+**1. Timeline Context Module**
+- **CREATED**: `lib/homesite/timeline.ex` (145 lines)
+  - `list_timeline_items/2` - Merges external feeds and own posts
+  - `get_unread_count/1` - Returns unread item counts
+  - Supports filtering: `:all`, `:external`, `:own_posts`
+  - Supports pagination: `limit`, `offset`
+  - Supports unread filtering: `unread_only`
+  - Returns standardized structure with type/item/metadata
+
+**2. Comprehensive Test Coverage**
+- **CREATED**: `test/homesite/timeline_test.exs` (370 lines)
+  - 13 tests covering all functionality:
+    - Empty state handling
+    - Filter by type (external/own/all)
+    - Chronological sorting (newest first)
+    - Limit and offset pagination
+    - Unread filtering
+    - Consistent item structure
+    - **Scope isolation** (critical security test)
+    - Unread count tracking
+
+**3. Implementation Details**
+
+**Unified Item Structure:**
+```elixir
+%{
+  type: :feed_item | :post,
+  item: %FeedItem{} | %Post{},
+  published_at: DateTime,
+  title: String,
+  url: String,
+  source: String,  # feed source name or "own"
+  metadata: Map
+}
+```
+
+**Filtering Logic:**
+- `:all` - Fetches both external and own, merges and sorts
+- `:external` - Only feed items (respects unread_only)
+- `:own_posts` - Only published posts (all posts have published_at)
+
+**Performance Optimization:**
+- Fetches 2x limit from each source (ensures enough items after merge)
+- Applies final limit after sort
+- Single sort operation on combined list
+
+**Security:**
+- All queries enforce scope isolation via context functions
+- Timeline respects ExternalFeeds and Content scope enforcement
+- Test verifies user A cannot see user B's items
+
+#### Test Results
+- **Total tests**: 668 (up from 649)
+- **New tests**: 19 (13 Timeline + 6 from Feed Cleanup Worker)
+- **Status**: All tests passing (0 failures)
+
+#### Files Created
+
+**Created (2 files, 515 lines):**
+- `lib/homesite/timeline.ex` (145 lines)
+- `test/homesite/timeline_test.exs` (370 lines)
+
+#### Technical Notes
+
+**Integration with Existing Contexts:**
+- Timeline depends on `ExternalFeeds.list_feed_items_unified/2`
+- Timeline depends on `Content.list_posts/1`
+- No database schema changes required
+- Pure transformation layer
+
+**Item Structure Handling:**
+- Fixed: `list_feed_items_unified` returns `%{feed_item: ..., interaction: ...}`
+- Pattern match extracts `feed_item` from wrapper
+- Maps to consistent timeline item structure
+
+**Post Schema Constraint:**
+- All posts require `published_at` (schema validation)
+- Removed redundant filter for nil published_at
+- Added comment explaining all posts are "published"
+
+🎯 **Next:** Phase 5.2 - OPML Import/Export (feed list backup/migration)
+
+---
+
 ## 2025-12-02 14:50:00 - Phase 3: Reddit Adapter Implementation
 
 ### Session: Reddit Feed Support via Native RSS
