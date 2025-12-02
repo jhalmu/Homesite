@@ -4,13 +4,14 @@ defmodule HomesiteWeb.PostLive.Show do
   alias Homesite.Content
   alias Homesite.Social
   alias HomesiteWeb.SEO.JsonLD
+  alias HomesiteWeb.Components.TableOfContents
   import HomesiteWeb.SocialComponents
 
   @impl true
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <main>
+      <main class="mx-auto max-w-7xl px-4">
         <article>
           <.header>
             {@post.title}
@@ -48,8 +49,24 @@ defmodule HomesiteWeb.PostLive.Show do
             </div>
           </div>
 
-          <div class="my-[var(--spacing-lg)] prose prose-slate max-w-none prose-pre:bg-gray-900 prose-pre:text-gray-100 dark:prose-invert">
-            {Phoenix.HTML.raw(render_markdown(@post.body))}
+        <!-- Main Content with Sidebar -->
+          <div class="my-[var(--spacing-lg)] flex gap-8">
+            <!-- Article Content -->
+            <div class="flex-1 prose prose-slate max-w-none prose-pre:bg-gray-900 prose-pre:text-gray-100 dark:prose-invert">
+              {Phoenix.HTML.raw(@rendered_html)}
+            </div>
+
+          <!-- Sidebar with TOC (only for longer posts) -->
+            <%= if @post.read_time_minutes >= 3 && @headings != [] do %>
+              <aside class="hidden lg:block lg:w-64">
+                <TableOfContents.table_of_contents
+                  headings={@headings}
+                  title="On This Page"
+                  sticky={true}
+                  show_mobile={false}
+                />
+              </aside>
+            <% end %>
           </div>
 
           <%= if @post.read_time_minutes >= 2 do %>
@@ -69,7 +86,8 @@ defmodule HomesiteWeb.PostLive.Show do
         strikethrough: true,
         table: true,
         tasklist: true,
-        autolink: true
+        autolink: true,
+        header_ids: ""
       ],
       render: [
         unsafe_: true
@@ -102,13 +120,19 @@ defmodule HomesiteWeb.PostLive.Show do
     post_url = url(~p"/posts/#{id}")
     json_ld = JsonLD.article(post, post.user, post_url) |> Jason.encode!()
 
+    # Render markdown and extract headings for TOC
+    rendered_html = render_markdown(post.body)
+    headings = TableOfContents.extract_headings(rendered_html)
+
     {:ok,
      socket
      |> assign(:page_title, post.title)
      |> assign(:post, post)
      |> assign(:can_edit, can_edit)
      |> assign(:current_url, "/posts/#{id}")
-     |> assign(:json_ld, json_ld)}
+     |> assign(:json_ld, json_ld)
+     |> assign(:rendered_html, rendered_html)
+     |> assign(:headings, headings)}
   end
 
   @impl true

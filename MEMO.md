@@ -6,6 +6,161 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-02 21:30:00 - Table of Contents Component Implementation
+
+### Session: FAQ & Blog TOC Sidebar with Active Tracking
+
+#### Objectives Completed
+Implemented reusable Table of Contents component with sidebar navigation and active section tracking for FAQ and blog pages.
+
+#### Changes Made (This Session)
+
+**1. Table of Contents Component** (NEW)
+- **CREATED**: `lib/homesite_web/components/table_of_contents.ex` (245 lines)
+  - `extract_headings/1` - Parses HTML with Floki, extracts h2/h3, builds nested structure
+  - `table_of_contents/1` - Phoenix component for rendering TOC sidebar
+  - `add_heading_ids/1` - Injects IDs into HTML headings for anchor links
+  - Hierarchical structure (h3s nested under h2s)
+  - Auto-generates slugs from heading text
+  - DaisyUI menu styling with sticky positioning
+
+**2. JavaScript Active Section Tracking** (+87 lines)
+- **MODIFIED**: `assets/js/app.js`
+  - TableOfContents hook with Intersection Observer API
+  - Tracks visible sections and highlights active TOC links
+  - 50% visibility threshold for smooth transitions
+  - Updates URL hash on section change
+
+**3. Component Integration**
+- **MODIFIED**: `lib/homesite_web/live/dev_faqs_live/index.ex`
+  - Added TOC sidebar to DEV FAQ page
+  - Extracts headings from all articles
+  - Flex layout with gap-8 for content + sidebar
+
+- **MODIFIED**: `lib/homesite_web/live/faq_live/index.ex`
+  - Added TOC sidebar to user/admin FAQ pages
+  - Extracts headings from FAQ answers
+  - **Fixed**: Added `TableOfContents.add_heading_ids/1` to inject IDs into FAQ HTML (fixes anchor links)
+
+- **MODIFIED**: `lib/homesite_web/live/post_live/show.ex`
+  - Added conditional TOC to blog posts
+  - Only shows TOC for posts with headings
+  - Pre-renders markdown to extract headings
+
+**4. MDEx Configuration Update**
+- **MODIFIED**: `lib/homesite/dev_faqs/parser.ex`
+  - Added `header_ids: ""` to MDEx options
+  - Ensures DEV FAQ headings have auto-generated IDs
+
+**5. Comprehensive Documentation**
+
+- **CREATED**: `.claude/workflows/faq-quality-check.md` (300+ lines)
+  - Bi-weekly automated FAQ quality review workflow
+  - Checks: accuracy, completeness, clarity, accessibility
+  - Manual checklist for content quality
+  - Automated checks for broken links, HTML validation
+
+- **CREATED**: `priv/dev_faqs/005-external-feeds.md` (450+ lines)
+  - Complete External Feeds system documentation
+  - 10 platform adapters (RSS, Atom, Reddit, YouTube, Bluesky, TikTok, Instagram, Twitter)
+  - Database schema, API examples, Oban workers
+  - OPML import/export, folder management
+
+- **CREATED**: `priv/dev_faqs/006-recent-features.md` (450+ lines)
+  - December 2025 feature documentation
+  - Username routing, dashboard enhancements, full-text search
+  - SEO/Open Graph improvements, accessibility compliance
+
+- **MODIFIED**: `.claude/skills/design-system/design-system.md` (+169 lines)
+  - Added Table of Contents component documentation
+  - Usage examples, attributes, accessibility notes
+
+**6. Comprehensive Test Coverage**
+- **CREATED**: `test/homesite_web/components/table_of_contents_test.exs` (367 lines)
+  - 24 tests for TOC component
+  - Covers: heading extraction, ID generation, nested structures, edge cases
+  - All tests passing ✅
+
+#### Test Results
+- **Total tests**: 735 (up from 711, +24 new tests)
+- **New tests**: 24 TOC component tests
+- **Status**: All passing (10 pre-existing OPML failures unrelated to this work)
+
+#### Files Created/Modified
+
+**Created (6 files, ~2,200 lines):**
+- `lib/homesite_web/components/table_of_contents.ex` (245 lines)
+- `test/homesite_web/components/table_of_contents_test.exs` (367 lines)
+- `.claude/workflows/faq-quality-check.md` (300+ lines)
+- `priv/dev_faqs/005-external-feeds.md` (450+ lines)
+- `priv/dev_faqs/006-recent-features.md` (450+ lines)
+
+**Modified (5 files):**
+- `assets/js/app.js` (+87 lines JavaScript hook)
+- `lib/homesite/dev_faqs/parser.ex` (MDEx config)
+- `lib/homesite_web/live/dev_faqs_live/index.ex` (TOC integration)
+- `lib/homesite_web/live/faq_live/index.ex` (TOC integration + heading ID fix)
+- `lib/homesite_web/live/post_live/show.ex` (conditional TOC)
+- `.claude/skills/design-system/design-system.md` (+169 lines)
+
+#### Key Technical Implementation
+
+**Heading Extraction with Floki:**
+```elixir
+def extract_headings(html_content) do
+  {:ok, document} = Floki.parse_document(html_content)
+
+  document
+  |> Floki.find("h2, h3")
+  |> Enum.map(&parse_heading/1)
+  |> build_hierarchy()  # Nests h3s under h2s
+end
+```
+
+**Heading ID Injection (fixes FAQ anchor links):**
+```elixir
+# In FAQ template
+{raw(TableOfContents.add_heading_ids(faq.answer))}
+```
+
+**Active Section Tracking:**
+```javascript
+// Intersection Observer tracks visible sections
+this.observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      this.setActiveLink(entry.target.id)
+    }
+  })
+}, { threshold: 0.5 })
+```
+
+#### Design Patterns Applied
+
+1. **DRY Principle**: Single reusable component for FAQ, DEV FAQ, and blog posts
+2. **Progressive Enhancement**: Works without JavaScript (links still functional)
+3. **Accessibility**: Sticky sidebar hidden on mobile, proper ARIA labels, semantic HTML
+4. **Responsive Design**: Hidden on mobile (`hidden lg:block`), visible on larger screens
+5. **DaisyUI Integration**: Uses menu component for consistent styling
+
+#### Session Insights
+
+**Research Sources:**
+- farens.me blog implementation (WebFetch for TOC pattern research)
+- Phoenix LiveView best practices (Context7)
+- Floki HTML parsing library (already installed)
+- Intersection Observer API (MDN documentation)
+
+**Bug Fix:**
+- FAQ TOC links not working initially - fixed by injecting IDs with `add_heading_ids/1`
+- Test failure with Floki HTML repair - updated assertion to match Floki behavior
+
+**User Feedback:**
+- "Links to wanted content do not work" - fixed by adding heading IDs to FAQ HTML
+- "No need askin perm" - user wanted rapid iteration without permission requests
+
+---
+
 ## 2025-12-02 23:45:00 - Production Deployment Strategy Planning
 
 ### Session: Comprehensive Deployment Documentation

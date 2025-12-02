@@ -155,7 +155,94 @@ const Hooks = {
       })
     }
   },
-  WebShareApi
+  WebShareApi,
+  TableOfContents: {
+    mounted() {
+      this.observer = null
+      this.links = this.el.querySelectorAll('.toc-link')
+      this.sections = []
+
+      // Find all sections that TOC links point to
+      this.links.forEach(link => {
+        const targetId = link.dataset.target
+        const section = document.getElementById(targetId)
+        if (section) {
+          this.sections.push({id: targetId, element: section, link: link})
+        }
+      })
+
+      // Set up Intersection Observer for active section tracking
+      this.setupObserver()
+
+      // Handle smooth scroll on TOC link click
+      this.links.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault()
+          const targetId = link.dataset.target
+          const target = document.getElementById(targetId)
+
+          if (target) {
+            target.scrollIntoView({behavior: 'smooth', block: 'start'})
+
+            // Update URL hash without jumping
+            if (history.pushState) {
+              history.pushState(null, null, `#${targetId}`)
+            } else {
+              location.hash = `#${targetId}`
+            }
+          }
+        })
+      })
+
+      // Highlight current section on mount (if hash in URL)
+      const hash = window.location.hash.slice(1)
+      if (hash) {
+        this.setActiveLink(hash)
+      }
+    },
+
+    setupObserver() {
+      const options = {
+        root: null,
+        rootMargin: '-20% 0px -35% 0px',
+        threshold: [0, 0.25, 0.5, 0.75, 1]
+      }
+
+      this.observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            this.setActiveLink(entry.target.id)
+          }
+        })
+      }, options)
+
+      // Observe all sections
+      this.sections.forEach(section => {
+        this.observer.observe(section.element)
+      })
+    },
+
+    setActiveLink(targetId) {
+      // Remove active class from all links
+      this.links.forEach(link => {
+        link.classList.remove('bg-primary', 'text-primary-content', 'opacity-100')
+        link.classList.add('opacity-70')
+      })
+
+      // Add active class to matching link
+      const activeLink = Array.from(this.links).find(link => link.dataset.target === targetId)
+      if (activeLink) {
+        activeLink.classList.remove('opacity-70')
+        activeLink.classList.add('bg-primary', 'text-primary-content', 'opacity-100')
+      }
+    },
+
+    destroyed() {
+      if (this.observer) {
+        this.observer.disconnect()
+      }
+    }
+  }
 }
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")

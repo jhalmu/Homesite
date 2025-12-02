@@ -28,7 +28,15 @@ defmodule Homesite.DevFaqs.Parser do
   defp parse_yaml_and_markdown(frontmatter, body) do
     case YamlElixir.read_from_string(frontmatter) do
       {:ok, attrs} ->
-        html_body = MDEx.to_html!(body, extension: [table: true, strikethrough: true])
+        html_body =
+          MDEx.to_html!(body,
+            extension: [
+              table: true,
+              strikethrough: true,
+              header_ids: ""
+            ]
+          )
+
         {Map.new(attrs, fn {k, v} -> {String.to_atom(k), v} end), html_body}
 
       {:error, reason} ->

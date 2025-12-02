@@ -377,6 +377,175 @@ All interactive elements have visible focus indicators:
 
 ---
 
+## Table of Contents Component
+
+### Overview
+
+Reusable sidebar component for automatic heading extraction and navigation.
+
+**Features:**
+- Extracts h2 and h3 headings from HTML content
+- Builds nested structure (h3s as children of h2s)
+- Sticky sidebar with active section tracking
+- Smooth scroll navigation
+- DaisyUI menu styling
+- Responsive (hidden on mobile, visible lg+)
+
+### Usage
+
+```elixir
+# In your LiveView mount
+def mount(_params, _session, socket) do
+  # Render markdown
+  html_content = render_markdown(post.body)
+
+  # Extract headings for TOC
+  headings = TableOfContents.extract_headings(html_content)
+
+  {:ok, assign(socket, headings: headings, html_content: html_content)}
+end
+```
+
+```heex
+<!-- In your template -->
+<div class="flex gap-8">
+  <!-- Main content -->
+  <div class="flex-1 prose">
+    {raw(@html_content)}
+  </div>
+
+  <!-- Sidebar with TOC -->
+  <aside class="hidden lg:block lg:w-64">
+    <TableOfContents.table_of_contents
+      headings={@headings}
+      title="On This Page"
+      sticky={true}
+      show_mobile={false}
+    />
+  </aside>
+</div>
+```
+
+### Component Attributes
+
+```elixir
+attr :headings, :list, required: true    # From extract_headings/1
+attr :title, :string, default: "Table of Contents"
+attr :class, :string, default: ""
+attr :sticky, :boolean, default: true    # Sticky sidebar
+attr :show_mobile, :boolean, default: false  # Show on mobile
+```
+
+### Helper Functions
+
+```elixir
+# Extract headings from HTML
+headings = TableOfContents.extract_headings(html_content)
+# Returns: [%{level: 2, text: "Introduction", id: "introduction", children: [...]}]
+
+# Add IDs to headings if markdown processor doesn't
+html_with_ids = TableOfContents.add_heading_ids(html_content)
+```
+
+### MDEx Configuration
+
+Ensure MDEx adds header IDs automatically:
+
+```elixir
+MDEx.to_html!(markdown,
+  extension: [
+    header_ids: "",  # Auto-generate IDs from heading text
+    # ... other extensions
+  ]
+)
+```
+
+### JavaScript Hook
+
+Active section tracking uses Intersection Observer:
+
+```javascript
+// Automatic tracking - included in app.js
+TableOfContents: {
+  mounted() {
+    // Tracks visible sections
+    // Highlights active TOC link
+    // Smooth scroll on click
+  }
+}
+```
+
+### Styling
+
+TOC uses DaisyUI menu component:
+
+```css
+/* Active link styles */
+.toc-link {
+  @apply rounded-md px-3 py-1.5 text-sm opacity-70;
+  @apply hover:opacity-100 hover:bg-base-300;
+}
+
+.toc-link.active {
+  @apply bg-primary text-primary-content opacity-100;
+}
+```
+
+### Display Conditions
+
+Only show TOC when:
+- Content has h2 or h3 headings
+- Post is >3 minutes read time (optional)
+- Viewport is lg+ (1024px+)
+
+```heex
+<%= if @post.read_time_minutes >= 3 && @headings != [] do %>
+  <TableOfContents.table_of_contents headings={@headings} />
+<% end %>
+```
+
+### Examples
+
+**Blog Post with TOC:**
+```heex
+<article>
+  <div class="flex gap-8">
+    <div class="flex-1 prose">
+      {raw(@rendered_html)}
+    </div>
+
+    <%= if length(@headings) > 0 do %>
+      <aside class="hidden lg:block lg:w-64">
+        <TableOfContents.table_of_contents
+          headings={@headings}
+          title="On This Page"
+        />
+      </aside>
+    <% end %>
+  </div>
+</article>
+```
+
+**FAQ Page with Combined Headings:**
+```elixir
+# Extract headings from multiple articles
+headings =
+  articles
+  |> Enum.flat_map(fn article ->
+    TableOfContents.extract_headings(article.body)
+  end)
+```
+
+### Accessibility
+
+- Proper semantic HTML (`<nav>`, `<ul>`, `<li>`)
+- ARIA label on nav element
+- Keyboard navigable links
+- Focus indicators
+- Screen reader friendly
+
+---
+
 ## LiveView Patterns
 
 ### Loading States

@@ -5,12 +5,13 @@ defmodule HomesiteWeb.FaqLive.Index do
 
   alias Homesite.Faqs
   alias HomesiteWeb.SEO.JsonLD
+  alias HomesiteWeb.Components.TableOfContents
 
   @impl true
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <main>
+      <main class="mx-auto max-w-7xl px-4">
         <.header>
           {if @category == "admin", do: gettext("Admin FAQs"), else: gettext("User FAQs")}
           <:subtitle>
@@ -33,7 +34,8 @@ defmodule HomesiteWeb.FaqLive.Index do
           </:actions>
         </.header>
 
-        <div class="mt-8 space-y-4">
+        <div class="mt-8 flex gap-8">
+          <div class="flex-1 space-y-4">
           <%= if Enum.empty?(@faqs) do %>
             <div class="card bg-base-200">
               <div class="card-body text-center">
@@ -54,7 +56,7 @@ defmodule HomesiteWeb.FaqLive.Index do
                     {faq.question}
                   </h2>
                   <div class="prose prose-sm max-w-none">
-                    {raw(faq.answer)}
+                    {raw(TableOfContents.add_heading_ids(faq.answer))}
                   </div>
                   <%= if @is_admin do %>
                     <div class="card-actions mt-4 justify-end">
@@ -76,6 +78,19 @@ defmodule HomesiteWeb.FaqLive.Index do
                 </div>
               </div>
             <% end %>
+          <% end %>
+          </div>
+
+          <!-- Sidebar with TOC -->
+          <%= if !Enum.empty?(@faqs) && @headings != [] do %>
+            <aside class="hidden lg:block lg:w-64">
+              <TableOfContents.table_of_contents
+                headings={@headings}
+                title={gettext("On This Page")}
+                sticky={true}
+                show_mobile={false}
+              />
+            </aside>
           <% end %>
         </div>
       </main>
@@ -99,6 +114,9 @@ defmodule HomesiteWeb.FaqLive.Index do
     category = Map.get(params, "category", "user")
     faqs = load_faqs(socket, category)
 
+    # Extract headings from all FAQs for TOC
+    headings = extract_all_headings(faqs)
+
     # Generate JSON-LD for user FAQs (public)
     json_ld =
       if category == "user" && !Enum.empty?(faqs) do
@@ -111,6 +129,7 @@ defmodule HomesiteWeb.FaqLive.Index do
      assign(socket,
        category: category,
        faqs: faqs,
+       headings: headings,
        page_title: page_title(category),
        json_ld: json_ld
      )}
@@ -152,4 +171,12 @@ defmodule HomesiteWeb.FaqLive.Index do
 
   defp page_title("admin"), do: gettext("Admin FAQs")
   defp page_title(_), do: gettext("FAQs")
+
+  # Extract headings from all FAQs' answers
+  defp extract_all_headings(faqs) do
+    faqs
+    |> Enum.flat_map(fn faq ->
+      TableOfContents.extract_headings(faq.answer)
+    end)
+  end
 end
