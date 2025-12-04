@@ -6,6 +6,52 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-04 11:35:00 - Admin LiveView Tests
+
+### Session: Test Coverage Improvements
+
+#### Objectives Completed
+Added comprehensive tests for all 4 Admin LiveView modules (28 new tests).
+
+#### Changes Made (This Session)
+
+**1. New Test Files Created**
+- `test/homesite_web/live/admin_live/dashboard_test.exs` (7 tests)
+  - Non-admin redirect, admin rendering, search stats cards
+  - Popular searches table, no-result searches table, activity log
+  - Authentication requirement
+
+- `test/homesite_web/live/admin_live/analytics_index_test.exs` (7 tests)
+  - Non-admin redirect, analytics rendering
+  - User metrics, content metrics, top authors, popular tags
+  - Authentication requirement
+
+- `test/homesite_web/live/admin_live/invitations_index_test.exs` (7 tests)
+  - Non-admin redirect, invitation list rendering
+  - Form open/cancel, column display
+  - Authentication requirement
+
+- `test/homesite_web/live/admin_live/users_index_test.exs` (9 tests)
+  - Non-admin redirect, insufficient flower level redirect
+  - User list, statistics, table columns
+  - User search, search clear
+  - Authentication requirement
+
+**2. Fixture Fix**
+- `test/support/fixtures/accounts_fixtures.ex`
+  - Fixed `admin_fixture/1` to allow overriding `admin_flowers` attribute
+  - Previously always set to 5, now respects passed attribute
+
+#### Test Results
+- **Total tests**: 763 (up from ~735)
+- **New tests**: 28 Admin LiveView tests
+- **Status**: All passing, 0 failures
+
+#### Commit
+`9ae0916` - test: Add Admin LiveView tests (28 tests)
+
+---
+
 ## 2025-12-04 10:50:00 - Critical Fixes and Accessibility Improvements
 
 ### Session: Health Assessment Follow-up Fixes
