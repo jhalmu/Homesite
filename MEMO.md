@@ -6,6 +6,164 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-04 19:30:00 - Feature Planning: Messaging System & Image Gallery
+
+### Session: Comprehensive Documentation for Two Major Features
+
+#### Objectives Completed
+Created comprehensive implementation plans for Messaging System and Image Gallery features, including research, architecture design, and GitHub issue tracking.
+
+#### Changes Made (This Session)
+
+**1. Messaging System Documentation**
+- **CREATED**: `MESSAGING_SYSTEM.md` (500+ lines)
+  - Complete architecture with 4 database tables
+  - Context API documentation (`Homesite.Messaging`)
+  - PubSub patterns for real-time updates
+  - Safety features (rate limiting, spam filtering, blocking)
+  - Moderation system for flagged messages
+  - LiveView UI components (conversation list, thread, admin queue)
+  - Security patterns with scope isolation
+  - Testing strategy (unit, security, integration)
+  - Common patterns and troubleshooting guide
+
+**Purpose**: Content collaboration messaging (1-on-1 conversations)
+**Estimated Effort**: 40-50 hours (1 week)
+
+**Key Features**:
+- Real-time messaging via LiveView + PubSub
+- Rate limiting: 50 messages/minute
+- Spam detection with keyword filtering
+- User blocking (bidirectional)
+- Admin moderation queue
+- Permanent message storage (legal/audit compliance)
+- Scope isolation for security
+
+**2. Image Gallery & Media Library Documentation**
+- **CREATED**: `IMAGE_GALLERY.md` (700+ lines)
+  - Research-based design from 2025 best practices
+  - Complete architecture with 5 database tables
+  - Context API documentation (`Homesite.Media`)
+  - Portfolio system with nested collections
+  - Media library for blog post assets
+  - Advanced watermarking system (text, image, EXIF)
+  - Video support (MP4, WebM, MOV)
+  - Responsive image variants (4 sizes)
+  - Privacy controls (public, unlisted, private)
+  - Image processing pipeline (Mogrify, FFmpeg)
+  - Storage backends (local, S3, Cloudinary)
+
+**Purpose**: Professional portfolios + media library for blog posts
+**Estimated Effort**: 200-240 hours (5-6 weeks)
+
+**Research Sources**:
+- Gallery Layout Best Practices (2025)
+- Photography Portfolio platforms
+- Watermarking & EXIF metadata guides
+- MediaCMS & DAM systems
+
+**Key Features**:
+- Portfolio galleries with public URLs (`/users/@username/portfolio/:slug`)
+- Masonry layout with lightbox viewer
+- Watermarking system (auto-apply, templates, batch processing)
+- EXIF metadata extraction/embedding
+- Video thumbnail generation
+- Tag-based search and organization
+- Media picker for blog posts
+- CDN integration for performance
+
+**3. GitHub Issue Management**
+- **CREATED**: Issue #47 "💬 Messaging System - Content Collaboration Feature"
+  - Label: enhancement, priority:medium, effort:large
+  - Complete checklist for Phase 1 implementation
+  - Success criteria and testing requirements
+
+- **CREATED**: Issue #48 "🖼️ Image Gallery & Media Library - Portfolio & Asset Management"
+  - Label: enhancement, priority:low
+  - 5-phase implementation plan
+  - Dependencies and technical details
+  - Research-backed feature set
+
+**4. Documentation Polish**
+- Added table of contents to both documents
+- Added emoji for visual organization
+- Added status badges (📋 Planning Complete)
+- Added effort estimates
+- Improved section headers with icons
+
+#### Technical Highlights
+
+**Messaging System Architecture**:
+- 4 tables: conversations, conversation_participants, messages, blocked_users
+- Dual PubSub topics: user-level + conversation-level
+- Soft delete pattern (hidden_at preserves audit trail)
+- Moderation fields in messages table
+- Scope isolation via pattern matching: `true = condition`
+
+**Image Gallery Architecture**:
+- 5 tables: galleries, collections, media_items, media_usage, watermark_templates
+- Nested hierarchy: User → Gallery → Collections → Media Items
+- Storage adapter interface for S3/local/Cloudinary
+- Image processing pipeline with 4 variants
+- Video processing via FFmpeg
+
+**Common Patterns**:
+- Both follow existing Homesite Scope pattern
+- Both use PubSub for real-time updates
+- Both include comprehensive security tests
+- Both support privacy levels
+- Both integrate with existing authentication
+
+#### Decision Points
+
+**Messaging System**:
+- Start with 1-on-1 only (Phase 1 MVP)
+- Group messaging deferred to Phase 2
+- No deletion allowed (legal requirement)
+- Soft delete hides from UI only
+
+**Image Gallery**:
+- Portfolio mode vs Media library mode
+- 5-phase rollout (core → watermarking → video → advanced)
+- S3 storage for production
+- Oban for background processing (watermarks, videos)
+
+#### Files Created (2 files, 1200+ lines)
+
+**Created**:
+- `MESSAGING_SYSTEM.md` (500+ lines)
+- `IMAGE_GALLERY.md` (700+ lines)
+
+**Modified**:
+- Both files polished with TOC and emoji
+
+#### GitHub Issues
+
+- **#47**: Messaging System (40-50 hours)
+- **#48**: Image Gallery (200-240 hours)
+
+#### Impact Assessment
+
+**Messaging System**:
+- **Value**: High if users collaborate on content; Low if independent work
+- **Alternative**: Post comments or @mentions might provide 80% value with 20% effort
+- **Recommendation**: Validate demand with Phase 1 MVP first
+
+**Image Gallery**:
+- **Value**: High for photographers/artists; Medium for bloggers needing media library
+- **Complexity**: High (5 dependencies, image/video processing, storage integration)
+- **Recommendation**: Implement in phases, start with core gallery + basic upload
+
+#### Next Steps
+
+**Option A**: Implement Messaging System (faster, smaller scope)
+**Option B**: Implement Image Gallery Phase 1 (larger, more complex)
+**Option C**: Defer both, focus on existing features
+
+**Recommendation**: Start with Messaging System to validate collaboration features before investing in larger Image Gallery project.
+
+---
+
 ## 2025-12-04 17:00:00 - Internationalization & UX Refinements
 
 ### Session: i18n Integration and User Profile Redesign
