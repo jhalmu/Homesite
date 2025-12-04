@@ -252,7 +252,9 @@ defmodule Homesite.ExternalFeeds.OPML do
        ) do
     xml_url = Map.get(outline, :xml_url)
     # Handle empty strings from SweetXml (which returns "" for missing attributes)
-    title = non_empty(Map.get(outline, :title)) || non_empty(Map.get(outline, :text)) || "Untitled Feed"
+    title =
+      non_empty(Map.get(outline, :title)) || non_empty(Map.get(outline, :text)) || "Untitled Feed"
+
     category = Map.get(outline, :category)
 
     cond do

@@ -68,11 +68,14 @@ defmodule Homesite.AccountsFixtures do
   end
 
   def admin_fixture(attrs \\ %{}) do
+    attrs = Enum.into(attrs, %{})
     user = user_fixture(attrs)
 
-    # Give admin role
+    # Give admin role - allow admin_flowers to be overridden
+    admin_flowers = Map.get(attrs, :admin_flowers, 5)
+
     user
-    |> Ecto.Changeset.change(%{role: "admin", admin_flowers: 5})
+    |> Ecto.Changeset.change(%{role: "admin", admin_flowers: admin_flowers})
     |> Homesite.Repo.update!()
   end
 

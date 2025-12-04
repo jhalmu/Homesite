@@ -404,7 +404,9 @@ defmodule Homesite.ExternalFeeds.OPMLTest do
       assert hd(feeds).name == "Valid Feed"
     end
 
-    test "imports platform feeds as RSS type (specialized types require extra fields)", %{scope: scope} do
+    test "imports platform feeds as RSS type (specialized types require extra fields)", %{
+      scope: scope
+    } do
       # OPML imports always use RSS type because specialized types (youtube, reddit, bluesky)
       # require additional fields like `username` that aren't available in OPML format.
       # Users can manually change feed types after import if needed.

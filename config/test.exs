@@ -54,4 +54,3 @@ config :phoenix_test,
     trace: System.get_env("PLAYWRIGHT_TRACE", "false") in ~w(t true),
     trace_dir: "tmp"
   ]
-
