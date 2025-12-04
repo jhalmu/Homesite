@@ -31,8 +31,9 @@ defmodule HomesiteWeb.AdminLive.DashboardTest do
 
       {:ok, _lv, html} = live(conn, ~p"/admin")
 
+      assert html =~ "Search Statistics"
       assert html =~ "Total Searches"
-      assert html =~ "Avg Search Time"
+      assert html =~ "Avg Response"
       assert html =~ "No Results"
       assert html =~ "Avg Results"
     end
@@ -54,7 +55,8 @@ defmodule HomesiteWeb.AdminLive.DashboardTest do
 
       {:ok, _lv, html} = live(conn, ~p"/admin")
 
-      assert html =~ "Searches With No Results"
+      assert html =~ "Content Gaps"
+      assert html =~ "Searches with no results"
     end
 
     test "displays recent activity log", %{conn: conn} do

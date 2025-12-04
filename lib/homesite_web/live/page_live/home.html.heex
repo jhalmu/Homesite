@@ -118,6 +118,15 @@
             <% end %>
           </div>
         </div>
+
+        <%!-- Load More Button --%>
+        <%= if @has_more_posts do %>
+          <div class="mt-[var(--spacing-lg)] text-center">
+            <button phx-click="load_more_posts" class="btn btn-outline btn-wide">
+              {gettext("Load More Posts")}
+            </button>
+          </div>
+        <% end %>
       <% end %>
 
       <%!-- External Feeds Section --%>

@@ -10,8 +10,14 @@ defmodule HomesiteWeb.FeedLive.Index do
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket) do
+      # Load feed sources for filter dropdown
+      feed_sources = ExternalFeeds.list_feed_sources(socket.assigns.current_scope)
       # Load feed items on first connection
-      socket = load_feed_items(socket, %{})
+      socket =
+        socket
+        |> assign(:feed_sources, feed_sources)
+        |> load_feed_items(%{})
+
       {:ok, socket}
     else
       # On initial render, just set empty state
@@ -20,6 +26,9 @@ defmodule HomesiteWeb.FeedLive.Index do
          items: [],
          unread_count: 0,
          filter: "all",
+         source_id: nil,
+         source_name: nil,
+         feed_sources: [],
          has_more: false,
          page_title: gettext("Feed")
        )}
@@ -114,11 +123,13 @@ defmodule HomesiteWeb.FeedLive.Index do
   def handle_event("load_more", _params, socket) do
     current_count = length(socket.assigns.items)
 
+    opts =
+      [limit: 20, offset: current_count]
+      |> build_query_opts(socket.assigns.filter)
+      |> maybe_add_source_filter(socket.assigns.source_id)
+
     new_items =
-      ExternalFeeds.list_feed_items_unified(
-        socket.assigns.current_scope,
-        build_query_opts(socket.assigns.filter, offset: current_count)
-      )
+      ExternalFeeds.list_feed_items_unified(socket.assigns.current_scope, opts)
 
     all_items = socket.assigns.items ++ new_items
     has_more = length(new_items) == 20
@@ -128,37 +139,81 @@ defmodule HomesiteWeb.FeedLive.Index do
 
   @impl true
   def handle_event("filter_change", %{"filter" => filter}, socket) do
-    {:noreply, push_patch(socket, to: ~p"/feed?filter=#{filter}")}
+    # Preserve source filter when changing filter
+    url =
+      if socket.assigns.source_id do
+        ~p"/feed?filter=#{filter}&source=#{socket.assigns.source_id}"
+      else
+        ~p"/feed?filter=#{filter}"
+      end
+
+    {:noreply, push_patch(socket, to: url)}
+  end
+
+  @impl true
+  def handle_event("clear_source_filter", _params, socket) do
+    url =
+      if socket.assigns.filter != "all" do
+        ~p"/feed?filter=#{socket.assigns.filter}"
+      else
+        ~p"/feed"
+      end
+
+    {:noreply, push_patch(socket, to: url)}
   end
 
   # Private functions
 
   defp load_feed_items(socket, params) do
     filter = params["filter"] || socket.assigns[:filter] || "all"
-    opts = build_query_opts(filter, limit: 20)
+    source_id = params["source"]
+
+    opts =
+      [limit: 20]
+      |> build_query_opts(filter)
+      |> maybe_add_source_filter(source_id)
 
     items = ExternalFeeds.list_feed_items_unified(socket.assigns.current_scope, opts)
     unread_count = ExternalFeeds.get_unread_count(socket.assigns.current_scope)
     has_more = length(items) == 20
 
+    # Get source name if filtering by source
+    source_name =
+      if source_id do
+        try do
+          source = ExternalFeeds.get_feed_source!(socket.assigns.current_scope, source_id)
+          source.name
+        rescue
+          _ -> nil
+        end
+      else
+        nil
+      end
+
     assign(socket,
       items: items,
       unread_count: unread_count,
       filter: filter,
+      source_id: source_id,
+      source_name: source_name,
       has_more: has_more
     )
   end
 
-  defp build_query_opts("unread", opts) do
-    Keyword.merge([unread_only: true, limit: 20], opts)
+  defp build_query_opts(opts, "unread") do
+    Keyword.put(opts, :unread_only, true)
   end
 
-  defp build_query_opts("bookmarks", opts) do
-    Keyword.merge([bookmarked_only: true, limit: 20], opts)
+  defp build_query_opts(opts, "bookmarks") do
+    Keyword.put(opts, :bookmarked_only, true)
   end
 
-  defp build_query_opts(_all, opts) do
-    Keyword.merge([limit: 20], opts)
+  defp build_query_opts(opts, _all), do: opts
+
+  defp maybe_add_source_filter(opts, nil), do: opts
+
+  defp maybe_add_source_filter(opts, source_id) do
+    Keyword.put(opts, :feed_source_id, String.to_integer(source_id))
   end
 
   defp update_item_interaction(item, scope, feed_item_id) do

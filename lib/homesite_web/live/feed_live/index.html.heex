@@ -13,32 +13,84 @@
       </:actions>
     </.header>
     
-<!-- Filter tabs -->
-    <div class="tabs tabs-boxed my-6">
-      <button
-        phx-click="filter_change"
-        phx-value-filter="all"
-        class={["tab", @filter == "all" && "tab-active"]}
-      >
-        {gettext("All")}
-      </button>
-      <button
-        phx-click="filter_change"
-        phx-value-filter="unread"
-        class={["tab", @filter == "unread" && "tab-active"]}
-      >
-        {gettext("Unread")}
-        <%= if @unread_count > 0 do %>
-          <span class="badge badge-primary badge-sm ml-2">{@unread_count}</span>
-        <% end %>
-      </button>
-      <button
-        phx-click="filter_change"
-        phx-value-filter="bookmarks"
-        class={["tab", @filter == "bookmarks" && "tab-active"]}
-      >
-        {gettext("Bookmarks")}
-      </button>
+<!-- Filter controls -->
+    <div class="my-6 flex flex-wrap items-center gap-4">
+      <!-- Status filter tabs -->
+      <div class="tabs tabs-boxed">
+        <button
+          phx-click="filter_change"
+          phx-value-filter="all"
+          class={["tab", @filter == "all" && "tab-active"]}
+        >
+          {gettext("All")}
+        </button>
+        <button
+          phx-click="filter_change"
+          phx-value-filter="unread"
+          class={["tab", @filter == "unread" && "tab-active"]}
+        >
+          {gettext("Unread")}
+          <%= if @unread_count > 0 do %>
+            <span class="badge badge-primary badge-sm ml-2">{@unread_count}</span>
+          <% end %>
+        </button>
+        <button
+          phx-click="filter_change"
+          phx-value-filter="bookmarks"
+          class={["tab", @filter == "bookmarks" && "tab-active"]}
+        >
+          {gettext("Bookmarks")}
+        </button>
+      </div>
+      
+<!-- Source filter dropdown -->
+      <%= if length(@feed_sources) > 0 do %>
+        <div class="flex items-center gap-2">
+          <span class="text-base-content/70 text-sm">{gettext("Filter by:")}</span>
+          <div class="dropdown">
+            <div tabindex="0" role="button" class="btn btn-sm btn-ghost gap-1">
+              <%= if @source_id do %>
+                <.icon name="hero-funnel-solid" class="text-primary h-4 w-4" />
+                {@source_name}
+              <% else %>
+                <.icon name="hero-funnel" class="h-4 w-4" />
+                {gettext("All sources")}
+              <% end %>
+              <.icon name="hero-chevron-down" class="h-3 w-3" />
+            </div>
+            <ul
+              tabindex="0"
+              class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+            >
+              <li>
+                <.link
+                  navigate={if @filter != "all", do: ~p"/feed?filter=#{@filter}", else: ~p"/feed"}
+                  class={[!@source_id && "active"]}
+                >
+                  <.icon name="hero-squares-2x2" class="h-4 w-4" />
+                  {gettext("All sources")}
+                </.link>
+              </li>
+              <li class="menu-title"><span>{gettext("Sources")}</span></li>
+              <%= for source <- @feed_sources do %>
+                <li>
+                  <.link
+                    navigate={
+                      if @filter != "all",
+                        do: ~p"/feed?filter=#{@filter}&source=#{source.id}",
+                        else: ~p"/feed?source=#{source.id}"
+                    }
+                    class={[to_string(@source_id) == to_string(source.id) && "active"]}
+                  >
+                    <span class="text-lg">{source.icon}</span>
+                    {source.name}
+                  </.link>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      <% end %>
     </div>
     
 <!-- Feed items list -->
@@ -71,9 +123,12 @@
             <div class="card-body">
               <!-- Feed source badge -->
               <div class="text-base-content/70 flex items-center gap-2 text-sm">
-                <span class="badge badge-ghost badge-sm">
+                <.link
+                  navigate={~p"/feed?source=#{item.feed_item.feed_source.id}"}
+                  class="badge badge-ghost badge-sm cursor-pointer hover:badge-primary"
+                >
                   {item.feed_item.feed_source.name}
-                </span>
+                </.link>
                 <span>•</span>
                 <time datetime={item.feed_item.published_at}>
                   {format_relative_time(item.feed_item.published_at)}
@@ -92,12 +147,36 @@
                 </a>
               </h2>
               
-<!-- Description/Summary -->
-              <%= if item.feed_item.content do %>
-                <div class="text-base-content/80 line-clamp-3 prose prose-sm max-w-none">
-                  {raw(item.feed_item.content)}
+<!-- Content with optional image -->
+              <div class="flex gap-4">
+                <!-- Image thumbnail if available -->
+                <%= if item.feed_item.metadata["image_url"] do %>
+                  <div class="shrink-0">
+                    <img
+                      src={item.feed_item.metadata["image_url"]}
+                      alt=""
+                      class="h-12 w-12 rounded object-cover"
+                      loading="lazy"
+                      onerror="this.style.display='none'"
+                    />
+                  </div>
+                <% end %>
+                
+<!-- Description/Summary - only show if different from title -->
+                <div class="flex-1">
+                  <%= if item.feed_item.content && item.feed_item.content != item.feed_item.title do %>
+                    <div class="text-base-content/80 line-clamp-3 prose prose-sm max-w-none">
+                      {raw(item.feed_item.content)}
+                    </div>
+                  <% else %>
+                    <!-- For title-only items, show the URL domain as context -->
+                    <div class="text-base-content/60 text-sm">
+                      <.icon name="hero-link" class="inline h-4 w-4" />
+                      {URI.parse(item.feed_item.url).host}
+                    </div>
+                  <% end %>
                 </div>
-              <% end %>
+              </div>
               
 <!-- Platform-specific metadata -->
               <%= if item.feed_item.metadata do %>

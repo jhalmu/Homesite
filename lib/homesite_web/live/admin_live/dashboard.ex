@@ -12,112 +12,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
         <:subtitle>System overview and analytics</:subtitle>
       </.header>
 
-      <div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <%!-- Search Stats Card --%>
-        <div class="card border-base-300 bg-primary text-primary-content border shadow-sm">
-          <div class="card-body">
-            <h3 class="card-title text-sm">Total Searches</h3>
-            <p class="text-3xl font-bold">{@search_stats.total_searches || 0}</p>
-            <p class="text-xs opacity-90">Last 7 days</p>
-          </div>
-        </div>
-
-        <%!-- Avg Search Duration --%>
-        <div class="card border-base-300 bg-secondary text-secondary-content border shadow-sm">
-          <div class="card-body">
-            <h3 class="card-title text-sm">Avg Search Time</h3>
-            <p class="text-3xl font-bold">
-              {if @search_stats.avg_duration_ms,
-                do: "#{@search_stats.avg_duration_ms |> Decimal.to_float() |> Float.round(1)}ms",
-                else: "N/A"}
-            </p>
-            <p class="text-xs opacity-90">Response time</p>
-          </div>
-        </div>
-
-        <%!-- Zero Results % --%>
-        <div class="card border-base-300 bg-accent text-accent-content border shadow-sm">
-          <div class="card-body">
-            <h3 class="card-title text-sm">No Results</h3>
-            <p class="text-3xl font-bold">
-              {if @search_stats.zero_results_pct,
-                do: "#{@search_stats.zero_results_pct}%",
-                else: "0%"}
-            </p>
-            <p class="text-xs opacity-90">Of searches</p>
-          </div>
-        </div>
-
-        <%!-- Avg Results --%>
-        <div class="card border-base-300 bg-info text-info-content border shadow-sm">
-          <div class="card-body">
-            <h3 class="card-title text-sm">Avg Results</h3>
-            <p class="text-3xl font-bold">
-              {if @search_stats.avg_results,
-                do: @search_stats.avg_results |> Decimal.to_float() |> Float.round(1),
-                else: 0}
-            </p>
-            <p class="text-xs opacity-90">Per search</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
-        <%!-- Popular Searches --%>
-        <.dashboard_card variant="content">
-          <h3 class="card-title">Popular Searches</h3>
-          <div class="overflow-x-auto">
-            <table class="table-sm table">
-              <thead>
-                <tr>
-                  <th>Query</th>
-                  <th class="text-right">Count</th>
-                  <th class="text-right">Avg Results</th>
-                </tr>
-              </thead>
-              <tbody>
-                <%= for search <- @popular_searches do %>
-                  <tr>
-                    <td class="font-mono text-sm">{search.query}</td>
-                    <td class="text-right">{search.count}</td>
-                    <td class="text-right">
-                      {if search.avg_results,
-                        do: search.avg_results |> Decimal.to_float() |> Float.round(1),
-                        else: 0}
-                    </td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
-        </.dashboard_card>
-
-        <%!-- No Result Searches --%>
-        <.dashboard_card variant="content">
-          <h3 class="card-title">Searches With No Results</h3>
-          <p class="text-secondary mb-4 text-sm">Content gaps to address</p>
-          <div class="overflow-x-auto">
-            <table class="table-sm table">
-              <thead>
-                <tr>
-                  <th>Query</th>
-                  <th class="text-right">Attempts</th>
-                </tr>
-              </thead>
-              <tbody>
-                <%= for search <- @no_result_searches do %>
-                  <tr>
-                    <td class="font-mono text-sm">{search.query}</td>
-                    <td class="text-right">{search.count}</td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
-        </.dashboard_card>
-      </div>
-
-      <%!-- Recent Activity --%>
+      <%!-- Recent Activity - at top for quick access --%>
       <div class="mt-8">
         <.dashboard_card variant="content">
           <h3 class="card-title">Recent Activity</h3>
@@ -150,6 +45,94 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
                 <% end %>
               </tbody>
             </table>
+          </div>
+        </.dashboard_card>
+      </div>
+
+      <%!-- Search Statistics - combined view --%>
+      <div class="mt-8">
+        <.dashboard_card variant="content">
+          <h3 class="card-title">Search Statistics</h3>
+          <p class="text-base-content/60 mb-4 text-sm">Last 7 days</p>
+
+          <%!-- Summary stats in compact grid --%>
+          <div class="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+            <div class="text-center">
+              <p class="text-primary text-2xl font-bold">{@search_stats.total_searches || 0}</p>
+              <p class="text-base-content/60 text-xs">Total Searches</p>
+            </div>
+            <div class="text-center">
+              <p class="text-secondary text-2xl font-bold">
+                {if @search_stats.avg_duration_ms,
+                  do: "#{@search_stats.avg_duration_ms |> Decimal.to_float() |> Float.round(1)}ms",
+                  else: "N/A"}
+              </p>
+              <p class="text-base-content/60 text-xs">Avg Response</p>
+            </div>
+            <div class="text-center">
+              <p class="text-accent text-2xl font-bold">
+                {if @search_stats.zero_results_pct,
+                  do: "#{@search_stats.zero_results_pct}%",
+                  else: "0%"}
+              </p>
+              <p class="text-base-content/60 text-xs">No Results</p>
+            </div>
+            <div class="text-center">
+              <p class="text-info text-2xl font-bold">
+                {if @search_stats.avg_results,
+                  do: @search_stats.avg_results |> Decimal.to_float() |> Float.round(1),
+                  else: 0}
+              </p>
+              <p class="text-base-content/60 text-xs">Avg Results</p>
+            </div>
+          </div>
+
+          <%!-- Popular searches and no-results in side-by-side tables --%>
+          <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <div>
+              <h4 class="text-base-content/80 mb-2 font-semibold">Popular Searches</h4>
+              <div class="overflow-x-auto">
+                <table class="table-sm table">
+                  <thead>
+                    <tr>
+                      <th>Query</th>
+                      <th class="text-right">Count</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <%= for search <- @popular_searches do %>
+                      <tr>
+                        <td class="font-mono text-sm">{search.query}</td>
+                        <td class="text-right">{search.count}</td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="text-base-content/80 mb-2 font-semibold">Content Gaps</h4>
+              <p class="text-base-content/50 mb-2 text-xs">Searches with no results</p>
+              <div class="overflow-x-auto">
+                <table class="table-sm table">
+                  <thead>
+                    <tr>
+                      <th>Query</th>
+                      <th class="text-right">Attempts</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <%= for search <- @no_result_searches do %>
+                      <tr>
+                        <td class="font-mono text-sm">{search.query}</td>
+                        <td class="text-right">{search.count}</td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </.dashboard_card>
       </div>

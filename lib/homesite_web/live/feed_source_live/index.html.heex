@@ -23,7 +23,7 @@
       <.table
         id="feed_sources"
         rows={@streams.feed_sources}
-        row_click={fn {_id, feed_source} -> JS.navigate(~p"/feeds/#{feed_source}") end}
+        row_click={fn {_id, feed_source} -> JS.navigate(~p"/feed?source=#{feed_source.id}") end}
       >
         <:col :let={{_id, feed_source}} label="Name">
           <div class="flex items-center gap-2">

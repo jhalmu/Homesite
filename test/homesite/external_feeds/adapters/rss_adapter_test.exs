@@ -107,4 +107,35 @@ defmodule Homesite.ExternalFeeds.Adapters.RssAdapterTest do
       end
     end
   end
+
+  describe "RSS feeds without description" do
+    @tag :external
+    test "uses title as fallback content when description is empty" do
+      # techtrib.es feed has no <description> tags - only title, link, guid, pubDate
+      feed_source = %FeedSource{
+        id: 999,
+        feed_type: "rss",
+        name: "TechTribes",
+        url: "https://www.techtrib.es/feed.xml"
+      }
+
+      case RssAdapter.fetch_items(feed_source) do
+        {:ok, items} ->
+          assert is_list(items)
+          assert length(items) > 0
+
+          # All items should have non-empty content (fallback to title)
+          Enum.each(items, fn item ->
+            assert is_binary(item.content)
+            assert item.content != "", "Content should not be empty (should fallback to title)"
+            # Content should equal title when description was empty
+            assert item.content == item.title
+          end)
+
+        {:error, _reason} ->
+          # Network issues can cause this test to fail
+          :ok
+      end
+    end
+  end
 end

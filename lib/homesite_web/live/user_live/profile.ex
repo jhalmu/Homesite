@@ -8,60 +8,66 @@ defmodule HomesiteWeb.UserLive.Profile do
   alias Homesite.Content
   alias Homesite.ExternalFeeds
 
+  @posts_per_page 10
+
   @impl true
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={assigns[:current_scope]}>
       <div class="w-[min(95vw,800px)] mx-auto">
-        <div class="gap-[var(--spacing-card)] my-[var(--spacing-xl)] flex flex-col items-center">
-          <.avatar user={@user} class="h-32 w-32" />
+        <%!-- Profile Header - Compact layout with avatar beside bio --%>
+        <div class="my-[var(--spacing-lg)]">
+          <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
+            <.avatar user={@user} class="h-20 w-20 shrink-0 sm:h-24 sm:w-24" />
 
-          <div class="text-center">
-            <h1 class="text-[var(--font-size-fluid-xl)] font-bold">
-              {@user.display_name || String.split(@user.email, "@") |> List.first()}
-            </h1>
-          </div>
+            <div class="flex-1 text-center sm:text-left">
+              <h1 class="text-[var(--font-size-fluid-xl)] font-bold">
+                {@user.display_name || String.split(@user.email, "@") |> List.first()}
+              </h1>
 
-          <p
-            :if={@user.bio}
-            class="text-[var(--font-size-fluid-base)] max-w-prose whitespace-pre-wrap text-center"
-          >
-            {@user.bio}
-          </p>
+              <p
+                :if={@user.bio}
+                class="text-base-content/80 mt-2 whitespace-pre-wrap text-sm"
+              >
+                {@user.bio}
+              </p>
 
-          <div
-            :if={has_social_links?(@user)}
-            class="gap-[var(--spacing-card)] flex flex-wrap justify-center"
-          >
-            <.link
-              :if={@user.website_url}
-              href={@user.website_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn btn-outline btn-sm gap-2"
-            >
-              <.icon name="hero-globe-alt" class="h-4 w-4" /> Website
-            </.link>
+              <%!-- Social links inline --%>
+              <div
+                :if={has_social_links?(@user)}
+                class="mt-3 flex flex-wrap justify-center gap-2 sm:justify-start"
+              >
+                <.link
+                  :if={@user.website_url}
+                  href={@user.website_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn btn-outline btn-xs gap-1"
+                >
+                  <.icon name="hero-globe-alt" class="h-3 w-3" /> Website
+                </.link>
 
-            <.link
-              :if={@user.bluesky_handle}
-              href={"https://bsky.app/profile/#{String.trim_leading(@user.bluesky_handle, "@")}"}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn btn-outline btn-sm gap-2"
-            >
-              <.icon name="hero-cloud" class="h-4 w-4" /> Bluesky
-            </.link>
+                <.link
+                  :if={@user.bluesky_handle}
+                  href={"https://bsky.app/profile/#{String.trim_leading(@user.bluesky_handle, "@")}"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn btn-outline btn-xs gap-1"
+                >
+                  <.icon name="hero-cloud" class="h-3 w-3" /> Bluesky
+                </.link>
 
-            <.link
-              :if={@user.mastodon_handle}
-              href={mastodon_url(@user.mastodon_handle)}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn btn-outline btn-sm gap-2"
-            >
-              <.icon name="hero-chat-bubble-left-right" class="h-4 w-4" /> Mastodon
-            </.link>
+                <.link
+                  :if={@user.mastodon_handle}
+                  href={mastodon_url(@user.mastodon_handle)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn btn-outline btn-xs gap-1"
+                >
+                  <.icon name="hero-chat-bubble-left-right" class="h-3 w-3" /> Mastodon
+                </.link>
+              </div>
+            </div>
           </div>
         </div>
         
@@ -97,150 +103,107 @@ defmodule HomesiteWeb.UserLive.Profile do
           </div>
         </div>
         
-    <!-- Stats Section -->
-        <div class="stats stats-vertical my-[var(--spacing-lg)] w-full shadow lg:stats-horizontal">
-          <div class="stat">
-            <div class="stat-figure text-primary">
-              <.icon name="hero-document-text" class="h-8 w-8" />
+    <!-- Stats & Actions - Column layout -->
+        <div class="bg-base-200 my-[var(--spacing-md)] rounded-lg p-4">
+          <%!-- Stats in columns --%>
+          <div class="mb-3 grid grid-cols-3 gap-4 text-center text-sm">
+            <div>
+              <div class="text-primary text-xl font-bold">{@stats.posts_count}</div>
+              <div class="text-base-content/60 text-xs">posts</div>
             </div>
-            <div class="stat-title">Published Posts</div>
-            <div class="stat-value text-primary">{@stats.posts_count}</div>
-            <div class="stat-desc">{@stats.total_words} total words</div>
+            <div>
+              <div class="text-secondary text-xl font-bold">{@stats.avg_read_time}</div>
+              <div class="text-base-content/60 text-xs">min avg</div>
+            </div>
+            <div>
+              <div class="text-accent text-xl font-bold">{@stats.member_since}</div>
+              <div class="text-base-content/60 text-xs">since</div>
+            </div>
           </div>
 
-          <div class="stat">
-            <div class="stat-figure text-secondary">
-              <.icon name="hero-clock" class="h-8 w-8" />
-            </div>
-            <div class="stat-title">Avg Read Time</div>
-            <div class="stat-value text-secondary">{@stats.avg_read_time} min</div>
-            <div class="stat-desc">per post</div>
+          <%!-- Actions row --%>
+          <div class="border-base-300 flex flex-wrap justify-center gap-2 border-t pt-3">
+            <%= if @user.username do %>
+              <a href={~p"/users/@#{@user.username}/rss.xml"} class="btn btn-xs btn-ghost gap-1">
+                <.icon name="hero-rss" class="h-3 w-3" /> RSS
+              </a>
+            <% else %>
+              <a href={~p"/users/#{@user.id}/rss.xml"} class="btn btn-xs btn-ghost gap-1">
+                <.icon name="hero-rss" class="h-3 w-3" /> RSS
+              </a>
+            <% end %>
+            <button type="button" phx-click="share_profile" class="btn btn-xs btn-ghost gap-1">
+              <.icon name="hero-share" class="h-3 w-3" /> Share
+            </button>
+            <button type="button" phx-click="copy_profile_url" class="btn btn-xs btn-ghost gap-1">
+              <.icon name="hero-clipboard" class="h-3 w-3" /> Copy
+            </button>
           </div>
-
-          <div class="stat">
-            <div class="stat-figure text-accent">
-              <.icon name="hero-calendar" class="h-8 w-8" />
-            </div>
-            <div class="stat-title">Member Since</div>
-            <div class="stat-value text-accent text-lg">{@stats.member_since}</div>
-          </div>
-        </div>
-        
-    <!-- Subscribe Section -->
-        <div class="card bg-base-200 shadow-xl">
-          <div class="card-body">
-            <h3 class="card-title">
-              <.icon name="hero-rss" class="h-6 w-6" /> Subscribe to Updates
-            </h3>
-            <p class="text-base-content/70">
-              Get notified when {@user.display_name || @user.username} publishes new posts.
-            </p>
-
-            <div class="mt-4 flex flex-wrap gap-2">
-              <%= if @user.username do %>
-                <a href={~p"/users/@#{@user.username}/rss.xml"} class="btn btn-sm btn-primary">
-                  <.icon name="hero-rss" class="h-4 w-4" /> RSS Feed
-                </a>
-                <a href={~p"/users/@#{@user.username}/feed.xml"} class="btn btn-sm btn-outline">
-                  Atom Feed
-                </a>
-                <a href={~p"/users/@#{@user.username}/feed.json"} class="btn btn-sm btn-outline">
-                  JSON Feed
-                </a>
-              <% else %>
-                <a href={~p"/users/#{@user.id}/rss.xml"} class="btn btn-sm btn-primary">
-                  <.icon name="hero-rss" class="h-4 w-4" /> RSS Feed
-                </a>
-              <% end %>
-            </div>
-          </div>
-        </div>
-        
-    <!-- Share Profile Section -->
-        <div class="mt-[var(--spacing-lg)] flex gap-3">
-          <button
-            type="button"
-            phx-click="share_profile"
-            class="btn btn-primary flex-1"
-          >
-            <.icon name="hero-share" class="h-5 w-5" /> Share Profile
-          </button>
-          <button
-            type="button"
-            phx-click="copy_profile_url"
-            class="btn btn-outline"
-          >
-            <.icon name="hero-clipboard" class="h-5 w-5" /> Copy Link
-          </button>
         </div>
         
     <!-- What I'm Reading Section -->
-        <div :if={@feed_sources != []} class="mt-[var(--spacing-xl)]">
-          <div class="divider">
-            <h2 class="text-[var(--font-size-fluid-lg)] flex items-center gap-2 font-bold">
-              <.icon name="hero-newspaper" class="h-6 w-6" /> What I'm Reading
-            </h2>
-          </div>
+        <div :if={@feed_sources != []} class="my-[var(--spacing-md)]">
+          <h2 class="text-base-content/60 mb-2 flex items-center gap-2 text-sm font-medium">
+            <.icon name="hero-newspaper" class="h-4 w-4" /> What I'm Reading
+          </h2>
 
-          <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div class="flex flex-wrap gap-2">
             <a
               :for={source <- @feed_sources}
               href={source.url}
               target="_blank"
               rel="noopener noreferrer"
-              class="card card-compact bg-base-200 transition-colors hover:bg-base-300"
+              class="border-base-300 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm transition-colors hover:border-primary hover:text-primary"
             >
-              <div class="card-body">
-                <div class="flex items-center gap-3">
-                  <span class="text-2xl">{source.icon}</span>
-                  <div class="min-w-0 flex-1">
-                    <h3 class="truncate font-semibold">{source.name}</h3>
-                    <p class="text-base-content/60 truncate text-xs">
-                      {source.feed_type |> String.upcase()} Feed
-                    </p>
-                  </div>
-                  <.icon name="hero-arrow-top-right-on-square" class="text-base-content/40 h-4 w-4" />
-                </div>
-              </div>
+              <span>{source.icon}</span>
+              <span class="font-medium">{source.name}</span>
             </a>
           </div>
         </div>
 
         <div class="divider"></div>
 
-        <div :if={@posts != []} class="my-[var(--spacing-xl)]">
-          <h2 class="text-[var(--font-size-fluid-lg)] mb-[var(--spacing-card)] font-bold">
+        <div :if={@posts != []} class="my-[var(--spacing-lg)]">
+          <h2 class="text-[var(--font-size-fluid-lg)] mb-3 font-bold">
             Published Posts
           </h2>
 
-          <div class="gap-[var(--spacing-lg)] grid">
-            <article
-              :for={post <- @posts}
-              class="card bg-base-100 shadow-lg transition-shadow hover:shadow-xl"
-            >
-              <div class="card-body">
-                <h3 class="card-title text-[var(--font-size-fluid-lg)]">
-                  <.link navigate={~p"/posts/#{post}"} class="hover:underline">
+          <div class="divide-base-300 divide-y">
+            <article :for={post <- @posts} class="flex items-end gap-4 py-3">
+              <div class="min-w-0 flex-1">
+                <.link navigate={~p"/posts/#{post}"} class="group">
+                  <h3 class="text-base font-semibold transition-colors group-hover:text-primary">
                     {post.title}
-                  </.link>
-                </h3>
+                  </h3>
+                </.link>
 
-                <time class="text-sm text-gray-600 dark:text-gray-400">
-                  {Calendar.strftime(post.published_at, "%B %d, %Y")}
-                </time>
-
-                <p class="text-[var(--font-size-fluid-sm)] line-clamp-3">
-                  {String.slice(post.body, 0..200)}{if String.length(post.body) > 200, do: "..."}
-                </p>
-
-                <div class="card-actions mt-4 justify-end">
-                  <.link navigate={~p"/posts/#{post}"} class="btn btn-primary btn-sm">
-                    Read More
-                  </.link>
+                <div class="text-base-content/60 mt-1 flex items-center gap-2 text-xs">
+                  <time>{Calendar.strftime(post.published_at, "%B %d, %Y")}</time>
+                  <span>·</span>
+                  <span>{post.read_time_minutes} min</span>
                 </div>
+
+                <p class="text-base-content/70 line-clamp-2 mt-1 text-sm">
+                  {String.slice(post.body, 0..150)}{if String.length(post.body) > 150, do: "..."}
+                </p>
+              </div>
+
+              <div class="shrink-0">
+                <.link navigate={~p"/posts/#{post}"} class="btn btn-primary btn-sm">
+                  Read more
+                </.link>
               </div>
             </article>
           </div>
+
+          <%!-- Load More Button --%>
+          <%= if @has_more_posts do %>
+            <div class="mt-[var(--spacing-lg)] text-center">
+              <button phx-click="load_more_posts" class="btn btn-outline btn-wide">
+                {gettext("Load More Posts")}
+              </button>
+            </div>
+          <% end %>
         </div>
 
         <div :if={@posts == []} class="my-[var(--spacing-xl)] text-center text-gray-600">
@@ -261,10 +224,14 @@ defmodule HomesiteWeb.UserLive.Profile do
          |> redirect(to: ~p"/")}
 
       user ->
-        posts = Content.list_published_posts_for_user(user.id)
+        # Get all posts for stats calculation (we need total count)
+        all_posts = Content.list_published_posts_for_user(user.id)
+
+        # Get paginated posts for display
+        posts = Content.list_published_posts_for_user(user.id, limit: @posts_per_page)
 
         # Get 6 most recent posts for highlight section (2 rows of 3 columns)
-        recent_posts = Enum.take(posts, 6)
+        recent_posts = Enum.take(all_posts, 6)
 
         # Load user's public feed sources (what they're reading)
         user_scope = Homesite.Accounts.Scope.for_user(user)
@@ -275,12 +242,12 @@ defmodule HomesiteWeb.UserLive.Profile do
           |> Enum.sort_by(& &1.display_order)
           |> Enum.take(12)
 
-        # Calculate profile stats
+        # Calculate profile stats (using all posts)
         stats = %{
-          posts_count: length(posts),
+          posts_count: length(all_posts),
           member_since: Calendar.strftime(user.inserted_at, "%B %Y"),
-          total_words: calculate_total_words(posts),
-          avg_read_time: calculate_avg_read_time(posts)
+          total_words: calculate_total_words(all_posts),
+          avg_read_time: calculate_avg_read_time(all_posts)
         }
 
         {:ok,
@@ -290,8 +257,26 @@ defmodule HomesiteWeb.UserLive.Profile do
          |> assign(:posts, posts)
          |> assign(:recent_posts, recent_posts)
          |> assign(:feed_sources, feed_sources)
-         |> assign(:stats, stats)}
+         |> assign(:stats, stats)
+         |> assign(:has_more_posts, length(posts) == @posts_per_page)}
     end
+  end
+
+  @impl true
+  def handle_event("load_more_posts", _params, socket) do
+    user = socket.assigns.user
+    current_count = length(socket.assigns.posts)
+
+    new_posts =
+      Content.list_published_posts_for_user(user.id,
+        limit: @posts_per_page,
+        offset: current_count
+      )
+
+    all_posts = socket.assigns.posts ++ new_posts
+    has_more = length(new_posts) == @posts_per_page
+
+    {:noreply, assign(socket, posts: all_posts, has_more_posts: has_more)}
   end
 
   @impl true

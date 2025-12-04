@@ -47,12 +47,14 @@ defmodule Homesite.ExternalFeeds.Adapters.RssAdapter do
     end
   end
 
-  # Parse feed based on type
+  # Parse feed based on type - auto-detect if set to rss/atom
   defp parse_feed(body, feed_type, feed_source) do
     try do
+      # Auto-detect feed type by checking XML structure
+      detected_type = detect_feed_type(body, feed_type)
+
       items =
-        case feed_type do
-          "rss" -> parse_rss(body, feed_source)
+        case detected_type do
           "atom" -> parse_atom(body, feed_source)
           _ -> parse_rss(body, feed_source)
         end
@@ -61,6 +63,20 @@ defmodule Homesite.ExternalFeeds.Adapters.RssAdapter do
     rescue
       e ->
         {:error, "Failed to parse #{feed_type} feed: #{Exception.message(e)}"}
+    end
+  end
+
+  # Auto-detect feed type from XML content
+  defp detect_feed_type(body, configured_type) do
+    cond do
+      # Check for Atom namespace or feed element
+      String.contains?(body, "xmlns=\"http://www.w3.org/2005/Atom\"") -> "atom"
+      String.contains?(body, "<feed") && String.contains?(body, "<entry") -> "atom"
+      # Check for RSS structure
+      String.contains?(body, "<rss") -> "rss"
+      String.contains?(body, "<channel>") && String.contains?(body, "<item>") -> "rss"
+      # Fall back to configured type
+      true -> configured_type
     end
   end
 
@@ -74,23 +90,32 @@ defmodule Homesite.ExternalFeeds.Adapters.RssAdapter do
       pub_date: ~x"./pubDate/text()"s,
       guid: ~x"./guid/text()"s,
       author: ~x"./author/text()"so,
-      category: ~x"./category/text()"lo
+      category: ~x"./category/text()"lo,
+      # Image sources: enclosure, media:content, media:thumbnail
+      enclosure_url: ~x"./enclosure/@url"so,
+      enclosure_type: ~x"./enclosure/@type"so,
+      media_content_url: ~x"./media:content/@url"so,
+      media_thumbnail_url: ~x"./media:thumbnail/@url"so
     )
     |> Enum.map(fn item ->
+      image_url = extract_image_url(item)
+
       %{
         external_id: generate_external_id(item.guid, item.link),
         title: item.title || "Untitled",
-        content: sanitize_content(item.description),
+        content: sanitize_content(item.description) |> fallback_content(item.title),
         author_name: item.author,
         author_handle: nil,
         author_avatar_url: nil,
         published_at: parse_date(item.pub_date),
         url: item.link || "",
-        metadata: %{
-          feed_source_id: feed_source.id,
-          feed_type: "rss",
-          categories: item.category || []
-        }
+        metadata:
+          %{
+            feed_source_id: feed_source.id,
+            feed_type: "rss",
+            categories: item.category || []
+          }
+          |> maybe_add_image(image_url)
       }
     end)
   end
@@ -107,25 +132,32 @@ defmodule Homesite.ExternalFeeds.Adapters.RssAdapter do
       updated: ~x"./updated/text()"s,
       id: ~x"./id/text()"s,
       author_name: ~x"./author/name/text()"so,
-      category: ~x"./category/@term"lo
+      category: ~x"./category/@term"lo,
+      # Atom uses link with rel="enclosure" for media
+      enclosure_url: ~x"./link[@rel='enclosure']/@href"so,
+      media_content_url: ~x"./media:content/@url"so,
+      media_thumbnail_url: ~x"./media:thumbnail/@url"so
     )
     |> Enum.map(fn item ->
       content = if item.content != "", do: item.content, else: item.summary
+      image_url = extract_image_url(item)
 
       %{
         external_id: generate_external_id(item.id, item.link),
         title: item.title || "Untitled",
-        content: sanitize_content(content),
+        content: sanitize_content(content) |> fallback_content(item.title),
         author_name: item.author_name,
         author_handle: nil,
         author_avatar_url: nil,
         published_at: parse_date(item.published || item.updated),
         url: item.link || "",
-        metadata: %{
-          feed_source_id: feed_source.id,
-          feed_type: "atom",
-          categories: item.category || []
-        }
+        metadata:
+          %{
+            feed_source_id: feed_source.id,
+            feed_type: "atom",
+            categories: item.category || []
+          }
+          |> maybe_add_image(image_url)
       }
     end)
   end
@@ -155,6 +187,65 @@ defmodule Homesite.ExternalFeeds.Adapters.RssAdapter do
   end
 
   defp sanitize_content(_), do: ""
+
+  # Fallback to title when content/description is empty
+  # Many feeds (especially event feeds) don't have description content
+  defp fallback_content("", title) when is_binary(title) and title != "", do: title
+  defp fallback_content(content, _title), do: content
+
+  # Extract image URL from various RSS/Atom image sources
+  # Priority: media:thumbnail > media:content > enclosure (if image type) > embedded in content
+  defp extract_image_url(item) do
+    cond do
+      is_binary(item.media_thumbnail_url) and item.media_thumbnail_url != "" ->
+        item.media_thumbnail_url
+
+      is_binary(item.media_content_url) and item.media_content_url != "" ->
+        item.media_content_url
+
+      is_binary(item.enclosure_url) and item.enclosure_url != "" and is_image_enclosure?(item) ->
+        item.enclosure_url
+
+      true ->
+        # Try to extract from HTML content as fallback
+        extract_image_from_html(item)
+    end
+  end
+
+  # Extract first image URL from HTML content (for feeds that embed images in content)
+  defp extract_image_from_html(%{description: desc}) when is_binary(desc) and desc != "" do
+    extract_first_img_src(desc)
+  end
+
+  defp extract_image_from_html(%{content: content}) when is_binary(content) and content != "" do
+    extract_first_img_src(content)
+  end
+
+  defp extract_image_from_html(%{summary: summary}) when is_binary(summary) and summary != "" do
+    extract_first_img_src(summary)
+  end
+
+  defp extract_image_from_html(_), do: nil
+
+  # Extract src attribute from first <img> tag in HTML
+  defp extract_first_img_src(html) do
+    case Regex.run(~r/<img[^>]+src=["']([^"']+)["']/i, html) do
+      [_, src] -> src
+      _ -> nil
+    end
+  end
+
+  # Check if enclosure is an image type
+  defp is_image_enclosure?(%{enclosure_type: type}) when is_binary(type) do
+    String.starts_with?(type, "image/")
+  end
+
+  defp is_image_enclosure?(_), do: false
+
+  # Add image URL to metadata if present
+  defp maybe_add_image(metadata, nil), do: metadata
+  defp maybe_add_image(metadata, ""), do: metadata
+  defp maybe_add_image(metadata, image_url), do: Map.put(metadata, "image_url", image_url)
 
   # Parse date string to DateTime
   defp parse_date(""), do: DateTime.utc_now()

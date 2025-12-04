@@ -393,12 +393,25 @@ defmodule Homesite.Content do
       [%Post{}, ...]
 
   """
-  def list_published_posts_for_user(user_id) do
-    from(p in Post,
-      where: p.user_id == ^user_id and not is_nil(p.published_at),
-      order_by: [desc: p.published_at]
-    )
-    |> Repo.all()
+  def list_published_posts_for_user(user_id, opts \\ []) do
+    limit = Keyword.get(opts, :limit)
+    offset = Keyword.get(opts, :offset, 0)
+
+    query =
+      from(p in Post,
+        where: p.user_id == ^user_id and not is_nil(p.published_at),
+        order_by: [desc: p.published_at],
+        offset: ^offset
+      )
+
+    query =
+      if limit do
+        from(p in query, limit: ^limit)
+      else
+        query
+      end
+
+    Repo.all(query)
   end
 
   @doc """
@@ -461,12 +474,16 @@ defmodule Homesite.Content do
       [%Post{}, ...]
 
   """
-  def list_all_published_posts do
+  def list_all_published_posts(opts \\ []) do
+    limit = Keyword.get(opts, :limit, 20)
+    offset = Keyword.get(opts, :offset, 0)
+
     from(p in Post,
       where: not is_nil(p.published_at),
       order_by: [desc: p.published_at],
       preload: [:user, :tags],
-      limit: 20
+      limit: ^limit,
+      offset: ^offset
     )
     |> Repo.all()
   end

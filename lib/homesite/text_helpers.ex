@@ -196,7 +196,15 @@ defmodule Homesite.TextHelpers do
     }
   end
 
-  def analyze(_), do: %{issues: [], repeated_words: [], passive_voice: [], overused_words: [], readability: %{}, stats: %{}}
+  def analyze(_),
+    do: %{
+      issues: [],
+      repeated_words: [],
+      passive_voice: [],
+      overused_words: [],
+      readability: %{},
+      stats: %{}
+    }
 
   # Private functions
 
@@ -210,7 +218,14 @@ defmodule Homesite.TextHelpers do
 
       cond do
         clean_word in common_misspellings() ->
-          [%{type: :misspelling, word: word, index: idx, suggestions: get_suggestions(clean_word)}]
+          [
+            %{
+              type: :misspelling,
+              word: word,
+              index: idx,
+              suggestions: get_suggestions(clean_word)
+            }
+          ]
 
         is_double_word?(words, idx) ->
           [%{type: :repeated_word, word: word, index: idx, suggestions: ["Remove duplicate"]}]

@@ -171,7 +171,10 @@ defmodule Homesite.TextHelpersTest do
     test "respects min_length option" do
       # "the" is 3 letters, should be ignored with min_length: 4
       overused =
-        TextHelpers.find_overused_words("the the the the important", threshold: 0.2, min_length: 4)
+        TextHelpers.find_overused_words("the the the the important",
+          threshold: 0.2,
+          min_length: 4
+        )
 
       refute Enum.any?(overused, &(&1.word == "the"))
     end

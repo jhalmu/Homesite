@@ -7,14 +7,11 @@ defmodule HomesiteWeb.PageLive.Home do
 
   import HomesiteWeb.SocialComponents
 
+  @posts_per_page 10
+
   @impl true
   def mount(_params, _session, socket) do
-    posts =
-      Content.list_all_published_posts()
-      |> Enum.map(fn post ->
-        # Add absolute URL for share buttons
-        Map.put(post, :absolute_url, url(~p"/posts/#{post}"))
-      end)
+    posts = load_posts(0)
 
     # Fetch feed items if user is authenticated
     feed_items =
@@ -29,8 +26,17 @@ defmodule HomesiteWeb.PageLive.Home do
       |> assign(:page_title, "Welcome")
       |> assign(:posts, posts)
       |> assign(:feed_items, feed_items)
+      |> assign(:has_more_posts, length(posts) == @posts_per_page)
 
     {:ok, socket}
+  end
+
+  defp load_posts(offset) do
+    Content.list_all_published_posts(limit: @posts_per_page, offset: offset)
+    |> Enum.map(fn post ->
+      # Add absolute URL for share buttons
+      Map.put(post, :absolute_url, url(~p"/posts/#{post}"))
+    end)
   end
 
   def markdown_preview(markdown, length) do
@@ -42,6 +48,17 @@ defmodule HomesiteWeb.PageLive.Home do
     |> then(fn text ->
       if String.length(text) >= length, do: text <> "...", else: text
     end)
+  end
+
+  @impl true
+  def handle_event("load_more_posts", _params, socket) do
+    current_count = length(socket.assigns.posts)
+    new_posts = load_posts(current_count)
+
+    all_posts = socket.assigns.posts ++ new_posts
+    has_more = length(new_posts) == @posts_per_page
+
+    {:noreply, assign(socket, posts: all_posts, has_more_posts: has_more)}
   end
 
   @impl true
