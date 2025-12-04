@@ -6,6 +6,79 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-04 10:50:00 - Critical Fixes and Accessibility Improvements
+
+### Session: Health Assessment Follow-up Fixes
+
+#### Objectives Completed
+Fixed critical issues and high priority items from the comprehensive health assessment.
+
+#### Changes Made (This Session)
+
+**1. Critical Fixes**
+
+- **NotAuthorizedError Fix** (`lib/homesite_web/live/admin_live/dashboard.ex`)
+  - Removed redundant admin check that referenced non-existent module
+  - Router already handles admin authorization via `:require_admin` on_mount hook
+  - Removed unused `Accounts` alias
+
+- **OPML Test Failures Fixed** (10 failures → 0)
+  - Fixed test isolation with unique user emails per test
+  - Added `non_empty/1` helper for empty string handling from SweetXml
+  - Rewrote `parse_opml/1` for hierarchical parsing with folder children
+  - Added `flatten_outlines/1` to properly assign categories from parent folders
+  - Updated `detect_feed_type/1` to return RSS-compatible types only (OPML doesn't have username fields)
+  - Updated test expectations to match correct behavior
+
+**2. High Priority Fixes**
+
+- **Wallaby Configuration Removed**
+  - Removed `included_applications(:test) -> [:wallaby]` from `mix.exs`
+  - Removed wallaby config from `config/test.exs`
+  - Eliminated confusing warning on every test run
+
+- **Unused JS Alias Fixed** (`lib/homesite_web/components/form_components.ex`)
+  - Removed `alias Phoenix.LiveView.JS` that was unused
+  - Gettext warnings are documented false positives (used in HEEx templates)
+
+**3. Accessibility Improvements (WCAG 2.4)**
+
+- **Skip Links Added** (`lib/homesite_web/components/layouts/root.html.heex`)
+  - Added "Skip to main content" link for keyboard navigation
+  - Visible on focus, styled with primary color
+  - Added `id="main-content"` wrapper with `tabindex="-1"`
+
+- **Focus-Visible Styling Added** (`assets/css/app.css`)
+  - Global `:focus-visible` styling with primary color outline
+  - Specific styles for links, buttons, menu items, cards
+  - Dropdown and modal focus handling
+  - High contrast mode support (`@media (prefers-contrast: high)`)
+
+#### Test Results
+- **735 tests, 0 failures** (was 10 failures before fixes)
+- All OPML tests passing (22 tests)
+- Wallaby warning eliminated
+
+#### Files Modified (9 files, +154/-46 lines)
+- `assets/css/app.css` (+61 lines - focus-visible styling)
+- `config/test.exs` (-6 lines - removed wallaby config)
+- `lib/homesite/external_feeds/opml.ex` (+53/-10 lines - parsing fixes)
+- `lib/homesite_web/components/form_components.ex` (-1 line - unused alias)
+- `lib/homesite_web/components/layouts/root.html.heex` (+10 lines - skip link)
+- `lib/homesite_web/live/admin_live/dashboard.ex` (-6 lines - removed redundant check)
+- `mix.exs` (-1 line - removed wallaby include)
+- `test/homesite/external_feeds/opml_test.exs` (+47/-28 lines - test fixes)
+
+#### Remaining Tasks (for future sessions)
+- Add Admin LiveView tests (5 modules)
+- Add Rate Limiting tests
+- Fix E2E Auth Helper
+- Add Component Unit Tests
+- Add missing LiveView tests
+- Create Spelling Helper feature
+
+---
+
 ## 2025-12-02 21:30:00 - Table of Contents Component Implementation
 
 ### Session: FAQ & Blog TOC Sidebar with Active Tracking

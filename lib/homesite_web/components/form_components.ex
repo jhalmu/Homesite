@@ -8,7 +8,6 @@ defmodule HomesiteWeb.FormComponents do
   use Phoenix.Component
   use Gettext, backend: HomesiteWeb.Gettext
 
-  alias Phoenix.LiveView.JS
   import HomesiteWeb.CoreComponents
 
   @doc """

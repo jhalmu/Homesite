@@ -622,3 +622,64 @@ body {
 .prose :where(h2[id], h3[id], h4[id]):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   scroll-margin-top: 12.75rem; /* 204px - extra breathing room */
 }
+
+/* ============================================================================
+   KEYBOARD FOCUS STYLES (WCAG 2.4.7 - Focus Visible)
+   Ensure clear focus indicators for keyboard navigation
+   ============================================================================ */
+
+/* Global focus-visible for interactive elements */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Links - subtle but visible focus ring */
+a:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Buttons - consistent with DaisyUI */
+.btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Menu items */
+.menu li a:focus-visible,
+.menu li button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+  border-radius: 4px;
+}
+
+/* Cards and clickable surfaces */
+.card:focus-visible,
+.post-card:focus-visible,
+.listing-card:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Dropdown menus */
+.dropdown-content li a:focus-visible,
+.dropdown-content li button:focus-visible {
+  background-color: var(--color-base-300);
+  outline: none;
+}
+
+/* Modal close buttons */
+dialog button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :focus-visible {
+    outline-width: 3px;
+    outline-color: currentColor;
+  }
+}

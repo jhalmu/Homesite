@@ -1,7 +1,7 @@
 defmodule HomesiteWeb.AdminLive.Dashboard do
   use HomesiteWeb, :live_view
 
-  alias Homesite.{Accounts, Analytics}
+  alias Homesite.Analytics
 
   @impl true
   def render(assigns) do
@@ -159,11 +159,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
 
   @impl true
   def mount(_params, _session, socket) do
-    # Verify admin access
-    unless socket.assigns.current_scope && Accounts.Scope.admin?(socket.assigns.current_scope) do
-      raise HomesiteWeb.LiveErrors.NotAuthorizedError
-    end
-
+    # Admin access is verified by :require_admin on_mount hook in router
     # Load analytics data
     search_stats = Analytics.search_performance_stats(7)
     popular_searches = Analytics.popular_searches(limit: 10, days: 7)

@@ -143,6 +143,11 @@ defmodule Homesite.ExternalFeeds.OPML do
   defp feed_type_to_opml_type("atom"), do: "atom"
   defp feed_type_to_opml_type(_), do: "rss"
 
+  # Returns nil for empty strings, otherwise returns the string
+  defp non_empty(""), do: nil
+  defp non_empty(nil), do: nil
+  defp non_empty(str) when is_binary(str), do: str
+
   defp escape_xml(nil), do: ""
 
   defp escape_xml(str) do
@@ -156,16 +161,25 @@ defmodule Homesite.ExternalFeeds.OPML do
 
   defp parse_opml(opml_content) when is_binary(opml_content) do
     try do
-      # Parse outlines from OPML
-      outlines =
+      # Parse top-level outlines with their nested children
+      top_level_outlines =
         opml_content
-        |> xpath(~x"//outline"l,
+        |> xpath(~x"//body/outline"l,
           text: ~x"./@text"s,
           title: ~x"./@title"s,
           xml_url: ~x"./@xmlUrl"s,
           type: ~x"./@type"s,
-          category: ~x"../@text"s
+          children: [
+            ~x"./outline"l,
+            text: ~x"./@text"s,
+            title: ~x"./@title"s,
+            xml_url: ~x"./@xmlUrl"s,
+            type: ~x"./@type"s
+          ]
         )
+
+      # Flatten the hierarchy, assigning category from parent folder
+      outlines = flatten_outlines(top_level_outlines)
 
       {:ok, outlines}
     rescue
@@ -175,6 +189,25 @@ defmodule Homesite.ExternalFeeds.OPML do
       :exit, reason ->
         {:error, "Failed to parse OPML: #{inspect(reason)}"}
     end
+  end
+
+  # Flatten hierarchical outlines, assigning category based on parent folder
+  defp flatten_outlines(top_level_outlines) do
+    Enum.flat_map(top_level_outlines, fn outline ->
+      children = Map.get(outline, :children, [])
+      xml_url = Map.get(outline, :xml_url)
+      folder_name = non_empty(Map.get(outline, :text)) || non_empty(Map.get(outline, :title))
+
+      if is_nil(xml_url) or xml_url == "" do
+        # This is a folder - add category to children
+        Enum.map(children, fn child ->
+          Map.put(child, :category, folder_name || "")
+        end)
+      else
+        # This is a direct feed (no folder)
+        [Map.put(outline, :category, "") |> Map.delete(:children)]
+      end
+    end)
   end
 
   defp import_feeds(scope, outlines, create_folders, skip_duplicates) do
@@ -218,7 +251,8 @@ defmodule Homesite.ExternalFeeds.OPML do
          errors
        ) do
     xml_url = Map.get(outline, :xml_url)
-    title = Map.get(outline, :title) || Map.get(outline, :text) || "Untitled Feed"
+    # Handle empty strings from SweetXml (which returns "" for missing attributes)
+    title = non_empty(Map.get(outline, :title)) || non_empty(Map.get(outline, :text)) || "Untitled Feed"
     category = Map.get(outline, :category)
 
     cond do
@@ -286,14 +320,15 @@ defmodule Homesite.ExternalFeeds.OPML do
     end
   end
 
+  # Detect feed type from URL - for OPML imports, we only detect simple RSS-compatible types
+  # Platform-specific types (youtube, bluesky, etc.) require additional fields (username)
+  # that aren't available in OPML, so we import them as RSS feeds
   defp detect_feed_type(url) do
     cond do
-      String.contains?(url, "youtube.com") -> "youtube"
-      String.contains?(url, "bsky.app") -> "bluesky"
-      String.contains?(url, "reddit.com") -> "reddit"
-      String.contains?(url, "mastodon") -> "mastodon"
-      String.contains?(url, "instagram") -> "instagram"
-      String.contains?(url, "tiktok") -> "tiktok"
+      # Only detect RSS-compatible feed types that don't require extra fields
+      String.contains?(url, "youtube.com/feeds") -> "rss"
+      String.contains?(url, "reddit.com") and String.contains?(url, ".rss") -> "rss"
+      String.contains?(url, "bsky.app") -> "rss"
       String.contains?(url, "atom") -> "atom"
       true -> "rss"
     end

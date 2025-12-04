@@ -55,9 +55,3 @@ config :phoenix_test,
     trace_dir: "tmp"
   ]
 
-# Configure Wallaby (used by a11y_audit but we're using Playwright for actual testing)
-config :wallaby,
-  driver: Wallaby.Chrome,
-  hackney_options: [timeout: :infinity]
-
-config :wallaby, :chromedriver, path: "/tmp/chromedriver_bin/chromedriver"

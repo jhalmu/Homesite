@@ -133,7 +133,16 @@
     <% end %>
   </head>
   <body>
+    <%!-- Skip link for keyboard navigation (WCAG 2.4.1) --%>
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-content focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+    >
+      Skip to main content
+    </a>
     <Layouts.navbar current_scope={@current_scope} />
-    {@inner_content}
+    <div id="main-content" tabindex="-1">
+      {@inner_content}
+    </div>
   </body>
 </html>
