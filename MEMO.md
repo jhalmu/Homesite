@@ -6,6 +6,68 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-04 12:30:00 - Test Coverage & Spelling Helper
+
+### Session: Complete 5 Requested Tasks
+
+#### Objectives Completed
+Completed 5 tasks: Rate Limiting tests, E2E Auth Helper fix, Component Unit Tests, missing LiveView tests, and Spelling Helper feature.
+
+#### Changes Made (This Session)
+
+**1. Fix E2E Auth Helper** (Critical)
+- `test/support/playwright_auth_helper.ex` - Fixed broken implementation
+  - Was using non-existent Plug.Conn functions that don't work with Playwright
+  - Now uses `PhoenixTest.Playwright.add_session_cookie/3` correctly
+- `lib/homesite_web/endpoint.ex` - Added `session_options/0` function
+  - Exposes session configuration for E2E tests
+
+**2. Add Rate Limiting Tests** (14 tests)
+- `test/homesite_web/plugs/rate_limiting_test.exs`
+  - Tests `get_ip/1` helper function (6 tests)
+  - Tests Hammer configuration (2 tests)
+  - Tests direct Hammer.check_rate/3 behavior (6 tests)
+
+**3. Add Component Unit Tests** (59 tests)
+- `test/homesite_web/components/social_components_test.exs` (28 tests)
+  - Tests web_share_button, social_share_buttons, platform_share_buttons
+  - Tests URL generation for each social platform
+  - Tests accessibility attributes and icon rendering
+- `test/homesite_web/components/layouts_test.exs` (31 tests)
+  - Tests app layout, flash_group, navbar, language_toggle, theme_toggle
+  - Fixed admin link test - requires `admin_override?: true` in Scope
+
+**4. Add Missing LiveView Tests** (19 tests)
+- `test/homesite_web/live/page_live/home_test.exs` (7 tests)
+  - Public home page rendering, published posts display
+  - Tests markdown_preview/2 function
+- `test/homesite_web/live/dashboard_live/index_test.exs` (12 tests)
+  - Dashboard authentication, statistics display, profile section
+
+**5. Create Spelling Helper Feature** (39 tests)
+- `lib/homesite/text_helpers.ex` - New text analysis module
+  - `check_text/1` - Detects 80+ common misspellings with suggestions
+  - `word_stats/1` - Word/char/sentence counts
+  - `readability/1` - Flesch Reading Ease score and grade level
+  - `find_repeated_words/1` - Consecutive duplicate word detection
+  - `find_passive_voice/1` - Passive voice construction detection
+  - `find_overused_words/2` - Overused words analysis with threshold
+  - `analyze/1` - Comprehensive analysis combining all above
+- `test/homesite/text_helpers_test.exs` (39 tests)
+  - Full coverage of all functions and edge cases
+
+#### Technical Notes
+- Passive voice regex: `~r/(was|were|is|are|been|being|be)\s+(\w+(?:ed|en|wn|nt|t))\b/i`
+- Flesch Reading Ease formula: `206.835 - 1.015 * (words/sentences) - 84.6 * (syllables/words)`
+- Scope.admin? checks `admin_override?` field, not user role
+
+#### Test Results
+- **Total tests**: 892 (up from 763)
+- **New tests**: 131 (14 + 59 + 19 + 39)
+- **Status**: All passing, 0 failures
+
+---
+
 ## 2025-12-04 11:35:00 - Admin LiveView Tests
 
 ### Session: Test Coverage Improvements

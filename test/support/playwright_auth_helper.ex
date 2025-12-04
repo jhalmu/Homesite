@@ -27,14 +27,12 @@ defmodule HomesiteWeb.PlaywrightAuthHelper do
 
   """
   def playwright_log_in_user(conn, user) do
-    # Generate session token
     token = Accounts.generate_user_session_token(user)
 
-    # Set the session cookie in the browser
-    # PhoenixTest.Playwright uses the conn to manage cookies
-    conn
-    |> Phoenix.ConnTest.init_test_session(%{})
-    |> Plug.Conn.put_session(:user_token, token)
-    |> Phoenix.ConnTest.recycle()
+    PhoenixTest.Playwright.add_session_cookie(
+      conn,
+      [value: %{user_token: token}],
+      HomesiteWeb.Endpoint.session_options()
+    )
   end
 end
