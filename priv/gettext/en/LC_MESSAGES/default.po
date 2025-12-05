@@ -12,37 +12,39 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: lib/homesite_web/components/core_components.ex:464
+#: lib/homesite_web/live/admin_live/feedback/index.ex:314
 #: lib/homesite_web/live/dashboard_live/index.html.heex:291
 #: lib/homesite_web/live/dashboard_live/index.html.heex:355
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:211
-#: lib/homesite_web/components/layouts.ex:316
+#: lib/homesite_web/components/layouts.ex:235
+#: lib/homesite_web/components/layouts.ex:340
 #, elixir-autogen, elixir-format
 msgid "Admin"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:124
-#: lib/homesite_web/components/layouts.ex:136
+#: lib/homesite_web/components/layouts.ex:148
+#: lib/homesite_web/components/layouts.ex:160
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:68
+#: lib/homesite_web/live/testimonial_live/show.ex:173
 #, elixir-autogen, elixir-format
 msgid "Built with"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:92
+#: lib/homesite_web/components/layouts.ex:107
 #, elixir-autogen, elixir-format
 msgid "Built with ❤️ and Elixir."
 msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:62
-#: lib/homesite_web/components/layouts.ex:195
-#: lib/homesite_web/components/layouts.ex:290
+#: lib/homesite_web/components/layouts.ex:219
+#: lib/homesite_web/components/layouts.ex:314
 #, elixir-autogen, elixir-format
 msgid "Dashboard"
 msgstr ""
@@ -52,21 +54,21 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:255
-#: lib/homesite_web/components/layouts.ex:365
+#: lib/homesite_web/components/layouts.ex:279
+#: lib/homesite_web/components/layouts.ex:389
 #: lib/homesite_web/live/user_live/login.ex:15
 #: lib/homesite_web/live/user_live/registration.ex:19
 #, elixir-autogen, elixir-format
 msgid "Log in"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:237
-#: lib/homesite_web/components/layouts.ex:354
+#: lib/homesite_web/components/layouts.ex:261
+#: lib/homesite_web/components/layouts.ex:378
 #, elixir-autogen, elixir-format
 msgid "Log out"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:284
+#: lib/homesite_web/components/layouts.ex:308
 #, elixir-autogen, elixir-format
 msgid "Menu"
 msgstr ""
@@ -77,41 +79,45 @@ msgid "Platform"
 msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:63
-#: lib/homesite_web/components/layouts.ex:201
-#: lib/homesite_web/components/layouts.ex:300
+#: lib/homesite_web/components/layouts.ex:225
+#: lib/homesite_web/components/layouts.ex:324
+#: lib/homesite_web/live/feedback_live/index.ex:191
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:429
 #: lib/homesite_web/live/search_live/index.html.heex:56
 #, elixir-autogen, elixir-format
 msgid "Posts"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:232
-#: lib/homesite_web/components/layouts.ex:349
+#: lib/homesite_web/components/layouts.ex:256
+#: lib/homesite_web/components/layouts.ex:373
 #: lib/homesite_web/live/dashboard_live/index.html.heex:259
 #, elixir-autogen, elixir-format
 msgid "Settings"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:131
+#: lib/homesite_web/components/layouts.ex:155
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr ""
 
 #: lib/homesite_web/components/form_components.ex:62
 #: lib/homesite_web/components/layouts.ex:64
-#: lib/homesite_web/components/layouts.ex:204
-#: lib/homesite_web/components/layouts.ex:305
+#: lib/homesite_web/components/layouts.ex:228
+#: lib/homesite_web/components/layouts.ex:329
+#: lib/homesite_web/live/feedback_live/index.ex:194
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:432
 #: lib/homesite_web/live/post_live/form.ex:86
 #: lib/homesite_web/live/search_live/index.html.heex:114
 #, elixir-autogen, elixir-format
 msgid "Tags"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:382
+#: lib/homesite_web/components/layouts.ex:406
 #, elixir-autogen, elixir-format
 msgid "Theme"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:119
+#: lib/homesite_web/components/layouts.ex:143
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr ""
@@ -136,6 +142,7 @@ msgstr ""
 
 #: lib/homesite_web/live/faq_live/form.ex:100
 #: lib/homesite_web/live/feed_folder_live/index.html.heex:60
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:176
 #: lib/homesite_web/live/post_live/form.ex:205
 #: lib/homesite_web/live/tag_live/form.ex:83
 #, elixir-autogen, elixir-format
@@ -726,7 +733,7 @@ msgstr ""
 msgid "to your account now."
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:375
+#: lib/homesite_web/components/layouts.ex:399
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr ""
@@ -1029,10 +1036,10 @@ msgstr ""
 msgid "FAQ updated successfully."
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:207
-#: lib/homesite_web/components/layouts.ex:247
-#: lib/homesite_web/components/layouts.ex:310
-#: lib/homesite_web/components/layouts.ex:360
+#: lib/homesite_web/components/layouts.ex:231
+#: lib/homesite_web/components/layouts.ex:271
+#: lib/homesite_web/components/layouts.ex:334
+#: lib/homesite_web/components/layouts.ex:384
 #: lib/homesite_web/live/faq_live/index.ex:173
 #: lib/homesite_web/live/search_live/index.html.heex:135
 #, elixir-autogen, elixir-format
@@ -1165,7 +1172,9 @@ msgstr ""
 msgid "No results found for"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:190
+#: lib/homesite_web/components/layouts.ex:214
+#: lib/homesite_web/live/feedback_live/index.ex:195
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:433
 #: lib/homesite_web/live/search_live/index.html.heex:5
 #: lib/homesite_web/live/search_live/index.html.heex:23
 #, elixir-autogen, elixir-format, fuzzy
@@ -1209,7 +1218,7 @@ msgstr ""
 msgid "read time"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:278
+#: lib/homesite_web/components/layouts.ex:302
 #, elixir-autogen, elixir-format
 msgid "Close menu"
 msgstr ""
@@ -1231,12 +1240,12 @@ msgstr ""
 msgid "Edit post"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:184
+#: lib/homesite_web/components/layouts.ex:208
 #, elixir-autogen, elixir-format
 msgid "Main navigation"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:174
+#: lib/homesite_web/components/layouts.ex:198
 #, elixir-autogen, elixir-format
 msgid "Open menu"
 msgstr ""
@@ -1383,16 +1392,18 @@ msgstr ""
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:206
 #: lib/homesite_web/live/feed_live/index.html.heex:42
+#: lib/homesite_web/live/feedback_live/index.ex:193
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:431
 #, elixir-autogen, elixir-format
 msgid "Bookmarks"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:474
+#: lib/homesite_web/components/layouts.ex:498
 #, elixir-autogen, elixir-format
 msgid "Business"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:438
+#: lib/homesite_web/components/layouts.ex:462
 #, elixir-autogen, elixir-format
 msgid "Change theme"
 msgstr ""
@@ -1407,6 +1418,7 @@ msgstr ""
 msgid "Claim your username to create your personal homepage!"
 msgstr ""
 
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:279
 #: lib/homesite_web/live/user_live/settings.ex:265
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Close"
@@ -1428,22 +1440,24 @@ msgstr ""
 msgid "Copy"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:483
+#: lib/homesite_web/components/layouts.ex:507
 #, elixir-autogen, elixir-format
 msgid "Corporate"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:492
+#: lib/homesite_web/components/layouts.ex:516
 #, elixir-autogen, elixir-format
 msgid "Cyberpunk"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:465
+#: lib/homesite_web/components/layouts.ex:489
 #, elixir-autogen, elixir-format
 msgid "Dark"
 msgstr ""
 
 #: lib/homesite_web/components/form_components.ex:241
+#: lib/homesite_web/live/admin_live/feedback/index.ex:170
+#: lib/homesite_web/live/admin_live/feedback/index.ex:309
 #, elixir-autogen, elixir-format
 msgid "Date"
 msgstr ""
@@ -1508,8 +1522,8 @@ msgstr ""
 msgid "Failed to toggle bookmark"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:198
-#: lib/homesite_web/components/layouts.ex:295
+#: lib/homesite_web/components/layouts.ex:222
+#: lib/homesite_web/components/layouts.ex:319
 #: lib/homesite_web/live/feed_live/index.ex:33
 #: lib/homesite_web/live/feed_live/index.html.heex:4
 #, elixir-autogen, elixir-format
@@ -1572,7 +1586,7 @@ msgstr ""
 msgid "Last Updated"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:456
+#: lib/homesite_web/components/layouts.ex:480
 #, elixir-autogen, elixir-format
 msgid "Light"
 msgstr ""
@@ -1597,8 +1611,8 @@ msgstr ""
 msgid "Mark as unread"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:227
-#: lib/homesite_web/components/layouts.ex:344
+#: lib/homesite_web/components/layouts.ex:251
+#: lib/homesite_web/components/layouts.ex:368
 #, elixir-autogen, elixir-format, fuzzy
 msgid "My Profile"
 msgstr ""
@@ -1759,6 +1773,7 @@ msgstr ""
 msgid "Total Views"
 msgstr ""
 
+#: lib/homesite_web/live/admin_live/feedback/index.ex:312
 #: lib/homesite_web/live/dashboard_live/index.html.heex:352
 #, elixir-autogen, elixir-format
 msgid "Type"
@@ -1840,7 +1855,555 @@ msgid "unread"
 msgstr ""
 
 #: lib/homesite_web/live/page_live/home.html.heex:126
-#: lib/homesite_web/live/user_live/profile.ex:251
+#: lib/homesite_web/live/user_live/profile.ex:203
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Load More Posts"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:113
+#, elixir-autogen, elixir-format
+msgid "1 Year"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:99
+#, elixir-autogen, elixir-format
+msgid "30 Days"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:106
+#, elixir-autogen, elixir-format
+msgid "90 Days"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/index.ex:92
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:158
+#, elixir-autogen, elixir-format
+msgid "Additional Feedback"
+msgstr ""
+
+#: lib/homesite_web/live/happiness_live/index.ex:319
+#: lib/homesite_web/live/testimonial_live/show.ex:236
+#, elixir-autogen, elixir-format
+msgid "Anonymous User"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:288
+#: lib/homesite_web/live/admin_live/feedback/index.ex:354
+#, elixir-autogen, elixir-format
+msgid "Approve"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:213
+#, elixir-autogen, elixir-format
+msgid "Avg Rating"
+msgstr ""
+
+#: lib/homesite_web/live/testimonial_live/show.ex:40
+#, elixir-autogen, elixir-format
+msgid "Back to Happiness Meter"
+msgstr ""
+
+#: lib/homesite_web/live/testimonial_live/show.ex:175
+#, elixir-autogen, elixir-format
+msgid "Check out Homesite"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:222
+#, elixir-autogen, elixir-format
+msgid "Choose a platform to share your testimonial:"
+msgstr ""
+
+#: lib/homesite_web/live/happiness_live/index.ex:75
+#, elixir-autogen, elixir-format
+msgid "Confidence"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:267
+#: lib/homesite_web/live/testimonial_live/show.ex:162
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Copy Link"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:53
+#, elixir-autogen, elixir-format
+msgid "Failed to approve testimonial."
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:396
+#, elixir-autogen, elixir-format
+msgid "Failed to share feedback publicly."
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:70
+#, elixir-autogen, elixir-format
+msgid "Failed to unapprove testimonial."
+msgstr ""
+
+#: lib/homesite_web/live/testimonial_live/show.ex:99
+#, elixir-autogen, elixir-format
+msgid "Features they found useful:"
+msgstr ""
+
+#: lib/homesite_web/components/layouts.ex:92
+#: lib/homesite_web/live/feedback_live/index.ex:121
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Feedback"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:85
+#: lib/homesite_web/live/admin_live/feedback/index.ex:402
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Feedback Analytics"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/index.ex:192
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:430
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Feeds"
+msgstr ""
+
+#: lib/homesite_web/live/happiness_live/index.ex:25
+#: lib/homesite_web/live/happiness_live/index.ex:37
+#, elixir-autogen, elixir-format
+msgid "Happiness Meter"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:123
+#, elixir-autogen, elixir-format
+msgid "Happiness Score"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:163
+#, elixir-autogen, elixir-format
+msgid "Happiness Trend"
+msgstr ""
+
+#: lib/homesite_web/components/layouts.ex:101
+#, elixir-autogen, elixir-format
+msgid "Help us improve!"
+msgstr ""
+
+#: lib/homesite_web/live/happiness_live/index.ex:294
+#, elixir-autogen, elixir-format
+msgid "High"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:409
+#, elixir-autogen, elixir-format
+msgid "High confidence"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:52
+#, elixir-autogen, elixir-format
+msgid "How are we doing?"
+msgstr ""
+
+#: lib/homesite_web/live/happiness_live/index.ex:151
+#, elixir-autogen, elixir-format
+msgid "How can we do better?"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/index.ex:64
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:128
+#, elixir-autogen, elixir-format
+msgid "How fast and responsive is the site?"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:141
+#, elixir-autogen, elixir-format
+msgid "Last"
+msgstr ""
+
+#: lib/homesite_web/live/happiness_live/index.ex:71
+#, elixir-autogen, elixir-format
+msgid "Last 90 days"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:71
+#, elixir-autogen, elixir-format
+msgid "Later"
+msgstr ""
+
+#: lib/homesite_web/live/happiness_live/index.ex:166
+#: lib/homesite_web/live/testimonial_live/show.ex:199
+#, elixir-autogen, elixir-format
+msgid "Log in to share feedback"
+msgstr ""
+
+#: lib/homesite_web/live/happiness_live/index.ex:292
+#, elixir-autogen, elixir-format
+msgid "Low"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:407
+#, elixir-autogen, elixir-format
+msgid "Low confidence"
+msgstr ""
+
+#: lib/homesite_web/live/happiness_live/index.ex:293
+#, elixir-autogen, elixir-format
+msgid "Medium"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:408
+#, elixir-autogen, elixir-format
+msgid "Medium confidence"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:87
+#, elixir-autogen, elixir-format
+msgid "Monitor user feedback, happiness trends, and moderate testimonials"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:343
+#, elixir-autogen, elixir-format, fuzzy
+msgid "No"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:405
+#: lib/homesite_web/live/happiness_live/index.ex:290
+#, elixir-autogen, elixir-format
+msgid "No data"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:233
+#, elixir-autogen, elixir-format
+msgid "No rank data available"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:374
+#, elixir-autogen, elixir-format
+msgid "No recent feedback"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:196
+#, elixir-autogen, elixir-format
+msgid "No trend data available"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:202
+#, elixir-autogen, elixir-format
+msgid "No, thanks"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/index.ex:50
+#: lib/homesite_web/live/feedback_live/index.ex:72
+#: lib/homesite_web/live/feedback_live/index.ex:93
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:114
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:138
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:159
+#, elixir-autogen, elixir-format
+msgid "Optional"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/index.ex:30
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:94
+#: lib/homesite_web/live/happiness_live/index.ex:62
+#, elixir-autogen, elixir-format
+msgid "Overall Satisfaction"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:149
+#, elixir-autogen, elixir-format
+msgid "Pending Approval"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:242
+#, elixir-autogen, elixir-format
+msgid "Pending Testimonials"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/index.ex:49
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:113
+#, elixir-autogen, elixir-format
+msgid "Performance"
+msgstr ""
+
+#: lib/homesite_web/live/testimonial_live/show.ex:83
+#, elixir-autogen, elixir-format
+msgid "Performance Rating"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:211
+#: lib/homesite_web/live/admin_live/feedback/index.ex:275
+#: lib/homesite_web/live/testimonial_live/show.ex:124
+#, elixir-autogen, elixir-format
+msgid "Rank"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:311
+#, elixir-autogen, elixir-format
+msgid "Rating"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:302
+#, elixir-autogen, elixir-format
+msgid "Recent Feedback"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:204
+#, elixir-autogen, elixir-format
+msgid "Response Rate by User Rank"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:172
+#: lib/homesite_web/live/admin_live/feedback/index.ex:212
+#: lib/homesite_web/live/happiness_live/index.ex:69
+#, elixir-autogen, elixir-format
+msgid "Responses"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:244
+#, elixir-autogen, elixir-format
+msgid "Review and approve testimonials for public display"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:171
+#, elixir-autogen, elixir-format
+msgid "Score"
+msgstr ""
+
+#: lib/homesite_web/live/happiness_live/index.ex:39
+#, elixir-autogen, elixir-format
+msgid "See how our community feels about Homesite based on real user feedback"
+msgstr ""
+
+#: lib/homesite_web/components/layouts.ex:98
+#: lib/homesite_web/live/feedback_live/index.ex:19
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:80
+#: lib/homesite_web/live/happiness_live/index.ex:160
+#: lib/homesite_web/live/testimonial_live/show.ex:193
+#, elixir-autogen, elixir-format
+msgid "Share Your Feedback"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:219
+#, elixir-autogen, elixir-format
+msgid "Share Your Testimonial"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:256
+#, elixir-autogen, elixir-format
+msgid "Share on Facebook"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:247
+#, elixir-autogen, elixir-format
+msgid "Share on LinkedIn"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:238
+#, elixir-autogen, elixir-format
+msgid "Share on X (Twitter)"
+msgstr ""
+
+#: lib/homesite_web/live/testimonial_live/show.ex:133
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Share this testimonial:"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:53
+#, elixir-autogen, elixir-format
+msgid "Share your feedback and help us improve!"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:313
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Shared"
+msgstr ""
+
+#: lib/homesite_web/live/testimonial_live/show.ex:52
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Shared on"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/index.ex:105
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:179
+#, elixir-autogen, elixir-format
+msgid "Submit Feedback"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/index.ex:104
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:178
+#, elixir-autogen, elixir-format
+msgid "Submitting..."
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:63
+#, elixir-autogen, elixir-format
+msgid "Sure!"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/index.ex:98
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:164
+#, elixir-autogen, elixir-format
+msgid "Tell us what you think..."
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:47
+#, elixir-autogen, elixir-format
+msgid "Testimonial approved and now visible publicly."
+msgstr ""
+
+#: lib/homesite_web/live/testimonial_live/show.ex:19
+#, elixir-autogen, elixir-format
+msgid "Testimonial not found or not publicly shared."
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:64
+#, elixir-autogen, elixir-format
+msgid "Testimonial unapproved."
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:154
+#, elixir-autogen, elixir-format
+msgid "Testimonials awaiting review"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:189
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:380
+#, elixir-autogen, elixir-format
+msgid "Thank you for your feedback!"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/index.ex:150
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:347
+#, elixir-autogen, elixir-format
+msgid "Thank you for your feedback! We appreciate your input."
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/index.ex:148
+#, elixir-autogen, elixir-format
+msgid "Thank you for your feedback! Would you like to share your testimonial publicly?"
+msgstr ""
+
+#: lib/homesite_web/live/testimonial_live/show.ex:170
+#, elixir-autogen, elixir-format
+msgid "This testimonial is from a real user of Homesite."
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/index.ex:196
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:434
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Timeline"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:136
+#, elixir-autogen, elixir-format
+msgid "Total Responses"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:363
+#, elixir-autogen, elixir-format
+msgid "Unapprove"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:410
+#: lib/homesite_web/live/happiness_live/index.ex:295
+#, elixir-autogen, elixir-format
+msgid "Unknown"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:310
+#, elixir-autogen, elixir-format, fuzzy
+msgid "User"
+msgstr ""
+
+#: lib/homesite_web/live/testimonial_live/show.ex:25
+#: lib/homesite_web/live/testimonial_live/show.ex:50
+#, elixir-autogen, elixir-format
+msgid "User Testimonial"
+msgstr ""
+
+#: lib/homesite_web/live/happiness_live/index.ex:291
+#, elixir-autogen, elixir-format
+msgid "Very low"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:406
+#, elixir-autogen, elixir-format
+msgid "Very low confidence"
+msgstr ""
+
+#: lib/homesite_web/live/happiness_live/index.ex:135
+#, elixir-autogen, elixir-format
+msgid "View full testimonial"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:173
+#, elixir-autogen, elixir-format
+msgid "Visual"
+msgstr ""
+
+#: lib/homesite_web/live/testimonial_live/show.ex:187
+#, elixir-autogen, elixir-format
+msgid "Want to share your experience?"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/index.ex:21
+#, elixir-autogen, elixir-format
+msgid "We'd love to hear your thoughts on how we're doing. Your feedback helps us improve!"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:192
+#, elixir-autogen, elixir-format
+msgid "We're thrilled you had a great experience! Would you like to share your testimonial publicly to help others discover Homesite?"
+msgstr ""
+
+#: lib/homesite_web/live/happiness_live/index.ex:87
+#, elixir-autogen, elixir-format
+msgid "What Users Are Saying"
+msgstr ""
+
+#: lib/homesite_web/live/testimonial_live/show.ex:73
+#, elixir-autogen, elixir-format
+msgid "What they said:"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/index.ex:71
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:136
+#, elixir-autogen, elixir-format
+msgid "Which features do you find useful?"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:341
+#, elixir-autogen, elixir-format
+msgid "Yes"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:210
+#, elixir-autogen, elixir-format
+msgid "Yes, share it!"
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/index.ex:160
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:357
+#, elixir-autogen, elixir-format
+msgid "You can only submit feedback once per week. Please try again later."
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:23
+#, elixir-autogen, elixir-format
+msgid "You must be an admin to access this page."
+msgstr ""
+
+#: lib/homesite_web/live/feedback_live/index.ex:166
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:366
+#, elixir-autogen, elixir-format
+msgid "You've reached the limit for critical feedback. Please share some positive feedback too!"
+msgstr ""
+
+#: lib/homesite_web/live/happiness_live/index.ex:154
+#, elixir-autogen, elixir-format
+msgid "Your feedback helps us improve. Share your thoughts and help shape the future of Homesite."
+msgstr ""
+
+#: lib/homesite_web/live/testimonial_live/show.ex:173
+#, elixir-autogen, elixir-format
+msgid "by"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/feedback/index.ex:141
+#, elixir-autogen, elixir-format
+msgid "days"
 msgstr ""
