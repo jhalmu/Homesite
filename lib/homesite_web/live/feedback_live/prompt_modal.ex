@@ -21,9 +21,9 @@ defmodule HomesiteWeb.FeedbackLive.PromptModal do
     socket =
       socket
       |> assign(assigns)
-      |> assign(:step, :initial)
+      |> assign_new(:step, fn -> :initial end)
       |> assign(:should_show, should_show)
-      |> assign(:feedback_response, nil)
+      |> assign_new(:feedback_response, fn -> nil end)
       |> assign_new(:form, fn ->
         changeset = Feedback.FeedbackResponse.changeset(%Feedback.FeedbackResponse{}, %{})
         to_form(changeset, as: "feedback")
