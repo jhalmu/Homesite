@@ -143,6 +143,7 @@ defmodule HomesiteWeb.Router do
       live "/admin/users", AdminLive.Users.Index, :index
       live "/admin/invitations", AdminLive.Invitations.Index, :index
       live "/admin/analytics", AdminLive.Analytics.Index, :index
+      live "/admin/feedback", AdminLive.Feedback.Index, :index
 
       # Admin FAQ management
       live "/faqs/new", FaqLive.Form, :new

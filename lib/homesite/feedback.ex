@@ -498,6 +498,47 @@ defmodule Homesite.Feedback do
   end
 
   @doc """
+  Unapproves a testimonial (removes public approval).
+
+  Admins can unapprove testimonials to remove them from public display
+  while keeping them shared.
+  """
+  def unapprove_testimonial(%Scope{admin_override?: true} = _scope, feedback_id) do
+    feedback = Repo.get!(FeedbackResponse, feedback_id)
+
+    feedback
+    |> FeedbackResponse.approval_changeset(%{
+      testimonial_approved: false,
+      approved_by_user_id: nil,
+      approved_at: nil
+    })
+    |> Repo.update()
+  end
+
+  def unapprove_testimonial(_scope, _feedback_id) do
+    raise "Unauthorized: Admin access required"
+  end
+
+  @doc """
+  Lists pending testimonials (shared but not yet approved).
+
+  Returns all testimonials that are shared publicly but haven't been
+  approved by an admin yet.
+  """
+  def list_pending_testimonials(%Scope{admin_override?: true} = _scope) do
+    from(f in FeedbackResponse,
+      where: f.shared_publicly == true and is_nil(f.testimonial_approved),
+      order_by: [desc: f.inserted_at],
+      preload: [:user]
+    )
+    |> Repo.all()
+  end
+
+  def list_pending_testimonials(_scope) do
+    raise "Unauthorized: Admin access required"
+  end
+
+  @doc """
   Gets feedback analytics for admin dashboard.
 
   Returns:
