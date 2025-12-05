@@ -83,12 +83,16 @@ defmodule HomesiteWeb.FeedbackLive.Index do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(params, _session, socket) do
     changeset = Feedback.FeedbackResponse.changeset(%Feedback.FeedbackResponse{}, %{})
+
+    # Get referrer from params or default to home
+    referrer = Map.get(params, "from", ~p"/")
 
     {:ok,
      socket
      |> assign(:page_title, gettext("Feedback"))
+     |> assign(:referrer, referrer)
      |> assign_form(changeset)}
   end
 
@@ -108,18 +112,11 @@ defmodule HomesiteWeb.FeedbackLive.Index do
     feedback_params = Map.put(feedback_params, "prompt_type", "passive")
 
     case Feedback.create_feedback_response(socket.assigns.current_scope, feedback_params) do
-      {:ok, feedback} ->
-        # Check if user wants to share (4-5 stars)
-        socket =
-          if feedback.overall_satisfaction >= 4 do
-            put_flash(socket, :info, gettext("Thank you for your feedback! Would you like to share your testimonial publicly?"))
-          else
-            put_flash(socket, :info, gettext("Thank you for your feedback! We appreciate your input."))
-          end
-
+      {:ok, _feedback} ->
         {:noreply,
          socket
-         |> push_navigate(to: ~p"/")}
+         |> put_flash(:info, gettext("Thank you for your feedback! We appreciate your input."))
+         |> push_navigate(to: socket.assigns.referrer)}
 
       {:error, :rate_limited} ->
         {:noreply,
