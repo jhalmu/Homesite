@@ -1095,6 +1095,8 @@ defmodule HomesiteWeb.SecurityTest do
       {:ok, feedback} =
         Feedback.create_feedback_response(user_scope, %{
           "overall_satisfaction" => 5,
+          "performance_rating" => 5,
+          "open_feedback" => "Test workflow",
           "prompt_type" => "active"
         })
 

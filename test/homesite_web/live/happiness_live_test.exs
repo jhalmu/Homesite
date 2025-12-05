@@ -28,6 +28,8 @@ defmodule HomesiteWeb.HappinessLiveTest do
       {:ok, _feedback2} =
         Feedback.create_feedback_response(scope2, %{
           "overall_satisfaction" => 4,
+          "performance_rating" => 4,
+          "open_feedback" => "Good app",
           "prompt_type" => "passive"
         })
 
@@ -94,6 +96,7 @@ defmodule HomesiteWeb.HappinessLiveTest do
       {:ok, feedback} =
         Feedback.create_feedback_response(scope, %{
           "overall_satisfaction" => 5,
+          "performance_rating" => 5,
           "open_feedback" => "This is my public testimonial",
           "prompt_type" => "passive"
         })
@@ -241,6 +244,8 @@ defmodule HomesiteWeb.HappinessLiveTest do
       {:ok, feedback} =
         Feedback.create_feedback_response(scope, %{
           "overall_satisfaction" => 5,
+          "performance_rating" => 5,
+          "open_feedback" => "Test feedback",
           "prompt_type" => "passive"
         })
 
@@ -269,6 +274,7 @@ defmodule HomesiteWeb.HappinessLiveTest do
       {:ok, feedback} =
         Feedback.create_feedback_response(scope, %{
           "overall_satisfaction" => 5,
+          "performance_rating" => 5,
           "open_feedback" => "Great app!",
           "prompt_type" => "passive"
         })
