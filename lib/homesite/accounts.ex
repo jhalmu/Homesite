@@ -90,24 +90,56 @@ defmodule Homesite.Accounts do
   def register_user(attrs) do
     invitation_code = Map.get(attrs, "invitation_code") || Map.get(attrs, :invitation_code)
 
-    # Validate invitation code first
+    # Quick validation first (before transaction)
     case validate_invitation_for_registration(invitation_code) do
       :ok ->
-        # Create user
-        result =
-          %User{}
-          |> User.email_changeset(attrs)
-          |> User.password_changeset(attrs)
-          |> Repo.insert()
+        # CRITICAL: Wrap in transaction to ensure atomicity
+        Repo.transaction(fn ->
+          # Lock invitation row to prevent race conditions
+          invitation =
+            from(i in Invitation, where: i.code == ^invitation_code, lock: "FOR UPDATE")
+            |> Repo.one()
 
-        # If user created successfully, consume the invitation
-        case result do
+          # Re-validate inside transaction (code could have been deleted or exhausted)
+          cond do
+            is_nil(invitation) ->
+              Repo.rollback(:invitation_deleted)
+
+            not Invitation.valid?(invitation) ->
+              Repo.rollback(:invitation_invalid)
+
+            true ->
+              # Create user with invitation tracking
+              # Apply password changeset only if password is provided (supports passwordless registration)
+              changeset =
+                %User{}
+                |> User.email_changeset(attrs)
+                |> maybe_apply_password_changeset(attrs)
+                |> Ecto.Changeset.cast(%{invitation_code_used: invitation_code}, [
+                  :invitation_code_used
+                ])
+
+              with {:ok, user} <- Repo.insert(changeset),
+                   {:ok, _invitation} <- increment_invitation_usage(invitation) do
+                user
+              else
+                {:error, changeset} -> Repo.rollback(changeset)
+              end
+          end
+        end)
+        |> case do
           {:ok, user} ->
-            use_invitation(invitation_code)
             {:ok, user}
 
-          error ->
-            error
+          {:error, %Ecto.Changeset{} = changeset} ->
+            {:error, changeset}
+
+          {:error, reason} when reason in [:invitation_deleted, :invitation_invalid] ->
+            {:error,
+             %User{}
+             |> User.email_changeset(attrs)
+             |> Ecto.Changeset.add_error(:invitation_code, invitation_error_message(:not_found))
+             |> Map.put(:action, :insert)}
         end
 
       {:error, reason} ->
@@ -116,6 +148,25 @@ defmodule Homesite.Accounts do
          |> User.email_changeset(attrs)
          |> Ecto.Changeset.add_error(:invitation_code, invitation_error_message(reason))
          |> Map.put(:action, :insert)}
+    end
+  end
+
+  # Helper function for atomically incrementing invitation usage
+  defp increment_invitation_usage(invitation) do
+    invitation
+    |> Ecto.Changeset.change(current_uses: invitation.current_uses + 1)
+    |> Repo.update()
+  end
+
+  # Helper function to conditionally apply password changeset
+  # Supports both password-based and passwordless registration
+  defp maybe_apply_password_changeset(changeset, attrs) do
+    password = Map.get(attrs, "password") || Map.get(attrs, :password)
+
+    if password && password != "" do
+      User.password_changeset(changeset, attrs)
+    else
+      changeset
     end
   end
 

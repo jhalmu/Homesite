@@ -706,4 +706,30 @@ defmodule Homesite.ExternalFeeds do
   def schedule_individual_refreshes do
     Homesite.Workers.FeedRefreshWorker.schedule_individual_refreshes()
   end
+
+  @doc """
+  Counts feed items marked as read by user.
+
+  Used by feedback system for rank calculation.
+  """
+  def count_user_read_items(user_id) do
+    from(i in FeedItemInteraction,
+      where: i.user_id == ^user_id and not is_nil(i.read_at),
+      select: count(i.id)
+    )
+    |> Repo.one()
+  end
+
+  @doc """
+  Counts bookmarked feed items by user.
+
+  Used by feedback system for rank calculation.
+  """
+  def count_user_bookmarks(user_id) do
+    from(i in FeedItemInteraction,
+      where: i.user_id == ^user_id and not is_nil(i.bookmarked_at),
+      select: count(i.id)
+    )
+    |> Repo.one()
+  end
 end

@@ -27,7 +27,25 @@ defmodule Homesite.Accounts.Invitation do
     |> validate_inclusion(:default_role, ["user", "admin"])
     |> validate_number(:max_uses, greater_than: 0)
     |> validate_number(:current_uses, greater_than_or_equal_to: 0)
+    |> validate_expires_at()
     |> unique_constraint(:code)
+  end
+
+  # Validates that expires_at is a proper DateTime (not a string that failed to parse)
+  defp validate_expires_at(changeset) do
+    case get_change(changeset, :expires_at) do
+      nil ->
+        changeset
+
+      %DateTime{} ->
+        changeset
+
+      invalid when is_binary(invalid) ->
+        add_error(changeset, :expires_at, "is not a valid datetime")
+
+      _ ->
+        add_error(changeset, :expires_at, "must be a datetime")
+    end
   end
 
   @doc """

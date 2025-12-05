@@ -6,6 +6,105 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-05 22:00:00 - Feedback System UI Implementation (Phase 3)
+
+### Session: LiveView Components for Feedback Collection
+
+#### Objectives Completed
+Completed Phase 3 of the Feedback System implementation by building user-facing UI components for both active and passive feedback collection.
+
+#### Changes Made (This Session)
+
+**1. Passive Feedback Form (Always Available)**
+- **CREATED**: `lib/homesite_web/live/feedback_live/index.ex` (199 lines)
+  - Standalone page at `/feedback` route
+  - 5-star overall satisfaction rating (required)
+  - 5-star performance rating (optional)
+  - Feature usefulness checkboxes (posts, feeds, bookmarks, tags, search, timeline)
+  - Open feedback textarea (optional)
+  - Anti-spam error handling (rate limiting, negative feedback limit)
+  - Success flow with conditional message for 4-5 star ratings
+
+**2. Active Feedback Prompt Modal (Intelligent Prompting)**
+- **CREATED**: `lib/homesite_web/live/feedback_live/prompt_modal.ex` (440 lines)
+  - Multi-step state machine: `:initial` → `:questions` → `:share_option` → `:share_platforms` → `:complete`
+  - Non-intrusive toast notification in bottom-right (initial state)
+  - Full modal with feedback form (questions state)
+  - Share option for 4-5 star ratings (social sharing encouragement)
+  - Social platform sharing buttons (Twitter, LinkedIn, Facebook)
+  - Clipboard copy functionality for testimonial links
+  - Automatically marks prompt as shown to respect user preferences
+  - Reuses form logic from passive feedback form
+
+**3. JavaScript Hook for Clipboard**
+- **UPDATED**: `assets/js/app.js`
+  - Added `CopyButton` hook (lines 159-179)
+  - Client-side clipboard API implementation
+  - Visual feedback (shows checkmark for 2 seconds after copy)
+  - Error handling for clipboard failures
+
+**4. Layout Integration**
+- **UPDATED**: `lib/homesite_web/components/layouts.ex`
+  - Integrated feedback prompt modal into app layout (lines 98-105)
+  - Conditional rendering for authenticated users only
+  - Modal appears after footer and flash messages
+
+**5. Router Updates**
+- **UPDATED**: `lib/homesite_web/router.ex`
+  - Added `/feedback` route in `:require_authenticated_user` live_session (line 122)
+  - Route accessible to authenticated users only
+
+**6. Bug Fixes**
+- Fixed missing `CoreComponents` import in both LiveView files
+- Removed non-existent `<.error>` component usage (Phoenix 1.8 pattern)
+  - Errors now handled by form validation and flash messages
+  - Cleaner UI without inline error displays for custom inputs
+
+#### Test Status
+- **Context tests**: 704 total tests (all passing from previous session)
+- **Worker tests**: FeedbackPromptWorker and RankCalculationWorker tested
+- **UI tests**: Not yet written (pending - Task 18)
+
+#### Files Created (2 files, 639 lines)
+- `lib/homesite_web/live/feedback_live/index.ex` (199 lines)
+- `lib/homesite_web/live/feedback_live/prompt_modal.ex` (440 lines)
+
+#### Files Modified (3 files)
+- `assets/js/app.js` (+20 lines - CopyButton hook)
+- `lib/homesite_web/components/layouts.ex` (+8 lines - modal integration)
+- `lib/homesite_web/router.ex` (+3 lines - /feedback route)
+
+#### Compilation Status
+✅ **Project compiles successfully**
+- Warnings only (no errors):
+  - Unused Gettext imports (expected - used in templates)
+  - Missing `/testimonials/:token` route (not yet implemented - Week 4)
+  - Unreachable error clause in RankCalculationWorker (minor, non-blocking)
+
+#### Progress Summary (35 Total Tasks)
+- **Completed**: 16 tasks (Weeks 1-3: Phases 1-2 complete, Phase 3 partially complete)
+  - ✅ Week 1: Database schema, core context, tests
+  - ✅ Week 2: Workers, rank calculation, Oban cron
+  - ✅ Week 3 (partial): Passive form, active modal, integration
+- **In Progress**: 0 tasks
+- **Pending**: 19 tasks (Phase 3 testing, Phase 4-6)
+
+#### Next Steps (Recommended)
+1. **Add footer widget** to layouts with link to /feedback (Task 15)
+2. **Test feedback submission flow** manually (Task 17)
+3. **Write LiveView tests** for feedback forms (Task 18)
+4. **Create /happiness page** with SVG animations (Week 4, Tasks 19-20)
+5. **Implement testimonials public page** at /testimonials/:token (Week 4, Task 23)
+
+#### Notes
+- Active modal uses `should_show_prompt?/1` to check if user is due for feedback
+- Exponential backoff schedule: [7, 14, 30, 60, 90, 180, 365] days
+- Social sharing URLs pre-filled with star ratings and testimonial link
+- Form validation handled by Ecto changeset, errors shown via flash messages
+- Feedback prompt respects user opt-out preference (`feedback_prompt_preference: "opted_out"`)
+
+---
+
 ## 2025-12-04 19:30:00 - Feature Planning: Messaging System & Image Gallery
 
 ### Session: Comprehensive Documentation for Two Major Features

@@ -39,7 +39,11 @@ config :homesite, Oban,
        # Refresh all feeds every 30 minutes
        {"*/30 * * * *", Homesite.Workers.FeedRefreshWorker, args: %{refresh_all: true}},
        # Clean up old feed items daily at 2 AM
-       {"0 2 * * *", Homesite.Workers.FeedCleanupWorker}
+       {"0 2 * * *", Homesite.Workers.FeedCleanupWorker},
+       # Check for users due for feedback prompts daily at 9 AM
+       {"0 9 * * *", Homesite.Workers.FeedbackPromptWorker},
+       # Recalculate user ranks weekly on Sunday at 3 AM
+       {"0 3 * * 0", Homesite.Workers.RankCalculationWorker}
      ]}
   ]
 

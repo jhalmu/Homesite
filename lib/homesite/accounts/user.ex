@@ -36,9 +36,21 @@ defmodule Homesite.Accounts.User do
     # Username for URL routing (optional)
     field :username, :string
 
+    # Invitation tracking (audit trail)
+    field :invitation_code_used, :string
+
+    # Feedback system fields
+    field :rank, :integer, default: 1
+    field :rank_updated_at, :utc_datetime
+    field :last_feedback_prompt_at, :utc_datetime
+    field :feedback_prompt_preference, :string, default: "normal"
+    field :positive_feedback_count, :integer, default: 0
+    field :negative_feedback_count, :integer, default: 0
+
     has_many :posts, Homesite.Content.Post
     has_many :tags, Homesite.Content.Tag
     has_many :feed_sources, Homesite.ExternalFeeds.FeedSource
+    has_many :feedback_responses, Homesite.Feedback.FeedbackResponse
 
     timestamps(type: :utc_datetime)
   end
@@ -54,6 +66,25 @@ defmodule Homesite.Accounts.User do
   """
   def flower_count(%__MODULE__{role: "admin", admin_flowers: count}), do: count
   def flower_count(_user), do: 0
+
+  @doc """
+  Returns true if the user has opted out of feedback prompts.
+  """
+  def feedback_opted_out?(%__MODULE__{feedback_prompt_preference: "opted_out"}), do: true
+  def feedback_opted_out?(_user), do: false
+
+  @doc """
+  Returns the user's rank (1-10 scale).
+
+  For admins, maps admin_flowers (1-5) to rank (2, 4, 6, 8, 10) by multiplying by 2.
+  For regular users, returns the calculated rank field (default 1).
+  """
+  def get_rank(%__MODULE__{role: "admin", admin_flowers: flowers}) when is_integer(flowers) do
+    flowers * 2
+  end
+
+  def get_rank(%__MODULE__{rank: rank}) when is_integer(rank), do: rank
+  def get_rank(_user), do: 1
 
   @doc """
   A user changeset for registering or changing the email.

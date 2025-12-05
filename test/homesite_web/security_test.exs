@@ -612,4 +612,125 @@ defmodule HomesiteWeb.SecurityTest do
       assert share.post.id == post.id
     end
   end
+
+  describe "Invitation System Security" do
+    test "concurrent registrations with limited invitation - atomic consumption", %{conn: _conn} do
+      # Create invitation with max 5 uses
+      admin = user_fixture()
+
+      {:ok, invitation} =
+        Accounts.create_invitation(admin, %{
+          code: "CONCURRENT-TEST",
+          max_uses: 5
+        })
+
+      # Simulate 10 concurrent registration attempts
+      tasks =
+        for i <- 1..10 do
+          Task.async(fn ->
+            Accounts.register_user(%{
+              email: "user#{i}@concurrent.test",
+              password: "testpassword123",
+              invitation_code: invitation.code,
+              preferred_language: "en"
+            })
+          end)
+        end
+
+      results = Enum.map(tasks, &Task.await/1)
+
+      # Exactly 5 should succeed (max_uses = 5)
+      successes =
+        Enum.count(results, fn
+          {:ok, _user} -> true
+          _ -> false
+        end)
+
+      # Core security property: exactly max_uses (5) registrations succeed
+      assert successes == 5
+
+      # 5 should fail (the ones that tried after invitation was exhausted)
+      failures =
+        Enum.count(results, fn
+          {:error, _changeset} -> true
+          _ -> false
+        end)
+
+      assert failures == 5
+
+      # CRITICAL: Verify invitation usage count matches exactly max_uses
+      # This proves atomic consumption with pessimistic locking worked
+      updated_invitation = Accounts.get_invitation_by_code(invitation.code)
+      assert updated_invitation.current_uses == 5
+      refute Homesite.Accounts.Invitation.valid?(updated_invitation)
+    end
+
+    test "exhausted invitation cannot be reused", %{conn: _conn} do
+      # Create invitation with max 1 use
+      admin = user_fixture()
+
+      {:ok, invitation} =
+        Accounts.create_invitation(admin, %{
+          code: "ONE-TIME-USE",
+          max_uses: 1
+        })
+
+      # First registration should succeed
+      {:ok, user1} =
+        Accounts.register_user(%{
+          email: "first@example.com",
+          password: "testpassword123",
+          invitation_code: invitation.code,
+          preferred_language: "en"
+        })
+
+      assert user1.invitation_code_used == "ONE-TIME-USE"
+
+      # Second registration with same code should fail
+      {:error, changeset} =
+        Accounts.register_user(%{
+          email: "second@example.com",
+          password: "testpassword123",
+          invitation_code: invitation.code,
+          preferred_language: "en"
+        })
+
+      errors = errors_on(changeset)
+      assert errors[:invitation_code] == ["has been used too many times"]
+
+      # Verify invitation is fully consumed
+      updated_invitation = Accounts.get_invitation_by_code(invitation.code)
+      assert updated_invitation.current_uses == 1
+      refute Homesite.Accounts.Invitation.valid?(updated_invitation)
+    end
+
+    test "invitation code is tracked in user record for audit trail", %{conn: _conn} do
+      # Create invitation
+      admin = user_fixture()
+
+      {:ok, invitation} =
+        Accounts.create_invitation(admin, %{
+          code: "AUDIT-TRAIL-TEST"
+        })
+
+      # Register user
+      {:ok, user} =
+        Accounts.register_user(%{
+          email: "audited@example.com",
+          password: "testpassword123",
+          invitation_code: invitation.code,
+          preferred_language: "en"
+        })
+
+      # Verify invitation code is stored in user record
+      assert user.invitation_code_used == "AUDIT-TRAIL-TEST"
+
+      # Verify we can query users by invitation code
+      retrieved_user = Accounts.get_user_by_email("audited@example.com")
+      assert retrieved_user.invitation_code_used == "AUDIT-TRAIL-TEST"
+
+      # This enables audit queries like "who used this invitation code?"
+      # In production, you could do: Repo.all(from u in User, where: u.invitation_code_used == ^code)
+    end
+  end
 end

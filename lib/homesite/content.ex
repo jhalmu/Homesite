@@ -1050,6 +1050,19 @@ defmodule Homesite.Content do
     }
   end
 
+  @doc """
+  Counts total published posts for a user.
+
+  Used by feedback system for rank calculation.
+  """
+  def count_user_posts(user_id) do
+    from(p in Post,
+      where: p.user_id == ^user_id and not is_nil(p.published_at),
+      select: count(p.id)
+    )
+    |> Repo.one()
+  end
+
   # Private Functions
 
   defp invalidate_feed_caches(%Post{} = post) do

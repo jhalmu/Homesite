@@ -748,6 +748,85 @@ defmodule Homesite.AccountsTest do
       assert String.length(code) == 8
       assert String.match?(code, ~r/^[A-Z0-9]+$/)
     end
+
+    test "register_user/1 stores invitation code for audit trail", %{user: admin} do
+      {:ok, invitation} = Accounts.create_invitation(admin, %{code: "AUDIT-TEST"})
+
+      {:ok, user} =
+        Accounts.register_user(%{
+          email: "audit@example.com",
+          password: "testpassword123",
+          invitation_code: invitation.code,
+          preferred_language: "en"
+        })
+
+      # Verify invitation code is stored in user record
+      assert user.invitation_code_used == "AUDIT-TEST"
+
+      # Verify it persists in database
+      reloaded = Accounts.get_user_by_email("audit@example.com")
+      assert reloaded.invitation_code_used == "AUDIT-TEST"
+    end
+
+    test "register_user/1 atomically consumes invitation", %{user: admin} do
+      {:ok, invitation} = Accounts.create_invitation(admin, %{code: "ATOMIC-TEST"})
+
+      # Verify initial state
+      assert invitation.current_uses == 0
+
+      # Register user
+      {:ok, user} =
+        Accounts.register_user(%{
+          email: "atomic@example.com",
+          password: "testpassword123",
+          invitation_code: invitation.code,
+          preferred_language: "en"
+        })
+
+      # Verify both user creation AND invitation consumption succeeded
+      assert user.email == "atomic@example.com"
+      assert user.invitation_code_used == "ATOMIC-TEST"
+
+      updated_invitation = Accounts.get_invitation_by_code("ATOMIC-TEST")
+      assert updated_invitation.current_uses == 1
+    end
+
+    test "register_user/1 rolls back invitation consumption on user creation failure", %{
+      user: admin
+    } do
+      {:ok, invitation} = Accounts.create_invitation(admin, %{code: "ROLLBACK-TEST"})
+
+      # Create a user with an email first
+      {:ok, existing_user} =
+        Accounts.register_user(%{
+          email: "existing@example.com",
+          password: "testpassword123",
+          invitation_code: invitation.code,
+          preferred_language: "en"
+        })
+
+      # Verify invitation was consumed once
+      invitation_after_first = Accounts.get_invitation_by_code("ROLLBACK-TEST")
+      assert invitation_after_first.current_uses == 1
+
+      # Try to register with duplicate email - should fail
+      {:error, changeset} =
+        Accounts.register_user(%{
+          email: existing_user.email,
+          # Same email - will fail unique constraint
+          password: "testpassword123",
+          invitation_code: invitation.code,
+          preferred_language: "en"
+        })
+
+      # Verify registration failed due to duplicate email
+      assert "has already been taken" in errors_on(changeset).email
+
+      # CRITICAL: Verify invitation was NOT consumed again (transaction rolled back)
+      invitation_after_failure = Accounts.get_invitation_by_code("ROLLBACK-TEST")
+      assert invitation_after_failure.current_uses == 1
+      # Should still be 1, not 2
+    end
   end
 
   describe "get_user_by_username/1" do
