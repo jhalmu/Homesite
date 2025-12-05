@@ -16,7 +16,11 @@ defmodule HomesiteWeb.FeedbackLive.PromptModal do
 
   @impl true
   def update(assigns, socket) do
+    require Logger
     should_show = should_show_prompt?(assigns)
+    current_step = socket.assigns[:step]
+
+    Logger.info("🔔 Feedback modal update - should_show: #{should_show}, current_step: #{inspect(current_step)}")
 
     socket =
       socket
@@ -29,6 +33,7 @@ defmodule HomesiteWeb.FeedbackLive.PromptModal do
         to_form(changeset, as: "feedback")
       end)
 
+    Logger.info("🔔 After update - step: #{inspect(socket.assigns.step)}, should_show: #{socket.assigns.should_show}")
     {:ok, socket}
   end
 
@@ -292,12 +297,18 @@ defmodule HomesiteWeb.FeedbackLive.PromptModal do
 
   @impl true
   def handle_event("show_form", _params, socket) do
+    require Logger
+    Logger.info("🔔 Feedback modal: show_form event received!")
+    Logger.info("🔔 Current step: #{inspect(socket.assigns[:step])}")
+
     # Mark prompt as shown
     if socket.assigns.current_scope do
       Feedback.mark_prompt_shown(socket.assigns.current_scope.user)
     end
 
-    {:noreply, assign(socket, step: :questions)}
+    new_socket = assign(socket, step: :questions)
+    Logger.info("🔔 New step: #{inspect(new_socket.assigns.step)}")
+    {:noreply, new_socket}
   end
 
   @impl true

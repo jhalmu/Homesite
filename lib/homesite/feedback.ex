@@ -307,7 +307,9 @@ defmodule Homesite.Feedback do
   """
   def mark_prompt_shown(%User{} = user) do
     user
-    |> Ecto.Changeset.change(%{last_feedback_prompt_at: DateTime.utc_now()})
+    |> Ecto.Changeset.change(%{
+      last_feedback_prompt_at: DateTime.utc_now() |> DateTime.truncate(:second)
+    })
     |> Repo.update()
   end
 
