@@ -36,6 +36,7 @@ defmodule HomesiteWeb.FeedbackLive.Index do
                     value={rating}
                     class="mask mask-heart bg-red-400"
                     checked={@form[:overall_satisfaction].value == rating}
+                    required={rating == 1}
                   />
                 <% end %>
               </div>
@@ -54,6 +55,7 @@ defmodule HomesiteWeb.FeedbackLive.Index do
                     value={rating}
                     class="mask mask-heart bg-blue-400"
                     checked={@form[:performance_rating].value == rating}
+                    required={rating == 1}
                   />
                 <% end %>
               </div>
