@@ -28,15 +28,10 @@ defmodule Homesite.Workers.RankCalculationWorker do
 
     Logger.info("[RankCalculationWorker] Starting rank recalculation (batch_size: #{batch_size})")
 
-    case Feedback.recalculate_all_ranks(batch_size: batch_size) do
-      :ok ->
-        duration = System.monotonic_time(:millisecond) - start_time
-        Logger.info("[RankCalculationWorker] Completed rank recalculation in #{duration}ms")
-        {:ok, %{status: :completed, duration_ms: duration, completed_at: DateTime.utc_now()}}
+    :ok = Feedback.recalculate_all_ranks(batch_size: batch_size)
 
-      {:error, reason} = error ->
-        Logger.error("[RankCalculationWorker] Failed to recalculate ranks: #{inspect(reason)}")
-        error
-    end
+    duration = System.monotonic_time(:millisecond) - start_time
+    Logger.info("[RankCalculationWorker] Completed rank recalculation in #{duration}ms")
+    {:ok, %{status: :completed, duration_ms: duration, completed_at: DateTime.utc_now()}}
   end
 end
