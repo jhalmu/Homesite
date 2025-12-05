@@ -87,7 +87,7 @@ defmodule HomesiteWeb.FeedbackLive.Index do
     changeset = Feedback.FeedbackResponse.changeset(%Feedback.FeedbackResponse{}, %{})
 
     # Get referrer from params or default to home
-    referrer = Map.get(params, "from", ~p"/")
+    referrer = params["from"] || "/"
 
     {:ok,
      socket
