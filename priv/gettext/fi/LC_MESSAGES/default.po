@@ -138,7 +138,6 @@ msgstr "Sisältö"
 
 #: lib/homesite_web/live/faq_live/form.ex:100
 #: lib/homesite_web/live/feed_folder_live/index.html.heex:60
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:160
 #: lib/homesite_web/live/post_live/form.ex:205
 #: lib/homesite_web/live/tag_live/form.ex:83
 #, elixir-autogen, elixir-format
@@ -1410,7 +1409,6 @@ msgstr "Varaa käyttäjänimesi"
 msgid "Claim your username to create your personal homepage!"
 msgstr "Varaa käyttäjänimesi luodaksesi oman kotisivun!"
 
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:263
 #: lib/homesite_web/live/user_live/settings.ex:265
 #, elixir-autogen, elixir-format
 msgid "Close"
@@ -1894,17 +1892,11 @@ msgstr "Takaisin onnellisuusmittariin"
 msgid "Check out Homesite"
 msgstr "Tutustu Homesitesiin"
 
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:206
-#, elixir-autogen, elixir-format
-msgid "Choose a platform to share your testimonial:"
-msgstr "Valitse alusta suosituksen jakamiseen:"
-
 #: lib/homesite_web/live/happiness_live/index.ex:75
 #, elixir-autogen, elixir-format
 msgid "Confidence"
 msgstr "Luotettavuus"
 
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:251
 #: lib/homesite_web/live/testimonial_live/show.ex:162
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Copy Link"
@@ -1914,11 +1906,6 @@ msgstr "Kopioi"
 #, elixir-autogen, elixir-format
 msgid "Failed to approve testimonial."
 msgstr "Suosituksen hyväksyminen epäonnistui."
-
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:383
-#, elixir-autogen, elixir-format
-msgid "Failed to share feedback publicly."
-msgstr "Palautteen julkinen jakaminen epäonnistui."
 
 #: lib/homesite_web/live/admin_live/feedback/index.ex:70
 #, elixir-autogen, elixir-format
@@ -1931,7 +1918,7 @@ msgid "Features they found useful:"
 msgstr "Hyödylliset ominaisuudet:"
 
 #: lib/homesite_web/components/layouts.ex:92
-#: lib/homesite_web/live/feedback_live/index.ex:100
+#: lib/homesite_web/live/feedback_live/index.ex:111
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Feedback"
 msgstr "Syöte"
@@ -1973,7 +1960,7 @@ msgstr "Korkea"
 msgid "High confidence"
 msgstr "Korkea luotettavuus"
 
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:57
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:40
 #, elixir-autogen, elixir-format
 msgid "How are we doing?"
 msgstr "Miten meillä menee?"
@@ -1983,8 +1970,7 @@ msgstr "Miten meillä menee?"
 msgid "How can we do better?"
 msgstr "Miten voimme parantaa?"
 
-#: lib/homesite_web/live/feedback_live/index.ex:50
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:120
+#: lib/homesite_web/live/feedback_live/index.ex:63
 #, elixir-autogen, elixir-format
 msgid "How fast and responsive is the site?"
 msgstr "Kuinka nopea ja reagoiva sivusto on?"
@@ -1999,7 +1985,7 @@ msgstr "Viimeiset"
 msgid "Last 90 days"
 msgstr "Viimeiset 90 päivää"
 
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:76
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:59
 #, elixir-autogen, elixir-format
 msgid "Later"
 msgstr "Myöhemmin"
@@ -2061,19 +2047,7 @@ msgstr "Ei viimeaikaisia palautteita"
 msgid "No trend data available"
 msgstr "Ei trenditietoa saatavilla"
 
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:186
-#, elixir-autogen, elixir-format
-msgid "No, thanks"
-msgstr "Ei kiitos"
-
-#: lib/homesite_web/live/feedback_live/index.ex:50
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:120
-#, elixir-autogen, elixir-format
-msgid "Optional"
-msgstr "Valinnainen"
-
-#: lib/homesite_web/live/feedback_live/index.ex:30
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:99
+#: lib/homesite_web/live/feedback_live/index.ex:44
 #: lib/homesite_web/live/happiness_live/index.ex:62
 #, elixir-autogen, elixir-format
 msgid "Overall Satisfaction"
@@ -2140,39 +2114,18 @@ msgstr "Katso miltä yhteisömme tuntuu Homesitesta todellisen käyttäjäpalaut
 
 #: lib/homesite_web/components/layouts.ex:98
 #: lib/homesite_web/live/feedback_live/index.ex:19
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:85
 #: lib/homesite_web/live/happiness_live/index.ex:160
 #: lib/homesite_web/live/testimonial_live/show.ex:193
 #, elixir-autogen, elixir-format
 msgid "Share Your Feedback"
 msgstr "Jaa palautteesi"
 
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:203
-#, elixir-autogen, elixir-format
-msgid "Share Your Testimonial"
-msgstr "Jaa suosituksesi"
-
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:240
-#, elixir-autogen, elixir-format
-msgid "Share on Facebook"
-msgstr "Jaa Facebookissa"
-
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:231
-#, elixir-autogen, elixir-format
-msgid "Share on LinkedIn"
-msgstr "Jaa LinkedInissä"
-
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:222
-#, elixir-autogen, elixir-format
-msgid "Share on X (Twitter)"
-msgstr "Jaa X:ssä (Twitter)"
-
 #: lib/homesite_web/live/testimonial_live/show.ex:133
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Share this testimonial:"
 msgstr "Jaa tämä kirjoitus"
 
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:58
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:41
 #, elixir-autogen, elixir-format
 msgid "Share your feedback and help us improve!"
 msgstr "Jaa palautteesi ja auta meitä parantamaan!"
@@ -2187,27 +2140,22 @@ msgstr "Jaa"
 msgid "Shared on"
 msgstr "Jaa"
 
-#: lib/homesite_web/live/feedback_live/index.ex:84
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:163
+#: lib/homesite_web/live/feedback_live/index.ex:92
 #, elixir-autogen, elixir-format
 msgid "Submit Feedback"
 msgstr "Lähetä palaute"
 
-#: lib/homesite_web/live/feedback_live/index.ex:83
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:162
+#: lib/homesite_web/live/feedback_live/index.ex:91
 #, elixir-autogen, elixir-format
 msgid "Submitting..."
 msgstr "Lähetetään..."
 
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:68
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:51
 #, elixir-autogen, elixir-format
 msgid "Sure!"
 msgstr "Totta kai!"
 
-#: lib/homesite_web/live/feedback_live/index.ex:70
-#: lib/homesite_web/live/feedback_live/index.ex:76
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:141
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:147
+#: lib/homesite_web/live/feedback_live/index.ex:84
 #, elixir-autogen, elixir-format
 msgid "Tell us what you think..."
 msgstr "Kerro mitä ajattelet..."
@@ -2232,22 +2180,10 @@ msgstr "Suosituksen hyväksyntä peruttu."
 msgid "Testimonials awaiting review"
 msgstr "Tarkistusta odottavat suositukset"
 
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:173
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:367
-#, elixir-autogen, elixir-format
-msgid "Thank you for your feedback!"
-msgstr "Kiitos palautteestasi!"
-
-#: lib/homesite_web/live/feedback_live/index.ex:126
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:334
+#: lib/homesite_web/live/feedback_live/index.ex:135
 #, elixir-autogen, elixir-format
 msgid "Thank you for your feedback! We appreciate your input."
 msgstr "Kiitos palautteestasi! Arvostamme panostasi."
-
-#: lib/homesite_web/live/feedback_live/index.ex:124
-#, elixir-autogen, elixir-format
-msgid "Thank you for your feedback! Would you like to share your testimonial publicly?"
-msgstr "Kiitos palautteestasi! Haluaisitko jakaa suosituksesi julkisesti?"
 
 #: lib/homesite_web/live/testimonial_live/show.ex:170
 #, elixir-autogen, elixir-format
@@ -2311,11 +2247,6 @@ msgstr "Haluatko jakaa kokemuksesi?"
 msgid "We'd love to hear your thoughts on how we're doing. Your feedback helps us improve!"
 msgstr "Haluamme kuulla ajatuksesi siitä, miten meillä menee. Palautteesi auttaa meitä kehittymään!"
 
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:176
-#, elixir-autogen, elixir-format
-msgid "We're thrilled you had a great experience! Would you like to share your testimonial publicly to help others discover Homesite?"
-msgstr "Olemme iloisia, että sinulla oli loistava kokemus! Haluaisitko jakaa suosituksesi julkisesti auttaaksesi muita löytämään Homesiten?"
-
 #: lib/homesite_web/live/happiness_live/index.ex:87
 #, elixir-autogen, elixir-format
 msgid "What Users Are Saying"
@@ -2331,13 +2262,7 @@ msgstr "Heidän sanansa:"
 msgid "Yes"
 msgstr "Kyllä"
 
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:194
-#, elixir-autogen, elixir-format
-msgid "Yes, share it!"
-msgstr "Kyllä, jaa se!"
-
-#: lib/homesite_web/live/feedback_live/index.ex:136
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:344
+#: lib/homesite_web/live/feedback_live/index.ex:141
 #, elixir-autogen, elixir-format
 msgid "You can only submit feedback once per week. Please try again later."
 msgstr "Voit lähettää palautetta vain kerran viikossa. Ole hyvä ja yritä myöhemmin uudelleen."
@@ -2347,8 +2272,7 @@ msgstr "Voit lähettää palautetta vain kerran viikossa. Ole hyvä ja yritä my
 msgid "You must be an admin to access this page."
 msgstr "Sinun täytyy olla ylläpitäjä päästäksesi tälle sivulle."
 
-#: lib/homesite_web/live/feedback_live/index.ex:142
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:353
+#: lib/homesite_web/live/feedback_live/index.ex:147
 #, elixir-autogen, elixir-format
 msgid "You've reached the limit for critical feedback. Please share some positive feedback too!"
 msgstr "Olet saavuttanut kriittisen palautteen rajan. Ole hyvä ja jaa myös positiivista palautetta!"
@@ -2367,3 +2291,8 @@ msgstr "käyttäjältä"
 #, elixir-autogen, elixir-format
 msgid "days"
 msgstr "päivää"
+
+#: lib/homesite_web/live/feedback_live/index.ex:31
+#, elixir-autogen, elixir-format
+msgid "Please fix the following errors:"
+msgstr ""
