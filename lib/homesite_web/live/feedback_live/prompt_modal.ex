@@ -99,14 +99,15 @@ defmodule HomesiteWeb.FeedbackLive.PromptModal do
                         {gettext("Overall Satisfaction")} <span class="text-error">*</span>
                       </span>
                     </label>
-                    <div class="rating rating-lg">
+                    <div class="rating rating-lg" phx-click="stop_propagation">
                       <%= for rating <- 1..5 do %>
                         <input
                           type="radio"
                           name="feedback[overall_satisfaction]"
                           value={rating}
-                          class="mask mask-star-2 bg-orange-400"
+                          class="mask mask-heart bg-red-400"
                           checked={@form[:overall_satisfaction].value == rating}
+                          phx-click="stop_propagation"
                         />
                       <% end %>
                     </div>
@@ -115,58 +116,36 @@ defmodule HomesiteWeb.FeedbackLive.PromptModal do
                   <%!-- Performance Rating (Optional) --%>
                   <div class="form-control">
                     <label class="label">
-                      <span class="label-text font-semibold">{gettext("Performance")}</span>
-                      <span class="label-text-alt">{gettext("Optional")}</span>
+                      <span class="label-text font-semibold">
+                        {gettext("How fast and responsive is the site?")} <span class="label-text-alt">({gettext("Optional")})</span>
+                      </span>
                     </label>
-                    <div class="rating rating-lg">
+                    <div class="rating rating-lg" phx-click="stop_propagation">
                       <%= for rating <- 1..5 do %>
                         <input
                           type="radio"
                           name="feedback[performance_rating]"
                           value={rating}
-                          class="mask mask-star-2 bg-blue-400"
+                          class="mask mask-heart bg-blue-400"
                           checked={@form[:performance_rating].value == rating}
+                          phx-click="stop_propagation"
                         />
                       <% end %>
                     </div>
-                    <label class="label">
-                      <span class="label-text-alt">{gettext("How fast and responsive is the site?")}</span>
-                    </label>
                   </div>
 
-                  <%!-- Feature Usefulness (Optional) --%>
+                  <%!-- Open Feedback (Required) --%>
                   <div class="form-control">
                     <label class="label">
                       <span class="label-text font-semibold">
-                        {gettext("Which features do you find useful?")}
+                        {gettext("Tell us what you think...")} ❤️ <span class="text-error">*</span>
                       </span>
-                      <span class="label-text-alt">{gettext("Optional")}</span>
-                    </label>
-                    <div class="grid grid-cols-2 gap-2">
-                      <%= for feature <- ["posts", "feeds", "bookmarks", "tags", "search", "timeline"] do %>
-                        <label class="label cursor-pointer justify-start gap-2">
-                          <input
-                            type="checkbox"
-                            name={"feedback[feature_usefulness][#{feature}]"}
-                            value="true"
-                            class="checkbox checkbox-sm"
-                          />
-                          <span class="label-text">{format_feature_name(feature)}</span>
-                        </label>
-                      <% end %>
-                    </div>
-                  </div>
-
-                  <%!-- Open Feedback (Optional) --%>
-                  <div class="form-control">
-                    <label class="label">
-                      <span class="label-text font-semibold">{gettext("Additional Feedback")}</span>
-                      <span class="label-text-alt">{gettext("Optional")}</span>
                     </label>
                     <textarea
                       name="feedback[open_feedback]"
                       class="textarea textarea-bordered h-24"
                       placeholder={gettext("Tell us what you think...")}
+                      required
                     >{@form[:open_feedback].value}</textarea>
                   </div>
 
@@ -342,9 +321,6 @@ defmodule HomesiteWeb.FeedbackLive.PromptModal do
     # Add prompt_type
     feedback_params = Map.put(feedback_params, "prompt_type", "active")
 
-    # Convert feature_usefulness checkboxes to map
-    feedback_params = normalize_feature_usefulness(feedback_params)
-
     case Feedback.create_feedback_response(socket.assigns.current_scope, feedback_params) do
       {:ok, feedback} ->
         # Check if user wants to share (4-5 stars)
@@ -424,31 +400,10 @@ defmodule HomesiteWeb.FeedbackLive.PromptModal do
     end
   end
 
-  defp normalize_feature_usefulness(params) do
-    features = Map.get(params, "feature_usefulness", %{})
-
-    # Convert checkbox map to simple true values
-    normalized =
-      features
-      |> Enum.filter(fn {_k, v} -> v == "true" end)
-      |> Enum.map(fn {k, _v} -> {k, true} end)
-      |> Map.new()
-
-    Map.put(params, "feature_usefulness", normalized)
-  end
-
-  defp format_feature_name("posts"), do: gettext("Posts")
-  defp format_feature_name("feeds"), do: gettext("Feeds")
-  defp format_feature_name("bookmarks"), do: gettext("Bookmarks")
-  defp format_feature_name("tags"), do: gettext("Tags")
-  defp format_feature_name("search"), do: gettext("Search")
-  defp format_feature_name("timeline"), do: gettext("Timeline")
-  defp format_feature_name(feature), do: String.capitalize(feature)
-
   # Social sharing URL builders
   defp twitter_share_url(url, feedback) do
-    stars = String.duplicate("⭐", feedback.overall_satisfaction)
-    text = "I rated Homesite #{stars}! #{feedback.open_feedback || ""}"
+    hearts = String.duplicate("❤️", feedback.overall_satisfaction)
+    text = "I rated Homesite #{hearts}! #{feedback.open_feedback || ""}"
     "https://twitter.com/intent/tweet?text=#{URI.encode(text)}&url=#{URI.encode(url)}"
   end
 
