@@ -23,6 +23,21 @@ defmodule HomesiteWeb.FeedbackLive.Index do
           </div>
 
           <.form for={@form} id="feedback-form" phx-submit="save" phx-change="validate" class="space-y-6">
+            <%!-- Show form-level errors --%>
+            <%= if @form.errors != [] do %>
+              <div class="alert alert-error">
+                <.icon name="hero-exclamation-triangle" />
+                <div>
+                  <p class="font-bold">{gettext("Please fix the following errors:")}</p>
+                  <ul class="list-disc list-inside">
+                    <%= for {field, {msg, _}} <- @form.errors do %>
+                      <li>{field}: {msg}</li>
+                    <% end %>
+                  </ul>
+                </div>
+              </div>
+            <% end %>
+
             <%!-- Overall Satisfaction (Required) --%>
             <div class="form-control">
               <h3 class="text-sm font-semibold mb-2">
