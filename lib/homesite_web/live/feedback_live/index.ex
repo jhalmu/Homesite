@@ -23,8 +23,8 @@ defmodule HomesiteWeb.FeedbackLive.Index do
           </div>
 
           <.form for={@form} id="feedback-form" phx-submit="save" phx-change="validate" class="space-y-6">
-            <%!-- Show form-level errors --%>
-            <%= if @form.errors != [] do %>
+            <%!-- Show form-level errors only if form was submitted --%>
+            <%= if @form.source.action == :insert && @form.errors != [] do %>
               <div class="alert alert-error">
                 <.icon name="hero-exclamation-triangle" />
                 <div>
@@ -115,10 +115,10 @@ defmodule HomesiteWeb.FeedbackLive.Index do
 
   @impl true
   def handle_event("validate", %{"feedback" => feedback_params}, socket) do
+    # Don't show validation errors until submit - just update form values
     changeset =
       %Feedback.FeedbackResponse{}
       |> Feedback.FeedbackResponse.changeset(feedback_params)
-      |> Map.put(:action, :validate)
 
     {:noreply, assign_form(socket, changeset)}
   end
