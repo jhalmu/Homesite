@@ -527,7 +527,7 @@ defmodule Homesite.Feedback do
   """
   def list_pending_testimonials(%Scope{admin_override?: true} = _scope) do
     from(f in FeedbackResponse,
-      where: f.shared_publicly == true and is_nil(f.testimonial_approved),
+      where: f.shared_publicly == true and f.testimonial_approved == false,
       order_by: [desc: f.inserted_at],
       preload: [:user]
     )
@@ -569,22 +569,64 @@ defmodule Homesite.Feedback do
         val when is_float(val) -> Float.round(val, 2)
       end
 
-    response_by_rank =
+    by_rank =
       from(f in FeedbackResponse,
         join: u in User,
         on: f.user_id == u.id,
         where: f.inserted_at > ^cutoff_date,
         group_by: u.rank,
-        select: %{rank: u.rank, count: count(f.id)},
+        select: %{
+          rank: u.rank,
+          count: count(f.id),
+          avg_rating: avg(f.overall_satisfaction)
+        },
         order_by: [asc: u.rank]
       )
       |> Repo.all()
+      |> Enum.map(fn stat ->
+        %{
+          rank: stat.rank || 1,
+          count: stat.count,
+          avg_rating:
+            case stat.avg_rating do
+              nil -> 0.0
+              %Decimal{} = val -> Decimal.to_float(val) |> Float.round(1)
+              val when is_float(val) -> Float.round(val, 1)
+            end
+        }
+      end)
+
+    # Generate simplified trend data (weekly buckets)
+    trend =
+      from(f in FeedbackResponse,
+        where: f.inserted_at > ^cutoff_date,
+        select: %{
+          inserted_at: f.inserted_at,
+          satisfaction: f.overall_satisfaction
+        }
+      )
+      |> Repo.all()
+      |> Enum.group_by(fn f ->
+        Date.to_iso8601(DateTime.to_date(f.inserted_at))
+      end)
+      |> Enum.map(fn {date, feedbacks} ->
+        avg =
+          Enum.map(feedbacks, & &1.satisfaction)
+          |> Enum.sum()
+          |> Kernel./(length(feedbacks))
+          |> Kernel.*(20)
+          |> round()
+
+        %{date: date, score: avg, count: length(feedbacks)}
+      end)
+      |> Enum.sort_by(& &1.date, :asc)
 
     %{
       happiness: happiness,
       total_responses: total_responses,
       avg_rating: avg_rating,
-      response_by_rank: response_by_rank
+      by_rank: by_rank,
+      trend: trend
     }
   end
 

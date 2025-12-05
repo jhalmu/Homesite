@@ -23,7 +23,10 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
        |> put_flash(:error, gettext("You must be an admin to access this page."))
        |> push_navigate(to: ~p"/")}
     else
-      {:ok, load_analytics(socket)}
+      {:ok,
+       socket
+       |> assign(:hide_feedback_modal, true)
+       |> load_analytics()}
     end
   end
 
@@ -279,6 +282,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
                         <button
                           phx-click="approve_testimonial"
                           phx-value-id={testimonial.id}
+                          data-section="pending"
                           class="btn btn-sm btn-success"
                         >
                           <.icon name="hero-check" /> {gettext("Approve")}
@@ -344,6 +348,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
                             <button
                               phx-click="approve_testimonial"
                               phx-value-id={feedback.id}
+                              data-section="recent"
                               class="btn btn-xs btn-primary"
                             >
                               {gettext("Approve")}

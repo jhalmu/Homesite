@@ -111,7 +111,7 @@ defmodule HomesiteWeb.Layouts do
     <.flash_group flash={@flash} />
 
     <%!-- Feedback Prompt Modal (Active) --%>
-    <%= if @current_scope do %>
+    <%= if @current_scope && !@current_scope.admin_override? do %>
       <.live_component
         module={HomesiteWeb.FeedbackLive.PromptModal}
         id="feedback-prompt"
