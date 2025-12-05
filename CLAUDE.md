@@ -111,6 +111,25 @@ After completing ANY coding work:
 
 **Documentation is part of the feature**, not an afterthought.
 
+### Rule 5: Fix Test Failures Immediately
+
+**CRITICAL**: Test failures are NEVER acceptable and MUST be fixed immediately.
+
+**When test failures are discovered:**
+1. **STOP all other work** - Failing tests take absolute priority
+2. **Investigate immediately** - Run the specific test, read the code, understand the failure
+3. **Fix the root cause** - Don't skip or ignore, fix it properly
+4. **Verify the fix** - Run the test again to confirm it passes
+5. **Run full suite** - Ensure the fix didn't break anything else
+
+**No exceptions:**
+- ❌ Don't defer test fixes to "later"
+- ❌ Don't document test failures as "known issues"
+- ❌ Don't work around failing tests
+- ✅ Fix them NOW before doing anything else
+
+**Test failures = production bugs waiting to happen.**
+
 ---
 
 ## 🤖 Automated Workflows
@@ -872,7 +891,7 @@ This application has TWO separate FAQ systems serving different purposes:
 
 **Purpose**: Developer documentation accessible only in development environment.
 
-**Location**: 
+**Location**:
 - Files: `priv/dev_faqs/*.md`
 - Context: `lib/homesite/dev_faqs.ex`
 - LiveView: `lib/homesite_web/live/dev_faqs_live/index.ex`
@@ -1008,7 +1027,7 @@ faq = Faqs.get_user_faq_by_slug!("how-to-do-something", "en")
 ```elixir
 # During registration
 case Accounts.validate_invitation(code) do
-  {:ok, invitation} -> 
+  {:ok, invitation} ->
     # Proceed with registration, code is valid and consumed
   {:error, reason} ->
     # "invitation code is invalid"
@@ -1075,7 +1094,7 @@ user = unconfirmed_user_fixture_no_password()
 user = user_fixture(%{email: "custom@example.com"})
 ```
 
-**Important**: 
+**Important**:
 - `user_fixture/1` creates CONFIRMED users (manually sets `confirmed_at`)
 - `unconfirmed_user_fixture_no_password/1` bypasses invitation system (direct DB insert)
 - All regular fixtures use password-based auth with "TEST-INVITE"
@@ -1093,7 +1112,6 @@ user = user_fixture(%{email: "custom@example.com"})
   - Parameter handling
   - XSS protection
 
-**Test Coverage**: 276 total tests (as of 2025-11-28)
-- DEV FAQs added 22 new tests
-- All tests passing in test environment
-- DEV FAQ routes correctly return 404 in test environment (expected behavior)
+**Test Coverage**: 892 total tests (as of 2025-12-05)
+- All tests passing
+- Comprehensive coverage across all features
