@@ -87,6 +87,21 @@ defmodule HomesiteWeb.Layouts do
             {gettext("JSON Feed")}
           </.link>
         </div>
+        <%= if @current_scope do %>
+          <div>
+            <span class="footer-title">{gettext("Feedback")}</span>
+            <.link
+              href={~p"/feedback"}
+              class="link-hover link gap-[var(--spacing-inline)] flex items-center"
+            >
+              <.icon name="hero-chat-bubble-left-right" class="h-4 w-4" />
+              {gettext("Share Your Feedback")}
+            </.link>
+            <p class="text-[var(--text-sm)] opacity-70">
+              {gettext("Help us improve!")}
+            </p>
+          </div>
+        <% end %>
       </div>
       <div class="border-base-300 bg-base-200/50 px-[var(--spacing-card)] py-[var(--spacing-md)] text-[var(--text-sm)] border-t text-center opacity-70">
         <p>© {Date.utc_today().year} Portal of JH. {gettext("Built with ❤️ and Elixir.")}</p>
