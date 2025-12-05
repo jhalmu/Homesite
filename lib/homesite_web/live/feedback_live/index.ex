@@ -25,7 +25,7 @@ defmodule HomesiteWeb.FeedbackLive.Index do
           <.form for={@form} id="feedback-form" phx-submit="save" phx-change="validate" class="space-y-6">
             <%!-- Overall Satisfaction (Required) --%>
             <div class="form-control">
-              <h3 class="text-lg font-bold mb-3">
+              <h3 class="text-sm font-semibold mb-2">
                 {gettext("Overall Satisfaction")} <span class="text-error">*</span>
               </h3>
               <div class="rating rating-lg">
@@ -43,7 +43,7 @@ defmodule HomesiteWeb.FeedbackLive.Index do
 
             <%!-- Performance Rating (Required) --%>
             <div class="form-control">
-              <h3 class="text-lg font-bold mb-3">
+              <h3 class="text-sm font-semibold mb-2">
                 {gettext("How fast and responsive is the site?")} <span class="text-error">*</span>
               </h3>
               <div class="rating rating-lg">
@@ -61,13 +61,10 @@ defmodule HomesiteWeb.FeedbackLive.Index do
 
             <%!-- Open Feedback (Required) --%>
             <div class="form-control">
-              <h3 class="text-lg font-bold mb-3">
-                {gettext("Tell us what you think...")} ❤️ <span class="text-error">*</span>
-              </h3>
               <textarea
                 name="feedback[open_feedback]"
                 class="textarea textarea-bordered h-24"
-                placeholder={gettext("Tell us what you think...")}
+                placeholder={"#{gettext("Tell us what you think...")} ❤️"}
                 required
               >{@form[:open_feedback].value}</textarea>
             </div>

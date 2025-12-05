@@ -90,6 +90,7 @@ defmodule HomesiteWeb.FeedbackLive.PromptModal do
                   phx-submit="save"
                   phx-change="validate"
                   phx-target={@myself}
+                  phx-click="stop_propagation"
                   class="space-y-6"
                 >
                   <%!-- Overall Satisfaction (Required) --%>
@@ -132,9 +133,6 @@ defmodule HomesiteWeb.FeedbackLive.PromptModal do
 
                   <%!-- Open Feedback (Required) --%>
                   <div class="form-control">
-                    <h3 class="text-sm font-semibold mb-2">
-                      {gettext("Tell us what you think...")} <span class="text-error">*</span>
-                    </h3>
                     <textarea
                       name="feedback[open_feedback]"
                       class="textarea textarea-bordered h-24"
