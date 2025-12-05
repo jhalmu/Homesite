@@ -4,21 +4,27 @@ defmodule Homesite.Workers.FeedbackPromptWorkerTest do
 
   alias Homesite.Workers.FeedbackPromptWorker
   alias Homesite.Feedback
+  alias Homesite.Repo
 
   import Homesite.AccountsFixtures
 
   describe "perform/1" do
     test "identifies users due for prompts" do
       # Create users at different stages
-      eight_days_ago = DateTime.add(DateTime.utc_now(), -8, :day)
-      five_days_ago = DateTime.add(DateTime.utc_now(), -5, :day)
+      eight_days_ago = DateTime.add(DateTime.utc_now(), -8, :day) |> DateTime.truncate(:second)
+      five_days_ago = DateTime.add(DateTime.utc_now(), -5, :day) |> DateTime.truncate(:second)
 
-      _user_due = user_fixture(%{inserted_at: eight_days_ago})
-      _user_not_due = user_fixture(%{inserted_at: five_days_ago})
-      _user_opted_out = user_fixture(%{
+      user_due = user_fixture()
+      Repo.update!(Ecto.Changeset.change(user_due, inserted_at: eight_days_ago))
+
+      user_not_due = user_fixture()
+      Repo.update!(Ecto.Changeset.change(user_not_due, inserted_at: five_days_ago))
+
+      user_opted_out = user_fixture()
+      Repo.update!(Ecto.Changeset.change(user_opted_out,
         inserted_at: eight_days_ago,
         feedback_prompt_preference: "opted_out"
-      })
+      ))
 
       assert {:ok, result} = perform_job(FeedbackPromptWorker, %{})
 
@@ -29,10 +35,11 @@ defmodule Homesite.Workers.FeedbackPromptWorkerTest do
 
     test "respects limit parameter" do
       # Create many users due for prompts
-      eight_days_ago = DateTime.add(DateTime.utc_now(), -8, :day)
+      eight_days_ago = DateTime.add(DateTime.utc_now(), -8, :day) |> DateTime.truncate(:second)
 
       for _ <- 1..10 do
-        user_fixture(%{inserted_at: eight_days_ago})
+        user = user_fixture()
+        Repo.update!(Ecto.Changeset.change(user, inserted_at: eight_days_ago))
       end
 
       assert {:ok, result} = perform_job(FeedbackPromptWorker, %{"limit" => 5})

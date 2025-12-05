@@ -390,7 +390,7 @@ defmodule Homesite.Feedback do
       Repo.transaction(fn ->
         # Update user
         user
-        |> Ecto.Changeset.change(%{rank: new_rank, rank_updated_at: DateTime.utc_now()})
+        |> Ecto.Changeset.change(%{rank: new_rank, rank_updated_at: DateTime.utc_now() |> DateTime.truncate(:second)})
         |> Repo.update!()
 
         # Store history
@@ -419,18 +419,20 @@ defmodule Homesite.Feedback do
   def recalculate_all_ranks(opts \\ []) do
     batch_size = Keyword.get(opts, :batch_size, 100)
 
-    from(u in User, where: u.role != "admin")
-    |> Repo.stream()
-    |> Stream.chunk_every(batch_size)
-    |> Stream.each(fn batch ->
-      Enum.each(batch, fn user ->
-        case calculate_rank(user) do
-          {:ok, _rank} -> :ok
-          {:error, reason} -> Logger.warning("Failed to calculate rank for user #{user.id}: #{inspect(reason)}")
-        end
+    Repo.transaction(fn ->
+      from(u in User, where: u.role != "admin")
+      |> Repo.stream()
+      |> Stream.chunk_every(batch_size)
+      |> Stream.each(fn batch ->
+        Enum.each(batch, fn user ->
+          case calculate_rank(user) do
+            {:ok, _rank} -> :ok
+            {:error, reason} -> Logger.warning("Failed to calculate rank for user #{user.id}: #{inspect(reason)}")
+          end
+        end)
       end)
+      |> Stream.run()
     end)
-    |> Stream.run()
 
     :ok
   end
@@ -638,6 +640,7 @@ defmodule Homesite.Feedback do
 
   ## Private Functions
 
+  defp days_since_signup(%User{inserted_at: nil}), do: 0
   defp days_since_signup(%User{inserted_at: inserted_at}) do
     DateTime.diff(DateTime.utc_now(), inserted_at, :day)
   end
