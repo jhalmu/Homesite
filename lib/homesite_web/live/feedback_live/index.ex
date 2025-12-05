@@ -43,11 +43,11 @@ defmodule HomesiteWeb.FeedbackLive.Index do
               </div>
             </div>
 
-            <%!-- Performance Rating (Optional) --%>
+            <%!-- Performance Rating (Required) --%>
             <div class="form-control">
               <label class="label">
                 <span class="label-text font-semibold">
-                  {gettext("How fast and responsive is the site?")} <span class="label-text-alt">({gettext("Optional")})</span>
+                  {gettext("How fast and responsive is the site?")} <span class="text-error">*</span>
                 </span>
               </label>
               <div class="rating rating-lg">
