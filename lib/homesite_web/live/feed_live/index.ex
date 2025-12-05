@@ -124,7 +124,7 @@ defmodule HomesiteWeb.FeedLive.Index do
     current_count = length(socket.assigns.items)
 
     opts =
-      [limit: 20, offset: current_count]
+      [limit: 10, offset: current_count]
       |> build_query_opts(socket.assigns.filter)
       |> maybe_add_source_filter(socket.assigns.source_id)
 
@@ -132,7 +132,7 @@ defmodule HomesiteWeb.FeedLive.Index do
       ExternalFeeds.list_feed_items_unified(socket.assigns.current_scope, opts)
 
     all_items = socket.assigns.items ++ new_items
-    has_more = length(new_items) == 20
+    has_more = length(new_items) == 10
 
     {:noreply, assign(socket, items: all_items, has_more: has_more)}
   end
@@ -169,13 +169,13 @@ defmodule HomesiteWeb.FeedLive.Index do
     source_id = params["source"]
 
     opts =
-      [limit: 20]
+      [limit: 10]
       |> build_query_opts(filter)
       |> maybe_add_source_filter(source_id)
 
     items = ExternalFeeds.list_feed_items_unified(socket.assigns.current_scope, opts)
     unread_count = ExternalFeeds.get_unread_count(socket.assigns.current_scope)
-    has_more = length(items) == 20
+    has_more = length(items) == 10
 
     # Get source name if filtering by source
     source_name =
@@ -261,28 +261,18 @@ defmodule HomesiteWeb.FeedLive.Index do
   defp render_metadata(%{metadata: nil}), do: nil
 
   defp render_metadata(%{metadata: metadata}) when is_map(metadata) do
-    # Platform-specific rendering
+    # Platform-specific rendering (inline with timestamp)
     cond do
-      # YouTube video
-      Map.has_key?(metadata, "thumbnail_url") && Map.has_key?(metadata, "duration") ->
+      # YouTube video - show duration
+      Map.has_key?(metadata, "duration") ->
         assigns = %{metadata: metadata}
 
         ~H"""
-        <div class="my-2 flex gap-4">
-          <%= if @metadata["thumbnail_url"] do %>
-            <img
-              src={@metadata["thumbnail_url"]}
-              alt="Video thumbnail"
-              class="h-20 w-32 rounded object-cover"
-            />
-          <% end %>
-          <%= if @metadata["duration"] do %>
-            <div class="text-base-content/70 text-sm">
-              <.icon name="hero-play-circle" class="inline h-4 w-4" />
-              {@metadata["duration"]}
-            </div>
-          <% end %>
-        </div>
+        <span>•</span>
+        <span>
+          <.icon name="hero-play-circle" class="inline h-3 w-3" />
+          {@metadata["duration"]}
+        </span>
         """
 
       # Bluesky/Mastodon post with author
@@ -290,23 +280,23 @@ defmodule HomesiteWeb.FeedLive.Index do
         assigns = %{metadata: metadata}
 
         ~H"""
-        <div class="my-2 flex items-center gap-2 text-sm">
-          <%= if @metadata["author_avatar"] do %>
-            <img
-              src={@metadata["author_avatar"]}
-              alt={@metadata["author_name"]}
-              class="h-8 w-8 rounded-full"
-            />
-          <% end %>
-          <div>
-            <div class="font-semibold">{@metadata["author_name"]}</div>
-            <div class="text-base-content/70">@{@metadata["author_handle"]}</div>
-          </div>
-        </div>
+        <span>•</span>
+        <span>{@metadata["author_name"]}</span>
         """
 
       true ->
         nil
     end
   end
+
+  defp truncate_html(html, max_length) when is_binary(html) do
+    html
+    |> String.replace(~r/<[^>]+>/, "")
+    |> String.slice(0, max_length)
+    |> then(fn text ->
+      if String.length(html) > max_length, do: text <> "...", else: text
+    end)
+  end
+
+  defp truncate_html(nil, _max_length), do: nil
 end

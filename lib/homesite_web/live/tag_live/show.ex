@@ -10,7 +10,7 @@ defmodule HomesiteWeb.TagLive.Show do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <main class="px-[var(--spacing-card)] py-[var(--spacing-lg)] container mx-auto">
+      <main class="technical-main">
         <header class="gap-[var(--spacing-md)] mb-[var(--spacing-section)] flex flex-col">
           <div class="flex flex-wrap items-center justify-between gap-4">
             <div class="flex items-center gap-4">

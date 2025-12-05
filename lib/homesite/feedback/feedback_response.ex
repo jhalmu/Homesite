@@ -58,7 +58,13 @@ defmodule Homesite.Feedback.FeedbackResponse do
       :ip_address,
       :user_agent
     ])
-    |> validate_required([:user_id, :overall_satisfaction, :performance_rating, :open_feedback, :prompt_type])
+    |> validate_required([
+      :user_id,
+      :overall_satisfaction,
+      :performance_rating,
+      :open_feedback,
+      :prompt_type
+    ])
     |> validate_inclusion(:overall_satisfaction, 1..5, message: "must be between 1 and 5")
     |> validate_inclusion(:performance_rating, 1..5, message: "must be between 1 and 5")
     |> validate_inclusion(:prompt_type, @prompt_types)

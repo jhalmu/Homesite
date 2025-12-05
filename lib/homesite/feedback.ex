@@ -293,7 +293,10 @@ defmodule Homesite.Feedback do
       true ->
         # Calculate next prompt time based on feedback count and preference
         feedback_count = count_user_feedback(user.id)
-        days_since_last_prompt = DateTime.diff(DateTime.utc_now(), user.last_feedback_prompt_at, :day)
+
+        days_since_last_prompt =
+          DateTime.diff(DateTime.utc_now(), user.last_feedback_prompt_at, :day)
+
         next_interval = calculate_prompt_interval(feedback_count, user.feedback_prompt_preference)
 
         days_since_last_prompt >= next_interval
@@ -390,7 +393,10 @@ defmodule Homesite.Feedback do
       Repo.transaction(fn ->
         # Update user
         user
-        |> Ecto.Changeset.change(%{rank: new_rank, rank_updated_at: DateTime.utc_now() |> DateTime.truncate(:second)})
+        |> Ecto.Changeset.change(%{
+          rank: new_rank,
+          rank_updated_at: DateTime.utc_now() |> DateTime.truncate(:second)
+        })
         |> Repo.update!()
 
         # Store history
@@ -426,8 +432,11 @@ defmodule Homesite.Feedback do
       |> Stream.each(fn batch ->
         Enum.each(batch, fn user ->
           case calculate_rank(user) do
-            {:ok, _rank} -> :ok
-            {:error, reason} -> Logger.warning("Failed to calculate rank for user #{user.id}: #{inspect(reason)}")
+            {:ok, _rank} ->
+              :ok
+
+            {:error, reason} ->
+              Logger.warning("Failed to calculate rank for user #{user.id}: #{inspect(reason)}")
           end
         end)
       end)
@@ -641,6 +650,7 @@ defmodule Homesite.Feedback do
   ## Private Functions
 
   defp days_since_signup(%User{inserted_at: nil}), do: 0
+
   defp days_since_signup(%User{inserted_at: inserted_at}) do
     DateTime.diff(DateTime.utc_now(), inserted_at, :day)
   end

@@ -1,15 +1,15 @@
 <Layouts.app flash={@flash} current_scope={@current_scope}>
-  <div class="mx-auto max-w-4xl px-4 py-8">
+  <div class="technical-main">
     <.header>
       {gettext("Feed")}
       <:subtitle>
         {ngettext("1 unread item", "%{count} unread items", @unread_count)}
       </:subtitle>
       <:actions>
-        <.link navigate={~p"/feeds"} class="btn btn-ghost btn-sm">
+        <.button navigate={~p"/feeds"}>
           <.icon name="hero-cog-6-tooth" class="h-5 w-5" />
           {gettext("Manage Sources")}
-        </.link>
+        </.button>
       </:actions>
     </.header>
     
@@ -111,130 +111,103 @@
           </span>
         </div>
       <% else %>
-        <%= for item <- @items do %>
-          <div
-            id={"feed-item-#{item.feed_item.id}"}
-            class={[
-              "card bg-base-100 border shadow-sm",
-              is_read?(item) && "opacity-60",
-              !is_read?(item) && "border-primary border-l-4"
-            ]}
-          >
-            <div class="card-body">
-              <!-- Feed source badge -->
-              <div class="text-base-content/70 flex items-center gap-2 text-sm">
-                <.link
-                  navigate={~p"/feed?source=#{item.feed_item.feed_source.id}"}
-                  class="badge badge-ghost badge-sm cursor-pointer hover:badge-primary"
-                >
-                  {item.feed_item.feed_source.name}
-                </.link>
-                <span>•</span>
-                <time datetime={item.feed_item.published_at}>
-                  {format_relative_time(item.feed_item.published_at)}
-                </time>
-              </div>
-              
-<!-- Title -->
-              <h2 class={["card-title", !is_read?(item) && "font-bold"]}>
-                <a
-                  href={item.feed_item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="link link-hover"
-                >
-                  {item.feed_item.title}
-                </a>
-              </h2>
-              
-<!-- Content with optional image -->
-              <div class="flex gap-4">
-                <!-- Image thumbnail if available -->
-                <%= if item.feed_item.metadata["image_url"] do %>
-                  <div class="shrink-0">
-                    <img
-                      src={item.feed_item.metadata["image_url"]}
-                      alt=""
-                      class="h-12 w-12 rounded object-cover"
-                      loading="lazy"
-                      onerror="this.style.display='none'"
-                    />
+        <div class="gap-[var(--spacing-md)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          <%= for item <- @items do %>
+            <article
+              id={"feed-item-#{item.feed_item.id}"}
+              class="card bg-base-200 duration-[var(--duration-normal)] border-base-300 border shadow-lg transition-shadow hover:shadow-xl"
+            >
+              <div class="card-body p-[var(--spacing-card)]">
+                <%!-- Feed source badge --%>
+                <div class="mb-[var(--spacing-sm)] gap-[var(--spacing-inline)] flex items-center">
+                  <span class="text-[var(--font-size-fluid-lg)]">
+                    {item.feed_item.feed_source.icon}
+                  </span>
+                  <span class="badge badge-sm badge-ghost">
+                    {item.feed_item.feed_source.name}
+                  </span>
+                </div>
+
+                <%!-- Item title --%>
+                <h3 class="mb-[var(--spacing-sm)] text-[var(--font-size-fluid-lg)] line-clamp-2 font-semibold">
+                  <a
+                    href={item.feed_item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="duration-[var(--duration-normal)] transition-colors hover:text-primary"
+                    title={item.feed_item.title}
+                  >
+                    {item.feed_item.title}
+                  </a>
+                </h3>
+
+                <%!-- Item metadata --%>
+                <div class="text-[var(--text-xs)] gap-[var(--spacing-inline)] flex items-center opacity-70">
+                  <time datetime={item.feed_item.published_at}>
+                    {Calendar.strftime(item.feed_item.published_at, "%B %d, %Y")}
+                  </time>
+                </div>
+
+                <%!-- Actions (read/unread, bookmark, external link) --%>
+                <div class="mt-[var(--spacing-sm)] pt-[var(--spacing-sm)] border-base-300 border-t">
+                  <div class="gap-[var(--spacing-inline)] flex items-center justify-between">
+                    <div class="gap-[var(--spacing-inline)] flex items-center">
+                      <%= if is_read?(item) do %>
+                        <button
+                          phx-click="mark_unread"
+                          phx-value-id={item.feed_item.id}
+                          class="btn btn-xs btn-ghost gap-[var(--spacing-inline)]"
+                          title={gettext("Mark as unread")}
+                        >
+                          <.icon name="hero-envelope" class="h-3 w-3" />
+                        </button>
+                      <% else %>
+                        <button
+                          phx-click="mark_read"
+                          phx-value-id={item.feed_item.id}
+                          class="btn btn-xs btn-ghost gap-[var(--spacing-inline)]"
+                          title={gettext("Mark as read")}
+                        >
+                          <.icon name="hero-envelope-open" class="h-3 w-3" />
+                        </button>
+                      <% end %>
+
+                      <button
+                        phx-click="toggle_bookmark"
+                        phx-value-id={item.feed_item.id}
+                        class={[
+                          "btn btn-xs btn-ghost gap-[var(--spacing-inline)]",
+                          is_bookmarked?(item) && "text-warning"
+                        ]}
+                        title={
+                          if is_bookmarked?(item),
+                            do: gettext("Remove bookmark"),
+                            else: gettext("Bookmark")
+                        }
+                      >
+                        <%= if is_bookmarked?(item) do %>
+                          <.icon name="hero-star-solid" class="h-3 w-3" />
+                        <% else %>
+                          <.icon name="hero-star" class="h-3 w-3" />
+                        <% end %>
+                      </button>
+                    </div>
+
+                    <a
+                      href={item.feed_item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="btn btn-xs btn-ghost gap-[var(--spacing-inline)]"
+                    >
+                      <.icon name="hero-arrow-top-right-on-square" class="h-3 w-3" />
+                      {gettext("Read more")}
+                    </a>
                   </div>
-                <% end %>
-                
-<!-- Description/Summary - only show if different from title -->
-                <div class="flex-1">
-                  <%= if item.feed_item.content && item.feed_item.content != item.feed_item.title do %>
-                    <div class="text-base-content/80 line-clamp-3 prose prose-sm max-w-none">
-                      {raw(item.feed_item.content)}
-                    </div>
-                  <% else %>
-                    <!-- For title-only items, show the URL domain as context -->
-                    <div class="text-base-content/60 text-sm">
-                      <.icon name="hero-link" class="inline h-4 w-4" />
-                      {URI.parse(item.feed_item.url).host}
-                    </div>
-                  <% end %>
                 </div>
               </div>
-              
-<!-- Platform-specific metadata -->
-              <%= if item.feed_item.metadata do %>
-                {render_metadata(item.feed_item)}
-              <% end %>
-              
-<!-- Actions -->
-              <div class="card-actions mt-4 justify-end">
-                <%= if is_read?(item) do %>
-                  <button
-                    phx-click="mark_unread"
-                    phx-value-id={item.feed_item.id}
-                    class="btn btn-ghost btn-sm"
-                    title={gettext("Mark as unread")}
-                  >
-                    <.icon name="hero-envelope" class="h-4 w-4" />
-                  </button>
-                <% else %>
-                  <button
-                    phx-click="mark_read"
-                    phx-value-id={item.feed_item.id}
-                    class="btn btn-ghost btn-sm"
-                    title={gettext("Mark as read")}
-                  >
-                    <.icon name="hero-envelope-open" class="h-4 w-4" />
-                  </button>
-                <% end %>
-
-                <button
-                  phx-click="toggle_bookmark"
-                  phx-value-id={item.feed_item.id}
-                  class={["btn btn-ghost btn-sm", is_bookmarked?(item) && "text-warning"]}
-                  title={
-                    if is_bookmarked?(item),
-                      do: gettext("Remove bookmark"),
-                      else: gettext("Bookmark")
-                  }
-                >
-                  <%= if is_bookmarked?(item) do %>
-                    <.icon name="hero-star-solid" class="h-4 w-4" />
-                  <% else %>
-                    <.icon name="hero-star" class="h-4 w-4" />
-                  <% end %>
-                </button>
-
-                <a
-                  href={item.feed_item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="btn btn-primary btn-sm"
-                >
-                  {gettext("Open")}
-                  <.icon name="hero-arrow-top-right-on-square" class="h-4 w-4" />
-                </a>
-              </div>
-            </div>
-          </div>
-        <% end %>
+            </article>
+          <% end %>
+        </div>
       <% end %>
     </div>
     

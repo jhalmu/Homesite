@@ -16,7 +16,7 @@ defmodule HomesiteWeb.PageLive.Home do
     # Fetch feed items if user is authenticated
     feed_items =
       if socket.assigns[:current_scope] do
-        ExternalFeeds.list_feed_items(socket.assigns.current_scope, limit: 10)
+        ExternalFeeds.list_feed_items(socket.assigns.current_scope, limit: 6)
       else
         []
       end
@@ -86,4 +86,15 @@ defmodule HomesiteWeb.PageLive.Home do
 
     {:noreply, socket}
   end
+
+  defp truncate_html(html, max_length) when is_binary(html) do
+    html
+    |> String.replace(~r/<[^>]+>/, "")
+    |> String.slice(0, max_length)
+    |> then(fn text ->
+      if String.length(html) > max_length, do: text <> "...", else: text
+    end)
+  end
+
+  defp truncate_html(nil, _max_length), do: nil
 end

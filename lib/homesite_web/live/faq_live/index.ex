@@ -11,7 +11,7 @@ defmodule HomesiteWeb.FaqLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <main class="mx-auto max-w-7xl px-4">
+      <main class="technical-main">
         <.header>
           {if @category == "admin", do: gettext("Admin FAQs"), else: gettext("User FAQs")}
           <:subtitle>

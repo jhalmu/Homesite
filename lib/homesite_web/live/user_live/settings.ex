@@ -9,265 +9,269 @@ defmodule HomesiteWeb.UserLive.Settings do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="text-center">
-        <.header>
-          {gettext("Account Settings")}
-          <:subtitle>{gettext("Manage your profile, email address and password settings")}</:subtitle>
-          <:actions>
-            <.link
-              href="https://github.com/jhalmu/Homesite/blob/main/docs/guides/USERNAME_ROUTING.md"
-              target="_blank"
-              class="text-sm font-semibold text-zinc-900 hover:text-zinc-700 dark:text-zinc-100 dark:hover:text-zinc-300"
-            >
-              <.icon name="hero-question-mark-circle" class="h-5 w-5" /> {gettext("Username Help")}
-            </.link>
-          </:actions>
-        </.header>
-      </div>
-
-      <.form
-        for={@profile_form}
-        id="profile_form"
-        phx-submit="update_profile"
-        phx-change="validate_profile"
-      >
-        <div class="gap-[var(--spacing-card)] flex flex-col items-center">
-          <div
-            class="gap-[var(--spacing-md)] flex flex-col items-center"
-            id="avatar-upload-container"
-            phx-hook="AvatarPreview"
-          >
-            <.avatar user={@current_scope.user} class="h-24 w-24" id="avatar-preview" />
-            <.live_file_input
-              upload={@uploads.avatar}
-              class="file-input file-input-bordered"
-              style="min-width: 20rem;"
-            />
-            <p class="mb-[var(--spacing-md)] text-sm text-gray-600 dark:text-gray-400">
-              {gettext(
-                "Upload a new avatar (JPG, PNG, max 5MB) or leave empty for auto-generated avatar"
-              )}
-            </p>
-          </div>
+      <div class="technical-main">
+        <div class="text-center">
+          <.header>
+            {gettext("Account Settings")}
+            <:subtitle>
+              {gettext("Manage your profile, email address and password settings")}
+            </:subtitle>
+            <:actions>
+              <.link
+                href="https://github.com/jhalmu/Homesite/blob/main/docs/guides/USERNAME_ROUTING.md"
+                target="_blank"
+                class="text-sm font-semibold text-zinc-900 hover:text-zinc-700 dark:text-zinc-100 dark:hover:text-zinc-300"
+              >
+                <.icon name="hero-question-mark-circle" class="h-5 w-5" /> {gettext("Username Help")}
+              </.link>
+            </:actions>
+          </.header>
         </div>
 
-        <.input
-          field={@profile_form[:display_name]}
-          type="text"
-          label={gettext("Display Name")}
-          placeholder={gettext("Your public name")}
+        <.form
+          for={@profile_form}
+          id="profile_form"
+          phx-submit="update_profile"
+          phx-change="validate_profile"
         >
-          <:help>
-            {gettext(
-              "Your display name appears on your posts and profile. This can be your real name or a pseudonym. Maximum 100 characters."
-            )}
-          </:help>
-        </.input>
-        <.input
-          field={@profile_form[:username]}
-          type="text"
-          label={gettext("Username")}
-          placeholder="johndoe"
-        >
-          <:help>
-            {gettext(
-              "Your unique username for your profile URL (e.g., /users/@johndoe). Must be 3-30 characters, start with a letter, and contain only lowercase letters, numbers, and underscores. Leave empty to use your user ID in URLs."
-            )}
-          </:help>
-        </.input>
-        <.input
-          field={@profile_form[:bio]}
-          type="textarea"
-          label={gettext("Bio")}
-          placeholder={gettext("Tell us about yourself (max 500 characters)")}
-        >
-          <:help>
-            {gettext(
-              "Write a brief description about yourself. This appears on your public profile. Maximum 500 characters."
-            )}
-          </:help>
-        </.input>
-        <.input
-          field={@profile_form[:website_url]}
-          type="url"
-          label={gettext("Website URL")}
-          placeholder="https://example.com"
-        >
-          <:help>
-            {gettext(
-              "Your personal website, blog, or portfolio URL. Must start with http:// or https://. This link will appear on your public profile."
-            )}
-          </:help>
-        </.input>
-        <.input
-          field={@profile_form[:bluesky_handle]}
-          type="text"
-          label={gettext("Bluesky Handle")}
-          placeholder="@username.bsky.social"
-        >
-          <:help>
-            {gettext(
-              "Your Bluesky username in the format @username.bsky.social or @username.custom-domain.com. This will be linked from your profile."
-            )}
-          </:help>
-        </.input>
-        <.input
-          field={@profile_form[:mastodon_handle]}
-          type="text"
-          label={gettext("Mastodon Handle")}
-          placeholder="@username@mastodon.social"
-        >
-          <:help>
-            {gettext(
-              "Your Mastodon handle in the format @username@instance.social. Include both your username and instance. This will be linked from your profile."
-            )}
-          </:help>
-        </.input>
-        <.input
-          field={@profile_form[:preferred_language]}
-          type="select"
-          label={gettext("Preferred Language")}
-          options={[{"English", "en"}, {"Suomi (Finnish)", "fi"}]}
-        >
-          <:help>
-            {gettext(
-              "Choose your preferred language for the user interface. This setting affects menus, buttons, and system messages throughout the application."
-            )}
-          </:help>
-        </.input>
-        <%= if @avatar_pending do %>
-          <div class="alert alert-warning mb-4">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6 shrink-0 stroke-current"
-              fill="none"
-              viewBox="0 0 24 24"
+          <div class="gap-[var(--spacing-card)] flex flex-col items-center">
+            <div
+              class="gap-[var(--spacing-md)] flex flex-col items-center"
+              id="avatar-upload-container"
+              phx-hook="AvatarPreview"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              <.avatar user={@current_scope.user} class="h-24 w-24" id="avatar-preview" />
+              <.live_file_input
+                upload={@uploads.avatar}
+                class="file-input file-input-bordered"
+                style="min-width: 20rem;"
               />
-            </svg>
-            <span>
-              {gettext("Avatar image selected. Click 'Update Profile' below to save your changes!")}
-            </span>
+              <p class="mb-[var(--spacing-md)] text-sm text-gray-600 dark:text-gray-400">
+                {gettext(
+                  "Upload a new avatar (JPG, PNG, max 5MB) or leave empty for auto-generated avatar"
+                )}
+              </p>
+            </div>
+          </div>
+
+          <.input
+            field={@profile_form[:display_name]}
+            type="text"
+            label={gettext("Display Name")}
+            placeholder={gettext("Your public name")}
+          >
+            <:help>
+              {gettext(
+                "Your display name appears on your posts and profile. This can be your real name or a pseudonym. Maximum 100 characters."
+              )}
+            </:help>
+          </.input>
+          <.input
+            field={@profile_form[:username]}
+            type="text"
+            label={gettext("Username")}
+            placeholder="johndoe"
+          >
+            <:help>
+              {gettext(
+                "Your unique username for your profile URL (e.g., /users/@johndoe). Must be 3-30 characters, start with a letter, and contain only lowercase letters, numbers, and underscores. Leave empty to use your user ID in URLs."
+              )}
+            </:help>
+          </.input>
+          <.input
+            field={@profile_form[:bio]}
+            type="textarea"
+            label={gettext("Bio")}
+            placeholder={gettext("Tell us about yourself (max 500 characters)")}
+          >
+            <:help>
+              {gettext(
+                "Write a brief description about yourself. This appears on your public profile. Maximum 500 characters."
+              )}
+            </:help>
+          </.input>
+          <.input
+            field={@profile_form[:website_url]}
+            type="url"
+            label={gettext("Website URL")}
+            placeholder="https://example.com"
+          >
+            <:help>
+              {gettext(
+                "Your personal website, blog, or portfolio URL. Must start with http:// or https://. This link will appear on your public profile."
+              )}
+            </:help>
+          </.input>
+          <.input
+            field={@profile_form[:bluesky_handle]}
+            type="text"
+            label={gettext("Bluesky Handle")}
+            placeholder="@username.bsky.social"
+          >
+            <:help>
+              {gettext(
+                "Your Bluesky username in the format @username.bsky.social or @username.custom-domain.com. This will be linked from your profile."
+              )}
+            </:help>
+          </.input>
+          <.input
+            field={@profile_form[:mastodon_handle]}
+            type="text"
+            label={gettext("Mastodon Handle")}
+            placeholder="@username@mastodon.social"
+          >
+            <:help>
+              {gettext(
+                "Your Mastodon handle in the format @username@instance.social. Include both your username and instance. This will be linked from your profile."
+              )}
+            </:help>
+          </.input>
+          <.input
+            field={@profile_form[:preferred_language]}
+            type="select"
+            label={gettext("Preferred Language")}
+            options={[{"English", "en"}, {"Suomi (Finnish)", "fi"}]}
+          >
+            <:help>
+              {gettext(
+                "Choose your preferred language for the user interface. This setting affects menus, buttons, and system messages throughout the application."
+              )}
+            </:help>
+          </.input>
+          <%= if @avatar_pending do %>
+            <div class="alert alert-warning mb-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6 shrink-0 stroke-current"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              <span>
+                {gettext("Avatar image selected. Click 'Update Profile' below to save your changes!")}
+              </span>
+            </div>
+          <% end %>
+          <.button variant="primary" phx-disable-with={gettext("Saving...")}>
+            {gettext("Update Profile")}
+          </.button>
+        </.form>
+
+        <div class="divider" />
+
+        <.form for={@email_form} id="email_form" phx-submit="update_email" phx-change="validate_email">
+          <.input
+            field={@email_form[:email]}
+            type="email"
+            label={gettext("Email")}
+            autocomplete="username"
+            required
+          >
+            <:help>
+              {gettext(
+                "Your email address is used for login and notifications. Changing it will send a confirmation link to the new address. Your old email remains active until confirmed."
+              )}
+            </:help>
+          </.input>
+          <.button variant="primary" phx-disable-with={gettext("Changing...")}>
+            {gettext("Change Email")}
+          </.button>
+        </.form>
+
+        <div class="divider" />
+
+        <.form
+          for={@password_form}
+          id="password_form"
+          action={~p"/users/update-password"}
+          method="post"
+          phx-change="validate_password"
+          phx-submit="update_password"
+          phx-trigger-action={@trigger_submit}
+        >
+          <input
+            name={@password_form[:email].name}
+            type="hidden"
+            id="hidden_user_email"
+            autocomplete="username"
+            value={@current_email}
+          />
+          <.input
+            field={@password_form[:password]}
+            type="password"
+            label={gettext("New password")}
+            autocomplete="new-password"
+            required
+          >
+            <:help>
+              {gettext(
+                "Choose a strong password with at least 12 characters. Use a mix of uppercase, lowercase, numbers, and special characters for better security."
+              )}
+            </:help>
+          </.input>
+          <.input
+            field={@password_form[:password_confirmation]}
+            type="password"
+            label={gettext("Confirm new password")}
+            autocomplete="new-password"
+          >
+            <:help>
+              {gettext(
+                "Re-enter your new password exactly as above to confirm. This helps prevent typos when setting your password."
+              )}
+            </:help>
+          </.input>
+          <.button variant="primary" phx-disable-with={gettext("Saving...")}>
+            {gettext("Save Password")}
+          </.button>
+        </.form>
+
+        <%!-- Username Celebration Modal --%>
+        <%= if assigns[:show_celebration] && @show_celebration do %>
+          <div class="modal modal-open">
+            <div class="modal-box max-w-2xl">
+              <h3 class="mb-4 text-2xl font-bold">
+                🎉 {gettext("Congratulations! Your Username is Live!")}
+              </h3>
+
+              <p class="mb-6 text-lg">
+                {gettext("Your personal homepage is now available at:")}
+              </p>
+
+              <div class="bg-base-200 mb-6 rounded-lg p-4">
+                <code class="break-all text-lg">
+                  {url(~p"/users/@#{@current_scope.user.username}")}
+                </code>
+              </div>
+
+              <p class="mb-6">{gettext("Share your new homepage with the world!")}</p>
+
+              <div class="mb-4 flex gap-3">
+                <button type="button" phx-click="share_username" class="btn btn-primary flex-1">
+                  <.icon name="hero-share" class="h-5 w-5" />
+                  {gettext("Share")}
+                </button>
+                <button type="button" phx-click="copy_username_url" class="btn btn-outline">
+                  <.icon name="hero-clipboard" class="h-5 w-5" />
+                  {gettext("Copy")}
+                </button>
+              </div>
+
+              <div class="modal-action">
+                <button type="button" phx-click="close_celebration" class="btn">
+                  {gettext("Close")}
+                </button>
+              </div>
+            </div>
           </div>
         <% end %>
-        <.button variant="primary" phx-disable-with={gettext("Saving...")}>
-          {gettext("Update Profile")}
-        </.button>
-      </.form>
-
-      <div class="divider" />
-
-      <.form for={@email_form} id="email_form" phx-submit="update_email" phx-change="validate_email">
-        <.input
-          field={@email_form[:email]}
-          type="email"
-          label={gettext("Email")}
-          autocomplete="username"
-          required
-        >
-          <:help>
-            {gettext(
-              "Your email address is used for login and notifications. Changing it will send a confirmation link to the new address. Your old email remains active until confirmed."
-            )}
-          </:help>
-        </.input>
-        <.button variant="primary" phx-disable-with={gettext("Changing...")}>
-          {gettext("Change Email")}
-        </.button>
-      </.form>
-
-      <div class="divider" />
-
-      <.form
-        for={@password_form}
-        id="password_form"
-        action={~p"/users/update-password"}
-        method="post"
-        phx-change="validate_password"
-        phx-submit="update_password"
-        phx-trigger-action={@trigger_submit}
-      >
-        <input
-          name={@password_form[:email].name}
-          type="hidden"
-          id="hidden_user_email"
-          autocomplete="username"
-          value={@current_email}
-        />
-        <.input
-          field={@password_form[:password]}
-          type="password"
-          label={gettext("New password")}
-          autocomplete="new-password"
-          required
-        >
-          <:help>
-            {gettext(
-              "Choose a strong password with at least 12 characters. Use a mix of uppercase, lowercase, numbers, and special characters for better security."
-            )}
-          </:help>
-        </.input>
-        <.input
-          field={@password_form[:password_confirmation]}
-          type="password"
-          label={gettext("Confirm new password")}
-          autocomplete="new-password"
-        >
-          <:help>
-            {gettext(
-              "Re-enter your new password exactly as above to confirm. This helps prevent typos when setting your password."
-            )}
-          </:help>
-        </.input>
-        <.button variant="primary" phx-disable-with={gettext("Saving...")}>
-          {gettext("Save Password")}
-        </.button>
-      </.form>
-
-      <%!-- Username Celebration Modal --%>
-      <%= if assigns[:show_celebration] && @show_celebration do %>
-        <div class="modal modal-open">
-          <div class="modal-box max-w-2xl">
-            <h3 class="mb-4 text-2xl font-bold">
-              🎉 {gettext("Congratulations! Your Username is Live!")}
-            </h3>
-
-            <p class="mb-6 text-lg">
-              {gettext("Your personal homepage is now available at:")}
-            </p>
-
-            <div class="bg-base-200 mb-6 rounded-lg p-4">
-              <code class="break-all text-lg">
-                {url(~p"/users/@#{@current_scope.user.username}")}
-              </code>
-            </div>
-
-            <p class="mb-6">{gettext("Share your new homepage with the world!")}</p>
-
-            <div class="mb-4 flex gap-3">
-              <button type="button" phx-click="share_username" class="btn btn-primary flex-1">
-                <.icon name="hero-share" class="h-5 w-5" />
-                {gettext("Share")}
-              </button>
-              <button type="button" phx-click="copy_username_url" class="btn btn-outline">
-                <.icon name="hero-clipboard" class="h-5 w-5" />
-                {gettext("Copy")}
-              </button>
-            </div>
-
-            <div class="modal-action">
-              <button type="button" phx-click="close_celebration" class="btn">
-                {gettext("Close")}
-              </button>
-            </div>
-          </div>
-        </div>
-      <% end %>
+      </div>
     </Layouts.app>
     """
   end

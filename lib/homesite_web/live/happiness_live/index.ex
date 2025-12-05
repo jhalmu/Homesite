@@ -31,18 +31,18 @@ defmodule HomesiteWeb.HappinessLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="min-h-screen px-[var(--spacing-card)] py-[var(--spacing-xl)]">
+      <div class="px-[var(--spacing-card)] py-[var(--spacing-xl)] min-h-screen">
         <%!-- Header --%>
-        <div class="text-center mb-12">
-          <h1 class="text-4xl font-bold mb-4">{gettext("Happiness Meter")}</h1>
-          <p class="text-lg text-base-content/70 max-w-2xl mx-auto">
+        <div class="mb-12 text-center">
+          <h1 class="mb-4 text-4xl font-bold">{gettext("Happiness Meter")}</h1>
+          <p class="text-base-content/70 mx-auto max-w-2xl text-lg">
             {gettext("See how our community feels about Homesite based on real user feedback")}
           </p>
         </div>
 
         <%!-- Happiness Meter (Main Visual) --%>
-        <div class="flex justify-center mb-16">
-          <div class="card bg-base-200 shadow-xl max-w-md w-full">
+        <div class="mb-16 flex justify-center">
+          <div class="card bg-base-200 w-full max-w-md shadow-xl">
             <div class="card-body items-center text-center">
               <%!-- SVG Animation --%>
               <%= if @happiness.score >= 60 do %>
@@ -55,16 +55,16 @@ defmodule HomesiteWeb.HappinessLive.Index do
 
               <%!-- Score Display --%>
               <div class="mt-6">
-                <div class="text-6xl font-bold text-primary">
+                <div class="text-primary text-6xl font-bold">
                   {@happiness.score}%
                 </div>
-                <div class="text-lg text-base-content/70 mt-2">
+                <div class="text-base-content/70 mt-2 text-lg">
                   {gettext("Overall Satisfaction")}
                 </div>
               </div>
 
               <%!-- Stats --%>
-              <div class="stats stats-vertical lg:stats-horizontal shadow mt-6">
+              <div class="stats stats-vertical mt-6 shadow lg:stats-horizontal">
                 <div class="stat">
                   <div class="stat-title">{gettext("Responses")}</div>
                   <div class="stat-value text-2xl">{@happiness.total_responses}</div>
@@ -84,9 +84,9 @@ defmodule HomesiteWeb.HappinessLive.Index do
         <%!-- Public Testimonials --%>
         <%= if length(@testimonials) > 0 do %>
           <div class="mb-16">
-            <h2 class="text-3xl font-bold text-center mb-8">{gettext("What Users Are Saying")}</h2>
+            <h2 class="mb-8 text-center text-3xl font-bold">{gettext("What Users Are Saying")}</h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               <%= for testimonial <- @testimonials do %>
                 <div class="card bg-base-100 shadow-xl">
                   <div class="card-body">
@@ -109,9 +109,9 @@ defmodule HomesiteWeb.HappinessLive.Index do
                     <% end %>
 
                     <%!-- User Info --%>
-                    <div class="flex items-center gap-2 mt-4 text-sm text-base-content/60">
+                    <div class="text-base-content/60 mt-4 flex items-center gap-2 text-sm">
                       <div class="avatar placeholder">
-                        <div class="bg-neutral text-neutral-content rounded-full w-8">
+                        <div class="bg-neutral text-neutral-content w-8 rounded-full">
                           <span class="text-xs">
                             {get_initial(testimonial)}
                           </span>
@@ -127,7 +127,7 @@ defmodule HomesiteWeb.HappinessLive.Index do
 
                     <%!-- Share Link --%>
                     <%= if testimonial.share_token do %>
-                      <div class="card-actions justify-end mt-2">
+                      <div class="card-actions mt-2 justify-end">
                         <.link
                           navigate={~p"/testimonials/#{testimonial.share_token}"}
                           class="link link-primary text-xs"
@@ -144,14 +144,16 @@ defmodule HomesiteWeb.HappinessLive.Index do
         <% end %>
 
         <%!-- Call to Action --%>
-        <div class="text-center mb-12">
-          <div class="card bg-gradient-to-r from-primary/10 to-secondary/10 shadow-xl max-w-2xl mx-auto">
+        <div class="mb-12 text-center">
+          <div class="card from-primary/10 to-secondary/10 mx-auto max-w-2xl bg-gradient-to-r shadow-xl">
             <div class="card-body">
-              <h3 class="card-title justify-center text-2xl mb-4">
+              <h3 class="card-title mb-4 justify-center text-2xl">
                 {gettext("How can we do better?")}
               </h3>
               <p class="text-base-content/70 mb-6">
-                {gettext("Your feedback helps us improve. Share your thoughts and help shape the future of Homesite.")}
+                {gettext(
+                  "Your feedback helps us improve. Share your thoughts and help shape the future of Homesite."
+                )}
               </p>
 
               <%= if @current_scope do %>
@@ -179,7 +181,7 @@ defmodule HomesiteWeb.HappinessLive.Index do
 
   defp sun_meter(assigns) do
     ~H"""
-    <svg viewBox="0 0 200 200" class="w-48 h-48">
+    <svg viewBox="0 0 200 200" class="h-48 w-48">
       <defs>
         <radialGradient id="sunGradient">
           <stop offset="0%" stop-color="#FFD700" />
@@ -189,14 +191,12 @@ defmodule HomesiteWeb.HappinessLive.Index do
 
       <%!-- Animated Rays --%>
       <%= for i <- 0..11 do %>
-        <%
-        angle = i * 30
+        <% angle = i * 30
         rad = angle * :math.pi() / 180
         x1 = 100 + 70 * :math.cos(rad)
         y1 = 100 + 70 * :math.sin(rad)
         x2 = 100 + 90 * :math.cos(rad)
-        y2 = 100 + 90 * :math.sin(rad)
-        %>
+        y2 = 100 + 90 * :math.sin(rad) %>
         <line
           x1={x1}
           y1={y1}
@@ -229,7 +229,7 @@ defmodule HomesiteWeb.HappinessLive.Index do
 
   defp thermometer_meter(assigns) do
     ~H"""
-    <svg viewBox="0 0 200 200" class="w-48 h-48">
+    <svg viewBox="0 0 200 200" class="h-48 w-48">
       <defs>
         <linearGradient id="thermGradient" x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" stop-color="#60A5FA" />
@@ -250,10 +250,8 @@ defmodule HomesiteWeb.HappinessLive.Index do
       />
 
       <%!-- Mercury Level --%>
-      <%
-      mercury_height = 120 * @score / 100
-      mercury_y = 40 + (120 - mercury_height)
-      %>
+      <% mercury_height = 120 * @score / 100
+      mercury_y = 40 + (120 - mercury_height) %>
       <rect
         x="85"
         y={mercury_y}
@@ -268,11 +266,9 @@ defmodule HomesiteWeb.HappinessLive.Index do
 
       <%!-- Scale Marks --%>
       <%= for i <- 0..4 do %>
-        <%
-        y = 50 + (i * 25)
-        %>
+        <% y = 50 + i * 25 %>
         <line x1="115" y1={y} x2="125" y2={y} stroke="#9CA3AF" stroke-width="2" />
-        <text x="130" y={y + 5} font-size="12" fill="#6B7280">{100 - (i * 25)}%</text>
+        <text x="130" y={y + 5} font-size="12" fill="#6B7280">{100 - i * 25}%</text>
       <% end %>
     </svg>
     """

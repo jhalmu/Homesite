@@ -1,131 +1,129 @@
 <Layouts.app flash={@flash} current_scope={@current_scope}>
-  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div class="mx-auto max-w-3xl">
-      <.header>
-        <div class="flex items-center gap-3">
-          <span class="text-4xl">{@feed_source.icon}</span>
-          <div>
-            {@feed_source.name}
-            <.badge color={if @feed_source.enabled, do: :green, else: :gray}>
-              {if @feed_source.enabled, do: "Enabled", else: "Disabled"}
-            </.badge>
-          </div>
-        </div>
-        <:subtitle>
-          {@feed_source.feed_type}
-          <%= if @feed_source.url do %>
-            ·
-            <a href={@feed_source.url} target="_blank" class="text-blue-600 hover:underline">
-              {@feed_source.url}
-            </a>
-          <% end %>
-          <%= if @feed_source.username do %>
-            · @{@feed_source.username}
-          <% end %>
-        </:subtitle>
-        <:actions>
-          <.link navigate={~p"/feeds"}>
-            <.button>
-              <.icon name="hero-arrow-left" class="h-4 w-4" /> Back to Feeds
-            </.button>
-          </.link>
-          <.link
-            phx-click="toggle_enabled"
-            class="text-sm font-semibold"
-          >
-            <.button>
-              {if @feed_source.enabled, do: "Disable", else: "Enable"}
-            </.button>
-          </.link>
-          <.link
-            phx-click="refresh_now"
-            class="text-sm font-semibold"
-          >
-            <.button>
-              <.icon name="hero-arrow-path" class="h-4 w-4" /> Refresh Now
-            </.button>
-          </.link>
-          <.link navigate={~p"/feeds/#{@feed_source}/edit"}>
-            <.button>
-              <.icon name="hero-pencil" class="h-4 w-4" /> Edit
-            </.button>
-          </.link>
-        </:actions>
-      </.header>
-
-      <div class="mt-6">
-        <div class="bg-base-200 space-y-2 rounded-lg p-4">
-          <div class="flex justify-between">
-            <span class="font-medium">Refresh Interval:</span>
-            <span>{@feed_source.refresh_interval} minutes</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="font-medium">Last Fetched:</span>
-            <span>
-              <%= if @feed_source.last_fetched_at do %>
-                {relative_time(@feed_source.last_fetched_at)}
-              <% else %>
-                <span class="opacity-50">Never</span>
-              <% end %>
-            </span>
-          </div>
-          <%= if @feed_source.last_error do %>
-            <div class="flex justify-between">
-              <span class="text-error font-medium">Last Error:</span>
-              <span class="text-error text-sm">{@feed_source.last_error}</span>
-            </div>
-          <% end %>
+  <div class="technical-main">
+    <.header>
+      <div class="flex items-center gap-3">
+        <span class="text-4xl">{@feed_source.icon}</span>
+        <div>
+          {@feed_source.name}
+          <.badge color={if @feed_source.enabled, do: :green, else: :gray}>
+            {if @feed_source.enabled, do: "Enabled", else: "Disabled"}
+          </.badge>
         </div>
       </div>
+      <:subtitle>
+        {@feed_source.feed_type}
+        <%= if @feed_source.url do %>
+          ·
+          <a href={@feed_source.url} target="_blank" class="text-blue-600 hover:underline">
+            {@feed_source.url}
+          </a>
+        <% end %>
+        <%= if @feed_source.username do %>
+          · @{@feed_source.username}
+        <% end %>
+      </:subtitle>
+      <:actions>
+        <.link navigate={~p"/feeds"}>
+          <.button>
+            <.icon name="hero-arrow-left" class="h-4 w-4" /> Back to Feeds
+          </.button>
+        </.link>
+        <.link
+          phx-click="toggle_enabled"
+          class="text-sm font-semibold"
+        >
+          <.button>
+            {if @feed_source.enabled, do: "Disable", else: "Enable"}
+          </.button>
+        </.link>
+        <.link
+          phx-click="refresh_now"
+          class="text-sm font-semibold"
+        >
+          <.button>
+            <.icon name="hero-arrow-path" class="h-4 w-4" /> Refresh Now
+          </.button>
+        </.link>
+        <.link navigate={~p"/feeds/#{@feed_source}/edit"}>
+          <.button>
+            <.icon name="hero-pencil" class="h-4 w-4" /> Edit
+          </.button>
+        </.link>
+      </:actions>
+    </.header>
 
-      <div class="mt-8">
-        <h2 class="mb-4 text-xl font-semibold">Recent Items ({length(@feed_items)})</h2>
-
-        <%= if Enum.empty?(@feed_items) do %>
-          <div class="py-12 text-center opacity-60">
-            <.icon name="hero-rss" class="mx-auto mb-4 h-12 w-12 opacity-50" />
-            <p class="text-lg">No feed items yet</p>
-            <p class="mt-2 text-sm">
-              <%= if @feed_source.enabled do %>
-                Items will appear here after the first fetch.
-              <% else %>
-                Enable this feed to start fetching items.
-              <% end %>
-            </p>
-          </div>
-        <% else %>
-          <div class="space-y-4">
-            <%= for item <- @feed_items do %>
-              <div class="border-base-300 bg-base-100 rounded-lg border p-4 transition-shadow hover:shadow-md">
-                <div class="flex items-start justify-between gap-4">
-                  <div class="flex-1">
-                    <h3 class="text-lg font-semibold">
-                      <%= if item.url do %>
-                        <a href={item.url} target="_blank" class="link link-primary">
-                          {item.title}
-                        </a>
-                      <% else %>
-                        {item.title}
-                      <% end %>
-                    </h3>
-                    <%= if item.author_name do %>
-                      <p class="mt-1 text-sm opacity-70">by {item.author_name}</p>
-                    <% end %>
-                    <%= if item.content do %>
-                      <div class="line-clamp-3 [&_img]:hidden mt-2 opacity-80">
-                        {raw(item.content)}
-                      </div>
-                    <% end %>
-                  </div>
-                  <div class="whitespace-nowrap text-sm opacity-60">
-                    {relative_time(item.published_at)}
-                  </div>
-                </div>
-              </div>
+    <div class="mt-6">
+      <div class="bg-base-200 space-y-2 rounded-lg p-4">
+        <div class="flex justify-between">
+          <span class="font-medium">Refresh Interval:</span>
+          <span>{@feed_source.refresh_interval} minutes</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="font-medium">Last Fetched:</span>
+          <span>
+            <%= if @feed_source.last_fetched_at do %>
+              {relative_time(@feed_source.last_fetched_at)}
+            <% else %>
+              <span class="opacity-50">Never</span>
             <% end %>
+          </span>
+        </div>
+        <%= if @feed_source.last_error do %>
+          <div class="flex justify-between">
+            <span class="text-error font-medium">Last Error:</span>
+            <span class="text-error text-sm">{@feed_source.last_error}</span>
           </div>
         <% end %>
       </div>
+    </div>
+
+    <div class="mt-8">
+      <h2 class="mb-4 text-xl font-semibold">Recent Items ({length(@feed_items)})</h2>
+
+      <%= if Enum.empty?(@feed_items) do %>
+        <div class="py-12 text-center opacity-60">
+          <.icon name="hero-rss" class="mx-auto mb-4 h-12 w-12 opacity-50" />
+          <p class="text-lg">No feed items yet</p>
+          <p class="mt-2 text-sm">
+            <%= if @feed_source.enabled do %>
+              Items will appear here after the first fetch.
+            <% else %>
+              Enable this feed to start fetching items.
+            <% end %>
+          </p>
+        </div>
+      <% else %>
+        <div class="space-y-4">
+          <%= for item <- @feed_items do %>
+            <div class="border-base-300 bg-base-100 rounded-lg border p-4 transition-shadow hover:shadow-md">
+              <div class="flex items-start justify-between gap-4">
+                <div class="flex-1">
+                  <h3 class="text-lg font-semibold">
+                    <%= if item.url do %>
+                      <a href={item.url} target="_blank" class="link link-primary">
+                        {item.title}
+                      </a>
+                    <% else %>
+                      {item.title}
+                    <% end %>
+                  </h3>
+                  <%= if item.author_name do %>
+                    <p class="mt-1 text-sm opacity-70">by {item.author_name}</p>
+                  <% end %>
+                  <%= if item.content do %>
+                    <div class="line-clamp-3 [&_img]:hidden mt-2 opacity-80">
+                      {raw(item.content)}
+                    </div>
+                  <% end %>
+                </div>
+                <div class="whitespace-nowrap text-sm opacity-60">
+                  {relative_time(item.published_at)}
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
     </div>
   </div>
 </Layouts.app>

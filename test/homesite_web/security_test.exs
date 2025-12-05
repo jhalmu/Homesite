@@ -749,6 +749,8 @@ defmodule HomesiteWeb.SecurityTest do
       {:ok, feedback_b} =
         Feedback.create_feedback_response(scope_b, %{
           "overall_satisfaction" => 5,
+          "performance_rating" => 5,
+          "open_feedback" => "Great!",
           "prompt_type" => "active"
         })
 
@@ -770,6 +772,8 @@ defmodule HomesiteWeb.SecurityTest do
       {:ok, feedback_b} =
         Feedback.create_feedback_response(scope_b, %{
           "overall_satisfaction" => 5,
+          "performance_rating" => 5,
+          "open_feedback" => "Great!",
           "prompt_type" => "active"
         })
 
@@ -792,12 +796,16 @@ defmodule HomesiteWeb.SecurityTest do
       {:ok, feedback_a} =
         Feedback.create_feedback_response(scope_a, %{
           "overall_satisfaction" => 4,
+          "performance_rating" => 4,
+          "open_feedback" => "Good",
           "prompt_type" => "active"
         })
 
       {:ok, feedback_b} =
         Feedback.create_feedback_response(scope_b, %{
           "overall_satisfaction" => 5,
+          "performance_rating" => 5,
+          "open_feedback" => "Excellent",
           "prompt_type" => "passive"
         })
 
@@ -823,6 +831,7 @@ defmodule HomesiteWeb.SecurityTest do
       {:ok, feedback} =
         Feedback.create_feedback_response(scope, %{
           "overall_satisfaction" => 5,
+          "performance_rating" => 5,
           "open_feedback" => "Great app!",
           "prompt_type" => "active"
         })
@@ -846,6 +855,8 @@ defmodule HomesiteWeb.SecurityTest do
       {:ok, feedback} =
         Feedback.create_feedback_response(admin_scope, %{
           "overall_satisfaction" => 5,
+          "performance_rating" => 5,
+          "open_feedback" => "Admin feedback",
           "prompt_type" => "active"
         })
 
@@ -899,6 +910,7 @@ defmodule HomesiteWeb.SecurityTest do
       {:ok, feedback} =
         Feedback.create_feedback_response(user_scope, %{
           "overall_satisfaction" => 5,
+          "performance_rating" => 5,
           "open_feedback" => "Amazing!",
           "prompt_type" => "active"
         })
@@ -942,6 +954,7 @@ defmodule HomesiteWeb.SecurityTest do
       {:ok, feedback} =
         Feedback.create_feedback_response(user_scope, %{
           "overall_satisfaction" => 5,
+          "performance_rating" => 5,
           "open_feedback" => "Public testimonial!",
           "prompt_type" => "active"
         })
@@ -964,6 +977,7 @@ defmodule HomesiteWeb.SecurityTest do
       {:ok, feedback} =
         Feedback.create_feedback_response(scope, %{
           "overall_satisfaction" => 5,
+          "performance_rating" => 5,
           "open_feedback" => "Not approved yet",
           "prompt_type" => "active"
         })
@@ -996,6 +1010,8 @@ defmodule HomesiteWeb.SecurityTest do
       {:ok, _feedback1} =
         Feedback.create_feedback_response(scope, %{
           "overall_satisfaction" => 5,
+          "performance_rating" => 5,
+          "open_feedback" => "Test feedback",
           "prompt_type" => "active"
         })
 
@@ -1003,6 +1019,8 @@ defmodule HomesiteWeb.SecurityTest do
       assert {:error, :rate_limited} =
                Feedback.create_feedback_response(scope, %{
                  "overall_satisfaction" => 4,
+                 "performance_rating" => 4,
+                 "open_feedback" => "Second feedback",
                  "prompt_type" => "passive"
                })
     end
@@ -1015,6 +1033,8 @@ defmodule HomesiteWeb.SecurityTest do
       {:ok, feedback1} =
         Feedback.create_feedback_response(scope, %{
           "overall_satisfaction" => 5,
+          "performance_rating" => 5,
+          "open_feedback" => "Test feedback",
           "prompt_type" => "active"
         })
 
@@ -1024,14 +1044,14 @@ defmodule HomesiteWeb.SecurityTest do
         |> DateTime.add(-8, :day)
         |> DateTime.truncate(:second)
 
-      Homesite.Repo.update!(
-        Ecto.Changeset.change(feedback1, inserted_at: eight_days_ago)
-      )
+      Homesite.Repo.update!(Ecto.Changeset.change(feedback1, inserted_at: eight_days_ago))
 
       # Second feedback should succeed
       assert {:ok, _feedback2} =
                Feedback.create_feedback_response(scope, %{
                  "overall_satisfaction" => 4,
+                 "performance_rating" => 4,
+                 "open_feedback" => "Second feedback",
                  "prompt_type" => "passive"
                })
     end
@@ -1049,6 +1069,7 @@ defmodule HomesiteWeb.SecurityTest do
       {:ok, feedback} =
         Feedback.create_feedback_response(scope, %{
           "overall_satisfaction" => 5,
+          "performance_rating" => 5,
           "open_feedback" => "Awaiting approval",
           "prompt_type" => "active"
         })
@@ -1100,6 +1121,8 @@ defmodule HomesiteWeb.SecurityTest do
       {:ok, feedback} =
         Feedback.create_feedback_response(admin_scope, %{
           "overall_satisfaction" => 5,
+          "performance_rating" => 5,
+          "open_feedback" => "Admin feedback",
           "prompt_type" => "active"
         })
 

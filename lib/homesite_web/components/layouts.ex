@@ -45,63 +45,71 @@ defmodule HomesiteWeb.Layouts do
     </div>
 
     <footer class="from-base-200 to-base-300 border-base-300 mt-[var(--spacing-section)] border-t bg-gradient-to-r">
-      <div class="footer max-w-[var(--content-max-width)] px-[var(--spacing-card)] py-[var(--spacing-lg)] mx-auto">
-        <div>
-          <.pegasus class="h-20 w-20" />
-          <p class="font-semibold">
-            Portal of JH <br />
-            <span class="text-[var(--text-sm)] font-normal opacity-70">
-              {gettext("Your personal space on the web")}
-            </span>
-          </p>
-        </div>
-        <div>
-          <span class="footer-title">{gettext("Platform")}</span>
-          <a href="/" class="link-hover link">{gettext("Home")}</a>
-          <%= if @current_scope do %>
-            <a href="/dashboard" class="link-hover link">{gettext("Dashboard")}</a>
-            <a href="/posts" class="link-hover link">{gettext("Posts")}</a>
-            <a href="/tags" class="link-hover link">{gettext("Tags")}</a>
-          <% end %>
-        </div>
-        <div>
-          <span class="footer-title">{gettext("Built with")}</span>
-          <p class="text-[var(--text-sm)] opacity-70">Phoenix Framework</p>
-          <p class="text-[var(--text-sm)] opacity-70">Elixir</p>
-          <p class="text-[var(--text-sm)] opacity-70">Tailwind CSS & DaisyUI</p>
-        </div>
-        <div>
-          <span class="footer-title">{gettext("Subscribe")}</span>
-          <.link
-            href={~p"/rss.xml"}
-            class="link-hover link gap-[var(--spacing-inline)] flex items-center"
-          >
-            <.icon name="hero-rss" class="h-4 w-4" />
-            {gettext("RSS Feed")}
-          </.link>
-          <.link
-            href={~p"/feed.json"}
-            class="link-hover link gap-[var(--spacing-inline)] flex items-center"
-          >
-            <.icon name="hero-code-bracket" class="h-4 w-4" />
-            {gettext("JSON Feed")}
-          </.link>
-        </div>
-        <%= if @current_scope do %>
-          <div>
-            <span class="footer-title">{gettext("Feedback")}</span>
-            <.link
-              href={~p"/feedback"}
-              class="link-hover link gap-[var(--spacing-inline)] flex items-center"
-            >
-              <.icon name="hero-chat-bubble-left-right" class="h-4 w-4" />
-              {gettext("Share Your Feedback")}
-            </.link>
-            <p class="text-[var(--text-sm)] opacity-70">
-              {gettext("Help us improve!")}
+      <div class="max-w-[var(--content-max-width)] px-[var(--spacing-card)] py-[var(--spacing-lg)] mx-auto">
+        <div class={[
+          "grid gap-8",
+          "grid-cols-1",
+          "sm:grid-cols-2",
+          "lg:grid-cols-4",
+          @current_scope && "lg:grid-cols-5"
+        ]}>
+          <div class="flex flex-col gap-4">
+            <.pegasus class="h-20 w-20" />
+            <p class="font-semibold">
+              Portal of JH <br />
+              <span class="text-[var(--text-sm)] font-normal opacity-70">
+                {gettext("Your personal space on the web")}
+              </span>
             </p>
           </div>
-        <% end %>
+          <div class="flex flex-col gap-2">
+            <span class="footer-title">{gettext("Platform")}</span>
+            <a href="/" class="link-hover link">{gettext("Home")}</a>
+            <%= if @current_scope do %>
+              <a href="/dashboard" class="link-hover link">{gettext("Dashboard")}</a>
+              <a href="/posts" class="link-hover link">{gettext("Posts")}</a>
+              <a href="/tags" class="link-hover link">{gettext("Tags")}</a>
+            <% end %>
+          </div>
+          <div class="flex flex-col gap-2">
+            <span class="footer-title">{gettext("Built with")}</span>
+            <p class="text-[var(--text-sm)] opacity-70">Phoenix Framework</p>
+            <p class="text-[var(--text-sm)] opacity-70">Elixir</p>
+            <p class="text-[var(--text-sm)] opacity-70">Tailwind CSS & DaisyUI</p>
+          </div>
+          <div class="flex flex-col gap-2">
+            <span class="footer-title">{gettext("Subscribe")}</span>
+            <.link
+              href={~p"/rss.xml"}
+              class="link-hover link gap-[var(--spacing-inline)] flex items-center"
+            >
+              <.icon name="hero-rss" class="h-4 w-4" />
+              {gettext("RSS Feed")}
+            </.link>
+            <.link
+              href={~p"/feed.json"}
+              class="link-hover link gap-[var(--spacing-inline)] flex items-center"
+            >
+              <.icon name="hero-code-bracket" class="h-4 w-4" />
+              {gettext("JSON Feed")}
+            </.link>
+          </div>
+          <%= if @current_scope do %>
+            <div class="flex flex-col gap-2">
+              <span class="footer-title">{gettext("Feedback")}</span>
+              <.link
+                href={~p"/feedback"}
+                class="link-hover link gap-[var(--spacing-inline)] flex items-center"
+              >
+                <.icon name="hero-chat-bubble-left-right" class="h-4 w-4" />
+                {gettext("Share Your Feedback")}
+              </.link>
+              <p class="text-[var(--text-sm)] opacity-70">
+                {gettext("Help us improve!")}
+              </p>
+            </div>
+          <% end %>
+        </div>
       </div>
       <div class="border-base-300 bg-base-200/50 px-[var(--spacing-card)] py-[var(--spacing-md)] text-[var(--text-sm)] border-t text-center opacity-70">
         <p>© {Date.utc_today().year} Portal of JH. {gettext("Built with ❤️ and Elixir.")}</p>

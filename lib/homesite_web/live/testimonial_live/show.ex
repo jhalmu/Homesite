@@ -32,8 +32,8 @@ defmodule HomesiteWeb.TestimonialLive.Show do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="min-h-screen px-[var(--spacing-card)] py-[var(--spacing-xl)]">
-        <div class="max-w-3xl mx-auto">
+      <div class="px-[var(--spacing-card)] py-[var(--spacing-xl)] min-h-screen">
+        <div class="mx-auto max-w-3xl">
           <%!-- Back Link --%>
           <div class="mb-8">
             <.link navigate={~p"/happiness"} class="link link-primary">
@@ -42,12 +42,12 @@ defmodule HomesiteWeb.TestimonialLive.Show do
           </div>
 
           <%!-- Testimonial Card --%>
-          <div class="card bg-gradient-to-br from-base-100 to-base-200 shadow-2xl">
+          <div class="card from-base-100 to-base-200 bg-gradient-to-br shadow-2xl">
             <div class="card-body">
               <%!-- Header --%>
-              <div class="flex items-start justify-between mb-6">
+              <div class="mb-6 flex items-start justify-between">
                 <div>
-                  <h1 class="text-3xl font-bold mb-2">{gettext("User Testimonial")}</h1>
+                  <h1 class="mb-2 text-3xl font-bold">{gettext("User Testimonial")}</h1>
                   <p class="text-base-content/60">
                     {gettext("Shared on")} {Calendar.strftime(@testimonial.inserted_at, "%B %d, %Y")}
                   </p>
@@ -57,7 +57,7 @@ defmodule HomesiteWeb.TestimonialLive.Show do
                 <div class="rating rating-lg">
                   <%= for star <- 1..5 do %>
                     <%= if star <= @testimonial.overall_satisfaction do %>
-                      <span class="text-orange-400 text-4xl">⭐</span>
+                      <span class="text-4xl text-orange-400">⭐</span>
                     <% else %>
                       <span class="text-base-content/20 text-4xl">⭐</span>
                     <% end %>
@@ -70,8 +70,8 @@ defmodule HomesiteWeb.TestimonialLive.Show do
               <%!-- Feedback Content --%>
               <%= if @testimonial.open_feedback do %>
                 <div class="mb-6">
-                  <h2 class="text-xl font-semibold mb-3">{gettext("What they said:")}</h2>
-                  <blockquote class="text-lg text-base-content/90 italic border-l-4 border-primary pl-4">
+                  <h2 class="mb-3 text-xl font-semibold">{gettext("What they said:")}</h2>
+                  <blockquote class="text-base-content/90 border-primary border-l-4 pl-4 text-lg italic">
                     "{@testimonial.open_feedback}"
                   </blockquote>
                 </div>
@@ -80,7 +80,7 @@ defmodule HomesiteWeb.TestimonialLive.Show do
               <%!-- Additional Ratings --%>
               <%= if @testimonial.performance_rating do %>
                 <div class="mb-6">
-                  <h3 class="text-lg font-semibold mb-2">{gettext("Performance Rating")}</h3>
+                  <h3 class="mb-2 text-lg font-semibold">{gettext("Performance Rating")}</h3>
                   <div class="rating rating-md">
                     <%= for star <- 1..5 do %>
                       <%= if star <= @testimonial.performance_rating do %>
@@ -96,7 +96,7 @@ defmodule HomesiteWeb.TestimonialLive.Show do
               <%!-- Useful Features --%>
               <%= if @testimonial.feature_usefulness && map_size(@testimonial.feature_usefulness) > 0 do %>
                 <div class="mb-6">
-                  <h3 class="text-lg font-semibold mb-2">{gettext("Features they found useful:")}</h3>
+                  <h3 class="mb-2 text-lg font-semibold">{gettext("Features they found useful:")}</h3>
                   <div class="flex flex-wrap gap-2">
                     <%= for {feature, true} <- @testimonial.feature_usefulness do %>
                       <span class="badge badge-primary badge-lg">
@@ -110,17 +110,17 @@ defmodule HomesiteWeb.TestimonialLive.Show do
               <div class="divider"></div>
 
               <%!-- User Info --%>
-              <div class="flex items-center gap-3 mb-6">
+              <div class="mb-6 flex items-center gap-3">
                 <div class="avatar placeholder">
-                  <div class="bg-primary text-primary-content rounded-full w-12">
+                  <div class="bg-primary text-primary-content w-12 rounded-full">
                     <span class="text-lg">
                       {get_initial(@testimonial)}
                     </span>
                   </div>
                 </div>
                 <div>
-                  <div class="font-semibold text-lg">{get_user_name(@testimonial)}</div>
-                  <div class="text-sm text-base-content/60">
+                  <div class="text-lg font-semibold">{get_user_name(@testimonial)}</div>
+                  <div class="text-base-content/60 text-sm">
                     {gettext("Rank")}: {rank_display(@testimonial.user_rank_at_time)}
                   </div>
                 </div>
@@ -130,7 +130,7 @@ defmodule HomesiteWeb.TestimonialLive.Show do
 
               <%!-- Social Sharing --%>
               <div class="mb-6">
-                <h3 class="text-lg font-semibold mb-3">{gettext("Share this testimonial:")}</h3>
+                <h3 class="mb-3 text-lg font-semibold">{gettext("Share this testimonial:")}</h3>
                 <div class="flex flex-wrap gap-3">
                   <%!-- Twitter/X --%>
                   <a
@@ -165,7 +165,7 @@ defmodule HomesiteWeb.TestimonialLive.Show do
               </div>
 
               <%!-- Attribution --%>
-              <div class="text-center text-sm text-base-content/60 mt-6">
+              <div class="text-base-content/60 mt-6 text-center text-sm">
                 <p>
                   {gettext("This testimonial is from a real user of Homesite.")}
                 </p>
@@ -180,10 +180,10 @@ defmodule HomesiteWeb.TestimonialLive.Show do
           </div>
 
           <%!-- Call to Action --%>
-          <div class="text-center mt-12">
+          <div class="mt-12 text-center">
             <div class="card bg-base-200 shadow-xl">
               <div class="card-body">
-                <h3 class="card-title justify-center text-xl mb-4">
+                <h3 class="card-title mb-4 justify-center text-xl">
                   {gettext("Want to share your experience?")}
                 </h3>
 

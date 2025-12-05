@@ -79,10 +79,10 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="min-h-screen px-[var(--spacing-card)] py-[var(--spacing-xl)]">
+      <div class="px-[var(--spacing-card)] py-[var(--spacing-xl)] min-h-screen">
         <%!-- Header --%>
         <div class="mb-8">
-          <h1 class="text-4xl font-bold mb-2">{gettext("Feedback Analytics")}</h1>
+          <h1 class="mb-2 text-4xl font-bold">{gettext("Feedback Analytics")}</h1>
           <p class="text-base-content/70">
             {gettext("Monitor user feedback, happiness trends, and moderate testimonials")}
           </p>
@@ -94,21 +94,21 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
             <button
               phx-click="filter_days"
               phx-value-days="30"
-              class={"btn join-item #{if @days == 30, do: "btn-active", else: ""}"}
+              class={"#{if @days == 30, do: "btn-active", else: ""} btn join-item"}
             >
               {gettext("30 Days")}
             </button>
             <button
               phx-click="filter_days"
               phx-value-days="90"
-              class={"btn join-item #{if @days == 90, do: "btn-active", else: ""}"}
+              class={"#{if @days == 90, do: "btn-active", else: ""} btn join-item"}
             >
               {gettext("90 Days")}
             </button>
             <button
               phx-click="filter_days"
               phx-value-days="365"
-              class={"btn join-item #{if @days == 365, do: "btn-active", else: ""}"}
+              class={"#{if @days == 365, do: "btn-active", else: ""} btn join-item"}
             >
               {gettext("1 Year")}
             </button>
@@ -116,15 +116,15 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
         </div>
 
         <%!-- Summary Stats --%>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
           <%!-- Happiness Score Card --%>
           <div class="card bg-base-200 shadow-xl">
             <div class="card-body">
               <h2 class="card-title text-sm">{gettext("Happiness Score")}</h2>
-              <div class="text-4xl font-bold text-primary">
+              <div class="text-primary text-4xl font-bold">
                 {@analytics.happiness.score}%
               </div>
-              <p class="text-sm text-base-content/60">
+              <p class="text-base-content/60 text-sm">
                 {confidence_text(@analytics.happiness.confidence)}
               </p>
             </div>
@@ -134,10 +134,10 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
           <div class="card bg-base-200 shadow-xl">
             <div class="card-body">
               <h2 class="card-title text-sm">{gettext("Total Responses")}</h2>
-              <div class="text-4xl font-bold text-secondary">
+              <div class="text-secondary text-4xl font-bold">
                 {@analytics.happiness.total_responses}
               </div>
-              <p class="text-sm text-base-content/60">
+              <p class="text-base-content/60 text-sm">
                 {gettext("Last")} {@days} {gettext("days")}
               </p>
             </div>
@@ -147,10 +147,10 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
           <div class="card bg-base-200 shadow-xl">
             <div class="card-body">
               <h2 class="card-title text-sm">{gettext("Pending Approval")}</h2>
-              <div class="text-4xl font-bold text-warning">
+              <div class="text-warning text-4xl font-bold">
                 {length(@pending_testimonials)}
               </div>
-              <p class="text-sm text-base-content/60">
+              <p class="text-base-content/60 text-sm">
                 {gettext("Testimonials awaiting review")}
               </p>
             </div>
@@ -158,13 +158,13 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
         </div>
 
         <%!-- Happiness Trend Chart (Simplified) --%>
-        <div class="card bg-base-200 shadow-xl mb-8">
+        <div class="card bg-base-200 mb-8 shadow-xl">
           <div class="card-body">
             <h2 class="card-title">{gettext("Happiness Trend")}</h2>
 
             <%= if length(@analytics.trend) > 0 do %>
               <div class="overflow-x-auto">
-                <table class="table table-sm">
+                <table class="table-sm table">
                   <thead>
                     <tr>
                       <th>{gettext("Date")}</th>
@@ -199,13 +199,13 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
         </div>
 
         <%!-- Response Rate by Rank --%>
-        <div class="card bg-base-200 shadow-xl mb-8">
+        <div class="card bg-base-200 mb-8 shadow-xl">
           <div class="card-body">
             <h2 class="card-title">{gettext("Response Rate by User Rank")}</h2>
 
             <%= if length(@analytics.by_rank) > 0 do %>
               <div class="overflow-x-auto">
-                <table class="table table-sm">
+                <table class="table-sm table">
                   <thead>
                     <tr>
                       <th>{gettext("Rank")}</th>
@@ -237,10 +237,10 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
 
         <%!-- Pending Testimonials (Moderation) --%>
         <%= if length(@pending_testimonials) > 0 do %>
-          <div class="card bg-base-200 shadow-xl mb-8">
+          <div class="card bg-base-200 mb-8 shadow-xl">
             <div class="card-body">
               <h2 class="card-title">{gettext("Pending Testimonials")}</h2>
-              <p class="text-sm text-base-content/60 mb-4">
+              <p class="text-base-content/60 mb-4 text-sm">
                 {gettext("Review and approve testimonials for public display")}
               </p>
 
@@ -249,24 +249,24 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
                   <div class="card bg-base-100 shadow">
                     <div class="card-body">
                       <%!-- Rating --%>
-                      <div class="flex items-center gap-2 mb-2">
+                      <div class="mb-2 flex items-center gap-2">
                         <%= for _star <- 1..testimonial.overall_satisfaction do %>
                           <span class="text-orange-400">⭐</span>
                         <% end %>
-                        <span class="text-sm text-base-content/60">
+                        <span class="text-base-content/60 text-sm">
                           {Calendar.strftime(testimonial.inserted_at, "%B %d, %Y")}
                         </span>
                       </div>
 
                       <%!-- Feedback Text --%>
                       <%= if testimonial.open_feedback do %>
-                        <blockquote class="border-l-4 border-primary pl-4 mb-4">
+                        <blockquote class="border-primary mb-4 border-l-4 pl-4">
                           "{testimonial.open_feedback}"
                         </blockquote>
                       <% end %>
 
                       <%!-- User Info --%>
-                      <div class="flex items-center gap-2 mb-4 text-sm">
+                      <div class="mb-4 flex items-center gap-2 text-sm">
                         <%= if testimonial.user do %>
                           <span class="font-semibold">
                             {testimonial.user.display_name || testimonial.user.email}
@@ -303,7 +303,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
 
             <%= if length(@recent_feedback) > 0 do %>
               <div class="overflow-x-auto">
-                <table class="table table-sm">
+                <table class="table-sm table">
                   <thead>
                     <tr>
                       <th>{gettext("Date")}</th>
@@ -321,7 +321,8 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
                         <td>
                           <%= if feedback.user do %>
                             <span class="text-sm">
-                              {feedback.user.display_name || String.split(feedback.user.email, "@") |> hd()}
+                              {feedback.user.display_name ||
+                                String.split(feedback.user.email, "@") |> hd()}
                             </span>
                           <% end %>
                         </td>

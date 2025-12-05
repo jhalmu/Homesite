@@ -10,7 +10,7 @@ defmodule HomesiteWeb.TagLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <main>
+      <main class="technical-main">
         <.header>
           {gettext("Listing Tags")}
           <:actions>
@@ -56,28 +56,28 @@ defmodule HomesiteWeb.TagLive.Index do
           </div>
         <% end %>
 
-        <div class="mt-8 space-y-4" id="tags" phx-update="stream">
+        <div class="mt-[var(--spacing-lg)] space-y-[var(--spacing-md)]" id="tags" phx-update="stream">
           <%= for {id, tag} <- @streams.tags do %>
             <article
               id={id}
-              class="card bg-base-200 shadow-lg transition-shadow hover:shadow-xl"
+              class="card bg-base-200 duration-[var(--duration-normal)] shadow-lg transition-shadow hover:shadow-xl"
             >
               <div class="card-body">
-                <div class="flex items-start justify-between gap-4">
+                <div class="gap-[var(--spacing-md)] flex items-start justify-between">
                   <div class="min-w-0 flex-1">
                     <.link navigate={~p"/tags/#{tag}"} class="group">
-                      <h2 class="card-title mb-2 text-xl transition-colors group-hover:text-primary">
+                      <h2 class="card-title mb-[var(--spacing-sm)] text-[var(--font-size-fluid-xl)] duration-[var(--duration-normal)] transition-colors group-hover:text-primary">
                         {tag.name}
                       </h2>
                     </.link>
 
                     <%= if tag.description && @current_tab == "my" do %>
-                      <p class="line-clamp-2 mb-3 text-sm opacity-70">
+                      <p class="line-clamp-2 mb-[var(--spacing-sm)] text-[var(--text-sm)] opacity-70">
                         {tag.description}
                       </p>
                     <% end %>
 
-                    <div class="flex flex-wrap gap-3 text-sm">
+                    <div class="gap-[var(--spacing-sm)] text-[var(--text-sm)] flex flex-wrap">
                       <%= if @current_tab == "my" do %>
                         <%= if tag.is_public do %>
                           <div class="badge badge-ghost gap-2">
@@ -101,7 +101,7 @@ defmodule HomesiteWeb.TagLive.Index do
                   </div>
 
                   <%= if @current_tab == "my" do %>
-                    <div class="flex flex-shrink-0 gap-2">
+                    <div class="gap-[var(--spacing-inline)] flex flex-shrink-0">
                       <.link navigate={~p"/tags/#{tag}"} class="btn btn-sm btn-ghost">
                         <.icon name="hero-eye" class="h-4 w-4" />
                       </.link>
@@ -131,7 +131,7 @@ defmodule HomesiteWeb.TagLive.Index do
         </div>
 
         <%= if not @has_tags do %>
-          <div class="alert alert-info mt-8">
+          <div class="alert alert-info mt-[var(--spacing-lg)]">
             <.icon name="hero-information-circle" class="h-6 w-6" />
             <%= if @current_tab == "my" do %>
               <span>{gettext("No tags yet. Create your first tag to get started!")}</span>

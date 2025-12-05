@@ -21,10 +21,13 @@ defmodule Homesite.Workers.FeedbackPromptWorkerTest do
       Repo.update!(Ecto.Changeset.change(user_not_due, inserted_at: five_days_ago))
 
       user_opted_out = user_fixture()
-      Repo.update!(Ecto.Changeset.change(user_opted_out,
-        inserted_at: eight_days_ago,
-        feedback_prompt_preference: "opted_out"
-      ))
+
+      Repo.update!(
+        Ecto.Changeset.change(user_opted_out,
+          inserted_at: eight_days_ago,
+          feedback_prompt_preference: "opted_out"
+        )
+      )
 
       assert {:ok, result} = perform_job(FeedbackPromptWorker, %{})
 

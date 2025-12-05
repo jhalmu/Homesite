@@ -167,13 +167,6 @@
                     <% end %>
                   </h3>
 
-                  <%!-- Item summary (remove images to avoid broken icons) --%>
-                  <%= if item.content do %>
-                    <div class="text-[var(--text-sm)] line-clamp-3 mb-[var(--spacing-sm)] [&_img]:hidden opacity-70">
-                      {raw(item.content)}
-                    </div>
-                  <% end %>
-
                   <%!-- Item metadata --%>
                   <div class="text-[var(--text-xs)] gap-[var(--spacing-inline)] flex items-center opacity-70">
                     <%= if item.published_at do %>

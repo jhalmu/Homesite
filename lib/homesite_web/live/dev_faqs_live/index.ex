@@ -64,7 +64,7 @@ defmodule HomesiteWeb.DevFaqsLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div class="technical-main">
       <.header>
         <div class="flex items-center gap-2">
           <.icon name="hero-code-bracket" class="h-8 w-8" /> Developer FAQs

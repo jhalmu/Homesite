@@ -56,18 +56,24 @@ defmodule HomesiteWeb.AdminLive.Feedback.IndexTest do
       {:ok, _} =
         Feedback.create_feedback_response(scope1, %{
           "overall_satisfaction" => 5,
+          "performance_rating" => 5,
+          "open_feedback" => "Excellent experience!",
           "prompt_type" => "active"
         })
 
       {:ok, _} =
         Feedback.create_feedback_response(scope2, %{
           "overall_satisfaction" => 4,
+          "performance_rating" => 4,
+          "open_feedback" => "Very good overall",
           "prompt_type" => "passive"
         })
 
       {:ok, _} =
         Feedback.create_feedback_response(scope3, %{
           "overall_satisfaction" => 3,
+          "performance_rating" => 3,
+          "open_feedback" => "It's okay",
           "prompt_type" => "active"
         })
 
@@ -138,6 +144,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.IndexTest do
       {:ok, feedback} =
         Feedback.create_feedback_response(scope, %{
           "overall_satisfaction" => 5,
+          "performance_rating" => 5,
           "open_feedback" => "Great app for moderation test!",
           "prompt_type" => "passive"
         })
@@ -169,7 +176,9 @@ defmodule HomesiteWeb.AdminLive.Feedback.IndexTest do
 
       # Click approve button in pending testimonials section
       view
-      |> element("button[phx-click='approve_testimonial'][phx-value-id='#{feedback.id}'][data-section='pending']")
+      |> element(
+        "button[phx-click='approve_testimonial'][phx-value-id='#{feedback.id}'][data-section='pending']"
+      )
       |> render_click()
 
       # Verify testimonial was approved
@@ -328,12 +337,16 @@ defmodule HomesiteWeb.AdminLive.Feedback.IndexTest do
       {:ok, _} =
         Feedback.create_feedback_response(scope1, %{
           "overall_satisfaction" => 5,
+          "performance_rating" => 5,
+          "open_feedback" => "Amazing!",
           "prompt_type" => "active"
         })
 
       {:ok, _} =
         Feedback.create_feedback_response(scope2, %{
           "overall_satisfaction" => 4,
+          "performance_rating" => 4,
+          "open_feedback" => "Good job",
           "prompt_type" => "passive"
         })
 

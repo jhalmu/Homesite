@@ -14,22 +14,30 @@ defmodule HomesiteWeb.FeedbackLive.Index do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="min-h-[calc(100vh-200px)] px-[var(--spacing-card)] py-[var(--spacing-xl)]">
-        <div class="max-w-2xl mx-auto">
+        <div class="mx-auto max-w-2xl">
           <div class="mb-8">
-            <h1 class="text-3xl font-bold mb-2">{gettext("Share Your Feedback")}</h1>
+            <h1 class="mb-2 text-3xl font-bold">{gettext("Share Your Feedback")}</h1>
             <p class="text-base-content/70">
-              {gettext("We'd love to hear your thoughts on how we're doing. Your feedback helps us improve!")}
+              {gettext(
+                "We'd love to hear your thoughts on how we're doing. Your feedback helps us improve!"
+              )}
             </p>
           </div>
 
-          <.form for={@form} id="feedback-form" phx-submit="save" phx-change="validate" class="space-y-6">
+          <.form
+            for={@form}
+            id="feedback-form"
+            phx-submit="save"
+            phx-change="validate"
+            class="space-y-6"
+          >
             <%!-- Show form-level errors only if form was submitted --%>
             <%= if @form.source.action == :insert && @form.errors != [] do %>
               <div class="alert alert-error">
                 <.icon name="hero-exclamation-triangle" />
                 <div>
                   <p class="font-bold">{gettext("Please fix the following errors:")}</p>
-                  <ul class="list-disc list-inside">
+                  <ul class="list-inside list-disc">
                     <%= for {field, {msg, _}} <- @form.errors do %>
                       <li>{field}: {msg}</li>
                     <% end %>
@@ -40,7 +48,7 @@ defmodule HomesiteWeb.FeedbackLive.Index do
 
             <%!-- Overall Satisfaction (Required) --%>
             <div class="form-control">
-              <h3 class="text-sm font-semibold mb-2">
+              <h3 class="mb-2 text-sm font-semibold">
                 {gettext("Overall Satisfaction")} <span class="text-error">*</span>
               </h3>
               <div class="rating rating-lg">
@@ -59,7 +67,7 @@ defmodule HomesiteWeb.FeedbackLive.Index do
 
             <%!-- Performance Rating (Required) --%>
             <div class="form-control">
-              <h3 class="text-sm font-semibold mb-2">
+              <h3 class="mb-2 text-sm font-semibold">
                 {gettext("How fast and responsive is the site?")} <span class="text-error">*</span>
               </h3>
               <div class="rating rating-lg">
@@ -88,7 +96,11 @@ defmodule HomesiteWeb.FeedbackLive.Index do
 
             <%!-- Submit Button --%>
             <div class="flex gap-4">
-              <button type="submit" class="btn btn-primary" phx-disable-with={gettext("Submitting...")}>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                phx-disable-with={gettext("Submitting...")}
+              >
                 <.icon name="hero-paper-airplane" /> {gettext("Submit Feedback")}
               </button>
             </div>
@@ -138,14 +150,26 @@ defmodule HomesiteWeb.FeedbackLive.Index do
       {:error, :rate_limited} ->
         {:noreply,
          socket
-         |> put_flash(:error, gettext("You can only submit feedback once per week. Please try again later."))
-         |> assign_form(Feedback.FeedbackResponse.changeset(%Feedback.FeedbackResponse{}, feedback_params))}
+         |> put_flash(
+           :error,
+           gettext("You can only submit feedback once per week. Please try again later.")
+         )
+         |> assign_form(
+           Feedback.FeedbackResponse.changeset(%Feedback.FeedbackResponse{}, feedback_params)
+         )}
 
       {:error, :negative_feedback_limit} ->
         {:noreply,
          socket
-         |> put_flash(:error, gettext("You've reached the limit for critical feedback. Please share some positive feedback too!"))
-         |> assign_form(Feedback.FeedbackResponse.changeset(%Feedback.FeedbackResponse{}, feedback_params))}
+         |> put_flash(
+           :error,
+           gettext(
+             "You've reached the limit for critical feedback. Please share some positive feedback too!"
+           )
+         )
+         |> assign_form(
+           Feedback.FeedbackResponse.changeset(%Feedback.FeedbackResponse{}, feedback_params)
+         )}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}

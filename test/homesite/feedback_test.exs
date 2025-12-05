@@ -22,7 +22,9 @@ defmodule Homesite.FeedbackTest do
         "prompt_type" => "active"
       }
 
-      assert {:ok, %FeedbackResponse{} = feedback} = Feedback.create_feedback_response(scope, attrs)
+      assert {:ok, %FeedbackResponse{} = feedback} =
+               Feedback.create_feedback_response(scope, attrs)
+
       assert feedback.overall_satisfaction == 5
       assert feedback.performance_rating == 4
       assert feedback.open_feedback == "Great app!"
@@ -31,17 +33,31 @@ defmodule Homesite.FeedbackTest do
     end
 
     test "auto-generates share_token for 4-5 star ratings", %{scope: scope} do
-      attrs = %{"overall_satisfaction" => 5, "prompt_type" => "passive"}
+      attrs = %{
+        "overall_satisfaction" => 5,
+        "performance_rating" => 5,
+        "open_feedback" => "Great!",
+        "prompt_type" => "passive"
+      }
 
-      assert {:ok, %FeedbackResponse{} = feedback} = Feedback.create_feedback_response(scope, attrs)
+      assert {:ok, %FeedbackResponse{} = feedback} =
+               Feedback.create_feedback_response(scope, attrs)
+
       assert is_binary(feedback.share_token)
       assert String.length(feedback.share_token) > 10
     end
 
     test "does not generate share_token for 1-3 star ratings", %{scope: scope} do
-      attrs = %{"overall_satisfaction" => 3, "prompt_type" => "passive"}
+      attrs = %{
+        "overall_satisfaction" => 3,
+        "performance_rating" => 3,
+        "open_feedback" => "Okay",
+        "prompt_type" => "passive"
+      }
 
-      assert {:ok, %FeedbackResponse{} = feedback} = Feedback.create_feedback_response(scope, attrs)
+      assert {:ok, %FeedbackResponse{} = feedback} =
+               Feedback.create_feedback_response(scope, attrs)
+
       assert is_nil(feedback.share_token)
     end
 
@@ -50,30 +66,43 @@ defmodule Homesite.FeedbackTest do
       user = Repo.update!(Ecto.Changeset.change(user, rank: 7))
       scope = Scope.for_user(user)
 
-      attrs = %{"overall_satisfaction" => 5, "prompt_type" => "active"}
+      attrs = %{
+        "overall_satisfaction" => 5,
+        "performance_rating" => 5,
+        "open_feedback" => "Test",
+        "prompt_type" => "active"
+      }
 
-      assert {:ok, %FeedbackResponse{} = feedback} = Feedback.create_feedback_response(scope, attrs)
+      assert {:ok, %FeedbackResponse{} = feedback} =
+               Feedback.create_feedback_response(scope, attrs)
+
       assert feedback.user_rank_at_time == 7
     end
 
     test "requires overall_satisfaction", %{scope: scope} do
       attrs = %{"prompt_type" => "active"}
 
-      assert {:error, %Ecto.Changeset{} = changeset} = Feedback.create_feedback_response(scope, attrs)
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               Feedback.create_feedback_response(scope, attrs)
+
       assert "can't be blank" in errors_on(changeset).overall_satisfaction
     end
 
     test "requires prompt_type", %{scope: scope} do
       attrs = %{"overall_satisfaction" => 5}
 
-      assert {:error, %Ecto.Changeset{} = changeset} = Feedback.create_feedback_response(scope, attrs)
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               Feedback.create_feedback_response(scope, attrs)
+
       assert "can't be blank" in errors_on(changeset).prompt_type
     end
 
     test "validates satisfaction rating is 1-5", %{scope: scope} do
       attrs = %{"overall_satisfaction" => 6, "prompt_type" => "active"}
 
-      assert {:error, %Ecto.Changeset{} = changeset} = Feedback.create_feedback_response(scope, attrs)
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               Feedback.create_feedback_response(scope, attrs)
+
       assert "must be between 1 and 5" in errors_on(changeset).overall_satisfaction
     end
   end
@@ -91,7 +120,13 @@ defmodule Homesite.FeedbackTest do
 
     test "enforces 7-day rate limit", %{scope: scope, user: user} do
       # Submit first feedback
-      attrs = %{"overall_satisfaction" => 5, "prompt_type" => "active"}
+      attrs = %{
+        "overall_satisfaction" => 5,
+        "performance_rating" => 5,
+        "open_feedback" => "First",
+        "prompt_type" => "active"
+      }
+
       assert {:ok, _feedback} = Feedback.create_feedback_response(scope, attrs)
 
       # Try to submit again immediately
@@ -100,7 +135,13 @@ defmodule Homesite.FeedbackTest do
 
     test "allows feedback after 7 days", %{scope: scope, user: user} do
       # Submit first feedback
-      attrs = %{"overall_satisfaction" => 5, "prompt_type" => "active"}
+      attrs = %{
+        "overall_satisfaction" => 5,
+        "performance_rating" => 5,
+        "open_feedback" => "First",
+        "prompt_type" => "active"
+      }
+
       {:ok, feedback} = Feedback.create_feedback_response(scope, attrs)
 
       # Manually update timestamp to 8 days ago
@@ -113,7 +154,10 @@ defmodule Homesite.FeedbackTest do
 
     test "enforces positive/negative bias (2x rule)", %{user: user} do
       # User has given 2 positive feedback
-      user = Repo.update!(Ecto.Changeset.change(user, positive_feedback_count: 2, negative_feedback_count: 0))
+      user =
+        Repo.update!(
+          Ecto.Changeset.change(user, positive_feedback_count: 2, negative_feedback_count: 0)
+        )
 
       # Can give 1 negative feedback (2 positive / 2 = 1)
       assert {:ok, :allowed} = Feedback.can_submit_feedback?(user, 2)
@@ -125,7 +169,10 @@ defmodule Homesite.FeedbackTest do
 
     test "allows more positive feedback without limit", %{user: user} do
       # User has given 5 positive and 2 negative
-      user = Repo.update!(Ecto.Changeset.change(user, positive_feedback_count: 5, negative_feedback_count: 2))
+      user =
+        Repo.update!(
+          Ecto.Changeset.change(user, positive_feedback_count: 5, negative_feedback_count: 2)
+        )
 
       # Can still give more positive feedback
       assert {:ok, :allowed} = Feedback.can_submit_feedback?(user, 5)
@@ -154,9 +201,26 @@ defmodule Homesite.FeedbackTest do
       user3 = user_fixture()
       scope3 = Scope.for_user(user3)
 
-      Feedback.create_feedback_response(scope, %{"overall_satisfaction" => 5, "prompt_type" => "active"})
-      Feedback.create_feedback_response(scope2, %{"overall_satisfaction" => 4, "prompt_type" => "passive"})
-      Feedback.create_feedback_response(scope3, %{"overall_satisfaction" => 5, "prompt_type" => "active"})
+      Feedback.create_feedback_response(scope, %{
+        "overall_satisfaction" => 5,
+        "performance_rating" => 5,
+        "open_feedback" => "Perfect!",
+        "prompt_type" => "active"
+      })
+
+      Feedback.create_feedback_response(scope2, %{
+        "overall_satisfaction" => 4,
+        "performance_rating" => 4,
+        "open_feedback" => "Good",
+        "prompt_type" => "passive"
+      })
+
+      Feedback.create_feedback_response(scope3, %{
+        "overall_satisfaction" => 5,
+        "performance_rating" => 5,
+        "open_feedback" => "Excellent",
+        "prompt_type" => "active"
+      })
 
       result = Feedback.calculate_happiness_score(90)
 
@@ -169,14 +233,28 @@ defmodule Homesite.FeedbackTest do
 
     test "applies exponential decay to older feedback", %{scope: scope} do
       # Create recent feedback (5 stars)
-      {:ok, _recent} = Feedback.create_feedback_response(scope, %{"overall_satisfaction" => 5, "prompt_type" => "active"})
+      {:ok, _recent} =
+        Feedback.create_feedback_response(scope, %{
+          "overall_satisfaction" => 5,
+          "performance_rating" => 5,
+          "open_feedback" => "Recent great feedback",
+          "prompt_type" => "active"
+        })
 
       # Create old feedback (1 star) - 60 days ago from different user
       # Give user2 positive feedback first to avoid anti-spam bias rule
       user2 = user_fixture()
       user2 = Repo.update!(Ecto.Changeset.change(user2, positive_feedback_count: 2))
       scope2 = Scope.for_user(user2)
-      {:ok, old} = Feedback.create_feedback_response(scope2, %{"overall_satisfaction" => 1, "prompt_type" => "passive"})
+
+      {:ok, old} =
+        Feedback.create_feedback_response(scope2, %{
+          "overall_satisfaction" => 1,
+          "performance_rating" => 1,
+          "open_feedback" => "Old bad feedback",
+          "prompt_type" => "passive"
+        })
+
       sixty_days_ago = DateTime.add(DateTime.utc_now(), -60, :day) |> DateTime.truncate(:second)
       Repo.update!(Ecto.Changeset.change(old, inserted_at: sixty_days_ago))
 
@@ -190,8 +268,17 @@ defmodule Homesite.FeedbackTest do
 
     test "respects time window", %{scope: scope} do
       # Create feedback 100 days ago
-      {:ok, old_feedback} = Feedback.create_feedback_response(scope, %{"overall_satisfaction" => 5, "prompt_type" => "active"})
-      hundred_days_ago = DateTime.add(DateTime.utc_now(), -100, :day) |> DateTime.truncate(:second)
+      {:ok, old_feedback} =
+        Feedback.create_feedback_response(scope, %{
+          "overall_satisfaction" => 5,
+          "performance_rating" => 5,
+          "open_feedback" => "Old feedback",
+          "prompt_type" => "active"
+        })
+
+      hundred_days_ago =
+        DateTime.add(DateTime.utc_now(), -100, :day) |> DateTime.truncate(:second)
+
       Repo.update!(Ecto.Changeset.change(old_feedback, inserted_at: hundred_days_ago))
 
       # Query last 90 days
@@ -206,20 +293,56 @@ defmodule Homesite.FeedbackTest do
       users = for _ <- 1..15, do: user_fixture()
 
       # 2 responses = very_low
-      Feedback.create_feedback_response(scope, %{"overall_satisfaction" => 5, "prompt_type" => "active"})
-      Feedback.create_feedback_response(Scope.for_user(Enum.at(users, 0)), %{"overall_satisfaction" => 4, "prompt_type" => "active"})
+      Feedback.create_feedback_response(scope, %{
+        "overall_satisfaction" => 5,
+        "performance_rating" => 5,
+        "open_feedback" => "Great",
+        "prompt_type" => "active"
+      })
+
+      Feedback.create_feedback_response(Scope.for_user(Enum.at(users, 0)), %{
+        "overall_satisfaction" => 4,
+        "performance_rating" => 4,
+        "open_feedback" => "Good",
+        "prompt_type" => "active"
+      })
+
       assert Feedback.calculate_happiness_score(90).confidence == :very_low
 
       # 5 responses total = low
-      Feedback.create_feedback_response(Scope.for_user(Enum.at(users, 1)), %{"overall_satisfaction" => 5, "prompt_type" => "passive"})
-      Feedback.create_feedback_response(Scope.for_user(Enum.at(users, 2)), %{"overall_satisfaction" => 4, "prompt_type" => "passive"})
-      Feedback.create_feedback_response(Scope.for_user(Enum.at(users, 3)), %{"overall_satisfaction" => 5, "prompt_type" => "passive"})
+      Feedback.create_feedback_response(Scope.for_user(Enum.at(users, 1)), %{
+        "overall_satisfaction" => 5,
+        "performance_rating" => 5,
+        "open_feedback" => "Excellent",
+        "prompt_type" => "passive"
+      })
+
+      Feedback.create_feedback_response(Scope.for_user(Enum.at(users, 2)), %{
+        "overall_satisfaction" => 4,
+        "performance_rating" => 4,
+        "open_feedback" => "Nice",
+        "prompt_type" => "passive"
+      })
+
+      Feedback.create_feedback_response(Scope.for_user(Enum.at(users, 3)), %{
+        "overall_satisfaction" => 5,
+        "performance_rating" => 5,
+        "open_feedback" => "Perfect",
+        "prompt_type" => "passive"
+      })
+
       assert Feedback.calculate_happiness_score(90).confidence == :low
 
       # 15 responses = medium
       for i <- 4..13 do
-        Feedback.create_feedback_response(Scope.for_user(Enum.at(users, i)), %{"overall_satisfaction" => 5, "prompt_type" => "active"})
+        Feedback.create_feedback_response(Scope.for_user(Enum.at(users, i)), %{
+          "overall_satisfaction" => 5,
+          "performance_rating" => 5,
+          "open_feedback" => "Test #{i}",
+          "prompt_type" => "active"
+        })
       end
+
       assert Feedback.calculate_happiness_score(90).confidence == :medium
     end
   end
@@ -239,7 +362,8 @@ defmodule Homesite.FeedbackTest do
       admin = admin_fixture(%{admin_flowers: 3})
 
       assert {:ok, rank} = Feedback.calculate_rank(admin)
-      assert rank == 6  # admin_flowers * 2
+      # admin_flowers * 2
+      assert rank == 6
     end
 
     test "stores rank history when rank changes", %{user: user} do
@@ -293,10 +417,14 @@ defmodule Homesite.FeedbackTest do
       user = user_fixture()
       fifteen_days_ago = DateTime.add(DateTime.utc_now(), -15, :day) |> DateTime.truncate(:second)
       eight_days_ago = DateTime.add(DateTime.utc_now(), -8, :day) |> DateTime.truncate(:second)
-      user = Repo.update!(Ecto.Changeset.change(user,
-        inserted_at: fifteen_days_ago,
-        last_feedback_prompt_at: eight_days_ago
-      ))
+
+      user =
+        Repo.update!(
+          Ecto.Changeset.change(user,
+            inserted_at: fifteen_days_ago,
+            last_feedback_prompt_at: eight_days_ago
+          )
+        )
 
       assert Feedback.should_show_prompt?(user) == true
     end
@@ -307,11 +435,13 @@ defmodule Homesite.FeedbackTest do
       user = user_fixture()
       scope = Scope.for_user(user)
 
-      {:ok, feedback} = Feedback.create_feedback_response(scope, %{
-        "overall_satisfaction" => 5,
-        "open_feedback" => "Excellent app!",
-        "prompt_type" => "active"
-      })
+      {:ok, feedback} =
+        Feedback.create_feedback_response(scope, %{
+          "overall_satisfaction" => 5,
+          "performance_rating" => 5,
+          "open_feedback" => "Excellent app!",
+          "prompt_type" => "active"
+        })
 
       # Share it publicly
       {:ok, shared_feedback} = Feedback.share_feedback_publicly(scope, feedback.id)
@@ -334,10 +464,13 @@ defmodule Homesite.FeedbackTest do
       scope = Scope.for_user(user)
 
       # Create feedback that's not shared
-      {:ok, private_feedback} = Feedback.create_feedback_response(scope, %{
-        "overall_satisfaction" => 5,
-        "prompt_type" => "passive"
-      })
+      {:ok, private_feedback} =
+        Feedback.create_feedback_response(scope, %{
+          "overall_satisfaction" => 5,
+          "performance_rating" => 5,
+          "open_feedback" => "Private feedback",
+          "prompt_type" => "passive"
+        })
 
       assert Feedback.get_testimonial_by_token(private_feedback.share_token) == nil
     end
@@ -348,7 +481,10 @@ defmodule Homesite.FeedbackTest do
       assert updated.share_token != nil
     end
 
-    test "list_public_testimonials/1 only returns approved testimonials by default", %{scope: scope, feedback: feedback} do
+    test "list_public_testimonials/1 only returns approved testimonials by default", %{
+      scope: scope,
+      feedback: feedback
+    } do
       # Share and approve the feedback
       {:ok, shared} = Feedback.share_feedback_publicly(scope, feedback.id)
 
@@ -383,13 +519,27 @@ defmodule Homesite.FeedbackTest do
       end
     end
 
-    test "list_feedback_responses/2 returns all feedback for admins", %{admin_scope: admin_scope, user_scope: user_scope} do
+    test "list_feedback_responses/2 returns all feedback for admins", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope
+    } do
       # Create some feedback from different users to avoid rate limiting
       user2 = user_fixture()
       scope2 = Scope.for_user(user2)
 
-      Feedback.create_feedback_response(user_scope, %{"overall_satisfaction" => 5, "prompt_type" => "active"})
-      Feedback.create_feedback_response(scope2, %{"overall_satisfaction" => 3, "prompt_type" => "passive"})
+      Feedback.create_feedback_response(user_scope, %{
+        "overall_satisfaction" => 5,
+        "performance_rating" => 5,
+        "open_feedback" => "Great",
+        "prompt_type" => "active"
+      })
+
+      Feedback.create_feedback_response(scope2, %{
+        "overall_satisfaction" => 3,
+        "performance_rating" => 3,
+        "open_feedback" => "Okay",
+        "prompt_type" => "passive"
+      })
 
       responses = Feedback.list_feedback_responses(admin_scope)
       assert length(responses) == 2
@@ -401,8 +551,18 @@ defmodule Homesite.FeedbackTest do
       end
     end
 
-    test "approve_testimonial/2 marks testimonial as approved", %{admin_scope: admin_scope, user_scope: user_scope} do
-      {:ok, feedback} = Feedback.create_feedback_response(user_scope, %{"overall_satisfaction" => 5, "prompt_type" => "active"})
+    test "approve_testimonial/2 marks testimonial as approved", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope
+    } do
+      {:ok, feedback} =
+        Feedback.create_feedback_response(user_scope, %{
+          "overall_satisfaction" => 5,
+          "performance_rating" => 5,
+          "open_feedback" => "To be approved",
+          "prompt_type" => "active"
+        })
+
       {:ok, shared} = Feedback.share_feedback_publicly(user_scope, feedback.id)
 
       {:ok, approved} = Feedback.approve_testimonial(admin_scope, shared.id)
@@ -412,16 +572,36 @@ defmodule Homesite.FeedbackTest do
       assert approved.approved_at != nil
     end
 
-    test "get_feedback_analytics/2 returns comprehensive stats", %{admin_scope: admin_scope, user_scope: user_scope} do
+    test "get_feedback_analytics/2 returns comprehensive stats", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope
+    } do
       # Create some feedback from different users to avoid rate limiting
       user2 = user_fixture()
       scope2 = Scope.for_user(user2)
       user3 = user_fixture()
       scope3 = Scope.for_user(user3)
 
-      Feedback.create_feedback_response(user_scope, %{"overall_satisfaction" => 5, "prompt_type" => "active"})
-      Feedback.create_feedback_response(scope2, %{"overall_satisfaction" => 4, "prompt_type" => "passive"})
-      Feedback.create_feedback_response(scope3, %{"overall_satisfaction" => 5, "prompt_type" => "active"})
+      Feedback.create_feedback_response(user_scope, %{
+        "overall_satisfaction" => 5,
+        "performance_rating" => 5,
+        "open_feedback" => "Excellent",
+        "prompt_type" => "active"
+      })
+
+      Feedback.create_feedback_response(scope2, %{
+        "overall_satisfaction" => 4,
+        "performance_rating" => 4,
+        "open_feedback" => "Good",
+        "prompt_type" => "passive"
+      })
+
+      Feedback.create_feedback_response(scope3, %{
+        "overall_satisfaction" => 5,
+        "performance_rating" => 5,
+        "open_feedback" => "Great",
+        "prompt_type" => "active"
+      })
 
       analytics = Feedback.get_feedback_analytics(admin_scope, 90)
 

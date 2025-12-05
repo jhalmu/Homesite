@@ -10,7 +10,7 @@ defmodule HomesiteWeb.PostLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <main>
+      <main class="technical-main">
         <.header>
           {gettext("Listing Posts")}
           <:actions>

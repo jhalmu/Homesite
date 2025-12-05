@@ -25,9 +25,8 @@ defmodule HomesiteWeb.FeedbackLiveTest do
 
       assert html =~ "Share Your Feedback"
       assert html =~ "Overall Satisfaction"
-      assert html =~ "Performance"
-      assert html =~ "Which features do you find useful?"
-      assert html =~ "Additional Feedback"
+      assert html =~ "How fast and responsive is the site?"
+      assert html =~ "Tell us what you think..."
       assert html =~ "Submit Feedback"
     end
 
@@ -42,29 +41,28 @@ defmodule HomesiteWeb.FeedbackLiveTest do
       assert html =~ "name=\"feedback[performance_rating]\" value=\"5\""
     end
 
-    test "shows feature usefulness checkboxes", %{conn: conn, user: user} do
+    test "shows all three required fields", %{conn: conn, user: user} do
       conn = log_in_user(conn, user)
       {:ok, view, html} = live(conn, ~p"/feedback")
 
-      # Check for feature checkboxes
-      assert html =~ "name=\"feedback[feature_usefulness][posts]\""
-      assert html =~ "name=\"feedback[feature_usefulness][feeds]\""
-      assert html =~ "name=\"feedback[feature_usefulness][bookmarks]\""
-      assert html =~ "name=\"feedback[feature_usefulness][tags]\""
-      assert html =~ "name=\"feedback[feature_usefulness][search]\""
-      assert html =~ "name=\"feedback[feature_usefulness][timeline]\""
+      # Check for all three required fields
+      assert html =~ "Overall Satisfaction"
+      assert html =~ "How fast and responsive is the site?"
+      assert html =~ "Tell us what you think..."
     end
 
     test "successfully submits feedback with required fields only", %{conn: conn, user: user} do
       conn = log_in_user(conn, user)
       {:ok, view, _html} = live(conn, ~p"/feedback")
 
-      # Submit with only required field (overall_satisfaction)
+      # Submit with required fields
       result =
         view
         |> form("#feedback-form", %{
           "feedback" => %{
-            "overall_satisfaction" => "5"
+            "overall_satisfaction" => "5",
+            "performance_rating" => "5",
+            "open_feedback" => "Great!"
           }
         })
         |> render_submit()
@@ -82,10 +80,12 @@ defmodule HomesiteWeb.FeedbackLiveTest do
         )
 
       assert feedback.overall_satisfaction == 5
+      assert feedback.performance_rating == 5
+      assert feedback.open_feedback == "Great!"
       assert feedback.prompt_type == "passive"
     end
 
-    test "successfully submits feedback with all fields", %{conn: conn, user: user} do
+    test "successfully submits feedback with all required fields filled", %{conn: conn, user: user} do
       conn = log_in_user(conn, user)
       {:ok, view, _html} = live(conn, ~p"/feedback")
 
@@ -95,11 +95,7 @@ defmodule HomesiteWeb.FeedbackLiveTest do
           "feedback" => %{
             "overall_satisfaction" => "4",
             "performance_rating" => "5",
-            "open_feedback" => "Great app, love the features!",
-            "feature_usefulness" => %{
-              "posts" => "true",
-              "feeds" => "true"
-            }
+            "open_feedback" => "Great app, love the features!"
           }
         })
         |> render_submit()
@@ -118,7 +114,6 @@ defmodule HomesiteWeb.FeedbackLiveTest do
       assert feedback.overall_satisfaction == 4
       assert feedback.performance_rating == 5
       assert feedback.open_feedback == "Great app, love the features!"
-      assert feedback.feature_usefulness == %{"posts" => true, "feeds" => true}
     end
 
     test "shows special message for 4-5 star ratings", %{conn: conn, user: user} do
@@ -127,7 +122,11 @@ defmodule HomesiteWeb.FeedbackLiveTest do
 
       view
       |> form("#feedback-form", %{
-        "feedback" => %{"overall_satisfaction" => "5"}
+        "feedback" => %{
+          "overall_satisfaction" => "5",
+          "performance_rating" => "5",
+          "open_feedback" => "Excellent!"
+        }
       })
       |> render_submit()
 
@@ -142,6 +141,8 @@ defmodule HomesiteWeb.FeedbackLiveTest do
       {:ok, _feedback} =
         Feedback.create_feedback_response(scope, %{
           "overall_satisfaction" => 5,
+          "performance_rating" => 5,
+          "open_feedback" => "First feedback",
           "prompt_type" => "passive"
         })
 
@@ -151,7 +152,11 @@ defmodule HomesiteWeb.FeedbackLiveTest do
 
       view
       |> form("#feedback-form", %{
-        "feedback" => %{"overall_satisfaction" => "4"}
+        "feedback" => %{
+          "overall_satisfaction" => "4",
+          "performance_rating" => "4",
+          "open_feedback" => "Second attempt"
+        }
       })
       |> render_submit()
 
@@ -177,7 +182,11 @@ defmodule HomesiteWeb.FeedbackLiveTest do
       result =
         view
         |> form("#feedback-form", %{
-          "feedback" => %{"overall_satisfaction" => "1"}
+          "feedback" => %{
+            "overall_satisfaction" => "1",
+            "performance_rating" => "1",
+            "open_feedback" => "Negative feedback"
+          }
         })
         |> render_submit()
 
