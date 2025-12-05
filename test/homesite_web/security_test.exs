@@ -733,4 +733,393 @@ defmodule HomesiteWeb.SecurityTest do
       # In production, you could do: Repo.all(from u in User, where: u.invitation_code_used == ^code)
     end
   end
+
+  describe "Feedback Security: Scope Isolation" do
+    alias Homesite.Feedback
+    alias Homesite.Accounts.Scope
+
+    test "user A cannot view user B's feedback responses", %{conn: _conn} do
+      user_a = user_fixture(%{email: "user-a-feedback@example.com"})
+      user_b = user_fixture(%{email: "user-b-feedback@example.com"})
+
+      scope_a = Scope.for_user(user_a)
+      scope_b = Scope.for_user(user_b)
+
+      # User B creates feedback
+      {:ok, feedback_b} =
+        Feedback.create_feedback_response(scope_b, %{
+          "overall_satisfaction" => 5,
+          "prompt_type" => "active"
+        })
+
+      # User A tries to get user B's feedback using their scope
+      # Raises MatchError due to scope isolation check
+      assert_raise MatchError, fn ->
+        Feedback.get_feedback_response!(scope_a, feedback_b.id)
+      end
+    end
+
+    test "user A cannot update user B's feedback", %{conn: _conn} do
+      user_a = user_fixture(%{email: "user-a-update@example.com"})
+      user_b = user_fixture(%{email: "user-b-update@example.com"})
+
+      scope_a = Scope.for_user(user_a)
+      scope_b = Scope.for_user(user_b)
+
+      # User B creates feedback
+      {:ok, feedback_b} =
+        Feedback.create_feedback_response(scope_b, %{
+          "overall_satisfaction" => 5,
+          "prompt_type" => "active"
+        })
+
+      # User A tries to share user B's feedback
+      assert_raise MatchError, fn ->
+        Feedback.share_feedback_publicly(scope_a, feedback_b.id)
+      end
+    end
+
+    test "list_feedback_responses (admin) only returns all data", %{conn: _conn} do
+      admin = admin_fixture(%{email: "admin-list@example.com"})
+      user_a = user_fixture(%{email: "user-a-list@example.com"})
+      user_b = user_fixture(%{email: "user-b-list@example.com"})
+
+      admin_scope = Scope.for_user(admin)
+      scope_a = Scope.for_user(user_a)
+      scope_b = Scope.for_user(user_b)
+
+      # Create feedback for both users
+      {:ok, feedback_a} =
+        Feedback.create_feedback_response(scope_a, %{
+          "overall_satisfaction" => 4,
+          "prompt_type" => "active"
+        })
+
+      {:ok, feedback_b} =
+        Feedback.create_feedback_response(scope_b, %{
+          "overall_satisfaction" => 5,
+          "prompt_type" => "passive"
+        })
+
+      # Admin can list all feedback
+      all_feedback = Feedback.list_feedback_responses(admin_scope)
+
+      # Should see at least the two we just created
+      assert length(all_feedback) >= 2
+      assert Enum.any?(all_feedback, &(&1.id == feedback_a.id))
+      assert Enum.any?(all_feedback, &(&1.id == feedback_b.id))
+    end
+  end
+
+  describe "Feedback Security: Admin Authorization" do
+    alias Homesite.Feedback
+    alias Homesite.Accounts.Scope
+
+    test "non-admin cannot approve testimonials", %{conn: _conn} do
+      user = user_fixture(%{email: "regular-user@example.com"})
+      scope = Scope.for_user(user)
+
+      # Create and share feedback
+      {:ok, feedback} =
+        Feedback.create_feedback_response(scope, %{
+          "overall_satisfaction" => 5,
+          "open_feedback" => "Great app!",
+          "prompt_type" => "active"
+        })
+
+      {:ok, shared} = Feedback.share_feedback_publicly(scope, feedback.id)
+
+      # Non-admin tries to approve testimonial
+      assert_raise RuntimeError, "Unauthorized: Admin access required", fn ->
+        Feedback.approve_testimonial(scope, shared.id)
+      end
+    end
+
+    test "non-admin cannot unapprove testimonials", %{conn: _conn} do
+      admin = admin_fixture(%{email: "admin-approve@example.com"})
+      user = user_fixture(%{email: "regular-unapprove@example.com"})
+
+      admin_scope = Scope.for_user(admin)
+      user_scope = Scope.for_user(user)
+
+      # Admin creates, shares, and approves feedback
+      {:ok, feedback} =
+        Feedback.create_feedback_response(admin_scope, %{
+          "overall_satisfaction" => 5,
+          "prompt_type" => "active"
+        })
+
+      {:ok, shared} = Feedback.share_feedback_publicly(admin_scope, feedback.id)
+      {:ok, _approved} = Feedback.approve_testimonial(admin_scope, shared.id)
+
+      # Non-admin tries to unapprove
+      assert_raise RuntimeError, "Unauthorized: Admin access required", fn ->
+        Feedback.unapprove_testimonial(user_scope, shared.id)
+      end
+    end
+
+    test "non-admin cannot list all feedback responses", %{conn: _conn} do
+      user = user_fixture(%{email: "non-admin-list@example.com"})
+      scope = Scope.for_user(user)
+
+      # Non-admin tries to list all feedback
+      assert_raise RuntimeError, "Unauthorized: Admin access required", fn ->
+        Feedback.list_feedback_responses(scope)
+      end
+    end
+
+    test "non-admin cannot list pending testimonials", %{conn: _conn} do
+      user = user_fixture(%{email: "non-admin-pending@example.com"})
+      scope = Scope.for_user(user)
+
+      # Non-admin tries to list pending testimonials
+      assert_raise RuntimeError, "Unauthorized: Admin access required", fn ->
+        Feedback.list_pending_testimonials(scope)
+      end
+    end
+
+    test "non-admin cannot access feedback analytics", %{conn: _conn} do
+      user = user_fixture(%{email: "non-admin-analytics@example.com"})
+      scope = Scope.for_user(user)
+
+      # Non-admin tries to get analytics
+      assert_raise RuntimeError, "Unauthorized: Admin access required", fn ->
+        Feedback.get_feedback_analytics(scope, 90)
+      end
+    end
+
+    test "admin can approve testimonials", %{conn: _conn} do
+      admin = admin_fixture(%{email: "admin-approve-success@example.com"})
+      user = user_fixture(%{email: "user-testimonial@example.com"})
+
+      admin_scope = Scope.for_user(admin)
+      user_scope = Scope.for_user(user)
+
+      # User creates and shares feedback
+      {:ok, feedback} =
+        Feedback.create_feedback_response(user_scope, %{
+          "overall_satisfaction" => 5,
+          "open_feedback" => "Amazing!",
+          "prompt_type" => "active"
+        })
+
+      {:ok, shared} = Feedback.share_feedback_publicly(user_scope, feedback.id)
+
+      # Admin approves testimonial
+      {:ok, approved} = Feedback.approve_testimonial(admin_scope, shared.id)
+
+      assert approved.testimonial_approved == true
+      assert approved.approved_by_user_id == admin.id
+      assert approved.approved_at != nil
+    end
+
+    test "admin can access feedback analytics", %{conn: _conn} do
+      admin = admin_fixture(%{email: "admin-analytics-success@example.com"})
+      admin_scope = Scope.for_user(admin)
+
+      # Admin accesses analytics
+      analytics = Feedback.get_feedback_analytics(admin_scope, 90)
+
+      assert is_map(analytics)
+      assert Map.has_key?(analytics, :happiness)
+      assert Map.has_key?(analytics, :trend)
+      assert Map.has_key?(analytics, :by_rank)
+    end
+  end
+
+  describe "Feedback Security: Public Access" do
+    alias Homesite.Feedback
+    alias Homesite.Accounts.Scope
+
+    test "anyone can view approved public testimonials", %{conn: _conn} do
+      admin = admin_fixture(%{email: "admin-public@example.com"})
+      user = user_fixture(%{email: "user-public@example.com"})
+
+      admin_scope = Scope.for_user(admin)
+      user_scope = Scope.for_user(user)
+
+      # User creates, shares feedback
+      {:ok, feedback} =
+        Feedback.create_feedback_response(user_scope, %{
+          "overall_satisfaction" => 5,
+          "open_feedback" => "Public testimonial!",
+          "prompt_type" => "active"
+        })
+
+      {:ok, shared} = Feedback.share_feedback_publicly(user_scope, feedback.id)
+      {:ok, approved} = Feedback.approve_testimonial(admin_scope, shared.id)
+
+      # Anyone can get by token (no scope required)
+      public_testimonial = Feedback.get_testimonial_by_token(approved.share_token)
+
+      assert public_testimonial.id == approved.id
+      assert public_testimonial.open_feedback == "Public testimonial!"
+    end
+
+    test "unapproved testimonials are not visible publicly", %{conn: _conn} do
+      user = user_fixture(%{email: "user-unapproved@example.com"})
+      scope = Scope.for_user(user)
+
+      # User creates and shares feedback (but not approved)
+      {:ok, feedback} =
+        Feedback.create_feedback_response(scope, %{
+          "overall_satisfaction" => 5,
+          "open_feedback" => "Not approved yet",
+          "prompt_type" => "active"
+        })
+
+      {:ok, shared} = Feedback.share_feedback_publicly(scope, feedback.id)
+
+      # Public list should not include unapproved testimonials
+      public_testimonials = Feedback.list_public_testimonials()
+
+      refute Enum.any?(public_testimonials, &(&1.id == shared.id))
+    end
+
+    test "invalid token returns nil", %{conn: _conn} do
+      # Try to get testimonial with invalid token
+      result = Feedback.get_testimonial_by_token("invalid-token-123")
+
+      assert result == nil
+    end
+  end
+
+  describe "Feedback Security: Rate Limiting" do
+    alias Homesite.Feedback
+    alias Homesite.Accounts.Scope
+
+    test "user cannot submit feedback within 7 days", %{conn: _conn} do
+      user = user_fixture(%{email: "rate-limit@example.com"})
+      scope = Scope.for_user(user)
+
+      # First feedback succeeds
+      {:ok, _feedback1} =
+        Feedback.create_feedback_response(scope, %{
+          "overall_satisfaction" => 5,
+          "prompt_type" => "active"
+        })
+
+      # Second feedback within 7 days fails
+      assert {:error, :rate_limited} =
+               Feedback.create_feedback_response(scope, %{
+                 "overall_satisfaction" => 4,
+                 "prompt_type" => "passive"
+               })
+    end
+
+    test "user can submit feedback after 7 days", %{conn: _conn} do
+      user = user_fixture(%{email: "rate-limit-pass@example.com"})
+      scope = Scope.for_user(user)
+
+      # First feedback
+      {:ok, feedback1} =
+        Feedback.create_feedback_response(scope, %{
+          "overall_satisfaction" => 5,
+          "prompt_type" => "active"
+        })
+
+      # Manually update inserted_at to 8 days ago
+      eight_days_ago =
+        DateTime.utc_now()
+        |> DateTime.add(-8, :day)
+        |> DateTime.truncate(:second)
+
+      Homesite.Repo.update!(
+        Ecto.Changeset.change(feedback1, inserted_at: eight_days_ago)
+      )
+
+      # Second feedback should succeed
+      assert {:ok, _feedback2} =
+               Feedback.create_feedback_response(scope, %{
+                 "overall_satisfaction" => 4,
+                 "prompt_type" => "passive"
+               })
+    end
+  end
+
+  describe "Feedback Security: Testimonial Approval Workflow" do
+    alias Homesite.Feedback
+    alias Homesite.Accounts.Scope
+
+    test "shared but unapproved testimonials require admin approval", %{conn: _conn} do
+      user = user_fixture(%{email: "approval-workflow@example.com"})
+      scope = Scope.for_user(user)
+
+      # User creates and shares feedback
+      {:ok, feedback} =
+        Feedback.create_feedback_response(scope, %{
+          "overall_satisfaction" => 5,
+          "open_feedback" => "Awaiting approval",
+          "prompt_type" => "active"
+        })
+
+      {:ok, shared} = Feedback.share_feedback_publicly(scope, feedback.id)
+
+      # Verify defaults
+      assert shared.shared_publicly == true
+      assert shared.testimonial_approved == false
+      assert shared.approved_by_user_id == nil
+      assert shared.approved_at == nil
+      assert shared.share_token != nil
+    end
+
+    test "approval workflow sets all required fields", %{conn: _conn} do
+      admin = admin_fixture(%{email: "admin-workflow@example.com"})
+      user = user_fixture(%{email: "user-workflow@example.com"})
+
+      admin_scope = Scope.for_user(admin)
+      user_scope = Scope.for_user(user)
+
+      # User creates and shares
+      {:ok, feedback} =
+        Feedback.create_feedback_response(user_scope, %{
+          "overall_satisfaction" => 5,
+          "prompt_type" => "active"
+        })
+
+      {:ok, shared} = Feedback.share_feedback_publicly(user_scope, feedback.id)
+
+      # Admin approves
+      {:ok, approved} = Feedback.approve_testimonial(admin_scope, shared.id)
+
+      # Verify all approval fields are set
+      assert approved.testimonial_approved == true
+      assert approved.approved_by_user_id == admin.id
+      assert approved.approved_at != nil
+
+      # Verify it's now publicly visible
+      public_testimonials = Feedback.list_public_testimonials()
+      assert Enum.any?(public_testimonials, &(&1.id == approved.id))
+    end
+
+    test "unapproval clears all approval fields", %{conn: _conn} do
+      admin = admin_fixture(%{email: "admin-unapprove-workflow@example.com"})
+      admin_scope = Scope.for_user(admin)
+
+      # Admin creates, shares, and approves
+      {:ok, feedback} =
+        Feedback.create_feedback_response(admin_scope, %{
+          "overall_satisfaction" => 5,
+          "prompt_type" => "active"
+        })
+
+      {:ok, shared} = Feedback.share_feedback_publicly(admin_scope, feedback.id)
+      {:ok, approved} = Feedback.approve_testimonial(admin_scope, shared.id)
+
+      # Verify approved
+      assert approved.testimonial_approved == true
+
+      # Admin unapproves
+      {:ok, unapproved} = Feedback.unapprove_testimonial(admin_scope, approved.id)
+
+      # Verify all approval fields cleared
+      assert unapproved.testimonial_approved == false
+      assert unapproved.approved_by_user_id == nil
+      assert unapproved.approved_at == nil
+
+      # Verify it's no longer publicly visible
+      public_testimonials = Feedback.list_public_testimonials()
+      refute Enum.any?(public_testimonials, &(&1.id == unapproved.id))
+    end
+  end
 end
