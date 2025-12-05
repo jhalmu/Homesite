@@ -57,6 +57,10 @@ defmodule HomesiteWeb.Router do
 
       # Public search
       live "/search", SearchLive.Index, :index
+
+      # Public happiness meter and testimonials
+      live "/happiness", HappinessLive.Index, :index
+      live "/testimonials/:token", TestimonialLive.Show, :show
     end
   end
 
