@@ -25,11 +25,9 @@ defmodule HomesiteWeb.FeedbackLive.Index do
           <.form for={@form} id="feedback-form" phx-submit="save" phx-change="validate" class="space-y-6">
             <%!-- Overall Satisfaction (Required) --%>
             <div class="form-control">
-              <label class="label">
-                <span class="label-text font-semibold">
-                  {gettext("Overall Satisfaction")} <span class="text-error">*</span>
-                </span>
-              </label>
+              <h3 class="text-lg font-bold mb-3">
+                {gettext("Overall Satisfaction")} <span class="text-error">*</span>
+              </h3>
               <div class="rating rating-lg">
                 <%= for rating <- 1..5 do %>
                   <input
@@ -45,11 +43,9 @@ defmodule HomesiteWeb.FeedbackLive.Index do
 
             <%!-- Performance Rating (Required) --%>
             <div class="form-control">
-              <label class="label">
-                <span class="label-text font-semibold">
-                  {gettext("How fast and responsive is the site?")} <span class="text-error">*</span>
-                </span>
-              </label>
+              <h3 class="text-lg font-bold mb-3">
+                {gettext("How fast and responsive is the site?")} <span class="text-error">*</span>
+              </h3>
               <div class="rating rating-lg">
                 <%= for rating <- 1..5 do %>
                   <input
@@ -65,11 +61,9 @@ defmodule HomesiteWeb.FeedbackLive.Index do
 
             <%!-- Open Feedback (Required) --%>
             <div class="form-control">
-              <label class="label">
-                <span class="label-text font-semibold">
-                  {gettext("Tell us what you think...")} ❤️ <span class="text-error">*</span>
-                </span>
-              </label>
+              <h3 class="text-lg font-bold mb-3">
+                {gettext("Tell us what you think...")} ❤️ <span class="text-error">*</span>
+              </h3>
               <textarea
                 name="feedback[open_feedback]"
                 class="textarea textarea-bordered h-24"
