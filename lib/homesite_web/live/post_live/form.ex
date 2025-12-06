@@ -3,9 +3,11 @@ defmodule HomesiteWeb.PostLive.Form do
 
   # Note: "unused import" warning is false positive - gettext() used in HEEx template
   import HomesiteWeb.Gettext
+  import Ecto.Query
 
   alias Homesite.Content
   alias Homesite.Content.Post
+  alias Homesite.Media
 
   @impl true
   def render(assigns) do
@@ -197,6 +199,126 @@ defmodule HomesiteWeb.PostLive.Form do
 
         <div class="divider"></div>
 
+        <!-- Media Items -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-semibold">{gettext("Featured Image")}</span>
+          </label>
+
+          <%= if @hero_image do %>
+            <div class="mb-3">
+              <article class="card card-side bg-base-200 shadow-lg">
+                <figure class="w-32">
+                  <img
+                    src={"data:#{@hero_image.content_type};base64,#{Base.encode64(@hero_image.thumb_data)}"}
+                    alt={@hero_image.alt_text}
+                    class="h-full w-full object-cover"
+                  />
+                </figure>
+                <div class="card-body p-4">
+                  <h3 class="card-title text-sm">{@hero_image.title || @hero_image.original_filename}</h3>
+                  <div class="card-actions justify-end">
+                    <button
+                      type="button"
+                      phx-click="remove-hero"
+                      class="btn btn-ghost btn-xs"
+                    >
+                      <.icon name="hero-x-mark" class="h-3 w-3" />
+                      {gettext("Remove")}
+                    </button>
+                  </div>
+                </div>
+              </article>
+              <input type="hidden" name="post[hero_image_id]" value={@hero_image.id} />
+            </div>
+          <% else %>
+            <input type="hidden" name="post[hero_image_id]" value="" />
+          <% end %>
+
+          <button
+            type="button"
+            phx-click="toggle-media-picker"
+            class="btn btn-outline btn-sm"
+          >
+            <.icon name="hero-photo" class="h-4 w-4" />
+            <%= if @hero_image, do: gettext("Change Image"), else: gettext("Select Image") %>
+          </button>
+
+          <p class="text-base-content/60 mt-3 text-sm">
+            <.icon name="hero-information-circle" class="inline h-4 w-4" />
+            {gettext("Select a featured image for your post")}
+          </p>
+        </div>
+
+        <!-- Media Picker Modal -->
+        <%= if @show_media_picker do %>
+          <div class="modal modal-open">
+            <div class="modal-box max-w-4xl">
+              <h3 class="text-lg font-bold">{gettext("Select Media")}</h3>
+
+              <!-- Search -->
+              <div class="form-control mt-4">
+                <input
+                  type="text"
+                  placeholder={gettext("Search media...")}
+                  value={@media_search}
+                  phx-keyup="search-media"
+                  phx-debounce="300"
+                  class="input input-bordered"
+                />
+              </div>
+
+              <!-- Media Grid -->
+              <div class="mt-4 max-h-96 overflow-y-auto">
+                <%= if @available_media == [] do %>
+                  <div class="alert">
+                    <.icon name="hero-information-circle" />
+                    <span>
+                      {gettext("No media available. Upload images in the Media Library first.")}
+                    </span>
+                  </div>
+                <% else %>
+                  <div class="grid grid-cols-3 gap-4">
+                    <%= for media <- @available_media do %>
+                      <button
+                        type="button"
+                        phx-click="select-hero"
+                        phx-value-id={media.id}
+                        class="card card-compact bg-base-200 hover:ring-2 hover:ring-primary transition-all"
+                      >
+                        <figure class="aspect-square">
+                          <img
+                            src={"data:#{media.content_type};base64,#{Base.encode64(media.thumb_data)}"}
+                            alt={media.alt_text}
+                            class="h-full w-full object-cover"
+                          />
+                        </figure>
+                        <div class="card-body">
+                          <p class="text-xs truncate">
+                            {media.title || media.original_filename}
+                          </p>
+                        </div>
+                      </button>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+
+              <div class="modal-action">
+                <button
+                  type="button"
+                  phx-click="toggle-media-picker"
+                  class="btn"
+                >
+                  {gettext("Close")}
+                </button>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="divider"></div>
+
         <footer class="flex gap-3">
           <.button phx-disable-with={gettext("Saving...")} variant="primary">
             {gettext("Save Post")}
@@ -224,7 +346,17 @@ defmodule HomesiteWeb.PostLive.Form do
   defp apply_action(socket, :edit, %{"id" => id}) do
     post =
       Content.get_post!(socket.assigns.current_scope, id)
-      |> Homesite.Repo.preload(:tags)
+      |> Homesite.Repo.preload([:tags, :media_items])
+
+    # Find hero image if exists
+    hero_image =
+      case Enum.find(post.media_items, fn _item ->
+             # You could add a context field check here in the future
+             true
+           end) do
+        nil -> nil
+        media -> media
+      end
 
     socket
     |> assign(:page_title, gettext("Edit Post"))
@@ -234,6 +366,10 @@ defmodule HomesiteWeb.PostLive.Form do
     |> assign(:tag_suggestions, [])
     |> assign(:similar_tags_warning, [])
     |> assign(:is_public, post.is_public)
+    |> assign(:hero_image, hero_image)
+    |> assign(:show_media_picker, false)
+    |> assign(:media_search, "")
+    |> assign(:available_media, [])
     |> assign(:form, to_form(Content.change_post(socket.assigns.current_scope, post)))
   end
 
@@ -248,6 +384,10 @@ defmodule HomesiteWeb.PostLive.Form do
     |> assign(:tag_suggestions, [])
     |> assign(:similar_tags_warning, [])
     |> assign(:is_public, true)
+    |> assign(:hero_image, nil)
+    |> assign(:show_media_picker, false)
+    |> assign(:media_search, "")
+    |> assign(:available_media, [])
     |> assign(:form, to_form(Content.change_post(socket.assigns.current_scope, post)))
   end
 
@@ -323,6 +463,55 @@ defmodule HomesiteWeb.PostLive.Form do
     end
   end
 
+  def handle_event("toggle-media-picker", _params, socket) do
+    show_picker = !socket.assigns.show_media_picker
+
+    available_media =
+      if show_picker do
+        Media.list_media_items(socket.assigns.current_scope)
+      else
+        []
+      end
+
+    {:noreply,
+     assign(socket,
+       show_media_picker: show_picker,
+       available_media: available_media,
+       media_search: ""
+     )}
+  end
+
+  def handle_event("search-media", %{"value" => query}, socket) do
+    available_media =
+      if String.trim(query) == "" do
+        Media.list_media_items(socket.assigns.current_scope)
+      else
+        Media.search_media_items(socket.assigns.current_scope, query)
+      end
+
+    {:noreply,
+     assign(socket,
+       media_search: query,
+       available_media: available_media
+     )}
+  end
+
+  def handle_event("select-hero", %{"id" => id}, socket) do
+    media_item = Media.get_media_item!(socket.assigns.current_scope, id)
+
+    {:noreply,
+     assign(socket,
+       hero_image: media_item,
+       show_media_picker: false,
+       media_search: "",
+       available_media: []
+     )}
+  end
+
+  def handle_event("remove-hero", _params, socket) do
+    {:noreply, assign(socket, hero_image: nil)}
+  end
+
   def handle_event("validate", %{"post" => post_params}, socket) do
     # Combine date and time into published_at
     post_params = combine_datetime(post_params)
@@ -388,6 +577,9 @@ defmodule HomesiteWeb.PostLive.Form do
   defp save_post(socket, :edit, post_params) do
     case Content.update_post(socket.assigns.current_scope, socket.assigns.post, post_params) do
       {:ok, post} ->
+        # Update media association if hero image is selected
+        update_media_association(socket, post)
+
         {:noreply,
          socket
          |> put_flash(:info, gettext("Post updated successfully"))
@@ -403,6 +595,9 @@ defmodule HomesiteWeb.PostLive.Form do
   defp save_post(socket, :new, post_params) do
     case Content.create_post(socket.assigns.current_scope, post_params) do
       {:ok, post} ->
+        # Add media association if hero image is selected
+        update_media_association(socket, post)
+
         {:noreply,
          socket
          |> put_flash(:info, gettext("Post created successfully"))
@@ -412,6 +607,26 @@ defmodule HomesiteWeb.PostLive.Form do
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
+    end
+  end
+
+  defp update_media_association(socket, post) do
+    # Clear existing media associations
+    Homesite.Repo.delete_all(
+      from pm in "post_media_items",
+        where: pm.post_id == ^post.id
+    )
+
+    # Add hero image if selected
+    if socket.assigns.hero_image do
+      Homesite.Repo.insert!(%{
+        post_id: post.id,
+        media_item_id: socket.assigns.hero_image.id,
+        context: "hero",
+        display_order: 0,
+        inserted_at: DateTime.utc_now(:second),
+        updated_at: DateTime.utc_now(:second)
+      })
     end
   end
 
