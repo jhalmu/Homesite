@@ -159,14 +159,14 @@ defmodule HomesiteWeb.Components.TableOfContents do
         id="table-of-contents"
         phx-hook="TableOfContents"
         class={[
-          "border-base-300 bg-base-200 rounded-lg border p-4",
+          "border-base-300 bg-base-200 rounded-lg border p-[var(--space-sm)]",
           @sticky && "sticky top-4",
           !@show_mobile && "hidden lg:block",
           @class
         ]}
         aria-label={@title}
       >
-        <h2 class="mb-4 text-sm font-semibold uppercase tracking-wide opacity-60">
+        <h2 class="mb-[var(--space-sm)] text-[var(--text-sm)] font-semibold uppercase tracking-wide opacity-60">
           {@title}
         </h2>
 
@@ -186,14 +186,14 @@ defmodule HomesiteWeb.Components.TableOfContents do
     <li>
       <a
         href={"##{@heading.id}"}
-        class="toc-link rounded-md px-3 py-1.5 text-sm opacity-70 hover:bg-base-300 hover:opacity-100"
+        class="toc-link rounded-md px-[var(--space-sm)] py-[var(--space-xs)] text-[var(--text-sm)] opacity-70 hover:bg-base-300 hover:opacity-100"
         data-target={@heading.id}
       >
         {@heading.text}
       </a>
 
       <%= if @heading.children != [] do %>
-        <ul class="mt-1 ml-4">
+        <ul class="mt-[var(--space-inline)] ml-[var(--space-sm)]">
           <.toc_item :for={child <- @heading.children} heading={child} />
         </ul>
       <% end %>

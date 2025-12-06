@@ -200,27 +200,27 @@ defmodule HomesiteWeb.ContentComponents do
       class={["card bg-base-200 shadow-lg transition-shadow hover:shadow-xl", @class]}
     >
       <div class="card-body">
-        <div class="flex items-start justify-between gap-4">
+        <div class="flex items-start justify-between gap-[var(--space-sm)]">
           <div class="min-w-0 flex-1">
             <.link navigate={~p"/tags/#{@tag.slug}"} class="group">
-              <h3 class="card-title mb-2 text-xl transition-colors duration-200 group-hover:text-primary">
+              <h3 class="card-title mb-[var(--space-xs)] text-[var(--text-xl)] transition-colors duration-200 group-hover:text-primary">
                 <.icon name="hero-tag" class="h-5 w-5" />
                 {@tag.name}
               </h3>
             </.link>
 
-            <div class="flex gap-2 text-sm">
+            <div class="flex gap-[var(--space-xs)] text-[var(--text-sm)]">
               <div class="badge badge-neutral">
                 {@post_count} {ngettext("post", "posts", @post_count)}
               </div>
 
               <%= if @tag.is_public do %>
-                <div class="badge badge-ghost gap-1">
+                <div class="badge badge-ghost gap-[var(--space-inline)]">
                   <.icon name="hero-globe-alt" class="h-3 w-3" />
                   {gettext("Public")}
                 </div>
               <% else %>
-                <div class="badge badge-ghost gap-1">
+                <div class="badge badge-ghost gap-[var(--space-inline)]">
                   <.icon name="hero-lock-closed" class="h-3 w-3" />
                   {gettext("Private")}
                 </div>
@@ -230,7 +230,7 @@ defmodule HomesiteWeb.ContentComponents do
           
     <!-- Actions for tag owner -->
           <%= if @show_actions && @current_scope && @tag.user_id == @current_scope.user.id do %>
-            <div class="flex flex-shrink-0 gap-1">
+            <div class="flex flex-shrink-0 gap-[var(--space-inline)]">
               <.link
                 navigate={~p"/tags/#{@tag}/edit"}
                 class="btn btn-sm btn-ghost"

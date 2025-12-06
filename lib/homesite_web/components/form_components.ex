@@ -72,9 +72,9 @@ defmodule HomesiteWeb.FormComponents do
       
     <!-- Selected tags -->
       <%= if @selected_tags != [] do %>
-        <div class="mb-3 flex flex-wrap gap-2">
+        <div class="mb-[var(--space-sm)] flex flex-wrap gap-[var(--space-xs)]">
           <%= for tag <- @selected_tags do %>
-            <div class="badge badge-primary badge-lg gap-2">
+            <div class="badge badge-primary badge-lg gap-[var(--space-xs)]">
               {tag.name}
               <button
                 type="button"
@@ -110,7 +110,7 @@ defmodule HomesiteWeb.FormComponents do
     <!-- Suggestions dropdown -->
         <%= if @tag_suggestions != [] or @tag_search_query != "" do %>
           <div
-            class="border-base-300 bg-base-100 absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border shadow-lg"
+            class="border-base-300 bg-base-100 absolute z-10 mt-[var(--space-xs)] max-h-60 w-full overflow-y-auto rounded-lg border shadow-lg"
             role="listbox"
           >
             <%= for {tag, post_count} <- @tag_suggestions do %>
@@ -118,11 +118,11 @@ defmodule HomesiteWeb.FormComponents do
                 type="button"
                 phx-click={@on_add}
                 phx-value-tag-id={tag.id}
-                class="flex w-full items-center justify-between px-4 py-2 text-left hover:bg-base-200"
+                class="flex w-full items-center justify-between px-[var(--space-sm)] py-[var(--space-xs)] text-left hover:bg-base-200"
                 role="option"
               >
                 <span>{tag.name}</span>
-                <span class="text-base-content/60 text-sm">{post_count} posts</span>
+                <span class="text-base-content/60 text-[var(--text-sm)]">{post_count} posts</span>
               </button>
             <% end %>
             
@@ -134,7 +134,7 @@ defmodule HomesiteWeb.FormComponents do
                   type="button"
                   phx-click={@on_add}
                   phx-value-tag-id={exact_tag.id}
-                  class="border-base-300 text-primary flex w-full items-center gap-2 border-t px-4 py-2 text-left font-semibold hover:bg-base-200"
+                  class="border-base-300 text-primary flex w-full items-center gap-[var(--space-xs)] border-t px-[var(--space-sm)] py-[var(--space-xs)] text-left font-semibold hover:bg-base-200"
                   role="option"
                 >
                   <.icon name="hero-check" class="h-4 w-4" />
@@ -146,7 +146,7 @@ defmodule HomesiteWeb.FormComponents do
                   type="button"
                   phx-click={@on_create}
                   phx-value-name={@tag_search_query}
-                  class="border-base-300 flex w-full items-center gap-2 border-t px-4 py-2 text-left font-semibold hover:bg-base-200"
+                  class="border-base-300 flex w-full items-center gap-[var(--space-xs)] border-t px-[var(--space-sm)] py-[var(--space-xs)] text-left font-semibold hover:bg-base-200"
                   role="option"
                 >
                   <.icon name="hero-plus" class="h-4 w-4" />
@@ -161,11 +161,11 @@ defmodule HomesiteWeb.FormComponents do
       
     <!-- Similar tags warning -->
       <%= if @similar_tags_warning != [] do %>
-        <div class="alert alert-warning mt-3">
+        <div class="alert alert-warning mt-[var(--space-sm)]">
           <.icon name="hero-information-circle" />
           <div>
             <p class="font-semibold">{gettext("Similar tags exist:")}</p>
-            <div class="mt-1 flex flex-wrap gap-2">
+            <div class="mt-[var(--space-xs)] flex flex-wrap gap-[var(--space-xs)]">
               <%= for tag <- @similar_tags_warning do %>
                 <button
                   type="button"
@@ -181,7 +181,7 @@ defmodule HomesiteWeb.FormComponents do
         </div>
       <% end %>
 
-      <p :if={@help_text} class="text-base-content/60 mt-3 text-sm">
+      <p :if={@help_text} class="text-base-content/60 mt-[var(--space-sm)] text-[var(--text-sm)]">
         <.icon name="hero-tag" class="inline h-4 w-4" />
         {@help_text}
       </p>
@@ -227,11 +227,11 @@ defmodule HomesiteWeb.FormComponents do
       end)
 
     ~H"""
-    <div class="form-control mb-4">
+    <div class="form-control mb-[var(--space-sm)]">
       <label class="label">
         <span class="label-text font-semibold">{@label}</span>
       </label>
-      <div class="flex gap-2">
+      <div class="flex gap-[var(--space-xs)]">
         <input
           type="date"
           name={@date_field.name}
@@ -257,7 +257,7 @@ defmodule HomesiteWeb.FormComponents do
           {gettext("Now")}
         </button>
       </div>
-      <p :if={@help_text} class="text-base-content/70 mt-2 text-sm">
+      <p :if={@help_text} class="text-base-content/70 mt-[var(--space-xs)] text-[var(--text-sm)]">
         <.icon name="hero-information-circle" class="inline h-4 w-4" />
         {@help_text}
       </p>

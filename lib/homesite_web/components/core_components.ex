@@ -188,7 +188,7 @@ defmodule HomesiteWeb.CoreComponents do
       end)
 
     ~H"""
-    <div class={["field-with-help", @help == [] && "mb-2"]}>
+    <div class={["field-with-help", @help == [] && "mb-[var(--space-xs)]"]}>
       <div class="field-input">
         <div class="fieldset">
           <label>
@@ -209,9 +209,9 @@ defmodule HomesiteWeb.CoreComponents do
         </div>
       </div>
       <div :if={@help != []} class="field-help">
-        <div class="bg-base-200/50 rounded-lg p-4 text-sm">
-          <div class="flex items-start gap-2">
-            <.icon name="hero-information-circle" class="text-info mt-0.5 h-5 w-5 flex-shrink-0" />
+        <div class="bg-base-200/50 rounded-lg p-[var(--space-sm)] text-[var(--text-sm)]">
+          <div class="flex items-start gap-[var(--space-xs)]">
+            <.icon name="hero-information-circle" class="text-info mt-[var(--space-xs)] h-5 w-5 flex-shrink-0" />
             <div class="text-base-content/70">
               {render_slot(@help)}
             </div>
@@ -224,11 +224,11 @@ defmodule HomesiteWeb.CoreComponents do
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <div class={["field-with-help", @help == [] && "mb-2"]}>
+    <div class={["field-with-help", @help == [] && "mb-[var(--space-xs)]"]}>
       <div class="field-input">
         <div class="fieldset">
           <label>
-            <span :if={@label} class="label mb-1">{@label}</span>
+            <span :if={@label} class="label mb-[var(--space-xs)]">{@label}</span>
             <select
               id={@id}
               name={@name}
@@ -244,9 +244,9 @@ defmodule HomesiteWeb.CoreComponents do
         </div>
       </div>
       <div :if={@help != []} class="field-help">
-        <div class="bg-base-200/50 rounded-lg p-4 text-sm">
-          <div class="flex items-start gap-2">
-            <.icon name="hero-information-circle" class="text-info mt-0.5 h-5 w-5 flex-shrink-0" />
+        <div class="bg-base-200/50 rounded-lg p-[var(--space-sm)] text-[var(--text-sm)]">
+          <div class="flex items-start gap-[var(--space-xs)]">
+            <.icon name="hero-information-circle" class="text-info mt-[var(--space-xs)] h-5 w-5 flex-shrink-0" />
             <div class="text-base-content/70">
               {render_slot(@help)}
             </div>
@@ -259,11 +259,11 @@ defmodule HomesiteWeb.CoreComponents do
 
   def input(%{type: "textarea"} = assigns) do
     ~H"""
-    <div class={["field-with-help", @help == [] && "mb-2"]}>
+    <div class={["field-with-help", @help == [] && "mb-[var(--space-xs)]"]}>
       <div class="field-input">
         <div class="fieldset">
           <label>
-            <span :if={@label} class="label mb-1">{@label}</span>
+            <span :if={@label} class="label mb-[var(--space-xs)]">{@label}</span>
             <textarea
               id={@id}
               name={@name}
@@ -278,9 +278,9 @@ defmodule HomesiteWeb.CoreComponents do
         </div>
       </div>
       <div :if={@help != []} class="field-help">
-        <div class="bg-base-200/50 rounded-lg p-4 text-sm">
-          <div class="flex items-start gap-2">
-            <.icon name="hero-information-circle" class="text-info mt-0.5 h-5 w-5 flex-shrink-0" />
+        <div class="bg-base-200/50 rounded-lg p-[var(--space-sm)] text-[var(--text-sm)]">
+          <div class="flex items-start gap-[var(--space-xs)]">
+            <.icon name="hero-information-circle" class="text-info mt-[var(--space-xs)] h-5 w-5 flex-shrink-0" />
             <div class="text-base-content/70">
               {render_slot(@help)}
             </div>
@@ -294,11 +294,11 @@ defmodule HomesiteWeb.CoreComponents do
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
-    <div class={["field-with-help", @help == [] && "mb-2"]}>
+    <div class={["field-with-help", @help == [] && "mb-[var(--space-xs)]"]}>
       <div class="field-input">
         <div class="fieldset">
           <label>
-            <span :if={@label} class="label mb-1">{@label}</span>
+            <span :if={@label} class="label mb-[var(--space-xs)]">{@label}</span>
             <input
               type={@type}
               name={@name}
@@ -312,9 +312,9 @@ defmodule HomesiteWeb.CoreComponents do
         </div>
       </div>
       <div :if={@help != []} class="field-help">
-        <div class="bg-base-200/50 rounded-lg p-4 text-sm">
-          <div class="flex items-start gap-2">
-            <.icon name="hero-information-circle" class="text-info mt-0.5 h-5 w-5 flex-shrink-0" />
+        <div class="bg-base-200/50 rounded-lg p-[var(--space-sm)] text-[var(--text-sm)]">
+          <div class="flex items-start gap-[var(--space-xs)]">
+            <.icon name="hero-information-circle" class="text-info mt-[var(--space-xs)] h-5 w-5 flex-shrink-0" />
             <div class="text-base-content/70">
               {render_slot(@help)}
             </div>
@@ -328,7 +328,7 @@ defmodule HomesiteWeb.CoreComponents do
   # Helper used by inputs to generate form errors
   defp error(assigns) do
     ~H"""
-    <p class="text-error mt-1.5 flex items-center gap-2 text-sm">
+    <p class="text-error mt-[var(--space-xs)] flex items-center gap-[var(--space-xs)] text-[var(--text-sm)]">
       <.icon name="hero-exclamation-circle" class="size-5" />
       {render_slot(@inner_block)}
     </p>
@@ -344,12 +344,12 @@ defmodule HomesiteWeb.CoreComponents do
 
   def header(assigns) do
     ~H"""
-    <header class={[@actions != [] && "flex items-center justify-between gap-6", "pb-4"]}>
+    <header class={[@actions != [] && "flex items-center justify-between gap-[var(--space-md)]", "pb-[var(--space-sm)]"]}>
       <div>
-        <h1 class="text-lg font-semibold leading-8">
+        <h1 class="text-[var(--text-lg)] font-semibold leading-8">
           {render_slot(@inner_block)}
         </h1>
-        <p :if={@subtitle != []} class="text-base-content/70 text-sm">
+        <p :if={@subtitle != []} class="text-base-content/70 text-[var(--text-sm)]">
           {render_slot(@subtitle)}
         </p>
       </div>
@@ -377,12 +377,12 @@ defmodule HomesiteWeb.CoreComponents do
 
   def page_header(assigns) do
     ~H"""
-    <header class={[@actions != [] && "flex items-center justify-between gap-6", "mb-6"]}>
+    <header class={[@actions != [] && "flex items-center justify-between gap-[var(--space-md)]", "mb-[var(--space-md)]"]}>
       <div>
         <h1 class="text-[var(--font-size-fluid-xl)] font-bold">
           {render_slot(@inner_block)}
         </h1>
-        <p :if={@subtitle != []} class="text-base-content/70 text-[var(--font-size-fluid-sm)] mt-2">
+        <p :if={@subtitle != []} class="text-base-content/70 text-[var(--font-size-fluid-sm)] mt-[var(--space-xs)]">
           {render_slot(@subtitle)}
         </p>
       </div>
@@ -410,12 +410,12 @@ defmodule HomesiteWeb.CoreComponents do
 
   def section_header(assigns) do
     ~H"""
-    <header class={[@actions != [] && "flex items-center justify-between gap-6", "mb-4"]}>
+    <header class={[@actions != [] && "flex items-center justify-between gap-[var(--space-md)]", "mb-[var(--space-sm)]"]}>
       <div>
         <h2 class="text-[var(--font-size-fluid-lg)] font-semibold">
           {render_slot(@inner_block)}
         </h2>
-        <p :if={@subtitle != []} class="text-base-content/70 text-[var(--font-size-fluid-sm)] mt-1">
+        <p :if={@subtitle != []} class="text-base-content/70 text-[var(--font-size-fluid-sm)] mt-[var(--space-xs)]">
           {render_slot(@subtitle)}
         </p>
       </div>
@@ -475,7 +475,7 @@ defmodule HomesiteWeb.CoreComponents do
             {render_slot(col, @row_item.(row))}
           </td>
           <td :if={@action != []} class="w-0 font-semibold">
-            <div class="flex gap-4">
+            <div class="flex gap-[var(--space-sm)]">
               <%= for action <- @action do %>
                 {render_slot(action, @row_item.(row))}
               <% end %>
@@ -530,7 +530,7 @@ defmodule HomesiteWeb.CoreComponents do
   ## Examples
 
       <.icon name="hero-x-mark" />
-      <.icon name="hero-arrow-path" class="ml-1 size-3 motion-safe:animate-spin" />
+      <.icon name="hero-arrow-path" class="ml-[var(--space-xs)] size-3 motion-safe:animate-spin" />
   """
   attr :name, :string, required: true
   attr :class, :string, default: "size-4"
@@ -633,7 +633,7 @@ defmodule HomesiteWeb.CoreComponents do
         </span>
         <time
           :if={@date}
-          class="text-sm text-gray-600 dark:text-gray-400"
+          class="text-[var(--text-sm)] text-gray-600 dark:text-gray-400"
           datetime={DateTime.to_iso8601(@date)}
           phx-hook="LocalTime"
           data-locale={@locale}
@@ -816,8 +816,8 @@ defmodule HomesiteWeb.CoreComponents do
     <.dashboard_card variant="stat">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-secondary text-sm">{@title}</p>
-          <p class="mt-1 text-3xl font-bold">{@value}</p>
+          <p class="text-secondary text-[var(--text-sm)]">{@title}</p>
+          <p class="mt-[var(--space-xs)] text-[var(--text-2xl)] font-bold">{@value}</p>
         </div>
         <div class={"#{@color} rounded-full p-3"}>
           <.icon name={@icon} class="h-6 w-6" />
@@ -851,7 +851,7 @@ defmodule HomesiteWeb.CoreComponents do
 
       <!-- Activity feed item -->
       <.dashboard_card variant="activity">
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-[var(--space-xs)]">
           <.icon name="hero-document-check" class="text-success h-5 w-5" />
           <span>Blog post published</span>
         </div>
@@ -918,7 +918,7 @@ defmodule HomesiteWeb.CoreComponents do
   def listing_container(assigns) do
     ~H"""
     <div class={["technical-main", @class]}>
-      <div class="space-y-6">
+      <div class="space-y-[var(--space-md)]">
         {render_slot(@inner_block)}
       </div>
     </div>
@@ -949,9 +949,9 @@ defmodule HomesiteWeb.CoreComponents do
     ~H"""
     <div class="post-card text-center">
       <.icon name={@icon} class="mx-auto h-12 w-12 text-gray-400" />
-      <p class="text-secondary mt-4">{@message}</p>
+      <p class="text-secondary mt-[var(--space-sm)]">{@message}</p>
       <%= if @action do %>
-        <p class="text-secondary/70 mt-2 text-sm">{@action}</p>
+        <p class="text-secondary/70 mt-[var(--space-xs)] text-[var(--text-sm)]">{@action}</p>
       <% end %>
     </div>
     """
@@ -982,7 +982,7 @@ defmodule HomesiteWeb.CoreComponents do
 
   def badge_section_header(assigns) do
     ~H"""
-    <h2 class="mb-4 flex items-center gap-2 text-xl font-semibold">
+    <h2 class="mb-[var(--space-sm)] flex items-center gap-[var(--space-xs)] text-[var(--text-xl)] font-semibold">
       <.icon name={@icon} class="h-6 w-6" />
       {@title}
       <%= if @count do %>
@@ -1016,7 +1016,7 @@ defmodule HomesiteWeb.CoreComponents do
     ~H"""
     <div class={["collapse bg-base-200", @arrow && "collapse-arrow", @class]}>
       <input type="checkbox" checked={@open} />
-      <div class="collapse-title text-xl font-medium">
+      <div class="collapse-title text-[var(--text-xl)] font-medium">
         {@title}
       </div>
       <div class="collapse-content">
@@ -1082,7 +1082,7 @@ defmodule HomesiteWeb.CoreComponents do
 
   def breadcrumbs(assigns) do
     ~H"""
-    <div class={["breadcrumbs text-sm", @class]}>
+    <div class={["breadcrumbs text-[var(--text-sm)]", @class]}>
       <ul>
         <%= for item <- @items do %>
           <li>

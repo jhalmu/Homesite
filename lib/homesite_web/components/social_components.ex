@@ -32,7 +32,7 @@ defmodule HomesiteWeb.SocialComponents do
       <button
         data-share-btn
         type="button"
-        class="btn btn-ghost btn-sm gap-2"
+        class="btn btn-ghost btn-sm gap-[var(--space-xs)]"
       >
         {share_icon(%{class: "h-5 w-5"})}
         <span>Share this post</span>
@@ -57,11 +57,11 @@ defmodule HomesiteWeb.SocialComponents do
     ~H"""
     <div class={"#{@class} space-y-4"}>
       <%!-- Native Web Share (primary option) --%>
-      <.web_share_button title={@title} url={@url} class="mb-4" />
+      <.web_share_button title={@title} url={@url} class="mb-[var(--space-sm)]" />
 
       <%!-- Platform Share Buttons (alternative options) --%>
-      <div class="mb-2 text-xs opacity-40">Share:</div>
-      <div class="flex flex-wrap gap-2">
+      <div class="mb-[var(--space-xs)] text-[var(--text-xs)] opacity-40">Share:</div>
+      <div class="flex flex-wrap gap-[var(--space-xs)]">
         <.share_button platform="bluesky" url={@url} title={@title} />
         <.share_button platform="mastodon" url={@url} title={@title} />
         <.share_button platform="twitter" url={@url} title={@title} />
