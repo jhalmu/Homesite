@@ -124,6 +124,9 @@ defmodule HomesiteWeb.Router do
       live "/galleries/:id/edit", GalleryLive.Form, :edit
       live "/galleries/:id", GalleryLive.Show, :show
 
+      live "/media", MediaLive.Index, :index
+      live "/media/:id", MediaLive.Show, :show
+
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
 
