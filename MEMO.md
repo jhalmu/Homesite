@@ -6,6 +6,57 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-06 15:45:00 - Phase 7 Media Picker for Blog Posts (Complete)
+
+### Session: Complete Blog Post Integration with Media Picker
+
+#### Objectives Completed
+Completed Phase 7 of the Image Gallery implementation by adding a media picker modal to the post editor. Users can now select hero images for blog posts through a searchable modal interface.
+
+#### Changes Made
+
+**Phase 7: Blog Post Integration - Media Picker UI** (Commit: b658178)
+- **MODIFIED**: `lib/homesite_web/live/post_live/form.ex` (+216 lines)
+  - Added media picker modal with search functionality
+  - Hero image selection and preview display
+  - Card-based image preview with remove button
+  - Event handlers: `toggle-media-picker`, `search-media`, `select-hero`, `remove-hero`
+  - `update_media_association/2` helper to manage post_media_items records
+  - Uses existing Media context functions (list_media_items, search_media_items)
+  - Preloads :media_items association when editing posts
+  - Grid layout (3 columns) for media selection modal
+  - Search with debounce (300ms) for responsive filtering
+
+**Technical Implementation:**
+- Hero images saved in `post_media_items` join table with context: "hero"
+- Manual Repo operations for join table (insert/delete_all)
+- Clear existing associations before saving new hero image
+- Modal uses DaisyUI `.modal` and `.modal-open` classes
+- Images displayed with base64 encoding from thumb_data
+- Empty state message when no media available
+
+#### Test Results
+- **All 1032 tests passing** - No test failures
+- Compilation successful with only benign warnings (unused imports)
+
+#### Design Decisions
+- **Simplified approach**: Direct join table manipulation instead of Ecto.Changeset associations
+- **Hero-only for now**: Inline image insertion deferred to future enhancement
+- **Search integration**: Reuses existing Media.search_media_items/2 function
+- **Modal pattern**: Consistent with other pickers in the app (tag picker)
+
+#### Future Enhancements (tracked in Issue #48)
+- Inline image insertion in markdown editor
+- Image gallery embedding in posts
+- Automatic image optimization for post content
+- Watermarking support
+- Video media support
+
+#### Next Steps
+None - Phase 7 complete. Image Gallery & Media Library implementation finished (all phases 1-7 done).
+
+---
+
 ## 2025-12-06 14:35:00 - Image Gallery & Media Library Implementation (Phases 4-7 Complete)
 
 ### Session: Complete Gallery LiveView UI, Media Library, Public Portfolio, and Blog Integration
