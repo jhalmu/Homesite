@@ -18,13 +18,15 @@ Always check AGENTS.md first for project-specific patterns before making archite
 
 - **AGENTS.md** - Primary source for coding patterns, Phoenix/LiveView guidelines, testing
 - **REGISTRATION_STRATEGY.md** - Authentication system documentation and strategy decisions
-- **MODERN_CSS_GUIDE.md** - CSS/Tailwind patterns and responsive design guidelines (if exists)
+- **MODERN_CSS_GUIDE.md** - CSS/Tailwind patterns and responsive design guidelines
+- **DESIGN_SYSTEM_MIGRATION_GUIDE.md** - Step-by-step guide for migrating templates to design tokens
 - **MEMO.md** - Session notes and historical context
 
 **When to read .md files:**
 - Before making architectural decisions (check AGENTS.md)
 - When working with authentication/registration (check REGISTRATION_STRATEGY.md)
-- When implementing UI changes (check MODERN_CSS_GUIDE.md if it exists)
+- When implementing UI changes (check MODERN_CSS_GUIDE.md)
+- When migrating templates to design tokens (check DESIGN_SYSTEM_MIGRATION_GUIDE.md)
 - At the start of each session (check MEMO.md for context)
 - When encountering unfamiliar patterns or decisions
 
@@ -862,6 +864,21 @@ mix deps.audit               # Dependency audit
 - Fix all Credo warnings before committing
 - Use `req` library for HTTP requests (already included)
 - Follow Elixir style guide and AGENTS.md guidelines
+
+## Design System Migration
+
+When migrating templates to use design tokens, consult these resources in order:
+
+1. **DESIGN_SYSTEM_MIGRATION_GUIDE.md** - Step-by-step migration guide with find/replace patterns
+2. **MODERN_CSS_GUIDE.md** - Practical patterns and real-world examples
+3. **HOMESITE_DESIGN_GUIDELINES.md** (archived_docs/) - Complete token reference and design philosophy
+
+**Quick Reference:**
+- Spacing: `gap-2` → `gap-[var(--space-xs)]`, `mt-4` → `mt-[var(--space-sm)]`
+- Typography: `text-sm` → `text-[var(--text-sm)]`, `text-xl` → `text-[var(--text-xl)]`
+- Layout: `max-w-4xl` → `max-w-[var(--article-max-width)]`
+
+**Migration Status:** 15% of templates migrated, 85% remaining (as of 2025-12-05)
 
 ## Project-Specific Notes
 
