@@ -17,7 +17,7 @@
       id="feed_source-form"
       phx-change="validate"
       phx-submit="save"
-      class="mt-8"
+      class="mt-[var(--space-md)]"
     >
       <.input
         field={@form[:feed_type]}
@@ -56,8 +56,8 @@
       <.input field={@form[:display_order]} type="number" label="Display Order" min="0" />
       <.input field={@form[:enabled]} type="checkbox" label="Enabled" />
 
-      <div class="mt-6 flex items-center justify-end gap-x-6">
-        <.link navigate={~p"/feeds"} class="text-sm font-semibold text-gray-900">
+      <div class="mt-[var(--space-md)] flex items-center justify-end gap-x-[var(--space-md)]">
+        <.link navigate={~p"/feeds"} class="text-[var(--text-sm)] font-semibold text-gray-900">
           Cancel
         </.link>
         <.button phx-disable-with="Saving...">Save Feed Source</.button>

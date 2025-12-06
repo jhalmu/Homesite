@@ -15,7 +15,7 @@
     
 <!-- New/Edit Folder Form -->
     <%= if @editing_folder_id do %>
-      <div class="card bg-base-100 my-6 shadow-md">
+      <div class="card bg-base-100 my-[var(--space-md)] shadow-md">
         <div class="card-body">
           <h3 class="card-title">
             {if @editing_folder_id == :new,
@@ -23,7 +23,7 @@
               else: gettext("Edit Folder")}
           </h3>
 
-          <.form for={@form} phx-submit="save_folder" class="space-y-4">
+          <.form for={@form} phx-submit="save_folder" class="space-y-[var(--space-sm)]">
             <.input
               field={@form[:name]}
               type="text"
@@ -32,7 +32,7 @@
               required
             />
 
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 gap-[var(--space-sm)]">
               <.input
                 field={@form[:icon]}
                 type="text"
@@ -55,7 +55,7 @@
               placeholder="0"
             />
 
-            <div class="card-actions justify-end gap-2">
+            <div class="card-actions justify-end gap-[var(--space-xs)]">
               <button type="button" phx-click="cancel_edit" class="btn btn-ghost">
                 {gettext("Cancel")}
               </button>
@@ -69,7 +69,7 @@
     <% end %>
     
 <!-- Folders List -->
-    <div class="mt-6 space-y-4">
+    <div class="mt-[var(--space-md)] space-y-[var(--space-sm)]">
       <%= if Enum.empty?(@folders) do %>
         <div class="alert">
           <.icon name="hero-information-circle" class="h-6 w-6" />
@@ -82,10 +82,10 @@
           <div class="card bg-base-100 border-base-300 border shadow-sm">
             <div class="card-body">
               <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-[var(--space-sm)]">
                   <span class="text-3xl">{folder.icon || "📁"}</span>
                   <div>
-                    <h3 class="card-title text-lg">{folder.name}</h3>
+                    <h3 class="card-title text-[var(--text-lg)]">{folder.name}</h3>
                     <%= if folder.color do %>
                       <span class={"badge-#{folder.color} badge badge-sm"}>
                         {folder.color}
@@ -115,10 +115,10 @@
                   </button>
                 </div>
               </div>
-              
+
 <!-- Display order badge -->
               <%= if folder.display_order != 0 do %>
-                <div class="text-base-content/60 text-sm">
+                <div class="text-base-content/60 text-[var(--text-sm)]">
                   {gettext("Order: %{order}", order: folder.display_order)}
                 </div>
               <% end %>
@@ -127,9 +127,9 @@
         <% end %>
       <% end %>
     </div>
-    
+
 <!-- Back to Feeds link -->
-    <div class="mt-8">
+    <div class="mt-[var(--space-md)]">
       <.link navigate={~p"/feeds"} class="btn btn-ghost btn-sm">
         <.icon name="hero-arrow-left" class="h-4 w-4" />
         {gettext("Back to Feed Sources")}

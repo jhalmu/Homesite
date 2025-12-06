@@ -1,14 +1,14 @@
-<main class="mt-8">
+<main class="mt-[var(--space-md)]">
   <.page_header>
-    <div class="flex items-center justify-center gap-4">
+    <div class="flex items-center justify-center gap-[var(--space-sm)]">
       <.icon name="hero-magnifying-glass" class="h-8 w-8" />
       <span>{gettext("Search")}</span>
     </div>
   </.page_header>
 
-  <div class="mt-8">
-    <form id="search-form" phx-submit="search" class="mx-auto mb-8 max-w-3xl">
-      <div class="flex gap-2">
+  <div class="mt-[var(--space-md)]">
+    <form id="search-form" phx-submit="search" class="mx-auto mb-[var(--space-md)] max-w-3xl">
+      <div class="flex gap-[var(--space-xs)]">
         <input
           type="text"
           name="query"
@@ -31,7 +31,7 @@
     </form>
 
     <%= if @searching and @query != "" do %>
-      <div class="text-base-content/70 mb-4 text-sm">
+      <div class="text-base-content/70 mb-[var(--space-sm)] text-[var(--text-sm)]">
         <%= if @total_count == 0 do %>
           <div class="alert alert-info">
             <.icon name="hero-information-circle" class="h-5 w-5" />
@@ -47,16 +47,16 @@
     <% end %>
 
     <%= if @searching and @total_count > 0 do %>
-      <div class="space-y-8">
+      <div class="space-y-[var(--space-md)]">
         <%!-- Posts Section --%>
         <%= if not Enum.empty?(@posts) do %>
           <section>
-            <h2 class="mb-4 flex items-center gap-2 text-xl font-semibold">
+            <h2 class="mb-[var(--space-sm)] flex items-center gap-[var(--space-xs)] text-[var(--text-xl)] font-semibold">
               <.icon name="hero-document-text" class="text-primary h-6 w-6" />
               {gettext("Posts")}
               <span class="badge badge-primary">{length(@posts)}</span>
             </h2>
-            <div class="space-y-4">
+            <div class="space-y-[var(--space-sm)]">
               <%= for post <- @posts do %>
                 <article class="card bg-base-100 shadow-md transition-shadow hover:shadow-lg">
                   <div class="card-body">
@@ -66,7 +66,7 @@
                       </.link>
                     </h3>
 
-                    <div class="text-base-content/60 flex items-center gap-2 text-sm">
+                    <div class="text-base-content/60 flex items-center gap-[var(--space-xs)] text-[var(--text-sm)]">
                       <.icon name="hero-user" class="h-4 w-4" />
                       <span>{post.user.email}</span>
                       <%= if post.published_at do %>
@@ -79,7 +79,7 @@
                     </div>
 
                     <%= if not Enum.empty?(post.tags) do %>
-                      <div class="mt-2 flex flex-wrap gap-2">
+                      <div class="mt-[var(--space-xs)] flex flex-wrap gap-[var(--space-xs)]">
                         <%= for tag <- post.tags do %>
                           <.link
                             navigate={~p"/tags/#{tag.slug}"}
@@ -91,11 +91,11 @@
                       </div>
                     <% end %>
 
-                    <div class="line-clamp-3 prose prose-sm mt-2">
+                    <div class="line-clamp-3 prose prose-sm mt-[var(--space-xs)]">
                       {raw(truncate_html(post.body, 200))}
                     </div>
 
-                    <div class="card-actions mt-4 justify-end">
+                    <div class="card-actions mt-[var(--space-sm)] justify-end">
                       <.link navigate={~p"/posts/#{post.id}"} class="btn btn-sm btn-primary">
                         {gettext("Read more")}
                       </.link>
@@ -109,12 +109,12 @@
         <%!-- Tags Section --%>
         <%= if not Enum.empty?(@tags) do %>
           <section>
-            <h2 class="mb-4 flex items-center gap-2 text-xl font-semibold">
+            <h2 class="mb-[var(--space-sm)] flex items-center gap-[var(--space-xs)] text-[var(--text-xl)] font-semibold">
               <.icon name="hero-tag" class="text-secondary h-6 w-6" />
               {gettext("Tags")}
               <span class="badge badge-secondary">{length(@tags)}</span>
             </h2>
-            <div class="flex flex-wrap gap-3">
+            <div class="flex flex-wrap gap-[var(--space-sm)]">
               <%= for tag <- @tags do %>
                 <.link
                   navigate={~p"/tags/#{tag.slug}"}
@@ -130,23 +130,23 @@
         <%!-- FAQs Section --%>
         <%= if not Enum.empty?(@faqs) do %>
           <section>
-            <h2 class="mb-4 flex items-center gap-2 text-xl font-semibold">
+            <h2 class="mb-[var(--space-sm)] flex items-center gap-[var(--space-xs)] text-[var(--text-xl)] font-semibold">
               <.icon name="hero-question-mark-circle" class="text-accent h-6 w-6" />
               {gettext("FAQs")}
               <span class="badge badge-accent">{length(@faqs)}</span>
             </h2>
-            <div class="space-y-4">
+            <div class="space-y-[var(--space-sm)]">
               <%= for faq <- @faqs do %>
                 <div class="card bg-base-100 shadow-md">
                   <div class="card-body">
-                    <h3 class="card-title text-lg">
+                    <h3 class="card-title text-[var(--text-lg)]">
                       <.icon name="hero-chat-bubble-left-right" class="text-accent h-5 w-5" />
                       {faq.question}
                     </h3>
-                    <div class="prose prose-sm mt-2">
+                    <div class="prose prose-sm mt-[var(--space-xs)]">
                       {raw(truncate_html(faq.answer, 200))}
                     </div>
-                    <div class="card-actions mt-4 items-center justify-between">
+                    <div class="card-actions mt-[var(--space-sm)] items-center justify-between">
                       <span class="badge badge-sm">{String.upcase(faq.category)}</span>
                       <.link navigate={~p"/faqs"} class="btn btn-sm btn-ghost">
                         {gettext("View all FAQs")}
@@ -163,10 +163,10 @@
       <%= if @query == "" do %>
         <div class="py-12 text-center">
           <.icon name="hero-magnifying-glass" class="text-base-content/40 mx-auto h-12 w-12" />
-          <h2 class="text-base-content mt-2 text-sm font-semibold">
+          <h2 class="text-base-content mt-[var(--space-xs)] text-[var(--text-sm)] font-semibold">
             {gettext("Start searching")}
           </h2>
-          <p class="text-base-content/60 mt-1 text-sm">
+          <p class="text-base-content/60 mt-[var(--space-xs)] text-[var(--text-sm)]">
             {gettext("Enter keywords to search through blog posts")}
           </p>
         </div>
