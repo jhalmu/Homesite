@@ -83,6 +83,13 @@ defmodule Homesite.Media do
   end
 
   @doc """
+  Returns an `%Ecto.Changeset{}` for tracking gallery changes.
+  """
+  def change_gallery(%Gallery{} = gallery, attrs \\ %{}) do
+    Gallery.changeset(gallery, attrs, %Scope{user: %{id: gallery.user_id || 0}})
+  end
+
+  @doc """
   Creates a gallery.
   """
   def create_gallery(%Scope{} = scope, attrs) do

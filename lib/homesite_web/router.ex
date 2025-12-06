@@ -119,6 +119,11 @@ defmodule HomesiteWeb.Router do
 
       live "/folders", FeedFolderLive.Index, :index
 
+      live "/galleries", GalleryLive.Index, :index
+      live "/galleries/new", GalleryLive.Form, :new
+      live "/galleries/:id/edit", GalleryLive.Form, :edit
+      live "/galleries/:id", GalleryLive.Show, :show
+
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
 
