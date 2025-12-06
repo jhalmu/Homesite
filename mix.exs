@@ -94,6 +94,9 @@ defmodule Homesite.MixProject do
       {:timex, "~> 3.7"},
       {:sweet_xml, "~> 0.7"},
 
+      # Image Processing
+      {:mogrify, "~> 0.9.3"},
+
       # Dev and Test
       {:phoenix_test, "0.9.1", only: :test, runtime: false},
       {:phoenix_test_playwright, "0.9.1", only: :test, runtime: false},

@@ -14,7 +14,7 @@
     </.header>
     
 <!-- Filter controls -->
-    <div class="my-6 flex flex-wrap items-center gap-4">
+    <div class="my-[var(--space-md)] flex flex-wrap items-center gap-[var(--space-sm)]">
       <!-- Status filter tabs -->
       <div class="tabs tabs-boxed">
         <button
@@ -31,7 +31,7 @@
         >
           {gettext("Unread")}
           <%= if @unread_count > 0 do %>
-            <span class="badge badge-primary badge-sm ml-2">{@unread_count}</span>
+            <span class="badge badge-primary badge-sm ml-[var(--space-xs)]">{@unread_count}</span>
           <% end %>
         </button>
         <button
@@ -45,10 +45,10 @@
       
 <!-- Source filter dropdown -->
       <%= if length(@feed_sources) > 0 do %>
-        <div class="flex items-center gap-2">
-          <span class="text-base-content/70 text-sm">{gettext("Filter by:")}</span>
+        <div class="flex items-center gap-[var(--space-xs)]">
+          <span class="text-base-content/70 text-[var(--text-sm)]">{gettext("Filter by:")}</span>
           <div class="dropdown">
-            <div tabindex="0" role="button" class="btn btn-sm btn-ghost gap-1">
+            <div tabindex="0" role="button" class="btn btn-sm btn-ghost gap-[var(--space-inline)]">
               <%= if @source_id do %>
                 <.icon name="hero-funnel-solid" class="text-primary h-4 w-4" />
                 {@source_name}
@@ -60,7 +60,7 @@
             </div>
             <ul
               tabindex="0"
-              class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+              class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-[var(--space-xs)] shadow"
             >
               <li>
                 <.link
@@ -82,7 +82,7 @@
                     }
                     class={[to_string(@source_id) == to_string(source.id) && "active"]}
                   >
-                    <span class="text-lg">{source.icon}</span>
+                    <span class="text-[var(--text-lg)]">{source.icon}</span>
                     {source.name}
                   </.link>
                 </li>
@@ -94,7 +94,7 @@
     </div>
     
 <!-- Feed items list -->
-    <div class="space-y-4" id="feed-items-list">
+    <div class="space-y-[var(--space-sm)]" id="feed-items-list">
       <%= if Enum.empty?(@items) do %>
         <div class="alert">
           <.icon name="hero-information-circle" class="h-6 w-6" />
@@ -129,7 +129,7 @@
                 </div>
 
                 <%!-- Item title --%>
-                <h3 class="mb-[var(--spacing-sm)] text-[var(--font-size-fluid-lg)] line-clamp-2 font-semibold">
+                <h3 class="mb-[var(--spacing-sm)] text-[var(--font-size-fluid-lg)] line-clamp-[var(--space-xs)] font-semibold">
                   <a
                     href={item.feed_item.url}
                     target="_blank"
