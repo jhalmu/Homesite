@@ -228,6 +228,7 @@ body {
   border-radius: 6px;
   padding: 2rem;
   margin-bottom: 1.5rem;
+  container-type: inline-size;
 }
 
 /* Post title styling */
@@ -275,6 +276,7 @@ body {
   border-radius: 6px;
   padding: 2rem;
   margin-bottom: 1.5rem;
+  container-type: inline-size;
 }
 
 /* Listing metadata - maps to post-meta */
@@ -394,6 +396,81 @@ body {
 
 [data-theme="dark"] .post-card:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================================================
+   CONTAINER QUERIES FOR CARDS
+   Responsive card layouts based on container width (not viewport)
+   ============================================================================ */
+
+/* Small containers (< 500px): Compact layout */
+@container (max-width: 500px) {
+  .post-card,
+  .listing-card {
+    padding: var(--space-sm);
+  }
+
+  .post-card .card-body,
+  .listing-card .card-body {
+    padding: var(--space-sm);
+  }
+
+  .post-card .card-actions,
+  .listing-card .card-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-xs);
+  }
+
+  .post-card .card-title,
+  .listing-card .card-title,
+  .post-title,
+  .listing-title {
+    font-size: var(--text-lg);
+  }
+
+  .post-excerpt,
+  .listing-content {
+    font-size: var(--text-sm);
+  }
+
+  .post-footer,
+  .listing-footer,
+  .listing-meta {
+    font-size: var(--text-xs);
+    flex-wrap: wrap;
+  }
+}
+
+/* Medium containers (501px - 700px): Balanced layout */
+@container (min-width: 501px) and (max-width: 700px) {
+  .post-card,
+  .listing-card {
+    padding: var(--space-md);
+  }
+
+  .post-card .card-body,
+  .listing-card .card-body {
+    padding: var(--space-md);
+  }
+}
+
+/* Large containers (> 700px): Spacious layout */
+@container (min-width: 701px) {
+  .post-card,
+  .listing-card {
+    padding: var(--space-lg);
+  }
+
+  .post-card .card-body,
+  .listing-card .card-body {
+    padding: var(--space-lg);
+  }
+
+  .post-card .card-actions,
+  .listing-card .card-actions {
+    gap: var(--space-sm);
+  }
 }
 
 /* Accent on code blocks */

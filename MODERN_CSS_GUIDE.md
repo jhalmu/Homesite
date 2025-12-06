@@ -83,33 +83,80 @@
 
 ### 4. Container Query - Post Cards
 
+**✅ IMPLEMENTED** (2025-12-06)
+
+Container queries are now active for all `.post-card` and `.listing-card` elements. Cards automatically adjust their layout based on container width, not viewport width.
+
 ```css
-/* Post-kortit mukautuvat omaan tilaansa */
-.post-card {
+/* Post-kortit mukautuvat omaan tilaansa (assets/css/app.css) */
+.post-card,
+.listing-card {
   container-type: inline-size;
 }
 
+/* Small containers (< 500px): Compact layout */
 @container (max-width: 500px) {
-  .post-card .card-body {
-    padding: 1rem;
+  .post-card,
+  .listing-card {
+    padding: var(--space-sm);
   }
-  
-  .post-card .card-actions {
+
+  .post-card .card-actions,
+  .listing-card .card-actions {
     flex-direction: column;
-    align-items: start;
+    align-items: flex-start;
   }
-  
-  .post-card .card-title {
-    font-size: 1.25rem;
+
+  .post-title,
+  .listing-title {
+    font-size: var(--text-lg);
   }
 }
 
-@container (min-width: 501px) {
-  .post-card .card-body {
-    padding: 2rem;
+/* Medium containers (501px - 700px): Balanced layout */
+@container (min-width: 501px) and (max-width: 700px) {
+  .post-card,
+  .listing-card {
+    padding: var(--space-md);
+  }
+}
+
+/* Large containers (> 700px): Spacious layout */
+@container (min-width: 701px) {
+  .post-card,
+  .listing-card {
+    padding: var(--space-lg);
   }
 }
 ```
+
+**Usage in Templates:**
+
+Add `.post-card` or `.listing-card` class to enable responsive behavior:
+
+```heex
+<!-- Post cards in search results -->
+<article class="post-card card bg-base-100 shadow-md">
+  <div class="card-body">
+    <h3 class="card-title">{@post.title}</h3>
+  </div>
+</article>
+
+<!-- Feed items -->
+<article class="listing-card card bg-base-200">
+  <div class="card-body">
+    <h3 class="card-title">{@item.title}</h3>
+  </div>
+</article>
+```
+
+**Benefits:**
+- Cards in sidebars stay compact even on wide screens
+- Cards in grid layouts adapt to column width, not viewport
+- No JavaScript or media queries needed
+- Truly modular components
+
+**Browser Support:** Chrome 105+, Firefox 110+, Safari 16+ (Sept 2022+)
 
 ### 5. Forms & Inputs
 
