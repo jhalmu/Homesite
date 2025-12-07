@@ -1,25 +1,25 @@
 defmodule Homesite.Media do
   @moduledoc """
-  The Media context for managing galleries, collections, and media items.
+  The Media context for managing projects, collections, and media items.
   """
 
   import Ecto.Query, warn: false
 
   alias Homesite.Accounts.Scope
-  alias Homesite.Media.{Gallery, MediaItem, GalleryMediaItem, ImageProcessor}
+  alias Homesite.Media.{Project, MediaItem, ProjectMediaItem, Collaborator, AffiliationLink, ImageProcessor}
   alias Homesite.Repo
 
   ## PubSub
 
   @doc """
-  Subscribes to scoped notifications about gallery changes.
+  Subscribes to scoped notifications about project changes.
   """
-  def subscribe_galleries(%Scope{} = scope) do
-    Phoenix.PubSub.subscribe(Homesite.PubSub, "user:#{scope.user.id}:galleries")
+  def subscribe_projects(%Scope{} = scope) do
+    Phoenix.PubSub.subscribe(Homesite.PubSub, "user:#{scope.user.id}:projects")
   end
 
-  defp broadcast_gallery(%Scope{} = scope, message) do
-    Phoenix.PubSub.broadcast(Homesite.PubSub, "user:#{scope.user.id}:galleries", message)
+  defp broadcast_project(%Scope{} = scope, message) do
+    Phoenix.PubSub.broadcast(Homesite.PubSub, "user:#{scope.user.id}:projects", message)
   end
 
   @doc """
@@ -33,26 +33,26 @@ defmodule Homesite.Media do
     Phoenix.PubSub.broadcast(Homesite.PubSub, "user:#{scope.user.id}:media_items", message)
   end
 
-  ## Galleries
+  ## Projects
 
   @doc """
-  Returns the list of galleries for the current user.
+  Returns the list of projects for the current user.
 
   ## Options
-    * `:gallery_type` - Filter by type ("portfolio" or "library")
+    * `:project_type` - Filter by type ("portfolio" or "library")
     * `:is_public` - Filter by public/private status
     * `:preload` - List of associations to preload (default: [])
   """
-  def list_galleries(%Scope{} = scope, opts \\ []) do
+  def list_projects(%Scope{} = scope, opts \\ []) do
     preload = opts[:preload] || []
 
     query =
-      from g in Gallery,
-        where: g.user_id == ^scope.user.id,
-        order_by: [asc: g.display_order, desc: g.inserted_at],
+      from p in Project,
+        where: p.user_id == ^scope.user.id,
+        order_by: [asc: p.display_order, desc: p.inserted_at],
         preload: ^preload
 
-    query = maybe_filter_by_type(query, opts[:gallery_type])
+    query = maybe_filter_by_type(query, opts[:project_type])
     query = maybe_filter_by_public(query, opts[:is_public])
 
     Repo.all(query)
@@ -62,79 +62,79 @@ defmodule Homesite.Media do
 
   defp maybe_filter_by_type(query, type) when type in ["portfolio", "library"] do
     is_portfolio = type == "portfolio"
-    from g in query, where: g.is_portfolio == ^is_portfolio
+    from p in query, where: p.is_portfolio == ^is_portfolio
   end
 
   defp maybe_filter_by_public(query, nil), do: query
 
   defp maybe_filter_by_public(query, is_public) when is_boolean(is_public) do
-    from g in query, where: g.is_public == ^is_public
+    from p in query, where: p.is_public == ^is_public
   end
 
   @doc """
-  Gets a single gallery with scope check.
-  Raises `Ecto.NoResultsError` if the gallery does not exist or doesn't belong to user.
+  Gets a single project with scope check.
+  Raises `Ecto.NoResultsError` if the project does not exist or doesn't belong to user.
   """
-  def get_gallery!(%Scope{} = scope, id) do
-    Repo.get_by!(Gallery, id: id, user_id: scope.user.id)
+  def get_project!(%Scope{} = scope, id) do
+    Repo.get_by!(Project, id: id, user_id: scope.user.id)
   end
 
   @doc """
-  Gets a gallery with its media items preloaded.
+  Gets a project with its media items preloaded.
   """
-  def get_gallery_with_media!(%Scope{} = scope, id) do
+  def get_project_with_media!(%Scope{} = scope, id) do
     media_items_query = from m in MediaItem, order_by: m.inserted_at
 
-    Repo.get_by!(Gallery, id: id, user_id: scope.user.id)
+    Repo.get_by!(Project, id: id, user_id: scope.user.id)
     |> Repo.preload(media_items: media_items_query)
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking gallery changes.
+  Returns an `%Ecto.Changeset{}` for tracking project changes.
   """
-  def change_gallery(%Gallery{} = gallery, attrs \\ %{}) do
-    Gallery.changeset(gallery, attrs, %Scope{user: %{id: gallery.user_id || 0}})
+  def change_project(%Project{} = project, attrs \\ %{}) do
+    Project.changeset(project, attrs, %Scope{user: %{id: project.user_id || 0}})
   end
 
   @doc """
-  Creates a gallery.
+  Creates a project.
   """
-  def create_gallery(%Scope{} = scope, attrs) do
-    with {:ok, gallery} <-
-           %Gallery{}
-           |> Gallery.changeset(attrs, scope)
+  def create_project(%Scope{} = scope, attrs) do
+    with {:ok, project} <-
+           %Project{}
+           |> Project.changeset(attrs, scope)
            |> Repo.insert() do
-      broadcast_gallery(scope, {:created, gallery})
-      {:ok, gallery}
+      broadcast_project(scope, {:created, project})
+      {:ok, project}
     end
   end
 
   @doc """
-  Updates a gallery with scope check.
+  Updates a project with scope check.
   """
-  def update_gallery(%Scope{} = scope, %Gallery{} = gallery, attrs) do
+  def update_project(%Scope{} = scope, %Project{} = project, attrs) do
     # Security check
-    true = gallery.user_id == scope.user.id
+    true = project.user_id == scope.user.id
 
-    with {:ok, gallery} <-
-           gallery
-           |> Gallery.changeset(attrs, scope)
+    with {:ok, project} <-
+           project
+           |> Project.changeset(attrs, scope)
            |> Repo.update() do
-      broadcast_gallery(scope, {:updated, gallery})
-      {:ok, gallery}
+      broadcast_project(scope, {:updated, project})
+      {:ok, project}
     end
   end
 
   @doc """
-  Deletes a gallery with scope check.
+  Deletes a project with scope check.
   """
-  def delete_gallery(%Scope{} = scope, %Gallery{} = gallery) do
+  def delete_project(%Scope{} = scope, %Project{} = project) do
     # Security check
-    true = gallery.user_id == scope.user.id
+    true = project.user_id == scope.user.id
 
-    with {:ok, gallery} <- Repo.delete(gallery) do
-      broadcast_gallery(scope, {:deleted, gallery})
-      {:ok, gallery}
+    with {:ok, project} <- Repo.delete(project) do
+      broadcast_project(scope, {:deleted, project})
+      {:ok, project}
     end
   end
 
@@ -144,7 +144,7 @@ defmodule Homesite.Media do
   Returns the list of media items for the current user.
 
   ## Options
-    * `:gallery_id` - Filter by gallery
+    * `:project_id` - Filter by project
     * `:aspect_category` - Filter by aspect category ("landscape", "portrait", "square")
     * `:limit` - Maximum number of items to return (default: 20)
     * `:offset` - Number of items to skip (default: 0)
@@ -158,21 +158,21 @@ defmodule Homesite.Media do
         where: m.user_id == ^scope.user.id,
         order_by: [desc: m.inserted_at]
 
-    query = maybe_filter_by_gallery(query, opts[:gallery_id])
+    query = maybe_filter_by_project(query, opts[:project_id])
     query = maybe_filter_by_aspect(query, opts[:aspect_category])
     query = from m in query, limit: ^limit, offset: ^offset
 
     Repo.all(query)
   end
 
-  defp maybe_filter_by_gallery(query, nil), do: query
+  defp maybe_filter_by_project(query, nil), do: query
 
-  defp maybe_filter_by_gallery(query, gallery_id) do
+  defp maybe_filter_by_project(query, project_id) do
     from m in query,
-      join: gm in GalleryMediaItem,
-      on: gm.media_item_id == m.id,
-      where: gm.gallery_id == ^gallery_id,
-      order_by: [asc: gm.display_order]
+      join: pm in ProjectMediaItem,
+      on: pm.media_item_id == m.id,
+      where: pm.project_id == ^project_id,
+      order_by: [asc: pm.display_order]
   end
 
   defp maybe_filter_by_aspect(query, nil), do: query
@@ -258,19 +258,19 @@ defmodule Homesite.Media do
     end
   end
 
-  ## Gallery-Media Associations
+  ## Project-Media Associations
 
   @doc """
-  Adds a media item to a gallery with a specific display order.
+  Adds a media item to a project with a specific display order.
   """
-  def add_media_to_gallery(%Scope{} = scope, gallery_id, media_item_id, display_order \\ 0) do
+  def add_media_to_project(%Scope{} = scope, project_id, media_item_id, display_order \\ 0) do
     # Verify ownership
-    gallery = get_gallery!(scope, gallery_id)
+    project = get_project!(scope, project_id)
     media_item = get_media_item!(scope, media_item_id)
 
-    %GalleryMediaItem{}
-    |> GalleryMediaItem.changeset(%{
-      gallery_id: gallery.id,
+    %ProjectMediaItem{}
+    |> ProjectMediaItem.changeset(%{
+      project_id: project.id,
       media_item_id: media_item.id,
       display_order: display_order
     })
@@ -278,14 +278,14 @@ defmodule Homesite.Media do
   end
 
   @doc """
-  Removes a media item from a gallery.
+  Removes a media item from a project.
   """
-  def remove_media_from_gallery(%Scope{} = scope, gallery_id, media_item_id) do
+  def remove_media_from_project(%Scope{} = scope, project_id, media_item_id) do
     # Verify ownership
-    _gallery = get_gallery!(scope, gallery_id)
+    _project = get_project!(scope, project_id)
     _media_item = get_media_item!(scope, media_item_id)
 
-    case Repo.get_by(GalleryMediaItem, gallery_id: gallery_id, media_item_id: media_item_id) do
+    case Repo.get_by(ProjectMediaItem, project_id: project_id, media_item_id: media_item_id) do
       nil -> {:error, :not_found}
       association -> Repo.delete(association)
     end
@@ -323,16 +323,16 @@ defmodule Homesite.Media do
   Lists all public portfolios.
 
   ## Options
-    * `:limit` - Maximum number of galleries to return (default: 20)
-    * `:offset` - Number of galleries to skip (default: 0)
+    * `:limit` - Maximum number of projects to return (default: 20)
+    * `:offset` - Number of projects to skip (default: 0)
   """
-  def list_public_galleries(opts \\ []) do
+  def list_public_projects(opts \\ []) do
     limit = opts[:limit] || 20
     offset = opts[:offset] || 0
 
-    from(g in Gallery,
-      where: g.is_public == true and g.is_portfolio == true,
-      order_by: [asc: g.display_order, desc: g.inserted_at],
+    from(p in Project,
+      where: p.is_public == true and p.is_portfolio == true,
+      order_by: [asc: p.display_order, desc: p.inserted_at],
       limit: ^limit,
       offset: ^offset,
       preload: [:user]
@@ -341,51 +341,189 @@ defmodule Homesite.Media do
   end
 
   @doc """
-  Gets a public gallery by slug (no authentication required).
-  Returns {:ok, gallery} or {:error, :not_found}.
+  Gets a public project by slug (no authentication required).
+  Returns {:ok, project} or {:error, :not_found}.
   """
-  def get_public_gallery_by_slug(slug) do
+  def get_public_project_by_slug(slug) do
     media_items_query = from m in MediaItem, order_by: m.inserted_at
 
-    case from(g in Gallery,
-           where: g.slug == ^slug and g.is_public == true and g.is_portfolio == true
+    case from(p in Project,
+           where: p.slug == ^slug and p.is_public == true and p.is_portfolio == true
          )
          |> Repo.one() do
       nil -> {:error, :not_found}
-      gallery -> {:ok, Repo.preload(gallery, [:user, media_items: media_items_query])}
+      project -> {:ok, Repo.preload(project, [:user, media_items: media_items_query])}
     end
   end
 
   @doc """
-  Gets a public gallery by slug (no authentication required).
+  Gets a public project by slug (no authentication required).
   Raises if not found.
   """
-  def get_public_gallery_by_slug!(slug) do
-    case get_public_gallery_by_slug(slug) do
-      {:ok, gallery} -> gallery
-      {:error, :not_found} -> raise Ecto.NoResultsError, queryable: Gallery
+  def get_public_project_by_slug!(slug) do
+    case get_public_project_by_slug(slug) do
+      {:ok, project} -> project
+      {:error, :not_found} -> raise Ecto.NoResultsError, queryable: Project
     end
   end
 
   @doc """
-  Gets usage information for a media item (which galleries/posts use it).
+  Gets usage information for a media item (which projects/posts use it).
   """
   def get_media_usage(%Scope{} = scope, media_item_id) do
     media_item = get_media_item!(scope, media_item_id)
 
-    galleries =
-      from(g in Gallery,
-        join: gm in GalleryMediaItem,
-        on: gm.gallery_id == g.id,
-        where: gm.media_item_id == ^media_item.id and g.user_id == ^scope.user.id,
-        select: g
+    projects =
+      from(p in Project,
+        join: pm in ProjectMediaItem,
+        on: pm.project_id == p.id,
+        where: pm.media_item_id == ^media_item.id and p.user_id == ^scope.user.id,
+        select: p
       )
       |> Repo.all()
 
     %{
       media_item: media_item,
-      galleries: galleries,
-      gallery_count: length(galleries)
+      projects: projects,
+      project_count: length(projects)
     }
+  end
+
+  ## Collaborators
+
+  @doc """
+  Returns the list of collaborators for a project.
+  """
+  def list_collaborators(%Scope{} = scope, project_id) do
+    # Verify project ownership
+    _project = get_project!(scope, project_id)
+
+    from(c in Collaborator,
+      where: c.project_id == ^project_id and c.user_id == ^scope.user.id,
+      order_by: [asc: c.display_order, asc: c.inserted_at]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Creates a collaborator for a project.
+  """
+  def create_collaborator(%Scope{} = scope, attrs) do
+    # Verify project ownership if project_id is provided
+    if attrs["project_id"] || attrs[:project_id] do
+      project_id = attrs["project_id"] || attrs[:project_id]
+      _project = get_project!(scope, project_id)
+    end
+
+    %Collaborator{}
+    |> Collaborator.changeset(attrs, scope)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a collaborator with scope check.
+  """
+  def update_collaborator(%Scope{} = scope, %Collaborator{} = collaborator, attrs) do
+    # Security check
+    true = collaborator.user_id == scope.user.id
+
+    collaborator
+    |> Collaborator.changeset(attrs, scope)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a collaborator with scope check.
+  """
+  def delete_collaborator(%Scope{} = scope, %Collaborator{} = collaborator) do
+    # Security check
+    true = collaborator.user_id == scope.user.id
+
+    Repo.delete(collaborator)
+  end
+
+  ## Affiliation Links
+
+  @doc """
+  Returns the list of affiliation links for a project.
+  """
+  def list_affiliation_links(%Scope{} = scope, project_id) do
+    # Verify project ownership
+    _project = get_project!(scope, project_id)
+
+    from(a in AffiliationLink,
+      where: a.project_id == ^project_id and a.user_id == ^scope.user.id,
+      order_by: [asc: a.display_order, asc: a.inserted_at]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Creates an affiliation link for a project.
+  """
+  def create_affiliation_link(%Scope{} = scope, attrs) do
+    # Verify project ownership if project_id is provided
+    if attrs["project_id"] || attrs[:project_id] do
+      project_id = attrs["project_id"] || attrs[:project_id]
+      _project = get_project!(scope, project_id)
+    end
+
+    %AffiliationLink{}
+    |> AffiliationLink.changeset(attrs, scope)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates an affiliation link with scope check.
+  """
+  def update_affiliation_link(%Scope{} = scope, %AffiliationLink{} = link, attrs) do
+    # Security check
+    true = link.user_id == scope.user.id
+
+    link
+    |> AffiliationLink.changeset(attrs, scope)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes an affiliation link with scope check.
+  """
+  def delete_affiliation_link(%Scope{} = scope, %AffiliationLink{} = link) do
+    # Security check
+    true = link.user_id == scope.user.id
+
+    Repo.delete(link)
+  end
+
+  ## Completion Tracking
+
+  @doc """
+  Updates the completion percentage for a project.
+
+  Recalculates based on all project fields including associations (collaborators, affiliation links).
+  This is called from the context layer after updating collaborators or links.
+  """
+  def update_project_completion(%Scope{} = scope, project_id) do
+    project =
+      get_project!(scope, project_id)
+      |> Repo.preload([:collaborators, :affiliation_links])
+
+    # Base calculation from schema: 60% max (name, description, category, tags, date, cover)
+    base_percentage = project.completion_percentage
+
+    # Add association bonuses
+    collaborator_bonus = if length(project.collaborators) > 0, do: 10, else: 0
+    link_bonus = if length(project.affiliation_links) > 0, do: 10, else: 0
+
+    total_percentage = min(base_percentage + collaborator_bonus + link_bonus, 100)
+
+    # Update only if changed
+    if total_percentage != project.completion_percentage do
+      project
+      |> Ecto.Changeset.change(completion_percentage: total_percentage)
+      |> Repo.update()
+    else
+      {:ok, project}
+    end
   end
 end
