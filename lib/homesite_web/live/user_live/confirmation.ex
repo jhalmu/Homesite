@@ -9,7 +9,7 @@ defmodule HomesiteWeb.UserLive.Confirmation do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="min-h-[calc(100vh-200px)] px-[var(--spacing-card)] py-[var(--spacing-xl)] flex items-center justify-center">
         <div class="max-w-[var(--card-max-width)] w-full">
-          <div class="mb-[var(--spacing-lg)] text-center">
+          <div class="mb-[var(--space-lg)] text-center">
             <.header>Welcome {@user.email}</.header>
           </div>
 
@@ -31,7 +31,10 @@ defmodule HomesiteWeb.UserLive.Confirmation do
             >
               Confirm and stay logged in
             </.button>
-            <.button phx-disable-with="Confirming..." class="btn btn-primary btn-soft mt-2 w-full">
+            <.button
+              phx-disable-with="Confirming..."
+              class="btn btn-primary btn-soft mt-[var(--space-xs)] w-full"
+            >
               Confirm and log in only this time
             </.button>
           </.form>
@@ -59,13 +62,16 @@ defmodule HomesiteWeb.UserLive.Confirmation do
               >
                 Keep me logged in on this device
               </.button>
-              <.button phx-disable-with="Logging in..." class="btn btn-primary btn-soft mt-2 w-full">
+              <.button
+                phx-disable-with="Logging in..."
+                class="btn btn-primary btn-soft mt-[var(--space-xs)] w-full"
+              >
                 Log me in only this time
               </.button>
             <% end %>
           </.form>
 
-          <p :if={!@user.confirmed_at} class="alert alert-outline mt-[var(--spacing-lg)]">
+          <p :if={!@user.confirmed_at} class="alert alert-outline mt-[var(--space-lg)]">
             Tip: If you prefer passwords, you can enable them in the user settings.
           </p>
         </div>

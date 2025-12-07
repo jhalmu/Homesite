@@ -41,7 +41,7 @@ defmodule HomesiteWeb.FeedbackLive.PromptModal do
                 <div class="text-xs">{gettext("Share your feedback and help us improve!")}</div>
               </div>
             </div>
-            <div class="flex gap-2">
+            <div class="gap-[var(--space-xs)] flex">
               <button
                 type="button"
                 class="btn btn-sm btn-primary"

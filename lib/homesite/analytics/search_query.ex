@@ -1,4 +1,10 @@
 defmodule Homesite.Analytics.SearchQuery do
+  @moduledoc """
+  Schema for tracking search queries and their results.
+
+  Stores search terms along with result counts broken down by content type
+  (posts, tags, FAQs) for search analytics and optimization.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

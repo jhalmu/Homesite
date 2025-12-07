@@ -46,32 +46,32 @@
         fill="#FD4F00"
       />
     </svg>
-    <div class="mt-10 flex items-center justify-between">
-      <h1 class="flex items-center text-sm font-semibold leading-6">
+    <div class="mt-[var(--space-md)] flex items-center justify-between">
+      <h1 class="text-[var(--text-sm)] flex items-center font-semibold leading-6">
         Phoenix Framework
-        <small class="badge badge-warning badge-sm ml-3">
+        <small class="badge badge-warning badge-sm ml-[var(--space-xs)]">
           v{Application.spec(:phoenix, :vsn)}
         </small>
       </h1>
       <Layouts.theme_toggle />
     </div>
 
-    <p class="text-[2rem] text-balance mt-4 font-semibold leading-10 tracking-tighter">
+    <p class="text-[clamp(1.5rem, 4vw, 2rem)] text-balance mt-[var(--space-xs)] font-semibold leading-10 tracking-tighter">
       Peace of mind from prototype to production.
     </p>
-    <p class="text-base-content/70 mt-4 leading-7">
+    <p class="text-base-content/70 mt-[var(--space-xs)] leading-7">
       Build rich, interactive web applications quickly, with less code and fewer moving parts. Join our growing community of developers using Phoenix to craft APIs, HTML5 apps and more, for fun or at scale.
     </p>
     <div class="flex">
       <div class="w-full sm:w-auto">
-        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-3">
+        <div class="mt-[var(--space-md)] gap-x-[var(--space-md)] gap-y-[var(--space-sm)] grid grid-cols-1 sm:grid-cols-3">
           <a
             href="https://hexdocs.pm/phoenix/overview.html"
-            class="group rounded-box relative px-6 py-4 text-sm font-semibold leading-6 sm:py-6"
+            class="group rounded-box px-[var(--space-md)] py-[var(--space-sm)] text-[var(--text-sm)] relative font-semibold leading-6 sm:py-[var(--space-md)]"
           >
             <span class="rounded-box bg-base-200 absolute inset-0 transition group-hover:bg-base-300 sm:group-hover:scale-105">
             </span>
-            <span class="relative flex items-center gap-4 sm:flex-col">
+            <span class="gap-[var(--space-sm)] relative flex items-center sm:flex-col">
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" class="h-6 w-6">
                 <path d="m12 4 10-2v18l-10 2V4Z" fill="currentColor" fill-opacity=".15" />
                 <path
@@ -87,11 +87,11 @@
           </a>
           <a
             href="https://github.com/phoenixframework/phoenix"
-            class="group rounded-box relative px-6 py-4 text-sm font-semibold leading-6 sm:py-6"
+            class="group rounded-box px-[var(--space-md)] py-[var(--space-sm)] text-[var(--text-sm)] relative font-semibold leading-6 sm:py-[var(--space-md)]"
           >
             <span class="rounded-box bg-base-200 absolute inset-0 transition group-hover:bg-base-300 sm:group-hover:scale-105">
             </span>
-            <span class="relative flex items-center gap-4 sm:flex-col">
+            <span class="gap-[var(--space-sm)] relative flex items-center sm:flex-col">
               <svg viewBox="0 0 24 24" aria-hidden="true" class="h-6 w-6">
                 <path
                   fill="currentColor"
@@ -105,11 +105,11 @@
           </a>
           <a
             href={"https://github.com/phoenixframework/phoenix/blob/v#{Application.spec(:phoenix, :vsn)}/CHANGELOG.md"}
-            class="group rounded-box relative px-6 py-4 text-sm font-semibold leading-6 sm:py-6"
+            class="group rounded-box px-[var(--space-md)] py-[var(--space-sm)] text-[var(--text-sm)] relative font-semibold leading-6 sm:py-[var(--space-md)]"
           >
             <span class="rounded-box bg-base-200 absolute inset-0 transition group-hover:bg-base-300 sm:group-hover:scale-105">
             </span>
-            <span class="relative flex items-center gap-4 sm:flex-col">
+            <span class="gap-[var(--space-sm)] relative flex items-center sm:flex-col">
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" class="h-6 w-6">
                 <path
                   d="M12 1v6M12 17v6"
@@ -134,11 +134,11 @@
             </span>
           </a>
         </div>
-        <div class="text-base-content/80 mt-10 grid grid-cols-1 gap-y-4 text-sm leading-6 sm:grid-cols-2">
+        <div class="text-base-content/80 mt-[var(--space-md)] gap-y-[var(--space-sm)] text-[var(--text-sm)] grid grid-cols-1 leading-6 sm:grid-cols-2">
           <div>
             <a
               href="https://elixirforum.com"
-              class="group -mx-2 -my-0.5 inline-flex items-center gap-3 rounded-lg px-2 py-0.5 hover:bg-base-200 hover:text-base-content"
+              class="group -mx-[var(--space-xs)] -my-[var(--space-inline)] gap-[var(--space-xs)] px-[var(--space-xs)] py-[var(--space-inline)] inline-flex items-center rounded-lg hover:bg-base-200 hover:text-base-content"
             >
               <svg
                 viewBox="0 0 16 16"
@@ -153,7 +153,7 @@
           <div>
             <a
               href="https://discord.gg/elixir"
-              class="group -mx-2 -my-0.5 inline-flex items-center gap-3 rounded-lg px-2 py-0.5 hover:bg-base-200 hover:text-base-content"
+              class="group -mx-[var(--space-xs)] -my-[var(--space-inline)] gap-[var(--space-xs)] px-[var(--space-xs)] py-[var(--space-inline)] inline-flex items-center rounded-lg hover:bg-base-200 hover:text-base-content"
             >
               <svg
                 viewBox="0 0 16 16"
@@ -168,7 +168,7 @@
           <div>
             <a
               href="https://elixir-slack.community/"
-              class="group -mx-2 -my-0.5 inline-flex items-center gap-3 rounded-lg px-2 py-0.5 hover:bg-base-200 hover:text-base-content"
+              class="group -mx-[var(--space-xs)] -my-[var(--space-inline)] gap-[var(--space-xs)] px-[var(--space-xs)] py-[var(--space-inline)] inline-flex items-center rounded-lg hover:bg-base-200 hover:text-base-content"
             >
               <svg
                 viewBox="0 0 16 16"
@@ -183,7 +183,7 @@
           <div>
             <a
               href="https://fly.io/docs/elixir/getting-started/"
-              class="group -mx-2 -my-0.5 inline-flex items-center gap-3 rounded-lg px-2 py-0.5 hover:bg-base-200 hover:text-base-content"
+              class="group -mx-[var(--space-xs)] -my-[var(--space-inline)] gap-[var(--space-xs)] px-[var(--space-xs)] py-[var(--space-inline)] inline-flex items-center rounded-lg hover:bg-base-200 hover:text-base-content"
             >
               <svg
                 viewBox="0 0 20 20"

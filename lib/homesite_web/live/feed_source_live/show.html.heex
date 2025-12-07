@@ -2,7 +2,7 @@
   <div class="technical-main">
     <.header>
       <div class="gap-[var(--space-sm)] flex items-center">
-        <span class="text-4xl">{@feed_source.icon}</span>
+        <span class="text-[clamp(2rem, 5vw, 2.25rem)]">{@feed_source.icon}</span>
         <div>
           {@feed_source.name}
           <.badge color={if @feed_source.enabled, do: :green, else: :gray}>
@@ -83,7 +83,7 @@
       </h2>
 
       <%= if Enum.empty?(@feed_items) do %>
-        <div class="py-12 text-center opacity-60">
+        <div class="py-[var(--space-lg)] text-center opacity-60">
           <.icon name="hero-rss" class="mb-[var(--space-sm)] mx-auto h-12 w-12 opacity-50" />
           <p class="text-[var(--text-lg)]">No feed items yet</p>
           <p class="mt-[var(--space-xs)] text-[var(--text-sm)]">

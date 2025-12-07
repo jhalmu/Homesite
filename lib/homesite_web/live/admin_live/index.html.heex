@@ -18,7 +18,7 @@
         <.icon name="hero-shield-check" class="h-6 w-6" />
         <div>
           <p class="font-semibold">{gettext("Admin Access Granted")}</p>
-          <p class="text-sm">
+          <p class="text-[var(--text-sm)]">
             {gettext("You have %{count} flower(s) - Admin Level %{level}",
               count: @flower_count,
               level: @flower_count
@@ -80,24 +80,24 @@
       </h2>
 
       <div class="gap-[var(--spacing-sm)] flex flex-wrap">
-        <.link navigate={~p"/dashboard"} class="btn btn-outline gap-2">
+        <.link navigate={~p"/dashboard"} class="btn btn-outline gap-[var(--space-xs)]">
           <.icon name="hero-home" class="h-5 w-5" /> {gettext("Back to User Dashboard")}
         </.link>
 
-        <.link navigate={~p"/admin/analytics"} class="btn btn-primary gap-2">
+        <.link navigate={~p"/admin/analytics"} class="btn btn-primary gap-[var(--space-xs)]">
           <.icon name="hero-chart-bar" class="h-5 w-5" /> {gettext("Analytics")}
         </.link>
 
         <%= if @flower_count >= 3 do %>
-          <.link navigate={~p"/admin/users"} class="btn btn-primary gap-2">
+          <.link navigate={~p"/admin/users"} class="btn btn-primary gap-[var(--space-xs)]">
             <.icon name="hero-users" class="h-5 w-5" /> {gettext("Manage Users")}
           </.link>
         <% end %>
 
-        <.link navigate={~p"/posts"} class="btn btn-outline gap-2">
+        <.link navigate={~p"/posts"} class="btn btn-outline gap-[var(--space-xs)]">
           <.icon name="hero-document-text" class="h-5 w-5" /> {gettext("View All Posts")}
         </.link>
-        <.link navigate={~p"/tags"} class="btn btn-outline gap-2">
+        <.link navigate={~p"/tags"} class="btn btn-outline gap-[var(--space-xs)]">
           <.icon name="hero-tag" class="h-5 w-5" /> {gettext("View All Tags")}
         </.link>
       </div>
@@ -124,7 +124,7 @@
             )}
           </p>
         </div>
-        <div class="card-actions mt-4 justify-end">
+        <div class="card-actions mt-[var(--space-sm)] justify-end">
           <span class="badge badge-lg badge-primary">
             {gettext("Your level:")}{@flower_count}
           </span>

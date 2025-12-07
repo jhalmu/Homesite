@@ -1,4 +1,10 @@
 defmodule Homesite.Analytics.ActivityLog do
+  @moduledoc """
+  Schema for tracking user activity and system events.
+
+  Records actions performed by users including resource changes,
+  IP addresses, and user agents for audit and analytics purposes.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

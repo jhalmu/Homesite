@@ -10,7 +10,7 @@ defmodule HomesiteWeb.UserLive.Login do
       <div class="min-h-[calc(100vh-200px)] px-[var(--spacing-card)] py-[var(--spacing-xl)] flex items-center justify-center">
         <div class="max-w-[var(--card-max-width)] w-full">
           <%!-- Header --%>
-          <div class="mb-[var(--spacing-lg)] text-center">
+          <div class="mb-[var(--space-lg)] text-center">
             <h1 class="text-[var(--font-size-fluid-2xl)] text-base-content font-bold">
               {gettext("Log in")}
             </h1>
@@ -29,7 +29,7 @@ defmodule HomesiteWeb.UserLive.Login do
           </div>
 
           <%!-- Dev mail adapter notice --%>
-          <div :if={local_mail_adapter?()} class="alert alert-info mb-[var(--spacing-md)]">
+          <div :if={local_mail_adapter?()} class="alert alert-info mb-[var(--space-md)]">
             <.icon name="hero-information-circle" class="size-6 shrink-0" />
             <div>
               <p class="text-[var(--font-size-fluid-sm)] font-semibold">
@@ -45,8 +45,8 @@ defmodule HomesiteWeb.UserLive.Login do
           </div>
 
           <%!-- Magic Link Login Card --%>
-          <div class="card bg-base-100 mb-[var(--spacing-md)] shadow-xl">
-            <div class="card-body gap-[var(--spacing-card)]">
+          <div class="card bg-base-100 mb-[var(--space-md)] shadow-xl">
+            <div class="card-body gap-[var(--space-md)]">
               <div>
                 <h2 class="text-[var(--font-size-fluid-lg)] card-title">
                   <.icon name="hero-envelope" class="h-6 w-6" />
@@ -82,13 +82,13 @@ defmodule HomesiteWeb.UserLive.Login do
             </div>
           </div>
 
-          <div class="divider text-[var(--font-size-fluid-sm)] text-base-content/50">
+          <div class="divider text-[var(--text-sm)] text-base-content/50">
             {gettext("or sign in with password")}
           </div>
 
           <%!-- Password Login Card --%>
           <div class="card bg-base-100 shadow-xl">
-            <div class="card-body gap-[var(--spacing-card)]">
+            <div class="card-body gap-[var(--space-md)]">
               <div>
                 <h2 class="text-[var(--font-size-fluid-lg)] card-title">
                   <.icon name="hero-lock-closed" class="h-6 w-6" />
@@ -143,7 +143,7 @@ defmodule HomesiteWeb.UserLive.Login do
           </div>
 
           <%!-- Security note --%>
-          <div class="mt-[var(--spacing-md)] text-center">
+          <div class="mt-[var(--space-md)] text-center">
             <p class="text-[var(--font-size-fluid-sm)] text-base-content/50">
               <.icon name="hero-shield-check" class="inline h-4 w-4" />
               {gettext("Your connection is secure and encrypted")}

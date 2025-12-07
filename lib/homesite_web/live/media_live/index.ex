@@ -142,7 +142,7 @@ defmodule HomesiteWeb.MediaLive.Index do
         </.header>
         
     <!-- Filters and Search -->
-        <div class="mt-[var(--spacing-lg)] gap-[var(--spacing-sm)] flex flex-col md:flex-row">
+        <div class="mt-[var(--spacing-lg)] gap-[var(--space-sm)] flex flex-col md:flex-row">
           <!-- Search -->
           <div class="flex-1">
             <.input
@@ -223,7 +223,7 @@ defmodule HomesiteWeb.MediaLive.Index do
                       class="h-full w-full object-cover"
                     />
                   </figure>
-                  <div class="card-body p-[var(--spacing-sm)]">
+                  <div class="card-body p-[var(--space-sm)]">
                     <%= if media.title do %>
                       <h3 class="card-title text-[var(--text-sm)]">{media.title}</h3>
                     <% else %>
@@ -232,12 +232,12 @@ defmodule HomesiteWeb.MediaLive.Index do
                       </h3>
                     <% end %>
 
-                    <div class="gap-[var(--spacing-inline)] text-[var(--text-xs)] flex flex-wrap opacity-70">
+                    <div class="gap-[var(--space-inline)] text-[var(--text-xs)] flex flex-wrap opacity-70">
                       <span class="badge badge-xs badge-ghost">{media.aspect_category}</span>
                       <span>{media.width}×{media.height}</span>
                     </div>
 
-                    <div class="card-actions mt-[var(--spacing-sm)] gap-[var(--spacing-inline)] justify-end">
+                    <div class="card-actions mt-[var(--space-sm)] gap-[var(--space-inline)] justify-end">
                       <button
                         phx-click="show-usage"
                         phx-value-id={media.id}

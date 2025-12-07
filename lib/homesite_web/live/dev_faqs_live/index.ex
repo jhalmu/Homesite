@@ -66,7 +66,7 @@ defmodule HomesiteWeb.DevFaqsLive.Index do
     ~H"""
     <div class="technical-main">
       <.header>
-        <div class="flex items-center gap-2">
+        <div class="gap-[var(--space-xs)] flex items-center">
           <.icon name="hero-code-bracket" class="h-8 w-8" /> Developer FAQs
         </div>
         <:subtitle>
@@ -75,7 +75,7 @@ defmodule HomesiteWeb.DevFaqsLive.Index do
       </.header>
       
     <!-- Category Filter -->
-      <div class="mt-8 flex flex-wrap gap-2">
+      <div class="mt-[var(--space-lg)] gap-[var(--space-xs)] flex flex-wrap">
         <button
           :if={@selected_category}
           phx-click="clear_filter"
@@ -98,15 +98,15 @@ defmodule HomesiteWeb.DevFaqsLive.Index do
       </div>
       
     <!-- Main Content with Sidebar -->
-      <div class="mt-8 flex gap-8">
+      <div class="mt-[var(--space-lg)] gap-[var(--space-lg)] flex">
         <!-- Main Content -->
-        <div class="flex-1 space-y-8">
+        <div class="space-y-[var(--space-lg)] flex-1">
           <article
             :for={article <- @articles}
             id={"article-#{article.id}"}
-            class="border-base-300 bg-base-100 prose prose-slate max-w-none rounded-lg border p-6 shadow-sm dark:prose-invert"
+            class="border-base-300 bg-base-100 p-[var(--space-md)] prose prose-slate max-w-none rounded-lg border shadow-sm dark:prose-invert"
           >
-            <div class="not-prose mb-4 flex items-center gap-2">
+            <div class="not-prose mb-[var(--space-sm)] gap-[var(--space-xs)] flex items-center">
               <span class="badge badge-primary badge-sm">
                 {article.category}
               </span>
@@ -118,11 +118,13 @@ defmodule HomesiteWeb.DevFaqsLive.Index do
     <!-- Empty State -->
           <div
             :if={@articles == []}
-            class="border-base-300 rounded-lg border-2 border-dashed p-12 text-center"
+            class="border-base-300 p-[var(--space-2xl)] rounded-lg border-2 border-dashed text-center"
           >
             <.icon name="hero-document-text" class="mx-auto h-12 w-12 opacity-50" />
-            <h3 class="mt-2 text-sm font-semibold">No articles found</h3>
-            <p class="mt-1 text-sm opacity-70">
+            <h3 class="mt-[var(--space-xs)] text-[var(--text-sm)] font-semibold">
+              No articles found
+            </h3>
+            <p class="mt-[var(--space-inline)] text-[var(--text-sm)] opacity-70">
               Try selecting a different category or clearing the filter.
             </p>
           </div>

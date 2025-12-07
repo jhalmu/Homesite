@@ -20,7 +20,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
       <div class="mt-6">
         <%!-- Search Form --%>
         <.form for={%{}} phx-change="search" phx-submit="search" class="mb-6">
-          <div class="flex gap-3">
+          <div class="flex gap-[var(--space-sm)]">
             <div class="flex-1">
               <input
                 type="text"
@@ -102,7 +102,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
                       <% end %>
                     </td>
                     <td>
-                      <span class="text-sm">
+                      <span class="text-[var(--text-sm)]">
                         {Calendar.strftime(user.inserted_at, "%B %d, %Y")}
                       </span>
                     </td>
@@ -127,7 +127,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
 
         <%!-- Pagination --%>
         <%= if @total_pages > 1 do %>
-          <div class="mt-6 flex justify-center gap-2">
+          <div class="mt-6 flex justify-center gap-[var(--space-xs)]">
             <button
               class="btn btn-sm"
               phx-click="prev_page"
@@ -136,7 +136,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
               <.icon name="hero-chevron-left" class="h-4 w-4" /> Previous
             </button>
 
-            <div class="flex gap-1">
+            <div class="flex gap-[var(--space-inline)]">
               <%= for page_num <- pagination_range(@page, @total_pages) do %>
                 <%= if page_num == :ellipsis do %>
                   <span class="btn btn-sm btn-disabled">...</span>
@@ -201,7 +201,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
                 </div>
               <% end %>
 
-              <div class="flex justify-end gap-2">
+              <div class="flex justify-end gap-[var(--space-xs)]">
                 <button type="button" phx-click="cancel_edit" class="btn btn-ghost">
                   Cancel
                 </button>

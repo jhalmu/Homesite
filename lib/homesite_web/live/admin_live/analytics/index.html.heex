@@ -4,11 +4,11 @@
     <:subtitle>Platform statistics and trends</:subtitle>
   </.header>
 
-  <div class="mt-8 space-y-8">
+  <div class="mt-[var(--space-lg)] space-y-[var(--space-lg)]">
     <%!-- User Metrics --%>
     <section>
-      <h2 class="mb-4 text-2xl font-semibold">User Metrics</h2>
-      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <h2 class="mb-[var(--space-sm)] text-[var(--text-xl)] font-semibold">User Metrics</h2>
+      <div class="gap-[var(--space-sm)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         <.stat_card
           title="Total Users"
           value={@user_stats.total_users}
@@ -38,8 +38,8 @@
 
     <%!-- Content Metrics --%>
     <section>
-      <h2 class="mb-4 text-2xl font-semibold">Content Metrics</h2>
-      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <h2 class="mb-[var(--space-sm)] text-[var(--text-xl)] font-semibold">Content Metrics</h2>
+      <div class="gap-[var(--space-sm)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         <.stat_card
           title="Total Posts"
           value={@content_stats.total_posts}
@@ -81,7 +81,7 @@
 
     <%!-- Top Authors --%>
     <section>
-      <h2 class="mb-4 text-2xl font-semibold">Top Authors</h2>
+      <h2 class="mb-[var(--space-sm)] text-[var(--text-xl)] font-semibold">Top Authors</h2>
       <div class="overflow-x-auto">
         <table class="table-zebra table w-full">
           <thead>
@@ -104,10 +104,10 @@
 
     <%!-- Popular Tags --%>
     <section>
-      <h2 class="mb-4 text-2xl font-semibold">Popular Tags</h2>
-      <div class="flex flex-wrap gap-2">
+      <h2 class="mb-[var(--space-sm)] text-[var(--text-xl)] font-semibold">Popular Tags</h2>
+      <div class="gap-[var(--space-xs)] flex flex-wrap">
         <%= for tag <- @content_stats.popular_tags do %>
-          <span class="badge badge-lg gap-2">
+          <span class="badge badge-lg gap-[var(--space-xs)]">
             {tag.name}
             <span class="badge badge-sm">{tag.usage_count}</span>
           </span>
@@ -118,7 +118,7 @@
     <%!-- Share Statistics --%>
     <%= if length(@share_stats) > 0 do %>
       <section>
-        <h2 class="mb-4 text-2xl font-semibold">Share Statistics</h2>
+        <h2 class="mb-[var(--space-sm)] text-[var(--text-xl)] font-semibold">Share Statistics</h2>
         <div class="overflow-x-auto">
           <table class="table-zebra table w-full">
             <thead>
@@ -143,7 +143,7 @@
     <%!-- Recent Shares --%>
     <%= if length(@recent_shares) > 0 do %>
       <section>
-        <h2 class="mb-4 text-2xl font-semibold">Recent Shares</h2>
+        <h2 class="mb-[var(--space-sm)] text-[var(--text-xl)] font-semibold">Recent Shares</h2>
         <div class="overflow-x-auto">
           <table class="table-zebra table w-full">
             <thead>
@@ -158,7 +158,7 @@
                 <tr>
                   <td><span class="badge">{share.platform}</span></td>
                   <td>{if share.post, do: share.post.title, else: "N/A"}</td>
-                  <td class="text-sm text-gray-600">
+                  <td class="text-[var(--text-sm)] text-gray-600">
                     {Calendar.strftime(share.inserted_at, "%B %d, %Y at %H:%M")}
                   </td>
                 </tr>

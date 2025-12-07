@@ -81,15 +81,15 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="px-[var(--spacing-card)] py-[var(--spacing-xl)] min-h-screen">
         <%!-- Header --%>
-        <div class="mb-8">
-          <h1 class="mb-2 text-4xl font-bold">{gettext("Feedback Analytics")}</h1>
+        <div class="mb-[var(--space-sm)]">
+          <h1 class="mb-[var(--space-xs)] text-4xl font-bold">{gettext("Feedback Analytics")}</h1>
           <p class="text-base-content/70">
             {gettext("Monitor user feedback, happiness trends, and moderate testimonials")}
           </p>
         </div>
 
         <%!-- Time Range Selector --%>
-        <div class="mb-8">
+        <div class="mb-[var(--space-sm)]">
           <div class="join">
             <button
               phx-click="filter_days"
@@ -116,15 +116,15 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
         </div>
 
         <%!-- Summary Stats --%>
-        <div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div class="mb-[var(--space-sm)] grid grid-cols-1 gap-[var(--space-sm)] md:grid-cols-3">
           <%!-- Happiness Score Card --%>
           <div class="card bg-base-200 shadow-xl">
             <div class="card-body">
-              <h2 class="card-title text-sm">{gettext("Happiness Score")}</h2>
+              <h2 class="card-title text-[var(--text-sm)]">{gettext("Happiness Score")}</h2>
               <div class="text-primary text-4xl font-bold">
                 {@analytics.happiness.score}%
               </div>
-              <p class="text-base-content/60 text-sm">
+              <p class="text-base-content/60 text-[var(--text-sm)]">
                 {confidence_text(@analytics.happiness.confidence)}
               </p>
             </div>
@@ -133,11 +133,11 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
           <%!-- Total Responses Card --%>
           <div class="card bg-base-200 shadow-xl">
             <div class="card-body">
-              <h2 class="card-title text-sm">{gettext("Total Responses")}</h2>
+              <h2 class="card-title text-[var(--text-sm)]">{gettext("Total Responses")}</h2>
               <div class="text-secondary text-4xl font-bold">
                 {@analytics.happiness.total_responses}
               </div>
-              <p class="text-base-content/60 text-sm">
+              <p class="text-base-content/60 text-[var(--text-sm)]">
                 {gettext("Last")} {@days} {gettext("days")}
               </p>
             </div>
@@ -146,11 +146,11 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
           <%!-- Pending Testimonials Card --%>
           <div class="card bg-base-200 shadow-xl">
             <div class="card-body">
-              <h2 class="card-title text-sm">{gettext("Pending Approval")}</h2>
+              <h2 class="card-title text-[var(--text-sm)]">{gettext("Pending Approval")}</h2>
               <div class="text-warning text-4xl font-bold">
                 {length(@pending_testimonials)}
               </div>
-              <p class="text-base-content/60 text-sm">
+              <p class="text-base-content/60 text-[var(--text-sm)]">
                 {gettext("Testimonials awaiting review")}
               </p>
             </div>
@@ -158,7 +158,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
         </div>
 
         <%!-- Happiness Trend Chart (Simplified) --%>
-        <div class="card bg-base-200 mb-8 shadow-xl">
+        <div class="card bg-base-200 mb-[var(--space-sm)] shadow-xl">
           <div class="card-body">
             <h2 class="card-title">{gettext("Happiness Trend")}</h2>
 
@@ -199,7 +199,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
         </div>
 
         <%!-- Response Rate by Rank --%>
-        <div class="card bg-base-200 mb-8 shadow-xl">
+        <div class="card bg-base-200 mb-[var(--space-sm)] shadow-xl">
           <div class="card-body">
             <h2 class="card-title">{gettext("Response Rate by User Rank")}</h2>
 
@@ -237,36 +237,36 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
 
         <%!-- Pending Testimonials (Moderation) --%>
         <%= if length(@pending_testimonials) > 0 do %>
-          <div class="card bg-base-200 mb-8 shadow-xl">
+          <div class="card bg-base-200 mb-[var(--space-sm)] shadow-xl">
             <div class="card-body">
               <h2 class="card-title">{gettext("Pending Testimonials")}</h2>
-              <p class="text-base-content/60 mb-4 text-sm">
+              <p class="text-base-content/60 mb-[var(--space-sm)] text-[var(--text-sm)]">
                 {gettext("Review and approve testimonials for public display")}
               </p>
 
-              <div class="space-y-4">
+              <div class="space-y-[var(--space-sm)]">
                 <%= for testimonial <- @pending_testimonials do %>
                   <div class="card bg-base-100 shadow">
                     <div class="card-body">
                       <%!-- Rating --%>
-                      <div class="mb-2 flex items-center gap-2">
+                      <div class="mb-[var(--space-xs)] flex items-center gap-[var(--space-xs)]">
                         <%= for _star <- 1..testimonial.overall_satisfaction do %>
                           <span class="text-orange-400">⭐</span>
                         <% end %>
-                        <span class="text-base-content/60 text-sm">
+                        <span class="text-base-content/60 text-[var(--text-sm)]">
                           {Calendar.strftime(testimonial.inserted_at, "%B %d, %Y")}
                         </span>
                       </div>
 
                       <%!-- Feedback Text --%>
                       <%= if testimonial.open_feedback do %>
-                        <blockquote class="border-primary mb-4 border-l-4 pl-4">
+                        <blockquote class="border-primary mb-[var(--space-sm)] border-l-4 pl-4">
                           "{testimonial.open_feedback}"
                         </blockquote>
                       <% end %>
 
                       <%!-- User Info --%>
-                      <div class="mb-4 flex items-center gap-2 text-sm">
+                      <div class="mb-[var(--space-sm)] flex items-center gap-[var(--space-xs)] text-[var(--text-sm)]">
                         <%= if testimonial.user do %>
                           <span class="font-semibold">
                             {testimonial.user.display_name || testimonial.user.email}
@@ -327,7 +327,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
                           <% end %>
                         </td>
                         <td>
-                          <div class="flex items-center gap-1">
+                          <div class="flex items-center gap-[var(--space-inline)]">
                             {feedback.overall_satisfaction}
                             <span class="text-orange-400">⭐</span>
                           </div>

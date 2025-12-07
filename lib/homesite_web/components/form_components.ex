@@ -295,11 +295,11 @@ defmodule HomesiteWeb.FormComponents do
 
     ~H"""
     <%= if @items != [] do %>
-      <div class="alert alert-warning mt-3">
+      <div class="alert alert-warning mt-[var(--space-xs)]">
         <.icon name="hero-information-circle" />
         <div>
           <p class="font-semibold">{@message}</p>
-          <div class="mt-1 flex flex-wrap gap-2">
+          <div class="mt-[var(--space-inline)] gap-[var(--space-xs)] flex flex-wrap">
             <%= for item <- @items do %>
               <button
                 type="button"

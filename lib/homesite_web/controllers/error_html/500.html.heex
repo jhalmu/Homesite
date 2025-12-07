@@ -2,23 +2,23 @@
   flash={Map.get(assigns, :flash, %{})}
   current_scope={Map.get(assigns, :current_scope, nil)}
 >
-  <div class="py-24 sm:py-32">
+  <div class="py-[var(--space-lg)] sm:py-[var(--space-xl)]">
     <div class="text-center">
       <div class="alert alert-error inline-block">
         <.icon name="hero-exclamation-circle" class="size-6" />
-        <span class="text-2xl font-bold">500</span>
+        <span class="text-[var(--text-xl)] font-bold">500</span>
       </div>
-      <h1 class="mt-6 text-3xl font-bold tracking-tight sm:text-5xl">
+      <h1 class="mt-[var(--space-md)] text-[var(--text-2xl)] font-bold tracking-tight sm:text-[clamp(1.875rem, 5vw, 3rem)]">
         No joo. Rauta aina välillä tekee näin.
       </h1>
-      <p class="text-base-content/80 mt-2 text-2xl font-semibold">
+      <p class="text-base-content/80 mt-[var(--space-xs)] text-[var(--text-xl)] font-semibold">
         Internal Server Error
       </p>
-      <p class="text-base-content/70 mt-6">
+      <p class="text-base-content/70 mt-[var(--space-md)]">
         Ihme että ees näät tän sivun, paukahdus oli kova.<br />
         Sorry, something went wrong. We're working on it.
       </p>
-      <.link navigate={~p"/"} class="btn btn-primary mt-6">
+      <.link navigate={~p"/"} class="btn btn-primary mt-[var(--space-md)]">
         <.icon name="hero-arrow-left" class="size-4" />
         <span>Takas / Go back home</span>
       </.link>

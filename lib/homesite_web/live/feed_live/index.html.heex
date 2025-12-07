@@ -152,7 +152,7 @@
                 <div class="mt-[var(--spacing-sm)] pt-[var(--spacing-sm)] border-base-300 border-t">
                   <div class="gap-[var(--spacing-inline)] flex items-center justify-between">
                     <div class="gap-[var(--spacing-inline)] flex items-center">
-                      <%= if is_read?(item) do %>
+                      <%= if read?(item) do %>
                         <button
                           phx-click="mark_unread"
                           phx-value-id={item.feed_item.id}
@@ -177,15 +177,15 @@
                         phx-value-id={item.feed_item.id}
                         class={[
                           "btn btn-xs btn-ghost gap-[var(--spacing-inline)]",
-                          is_bookmarked?(item) && "text-warning"
+                          bookmarked?(item) && "text-warning"
                         ]}
                         title={
-                          if is_bookmarked?(item),
+                          if bookmarked?(item),
                             do: gettext("Remove bookmark"),
                             else: gettext("Bookmark")
                         }
                       >
-                        <%= if is_bookmarked?(item) do %>
+                        <%= if bookmarked?(item) do %>
                           <.icon name="hero-star-solid" class="h-3 w-3" />
                         <% else %>
                           <.icon name="hero-star" class="h-3 w-3" />
@@ -213,7 +213,7 @@
     
 <!-- Load more button -->
     <%= if @has_more do %>
-      <div class="mt-8 text-center">
+      <div class="mt-[var(--space-lg)] text-center">
         <button phx-click="load_more" class="btn btn-outline">
           {gettext("Load More")}
         </button>

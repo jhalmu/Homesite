@@ -36,7 +36,7 @@ defmodule HomesiteWeb.PortfolioLive.Index do
               </span>
             </div>
           <% else %>
-            <div class="gap-[var(--spacing-lg)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            <div class="gap-[var(--space-lg)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
               <%= for gallery <- @galleries do %>
                 <article class="listing-card card bg-base-200 duration-[var(--duration-normal)] shadow-lg transition-shadow hover:shadow-xl">
                   <!-- Cover image if available -->
@@ -65,24 +65,24 @@ defmodule HomesiteWeb.PortfolioLive.Index do
                       </p>
                     <% end %>
 
-                    <div class="mt-[var(--spacing-sm)]">
-                      <div class="badge badge-primary gap-[var(--spacing-inline)]">
+                    <div class="mt-[var(--space-sm)]">
+                      <div class="badge badge-primary gap-[var(--space-inline)]">
                         <.icon name="hero-briefcase" class="h-3 w-3" />
                         {gettext("Portfolio")}
                       </div>
                     </div>
 
-                    <div class="card-actions mt-[var(--spacing-sm)] justify-end">
+                    <div class="card-actions mt-[var(--space-sm)] justify-end">
                       <.link navigate={~p"/portfolio/#{gallery.slug}"} class="btn btn-primary btn-sm">
                         {gettext("View Gallery")}
                         <.icon name="hero-arrow-right" class="h-4 w-4" />
                       </.link>
                     </div>
-                    
+
     <!-- Author info -->
                     <%= if gallery.user do %>
                       <div class="divider"></div>
-                      <div class="text-base-content/60 gap-[var(--spacing-xs)] text-[var(--text-xs)] flex items-center">
+                      <div class="text-base-content/60 gap-[var(--space-xs)] text-[var(--text-xs)] flex items-center">
                         <.icon name="hero-user-circle" class="h-4 w-4" />
                         <span>{gallery.user.display_name || gallery.user.email}</span>
                       </div>

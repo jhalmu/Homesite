@@ -59,8 +59,8 @@ defmodule HomesiteWeb.FeedSourceLive.Index do
     cond do
       diff_seconds < 60 -> "just now"
       diff_seconds < 3600 -> "#{div(diff_seconds, 60)}m ago"
-      diff_seconds < 86400 -> "#{div(diff_seconds, 3600)}h ago"
-      diff_seconds < 604_800 -> "#{div(diff_seconds, 86400)}d ago"
+      diff_seconds < 86_400 -> "#{div(diff_seconds, 3600)}h ago"
+      diff_seconds < 604_800 -> "#{div(diff_seconds, 86_400)}d ago"
       true -> Calendar.strftime(datetime, "%B %d, %Y")
     end
   end
@@ -72,7 +72,7 @@ defmodule HomesiteWeb.FeedSourceLive.Index do
       |> assign(:color_class, badge_color_class(assigns[:color] || :blue))
 
     ~H"""
-    <span class={["inline-flex items-center rounded-md px-2 py-1 text-xs font-medium", @color_class]}>
+    <span class={["inline-flex items-center rounded-md px-[var(--space-xs)] py-[var(--space-inline)] text-[var(--text-xs)] font-medium", @color_class]}>
       {render_slot(@inner_block)}
     </span>
     """

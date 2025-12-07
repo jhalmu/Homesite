@@ -16,8 +16,8 @@ defmodule HomesiteWeb.UserLive.Profile do
     <Layouts.app flash={@flash} current_scope={assigns[:current_scope]}>
       <div class="w-[min(95vw,800px)] mx-auto">
         <%!-- Profile Header - Compact layout with avatar beside bio --%>
-        <div class="my-[var(--spacing-lg)]">
-          <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
+        <div class="my-[var(--space-lg)]">
+          <div class="gap-[var(--space-sm)] flex flex-col items-center sm:flex-row sm:items-start">
             <.avatar user={@user} class="h-20 w-20 shrink-0 sm:h-24 sm:w-24" />
 
             <div class="flex-1 text-center sm:text-left">
@@ -27,7 +27,7 @@ defmodule HomesiteWeb.UserLive.Profile do
 
               <p
                 :if={@user.bio}
-                class="text-base-content/80 mt-2 whitespace-pre-wrap text-sm"
+                class="text-base-content/80 mt-[var(--space-xs)] text-[var(--text-sm)] whitespace-pre-wrap"
               >
                 {@user.bio}
               </p>
@@ -35,7 +35,7 @@ defmodule HomesiteWeb.UserLive.Profile do
               <%!-- Social links inline --%>
               <div
                 :if={has_social_links?(@user)}
-                class="mt-3 flex flex-wrap justify-center gap-2 sm:justify-start"
+                class="mt-[var(--space-sm)] gap-[var(--space-xs)] flex flex-wrap justify-center sm:justify-start"
               >
                 <.link
                   :if={@user.website_url}
@@ -72,26 +72,26 @@ defmodule HomesiteWeb.UserLive.Profile do
         </div>
         
     <!-- Recent Posts Highlight -->
-        <div :if={@recent_posts != []} class="my-[var(--spacing-lg)]">
-          <h2 class="text-[var(--font-size-fluid-lg)] mb-[var(--spacing-card)] flex items-center gap-2 font-bold">
+        <div :if={@recent_posts != []} class="my-[var(--space-lg)]">
+          <h2 class="text-[var(--font-size-fluid-lg)] mb-[var(--space-md)] gap-[var(--space-xs)] flex items-center font-bold">
             <.icon name="hero-sparkles" class="h-5 w-5" /> Recent Posts
           </h2>
 
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div class="gap-[var(--space-sm)] grid grid-cols-1 md:grid-cols-3">
             <.link
               :for={post <- @recent_posts}
               navigate={~p"/posts/#{post}"}
               class="card card-compact bg-base-200 group transition-colors hover:bg-base-300"
             >
-              <div class="card-body p-4">
-                <h3 class="line-clamp-2 mb-2 text-base font-semibold transition-colors group-hover:text-primary">
+              <div class="card-body p-[var(--space-sm)]">
+                <h3 class="line-clamp-2 mb-[var(--space-xs)] text-base font-semibold transition-colors group-hover:text-primary">
                   {post.title}
                 </h3>
-                <p class="text-base-content/60 line-clamp-3 mb-3 text-xs">
+                <p class="text-base-content/60 line-clamp-3 mb-[var(--space-sm)] text-[var(--text-xs)]">
                   {String.slice(post.body, 0..120)}{if String.length(post.body) > 120,
                     do: "..."}
                 </p>
-                <div class="text-base-content/50 mt-auto flex items-center gap-2 text-xs">
+                <div class="text-base-content/50 gap-[var(--space-xs)] text-[var(--text-xs)] mt-auto flex items-center">
                   <time>
                     {Calendar.strftime(post.published_at, "%b %d")}
                   </time>
@@ -104,9 +104,9 @@ defmodule HomesiteWeb.UserLive.Profile do
         </div>
         
     <!-- Stats & Actions - Column layout -->
-        <div class="bg-base-200 my-[var(--spacing-md)] rounded-lg p-4">
+        <div class="bg-base-200 my-[var(--space-md)] p-[var(--space-sm)] rounded-lg">
           <%!-- Stats in columns --%>
-          <div class="mb-3 grid grid-cols-3 gap-4 text-center text-sm">
+          <div class="mb-[var(--space-sm)] gap-[var(--space-sm)] text-[var(--text-sm)] grid grid-cols-3 text-center">
             <div>
               <div class="text-primary text-xl font-bold">{@stats.posts_count}</div>
               <div class="text-base-content/60 text-xs">posts</div>
@@ -122,7 +122,7 @@ defmodule HomesiteWeb.UserLive.Profile do
           </div>
 
           <%!-- Actions row --%>
-          <div class="border-base-300 flex flex-wrap justify-center gap-2 border-t pt-3">
+          <div class="border-base-300 gap-[var(--space-xs)] pt-[var(--space-sm)] flex flex-wrap justify-center border-t">
             <%= if @user.username do %>
               <a href={~p"/users/@#{@user.username}/rss.xml"} class="btn btn-xs btn-ghost gap-1">
                 <.icon name="hero-rss" class="h-3 w-3" /> RSS
@@ -142,18 +142,18 @@ defmodule HomesiteWeb.UserLive.Profile do
         </div>
         
     <!-- What I'm Reading Section -->
-        <div :if={@feed_sources != []} class="my-[var(--spacing-md)]">
-          <h2 class="text-base-content/60 mb-2 flex items-center gap-2 text-sm font-medium">
+        <div :if={@feed_sources != []} class="my-[var(--space-md)]">
+          <h2 class="text-base-content/60 mb-[var(--space-xs)] gap-[var(--space-xs)] text-[var(--text-sm)] flex items-center font-medium">
             <.icon name="hero-newspaper" class="h-4 w-4" /> What I'm Reading
           </h2>
 
-          <div class="flex flex-wrap gap-2">
+          <div class="gap-[var(--space-xs)] flex flex-wrap">
             <a
               :for={source <- @feed_sources}
               href={source.url}
               target="_blank"
               rel="noopener noreferrer"
-              class="border-base-300 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm transition-colors hover:border-primary hover:text-primary"
+              class="border-base-300 gap-[var(--space-inline)] px-[var(--space-sm)] py-[var(--space-inline)] text-[var(--text-sm)] inline-flex items-center rounded-full border transition-colors hover:border-primary hover:text-primary"
             >
               <span>{source.icon}</span>
               <span class="font-medium">{source.name}</span>
@@ -163,13 +163,16 @@ defmodule HomesiteWeb.UserLive.Profile do
 
         <div class="divider"></div>
 
-        <div :if={@posts != []} class="my-[var(--spacing-lg)]">
-          <h2 class="text-[var(--font-size-fluid-lg)] mb-3 font-bold">
+        <div :if={@posts != []} class="my-[var(--space-lg)]">
+          <h2 class="text-[var(--font-size-fluid-lg)] mb-[var(--space-sm)] font-bold">
             Published Posts
           </h2>
 
           <div class="divide-base-300 divide-y">
-            <article :for={post <- @posts} class="flex items-end gap-4 py-3">
+            <article
+              :for={post <- @posts}
+              class="gap-[var(--space-sm)] py-[var(--space-sm)] flex items-end"
+            >
               <div class="min-w-0 flex-1">
                 <.link navigate={~p"/posts/#{post}"} class="group">
                   <h3 class="text-base font-semibold transition-colors group-hover:text-primary">
@@ -177,13 +180,13 @@ defmodule HomesiteWeb.UserLive.Profile do
                   </h3>
                 </.link>
 
-                <div class="text-base-content/60 mt-1 flex items-center gap-2 text-xs">
+                <div class="text-base-content/60 mt-[var(--space-inline)] gap-[var(--space-xs)] text-[var(--text-xs)] flex items-center">
                   <time>{Calendar.strftime(post.published_at, "%B %d, %Y")}</time>
                   <span>·</span>
                   <span>{post.read_time_minutes} min</span>
                 </div>
 
-                <p class="text-base-content/70 line-clamp-2 mt-1 text-sm">
+                <p class="text-base-content/70 line-clamp-2 mt-[var(--space-inline)] text-[var(--text-sm)]">
                   {String.slice(post.body, 0..150)}{if String.length(post.body) > 150, do: "..."}
                 </p>
               </div>
@@ -198,7 +201,7 @@ defmodule HomesiteWeb.UserLive.Profile do
 
           <%!-- Load More Button --%>
           <%= if @has_more_posts do %>
-            <div class="mt-[var(--spacing-lg)] text-center">
+            <div class="mt-[var(--space-lg)] text-center">
               <button phx-click="load_more_posts" class="btn btn-outline btn-wide">
                 {gettext("Load More Posts")}
               </button>
@@ -206,7 +209,7 @@ defmodule HomesiteWeb.UserLive.Profile do
           <% end %>
         </div>
 
-        <div :if={@posts == []} class="my-[var(--spacing-xl)] text-center text-gray-600">
+        <div :if={@posts == []} class="my-[var(--space-lg)] text-center text-gray-600">
           <p class="text-[var(--font-size-fluid-base)]">No published posts yet.</p>
         </div>
       </div>

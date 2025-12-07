@@ -34,9 +34,9 @@ defmodule HomesiteWeb.UserLive.Settings do
           phx-submit="update_profile"
           phx-change="validate_profile"
         >
-          <div class="gap-[var(--spacing-card)] flex flex-col items-center">
+          <div class="gap-[var(--space-md)] flex flex-col items-center">
             <div
-              class="gap-[var(--spacing-md)] flex flex-col items-center"
+              class="gap-[var(--space-md)] flex flex-col items-center"
               id="avatar-upload-container"
               phx-hook="AvatarPreview"
             >
@@ -46,7 +46,7 @@ defmodule HomesiteWeb.UserLive.Settings do
                 class="file-input file-input-bordered"
                 style="min-width: 20rem;"
               />
-              <p class="mb-[var(--spacing-md)] text-sm text-gray-600 dark:text-gray-400">
+              <p class="mb-[var(--space-md)] text-[var(--text-sm)] text-gray-600 dark:text-gray-400">
                 {gettext(
                   "Upload a new avatar (JPG, PNG, max 5MB) or leave empty for auto-generated avatar"
                 )}
@@ -139,7 +139,7 @@ defmodule HomesiteWeb.UserLive.Settings do
             </:help>
           </.input>
           <%= if @avatar_pending do %>
-            <div class="alert alert-warning mb-4">
+            <div class="alert alert-warning mb-[var(--space-sm)]">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-6 w-6 shrink-0 stroke-current"
@@ -236,23 +236,23 @@ defmodule HomesiteWeb.UserLive.Settings do
         <%= if assigns[:show_celebration] && @show_celebration do %>
           <div class="modal modal-open">
             <div class="modal-box max-w-2xl">
-              <h3 class="mb-4 text-2xl font-bold">
+              <h3 class="mb-[var(--space-sm)] text-[var(--text-2xl)] font-bold">
                 🎉 {gettext("Congratulations! Your Username is Live!")}
               </h3>
 
-              <p class="mb-6 text-lg">
+              <p class="mb-[var(--space-md)] text-lg">
                 {gettext("Your personal homepage is now available at:")}
               </p>
 
-              <div class="bg-base-200 mb-6 rounded-lg p-4">
+              <div class="bg-base-200 mb-[var(--space-md)] p-[var(--space-sm)] rounded-lg">
                 <code class="break-all text-lg">
                   {url(~p"/users/@#{@current_scope.user.username}")}
                 </code>
               </div>
 
-              <p class="mb-6">{gettext("Share your new homepage with the world!")}</p>
+              <p class="mb-[var(--space-md)]">{gettext("Share your new homepage with the world!")}</p>
 
-              <div class="mb-4 flex gap-3">
+              <div class="mb-[var(--space-sm)] gap-[var(--space-sm)] flex">
                 <button type="button" phx-click="share_username" class="btn btn-primary flex-1">
                   <.icon name="hero-share" class="h-5 w-5" />
                   {gettext("Share")}

@@ -13,7 +13,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
       </.header>
 
       <%!-- Recent Activity - at top for quick access --%>
-      <div class="mt-8">
+      <div class="mt-[var(--space-lg)]">
         <.dashboard_card variant="content">
           <h3 class="card-title">Recent Activity</h3>
           <div class="overflow-x-auto">
@@ -29,7 +29,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
               <tbody>
                 <%= for log <- @activity_logs do %>
                   <tr>
-                    <td class="text-xs">
+                    <td class="text-[var(--text-xs)]">
                       {Calendar.strftime(log.inserted_at, "%B %d, %Y at %H:%M")}
                     </td>
                     <td>{(log.user && log.user.email) || "Unknown"}</td>
@@ -50,47 +50,51 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
       </div>
 
       <%!-- Search Statistics - combined view --%>
-      <div class="mt-8">
+      <div class="mt-[var(--space-lg)]">
         <.dashboard_card variant="content">
           <h3 class="card-title">Search Statistics</h3>
-          <p class="text-base-content/60 mb-4 text-sm">Last 7 days</p>
+          <p class="text-base-content/60 mb-[var(--space-sm)] text-[var(--text-sm)]">Last 7 days</p>
 
           <%!-- Summary stats in compact grid --%>
-          <div class="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+          <div class="mb-[var(--space-md)] gap-[var(--space-sm)] grid grid-cols-2 md:grid-cols-4">
             <div class="text-center">
-              <p class="text-primary text-2xl font-bold">{@search_stats.total_searches || 0}</p>
-              <p class="text-base-content/60 text-xs">Total Searches</p>
+              <p class="text-primary text-[var(--text-2xl)] font-bold">
+                {@search_stats.total_searches || 0}
+              </p>
+              <p class="text-base-content/60 text-[var(--text-xs)]">Total Searches</p>
             </div>
             <div class="text-center">
-              <p class="text-secondary text-2xl font-bold">
+              <p class="text-secondary text-[var(--text-2xl)] font-bold">
                 {if @search_stats.avg_duration_ms,
                   do: "#{@search_stats.avg_duration_ms |> Decimal.to_float() |> Float.round(1)}ms",
                   else: "N/A"}
               </p>
-              <p class="text-base-content/60 text-xs">Avg Response</p>
+              <p class="text-base-content/60 text-[var(--text-xs)]">Avg Response</p>
             </div>
             <div class="text-center">
-              <p class="text-accent text-2xl font-bold">
+              <p class="text-accent text-[var(--text-2xl)] font-bold">
                 {if @search_stats.zero_results_pct,
                   do: "#{@search_stats.zero_results_pct}%",
                   else: "0%"}
               </p>
-              <p class="text-base-content/60 text-xs">No Results</p>
+              <p class="text-base-content/60 text-[var(--text-xs)]">No Results</p>
             </div>
             <div class="text-center">
-              <p class="text-info text-2xl font-bold">
+              <p class="text-info text-[var(--text-2xl)] font-bold">
                 {if @search_stats.avg_results,
                   do: @search_stats.avg_results |> Decimal.to_float() |> Float.round(1),
                   else: 0}
               </p>
-              <p class="text-base-content/60 text-xs">Avg Results</p>
+              <p class="text-base-content/60 text-[var(--text-xs)]">Avg Results</p>
             </div>
           </div>
 
           <%!-- Popular searches and no-results in side-by-side tables --%>
-          <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <div class="gap-[var(--space-md)] grid grid-cols-1 lg:grid-cols-2">
             <div>
-              <h4 class="text-base-content/80 mb-2 font-semibold">Popular Searches</h4>
+              <h4 class="text-base-content/80 mb-[var(--space-xs)] font-semibold">
+                Popular Searches
+              </h4>
               <div class="overflow-x-auto">
                 <table class="table-sm table">
                   <thead>
@@ -102,7 +106,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
                   <tbody>
                     <%= for search <- @popular_searches do %>
                       <tr>
-                        <td class="font-mono text-sm">{search.query}</td>
+                        <td class="font-mono text-[var(--text-sm)]">{search.query}</td>
                         <td class="text-right">{search.count}</td>
                       </tr>
                     <% end %>
@@ -112,8 +116,10 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
             </div>
 
             <div>
-              <h4 class="text-base-content/80 mb-2 font-semibold">Content Gaps</h4>
-              <p class="text-base-content/50 mb-2 text-xs">Searches with no results</p>
+              <h4 class="text-base-content/80 mb-[var(--space-xs)] font-semibold">Content Gaps</h4>
+              <p class="text-base-content/50 mb-[var(--space-xs)] text-[var(--text-xs)]">
+                Searches with no results
+              </p>
               <div class="overflow-x-auto">
                 <table class="table-sm table">
                   <thead>
@@ -125,7 +131,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
                   <tbody>
                     <%= for search <- @no_result_searches do %>
                       <tr>
-                        <td class="font-mono text-sm">{search.query}</td>
+                        <td class="font-mono text-[var(--text-sm)]">{search.query}</td>
                         <td class="text-right">{search.count}</td>
                       </tr>
                     <% end %>

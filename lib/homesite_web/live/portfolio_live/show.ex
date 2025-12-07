@@ -42,25 +42,25 @@ defmodule HomesiteWeb.PortfolioLive.Show do
         </.header>
         
     <!-- Gallery metadata -->
-        <div class="mt-[var(--spacing-md)] gap-[var(--spacing-xs)] flex flex-wrap items-center">
-          <div class="badge badge-primary gap-[var(--spacing-inline)]">
+        <div class="mt-[var(--space-md)] gap-[var(--space-xs)] flex flex-wrap items-center">
+          <div class="badge badge-primary gap-[var(--space-inline)]">
             <.icon name="hero-briefcase" class="h-3 w-3" />
             {gettext("Portfolio")}
           </div>
 
-          <div class="badge badge-success gap-[var(--spacing-inline)]">
+          <div class="badge badge-success gap-[var(--space-inline)]">
             <.icon name="hero-globe-alt" class="h-3 w-3" />
             {gettext("Public")}
           </div>
 
           <%= if @gallery.user do %>
-            <div class="text-base-content/60 ml-[var(--spacing-sm)] gap-[var(--spacing-xs)] text-[var(--text-sm)] flex items-center">
+            <div class="text-base-content/60 ml-[var(--space-sm)] gap-[var(--space-xs)] text-[var(--text-sm)] flex items-center">
               <.icon name="hero-user-circle" class="h-4 w-4" />
               <span>{@gallery.user.display_name || @gallery.user.email}</span>
             </div>
           <% end %>
         </div>
-        
+
     <!-- Media items grid -->
         <div class="mt-[var(--spacing-lg)]">
           <%= if Enum.empty?(@gallery.media_items) do %>
@@ -75,14 +75,14 @@ defmodule HomesiteWeb.PortfolioLive.Show do
             </div>
           <% else %>
             <!-- Statistics -->
-            <div class="mb-[var(--spacing-md)] text-base-content/60 text-[var(--text-sm)]">
+            <div class="mb-[var(--space-md)] text-base-content/60 text-[var(--text-sm)]">
               {gettext("%{count} image(s)", count: length(@gallery.media_items))}
             </div>
-            
+
     <!-- Masonry-style grid for varied aspect ratios -->
-            <div class="gap-[var(--spacing-md)] columns-1 sm:columns-2 md:columns-3 lg:columns-4">
+            <div class="gap-[var(--space-md)] columns-1 sm:columns-2 md:columns-3 lg:columns-4">
               <%= for media <- @gallery.media_items do %>
-                <article class="mb-[var(--spacing-md)] break-inside-avoid">
+                <article class="mb-[var(--space-md)] break-inside-avoid">
                   <div class="card bg-base-200 duration-[var(--duration-normal)] overflow-hidden shadow-lg transition-shadow hover:shadow-xl">
                     <figure class="bg-base-300 overflow-hidden">
                       <img
@@ -94,7 +94,7 @@ defmodule HomesiteWeb.PortfolioLive.Show do
                     </figure>
 
                     <%= if media.title || media.caption do %>
-                      <div class="card-body p-[var(--spacing-sm)]">
+                      <div class="card-body p-[var(--space-sm)]">
                         <%= if media.title do %>
                           <h3 class="card-title text-[var(--text-sm)]">{media.title}</h3>
                         <% end %>
@@ -103,7 +103,7 @@ defmodule HomesiteWeb.PortfolioLive.Show do
                           <p class="text-base-content/70 text-[var(--text-xs)]">{media.caption}</p>
                         <% end %>
 
-                        <div class="mt-[var(--spacing-xs)] gap-[var(--spacing-inline)] text-[var(--text-xs)] flex flex-wrap opacity-70">
+                        <div class="mt-[var(--space-xs)] gap-[var(--space-inline)] text-[var(--text-xs)] flex flex-wrap opacity-70">
                           <span class="badge badge-xs badge-ghost">{media.aspect_category}</span>
                           <span>{media.width}×{media.height}</span>
                         </div>

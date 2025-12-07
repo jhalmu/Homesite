@@ -227,9 +227,9 @@ defmodule HomesiteWeb.FeedLive.Index do
     end
   end
 
-  defp is_read?(%{interaction: nil}), do: false
-  defp is_read?(%{interaction: interaction}), do: not is_nil(interaction.read_at)
+  defp read?(%{interaction: nil}), do: false
+  defp read?(%{interaction: interaction}), do: not is_nil(interaction.read_at)
 
-  defp is_bookmarked?(%{interaction: nil}), do: false
-  defp is_bookmarked?(%{interaction: interaction}), do: not is_nil(interaction.bookmarked_at)
+  defp bookmarked?(%{interaction: nil}), do: false
+  defp bookmarked?(%{interaction: interaction}), do: not is_nil(interaction.bookmarked_at)
 end

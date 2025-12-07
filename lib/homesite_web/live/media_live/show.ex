@@ -73,7 +73,7 @@ defmodule HomesiteWeb.MediaLive.Show do
           </:actions>
         </.header>
 
-        <div class="mt-[var(--spacing-lg)] gap-[var(--spacing-lg)] grid grid-cols-1 lg:grid-cols-2">
+        <div class="mt-[var(--spacing-lg)] gap-[var(--space-lg)] grid grid-cols-1 lg:grid-cols-2">
           <!-- Image Preview -->
           <div class="card bg-base-200 shadow-lg">
             <figure class="bg-base-300">
@@ -86,7 +86,7 @@ defmodule HomesiteWeb.MediaLive.Show do
           </div>
           
     <!-- Media Details -->
-          <div class="space-y-[var(--spacing-md)]">
+          <div class="space-y-[var(--space-md)]">
             <!-- Metadata Card -->
             <div class="card bg-base-200 shadow-lg">
               <div class="card-body p-[var(--spacing-card)]">
@@ -94,7 +94,7 @@ defmodule HomesiteWeb.MediaLive.Show do
                   {gettext("Media Details")}
                 </h3>
 
-                <dl class="space-y-[var(--spacing-sm)] text-[var(--text-sm)]">
+                <dl class="space-y-[var(--space-sm)] text-[var(--text-sm)]">
                   <div>
                     <dt class="text-base-content/60 font-semibold">{gettext("Original Filename")}</dt>
                     <dd class="font-mono">{@media_item.original_filename}</dd>
@@ -149,7 +149,7 @@ defmodule HomesiteWeb.MediaLive.Show do
                   {gettext("Available Sizes")}
                 </h3>
 
-                <dl class="space-y-[var(--spacing-sm)] text-[var(--text-sm)]">
+                <dl class="space-y-[var(--space-sm)] text-[var(--text-sm)]">
                   <div>
                     <dt class="text-base-content/60 font-semibold">{gettext("Thumbnail")}</dt>
                     <dd>{@media_item.thumb_width}×{@media_item.thumb_height} px</dd>
@@ -181,13 +181,13 @@ defmodule HomesiteWeb.MediaLive.Show do
                     <span>{gettext("This media item is not used in any galleries.")}</span>
                   </div>
                 <% else %>
-                  <div class="mb-[var(--spacing-sm)]">
+                  <div class="mb-[var(--space-sm)]">
                     <p class="text-[var(--text-sm)]">
                       {gettext("Used in %{count} gallery/galleries:", count: @usage.gallery_count)}
                     </p>
                   </div>
 
-                  <div class="space-y-[var(--spacing-xs)]">
+                  <div class="space-y-[var(--space-xs)]">
                     <%= for gallery <- @usage.galleries do %>
                       <.link
                         navigate={~p"/galleries/#{gallery}"}

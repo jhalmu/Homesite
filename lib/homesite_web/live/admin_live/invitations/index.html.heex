@@ -1,17 +1,17 @@
 <div class="technical-main">
-  <div class="mb-6 flex items-center justify-between">
-    <h1 class="text-3xl font-bold">Manage Invitations</h1>
+  <div class="mb-[var(--space-md)] flex items-center justify-between">
+    <h1 class="text-[var(--text-2xl)] font-bold">Manage Invitations</h1>
     <.link
       :if={@form == nil}
       phx-click="new"
       class="btn btn-primary"
     >
-      <.icon name="hero-plus" class="mr-2 h-5 w-5" /> Create Invitation
+      <.icon name="hero-plus" class="mr-[var(--space-xs)] h-5 w-5" /> Create Invitation
     </.link>
   </div>
 
   <%= if @form do %>
-    <div class="card bg-base-100 mb-6 shadow-xl">
+    <div class="card bg-base-100 mb-[var(--space-md)] shadow-xl">
       <div class="card-body">
         <h2 class="card-title">New Invitation</h2>
 
@@ -20,7 +20,7 @@
           id="invitation-form"
           phx-submit="create"
         >
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div class="gap-[var(--space-sm)] grid grid-cols-1 md:grid-cols-2">
             <.input
               field={@form[:code]}
               type="text"
@@ -54,7 +54,7 @@
             />
           </div>
 
-          <div class="card-actions mt-4 justify-end">
+          <div class="card-actions mt-[var(--space-sm)] justify-end">
             <button type="button" phx-click="cancel" class="btn btn-ghost">
               Cancel
             </button>
@@ -69,11 +69,11 @@
 
   <div class="card bg-base-100 shadow-xl">
     <div class="card-body">
-      <h2 class="card-title mb-4">Active Invitations</h2>
+      <h2 class="card-title mb-[var(--space-sm)]">Active Invitations</h2>
 
       <%= if @invitations == [] do %>
-        <div class="text-base-content/60 py-8 text-center">
-          <.icon name="hero-ticket" class="mx-auto mb-4 h-16 w-16 opacity-50" />
+        <div class="text-base-content/60 py-[var(--space-lg)] text-center">
+          <.icon name="hero-ticket" class="mb-[var(--space-sm)] mx-auto h-16 w-16 opacity-50" />
           <p>No invitations yet. Create one to get started.</p>
         </div>
       <% else %>
@@ -99,7 +99,7 @@
                     </code>
                     <button
                       type="button"
-                      class="btn btn-xs btn-ghost ml-2"
+                      class="btn btn-xs btn-ghost ml-[var(--space-xs)]"
                       phx-click="copy"
                       phx-value-code={invitation.code}
                       onclick={"navigator.clipboard.writeText('#{invitation.code}')"}

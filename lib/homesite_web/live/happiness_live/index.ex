@@ -33,15 +33,15 @@ defmodule HomesiteWeb.HappinessLive.Index do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="px-[var(--spacing-card)] py-[var(--spacing-xl)] min-h-screen">
         <%!-- Header --%>
-        <div class="mb-12 text-center">
-          <h1 class="mb-4 text-4xl font-bold">{gettext("Happiness Meter")}</h1>
+        <div class="mb-[var(--space-2xl)] text-center">
+          <h1 class="mb-[var(--space-sm)] text-4xl font-bold">{gettext("Happiness Meter")}</h1>
           <p class="text-base-content/70 mx-auto max-w-2xl text-lg">
             {gettext("See how our community feels about Homesite based on real user feedback")}
           </p>
         </div>
 
         <%!-- Happiness Meter (Main Visual) --%>
-        <div class="mb-16 flex justify-center">
+        <div class="mb-[var(--space-2xl)] flex justify-center">
           <div class="card bg-base-200 w-full max-w-md shadow-xl">
             <div class="card-body items-center text-center">
               <%!-- SVG Animation --%>
@@ -54,26 +54,28 @@ defmodule HomesiteWeb.HappinessLive.Index do
               <% end %>
 
               <%!-- Score Display --%>
-              <div class="mt-6">
-                <div class="text-primary text-6xl font-bold">
+              <div class="mt-[var(--space-md)]">
+                <div class="text-primary text-[var(--text-5xl)] font-bold">
                   {@happiness.score}%
                 </div>
-                <div class="text-base-content/70 mt-2 text-lg">
+                <div class="text-base-content/70 mt-[var(--space-xs)] text-lg">
                   {gettext("Overall Satisfaction")}
                 </div>
               </div>
 
               <%!-- Stats --%>
-              <div class="stats stats-vertical mt-6 shadow lg:stats-horizontal">
+              <div class="stats stats-vertical mt-[var(--space-md)] shadow lg:stats-horizontal">
                 <div class="stat">
                   <div class="stat-title">{gettext("Responses")}</div>
-                  <div class="stat-value text-2xl">{@happiness.total_responses}</div>
+                  <div class="stat-value text-[var(--text-2xl)]">{@happiness.total_responses}</div>
                   <div class="stat-desc">{gettext("Last 90 days")}</div>
                 </div>
 
                 <div class="stat">
                   <div class="stat-title">{gettext("Confidence")}</div>
-                  <div class="stat-value text-2xl">{confidence_emoji(@happiness.confidence)}</div>
+                  <div class="stat-value text-[var(--text-2xl)]">
+                    {confidence_emoji(@happiness.confidence)}
+                  </div>
                   <div class="stat-desc">{confidence_text(@happiness.confidence)}</div>
                 </div>
               </div>
@@ -83,15 +85,17 @@ defmodule HomesiteWeb.HappinessLive.Index do
 
         <%!-- Public Testimonials --%>
         <%= if length(@testimonials) > 0 do %>
-          <div class="mb-16">
-            <h2 class="mb-8 text-center text-3xl font-bold">{gettext("What Users Are Saying")}</h2>
+          <div class="mb-[var(--space-2xl)]">
+            <h2 class="mb-[var(--space-lg)] text-center text-3xl font-bold">
+              {gettext("What Users Are Saying")}
+            </h2>
 
-            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div class="gap-[var(--space-md)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
               <%= for testimonial <- @testimonials do %>
                 <div class="card bg-base-100 shadow-xl">
                   <div class="card-body">
                     <%!-- Star Rating --%>
-                    <div class="rating rating-sm mb-2">
+                    <div class="rating rating-sm mb-[var(--space-xs)]">
                       <%= for star <- 1..5 do %>
                         <%= if star <= testimonial.overall_satisfaction do %>
                           <span class="text-orange-400">⭐</span>
@@ -109,7 +113,7 @@ defmodule HomesiteWeb.HappinessLive.Index do
                     <% end %>
 
                     <%!-- User Info --%>
-                    <div class="text-base-content/60 mt-4 flex items-center gap-2 text-sm">
+                    <div class="text-base-content/60 mt-[var(--space-sm)] gap-[var(--space-xs)] text-[var(--text-sm)] flex items-center">
                       <div class="avatar placeholder">
                         <div class="bg-neutral text-neutral-content w-8 rounded-full">
                           <span class="text-xs">
@@ -127,7 +131,7 @@ defmodule HomesiteWeb.HappinessLive.Index do
 
                     <%!-- Share Link --%>
                     <%= if testimonial.share_token do %>
-                      <div class="card-actions mt-2 justify-end">
+                      <div class="card-actions mt-[var(--space-xs)] justify-end">
                         <.link
                           navigate={~p"/testimonials/#{testimonial.share_token}"}
                           class="link link-primary text-xs"
@@ -144,13 +148,13 @@ defmodule HomesiteWeb.HappinessLive.Index do
         <% end %>
 
         <%!-- Call to Action --%>
-        <div class="mb-12 text-center">
+        <div class="mb-[var(--space-2xl)] text-center">
           <div class="card from-primary/10 to-secondary/10 mx-auto max-w-2xl bg-gradient-to-r shadow-xl">
             <div class="card-body">
-              <h3 class="card-title mb-4 justify-center text-2xl">
+              <h3 class="card-title mb-[var(--space-sm)] text-[var(--text-2xl)] justify-center">
                 {gettext("How can we do better?")}
               </h3>
-              <p class="text-base-content/70 mb-6">
+              <p class="text-base-content/70 mb-[var(--space-md)]">
                 {gettext(
                   "Your feedback helps us improve. Share your thoughts and help shape the future of Homesite."
                 )}

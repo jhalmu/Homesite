@@ -1,4 +1,10 @@
 defmodule HomesiteWeb.AdminLive.Analytics.Index do
+  @moduledoc """
+  Admin analytics dashboard showing system-wide statistics.
+
+  Displays metrics for user accounts, content items, social interactions,
+  and search queries in a comprehensive analytics overview.
+  """
   use HomesiteWeb, :live_view
 
   alias Homesite.Accounts

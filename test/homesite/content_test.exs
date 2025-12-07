@@ -443,7 +443,7 @@ defmodule Homesite.ContentTest do
 
     test "get_public_post!/1 raises for non-existent post" do
       assert_raise Ecto.NoResultsError, fn ->
-        Content.get_public_post!(99999)
+        Content.get_public_post!(99_999)
       end
     end
 

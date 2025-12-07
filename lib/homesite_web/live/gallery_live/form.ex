@@ -24,17 +24,17 @@ defmodule HomesiteWeb.GalleryLive.Form do
           phx-change="validate"
           phx-submit="save"
         >
-          <div class="mb-[var(--spacing-sm)]">
+          <div class="mb-[var(--space-sm)]">
             <.input field={@form[:name]} type="text" label={gettext("Gallery Name")} required />
             <%= if @form[:slug].value do %>
-              <p class="text-base-content/60 mt-[var(--spacing-inline)] text-[var(--text-sm)]">
+              <p class="text-base-content/60 mt-[var(--space-inline)] text-[var(--text-sm)]">
                 <.icon name="hero-link" class="inline h-4 w-4" /> {gettext("Slug")}:
                 <span class="font-mono">{@form[:slug].value}</span>
               </p>
             <% end %>
           </div>
 
-          <div class="mb-[var(--spacing-sm)]">
+          <div class="mb-[var(--space-sm)]">
             <.input
               field={@form[:description]}
               type="textarea"
@@ -43,14 +43,14 @@ defmodule HomesiteWeb.GalleryLive.Form do
             />
           </div>
 
-          <div class="mb-[var(--spacing-sm)]">
+          <div class="mb-[var(--space-sm)]">
             <.input
               field={@form[:display_order]}
               type="number"
               label={gettext("Display Order")}
               value={@form[:display_order].value || 0}
             />
-            <p class="text-base-content/60 mt-[var(--spacing-inline)] text-[var(--text-sm)]">
+            <p class="text-base-content/60 mt-[var(--space-inline)] text-[var(--text-sm)]">
               <.icon name="hero-information-circle" class="inline h-4 w-4" />
               {gettext("Lower numbers appear first")}
             </p>
@@ -58,8 +58,8 @@ defmodule HomesiteWeb.GalleryLive.Form do
 
           <div class="divider"></div>
 
-          <div class="form-control mb-[var(--spacing-sm)]">
-            <label class="label gap-[var(--spacing-sm)] cursor-pointer justify-start">
+          <div class="form-control mb-[var(--space-sm)]">
+            <label class="label gap-[var(--space-sm)] cursor-pointer justify-start">
               <input
                 type="checkbox"
                 name={@form[:is_portfolio].name}
@@ -71,7 +71,7 @@ defmodule HomesiteWeb.GalleryLive.Form do
                 {gettext("Portfolio Gallery")}
               </span>
             </label>
-            <p class="text-base-content/60 ml-[calc(var(--spacing-md)+var(--spacing-sm))] text-[var(--text-sm)]">
+            <p class="text-base-content/60 ml-[calc(var(--space-md)+var(--space-sm))] text-[var(--text-sm)]">
               {gettext(
                 "Portfolio galleries showcase your work publicly. Turn off for media libraries."
               )}
@@ -79,7 +79,7 @@ defmodule HomesiteWeb.GalleryLive.Form do
           </div>
 
           <div class="form-control">
-            <label class="label gap-[var(--spacing-sm)] cursor-pointer justify-start">
+            <label class="label gap-[var(--space-sm)] cursor-pointer justify-start">
               <input
                 type="checkbox"
                 name={@form[:is_public].name}
@@ -91,12 +91,12 @@ defmodule HomesiteWeb.GalleryLive.Form do
                 {gettext("Make this gallery publicly visible")}
               </span>
             </label>
-            <p class="text-base-content/60 ml-[calc(var(--spacing-md)+var(--spacing-sm))] text-[var(--text-sm)]">
+            <p class="text-base-content/60 ml-[calc(var(--space-md)+var(--space-sm))] text-[var(--text-sm)]">
               {gettext("Public galleries are visible to everyone on your portfolio page.")}
             </p>
           </div>
 
-          <div class="mt-[var(--spacing-lg)] gap-[var(--spacing-sm)] flex items-center justify-end">
+          <div class="mt-[var(--space-lg)] gap-[var(--space-sm)] flex items-center justify-end">
             <.link
               navigate={~p"/galleries"}
               class="btn btn-ghost"

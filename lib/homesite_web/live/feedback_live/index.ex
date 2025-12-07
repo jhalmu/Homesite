@@ -15,8 +15,8 @@ defmodule HomesiteWeb.FeedbackLive.Index do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="min-h-[calc(100vh-200px)] px-[var(--spacing-card)] py-[var(--spacing-xl)]">
         <div class="mx-auto max-w-2xl">
-          <div class="mb-8">
-            <h1 class="mb-2 text-3xl font-bold">{gettext("Share Your Feedback")}</h1>
+          <div class="mb-[var(--space-lg)]">
+            <h1 class="mb-[var(--space-xs)] text-3xl font-bold">{gettext("Share Your Feedback")}</h1>
             <p class="text-base-content/70">
               {gettext(
                 "We'd love to hear your thoughts on how we're doing. Your feedback helps us improve!"
@@ -29,7 +29,7 @@ defmodule HomesiteWeb.FeedbackLive.Index do
             id="feedback-form"
             phx-submit="save"
             phx-change="validate"
-            class="space-y-6"
+            class="space-y-[var(--space-md)]"
           >
             <%!-- Show form-level errors only if form was submitted --%>
             <%= if @form.source.action == :insert && @form.errors != [] do %>
@@ -48,7 +48,7 @@ defmodule HomesiteWeb.FeedbackLive.Index do
 
             <%!-- Overall Satisfaction (Required) --%>
             <div class="form-control">
-              <h3 class="mb-2 text-sm font-semibold">
+              <h3 class="mb-[var(--space-xs)] text-[var(--text-sm)] font-semibold">
                 {gettext("Overall Satisfaction")} <span class="text-error">*</span>
               </h3>
               <div class="rating rating-lg">
@@ -67,7 +67,7 @@ defmodule HomesiteWeb.FeedbackLive.Index do
 
             <%!-- Performance Rating (Required) --%>
             <div class="form-control">
-              <h3 class="mb-2 text-sm font-semibold">
+              <h3 class="mb-[var(--space-xs)] text-[var(--text-sm)] font-semibold">
                 {gettext("How fast and responsive is the site?")} <span class="text-error">*</span>
               </h3>
               <div class="rating rating-lg">
@@ -95,7 +95,7 @@ defmodule HomesiteWeb.FeedbackLive.Index do
             </div>
 
             <%!-- Submit Button --%>
-            <div class="flex gap-4">
+            <div class="gap-[var(--space-sm)] flex">
               <button
                 type="submit"
                 class="btn btn-primary"
