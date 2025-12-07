@@ -23,7 +23,7 @@ defmodule HomesiteWeb.ProjectLive.Show do
   @impl true
   def render(assigns) do
     ~H"""
-    <.layouts.app flash={@flash} current_scope={@current_scope}>
+    <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="w-full max-w-5xl mx-auto px-4 py-8">
         <%!-- Page Header --%>
         <div class="flex justify-between items-start mb-8">
@@ -156,7 +156,7 @@ defmodule HomesiteWeb.ProjectLive.Show do
           </div>
         <% end %>
       </div>
-    </.layouts.app>
+    </Layouts.app>
     """
   end
 end

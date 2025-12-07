@@ -139,21 +139,19 @@ defmodule Homesite.Media.Project do
     end
   end
 
-  @doc """
-  Calculate project completion percentage based on filled fields.
-
-  Scoring:
-  - Name (required): 20% (always present)
-  - Description: +15%
-  - Category: +10%
-  - Tags (at least one): +10%
-  - Project date: +10%
-  - Cover image: +15%
-  - Collaborators: +10% (calculated in context layer)
-  - Affiliation links: +10% (calculated in context layer)
-
-  Maximum: 100%
-  """
+  # Calculate project completion percentage based on filled fields.
+  #
+  # Scoring:
+  # - Name (required): 20% (always present)
+  # - Description: +15%
+  # - Category: +10%
+  # - Tags (at least one): +10%
+  # - Project date: +10%
+  # - Cover image: +15%
+  # - Collaborators: +10% (calculated in context layer)
+  # - Affiliation links: +10% (calculated in context layer)
+  #
+  # Maximum: 100%
   defp calculate_completion(changeset) do
     data = apply_changes(changeset)
 

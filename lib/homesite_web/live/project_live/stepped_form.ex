@@ -161,7 +161,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
   @impl true
   def render(assigns) do
     ~H"""
-    <.layouts.app flash={@flash} current_scope={@current_scope}>
+    <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="w-full max-w-4xl mx-auto px-4 py-8">
         <%!-- Page Header --%>
         <div class="mb-8">
@@ -247,7 +247,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
           </div>
         </.form>
       </div>
-    </.layouts.app>
+    </Layouts.app>
     """
   end
 
