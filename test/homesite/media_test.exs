@@ -32,7 +32,6 @@ defmodule Homesite.MediaTest do
       valid_attrs = %{
         name: "Test Gallery",
         description: "A test gallery",
-        slug: "test-gallery",
         is_public: true
       }
 
@@ -41,7 +40,7 @@ defmodule Homesite.MediaTest do
       assert {:ok, %Gallery{} = gallery} = Media.create_gallery(scope, valid_attrs)
       assert gallery.name == "Test Gallery"
       assert gallery.description == "A test gallery"
-      assert gallery.slug == "test-gallery"
+      assert String.starts_with?(gallery.slug, "test-gallery-")
       assert gallery.is_public == true
       assert gallery.user_id == scope.user.id
     end
@@ -66,14 +65,13 @@ defmodule Homesite.MediaTest do
       update_attrs = %{
         name: "Updated Gallery",
         description: "Updated description",
-        slug: "updated-gallery",
         is_public: false
       }
 
       assert {:ok, %Gallery{} = gallery} = Media.update_gallery(scope, gallery, update_attrs)
       assert gallery.name == "Updated Gallery"
       assert gallery.description == "Updated description"
-      assert gallery.slug == "updated-gallery"
+      assert String.starts_with?(gallery.slug, "updated-gallery-")
       assert gallery.is_public == false
     end
 
@@ -108,17 +106,29 @@ defmodule Homesite.MediaTest do
       assert_raise MatchError, fn -> Media.delete_gallery(other_scope, gallery) end
     end
 
-    test "get_public_gallery_by_slug!/1 returns public gallery" do
+    test "get_public_gallery_by_slug!/1 returns public portfolio gallery" do
       scope = user_scope_fixture()
-      gallery = gallery_fixture(scope, %{name: "Public Gallery", is_public: true})
+
+      gallery =
+        gallery_fixture(scope, %{
+          name: "Public Gallery",
+          is_public: true,
+          is_portfolio: true
+        })
 
       found = Media.get_public_gallery_by_slug!(gallery.slug)
       assert found.id == gallery.id
     end
 
-    test "get_public_gallery_by_slug!/1 does not return private gallery" do
+    test "get_public_gallery_by_slug!/1 does not return non-portfolio gallery" do
       scope = user_scope_fixture()
-      gallery = gallery_fixture(scope, %{name: "Private Gallery", is_public: false})
+
+      gallery =
+        gallery_fixture(scope, %{
+          name: "Public Non-Portfolio",
+          is_public: true,
+          is_portfolio: false
+        })
 
       assert_raise Ecto.NoResultsError, fn ->
         Media.get_public_gallery_by_slug!(gallery.slug)
@@ -189,11 +199,15 @@ defmodule Homesite.MediaTest do
       scope = user_scope_fixture()
       temp_path = create_test_image("test-upload.jpg")
 
+      # Get file size
+      %{size: file_size} = File.stat!(temp_path)
+
       attrs = %{
         original_filename: "test-upload.jpg",
         alt_text: "Test upload",
         title: "My Upload",
-        content_type: "image/jpeg"
+        content_type: "image/jpeg",
+        file_size_bytes: file_size
       }
 
       assert {:ok, %MediaItem{} = media} =
@@ -297,7 +311,7 @@ defmodule Homesite.MediaTest do
       gallery = gallery_fixture(scope)
       media = media_item_fixture(scope)
 
-      assert {:ok, _} = Media.add_media_to_gallery(scope, gallery, media, 1)
+      assert {:ok, _} = Media.add_media_to_gallery(scope, gallery.id, media.id, 1)
 
       # Verify it was added
       gallery = Media.get_gallery!(scope, gallery.id) |> Repo.preload(:media_items)
@@ -311,8 +325,8 @@ defmodule Homesite.MediaTest do
       gallery = gallery_fixture(scope)
       media = media_item_fixture(scope)
 
-      assert_raise MatchError, fn ->
-        Media.add_media_to_gallery(other_scope, gallery, media, 1)
+      assert_raise Ecto.NoResultsError, fn ->
+        Media.add_media_to_gallery(other_scope, gallery.id, media.id, 1)
       end
     end
 
@@ -321,8 +335,8 @@ defmodule Homesite.MediaTest do
       gallery = gallery_fixture(scope)
       media = media_item_fixture(scope)
 
-      {:ok, _} = Media.add_media_to_gallery(scope, gallery, media, 1)
-      assert {:ok, _} = Media.remove_media_from_gallery(scope, gallery, media)
+      {:ok, _} = Media.add_media_to_gallery(scope, gallery.id, media.id, 1)
+      assert {:ok, _} = Media.remove_media_from_gallery(scope, gallery.id, media.id)
 
       # Verify it was removed
       gallery = Media.get_gallery!(scope, gallery.id) |> Repo.preload(:media_items)
@@ -341,8 +355,8 @@ defmodule Homesite.MediaTest do
       gallery1 = gallery_fixture(scope)
       gallery2 = gallery_fixture(scope)
 
-      {:ok, _} = Media.add_media_to_gallery(scope, gallery1, media, 1)
-      {:ok, _} = Media.add_media_to_gallery(scope, gallery2, media, 1)
+      {:ok, _} = Media.add_media_to_gallery(scope, gallery1.id, media.id, 1)
+      {:ok, _} = Media.add_media_to_gallery(scope, gallery2.id, media.id, 1)
 
       usage = Media.get_media_usage(scope, media.id)
 

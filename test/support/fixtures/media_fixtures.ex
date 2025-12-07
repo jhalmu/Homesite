@@ -73,12 +73,16 @@ defmodule Homesite.MediaFixtures do
     # Create a temporary test image
     temp_path = create_test_image()
 
+    # Get file size
+    %{size: file_size} = File.stat!(temp_path)
+
     attrs =
       Enum.into(attrs, %{
         original_filename: unique_filename(),
         alt_text: "Test image",
         title: "Test Image #{System.unique_integer([:positive])}",
-        content_type: "image/jpeg"
+        content_type: "image/jpeg",
+        file_size_bytes: file_size
       })
 
     # Upload and process the image
@@ -97,11 +101,15 @@ defmodule Homesite.MediaFixtures do
   def minimal_media_item_fixture(scope, attrs \\ %{}) do
     temp_path = create_test_image()
 
+    # Get file size
+    %{size: file_size} = File.stat!(temp_path)
+
     attrs =
       Enum.into(attrs, %{
         original_filename: unique_filename(),
         alt_text: "Test image",
-        content_type: "image/jpeg"
+        content_type: "image/jpeg",
+        file_size_bytes: file_size
       })
 
     {:ok, media_item} =
