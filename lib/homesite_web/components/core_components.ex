@@ -846,7 +846,7 @@ defmodule HomesiteWeb.CoreComponents do
           <p class="text-secondary text-[var(--text-sm)]">{@title}</p>
           <p class="mt-[var(--space-xs)] text-[var(--text-2xl)] font-bold">{@value}</p>
         </div>
-        <div class={"#{@color} rounded-full p-[var(--space-sm)]"}>
+        <div class={"#{@color} p-[var(--space-sm)] rounded-full"}>
           <.icon name={@icon} class="h-6 w-6" />
         </div>
       </div>
@@ -1195,7 +1195,7 @@ defmodule HomesiteWeb.CoreComponents do
       </div>
       <div class="drawer-side">
         <label for={@id} aria-label="close sidebar" class="drawer-overlay"></label>
-        <div class="menu bg-base-200 min-h-full w-80 p-[var(--space-sm)]">
+        <div class="menu bg-base-200 p-[var(--space-sm)] min-h-full w-80">
           {render_slot(@content)}
         </div>
       </div>

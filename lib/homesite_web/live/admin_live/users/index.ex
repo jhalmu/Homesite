@@ -20,7 +20,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
       <div class="mt-6">
         <%!-- Search Form --%>
         <.form for={%{}} phx-change="search" phx-submit="search" class="mb-6">
-          <div class="flex gap-[var(--space-md)]">
+          <div class="gap-[var(--space-md)] flex">
             <div class="flex-1">
               <input
                 type="text"
@@ -127,7 +127,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
 
         <%!-- Pagination --%>
         <%= if @total_pages > 1 do %>
-          <div class="mt-6 flex justify-center gap-[var(--space-xs)]">
+          <div class="gap-[var(--space-xs)] mt-6 flex justify-center">
             <button
               class="btn btn-sm"
               phx-click="prev_page"
@@ -136,7 +136,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
               <.icon name="hero-chevron-left" class="h-4 w-4" /> Previous
             </button>
 
-            <div class="flex gap-[var(--space-inline)]">
+            <div class="gap-[var(--space-inline)] flex">
               <%= for page_num <- pagination_range(@page, @total_pages) do %>
                 <%= if page_num == :ellipsis do %>
                   <span class="btn btn-sm btn-disabled">...</span>
@@ -201,7 +201,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
                 </div>
               <% end %>
 
-              <div class="flex justify-end gap-[var(--space-xs)]">
+              <div class="gap-[var(--space-xs)] flex justify-end">
                 <button type="button" phx-click="cancel_edit" class="btn btn-ghost">
                   Cancel
                 </button>

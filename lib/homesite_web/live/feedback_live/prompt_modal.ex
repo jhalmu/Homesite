@@ -38,7 +38,9 @@ defmodule HomesiteWeb.FeedbackLive.PromptModal do
               <.icon name="hero-chat-bubble-left-right" />
               <div>
                 <h3 class="font-bold">{gettext("How are we doing?")}</h3>
-                <div class="text-[var(--text-xs)]">{gettext("Share your feedback and help us improve!")}</div>
+                <div class="text-[var(--text-xs)]">
+                  {gettext("Share your feedback and help us improve!")}
+                </div>
               </div>
             </div>
             <div class="gap-[var(--space-xs)] flex">

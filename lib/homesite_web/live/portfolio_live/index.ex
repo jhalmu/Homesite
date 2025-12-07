@@ -100,7 +100,7 @@ defmodule HomesiteWeb.PortfolioLive.Index do
                         <.icon name="hero-arrow-right" class="h-4 w-4" />
                       </.link>
                     </div>
-
+                    
     <!-- Author info -->
                     <%= if gallery.user do %>
                       <div class="divider"></div>

@@ -2,7 +2,10 @@
   <main class="technical-main">
     <h1 class="sr-only">{gettext("Portal of JH - Blog Homepage")}</h1>
     <div>
-      <div :if={length(@posts) == 0} class="alert alert-info mx-auto max-w-[var(--article-max-width)]">
+      <div
+        :if={length(@posts) == 0}
+        class="alert alert-info max-w-[var(--article-max-width)] mx-auto"
+      >
         <.icon name="hero-information-circle" class="h-6 w-6" />
         <span>{gettext("No published posts yet. Be the first to share something!")}</span>
       </div>

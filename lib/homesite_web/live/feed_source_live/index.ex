@@ -72,7 +72,10 @@ defmodule HomesiteWeb.FeedSourceLive.Index do
       |> assign(:color_class, badge_color_class(assigns[:color] || :blue))
 
     ~H"""
-    <span class={["inline-flex items-center rounded-md px-[var(--space-xs)] py-[var(--space-inline)] text-[var(--text-xs)] font-medium", @color_class]}>
+    <span class={[
+      "px-[var(--space-xs)] py-[var(--space-inline)] text-[var(--text-xs)] inline-flex items-center rounded-md font-medium",
+      @color_class
+    ]}>
       {render_slot(@inner_block)}
     </span>
     """

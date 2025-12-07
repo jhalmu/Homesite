@@ -21,6 +21,13 @@ defmodule HomesiteWeb.MediaLive.Index do
      |> assign(:gallery_filter, nil)
      |> assign(:page, 1)
      |> assign(:has_more, length(media_items) == @media_per_page)
+     |> assign(:uploaded_files, [])
+     |> allow_upload(:images,
+       accept: ~w(.jpg .jpeg .png .gif .webp),
+       max_entries: 10,
+       max_file_size: 5_000_000,
+       auto_upload: true
+     )
      |> stream(:media_items, media_items)}
   end
 
@@ -173,6 +180,63 @@ defmodule HomesiteWeb.MediaLive.Index do
      |> assign(:media_usage, nil)}
   end
 
+  def handle_event("validate", _params, socket) do
+    {:noreply, socket}
+  end
+
+  def handle_event("save-uploads", _params, socket) do
+    uploaded_files =
+      consume_uploaded_entries(socket, :images, fn %{path: path}, entry ->
+        # Get file metadata
+        attrs = %{
+          original_filename: entry.client_name,
+          content_type: entry.client_type,
+          file_size_bytes: entry.client_size,
+          alt_text: entry.client_name
+        }
+
+        # Upload and process the image
+        case Media.upload_media(socket.assigns.current_scope, path, entry.client_type, attrs) do
+          {:ok, media_item} ->
+            {:ok, media_item}
+
+          {:error, _changeset} ->
+            {:postpone, :error}
+        end
+      end)
+
+    successful_uploads = Enum.filter(uploaded_files, &match?({:ok, _}, &1))
+    failed_uploads = Enum.filter(uploaded_files, &(&1 == :error))
+
+    socket =
+      if length(failed_uploads) > 0 do
+        put_flash(
+          socket,
+          :error,
+          gettext("Failed to upload %{count} file(s)", count: length(failed_uploads))
+        )
+      else
+        socket
+      end
+
+    socket =
+      if length(successful_uploads) > 0 do
+        put_flash(
+          socket,
+          :info,
+          gettext("Successfully uploaded %{count} file(s)", count: length(successful_uploads))
+        )
+      else
+        socket
+      end
+
+    {:noreply, socket}
+  end
+
+  def handle_event("cancel-upload", %{"ref" => ref}, socket) do
+    {:noreply, cancel_upload(socket, :images, ref)}
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -184,6 +248,81 @@ defmodule HomesiteWeb.MediaLive.Index do
             {gettext("Browse and manage your media items")}
           </:subtitle>
         </.header>
+        
+    <!-- Upload Section -->
+        <div class="mt-[var(--spacing-lg)]">
+          <.form for={%{}} phx-submit="save-uploads" phx-change="validate">
+            <div
+              class="border-base-content/20 p-[var(--spacing-lg)] duration-[var(--duration-normal)] rounded-lg border-2 border-dashed text-center transition-colors hover:border-base-content/40"
+              phx-drop-target={@uploads.images.ref}
+            >
+              <.icon name="hero-cloud-arrow-up" class="text-base-content/40 mx-auto h-12 w-12" />
+              <div class="mt-[var(--space-sm)]">
+                <label for={@uploads.images.ref} class="btn btn-primary btn-sm cursor-pointer">
+                  {gettext("Choose Files")}
+                  <.live_file_input upload={@uploads.images} class="hidden" />
+                </label>
+                <p class="mt-[var(--space-xs)] text-[var(--text-sm)] text-base-content/60">
+                  {gettext("or drag and drop images here")}
+                </p>
+              </div>
+              <p class="mt-[var(--space-xs)] text-[var(--text-xs)] text-base-content/50">
+                {gettext("JPG, PNG, GIF, WebP up to 5MB (max 10 files)")}
+              </p>
+            </div>
+
+            <%!-- Upload Previews --%>
+            <%= if Enum.any?(@uploads.images.entries) do %>
+              <div class="mt-[var(--space-md)] space-y-[var(--space-xs)]">
+                <%= for entry <- @uploads.images.entries do %>
+                  <div class="gap-[var(--space-sm)] bg-base-200 p-[var(--space-sm)] flex items-center rounded-lg">
+                    <.live_img_preview entry={entry} class="h-12 w-12 rounded object-cover" />
+                    <div class="min-w-0 flex-1">
+                      <p class="text-[var(--text-sm)] truncate">{entry.client_name}</p>
+                      <div class="bg-base-300 mt-[var(--space-inline)] h-2 w-full rounded-full">
+                        <div
+                          class="bg-primary h-2 rounded-full transition-all duration-300"
+                          style={"width: #{entry.progress}%"}
+                        >
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      phx-click="cancel-upload"
+                      phx-value-ref={entry.ref}
+                      class="btn btn-ghost btn-xs text-error"
+                      aria-label={gettext("Cancel")}
+                    >
+                      <.icon name="hero-x-mark" class="h-4 w-4" />
+                    </button>
+                  </div>
+
+                  <%!-- Upload Errors --%>
+                  <%= for err <- upload_errors(@uploads.images, entry) do %>
+                    <p class="text-error text-[var(--text-xs)] mt-[var(--space-inline)]">
+                      {error_to_string(err)}
+                    </p>
+                  <% end %>
+                <% end %>
+
+                <div class="mt-[var(--space-sm)]">
+                  <button type="submit" class="btn btn-primary btn-sm">
+                    <.icon name="hero-cloud-arrow-up" class="h-4 w-4" />
+                    {gettext("Upload %{count} file(s)", count: length(@uploads.images.entries))}
+                  </button>
+                </div>
+              </div>
+            <% end %>
+
+            <%!-- General Upload Errors --%>
+            <%= for err <- upload_errors(@uploads.images) do %>
+              <p class="alert alert-error mt-[var(--space-sm)] text-[var(--text-sm)]">
+                {error_to_string(err)}
+              </p>
+            <% end %>
+          </.form>
+        </div>
         
     <!-- Filters and Search -->
         <div class="mt-[var(--spacing-lg)] gap-[var(--space-sm)] flex flex-col md:flex-row">
@@ -330,4 +469,12 @@ defmodule HomesiteWeb.MediaLive.Index do
       offset: opts[:offset]
     )
   end
+
+  defp error_to_string(:too_large), do: gettext("File is too large (max 5MB)")
+  defp error_to_string(:too_many_files), do: gettext("Too many files (max 10)")
+
+  defp error_to_string(:not_accepted),
+    do: gettext("File type not accepted (use JPG, PNG, GIF, or WebP)")
+
+  defp error_to_string(:external_client_failure), do: gettext("Upload failed")
 end

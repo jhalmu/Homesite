@@ -16,7 +16,9 @@ defmodule HomesiteWeb.FeedbackLive.Index do
       <div class="min-h-[calc(100vh-200px)] px-[var(--spacing-card)] py-[var(--spacing-xl)]">
         <div class="mx-auto max-w-2xl">
           <div class="mb-[var(--space-lg)]">
-            <h1 class="mb-[var(--space-xs)] text-[var(--text-3xl)] font-bold">{gettext("Share Your Feedback")}</h1>
+            <h1 class="mb-[var(--space-xs)] text-[var(--text-3xl)] font-bold">
+              {gettext("Share Your Feedback")}
+            </h1>
             <p class="text-base-content/70">
               {gettext(
                 "We'd love to hear your thoughts on how we're doing. Your feedback helps us improve!"

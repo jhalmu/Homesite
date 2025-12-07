@@ -116,7 +116,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
         </div>
 
         <%!-- Summary Stats --%>
-        <div class="mb-[var(--space-md)] grid grid-cols-1 gap-[var(--space-sm)] md:grid-cols-3">
+        <div class="mb-[var(--space-md)] gap-[var(--space-sm)] grid grid-cols-1 md:grid-cols-3">
           <%!-- Happiness Score Card --%>
           <div class="card bg-base-200 shadow-xl">
             <div class="card-body">
@@ -249,7 +249,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
                   <div class="card bg-base-100 shadow">
                     <div class="card-body">
                       <%!-- Rating --%>
-                      <div class="mb-[var(--space-xs)] flex items-center gap-[var(--space-xs)]">
+                      <div class="mb-[var(--space-xs)] gap-[var(--space-xs)] flex items-center">
                         <%= for _star <- 1..testimonial.overall_satisfaction do %>
                           <span class="text-orange-400">⭐</span>
                         <% end %>
@@ -266,7 +266,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
                       <% end %>
 
                       <%!-- User Info --%>
-                      <div class="mb-[var(--space-md)] flex items-center gap-[var(--space-xs)] text-[var(--text-sm)]">
+                      <div class="mb-[var(--space-md)] gap-[var(--space-xs)] text-[var(--text-sm)] flex items-center">
                         <%= if testimonial.user do %>
                           <span class="font-semibold">
                             {testimonial.user.display_name || testimonial.user.email}
@@ -327,7 +327,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
                           <% end %>
                         </td>
                         <td>
-                          <div class="flex items-center gap-[var(--space-inline)]">
+                          <div class="gap-[var(--space-inline)] flex items-center">
                             {feedback.overall_satisfaction}
                             <span class="text-orange-400">⭐</span>
                           </div>

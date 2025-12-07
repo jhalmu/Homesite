@@ -67,7 +67,7 @@ defmodule HomesiteWeb.PortfolioLive.Show do
             </div>
           <% end %>
         </div>
-
+        
     <!-- Media items grid -->
         <div class="mt-[var(--spacing-lg)]">
           <%= if Enum.empty?(@gallery.media_items) do %>
@@ -85,7 +85,7 @@ defmodule HomesiteWeb.PortfolioLive.Show do
             <div class="mb-[var(--space-md)] text-base-content/60 text-[var(--text-sm)]">
               {gettext("%{count} image(s)", count: length(@gallery.media_items))}
             </div>
-
+            
     <!-- Masonry-style grid for varied aspect ratios -->
             <div class="gap-[var(--space-md)] columns-1 sm:columns-2 md:columns-3 lg:columns-4">
               <%= for media <- @gallery.media_items do %>

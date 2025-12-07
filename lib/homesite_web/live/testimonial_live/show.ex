@@ -75,7 +75,7 @@ defmodule HomesiteWeb.TestimonialLive.Show do
                   <h2 class="mb-[var(--space-sm)] text-[var(--text-xl)]font-semibold">
                     {gettext("What they said:")}
                   </h2>
-                  <blockquote class="text-base-content/90 border-primary pl-[var(--space-sm)] border-l-4 text-[var(--text-lg)]italic">
+                  <blockquote class="text-base-content/90 border-primary pl-[var(--space-sm)] text-[var(--text-lg)]italic border-l-4">
                     "{@testimonial.open_feedback}"
                   </blockquote>
                 </div>
@@ -152,12 +152,20 @@ defmodule HomesiteWeb.TestimonialLive.Show do
                   </a>
 
                   <%!-- LinkedIn --%>
-                  <a href={linkedin_share_url(@share_url)} target="_blank" class="btn btn-sm gap-[var(--space-xs)]">
+                  <a
+                    href={linkedin_share_url(@share_url)}
+                    target="_blank"
+                    class="btn btn-sm gap-[var(--space-xs)]"
+                  >
                     <.icon name="hero-briefcase" /> LinkedIn
                   </a>
 
                   <%!-- Facebook --%>
-                  <a href={facebook_share_url(@share_url)} target="_blank" class="btn btn-sm gap-[var(--space-xs)]">
+                  <a
+                    href={facebook_share_url(@share_url)}
+                    target="_blank"
+                    class="btn btn-sm gap-[var(--space-xs)]"
+                  >
                     <.icon name="hero-user-group" /> Facebook
                   </a>
 

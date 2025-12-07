@@ -47,13 +47,13 @@ defmodule HomesiteWeb.Layouts do
     <footer class="from-base-200 to-base-300 border-base-300 mt-[var(--spacing-section)] border-t bg-gradient-to-r">
       <div class="max-w-[var(--content-max-width)] px-[var(--spacing-card)] py-[var(--spacing-lg)] mx-auto">
         <div class={[
-          "grid gap-[var(--space-lg)]",
+          "gap-[var(--space-lg)] grid",
           "grid-cols-1",
           "sm:grid-cols-2",
           "lg:grid-cols-4",
           @current_scope && "lg:grid-cols-5"
         ]}>
-          <div class="flex flex-col gap-[var(--space-sm)]">
+          <div class="gap-[var(--space-sm)] flex flex-col">
             <.pegasus class="h-20 w-20" />
             <p class="font-semibold">
               Portal of JH <br />
@@ -62,7 +62,7 @@ defmodule HomesiteWeb.Layouts do
               </span>
             </p>
           </div>
-          <div class="flex flex-col gap-[var(--space-xs)]">
+          <div class="gap-[var(--space-xs)] flex flex-col">
             <span class="footer-title">{gettext("Platform")}</span>
             <a href="/" class="link-hover link">{gettext("Home")}</a>
             <%= if @current_scope do %>
@@ -71,13 +71,13 @@ defmodule HomesiteWeb.Layouts do
               <a href="/tags" class="link-hover link">{gettext("Tags")}</a>
             <% end %>
           </div>
-          <div class="flex flex-col gap-[var(--space-xs)]">
+          <div class="gap-[var(--space-xs)] flex flex-col">
             <span class="footer-title">{gettext("Built with")}</span>
             <p class="text-[var(--text-sm)] opacity-70">Phoenix Framework</p>
             <p class="text-[var(--text-sm)] opacity-70">Elixir</p>
             <p class="text-[var(--text-sm)] opacity-70">Tailwind CSS & DaisyUI</p>
           </div>
-          <div class="flex flex-col gap-[var(--space-xs)]">
+          <div class="gap-[var(--space-xs)] flex flex-col">
             <span class="footer-title">{gettext("Subscribe")}</span>
             <.link
               href={~p"/rss.xml"}
@@ -95,7 +95,7 @@ defmodule HomesiteWeb.Layouts do
             </.link>
           </div>
           <%= if @current_scope do %>
-            <div class="flex flex-col gap-[var(--space-xs)]">
+            <div class="gap-[var(--space-xs)] flex flex-col">
               <span class="footer-title">{gettext("Feedback")}</span>
               <.link
                 href={~p"/feedback"}
@@ -245,11 +245,11 @@ defmodule HomesiteWeb.Layouts do
               <% end %>
               <li>
                 <details>
-                  <summary class="flex items-center gap-[var(--space-xs)]">
+                  <summary class="gap-[var(--space-xs)] flex items-center">
                     <.avatar user={@current_scope.user} class="h-8 w-8" />
                     <span>{@current_scope.user.display_name || @current_scope.user.email}</span>
                   </summary>
-                  <ul class="bg-base-200 border-base-300 z-50 rounded-t-none border p-[var(--space-xs)] shadow-lg">
+                  <ul class="bg-base-200 border-base-300 p-[var(--space-xs)] z-50 rounded-t-none border shadow-lg">
                     <li>
                       <.link navigate={
                         if @current_scope.user.username,
@@ -306,14 +306,16 @@ defmodule HomesiteWeb.Layouts do
       <div class="modal-box">
         <form method="dialog">
           <button
-            class="btn btn-sm btn-circle btn-ghost absolute top-[var(--space-xs)] right-[var(--space-xs)]"
+            class="btn btn-sm btn-circle btn-ghost top-[var(--space-xs)] right-[var(--space-xs)] absolute"
             aria-label={gettext("Close menu")}
           >
             <.icon name="hero-x-mark" class="h-5 w-5" />
           </button>
         </form>
 
-        <h3 class="font-display mb-[var(--space-sm)] text-[var(--text-lg)] font-bold">{gettext("Menu")}</h3>
+        <h3 class="font-display mb-[var(--space-sm)] text-[var(--text-lg)] font-bold">
+          {gettext("Menu")}
+        </h3>
 
         <ul class="menu menu-vertical gap-[var(--space-xs)]">
           <%= if @current_scope do %>
@@ -353,7 +355,7 @@ defmodule HomesiteWeb.Layouts do
             <div class="divider my-[var(--space-xs)]"></div>
 
             <li>
-              <div class="flex items-center gap-[var(--space-sm)] px-[var(--space-sm)] py-[var(--space-xs)]">
+              <div class="gap-[var(--space-sm)] px-[var(--space-sm)] py-[var(--space-xs)] flex items-center">
                 <.avatar user={@current_scope.user} class="h-10 w-10" />
                 <div class="flex flex-col">
                   <span class="text-[var(--text-sm)] font-semibold">
@@ -437,7 +439,7 @@ defmodule HomesiteWeb.Layouts do
       <div class="border-1 border-base-200 bg-base-100 [[data-locale=en]_&]:left-0 [[data-locale=fi]_&]:left-1/2 transition-[left] pointer-events-none absolute h-full w-1/2 rounded-full brightness-200" />
 
       <button
-        class="relative z-10 flex w-1/2 cursor-pointer items-center justify-center p-[var(--space-inline)] text-[var(--text-xs)] font-semibold opacity-75 hover:opacity-100"
+        class="p-[var(--space-inline)] text-[var(--text-xs)] relative z-10 flex w-1/2 cursor-pointer items-center justify-center font-semibold opacity-75 hover:opacity-100"
         phx-click={JS.dispatch("phx:set-locale")}
         data-phx-locale="en"
       >
@@ -445,7 +447,7 @@ defmodule HomesiteWeb.Layouts do
       </button>
 
       <button
-        class="relative z-10 flex w-1/2 cursor-pointer items-center justify-center p-[var(--space-inline)] text-[var(--text-xs)] font-semibold opacity-75 hover:opacity-100"
+        class="p-[var(--space-inline)] text-[var(--text-xs)] relative z-10 flex w-1/2 cursor-pointer items-center justify-center font-semibold opacity-75 hover:opacity-100"
         phx-click={JS.dispatch("phx:set-locale")}
         data-phx-locale="fi"
       >
@@ -477,11 +479,11 @@ defmodule HomesiteWeb.Layouts do
       </div>
       <ul
         tabindex="0"
-        class="dropdown-content menu bg-base-200 rounded-box z-[1] border-base-300 mt-[var(--space-xs)] w-52 border p-[var(--space-xs)] shadow-lg"
+        class="dropdown-content menu bg-base-200 rounded-box z-[1] border-base-300 mt-[var(--space-xs)] p-[var(--space-xs)] w-52 border shadow-lg"
       >
         <li>
           <button
-            class="flex items-center gap-[var(--space-xs)]"
+            class="gap-[var(--space-xs)] flex items-center"
             phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "light"})}
           >
             <.icon name="hero-sun" class="h-4 w-4" />
@@ -490,7 +492,7 @@ defmodule HomesiteWeb.Layouts do
         </li>
         <li>
           <button
-            class="flex items-center gap-[var(--space-xs)]"
+            class="gap-[var(--space-xs)] flex items-center"
             phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "dark"})}
           >
             <.icon name="hero-moon" class="h-4 w-4" />
@@ -499,7 +501,7 @@ defmodule HomesiteWeb.Layouts do
         </li>
         <li>
           <button
-            class="flex items-center gap-[var(--space-xs)]"
+            class="gap-[var(--space-xs)] flex items-center"
             phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "business"})}
           >
             <.icon name="hero-briefcase" class="h-4 w-4" />
@@ -508,7 +510,7 @@ defmodule HomesiteWeb.Layouts do
         </li>
         <li>
           <button
-            class="flex items-center gap-[var(--space-xs)]"
+            class="gap-[var(--space-xs)] flex items-center"
             phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "corporate"})}
           >
             <.icon name="hero-building-office" class="h-4 w-4" />
@@ -517,7 +519,7 @@ defmodule HomesiteWeb.Layouts do
         </li>
         <li>
           <button
-            class="flex items-center gap-[var(--space-xs)]"
+            class="gap-[var(--space-xs)] flex items-center"
             phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "cyberpunk"})}
           >
             <.icon name="hero-bolt" class="h-4 w-4" />

@@ -124,18 +124,32 @@ defmodule HomesiteWeb.UserLive.Profile do
           <%!-- Actions row --%>
           <div class="border-base-300 gap-[var(--space-xs)] pt-[var(--space-sm)] flex flex-wrap justify-center border-t">
             <%= if @user.username do %>
-              <a href={~p"/users/@#{@user.username}/rss.xml"} class="btn btn-xs btn-ghost gap-[var(--space-inline)]">
+              <a
+                href={~p"/users/@#{@user.username}/rss.xml"}
+                class="btn btn-xs btn-ghost gap-[var(--space-inline)]"
+              >
                 <.icon name="hero-rss" class="h-3 w-3" /> RSS
               </a>
             <% else %>
-              <a href={~p"/users/#{@user.id}/rss.xml"} class="btn btn-xs btn-ghost gap-[var(--space-inline)]">
+              <a
+                href={~p"/users/#{@user.id}/rss.xml"}
+                class="btn btn-xs btn-ghost gap-[var(--space-inline)]"
+              >
                 <.icon name="hero-rss" class="h-3 w-3" /> RSS
               </a>
             <% end %>
-            <button type="button" phx-click="share_profile" class="btn btn-xs btn-ghost gap-[var(--space-inline)]">
+            <button
+              type="button"
+              phx-click="share_profile"
+              class="btn btn-xs btn-ghost gap-[var(--space-inline)]"
+            >
               <.icon name="hero-share" class="h-3 w-3" /> Share
             </button>
-            <button type="button" phx-click="copy_profile_url" class="btn btn-xs btn-ghost gap-[var(--space-inline)]">
+            <button
+              type="button"
+              phx-click="copy_profile_url"
+              class="btn btn-xs btn-ghost gap-[var(--space-inline)]"
+            >
               <.icon name="hero-clipboard" class="h-3 w-3" /> Copy
             </button>
           </div>
