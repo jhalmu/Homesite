@@ -33,13 +33,11 @@ defmodule Homesite.ExternalFeeds.Adapters.TwitterAdapter do
   def validate_source(%FeedSource{url: url}) when is_binary(url) and url != "" do
     Logger.warning("Twitter adapter is DORMANT. Feed validation skipped.")
 
-    cond do
-      String.contains?(url, ["rss", "feed", "xml", "nitter"]) ->
-        :ok
-
-      true ->
-        {:error,
-         "Twitter feeds require a valid RSS feed URL from a bridge service (e.g., Nitter, RSS Bridge)"}
+    if String.contains?(url, ["rss", "feed", "xml", "nitter"]) do
+      :ok
+    else
+      {:error,
+       "Twitter feeds require a valid RSS feed URL from a bridge service (e.g., Nitter, RSS Bridge)"}
     end
   end
 

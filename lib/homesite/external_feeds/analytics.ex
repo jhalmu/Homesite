@@ -277,7 +277,7 @@ defmodule Homesite.ExternalFeeds.Analytics do
 
   defp calculate_engagement_score(%{read_count: read, bookmark_count: bookmarks}) do
     # Bookmarks weighted 3x higher than reads
-    read * 1 + bookmarks * 3
+    read + bookmarks * 3
   end
 
   defp get_read_counts_by_date(%Scope{user: %{id: user_id}}, start_date, end_date) do

@@ -25,13 +25,11 @@ defmodule Homesite.ExternalFeeds.Adapters.InstagramAdapter do
 
   @impl true
   def validate_source(%FeedSource{url: url}) when is_binary(url) and url != "" do
-    cond do
-      String.contains?(url, ["rss", "feed", "xml"]) ->
-        :ok
-
-      true ->
-        {:error,
-         "Instagram feeds require a valid RSS feed URL from a bridge service (e.g., RSS Bridge, rsshub.app)"}
+    if String.contains?(url, ["rss", "feed", "xml"]) do
+      :ok
+    else
+      {:error,
+       "Instagram feeds require a valid RSS feed URL from a bridge service (e.g., RSS Bridge, rsshub.app)"}
     end
   end
 

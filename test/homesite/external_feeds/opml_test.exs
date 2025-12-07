@@ -282,7 +282,7 @@ defmodule Homesite.ExternalFeeds.OPMLTest do
       assert result.imported == 1
 
       folders = ExternalFeeds.list_feed_folders(scope)
-      assert length(folders) == 0
+      assert Enum.empty?(folders)
 
       feeds = ExternalFeeds.list_feed_sources(scope)
       assert is_nil(hd(feeds).folder_id)
