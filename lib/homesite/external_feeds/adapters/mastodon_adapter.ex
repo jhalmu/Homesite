@@ -233,8 +233,7 @@ defmodule Homesite.ExternalFeeds.Adapters.MastodonAdapter do
   defp extract_media_text([]), do: ""
 
   defp extract_media_text(attachments) when is_list(attachments) do
-    attachments
-    |> Enum.map(fn attachment ->
+    Enum.map_join(attachments, "\n", fn attachment ->
       type = attachment["type"] || "unknown"
       description = attachment["description"] || ""
 
@@ -246,7 +245,6 @@ defmodule Homesite.ExternalFeeds.Adapters.MastodonAdapter do
         _ -> "[Media: #{description}]"
       end
     end)
-    |> Enum.join("\n")
   end
 
   defp extract_media_text(_), do: ""
