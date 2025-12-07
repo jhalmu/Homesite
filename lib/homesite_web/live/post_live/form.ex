@@ -537,23 +537,30 @@ defmodule HomesiteWeb.PostLive.Form do
   end
 
   def handle_event("set-time-now", _params, socket) do
-    # Get current time in UTC
-    now = DateTime.utc_now(:second)
+    # Get current time in user's timezone using Timex
+    timezone = socket.assigns.current_scope.user.timezone || "Europe/Helsinki"
+    now = Timex.now(timezone)
 
-    # Update form with current date and time
-    post_params = %{
-      "publish_date" => Date.to_string(DateTime.to_date(now)),
-      "publish_time" => now |> DateTime.to_time() |> Time.to_string() |> String.slice(0, 5)
-    }
+    # Get existing form params to preserve them
+    existing_params = socket.assigns.form.params || %{}
+
+    # Update form with current date and time, preserving other fields
+    post_params =
+      existing_params
+      |> Map.put("publish_date", Date.to_string(DateTime.to_date(now)))
+      |> Map.put(
+        "publish_time",
+        now |> DateTime.to_time() |> Time.to_string() |> String.slice(0, 5)
+      )
 
     # Combine into published_at
     post_params = combine_datetime(post_params)
 
-    # Update the changeset
+    # Update the changeset preserving existing data
     changeset =
       Content.change_post(socket.assigns.current_scope, socket.assigns.post, post_params)
 
-    {:noreply, assign(socket, :form, to_form(changeset))}
+    {:noreply, assign(socket, :form, to_form(changeset, action: :validate))}
   end
 
   def handle_event("save", %{"post" => post_params}, socket) do

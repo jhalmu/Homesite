@@ -239,7 +239,7 @@ defmodule HomesiteWeb.MediaLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <main class="technical-main">
+      <div class="technical-main">
         <.header>
           {gettext("Media Library")}
           <:subtitle>
@@ -264,7 +264,7 @@ defmodule HomesiteWeb.MediaLive.Index do
                   {gettext("or drag and drop images here")}
                 </p>
               </div>
-              <p class="mt-[var(--space-xs)] text-[var(--text-xs)] text-base-content/50">
+              <p class="mt-[var(--space-xs)] text-[var(--text-xs)] text-base-content/70">
                 {gettext("JPG, PNG, GIF, WebP up to 5MB (max 10 files)")}
               </p>
             </div>
@@ -453,7 +453,7 @@ defmodule HomesiteWeb.MediaLive.Index do
             <% end %>
           <% end %>
         </div>
-      </main>
+      </div>
     </Layouts.app>
     """
   end

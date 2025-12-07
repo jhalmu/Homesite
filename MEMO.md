@@ -6,6 +6,52 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-07 22:00:00 - Visual Polish: Background Squares and Readability Overlays
+
+### Session: "Beautiful but Dim" UX Enhancements
+
+#### Objectives Completed
+Implemented decorative SVG square pattern background with theme-specific styling, plus readability gradient overlays to ensure text remains readable across all themes (light, dark, brownie/business).
+
+#### Major Changes
+
+**Background Pattern (body::before)**:
+- 4 rows of 100px squares with 20px gap, positioned at top: 160px
+- Fading edges using CSS mask-image (left/right 2%-98%, top/bottom)
+- Theme-specific colors:
+  - Light: #d1d5db at 35% opacity
+  - Dark: #4b5563 at 25% opacity
+  - Brownie: #d4c4b0 at 20% opacity
+
+**Readability Overlay (body::after)**:
+- Fixed positioned gradient overlay behind text, in front of squares
+- 710px wide, aligned with content area (35px left offset)
+- Theme-specific gradients fading from bottom to top:
+  - Light: white (#ffffff), 40% opacity, solid to 600px
+  - Dark: #1d232a, 60% opacity, solid to 200px, fading to 600px
+  - Brownie: #202020, 80% opacity, solid to 200px, fading to 600px
+
+**Accessibility Fixes**:
+- Changed duplicate `<main class="technical-main">` to `<div>` in page templates
+- Added proper `<main>` landmark in layouts.ex
+- Improved contrast: changed `/50` opacity to `/70` in multiple files
+
+**Other Changes**:
+- Removed code block hover movement effect (border-left width change)
+- User timezone field added (new migration)
+- Scroll-hide navbar JavaScript
+
+#### Files Modified
+- `assets/css/app.css` - Major styling changes (+1183 lines refactored)
+- `lib/homesite_web/components/layouts.ex` - Main landmark
+- `lib/homesite_web/live/*/` - Multiple LiveViews updated
+- `priv/repo/migrations/20251207161923_add_timezone_to_users.exs` - New
+
+#### Test Results
+- 211 tests, 0 failures
+
+---
+
 ## 2025-12-08 00:30:00 - i18n, Accessibility, and Testing Improvements
 
 ### Session: Code Quality and UX Enhancements

@@ -7,7 +7,7 @@ defmodule HomesiteWeb.TagLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <main class="technical-main">
+      <div class="technical-main">
         <.header>
           {gettext("Listing Tags")}
           <:actions>
@@ -146,7 +146,7 @@ defmodule HomesiteWeb.TagLive.Index do
             <% end %>
           </div>
         <% end %>
-      </main>
+      </div>
     </Layouts.app>
     """
   end

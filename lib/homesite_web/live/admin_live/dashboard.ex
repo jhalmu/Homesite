@@ -118,7 +118,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
 
             <div>
               <h4 class="text-base-content/80 mb-[var(--space-xs)] font-semibold">Content Gaps</h4>
-              <p class="text-base-content/50 mb-[var(--space-xs)] text-[var(--text-xs)]">
+              <p class="text-base-content/70 mb-[var(--space-xs)] text-[var(--text-xs)]">
                 Searches with no results
               </p>
               <div class="overflow-x-auto">

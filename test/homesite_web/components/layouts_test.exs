@@ -232,19 +232,9 @@ defmodule HomesiteWeb.LayoutsTest do
       assert html =~ "Dark"
     end
 
-    test "has business theme option" do
+    test "has brownie theme option" do
       html = render_component(&Layouts.theme_toggle/1, %{})
-      assert html =~ "Business"
-    end
-
-    test "has corporate theme option" do
-      html = render_component(&Layouts.theme_toggle/1, %{})
-      assert html =~ "Corporate"
-    end
-
-    test "has cyberpunk theme option" do
-      html = render_component(&Layouts.theme_toggle/1, %{})
-      assert html =~ "Cyberpunk"
+      assert html =~ "Brownie"
     end
 
     test "dispatches phx:set-theme event" do

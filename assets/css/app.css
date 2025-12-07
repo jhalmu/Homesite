@@ -14,12 +14,16 @@
    curl -sLO https://github.com/saadeghi/daisyui/releases/latest/download/daisyui.js
    Make sure to look at the daisyUI changelog: https://daisyui.com/docs/changelog/ */
 @plugin "../vendor/daisyui" {
-  themes: light --default, dark --prefersdark, business, corporate, cyberpunk;
+    themes:
+        light --default,
+        dark --prefersdark,
+        business;
 }
 
 /* Import design tokens */
 @import "./tokens/typography.css";
 @import "./tokens/spacing.css";
+@import "./tokens/decorative.css";
 
 /* Add variants based on LiveView classes */
 @custom-variant phx-click-loading (.phx-click-loading&, .phx-click-loading &);
@@ -35,45 +39,162 @@
    ============================================================================ */
 
 @theme {
-  /* Typography scale */
-  --font-size-fluid-xs: var(--text-xs);
-  --font-size-fluid-sm: var(--text-sm);
-  --font-size-fluid-base: var(--text-base);
-  --font-size-fluid-lg: var(--text-lg);
-  --font-size-fluid-xl: var(--text-xl);
-  --font-size-fluid-2xl: var(--text-2xl);
+    /* Typography scale */
+    --font-size-fluid-xs: var(--text-xs);
+    --font-size-fluid-sm: var(--text-sm);
+    --font-size-fluid-base: var(--text-base);
+    --font-size-fluid-lg: var(--text-lg);
+    --font-size-fluid-xl: var(--text-xl);
+    --font-size-fluid-2xl: var(--text-2xl);
 
-  /* Spacing scale */
-  --spacing-xs: var(--space-xs);
-  --spacing-sm: var(--space-sm);
-  --spacing-md: var(--space-md);
-  --spacing-lg: var(--space-lg);
-  --spacing-xl: var(--space-xl);
+    /* Spacing scale */
+    --spacing-xs: var(--space-xs);
+    --spacing-sm: var(--space-sm);
+    --spacing-md: var(--space-md);
+    --spacing-lg: var(--space-lg);
+    --spacing-xl: var(--space-xl);
 
-  /* Component spacing */
-  --spacing-card: var(--card-padding);
-  --spacing-section: var(--section-gap);
-  --spacing-inline: var(--inline-gap);
+    /* Component spacing */
+    --spacing-card: var(--card-padding);
+    --spacing-section: var(--section-gap);
+    --spacing-inline: var(--inline-gap);
 
-  /* Layout constraints */
-  --width-content: var(--content-max-width);
-  --width-article: var(--article-max-width);
-  --width-card: var(--card-max-width);
-  --width-sidebar: var(--sidebar-width);
+    /* Layout constraints */
+    --width-content: var(--content-max-width);
+    --width-article: var(--article-max-width);
+    --width-card: var(--card-max-width);
+    --width-sidebar: var(--sidebar-width);
 }
 
 /* Apply theme colors to entire page */
-html,
+html {
+    background-color: var(--color-base-100);
+    min-height: 100vh;
+}
+
 body {
-  background-color: var(--color-base-100);
-  color: var(--color-base-content);
-  min-height: 100vh;
+    background-color: transparent;
+    color: var(--color-base-content);
+    min-height: 100vh;
+    position: relative;
+}
+
+/* ============================================================================
+   NATURE TEXTURE BACKGROUND
+   Dim, subtle texture beneath all content
+   ============================================================================ */
+
+/* Four rows of squares - top banner */
+body::before {
+    content: "";
+    position: fixed;
+    top: 160px;
+    left: 0;
+    right: 0;
+    height: 480px; /* 4 rows × 120px (100px + 20px gap) */
+    z-index: -2;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='100' height='100' fill='%23d1d5db' fill-opacity='0.8'/%3E%3C/svg%3E");
+    background-size: 120px 120px;
+    opacity: 0.35;
+    mask-image:
+        linear-gradient(
+            to right,
+            transparent 2%,
+            black 30%,
+            black 70%,
+            transparent 98%
+        ),
+        linear-gradient(
+            to bottom,
+            transparent 2%,
+            black 20%,
+            black 88%,
+            transparent 100%
+        );
+    -webkit-mask-image:
+        linear-gradient(
+            to right,
+            transparent 2%,
+            black 30%,
+            black 70%,
+            transparent 98%
+        ),
+        linear-gradient(
+            to bottom,
+            transparent 2%,
+            black 20%,
+            black 88%,
+            transparent 100%
+        );
+    mask-composite: intersect;
+    -webkit-mask-composite: source-in;
+}
+
+/* Business/brownie theme - warm toned squares */
+[data-theme="business"] body::before {
+    background-image: url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='100' height='100' fill='%23d4c4b0' fill-opacity='0.2'/%3E%3C/svg%3E");
+    opacity: 0.2;
+}
+
+/* Dark mode - lighter squares for visibility */
+[data-theme="dark"] body::before {
+    background-image: url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='100' height='100' fill='%234b5563' fill-opacity='0.8'/%3E%3C/svg%3E");
+    opacity: 0.25;
+}
+
+/* Content readability gradient overlay - light mode, fading from bottom to top */
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: calc(50% - 600px + 2rem - 35px);
+    width: 710px;
+    height: 800px;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.6;
+    background: linear-gradient(
+        to top,
+        #ffffff 0%,
+        #ffffff 600px,
+        rgba(255, 255, 255, 0.5) 700px,
+        transparent 800px
+    );
+}
+
+/* Business theme readability - fading from bottom to top, lighter for contrast */
+[data-theme="business"] body::after {
+    left: calc(50% - 600px + 2rem - 35px);
+    width: 710px;
+    opacity: 0.8;
+    background: linear-gradient(
+        to top,
+        #202020 0%,
+        #202020 200px,
+        rgba(42, 36, 32, 0.5) 400px,
+        transparent 600px
+    );
+}
+
+/* Dark mode readability - fading from bottom to top */
+[data-theme="dark"] body::after {
+    left: calc(50% - 600px + 2rem - 35px);
+    width: 710px;
+    opacity: 0.6;
+    background: linear-gradient(
+        to top,
+        #1d232a 0%,
+        #1d232a 200px,
+        rgba(29, 35, 42, 0.5) 400px,
+        transparent 600px
+    );
 }
 
 /* Make LiveView wrapper divs transparent for layout */
 [data-phx-session],
 [data-phx-teleported-src] {
-  display: contents;
+    display: contents;
 }
 
 /* ============================================================================
@@ -83,72 +204,79 @@ body {
 
 /* Base input styling - text, email, password, number, url, etc. */
 .input {
-  background-color: var(--color-base-100);
-  border-color: var(--color-base-300);
-  color: var(--color-base-content);
+    background-color: var(--color-base-100);
+    border-color: var(--color-base-300);
+    color: var(--color-base-content);
+}
+
+/* Dark mode - slightly lighter input background for better contrast */
+[data-theme="dark"] .input,
+[data-theme="dark"] .textarea,
+[data-theme="dark"] .select {
+    background-color: var(--color-base-200);
 }
 
 .input:focus {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-  border-color: var(--color-accent);
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-color: var(--color-accent);
 }
 
 /* Textarea styling */
 .textarea {
-  background-color: var(--color-base-100);
-  border-color: var(--color-base-300);
-  color: var(--color-base-content);
-  min-height: 8rem;
+    background-color: var(--color-base-100);
+    border-color: var(--color-base-300);
+    color: var(--color-base-content);
+    min-height: 8rem;
 }
 
 .textarea:focus {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-  border-color: var(--color-accent);
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-color: var(--color-accent);
 }
 
 /* Select dropdown styling */
 .select {
-  background-color: var(--color-base-100);
-  border-color: var(--color-base-300);
-  color: var(--color-base-content);
+    background-color: var(--color-base-100);
+    border-color: var(--color-base-300);
+    color: var(--color-base-content);
 }
 
 .select:focus {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-  border-color: var(--color-accent);
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-color: var(--color-accent);
 }
 
 /* Disabled state */
 .input:disabled,
 .textarea:disabled,
 .select:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background-color: var(--color-base-100);
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--color-base-100);
 }
 
 /* Error state */
 .input-error {
-  border-color: #f85149;
-  background-color: rgba(248, 81, 73, 0.05);
+    border-color: #f85149;
+    background-color: rgba(248, 81, 73, 0.05);
 }
 
 /* File input styling */
 .file-input {
-  background-color: var(--color-base-100);
-  border-color: var(--color-base-300);
-  color: var(--color-base-content);
-  border-radius: 15px;
+    background-color: var(--color-base-100);
+    border-color: var(--color-base-300);
+    color: var(--color-base-content);
+    border-radius: 15px;
 }
 
 .file-input::file-selector-button {
-  background-color: var(--color-accent);
-  color: #ffffff;
-  cursor: pointer;
-  border-radius: 15px;
+    background-color: var(--color-accent);
+    color: #ffffff;
+    cursor: pointer;
+    border-radius: 15px;
 }
 
 /* ============================================================================
@@ -156,112 +284,150 @@ body {
    GitHub-inspired minimalist aesthetic
    ============================================================================ */
 
+/* ============================================================================
+   BUTTON ENHANCEMENTS
+   Subtle improvements for better visual feedback
+   ============================================================================ */
+
+.btn {
+    transition: box-shadow var(--transition-subtle, 200ms ease);
+}
+
+/* Primary button glow on hover */
+.btn-primary:hover:not(:disabled) {
+    box-shadow: 0 4px 12px oklch(from var(--color-primary) l c h / 0.3);
+}
+
+/* Ghost button subtle background */
+.btn-ghost:hover:not(:disabled) {
+    background: oklch(from var(--color-base-content) l c h / 0.05);
+}
+
+/* Outline button fill on hover */
+.btn-outline:hover:not(:disabled) {
+    box-shadow: 0 2px 8px oklch(from var(--color-base-content) l c h / 0.1);
+}
+
 /* Header styling from design-e-technical.html */
 .technical-header {
-  border-bottom: 1px solid var(--color-base-300);
-  background: var(--color-base-100);
-  padding: 1.25rem 0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+    border-bottom: 1px solid var(--color-base-300);
+    background: oklch(from var(--color-base-100) l c h / 0.95);
+    backdrop-filter: blur(8px);
+    padding: 1.25rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    transition: transform 0.5s ease;
+}
+
+/* Hide navbar on scroll down */
+.technical-header.nav-hidden {
+    transform: translateY(-100%);
 }
 
 .header-content {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 /* Main content container */
 .technical-main {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 4rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
 }
 
 /* Post metadata styling */
 .post-meta {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 0.875rem;
-  color: oklch(from var(--color-base-content) l c h / 0.6);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    color: oklch(from var(--color-base-content) l c h / 0.6);
 }
 
 .post-meta time {
-  font-family: "SF Mono", "Consolas", monospace;
+    font-family: "SF Mono", "Consolas", monospace;
 }
 
-/* Technical tags */
+/* Technical tags with subtle hover */
 .tag-technical {
-  background: var(--color-base-200);
-  color: var(--color-accent);
-  padding: 0.25rem 0.625rem;
-  border-radius: 3px;
-  font-size: 0.75rem;
-  font-family: "SF Mono", "Consolas", monospace;
-  font-weight: 500;
+    background: var(--color-base-200);
+    color: var(--color-accent);
+    padding: 0.25rem 0.625rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-family: "SF Mono", "Consolas", monospace;
+    font-weight: 500;
+    transition: all var(--transition-subtle, 200ms ease);
+    border: 1px solid transparent;
+}
+
+.tag-technical:hover {
+    background: oklch(from var(--color-accent) l c h / 0.1);
+    border-color: oklch(from var(--color-accent) l c h / 0.2);
 }
 
 /* Badge padding improvements */
 .badge {
-  padding: 0.5rem 0.875rem;
+    padding: 0.5rem 0.875rem;
 }
 
 .badge-lg {
-  padding: 0.625rem 1rem;
-  font-size: 0.875rem;
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
 }
 
 .badge-sm {
-  padding: 0.375rem 0.625rem;
-  font-size: 0.75rem;
+    padding: 0.375rem 0.625rem;
+    font-size: 0.75rem;
 }
 
 /* Post cards with technical borders */
 .post-card {
-  background: var(--color-base-100);
-  border: 1px solid var(--color-base-300);
-  border-radius: 6px;
-  padding: 2rem;
-  margin-bottom: 1.5rem;
-  container-type: inline-size;
+    background: var(--color-base-100);
+    border: 1px solid var(--color-base-300);
+    border-radius: 6px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    container-type: inline-size;
 }
 
 /* Post title styling */
 .post-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 0.875rem;
-  letter-spacing: -0.01em;
-  line-height: 1.3;
-  color: var(--color-base-content);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.875rem;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    color: var(--color-base-content);
 }
 
 .post-title:hover {
-  color: var(--color-accent);
+    color: var(--color-accent);
 }
 
 /* Post excerpt */
 .post-excerpt {
-  color: oklch(from var(--color-base-content) l c h / 0.6);
-  line-height: 1.7;
-  margin-bottom: 1rem;
+    color: oklch(from var(--color-base-content) l c h / 0.6);
+    line-height: 1.7;
+    margin-bottom: 1rem;
 }
 
 /* Post footer with separator */
 .post-footer {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  font-size: 0.875rem;
-  color: oklch(from var(--color-base-content) l c h / 0.6);
-  padding-top: 1rem;
-  border-top: 1px solid var(--color-base-300);
-  font-family: "SF Mono", "Consolas", monospace;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: oklch(from var(--color-base-content) l c h / 0.6);
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-base-300);
+    font-family: "SF Mono", "Consolas", monospace;
 }
 
 /* ============================================================================
@@ -271,58 +437,58 @@ body {
 
 /* Base listing card - maps to post-card */
 .listing-card {
-  background: var(--color-base-100);
-  border: 1px solid var(--color-base-300);
-  border-radius: 6px;
-  padding: 2rem;
-  margin-bottom: 1.5rem;
-  container-type: inline-size;
+    background: var(--color-base-100);
+    border: 1px solid var(--color-base-300);
+    border-radius: 6px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    container-type: inline-size;
 }
 
 /* Listing metadata - maps to post-meta */
 .listing-meta {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 0.875rem;
-  color: oklch(from var(--color-base-content) l c h / 0.6);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    color: oklch(from var(--color-base-content) l c h / 0.6);
 }
 
 .listing-meta time {
-  font-family: "SF Mono", "Consolas", monospace;
+    font-family: "SF Mono", "Consolas", monospace;
 }
 
 /* Listing title - maps to post-title */
 .listing-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 0.875rem;
-  letter-spacing: -0.01em;
-  line-height: 1.3;
-  color: var(--color-base-content);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.875rem;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    color: var(--color-base-content);
 }
 
 .listing-title:hover {
-  color: var(--color-accent);
+    color: var(--color-accent);
 }
 
 /* Listing content/excerpt - maps to post-excerpt */
 .listing-content {
-  color: oklch(from var(--color-base-content) l c h / 0.6);
-  line-height: 1.7;
-  margin-bottom: 1rem;
+    color: oklch(from var(--color-base-content) l c h / 0.6);
+    line-height: 1.7;
+    margin-bottom: 1rem;
 }
 
 /* Listing footer - maps to post-footer */
 .listing-footer {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  font-size: 0.875rem;
-  color: oklch(from var(--color-base-content) l c h / 0.6);
-  padding-top: 1rem;
-  border-top: 1px solid var(--color-base-300);
-  font-family: "SF Mono", "Consolas", monospace;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: oklch(from var(--color-base-content) l c h / 0.6);
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-base-300);
+    font-family: "SF Mono", "Consolas", monospace;
 }
 
 /* ============================================================================
@@ -332,70 +498,290 @@ body {
 
 /* Subtle grid texture for background */
 .technical-main::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  opacity: 0.015; /* 1.5% opacity - barely visible */
-  z-index: -1;
-  background-image:
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0, 0, 0, 0.03) 2px,
-      rgba(0, 0, 0, 0.03) 4px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 2px,
-      rgba(0, 0, 0, 0.03) 2px,
-      rgba(0, 0, 0, 0.03) 4px
-    );
-  background-size: 4px 4px;
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.015; /* 1.5% opacity - barely visible */
+    z-index: -1;
+    background-image:
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 0, 0, 0.03) 2px,
+            rgba(0, 0, 0, 0.03) 4px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 0, 0, 0.03) 2px,
+            rgba(0, 0, 0, 0.03) 4px
+        );
+    background-size: 4px 4px;
 }
 
 [data-theme="dark"] .technical-main::before {
-  background-image:
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(255, 255, 255, 0.02) 2px,
-      rgba(255, 255, 255, 0.02) 4px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 2px,
-      rgba(255, 255, 255, 0.02) 2px,
-      rgba(255, 255, 255, 0.02) 4px
-    );
+    background-image:
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(255, 255, 255, 0.02) 2px,
+            rgba(255, 255, 255, 0.02) 4px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 2px,
+            rgba(255, 255, 255, 0.02) 2px,
+            rgba(255, 255, 255, 0.02) 4px
+        );
 }
 
 /* Accent border on featured post */
 .post-card:first-child {
-  border-left: 3px solid var(--color-accent);
+    border-left: 3px solid var(--color-accent);
 }
 
-/* Subtle hover lift effect */
+/* Subtle hover shadow effect */
 .post-card {
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+    transition: box-shadow 0.2s ease;
 }
 
 .post-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 [data-theme="dark"] .post-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================================================
+   HERO SECTION - Dim decorative background
+   Beautiful but subtle - radial glow + dot pattern
+   ============================================================================ */
+
+.hero-section {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: var(--space-lg);
+}
+
+/* Radial gradient glow - very dim accent at top */
+.hero-section::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: var(--hero-glow-size, 150%);
+    height: 150%;
+    background: radial-gradient(
+        ellipse at center top,
+        oklch(from var(--color-accent) l c h / var(--hero-glow-opacity, 0.03))
+            0%,
+        transparent 60%
+    );
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Subtle dot pattern overlay */
+.hero-section::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(
+        circle at center,
+        oklch(from var(--color-base-content) l c h / 0.015) 1px,
+        transparent 1px
+    );
+    background-size: 20px 20px;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .hero-section::before {
+    background: radial-gradient(
+        ellipse at center top,
+        oklch(from var(--color-accent) l c h / 0.05) 0%,
+        transparent 60%
+    );
+}
+
+[data-theme="dark"] .hero-section::after {
+    background-image: radial-gradient(
+        circle at center,
+        oklch(from var(--color-base-content) l c h / 0.02) 1px,
+        transparent 1px
+    );
+}
+
+/* Hero content sits above decorations */
+.hero-section > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* ============================================================================
+   ENHANCED POST CARD HOVER EFFECTS
+   Subtle gradient border + inner glow on hover
+   ============================================================================ */
+
+/* Gradient border effect on hover */
+.post-card {
+    position: relative;
+}
+
+.post-card::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: 7px;
+    background: linear-gradient(
+        135deg,
+        oklch(
+            from var(--color-accent) l c h /
+                var(--card-border-glow-opacity, 0.1)
+        ),
+        oklch(from var(--color-base-300) l c h / 0.3)
+    );
+    opacity: 0;
+    transition: opacity var(--transition-subtle, 200ms ease);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.post-card:hover::before {
+    opacity: 1;
+}
+
+/* Subtle inner glow from top on hover */
+.post-card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    border-radius: 6px 6px 0 0;
+    background: linear-gradient(
+        180deg,
+        oklch(from var(--color-accent) l c h / var(--hover-glow-opacity, 0.02))
+            0%,
+        transparent 100%
+    );
+    opacity: 0;
+    transition: opacity var(--transition-subtle, 200ms ease);
+    pointer-events: none;
+}
+
+.post-card:hover::after {
+    opacity: 1;
+}
+
+/* Featured post (first card) enhanced accent */
+.post-card:first-child::after {
+    opacity: 0.5;
+}
+
+/* ============================================================================
+   TITLE UNDERLINE ANIMATION
+   Subtle underline grows from left on hover
+   ============================================================================ */
+
+.post-title {
+    position: relative;
+    display: inline;
+}
+
+.post-title::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        var(--color-accent) 0%,
+        oklch(from var(--color-accent) l c h / 0.3) 100%
+    );
+    transition: width var(--transition-smooth, 300ms ease);
+}
+
+.group:hover .post-title::after,
+.post-title:hover::after {
+    width: 100%;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .post-title::after {
+        transition: none;
+    }
+
+    .post-card::before,
+    .post-card::after {
+        transition: none;
+    }
+
+    .btn,
+    .tag-technical,
+    .card {
+        transition: none;
+    }
+}
+
+/* ============================================================================
+   FEED CARD ENHANCEMENTS
+   Subtle styling for external feed items
+   ============================================================================ */
+
+.card {
+    transition: box-shadow var(--transition-subtle, 200ms ease);
+}
+
+.card:hover {
+    box-shadow:
+        0 8px 24px oklch(from var(--color-base-content) l c h / 0.08),
+        0 0 0 1px oklch(from var(--color-accent) l c h / 0.05);
+}
+
+[data-theme="dark"] .card:hover {
+    box-shadow:
+        0 8px 24px oklch(from var(--color-base-content) l c h / 0.15),
+        0 0 0 1px oklch(from var(--color-accent) l c h / 0.1);
+}
+
+/* Feed source badge glow */
+.card .badge-ghost {
+    transition: all var(--transition-subtle, 200ms ease);
+}
+
+.card:hover .badge-ghost {
+    background: oklch(from var(--color-accent) l c h / 0.1);
+    color: var(--color-accent);
+}
+
+/* ============================================================================
+   LINK HOVER EFFECTS
+   Subtle color transitions for links
+   ============================================================================ */
+
+a {
+    transition: color var(--transition-subtle, 200ms ease);
+}
+
+.link-hover:hover {
+    text-decoration-color: oklch(from var(--color-accent) l c h / 0.5);
 }
 
 /* ============================================================================
@@ -405,289 +791,281 @@ body {
 
 /* Small containers (< 500px): Compact layout */
 @container (max-width: 500px) {
-  .post-card,
-  .listing-card {
-    padding: var(--space-sm);
-  }
+    .post-card,
+    .listing-card {
+        padding: var(--space-sm);
+    }
 
-  .post-card .card-body,
-  .listing-card .card-body {
-    padding: var(--space-sm);
-  }
+    .post-card .card-body,
+    .listing-card .card-body {
+        padding: var(--space-sm);
+    }
 
-  .post-card .card-actions,
-  .listing-card .card-actions {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-xs);
-  }
+    .post-card .card-actions,
+    .listing-card .card-actions {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-xs);
+    }
 
-  .post-card .card-title,
-  .listing-card .card-title,
-  .post-title,
-  .listing-title {
-    font-size: var(--text-lg);
-  }
+    .post-card .card-title,
+    .listing-card .card-title,
+    .post-title,
+    .listing-title {
+        font-size: var(--text-lg);
+    }
 
-  .post-excerpt,
-  .listing-content {
-    font-size: var(--text-sm);
-  }
+    .post-excerpt,
+    .listing-content {
+        font-size: var(--text-sm);
+    }
 
-  .post-footer,
-  .listing-footer,
-  .listing-meta {
-    font-size: var(--text-xs);
-    flex-wrap: wrap;
-  }
+    .post-footer,
+    .listing-footer,
+    .listing-meta {
+        font-size: var(--text-xs);
+        flex-wrap: wrap;
+    }
 }
 
 /* Medium containers (501px - 700px): Balanced layout */
 @container (min-width: 501px) and (max-width: 700px) {
-  .post-card,
-  .listing-card {
-    padding: var(--space-md);
-  }
+    .post-card,
+    .listing-card {
+        padding: var(--space-md);
+    }
 
-  .post-card .card-body,
-  .listing-card .card-body {
-    padding: var(--space-md);
-  }
+    .post-card .card-body,
+    .listing-card .card-body {
+        padding: var(--space-md);
+    }
 }
 
 /* Large containers (> 700px): Spacious layout */
 @container (min-width: 701px) {
-  .post-card,
-  .listing-card {
-    padding: var(--space-lg);
-  }
+    .post-card,
+    .listing-card {
+        padding: var(--space-lg);
+    }
 
-  .post-card .card-body,
-  .listing-card .card-body {
-    padding: var(--space-lg);
-  }
+    .post-card .card-body,
+    .listing-card .card-body {
+        padding: var(--space-lg);
+    }
 
-  .post-card .card-actions,
-  .listing-card .card-actions {
-    gap: var(--space-sm);
-  }
+    .post-card .card-actions,
+    .listing-card .card-actions {
+        gap: var(--space-sm);
+    }
 }
 
 /* Accent on code blocks */
 .prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  border-left: 2px solid var(--color-accent);
-  transition: border-color 0.2s ease;
-}
-
-.prose
-  :where(pre):not(
-    :where([class~="not-prose"], [class~="not-prose"] *)
-  ):hover {
-  border-left-width: 3px;
+    border-left: 2px solid var(--color-accent);
 }
 
 /* Field with help - responsive layout */
 .field-with-help {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  margin-bottom: 0.5rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .field-with-help .field-input {
-  min-width: 0; /* Prevent grid overflow */
+    min-width: 0; /* Prevent grid overflow */
 }
 
 .field-with-help .field-help {
-  min-width: 0;
+    min-width: 0;
 }
 
 /* Desktop: side-by-side layout */
 @media (min-width: 1024px) {
-  .field-with-help {
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    align-items: start;
-  }
+    .field-with-help {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        align-items: start;
+    }
 }
 
 /* Markdown Prose Styling */
 .prose {
-  color: var(--color-base-content);
-  max-width: 65ch;
+    color: var(--color-base-content);
+    max-width: 65ch;
 }
 
 .prose :where(h1):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  font-size: 2.25em;
-  font-weight: 800;
-  line-height: 1.1111111;
-  margin-top: 0;
-  margin-bottom: 0.8888889em;
+    font-size: 2.25em;
+    font-weight: 800;
+    line-height: 1.1111111;
+    margin-top: 0;
+    margin-bottom: 0.8888889em;
 }
 
 .prose :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  font-size: 1.5em;
-  font-weight: 700;
-  line-height: 1.3333333;
-  margin-top: 2em;
-  margin-bottom: 1em;
+    font-size: 1.5em;
+    font-weight: 700;
+    line-height: 1.3333333;
+    margin-top: 2em;
+    margin-bottom: 1em;
 }
 
 .prose :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  font-size: 1.25em;
-  font-weight: 600;
-  line-height: 1.6;
-  margin-top: 1.6em;
-  margin-bottom: 0.6em;
+    font-size: 1.25em;
+    font-weight: 600;
+    line-height: 1.6;
+    margin-top: 1.6em;
+    margin-bottom: 0.6em;
 }
 
 .prose :where(h4):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  font-weight: 600;
-  line-height: 1.5;
-  margin-top: 1.5em;
-  margin-bottom: 0.5em;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
 }
 
 .prose :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  margin-top: 1.25em;
-  margin-bottom: 1.25em;
-  line-height: 1.75;
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+    line-height: 1.75;
 }
 
 .prose :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  color: var(--color-primary);
-  text-decoration: underline;
-  font-weight: 500;
+    color: var(--color-primary);
+    text-decoration: underline;
+    font-weight: 500;
 }
 
 .prose
-  :where(strong):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  font-weight: 600;
+    :where(strong):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    font-weight: 600;
 }
 
 .prose :where(ul):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  list-style-type: disc;
-  margin-top: 1.25em;
-  margin-bottom: 1.25em;
-  padding-left: 1.625em;
+    list-style-type: disc;
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+    padding-left: 1.625em;
 }
 
 .prose :where(ol):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  list-style-type: decimal;
-  margin-top: 1.25em;
-  margin-bottom: 1.25em;
-  padding-left: 1.625em;
+    list-style-type: decimal;
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+    padding-left: 1.625em;
 }
 
 .prose :where(li):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
 }
 
 .prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  font-weight: 600;
-  font-size: 0.875em;
+    font-weight: 600;
+    font-size: 0.875em;
 }
 
 .prose
-  :where(:not(pre) > code):not(
-    :where([class~="not-prose"], [class~="not-prose"] *)
-  ) {
-  color: var(--color-primary);
-  background-color: var(--color-base-200);
-  padding: 0.125rem 0.375rem;
-  border-radius: 0.25rem;
-  font-weight: 600;
+    :where(:not(pre) > code):not(
+        :where([class~="not-prose"], [class~="not-prose"] *)
+    ) {
+    color: var(--color-primary);
+    background-color: var(--color-base-200);
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-weight: 600;
 }
 
 .prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  background-color: var(--color-base-200);
-  color: var(--color-base-content);
-  border: 1px solid var(--color-base-300);
-  border-radius: 6px;
-  padding: 1rem;
-  overflow-x: auto;
-  font-family: "SF Mono", "Consolas", monospace;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  margin: 1.5rem 0;
+    background-color: var(--color-base-200);
+    color: var(--color-base-content);
+    border: 1px solid var(--color-base-300);
+    border-radius: 6px;
+    padding: 1rem;
+    overflow-x: auto;
+    font-family: "SF Mono", "Consolas", monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin: 1.5rem 0;
 }
 
 .prose
-  :where(pre code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  background-color: transparent;
-  border: none;
-  padding: 0;
-  font-size: inherit;
-  color: inherit;
-  font-family: inherit;
+    :where(pre code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+    color: inherit;
+    font-family: inherit;
 }
 
 .prose :where(table):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  width: 100%;
-  table-layout: auto;
-  text-align: left;
-  margin-top: 2em;
-  margin-bottom: 2em;
-  font-size: 0.875em;
-  line-height: 1.7142857;
+    width: 100%;
+    table-layout: auto;
+    text-align: left;
+    margin-top: 2em;
+    margin-bottom: 2em;
+    font-size: 0.875em;
+    line-height: 1.7142857;
 }
 
 .prose :where(thead):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  border-bottom-width: 1px;
-  border-bottom-color: oklch(var(--color-base-300));
+    border-bottom-width: 1px;
+    border-bottom-color: oklch(var(--color-base-300));
 }
 
 .prose
-  :where(thead th):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  font-weight: 600;
-  vertical-align: bottom;
-  padding-right: 0.5714286em;
-  padding-bottom: 0.5714286em;
-  padding-left: 0.5714286em;
+    :where(thead th):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    font-weight: 600;
+    vertical-align: bottom;
+    padding-right: 0.5714286em;
+    padding-bottom: 0.5714286em;
+    padding-left: 0.5714286em;
 }
 
 .prose
-  :where(tbody tr):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  border-bottom-width: 1px;
-  border-bottom-color: oklch(var(--color-base-200));
+    :where(tbody tr):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    border-bottom-width: 1px;
+    border-bottom-color: oklch(var(--color-base-200));
 }
 
 .prose
-  :where(tbody td):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  vertical-align: baseline;
-  padding: 0.5714286em;
+    :where(tbody td):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    vertical-align: baseline;
+    padding: 0.5714286em;
 }
 
 .prose
-  :where(blockquote):not(
-    :where([class~="not-prose"], [class~="not-prose"] *)
-  ) {
-  font-weight: 500;
-  font-style: italic;
-  border-left-width: 0.25rem;
-  border-left-color: oklch(var(--color-base-300));
-  quotes: "\201C" "\201D" "\2018" "\2019";
-  margin-top: 1.6em;
-  margin-bottom: 1.6em;
-  padding-left: 1em;
+    :where(blockquote):not(
+        :where([class~="not-prose"], [class~="not-prose"] *)
+    ) {
+    font-weight: 500;
+    font-style: italic;
+    border-left-width: 0.25rem;
+    border-left-color: oklch(var(--color-base-300));
+    quotes: "\201C" "\201D" "\2018" "\2019";
+    margin-top: 1.6em;
+    margin-bottom: 1.6em;
+    padding-left: 1em;
 }
 
 .prose :where(hr):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  border-color: oklch(var(--color-base-300));
-  border-top-width: 1px;
-  margin-top: 3em;
-  margin-bottom: 3em;
+    border-color: oklch(var(--color-base-300));
+    border-top-width: 1px;
+    margin-top: 3em;
+    margin-bottom: 3em;
 }
 
 /* Dark mode adjustments */
 .prose:where([data-theme="dark"], [data-theme="dark"] *) {
-  color: var(--color-base-content);
+    color: var(--color-base-content);
 }
 
 .prose:where([data-theme="dark"], [data-theme="dark"] *)
-  :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  color: var(--color-primary);
+    :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    color: var(--color-primary);
 }
 
 /* ============================================================================
@@ -696,8 +1074,11 @@ body {
    ============================================================================ */
 
 /* All headings with IDs (linked from TOC) get scroll offset */
-.prose :where(h2[id], h3[id], h4[id]):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  scroll-margin-top: 12.75rem; /* 204px - extra breathing room */
+.prose
+    :where(h2[id], h3[id], h4[id]):not(
+        :where([class~="not-prose"], [class~="not-prose"] *)
+    ) {
+    scroll-margin-top: 12.75rem; /* 204px - extra breathing room */
 }
 
 /* ============================================================================
@@ -707,56 +1088,56 @@ body {
 
 /* Global focus-visible for interactive elements */
 :focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
 }
 
 /* Links - subtle but visible focus ring */
 a:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-  border-radius: 2px;
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: 2px;
 }
 
 /* Buttons - consistent with DaisyUI */
 .btn:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
 }
 
 /* Menu items */
 .menu li a:focus-visible,
 .menu li button:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: -2px;
-  border-radius: 4px;
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+    border-radius: 4px;
 }
 
 /* Cards and clickable surfaces */
 .card:focus-visible,
 .post-card:focus-visible,
 .listing-card:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
 }
 
 /* Dropdown menus */
 .dropdown-content li a:focus-visible,
 .dropdown-content li button:focus-visible {
-  background-color: var(--color-base-300);
-  outline: none;
+    background-color: var(--color-base-300);
+    outline: none;
 }
 
 /* Modal close buttons */
 dialog button:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
 }
 
 /* High contrast mode support */
 @media (prefers-contrast: high) {
-  :focus-visible {
-    outline-width: 3px;
-    outline-color: currentColor;
-  }
+    :focus-visible {
+        outline-width: 3px;
+        outline-color: currentColor;
+    }
 }

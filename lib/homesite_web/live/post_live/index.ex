@@ -9,7 +9,7 @@ defmodule HomesiteWeb.PostLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <main class="technical-main">
+      <div class="technical-main">
         <.header>
           {gettext("Listing Posts")}
           <:actions>
@@ -143,7 +143,7 @@ defmodule HomesiteWeb.PostLive.Index do
             <span>{gettext("No posts yet. Create your first post to get started!")}</span>
           </div>
         <% end %>
-      </main>
+      </div>
     </Layouts.app>
     """
   end

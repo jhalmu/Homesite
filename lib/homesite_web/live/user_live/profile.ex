@@ -93,7 +93,7 @@ defmodule HomesiteWeb.UserLive.Profile do
                   {String.slice(post.body, 0..120)}{if String.length(post.body) > 120,
                     do: "..."}
                 </p>
-                <div class="text-base-content/50 gap-[var(--space-xs)] text-[var(--text-xs)] mt-auto flex items-center">
+                <div class="text-base-content/70 gap-[var(--space-xs)] text-[var(--text-xs)] mt-auto flex items-center">
                   <time>
                     {format_date_short(post.published_at)}
                   </time>

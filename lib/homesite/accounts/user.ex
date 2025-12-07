@@ -11,6 +11,40 @@ defmodule Homesite.Accounts.User do
     signup staff static support system tags test user users www
   ]
 
+  @supported_timezones [
+    "Europe/Helsinki",
+    "Europe/Stockholm",
+    "Europe/London",
+    "Europe/Paris",
+    "Europe/Berlin",
+    "Europe/Amsterdam",
+    "Europe/Rome",
+    "Europe/Madrid",
+    "Europe/Lisbon",
+    "Europe/Athens",
+    "Europe/Tallinn",
+    "Europe/Kyiv",
+    "Africa/Johannesburg",
+    "Africa/Cairo",
+    "Asia/Tokyo",
+    "Asia/Shanghai",
+    "Asia/Singapore",
+    "Asia/Dubai",
+    "Asia/Kolkata",
+    "Australia/Sydney",
+    "Australia/Melbourne",
+    "America/New_York",
+    "America/Chicago",
+    "America/Denver",
+    "America/Los_Angeles",
+    "America/Toronto",
+    "America/Sao_Paulo",
+    "Pacific/Auckland",
+    "UTC"
+  ]
+
+  def supported_timezones, do: @supported_timezones
+
   schema "users" do
     field :email, :string
     field :password, :string, virtual: true, redact: true
@@ -32,6 +66,7 @@ defmodule Homesite.Accounts.User do
 
     # Localization
     field :preferred_language, :string, default: "en"
+    field :timezone, :string, default: "Europe/Helsinki"
 
     # Username for URL routing (optional)
     field :username, :string
@@ -202,6 +237,7 @@ defmodule Homesite.Accounts.User do
       :bluesky_handle,
       :mastodon_handle,
       :preferred_language,
+      :timezone,
       :username
     ])
     |> validate_length(:display_name, max: 100)
@@ -210,6 +246,7 @@ defmodule Homesite.Accounts.User do
     |> validate_social_handle(:bluesky_handle)
     |> validate_social_handle(:mastodon_handle)
     |> validate_inclusion(:preferred_language, ["en", "fi"])
+    |> validate_inclusion(:timezone, @supported_timezones)
     |> validate_username()
   end
 

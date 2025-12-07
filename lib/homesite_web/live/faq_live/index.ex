@@ -9,7 +9,7 @@ defmodule HomesiteWeb.FaqLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <main class="technical-main">
+      <div class="technical-main">
         <.header>
           {if @category == "admin", do: gettext("Admin FAQs"), else: gettext("User FAQs")}
           <:subtitle>
@@ -91,7 +91,7 @@ defmodule HomesiteWeb.FaqLive.Index do
             </aside>
           <% end %>
         </div>
-      </main>
+      </div>
     </Layouts.app>
     """
   end

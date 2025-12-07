@@ -38,7 +38,7 @@ defmodule HomesiteWeb.PortfolioLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <main class="technical-main">
+      <div class="technical-main">
         <.header>
           {gettext("Portfolio")}
           <:subtitle>
@@ -122,7 +122,7 @@ defmodule HomesiteWeb.PortfolioLive.Index do
             <% end %>
           <% end %>
         </div>
-      </main>
+      </div>
     </Layouts.app>
     """
   end

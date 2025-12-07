@@ -1,0 +1,48 @@
+/* ============================================================================
+   DECORATIVE DESIGN TOKENS
+   Subtle visual enhancements for dim, beautiful aesthetics
+
+   Philosophy: Beautiful but dim - max 3-5% opacity for decorative elements
+   ============================================================================ */
+
+:root {
+  /* Glow effects - very subtle */
+  --glow-opacity: 0.03;
+  --hover-glow-opacity: 0.02;
+
+  /* Pattern opacity */
+  --pattern-opacity: 0.015;
+  --pattern-accent-opacity: 0.01;
+
+  /* Hero section */
+  --hero-glow-size: 150%;
+  --hero-glow-opacity: 0.03;
+
+  /* Card enhancements */
+  --card-hover-lift: -2px;
+  --card-hover-shadow-opacity: 0.08;
+  --card-border-glow-opacity: 0.1;
+
+  /* Transition timing */
+  --transition-subtle: 200ms ease;
+  --transition-smooth: 300ms ease;
+}
+
+/* Dark mode - slightly more visible effects */
+[data-theme="dark"] {
+  --glow-opacity: 0.05;
+  --hover-glow-opacity: 0.03;
+  --pattern-opacity: 0.02;
+  --pattern-accent-opacity: 0.015;
+  --hero-glow-opacity: 0.05;
+  --card-hover-shadow-opacity: 0.15;
+  --card-border-glow-opacity: 0.15;
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-subtle: 0ms;
+    --transition-smooth: 0ms;
+  }
+}

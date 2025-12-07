@@ -49,7 +49,7 @@ defmodule HomesiteWeb.MediaLive.Show do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <main class="technical-main">
+      <div class="technical-main">
         <.header>
           {@media_item.title || @media_item.original_filename}
           <:subtitle>
@@ -214,7 +214,7 @@ defmodule HomesiteWeb.MediaLive.Show do
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </Layouts.app>
     """
   end

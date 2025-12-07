@@ -9,7 +9,7 @@ defmodule HomesiteWeb.TagLive.Show do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <main class="technical-main">
+      <div class="technical-main">
         <header class="gap-[var(--spacing-md)] mb-[var(--spacing-section)] flex flex-col">
           <div class="flex flex-wrap items-center justify-between gap-4">
             <div class="flex items-center gap-4">
@@ -121,7 +121,7 @@ defmodule HomesiteWeb.TagLive.Show do
             <% end %>
           </div>
         </section>
-      </main>
+      </div>
     </Layouts.app>
     """
   end

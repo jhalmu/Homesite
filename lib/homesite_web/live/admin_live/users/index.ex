@@ -100,7 +100,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
                           {String.duplicate("🌸", user.admin_flowers || 0)}
                         </span>
                       <% else %>
-                        <span class="text-base-content/50">-</span>
+                        <span class="text-base-content/70">-</span>
                       <% end %>
                     </td>
                     <td>

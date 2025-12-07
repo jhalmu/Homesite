@@ -35,13 +35,21 @@ defmodule HomesiteWeb.Layouts do
 
   def app(assigns) do
     ~H"""
-    <div class="px-[var(--spacing-card)] py-[var(--spacing-lg)] min-h-screen">
+    <main
+      id="main-content"
+      tabindex="-1"
+      role="main"
+      class="px-[var(--spacing-card)] py-[var(--spacing-lg)] min-h-screen"
+    >
       <div class="max-w-[var(--content-max-width)] space-y-[var(--spacing-md)] mx-auto">
         {render_slot(@inner_block)}
       </div>
-    </div>
+    </main>
 
-    <footer class="from-base-200 to-base-300 border-base-300 mt-[var(--spacing-section)] border-t bg-gradient-to-r">
+    <footer
+      role="contentinfo"
+      class="from-base-200 to-base-300 border-base-300 mt-[var(--spacing-section)] border-t bg-gradient-to-r"
+    >
       <div class="max-w-[var(--content-max-width)] px-[var(--spacing-card)] py-[var(--spacing-lg)] mx-auto">
         <div class={[
           "gap-[var(--space-lg)] grid",
@@ -508,28 +516,8 @@ defmodule HomesiteWeb.Layouts do
             class="gap-[var(--space-xs)] flex items-center"
             phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "business"})}
           >
-            <.icon name="hero-briefcase" class="h-4 w-4" />
-            <span>{gettext("Business")}</span>
-          </button>
-        </li>
-        <li role="none">
-          <button
-            role="menuitem"
-            class="gap-[var(--space-xs)] flex items-center"
-            phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "corporate"})}
-          >
-            <.icon name="hero-building-office" class="h-4 w-4" />
-            <span>{gettext("Corporate")}</span>
-          </button>
-        </li>
-        <li role="none">
-          <button
-            role="menuitem"
-            class="gap-[var(--space-xs)] flex items-center"
-            phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "cyberpunk"})}
-          >
-            <.icon name="hero-bolt" class="h-4 w-4" />
-            <span>{gettext("Cyberpunk")}</span>
+            <.icon name="hero-cake" class="h-4 w-4" />
+            <span>{gettext("Brownie")}</span>
           </button>
         </li>
       </ul>

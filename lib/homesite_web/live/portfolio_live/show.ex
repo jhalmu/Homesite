@@ -94,7 +94,7 @@ defmodule HomesiteWeb.PortfolioLive.Show do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <main class="technical-main">
+      <div class="technical-main">
         <.header>
           {@project.name}
           <:subtitle>
@@ -308,7 +308,7 @@ defmodule HomesiteWeb.PortfolioLive.Show do
             </div>
           <% end %>
         </div>
-      </main>
+      </div>
     </Layouts.app>
     """
   end

@@ -82,7 +82,7 @@ defmodule HomesiteWeb.UserLive.Login do
             </div>
           </div>
 
-          <div class="divider text-[var(--text-sm)] text-base-content/50">
+          <div class="divider text-[var(--text-sm)] text-base-content/70">
             {gettext("or sign in with password")}
           </div>
 
@@ -144,7 +144,7 @@ defmodule HomesiteWeb.UserLive.Login do
 
           <%!-- Security note --%>
           <div class="mt-[var(--space-md)] text-center">
-            <p class="text-[var(--font-size-fluid-sm)] text-base-content/50">
+            <p class="text-[var(--font-size-fluid-sm)] text-base-content/70">
               <.icon name="hero-shield-check" class="inline h-4 w-4" />
               {gettext("Your connection is secure and encrypted")}
             </p>

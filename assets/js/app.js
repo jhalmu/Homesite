@@ -354,6 +354,55 @@ window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
 // connect if there are any LiveViews on the page
 liveSocket.connect()
 
+// Scroll-hide navbar: hide on scroll down, show on scroll up
+;(function initScrollHideNavbar() {
+  let lastScrollY = window.scrollY
+  let ticking = false
+  let initialized = false
+
+  function setup() {
+    if (initialized) return
+    const navbar = document.querySelector('.technical-header')
+    if (!navbar) return
+
+    initialized = true
+    console.log('Scroll-hide navbar initialized')
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY
+
+          // Only hide after scrolling down past 100px
+          if (currentScrollY > 100) {
+            if (currentScrollY > lastScrollY) {
+              // Scrolling down - hide navbar
+              navbar.classList.add('nav-hidden')
+            } else {
+              // Scrolling up - show navbar
+              navbar.classList.remove('nav-hidden')
+            }
+          } else {
+            // At top of page - always show
+            navbar.classList.remove('nav-hidden')
+          }
+
+          lastScrollY = currentScrollY
+          ticking = false
+        })
+        ticking = true
+      }
+    }, { passive: true })
+  }
+
+  // Try immediately
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setup)
+  } else {
+    setup()
+  }
+})()
+
 // expose liveSocket on window for web console debug logs and latency simulation:
 // >> liveSocket.enableDebug()
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session

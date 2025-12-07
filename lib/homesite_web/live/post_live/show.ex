@@ -11,7 +11,7 @@ defmodule HomesiteWeb.PostLive.Show do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <main class="technical-main">
+      <div class="technical-main">
         <article>
           <.header>
             {@post.title}
@@ -75,7 +75,7 @@ defmodule HomesiteWeb.PostLive.Show do
             </div>
           <% end %>
         </article>
-      </main>
+      </div>
     </Layouts.app>
     """
   end

@@ -138,6 +138,18 @@ defmodule HomesiteWeb.UserLive.Settings do
               )}
             </:help>
           </.input>
+          <.input
+            field={@profile_form[:timezone]}
+            type="select"
+            label={gettext("Timezone")}
+            options={timezone_options()}
+          >
+            <:help>
+              {gettext(
+                "Your timezone affects how dates and times are displayed. The 'Now' button when creating posts will use this timezone."
+              )}
+            </:help>
+          </.input>
           <%= if @avatar_pending do %>
             <div class="alert alert-warning mb-[var(--space-sm)]">
               <svg
@@ -485,5 +497,14 @@ defmodule HomesiteWeb.UserLive.Settings do
      socket
      |> put_flash(:info, "Profile URL copied to clipboard!")
      |> push_event("copy-to-clipboard", %{text: profile_url})}
+  end
+
+  # Build timezone options with friendly labels
+  defp timezone_options do
+    Homesite.Accounts.User.supported_timezones()
+    |> Enum.map(fn tz ->
+      label = tz |> String.replace("_", " ") |> String.replace("/", " / ")
+      {label, tz}
+    end)
   end
 end
