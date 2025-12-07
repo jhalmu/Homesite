@@ -159,14 +159,14 @@ defmodule HomesiteWeb.Components.TableOfContents do
         id="table-of-contents"
         phx-hook="TableOfContents"
         class={[
-          "border-base-300 bg-base-200 p-[var(--space-sm)] rounded-lg border",
+          "border-base-300 bg-base-200 p-[var(--space-md)] rounded-lg border",
           @sticky && "sticky top-4",
           !@show_mobile && "hidden lg:block",
           @class
         ]}
         aria-label={@title}
       >
-        <h2 class="mb-[var(--space-sm)] text-[var(--text-sm)] font-semibold uppercase tracking-wide opacity-60">
+        <h2 class="mb-[var(--space-md)] text-[var(--text-sm)] font-semibold uppercase tracking-wide opacity-60">
           {@title}
         </h2>
 
@@ -186,14 +186,14 @@ defmodule HomesiteWeb.Components.TableOfContents do
     <li>
       <a
         href={"##{@heading.id}"}
-        class="toc-link px-[var(--space-sm)] py-[var(--space-xs)] text-[var(--text-sm)] rounded-md opacity-70 hover:bg-base-300 hover:opacity-100"
+        class="toc-link px-[var(--space-md)] py-[var(--space-xs)] text-[var(--text-sm)] rounded-md opacity-70 hover:bg-base-300 hover:opacity-100"
         data-target={@heading.id}
       >
         {@heading.text}
       </a>
 
       <%= if @heading.children != [] do %>
-        <ul class="mt-[var(--space-inline)] ml-[var(--space-sm)]">
+        <ul class="mt-[var(--space-inline)] ml-[var(--space-md)]">
           <.toc_item :for={child <- @heading.children} heading={child} />
         </ul>
       <% end %>

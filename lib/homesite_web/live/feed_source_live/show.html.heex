@@ -52,8 +52,8 @@
       </:actions>
     </.header>
 
-    <div class="mt-[var(--space-md)]">
-      <div class="bg-base-200 space-y-[var(--space-xs)] p-[var(--space-sm)] rounded-lg">
+    <div class="mt-[var(--space-lg)]">
+      <div class="bg-base-200 space-y-[var(--space-xs)] p-[var(--space-md)] rounded-lg">
         <div class="flex justify-between">
           <span class="font-medium">Refresh Interval:</span>
           <span>{@feed_source.refresh_interval} minutes</span>
@@ -77,14 +77,14 @@
       </div>
     </div>
 
-    <div class="mt-[var(--space-md)]">
-      <h2 class="mb-[var(--space-sm)] text-[var(--text-xl)] font-semibold">
+    <div class="mt-[var(--space-lg)]">
+      <h2 class="mb-[var(--space-md)] text-[var(--text-xl)] font-semibold">
         Recent Items ({length(@feed_items)})
       </h2>
 
       <%= if Enum.empty?(@feed_items) do %>
         <div class="py-[var(--space-lg)] text-center opacity-60">
-          <.icon name="hero-rss" class="mb-[var(--space-sm)] mx-auto h-12 w-12 opacity-50" />
+          <.icon name="hero-rss" class="mb-[var(--space-md)] mx-auto h-12 w-12 opacity-50" />
           <p class="text-[var(--text-lg)]">No feed items yet</p>
           <p class="mt-[var(--space-xs)] text-[var(--text-sm)]">
             <%= if @feed_source.enabled do %>
@@ -95,10 +95,10 @@
           </p>
         </div>
       <% else %>
-        <div class="space-y-[var(--space-sm)]">
+        <div class="space-y-[var(--space-md)]">
           <%= for item <- @feed_items do %>
-            <div class="border-base-300 bg-base-100 p-[var(--space-sm)] rounded-lg border transition-shadow hover:shadow-md">
-              <div class="gap-[var(--space-sm)] flex items-start justify-between">
+            <div class="border-base-300 bg-base-100 p-[var(--space-md)] rounded-lg border transition-shadow hover:shadow-md">
+              <div class="gap-[var(--space-md)] flex items-start justify-between">
                 <div class="flex-1">
                   <h3 class="text-[var(--text-lg)] font-semibold">
                     <%= if item.url do %>

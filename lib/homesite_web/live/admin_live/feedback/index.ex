@@ -81,7 +81,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="px-[var(--spacing-card)] py-[var(--spacing-xl)] min-h-screen">
         <%!-- Header --%>
-        <div class="mb-[var(--space-sm)]">
+        <div class="mb-[var(--space-md)]">
           <h1 class="mb-[var(--space-xs)] text-4xl font-bold">{gettext("Feedback Analytics")}</h1>
           <p class="text-base-content/70">
             {gettext("Monitor user feedback, happiness trends, and moderate testimonials")}
@@ -89,7 +89,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
         </div>
 
         <%!-- Time Range Selector --%>
-        <div class="mb-[var(--space-sm)]">
+        <div class="mb-[var(--space-md)]">
           <div class="join">
             <button
               phx-click="filter_days"
@@ -116,7 +116,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
         </div>
 
         <%!-- Summary Stats --%>
-        <div class="mb-[var(--space-sm)] grid grid-cols-1 gap-[var(--space-sm)] md:grid-cols-3">
+        <div class="mb-[var(--space-md)] grid grid-cols-1 gap-[var(--space-sm)] md:grid-cols-3">
           <%!-- Happiness Score Card --%>
           <div class="card bg-base-200 shadow-xl">
             <div class="card-body">
@@ -158,7 +158,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
         </div>
 
         <%!-- Happiness Trend Chart (Simplified) --%>
-        <div class="card bg-base-200 mb-[var(--space-sm)] shadow-xl">
+        <div class="card bg-base-200 mb-[var(--space-md)] shadow-xl">
           <div class="card-body">
             <h2 class="card-title">{gettext("Happiness Trend")}</h2>
 
@@ -199,7 +199,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
         </div>
 
         <%!-- Response Rate by Rank --%>
-        <div class="card bg-base-200 mb-[var(--space-sm)] shadow-xl">
+        <div class="card bg-base-200 mb-[var(--space-md)] shadow-xl">
           <div class="card-body">
             <h2 class="card-title">{gettext("Response Rate by User Rank")}</h2>
 
@@ -237,10 +237,10 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
 
         <%!-- Pending Testimonials (Moderation) --%>
         <%= if length(@pending_testimonials) > 0 do %>
-          <div class="card bg-base-200 mb-[var(--space-sm)] shadow-xl">
+          <div class="card bg-base-200 mb-[var(--space-md)] shadow-xl">
             <div class="card-body">
               <h2 class="card-title">{gettext("Pending Testimonials")}</h2>
-              <p class="text-base-content/60 mb-[var(--space-sm)] text-[var(--text-sm)]">
+              <p class="text-base-content/60 mb-[var(--space-md)] text-[var(--text-sm)]">
                 {gettext("Review and approve testimonials for public display")}
               </p>
 
@@ -260,13 +260,13 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
 
                       <%!-- Feedback Text --%>
                       <%= if testimonial.open_feedback do %>
-                        <blockquote class="border-primary mb-[var(--space-sm)] border-l-4 pl-4">
+                        <blockquote class="border-primary mb-[var(--space-md)] border-l-4 pl-4">
                           "{testimonial.open_feedback}"
                         </blockquote>
                       <% end %>
 
                       <%!-- User Info --%>
-                      <div class="mb-[var(--space-sm)] flex items-center gap-[var(--space-xs)] text-[var(--text-sm)]">
+                      <div class="mb-[var(--space-md)] flex items-center gap-[var(--space-xs)] text-[var(--text-sm)]">
                         <%= if testimonial.user do %>
                           <span class="font-semibold">
                             {testimonial.user.display_name || testimonial.user.email}

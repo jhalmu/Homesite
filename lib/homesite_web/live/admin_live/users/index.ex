@@ -20,7 +20,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
       <div class="mt-6">
         <%!-- Search Form --%>
         <.form for={%{}} phx-change="search" phx-submit="search" class="mb-6">
-          <div class="flex gap-[var(--space-sm)]">
+          <div class="flex gap-[var(--space-md)]">
             <div class="flex-1">
               <input
                 type="text"

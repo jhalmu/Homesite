@@ -134,7 +134,7 @@ defmodule HomesiteWeb.FormComponents do
                   type="button"
                   phx-click={@on_add}
                   phx-value-tag-id={exact_tag.id}
-                  class="border-base-300 text-primary gap-[var(--space-xs)] px-[var(--space-sm)] py-[var(--space-xs)] flex w-full items-center border-t text-left font-semibold hover:bg-base-200"
+                  class="border-base-300 text-primary gap-[var(--space-xs)] px-[var(--space-md)] py-[var(--space-xs)] flex w-full items-center border-t text-left font-semibold hover:bg-base-200"
                   role="option"
                 >
                   <.icon name="hero-check" class="h-4 w-4" />
@@ -146,7 +146,7 @@ defmodule HomesiteWeb.FormComponents do
                   type="button"
                   phx-click={@on_create}
                   phx-value-name={@tag_search_query}
-                  class="border-base-300 gap-[var(--space-xs)] px-[var(--space-sm)] py-[var(--space-xs)] flex w-full items-center border-t text-left font-semibold hover:bg-base-200"
+                  class="border-base-300 gap-[var(--space-xs)] px-[var(--space-md)] py-[var(--space-xs)] flex w-full items-center border-t text-left font-semibold hover:bg-base-200"
                   role="option"
                 >
                   <.icon name="hero-plus" class="h-4 w-4" />
@@ -227,7 +227,7 @@ defmodule HomesiteWeb.FormComponents do
       end)
 
     ~H"""
-    <div class="form-control mb-[var(--space-sm)]">
+    <div class="form-control mb-[var(--space-md)]">
       <label class="label">
         <span class="label-text font-semibold">{@label}</span>
       </label>

@@ -24,7 +24,7 @@ defmodule HomesiteWeb.GalleryLive.Form do
           phx-change="validate"
           phx-submit="save"
         >
-          <div class="mb-[var(--space-sm)]">
+          <div class="mb-[var(--space-md)]">
             <.input field={@form[:name]} type="text" label={gettext("Gallery Name")} required />
             <%= if @form[:slug].value do %>
               <p class="text-base-content/60 mt-[var(--space-inline)] text-[var(--text-sm)]">
@@ -34,7 +34,7 @@ defmodule HomesiteWeb.GalleryLive.Form do
             <% end %>
           </div>
 
-          <div class="mb-[var(--space-sm)]">
+          <div class="mb-[var(--space-md)]">
             <.input
               field={@form[:description]}
               type="textarea"
@@ -43,7 +43,7 @@ defmodule HomesiteWeb.GalleryLive.Form do
             />
           </div>
 
-          <div class="mb-[var(--space-sm)]">
+          <div class="mb-[var(--space-md)]">
             <.input
               field={@form[:display_order]}
               type="number"
@@ -58,8 +58,8 @@ defmodule HomesiteWeb.GalleryLive.Form do
 
           <div class="divider"></div>
 
-          <div class="form-control mb-[var(--space-sm)]">
-            <label class="label gap-[var(--space-sm)] cursor-pointer justify-start">
+          <div class="form-control mb-[var(--space-md)]">
+            <label class="label gap-[var(--space-md)] cursor-pointer justify-start">
               <input
                 type="checkbox"
                 name={@form[:is_portfolio].name}
@@ -79,7 +79,7 @@ defmodule HomesiteWeb.GalleryLive.Form do
           </div>
 
           <div class="form-control">
-            <label class="label gap-[var(--space-sm)] cursor-pointer justify-start">
+            <label class="label gap-[var(--space-md)] cursor-pointer justify-start">
               <input
                 type="checkbox"
                 name={@form[:is_public].name}
@@ -96,7 +96,7 @@ defmodule HomesiteWeb.GalleryLive.Form do
             </p>
           </div>
 
-          <div class="mt-[var(--space-lg)] gap-[var(--space-sm)] flex items-center justify-end">
+          <div class="mt-[var(--space-lg)] gap-[var(--space-md)] flex items-center justify-end">
             <.link
               navigate={~p"/galleries"}
               class="btn btn-ghost"

@@ -53,10 +53,10 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
       <div class="mt-[var(--space-lg)]">
         <.dashboard_card variant="content">
           <h3 class="card-title">Search Statistics</h3>
-          <p class="text-base-content/60 mb-[var(--space-sm)] text-[var(--text-sm)]">Last 7 days</p>
+          <p class="text-base-content/60 mb-[var(--space-md)] text-[var(--text-sm)]">Last 7 days</p>
 
           <%!-- Summary stats in compact grid --%>
-          <div class="mb-[var(--space-md)] gap-[var(--space-sm)] grid grid-cols-2 md:grid-cols-4">
+          <div class="mb-[var(--space-md)] gap-[var(--space-md)] grid grid-cols-2 md:grid-cols-4">
             <div class="text-center">
               <p class="text-primary text-[var(--text-2xl)] font-bold">
                 {@search_stats.total_searches || 0}
