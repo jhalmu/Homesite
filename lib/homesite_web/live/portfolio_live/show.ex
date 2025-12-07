@@ -12,13 +12,20 @@ defmodule HomesiteWeb.PortfolioLive.Show do
 
   @impl true
   def handle_params(%{"slug" => slug}, _, socket) do
-    gallery = Media.get_public_gallery_by_slug!(slug)
+    case Media.get_public_gallery_by_slug(slug) do
+      {:ok, gallery} ->
+        {:noreply,
+         socket
+         |> assign(:page_title, gallery.name)
+         |> assign(:gallery, gallery)
+         |> assign(:current_url, url(~p"/portfolio/#{slug}"))}
 
-    {:noreply,
-     socket
-     |> assign(:page_title, gallery.name)
-     |> assign(:gallery, gallery)
-     |> assign(:current_url, url(~p"/portfolio/#{slug}"))}
+      {:error, :not_found} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, gettext("Gallery not found"))
+         |> redirect(to: ~p"/portfolio")}
+    end
   end
 
   @impl true

@@ -96,6 +96,7 @@ defmodule HomesiteWeb.GalleryLive.Show do
                       src={"data:#{media.content_type};base64,#{Base.encode64(media.medium_data)}"}
                       alt={media.alt_text}
                       class="h-full w-full object-cover"
+                      loading="lazy"
                     />
                   </figure>
                   <div class="card-body p-[var(--spacing-sm)]">

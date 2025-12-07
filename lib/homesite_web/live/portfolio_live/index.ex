@@ -5,14 +5,35 @@ defmodule HomesiteWeb.PortfolioLive.Index do
 
   alias Homesite.Media
 
+  @galleries_per_page 20
+
   @impl true
   def mount(_params, _session, socket) do
-    galleries = Media.list_public_galleries()
+    galleries = Media.list_public_galleries(limit: @galleries_per_page)
 
     {:ok,
      socket
      |> assign(:page_title, gettext("Portfolio"))
-     |> assign(:galleries, galleries)}
+     |> assign(:galleries, galleries)
+     |> assign(:page, 1)
+     |> assign(:has_more, length(galleries) == @galleries_per_page)}
+  end
+
+  @impl true
+  def handle_event("load_more", _params, socket) do
+    next_page = socket.assigns.page + 1
+    offset = socket.assigns.page * @galleries_per_page
+
+    new_galleries =
+      Media.list_public_galleries(limit: @galleries_per_page, offset: offset)
+
+    all_galleries = socket.assigns.galleries ++ new_galleries
+
+    {:noreply,
+     socket
+     |> assign(:galleries, all_galleries)
+     |> assign(:page, next_page)
+     |> assign(:has_more, length(new_galleries) == @galleries_per_page)}
   end
 
   @impl true
@@ -47,6 +68,7 @@ defmodule HomesiteWeb.PortfolioLive.Index do
                           src={"data:#{gallery.cover_media_item.content_type};base64,#{Base.encode64(gallery.cover_media_item.medium_data)}"}
                           alt={gallery.cover_media_item.alt_text}
                           class="duration-[var(--duration-normal)] h-full w-full object-cover transition-transform hover:scale-105"
+                          loading="lazy"
                         />
                       </.link>
                     </figure>
@@ -91,6 +113,15 @@ defmodule HomesiteWeb.PortfolioLive.Index do
                 </article>
               <% end %>
             </div>
+
+            <%!-- Load More Button --%>
+            <%= if @has_more do %>
+              <div class="mt-[var(--spacing-lg)] text-center">
+                <button phx-click="load_more" class="btn btn-outline btn-wide">
+                  {gettext("Load More Galleries")}
+                </button>
+              </div>
+            <% end %>
           <% end %>
         </div>
       </main>

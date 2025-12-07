@@ -5,11 +5,13 @@ defmodule HomesiteWeb.MediaLive.Index do
 
   alias Homesite.Media
 
+  @media_per_page 20
+
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket), do: Media.subscribe_media_items(socket.assigns.current_scope)
 
-    media_items = list_media_items(socket.assigns.current_scope, %{})
+    media_items = list_media_items(socket.assigns.current_scope, %{}, limit: @media_per_page)
 
     {:ok,
      socket
@@ -17,6 +19,8 @@ defmodule HomesiteWeb.MediaLive.Index do
      |> assign(:search_query, "")
      |> assign(:aspect_filter, nil)
      |> assign(:gallery_filter, nil)
+     |> assign(:page, 1)
+     |> assign(:has_more, length(media_items) == @media_per_page)
      |> stream(:media_items, media_items)}
   end
 
@@ -39,10 +43,14 @@ defmodule HomesiteWeb.MediaLive.Index do
 
     media_items =
       if search_query == "" do
-        list_media_items(socket.assigns.current_scope, %{
-          aspect_category: socket.assigns.aspect_filter,
-          gallery_id: socket.assigns.gallery_filter
-        })
+        list_media_items(
+          socket.assigns.current_scope,
+          %{
+            aspect_category: socket.assigns.aspect_filter,
+            gallery_id: socket.assigns.gallery_filter
+          },
+          limit: @media_per_page
+        )
       else
         Media.search_media_items(socket.assigns.current_scope, search_query)
       end
@@ -50,6 +58,8 @@ defmodule HomesiteWeb.MediaLive.Index do
     {:noreply,
      socket
      |> assign(:search_query, search_query)
+     |> assign(:page, 1)
+     |> assign(:has_more, length(media_items) == @media_per_page)
      |> stream(:media_items, media_items, reset: true)}
   end
 
@@ -57,15 +67,21 @@ defmodule HomesiteWeb.MediaLive.Index do
     aspect_filter = if aspect == "", do: nil, else: aspect
 
     media_items =
-      list_media_items(socket.assigns.current_scope, %{
-        aspect_category: aspect_filter,
-        gallery_id: socket.assigns.gallery_filter
-      })
+      list_media_items(
+        socket.assigns.current_scope,
+        %{
+          aspect_category: aspect_filter,
+          gallery_id: socket.assigns.gallery_filter
+        },
+        limit: @media_per_page
+      )
 
     {:noreply,
      socket
      |> assign(:aspect_filter, aspect_filter)
      |> assign(:search_query, "")
+     |> assign(:page, 1)
+     |> assign(:has_more, length(media_items) == @media_per_page)
      |> stream(:media_items, media_items, reset: true)}
   end
 
@@ -77,16 +93,44 @@ defmodule HomesiteWeb.MediaLive.Index do
       end
 
     media_items =
-      list_media_items(socket.assigns.current_scope, %{
-        aspect_category: socket.assigns.aspect_filter,
-        gallery_id: gallery_filter
-      })
+      list_media_items(
+        socket.assigns.current_scope,
+        %{
+          aspect_category: socket.assigns.aspect_filter,
+          gallery_id: gallery_filter
+        },
+        limit: @media_per_page
+      )
 
     {:noreply,
      socket
      |> assign(:gallery_filter, gallery_filter)
      |> assign(:search_query, "")
+     |> assign(:page, 1)
+     |> assign(:has_more, length(media_items) == @media_per_page)
      |> stream(:media_items, media_items, reset: true)}
+  end
+
+  def handle_event("load_more", _params, socket) do
+    next_page = socket.assigns.page + 1
+    offset = socket.assigns.page * @media_per_page
+
+    new_items =
+      list_media_items(
+        socket.assigns.current_scope,
+        %{
+          aspect_category: socket.assigns.aspect_filter,
+          gallery_id: socket.assigns.gallery_filter
+        },
+        limit: @media_per_page,
+        offset: offset
+      )
+
+    {:noreply,
+     socket
+     |> assign(:page, next_page)
+     |> assign(:has_more, length(new_items) == @media_per_page)
+     |> stream(:media_items, new_items)}
   end
 
   def handle_event("delete", %{"id" => id}, socket) do
@@ -221,6 +265,7 @@ defmodule HomesiteWeb.MediaLive.Index do
                       src={"data:#{media.content_type};base64,#{Base.encode64(media.medium_data)}"}
                       alt={media.alt_text}
                       class="h-full w-full object-cover"
+                      loading="lazy"
                     />
                   </figure>
                   <div class="card-body p-[var(--space-sm)]">
@@ -260,6 +305,15 @@ defmodule HomesiteWeb.MediaLive.Index do
                 </article>
               <% end %>
             </div>
+
+            <%!-- Load More Button --%>
+            <%= if @has_more && @search_query == "" do %>
+              <div class="mt-[var(--spacing-lg)] text-center">
+                <button phx-click="load_more" class="btn btn-outline btn-wide">
+                  {gettext("Load More Media")}
+                </button>
+              </div>
+            <% end %>
           <% end %>
         </div>
       </main>
@@ -267,10 +321,13 @@ defmodule HomesiteWeb.MediaLive.Index do
     """
   end
 
-  defp list_media_items(scope, filters) do
-    Media.list_media_items(scope,
+  defp list_media_items(scope, filters, opts \\ []) do
+    Media.list_media_items(
+      scope,
       gallery_id: filters[:gallery_id],
-      aspect_category: filters[:aspect_category]
+      aspect_category: filters[:aspect_category],
+      limit: opts[:limit],
+      offset: opts[:offset]
     )
   end
 end

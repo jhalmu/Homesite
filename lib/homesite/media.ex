@@ -41,12 +41,16 @@ defmodule Homesite.Media do
   ## Options
     * `:gallery_type` - Filter by type ("portfolio" or "library")
     * `:is_public` - Filter by public/private status
+    * `:preload` - List of associations to preload (default: [])
   """
   def list_galleries(%Scope{} = scope, opts \\ []) do
+    preload = opts[:preload] || []
+
     query =
       from g in Gallery,
         where: g.user_id == ^scope.user.id,
-        order_by: [asc: g.display_order, desc: g.inserted_at]
+        order_by: [asc: g.display_order, desc: g.inserted_at],
+        preload: ^preload
 
     query = maybe_filter_by_type(query, opts[:gallery_type])
     query = maybe_filter_by_public(query, opts[:is_public])
@@ -142,8 +146,13 @@ defmodule Homesite.Media do
   ## Options
     * `:gallery_id` - Filter by gallery
     * `:aspect_category` - Filter by aspect category ("landscape", "portrait", "square")
+    * `:limit` - Maximum number of items to return (default: 20)
+    * `:offset` - Number of items to skip (default: 0)
   """
   def list_media_items(%Scope{} = scope, opts \\ []) do
+    limit = opts[:limit] || 20
+    offset = opts[:offset] || 0
+
     query =
       from m in MediaItem,
         where: m.user_id == ^scope.user.id,
@@ -151,6 +160,7 @@ defmodule Homesite.Media do
 
     query = maybe_filter_by_gallery(query, opts[:gallery_id])
     query = maybe_filter_by_aspect(query, opts[:aspect_category])
+    query = from m in query, limit: ^limit, offset: ^offset
 
     Repo.all(query)
   end
@@ -311,11 +321,20 @@ defmodule Homesite.Media do
 
   @doc """
   Lists all public portfolios.
+
+  ## Options
+    * `:limit` - Maximum number of galleries to return (default: 20)
+    * `:offset` - Number of galleries to skip (default: 0)
   """
-  def list_public_galleries do
+  def list_public_galleries(opts \\ []) do
+    limit = opts[:limit] || 20
+    offset = opts[:offset] || 0
+
     from(g in Gallery,
       where: g.is_public == true and g.is_portfolio == true,
       order_by: [asc: g.display_order, desc: g.inserted_at],
+      limit: ^limit,
+      offset: ^offset,
       preload: [:user]
     )
     |> Repo.all()
@@ -323,15 +342,29 @@ defmodule Homesite.Media do
 
   @doc """
   Gets a public gallery by slug (no authentication required).
+  Returns {:ok, gallery} or {:error, :not_found}.
   """
-  def get_public_gallery_by_slug!(slug) do
+  def get_public_gallery_by_slug(slug) do
     media_items_query = from m in MediaItem, order_by: m.inserted_at
 
-    from(g in Gallery,
-      where: g.slug == ^slug and g.is_public == true and g.is_portfolio == true
-    )
-    |> Repo.one!()
-    |> Repo.preload([:user, media_items: media_items_query])
+    case from(g in Gallery,
+           where: g.slug == ^slug and g.is_public == true and g.is_portfolio == true
+         )
+         |> Repo.one() do
+      nil -> {:error, :not_found}
+      gallery -> {:ok, Repo.preload(gallery, [:user, media_items: media_items_query])}
+    end
+  end
+
+  @doc """
+  Gets a public gallery by slug (no authentication required).
+  Raises if not found.
+  """
+  def get_public_gallery_by_slug!(slug) do
+    case get_public_gallery_by_slug(slug) do
+      {:ok, gallery} -> gallery
+      {:error, :not_found} -> raise Ecto.NoResultsError, queryable: Gallery
+    end
   end
 
   @doc """
