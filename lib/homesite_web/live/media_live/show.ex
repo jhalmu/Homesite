@@ -26,13 +26,13 @@ defmodule HomesiteWeb.MediaLive.Show do
   def handle_event("delete", _params, socket) do
     media_item = socket.assigns.media_item
 
-    if socket.assigns.usage.gallery_count > 0 do
+    if socket.assigns.usage.project_count > 0 do
       {:noreply,
        socket
        |> put_flash(
          :error,
-         gettext("Cannot delete media item - it is used in %{count} gallery/galleries",
-           count: socket.assigns.usage.gallery_count
+         gettext("Cannot delete media item - it is used in %{count} project(s)",
+           count: socket.assigns.usage.project_count
          )
        )}
     else
@@ -175,7 +175,7 @@ defmodule HomesiteWeb.MediaLive.Show do
                   {gettext("Usage Statistics")}
                 </h3>
 
-                <%= if @usage.gallery_count == 0 do %>
+                <%= if @usage.project_count == 0 do %>
                   <div class="alert alert-info">
                     <.icon name="hero-information-circle" class="h-5 w-5" />
                     <span>{gettext("This media item is not used in any galleries.")}</span>
@@ -183,18 +183,18 @@ defmodule HomesiteWeb.MediaLive.Show do
                 <% else %>
                   <div class="mb-[var(--space-sm)]">
                     <p class="text-[var(--text-sm)]">
-                      {gettext("Used in %{count} gallery/galleries:", count: @usage.gallery_count)}
+                      {gettext("Used in %{count} project(s):", count: @usage.project_count)}
                     </p>
                   </div>
 
                   <div class="space-y-[var(--space-xs)]">
-                    <%= for gallery <- @usage.galleries do %>
+                    <%= for project <- @usage.projects do %>
                       <.link
-                        navigate={~p"/galleries/#{gallery}"}
+                        navigate={~p"/projects/#{project}"}
                         class="badge badge-lg badge-ghost gap-[var(--spacing-inline)] duration-[var(--duration-fast)] transition-colors hover:badge-primary"
                       >
                         <.icon name="hero-photo" class="h-4 w-4" />
-                        {gallery.name}
+                        {project.name}
                       </.link>
                     <% end %>
                   </div>

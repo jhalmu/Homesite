@@ -146,13 +146,13 @@ defmodule HomesiteWeb.MediaLive.Index do
     # Check if media is in use
     usage = Media.get_media_usage(socket.assigns.current_scope, id)
 
-    if usage.gallery_count > 0 do
+    if usage.project_count > 0 do
       {:noreply,
        socket
        |> put_flash(
          :error,
-         gettext("Cannot delete media item - it is used in %{count} gallery/galleries",
-           count: usage.gallery_count
+         gettext("Cannot delete media item - it is used in %{count} project(s)",
+           count: usage.project_count
          )
        )}
     else
@@ -362,13 +362,13 @@ defmodule HomesiteWeb.MediaLive.Index do
           <div class="w-full md:w-48">
             <select
               phx-change="filter-gallery"
-              name="gallery"
+              name="project"
               class="select select-bordered w-full"
             >
-              <option value="">{gettext("All Galleries")}</option>
-              <%= for gallery <- Media.list_galleries(@current_scope) do %>
-                <option value={gallery.id} selected={@gallery_filter == gallery.id}>
-                  {gallery.name}
+              <option value="">{gettext("All Projects")}</option>
+              <%= for project <- Media.list_projects(@current_scope) do %>
+                <option value={project.id} selected={@project_filter == project.id}>
+                  {project.name}
                 </option>
               <% end %>
             </select>

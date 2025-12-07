@@ -12,18 +12,18 @@ defmodule HomesiteWeb.PortfolioLive.Show do
 
   @impl true
   def handle_params(%{"slug" => slug}, _, socket) do
-    case Media.get_public_gallery_by_slug(slug) do
-      {:ok, gallery} ->
+    case Media.get_public_project_by_slug(slug) do
+      {:ok, project} ->
         {:noreply,
          socket
-         |> assign(:page_title, gallery.name)
-         |> assign(:gallery, gallery)
+         |> assign(:page_title, project.name)
+         |> assign(:project, project)
          |> assign(:current_url, url(~p"/portfolio/#{slug}"))}
 
       {:error, :not_found} ->
         {:noreply,
          socket
-         |> put_flash(:error, gettext("Gallery not found"))
+         |> put_flash(:error, gettext("Project not found"))
          |> redirect(to: ~p"/portfolio")}
     end
   end
@@ -34,10 +34,10 @@ defmodule HomesiteWeb.PortfolioLive.Show do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <main class="technical-main">
         <.header>
-          {@gallery.name}
+          {@project.name}
           <:subtitle>
-            <%= if @gallery.description do %>
-              {@gallery.description}
+            <%= if @project.description do %>
+              {@project.description}
             <% end %>
           </:subtitle>
           <:actions>
@@ -60,17 +60,17 @@ defmodule HomesiteWeb.PortfolioLive.Show do
             {gettext("Public")}
           </div>
 
-          <%= if @gallery.user do %>
+          <%= if @project.user do %>
             <div class="text-base-content/60 ml-[var(--space-sm)] gap-[var(--space-xs)] text-[var(--text-sm)] flex items-center">
               <.icon name="hero-user-circle" class="h-4 w-4" />
-              <span>{@gallery.user.display_name || @gallery.user.email}</span>
+              <span>{@project.user.display_name || @project.user.email}</span>
             </div>
           <% end %>
         </div>
         
     <!-- Media items grid -->
         <div class="mt-[var(--spacing-lg)]">
-          <%= if Enum.empty?(@gallery.media_items) do %>
+          <%= if Enum.empty?(@project.media_items) do %>
             <div class="alert">
               <.icon name="hero-information-circle" class="h-6 w-6" />
               <div>
@@ -83,12 +83,12 @@ defmodule HomesiteWeb.PortfolioLive.Show do
           <% else %>
             <!-- Statistics -->
             <div class="mb-[var(--space-md)] text-base-content/60 text-[var(--text-sm)]">
-              {gettext("%{count} image(s)", count: length(@gallery.media_items))}
+              {gettext("%{count} image(s)", count: length(@project.media_items))}
             </div>
             
     <!-- Masonry-style grid for varied aspect ratios -->
             <div class="gap-[var(--space-md)] columns-1 sm:columns-2 md:columns-3 lg:columns-4">
-              <%= for media <- @gallery.media_items do %>
+              <%= for media <- @project.media_items do %>
                 <article class="mb-[var(--space-md)] break-inside-avoid">
                   <div class="card bg-base-200 duration-[var(--duration-normal)] overflow-hidden shadow-lg transition-shadow hover:shadow-xl">
                     <figure class="bg-base-300 overflow-hidden">
