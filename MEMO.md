@@ -6,6 +6,36 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-07 23:45:00 - GitHub Issue Clarification
+
+### Session: Issue #4 vs #47 Distinction
+
+#### Objectives Completed
+Clarified the distinction between two GitHub issues that appeared similar but serve different purposes:
+- **Issue #47**: Private 1-on-1 messaging (DMs) - matches MESSAGING_SYSTEM.md specification
+- **Issue #4**: Public microblogging feed (tweets/short posts)
+
+#### Actions Taken
+
+**GitHub Issue Update**:
+- **Updated Issue #4**:
+  - New title: "Public Microblogging Feed (Short Posts)"
+  - Added clear description distinguishing it from private messaging (#47)
+  - Listed features: realtime feed, character limit, visibility controls
+  - Added routes: `/feed` (public), `/dashboard/lyhyet/*` (admin)
+  - Cross-referenced issue #47 in description
+
+**Documentation Review**:
+- Reviewed `MESSAGING_SYSTEM.md` - confirmed alignment with issue #47
+- No code changes required (clarification only)
+
+#### Session Statistics
+- **Duration**: ~15 minutes
+- **Files changed**: 0 (GitHub metadata only)
+- **Commits**: 0 (no code changes)
+
+---
+
 ## 2025-12-07 23:00:00 - Project Transformation Complete (Days 4-6 Finished)
 
 ### Session: Completion of Portfolio Platform Transformation
