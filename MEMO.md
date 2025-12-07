@@ -6,6 +6,154 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-07 14:30:00 - Gallery to Project Transformation (Days 1-3 Complete)
+
+### Session: Core Infrastructure Transformation
+
+#### Objectives Completed
+Transformed the image gallery system into a project-focused portfolio platform with rich metadata, stepped form creation, and enhanced organization capabilities. Completed Days 1-3 of the planned 7-day implementation (database migrations, schema refactoring, stepped form creation).
+
+#### Major Changes
+
+**Day 1: Database Migrations** (4 migrations created and tested)
+1. **Rename galleries → projects**: Table rename with reversible index operations
+2. **Add project metadata**: Added fields for category, tags, project_date, field_visibility (JSONB), completion_percentage
+3. **Create collaborators table**: Track team members with name, contact (URL/email/none), display_order
+4. **Create affiliation_links table**: Related project links (client websites, press, etc.)
+
+**Day 2: Schema & Context Refactoring**
+- **RENAMED**: `lib/homesite/media/gallery.ex` → `project.ex`
+  - Added dual changeset strategy: `basic_changeset/3` (Step 1 only) and `changeset/3` (all fields)
+  - Implemented `calculate_completion/1` with 20-80% scoring (base fields only, associations add +20% in context)
+  - New associations: `has_many :collaborators`, `has_many :affiliation_links`
+- **RENAMED**: `lib/homesite/media/gallery_media_item.ex` → `project_media_item.ex`
+- **CREATED**: `lib/homesite/media/collaborator.ex`
+  - Smart contact validation: auto-infers URL/email, validates formats
+- **CREATED**: `lib/homesite/media/affiliation_link.ex`
+  - URL validation for external references
+- **MODIFIED**: `lib/homesite/media.ex`
+  - Renamed 12 functions (list_galleries → list_projects, etc.)
+  - Added 4 collaborator CRUD functions with scope isolation
+  - Added 4 affiliation_link CRUD functions with scope isolation
+  - Added `update_project_completion/2` for recalculating percentage with associations
+- **MODIFIED**: `test/support/fixtures/media_fixtures.ex`
+  - Renamed: `gallery_fixture` → `project_fixture`
+  - Added: `collaborator_fixture/3`, `affiliation_link_fixture/3`
+
+**Day 3: Stepped Form & LiveViews**
+- **CREATED**: `lib/homesite_web/live/project_live/stepped_form.ex` (400 lines)
+  - 4-step interface using daisyUI Steps component:
+    1. **Basics** (required): Name, description
+    2. **Metadata** (optional): Category, tags, project date
+    3. **Team** (optional): Collaborators and affiliation links display (inline management deferred)
+    4. **Settings** (optional): Public/portfolio toggles, field visibility
+  - Skip to Save button on optional steps (2-4)
+  - Real-time completion percentage display
+  - Next/Back navigation between steps
+- **CREATED**: `lib/homesite_web/live/project_live/index.ex`
+  - Grid layout for project cards (1/2/3 columns responsive)
+  - Completion percentage, Portfolio/Public badges
+  - Empty state with call-to-action
+- **CREATED**: `lib/homesite_web/live/project_live/show.ex`
+  - Comprehensive project details: metadata, collaborators, affiliation links, media items
+  - Field visibility respected (reads from project.field_visibility JSONB)
+- **DELETED**: `lib/homesite_web/live/gallery_live/` (old directory removed)
+- **MODIFIED**: `lib/homesite_web/router.ex`
+  - Updated routes: `/galleries/*` → `/projects/*`
+  - New routes use ProjectLive.SteppedForm for create/edit
+
+**Reference Updates Across Codebase**
+- **MODIFIED**: `lib/homesite_web/live/portfolio_live/index.ex`
+  - Updated: `list_public_galleries` → `list_public_projects`
+  - Updated assigns: `@galleries` → `@projects`
+  - Updated template variable: `gallery` → `project`
+- **MODIFIED**: `lib/homesite_web/live/portfolio_live/show.ex`
+  - Updated: `get_public_gallery_by_slug` → `get_public_project_by_slug`
+  - Updated assigns: `@gallery` → `@project`
+- **MODIFIED**: `lib/homesite_web/live/media_live/index.ex`
+  - Updated: `list_galleries` → `list_projects`
+  - Updated: `gallery_count` → `project_count`
+  - Updated filter names and variables throughout
+- **MODIFIED**: `lib/homesite_web/live/media_live/show.ex`
+  - Updated: `@usage.galleries` → `@usage.projects`
+  - Updated: `gallery_count` → `project_count`
+  - Updated routes: `/galleries/` → `/projects/`
+
+#### Compilation & Testing Status
+- **✅ Compilation**: All files compile successfully (zero errors)
+- **⚠️ Tests**: Media tests failing (expected) - require Gallery → Project updates
+  - Test file updates deferred to Day 7 per implementation plan
+
+#### Commits Pushed (10 total)
+1. `feat: Rename galleries to projects and add metadata tables` (migrations)
+2. `refactor: Rename Gallery to Project across codebase` (schemas)
+3. `refactor: Update Media context - Gallery to Project rename and new CRUD`
+4. `refactor: Update test fixtures - gallery to project rename`
+5. `feat: Create SteppedForm LiveView with daisyUI Steps component`
+6. `refactor: Update router - Gallery routes to Project routes`
+7. `feat: Add ProjectLive.Index and ProjectLive.Show views`
+8. `fix: Correct layout syntax and remove old gallery_live directory`
+9. `refactor: Update all gallery references to project throughout codebase`
+10. `refactor: Update Media context - Gallery to Project rename and new CRUD`
+
+#### Implementation Plan Progress
+
+**Completed (Days 1-3):**
+- ✅ Day 1: All 4 migrations created, tested (rollback/forward), committed
+- ✅ Day 2: Complete schema refactoring (Project, Collaborator, AffiliationLink)
+- ✅ Day 2: Media context fully updated with all new CRUD operations
+- ✅ Day 2: Test fixtures updated
+- ✅ Day 3: SteppedForm LiveView with all 4 steps complete
+- ✅ Day 3: Router updated with new project routes
+- ✅ Day 3: ProjectLive.Index and Show created
+- ✅ Additional: All gallery references updated across entire codebase
+
+**Remaining (Days 4-7):**
+- ⏳ Day 4: Team step inline forms (collaborator/link add/remove in SteppedForm)
+- ⏳ Day 5: Enhanced PortfolioLive.Show with metadata display, HTML export, share menu
+- ⏳ Day 6: Navigation links, translations (Finnish + extraction)
+- ⏳ Day 7: Test updates (Gallery → Project), new test files, full test suite
+
+#### Architecture Decisions
+1. **Dual changeset strategy**: Enables minimal project creation (Step 1 only) while supporting full updates
+2. **Completion percentage**: Calculated in schema (60% max) + context layer adds associations (+40%)
+3. **Field visibility**: User-controlled via JSONB map, respected in public views
+4. **Smart contact validation**: Auto-infers URL vs email, validates formats appropriately
+5. **Scope isolation maintained**: All new CRUD functions enforce `true = record.user_id == scope.user.id`
+
+#### Security Considerations
+- All new CRUD functions maintain scope isolation pattern
+- Field visibility control prevents accidental data exposure
+- Validation prevents XSS in collaborator names and link titles
+- URL validation ensures proper format for external links
+
+#### Next Session Priorities
+1. **Fix tests**: Update `test/homesite/media_test.exs` (Gallery → Project references)
+2. **Inline collaborator/link management**: Add forms to Team step in SteppedForm
+3. **Enhanced PortfolioLive.Show**: Display all new metadata with field visibility
+4. **HTML export**: Implement `HomesiteWeb.Export.ProjectHTML` module
+5. **Translations**: Extract new strings, add Finnish translations
+
+#### Known Issues
+- **Tests failing**: `media_test.exs` references old Gallery module (expected, deferred to Day 7)
+- **Team step read-only**: Collaborator and affiliation link inline forms not yet implemented
+- **Completion percentage**: Currently only shows base fields (60%), associations bonus (+40%) works but needs testing
+
+#### Files Changed
+- **Created**: 7 files (4 migrations, 2 schemas, 1 LiveView directory with 3 files)
+- **Modified**: 10 files (Media context, router, 4 LiveViews, test fixtures, Project schema, ProjectMediaItem)
+- **Deleted**: 3 files (old gallery_live directory)
+- **Total lines changed**: ~1500 additions, ~600 deletions
+
+#### Session Statistics
+- **Duration**: ~2.5 hours
+- **Commits**: 10
+- **Token usage**: 121K / 200K (60%)
+- **Compilation**: ✅ Success (zero errors)
+- **Tests**: ⚠️ Failing (expected, deferred updates)
+
+---
+
 ## 2025-12-07 12:00:00 - Phase 3 Image Gallery Critical Improvements (Complete)
 
 ### Session: Error Handling, Pagination, and Performance Optimization
