@@ -5,9 +5,9 @@ defmodule Homesite.MediaFixtures do
   """
 
   @doc """
-  Generate a unique gallery name.
+  Generate a unique project name.
   """
-  def unique_gallery_name, do: "gallery #{System.unique_integer([:positive])}"
+  def unique_project_name, do: "project #{System.unique_integer([:positive])}"
 
   @doc """
   Generate a unique media item filename.
@@ -50,19 +50,19 @@ defmodule Homesite.MediaFixtures do
   end
 
   @doc """
-  Generate a gallery.
+  Generate a project.
   """
-  def gallery_fixture(scope, attrs \\ %{}) do
+  def project_fixture(scope, attrs \\ %{}) do
     attrs =
       Enum.into(attrs, %{
-        name: unique_gallery_name(),
-        description: "Test gallery description",
+        name: unique_project_name(),
+        description: "Test project description",
         slug: "will-be-generated",
         is_public: true
       })
 
-    {:ok, gallery} = Homesite.Media.create_gallery(scope, attrs)
-    gallery
+    {:ok, project} = Homesite.Media.create_project(scope, attrs)
+    project
   end
 
   @doc """
@@ -117,5 +117,38 @@ defmodule Homesite.MediaFixtures do
 
     File.rm(temp_path)
     media_item
+  end
+
+  @doc """
+  Generate a collaborator for a project.
+  """
+  def collaborator_fixture(scope, project_id, attrs \\ %{}) do
+    attrs =
+      Enum.into(attrs, %{
+        name: "Test Collaborator #{System.unique_integer([:positive])}",
+        contact: "https://example.com",
+        contact_type: "url",
+        display_order: 0,
+        project_id: project_id
+      })
+
+    {:ok, collaborator} = Homesite.Media.create_collaborator(scope, attrs)
+    collaborator
+  end
+
+  @doc """
+  Generate an affiliation link for a project.
+  """
+  def affiliation_link_fixture(scope, project_id, attrs \\ %{}) do
+    attrs =
+      Enum.into(attrs, %{
+        title: "Test Link #{System.unique_integer([:positive])}",
+        url: "https://example.com/project-#{System.unique_integer([:positive])}",
+        display_order: 0,
+        project_id: project_id
+      })
+
+    {:ok, link} = Homesite.Media.create_affiliation_link(scope, attrs)
+    link
   end
 end
