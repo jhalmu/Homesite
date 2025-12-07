@@ -72,7 +72,7 @@ defmodule HomesiteWeb.FormComponents do
       
     <!-- Selected tags -->
       <%= if @selected_tags != [] do %>
-        <div class="mb-[var(--space-sm)] flex flex-wrap gap-[var(--space-xs)]">
+        <div class="mb-[var(--space-sm)] gap-[var(--space-xs)] flex flex-wrap">
           <%= for tag <- @selected_tags do %>
             <div class="badge badge-primary badge-lg gap-[var(--space-xs)]">
               {tag.name}
@@ -110,7 +110,7 @@ defmodule HomesiteWeb.FormComponents do
     <!-- Suggestions dropdown -->
         <%= if @tag_suggestions != [] or @tag_search_query != "" do %>
           <div
-            class="border-base-300 bg-base-100 absolute z-10 mt-[var(--space-xs)] max-h-60 w-full overflow-y-auto rounded-lg border shadow-lg"
+            class="border-base-300 bg-base-100 mt-[var(--space-xs)] absolute z-10 max-h-60 w-full overflow-y-auto rounded-lg border shadow-lg"
             role="listbox"
           >
             <%= for {tag, post_count} <- @tag_suggestions do %>
@@ -118,7 +118,7 @@ defmodule HomesiteWeb.FormComponents do
                 type="button"
                 phx-click={@on_add}
                 phx-value-tag-id={tag.id}
-                class="flex w-full items-center justify-between px-[var(--space-sm)] py-[var(--space-xs)] text-left hover:bg-base-200"
+                class="px-[var(--space-sm)] py-[var(--space-xs)] flex w-full items-center justify-between text-left hover:bg-base-200"
                 role="option"
               >
                 <span>{tag.name}</span>
@@ -134,7 +134,7 @@ defmodule HomesiteWeb.FormComponents do
                   type="button"
                   phx-click={@on_add}
                   phx-value-tag-id={exact_tag.id}
-                  class="border-base-300 text-primary flex w-full items-center gap-[var(--space-xs)] border-t px-[var(--space-sm)] py-[var(--space-xs)] text-left font-semibold hover:bg-base-200"
+                  class="border-base-300 text-primary gap-[var(--space-xs)] px-[var(--space-sm)] py-[var(--space-xs)] flex w-full items-center border-t text-left font-semibold hover:bg-base-200"
                   role="option"
                 >
                   <.icon name="hero-check" class="h-4 w-4" />
@@ -146,7 +146,7 @@ defmodule HomesiteWeb.FormComponents do
                   type="button"
                   phx-click={@on_create}
                   phx-value-name={@tag_search_query}
-                  class="border-base-300 flex w-full items-center gap-[var(--space-xs)] border-t px-[var(--space-sm)] py-[var(--space-xs)] text-left font-semibold hover:bg-base-200"
+                  class="border-base-300 gap-[var(--space-xs)] px-[var(--space-sm)] py-[var(--space-xs)] flex w-full items-center border-t text-left font-semibold hover:bg-base-200"
                   role="option"
                 >
                   <.icon name="hero-plus" class="h-4 w-4" />
@@ -165,7 +165,7 @@ defmodule HomesiteWeb.FormComponents do
           <.icon name="hero-information-circle" />
           <div>
             <p class="font-semibold">{gettext("Similar tags exist:")}</p>
-            <div class="mt-[var(--space-xs)] flex flex-wrap gap-[var(--space-xs)]">
+            <div class="mt-[var(--space-xs)] gap-[var(--space-xs)] flex flex-wrap">
               <%= for tag <- @similar_tags_warning do %>
                 <button
                   type="button"
@@ -231,7 +231,7 @@ defmodule HomesiteWeb.FormComponents do
       <label class="label">
         <span class="label-text font-semibold">{@label}</span>
       </label>
-      <div class="flex gap-[var(--space-xs)]">
+      <div class="gap-[var(--space-xs)] flex">
         <input
           type="date"
           name={@date_field.name}

@@ -209,9 +209,12 @@ defmodule HomesiteWeb.CoreComponents do
         </div>
       </div>
       <div :if={@help != []} class="field-help">
-        <div class="bg-base-200/50 rounded-lg p-[var(--space-sm)] text-[var(--text-sm)]">
-          <div class="flex items-start gap-[var(--space-xs)]">
-            <.icon name="hero-information-circle" class="text-info mt-[var(--space-xs)] h-5 w-5 flex-shrink-0" />
+        <div class="bg-base-200/50 p-[var(--space-sm)] text-[var(--text-sm)] rounded-lg">
+          <div class="gap-[var(--space-xs)] flex items-start">
+            <.icon
+              name="hero-information-circle"
+              class="text-info mt-[var(--space-xs)] h-5 w-5 flex-shrink-0"
+            />
             <div class="text-base-content/70">
               {render_slot(@help)}
             </div>
@@ -244,9 +247,12 @@ defmodule HomesiteWeb.CoreComponents do
         </div>
       </div>
       <div :if={@help != []} class="field-help">
-        <div class="bg-base-200/50 rounded-lg p-[var(--space-sm)] text-[var(--text-sm)]">
-          <div class="flex items-start gap-[var(--space-xs)]">
-            <.icon name="hero-information-circle" class="text-info mt-[var(--space-xs)] h-5 w-5 flex-shrink-0" />
+        <div class="bg-base-200/50 p-[var(--space-sm)] text-[var(--text-sm)] rounded-lg">
+          <div class="gap-[var(--space-xs)] flex items-start">
+            <.icon
+              name="hero-information-circle"
+              class="text-info mt-[var(--space-xs)] h-5 w-5 flex-shrink-0"
+            />
             <div class="text-base-content/70">
               {render_slot(@help)}
             </div>
@@ -278,9 +284,12 @@ defmodule HomesiteWeb.CoreComponents do
         </div>
       </div>
       <div :if={@help != []} class="field-help">
-        <div class="bg-base-200/50 rounded-lg p-[var(--space-sm)] text-[var(--text-sm)]">
-          <div class="flex items-start gap-[var(--space-xs)]">
-            <.icon name="hero-information-circle" class="text-info mt-[var(--space-xs)] h-5 w-5 flex-shrink-0" />
+        <div class="bg-base-200/50 p-[var(--space-sm)] text-[var(--text-sm)] rounded-lg">
+          <div class="gap-[var(--space-xs)] flex items-start">
+            <.icon
+              name="hero-information-circle"
+              class="text-info mt-[var(--space-xs)] h-5 w-5 flex-shrink-0"
+            />
             <div class="text-base-content/70">
               {render_slot(@help)}
             </div>
@@ -312,9 +321,12 @@ defmodule HomesiteWeb.CoreComponents do
         </div>
       </div>
       <div :if={@help != []} class="field-help">
-        <div class="bg-base-200/50 rounded-lg p-[var(--space-sm)] text-[var(--text-sm)]">
-          <div class="flex items-start gap-[var(--space-xs)]">
-            <.icon name="hero-information-circle" class="text-info mt-[var(--space-xs)] h-5 w-5 flex-shrink-0" />
+        <div class="bg-base-200/50 p-[var(--space-sm)] text-[var(--text-sm)] rounded-lg">
+          <div class="gap-[var(--space-xs)] flex items-start">
+            <.icon
+              name="hero-information-circle"
+              class="text-info mt-[var(--space-xs)] h-5 w-5 flex-shrink-0"
+            />
             <div class="text-base-content/70">
               {render_slot(@help)}
             </div>
@@ -328,7 +340,7 @@ defmodule HomesiteWeb.CoreComponents do
   # Helper used by inputs to generate form errors
   defp error(assigns) do
     ~H"""
-    <p class="text-error mt-[var(--space-xs)] flex items-center gap-[var(--space-xs)] text-[var(--text-sm)]">
+    <p class="text-error mt-[var(--space-xs)] gap-[var(--space-xs)] text-[var(--text-sm)] flex items-center">
       <.icon name="hero-exclamation-circle" class="size-5" />
       {render_slot(@inner_block)}
     </p>
@@ -344,7 +356,10 @@ defmodule HomesiteWeb.CoreComponents do
 
   def header(assigns) do
     ~H"""
-    <header class={[@actions != [] && "flex items-center justify-between gap-[var(--space-md)]", "pb-[var(--space-sm)]"]}>
+    <header class={[
+      @actions != [] && "gap-[var(--space-md)] flex items-center justify-between",
+      "pb-[var(--space-sm)]"
+    ]}>
       <div>
         <h1 class="text-[var(--text-lg)] font-semibold leading-8">
           {render_slot(@inner_block)}
@@ -377,12 +392,18 @@ defmodule HomesiteWeb.CoreComponents do
 
   def page_header(assigns) do
     ~H"""
-    <header class={[@actions != [] && "flex items-center justify-between gap-[var(--space-md)]", "mb-[var(--space-md)]"]}>
+    <header class={[
+      @actions != [] && "gap-[var(--space-md)] flex items-center justify-between",
+      "mb-[var(--space-md)]"
+    ]}>
       <div>
         <h1 class="text-[var(--font-size-fluid-xl)] font-bold">
           {render_slot(@inner_block)}
         </h1>
-        <p :if={@subtitle != []} class="text-base-content/70 text-[var(--font-size-fluid-sm)] mt-[var(--space-xs)]">
+        <p
+          :if={@subtitle != []}
+          class="text-base-content/70 text-[var(--font-size-fluid-sm)] mt-[var(--space-xs)]"
+        >
           {render_slot(@subtitle)}
         </p>
       </div>
@@ -410,12 +431,18 @@ defmodule HomesiteWeb.CoreComponents do
 
   def section_header(assigns) do
     ~H"""
-    <header class={[@actions != [] && "flex items-center justify-between gap-[var(--space-md)]", "mb-[var(--space-sm)]"]}>
+    <header class={[
+      @actions != [] && "gap-[var(--space-md)] flex items-center justify-between",
+      "mb-[var(--space-sm)]"
+    ]}>
       <div>
         <h2 class="text-[var(--font-size-fluid-lg)] font-semibold">
           {render_slot(@inner_block)}
         </h2>
-        <p :if={@subtitle != []} class="text-base-content/70 text-[var(--font-size-fluid-sm)] mt-[var(--space-xs)]">
+        <p
+          :if={@subtitle != []}
+          class="text-base-content/70 text-[var(--font-size-fluid-sm)] mt-[var(--space-xs)]"
+        >
           {render_slot(@subtitle)}
         </p>
       </div>
@@ -475,7 +502,7 @@ defmodule HomesiteWeb.CoreComponents do
             {render_slot(col, @row_item.(row))}
           </td>
           <td :if={@action != []} class="w-0 font-semibold">
-            <div class="flex gap-[var(--space-sm)]">
+            <div class="gap-[var(--space-sm)] flex">
               <%= for action <- @action do %>
                 {render_slot(action, @row_item.(row))}
               <% end %>
@@ -982,7 +1009,7 @@ defmodule HomesiteWeb.CoreComponents do
 
   def badge_section_header(assigns) do
     ~H"""
-    <h2 class="mb-[var(--space-sm)] flex items-center gap-[var(--space-xs)] text-[var(--text-xl)] font-semibold">
+    <h2 class="mb-[var(--space-sm)] gap-[var(--space-xs)] text-[var(--text-xl)] flex items-center font-semibold">
       <.icon name={@icon} class="h-6 w-6" />
       {@title}
       <%= if @count do %>

@@ -86,15 +86,4 @@ defmodule HomesiteWeb.PageLive.Home do
 
     {:noreply, socket}
   end
-
-  defp truncate_html(html, max_length) when is_binary(html) do
-    html
-    |> String.replace(~r/<[^>]+>/, "")
-    |> String.slice(0, max_length)
-    |> then(fn text ->
-      if String.length(html) > max_length, do: text <> "...", else: text
-    end)
-  end
-
-  defp truncate_html(nil, _max_length), do: nil
 end

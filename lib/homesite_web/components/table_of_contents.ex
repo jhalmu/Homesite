@@ -159,7 +159,7 @@ defmodule HomesiteWeb.Components.TableOfContents do
         id="table-of-contents"
         phx-hook="TableOfContents"
         class={[
-          "border-base-300 bg-base-200 rounded-lg border p-[var(--space-sm)]",
+          "border-base-300 bg-base-200 p-[var(--space-sm)] rounded-lg border",
           @sticky && "sticky top-4",
           !@show_mobile && "hidden lg:block",
           @class
@@ -186,7 +186,7 @@ defmodule HomesiteWeb.Components.TableOfContents do
     <li>
       <a
         href={"##{@heading.id}"}
-        class="toc-link rounded-md px-[var(--space-sm)] py-[var(--space-xs)] text-[var(--text-sm)] opacity-70 hover:bg-base-300 hover:opacity-100"
+        class="toc-link px-[var(--space-sm)] py-[var(--space-xs)] text-[var(--text-sm)] rounded-md opacity-70 hover:bg-base-300 hover:opacity-100"
         data-target={@heading.id}
       >
         {@heading.text}

@@ -84,8 +84,8 @@ defmodule HomesiteWeb.MediaLive.Show do
               />
             </figure>
           </div>
-
-          <!-- Media Details -->
+          
+    <!-- Media Details -->
           <div class="space-y-[var(--spacing-md)]">
             <!-- Metadata Card -->
             <div class="card bg-base-200 shadow-lg">
@@ -114,7 +114,9 @@ defmodule HomesiteWeb.MediaLive.Show do
                     <dt class="text-base-content/60 font-semibold">{gettext("Aspect Ratio")}</dt>
                     <dd>
                       <span class="badge badge-primary">{@media_item.aspect_category}</span>
-                      <span class="ml-2 opacity-70">{Decimal.to_string(@media_item.aspect_ratio)}</span>
+                      <span class="ml-2 opacity-70">
+                        {Decimal.to_string(@media_item.aspect_ratio)}
+                      </span>
                     </dd>
                   </div>
 
@@ -139,8 +141,8 @@ defmodule HomesiteWeb.MediaLive.Show do
                 </dl>
               </div>
             </div>
-
-            <!-- Available Sizes Card -->
+            
+    <!-- Available Sizes Card -->
             <div class="card bg-base-200 shadow-lg">
               <div class="card-body p-[var(--spacing-card)]">
                 <h3 class="card-title text-[var(--font-size-fluid-md)]">
@@ -165,8 +167,8 @@ defmodule HomesiteWeb.MediaLive.Show do
                 </dl>
               </div>
             </div>
-
-            <!-- Usage Statistics Card -->
+            
+    <!-- Usage Statistics Card -->
             <div class="card bg-base-200 shadow-lg">
               <div class="card-body p-[var(--spacing-card)]">
                 <h3 class="card-title text-[var(--font-size-fluid-md)]">
@@ -202,7 +204,9 @@ defmodule HomesiteWeb.MediaLive.Show do
                   <div class="alert alert-warning">
                     <.icon name="hero-exclamation-triangle" class="h-5 w-5" />
                     <span>
-                      {gettext("Cannot delete this media item while it is in use. Remove it from all galleries first.")}
+                      {gettext(
+                        "Cannot delete this media item while it is in use. Remove it from all galleries first."
+                      )}
                     </span>
                   </div>
                 <% end %>

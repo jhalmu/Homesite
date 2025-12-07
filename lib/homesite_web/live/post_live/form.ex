@@ -19,10 +19,10 @@ defmodule HomesiteWeb.PostLive.Form do
       </.header>
 
       <.form for={@form} id="post-form" phx-change="validate" phx-submit="save">
-        <div class="mb-4">
+        <div class="mb-[var(--space-sm)]">
           <.input field={@form[:title]} type="text" label={gettext("Title")} />
           <%= if @form[:slug].value do %>
-            <p class="text-base-content/60 mt-1 text-sm">
+            <p class="text-base-content/60 mt-[var(--space-inline)] text-[var(--text-sm)]">
               <.icon name="hero-link" class="inline h-4 w-4" /> {gettext("Slug")}:
               <span class="font-mono">{@form[:slug].value}</span>
             </p>
@@ -30,11 +30,11 @@ defmodule HomesiteWeb.PostLive.Form do
         </div>
         <.input field={@form[:body]} type="textarea" label={gettext("Body")} rows="12" />
 
-        <div class="form-control mb-4">
+        <div class="form-control mb-[var(--space-sm)]">
           <label class="label">
             <span class="label-text font-semibold">{gettext("Publication Date & Time")}</span>
           </label>
-          <div class="flex gap-2">
+          <div class="gap-[var(--space-xs)] flex">
             <input
               type="date"
               name={@form[:publish_date].name}
@@ -57,7 +57,7 @@ defmodule HomesiteWeb.PostLive.Form do
               {gettext("Now")}
             </button>
           </div>
-          <p class="text-base-content/70 mt-2 text-sm">
+          <p class="text-base-content/70 mt-[var(--space-xs)] text-[var(--text-sm)]">
             <.icon name="hero-information-circle" class="inline h-4 w-4" />
             {gettext("Select when this post should be published")}
           </p>
@@ -66,7 +66,7 @@ defmodule HomesiteWeb.PostLive.Form do
         <div class="divider"></div>
 
         <div class="form-control">
-          <label class="label cursor-pointer justify-start gap-3">
+          <label class="label gap-[var(--space-xs)] cursor-pointer justify-start">
             <input
               type="checkbox"
               name={@form[:is_public].name}
@@ -76,7 +76,7 @@ defmodule HomesiteWeb.PostLive.Form do
             />
             <span class="label-text font-semibold">{gettext("Make this post publicly visible")}</span>
           </label>
-          <p class="text-base-content/60 ml-14 text-sm">
+          <p class="text-base-content/60 text-[var(--text-sm)] ml-14">
             {gettext("Public posts are visible to everyone. Turn off to make this post private.")}
           </p>
         </div>
@@ -90,9 +90,9 @@ defmodule HomesiteWeb.PostLive.Form do
           
     <!-- Selected tags -->
           <%= if @selected_tags != [] do %>
-            <div class="mb-3 flex flex-wrap gap-2">
+            <div class="mb-[var(--space-xs)] gap-[var(--space-xs)] flex flex-wrap">
               <%= for tag <- @selected_tags do %>
-                <div class="badge badge-primary badge-lg gap-2">
+                <div class="badge badge-primary badge-lg gap-[var(--space-xs)]">
                   {tag.name}
                   <button
                     type="button"
@@ -134,7 +134,7 @@ defmodule HomesiteWeb.PostLive.Form do
                     class="flex w-full items-center justify-between px-4 py-2 text-left hover:bg-base-200"
                   >
                     <span>{tag.name}</span>
-                    <span class="text-base-content/60 text-sm">{post_count} posts</span>
+                    <span class="text-base-content/60 text-[var(--text-sm)]">{post_count} posts</span>
                   </button>
                 <% end %>
                 
@@ -146,7 +146,7 @@ defmodule HomesiteWeb.PostLive.Form do
                       type="button"
                       phx-click="add-tag"
                       phx-value-tag-id={exact_tag.id}
-                      class="border-base-300 text-primary flex w-full items-center gap-2 border-t px-4 py-2 text-left font-semibold hover:bg-base-200"
+                      class="border-base-300 text-primary gap-[var(--space-xs)] flex w-full items-center border-t px-4 py-2 text-left font-semibold hover:bg-base-200"
                     >
                       <.icon name="hero-check" class="h-4 w-4" />
                       {gettext("Add")} "{exact_tag.name}"
@@ -157,7 +157,7 @@ defmodule HomesiteWeb.PostLive.Form do
                       type="button"
                       phx-click="create-and-add-tag"
                       phx-value-name={@tag_search_query}
-                      class="border-base-300 flex w-full items-center gap-2 border-t px-4 py-2 text-left font-semibold hover:bg-base-200"
+                      class="border-base-300 gap-[var(--space-xs)] flex w-full items-center border-t px-4 py-2 text-left font-semibold hover:bg-base-200"
                     >
                       <.icon name="hero-plus" class="h-4 w-4" />
                       {gettext("Create")} "{@tag_search_query}"
@@ -171,11 +171,11 @@ defmodule HomesiteWeb.PostLive.Form do
           
     <!-- Similar tags warning -->
           <%= if @similar_tags_warning != [] do %>
-            <div class="alert alert-warning mt-3">
+            <div class="alert alert-warning mt-[var(--space-xs)]">
               <.icon name="hero-information-circle" />
               <div>
                 <p class="font-semibold">{gettext("Similar tags exist:")}</p>
-                <div class="mt-1 flex flex-wrap gap-2">
+                <div class="gap-[var(--space-xs)] mt-1 flex flex-wrap">
                   <%= for tag <- @similar_tags_warning do %>
                     <button
                       type="button"
@@ -191,22 +191,22 @@ defmodule HomesiteWeb.PostLive.Form do
             </div>
           <% end %>
 
-          <p class="text-base-content/60 mt-3 text-sm">
+          <p class="text-base-content/60 mt-[var(--space-xs)] text-[var(--text-sm)]">
             <.icon name="hero-tag" class="inline h-4 w-4" />
             {gettext("Search for tags or type to create new ones")}
           </p>
         </div>
 
         <div class="divider"></div>
-
-        <!-- Media Items -->
+        
+    <!-- Media Items -->
         <div class="form-control">
           <label class="label">
             <span class="label-text font-semibold">{gettext("Featured Image")}</span>
           </label>
 
           <%= if @hero_image do %>
-            <div class="mb-3">
+            <div class="mb-[var(--space-xs)]">
               <article class="card card-side bg-base-200 shadow-lg">
                 <figure class="w-32">
                   <img
@@ -216,7 +216,9 @@ defmodule HomesiteWeb.PostLive.Form do
                   />
                 </figure>
                 <div class="card-body p-4">
-                  <h3 class="card-title text-sm">{@hero_image.title || @hero_image.original_filename}</h3>
+                  <h3 class="card-title text-[var(--text-sm)]">
+                    {@hero_image.title || @hero_image.original_filename}
+                  </h3>
                   <div class="card-actions justify-end">
                     <button
                       type="button"
@@ -241,23 +243,23 @@ defmodule HomesiteWeb.PostLive.Form do
             class="btn btn-outline btn-sm"
           >
             <.icon name="hero-photo" class="h-4 w-4" />
-            <%= if @hero_image, do: gettext("Change Image"), else: gettext("Select Image") %>
+            {if @hero_image, do: gettext("Change Image"), else: gettext("Select Image")}
           </button>
 
-          <p class="text-base-content/60 mt-3 text-sm">
+          <p class="text-base-content/60 mt-[var(--space-xs)] text-[var(--text-sm)]">
             <.icon name="hero-information-circle" class="inline h-4 w-4" />
             {gettext("Select a featured image for your post")}
           </p>
         </div>
-
-        <!-- Media Picker Modal -->
+        
+    <!-- Media Picker Modal -->
         <%= if @show_media_picker do %>
           <div class="modal modal-open">
             <div class="modal-box max-w-4xl">
               <h3 class="text-lg font-bold">{gettext("Select Media")}</h3>
-
-              <!-- Search -->
-              <div class="form-control mt-4">
+              
+    <!-- Search -->
+              <div class="form-control mt-[var(--space-sm)]">
                 <input
                   type="text"
                   placeholder={gettext("Search media...")}
@@ -267,9 +269,9 @@ defmodule HomesiteWeb.PostLive.Form do
                   class="input input-bordered"
                 />
               </div>
-
-              <!-- Media Grid -->
-              <div class="mt-4 max-h-96 overflow-y-auto">
+              
+    <!-- Media Grid -->
+              <div class="mt-[var(--space-sm)] max-h-96 overflow-y-auto">
                 <%= if @available_media == [] do %>
                   <div class="alert">
                     <.icon name="hero-information-circle" />
@@ -278,13 +280,13 @@ defmodule HomesiteWeb.PostLive.Form do
                     </span>
                   </div>
                 <% else %>
-                  <div class="grid grid-cols-3 gap-4">
+                  <div class="gap-[var(--space-sm)] grid grid-cols-3">
                     <%= for media <- @available_media do %>
                       <button
                         type="button"
                         phx-click="select-hero"
                         phx-value-id={media.id}
-                        class="card card-compact bg-base-200 hover:ring-2 hover:ring-primary transition-all"
+                        class="card card-compact bg-base-200 transition-all hover:ring-primary hover:ring-2"
                       >
                         <figure class="aspect-square">
                           <img
@@ -294,7 +296,7 @@ defmodule HomesiteWeb.PostLive.Form do
                           />
                         </figure>
                         <div class="card-body">
-                          <p class="text-xs truncate">
+                          <p class="text-[var(--text-xs)] truncate">
                             {media.title || media.original_filename}
                           </p>
                         </div>
@@ -319,7 +321,7 @@ defmodule HomesiteWeb.PostLive.Form do
 
         <div class="divider"></div>
 
-        <footer class="flex gap-3">
+        <footer class="gap-[var(--space-xs)] flex">
           <.button phx-disable-with={gettext("Saving...")} variant="primary">
             {gettext("Save Post")}
           </.button>

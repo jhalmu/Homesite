@@ -25,7 +25,7 @@
       row_click={fn {_id, feed_source} -> JS.navigate(~p"/feed?source=#{feed_source.id}") end}
     >
       <:col :let={{_id, feed_source}} label="Name">
-        <div class="flex items-center gap-[var(--space-xs)]">
+        <div class="gap-[var(--space-xs)] flex items-center">
           <span class="text-2xl">{feed_source.icon}</span>
           <div>
             <div class="font-medium">{feed_source.name}</div>

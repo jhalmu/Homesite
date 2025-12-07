@@ -140,8 +140,8 @@ defmodule HomesiteWeb.MediaLive.Index do
             {gettext("Browse and manage your media items")}
           </:subtitle>
         </.header>
-
-        <!-- Filters and Search -->
+        
+    <!-- Filters and Search -->
         <div class="mt-[var(--spacing-lg)] gap-[var(--spacing-sm)] flex flex-col md:flex-row">
           <!-- Search -->
           <div class="flex-1">
@@ -154,8 +154,8 @@ defmodule HomesiteWeb.MediaLive.Index do
               placeholder={gettext("Search by title or caption...")}
             />
           </div>
-
-          <!-- Aspect Ratio Filter -->
+          
+    <!-- Aspect Ratio Filter -->
           <div class="w-full md:w-48">
             <select
               phx-change="filter-aspect"
@@ -174,8 +174,8 @@ defmodule HomesiteWeb.MediaLive.Index do
               </option>
             </select>
           </div>
-
-          <!-- Gallery Filter -->
+          
+    <!-- Gallery Filter -->
           <div class="w-full md:w-48">
             <select
               phx-change="filter-gallery"
@@ -191,8 +191,8 @@ defmodule HomesiteWeb.MediaLive.Index do
             </select>
           </div>
         </div>
-
-        <!-- Media Grid -->
+        
+    <!-- Media Grid -->
         <div class="mt-[var(--spacing-lg)]">
           <%= if Enum.empty?(@streams.media_items) do %>
             <div class="alert">
@@ -214,9 +214,9 @@ defmodule HomesiteWeb.MediaLive.Index do
               <%= for {id, media} <- @streams.media_items do %>
                 <article
                   id={id}
-                  class="card bg-base-200 overflow-hidden shadow-lg duration-[var(--duration-normal)] transition-shadow hover:shadow-xl"
+                  class="card bg-base-200 duration-[var(--duration-normal)] overflow-hidden shadow-lg transition-shadow hover:shadow-xl"
                 >
-                  <figure class="aspect-square overflow-hidden bg-base-300">
+                  <figure class="aspect-square bg-base-300 overflow-hidden">
                     <img
                       src={"data:#{media.content_type};base64,#{Base.encode64(media.medium_data)}"}
                       alt={media.alt_text}
@@ -232,12 +232,12 @@ defmodule HomesiteWeb.MediaLive.Index do
                       </h3>
                     <% end %>
 
-                    <div class="gap-[var(--spacing-inline)] flex flex-wrap text-[var(--text-xs)] opacity-70">
+                    <div class="gap-[var(--spacing-inline)] text-[var(--text-xs)] flex flex-wrap opacity-70">
                       <span class="badge badge-xs badge-ghost">{media.aspect_category}</span>
                       <span>{media.width}×{media.height}</span>
                     </div>
 
-                    <div class="card-actions mt-[var(--spacing-sm)] justify-end gap-[var(--spacing-inline)]">
+                    <div class="card-actions mt-[var(--spacing-sm)] gap-[var(--spacing-inline)] justify-end">
                       <button
                         phx-click="show-usage"
                         phx-value-id={media.id}

@@ -32,7 +32,7 @@
               required
             />
 
-            <div class="grid grid-cols-2 gap-[var(--space-sm)]">
+            <div class="gap-[var(--space-sm)] grid grid-cols-2">
               <.input
                 field={@form[:icon]}
                 type="text"
@@ -55,7 +55,7 @@
               placeholder="0"
             />
 
-            <div class="card-actions justify-end gap-[var(--space-xs)]">
+            <div class="card-actions gap-[var(--space-xs)] justify-end">
               <button type="button" phx-click="cancel_edit" class="btn btn-ghost">
                 {gettext("Cancel")}
               </button>
@@ -82,7 +82,7 @@
           <div class="listing-card card bg-base-100 border-base-300 border shadow-sm">
             <div class="card-body">
               <div class="flex items-center justify-between">
-                <div class="flex items-center gap-[var(--space-sm)]">
+                <div class="gap-[var(--space-sm)] flex items-center">
                   <span class="text-3xl">{folder.icon || "📁"}</span>
                   <div>
                     <h3 class="card-title text-[var(--text-lg)]">{folder.name}</h3>
@@ -115,7 +115,7 @@
                   </button>
                 </div>
               </div>
-
+              
 <!-- Display order badge -->
               <%= if folder.display_order != 0 do %>
                 <div class="text-base-content/60 text-[var(--text-sm)]">
@@ -127,7 +127,7 @@
         <% end %>
       <% end %>
     </div>
-
+    
 <!-- Back to Feeds link -->
     <div class="mt-[var(--space-md)]">
       <.link navigate={~p"/feeds"} class="btn btn-ghost btn-sm">

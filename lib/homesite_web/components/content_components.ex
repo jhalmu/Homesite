@@ -200,7 +200,7 @@ defmodule HomesiteWeb.ContentComponents do
       class={["card bg-base-200 shadow-lg transition-shadow hover:shadow-xl", @class]}
     >
       <div class="card-body">
-        <div class="flex items-start justify-between gap-[var(--space-sm)]">
+        <div class="gap-[var(--space-sm)] flex items-start justify-between">
           <div class="min-w-0 flex-1">
             <.link navigate={~p"/tags/#{@tag.slug}"} class="group">
               <h3 class="card-title mb-[var(--space-xs)] text-[var(--text-xl)] transition-colors duration-200 group-hover:text-primary">
@@ -209,7 +209,7 @@ defmodule HomesiteWeb.ContentComponents do
               </h3>
             </.link>
 
-            <div class="flex gap-[var(--space-xs)] text-[var(--text-sm)]">
+            <div class="gap-[var(--space-xs)] text-[var(--text-sm)] flex">
               <div class="badge badge-neutral">
                 {@post_count} {ngettext("post", "posts", @post_count)}
               </div>
@@ -230,7 +230,7 @@ defmodule HomesiteWeb.ContentComponents do
           
     <!-- Actions for tag owner -->
           <%= if @show_actions && @current_scope && @tag.user_id == @current_scope.user.id do %>
-            <div class="flex flex-shrink-0 gap-[var(--space-inline)]">
+            <div class="gap-[var(--space-inline)] flex flex-shrink-0">
               <.link
                 navigate={~p"/tags/#{@tag}/edit"}
                 class="btn btn-sm btn-ghost"

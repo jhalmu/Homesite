@@ -59,7 +59,7 @@ defmodule HomesiteWeb.GalleryLive.Form do
           <div class="divider"></div>
 
           <div class="form-control mb-[var(--spacing-sm)]">
-            <label class="label cursor-pointer justify-start gap-[var(--spacing-sm)]">
+            <label class="label gap-[var(--spacing-sm)] cursor-pointer justify-start">
               <input
                 type="checkbox"
                 name={@form[:is_portfolio].name}
@@ -72,12 +72,14 @@ defmodule HomesiteWeb.GalleryLive.Form do
               </span>
             </label>
             <p class="text-base-content/60 ml-[calc(var(--spacing-md)+var(--spacing-sm))] text-[var(--text-sm)]">
-              {gettext("Portfolio galleries showcase your work publicly. Turn off for media libraries.")}
+              {gettext(
+                "Portfolio galleries showcase your work publicly. Turn off for media libraries."
+              )}
             </p>
           </div>
 
           <div class="form-control">
-            <label class="label cursor-pointer justify-start gap-[var(--spacing-sm)]">
+            <label class="label gap-[var(--spacing-sm)] cursor-pointer justify-start">
               <input
                 type="checkbox"
                 name={@form[:is_public].name}
@@ -94,7 +96,7 @@ defmodule HomesiteWeb.GalleryLive.Form do
             </p>
           </div>
 
-          <div class="mt-[var(--spacing-lg)] flex items-center justify-end gap-[var(--spacing-sm)]">
+          <div class="mt-[var(--spacing-lg)] gap-[var(--spacing-sm)] flex items-center justify-end">
             <.link
               navigate={~p"/galleries"}
               class="btn btn-ghost"
@@ -156,7 +158,11 @@ defmodule HomesiteWeb.GalleryLive.Form do
   end
 
   defp save_gallery(socket, :edit, gallery_params) do
-    case Media.update_gallery(socket.assigns.current_scope, socket.assigns.gallery, gallery_params) do
+    case Media.update_gallery(
+           socket.assigns.current_scope,
+           socket.assigns.gallery,
+           gallery_params
+         ) do
       {:ok, _gallery} ->
         {:noreply,
          socket

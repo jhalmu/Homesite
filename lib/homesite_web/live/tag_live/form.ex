@@ -17,10 +17,10 @@ defmodule HomesiteWeb.TagLive.Form do
       </.header>
 
       <.form for={@form} id="tag-form" phx-change="validate" phx-submit="save">
-        <div class="mb-4">
+        <div class="mb-[var(--space-sm)]">
           <.input field={@form[:name]} type="text" label={gettext("Name")} />
           <%= if @form[:slug].value do %>
-            <p class="text-base-content/60 mt-1 text-sm">
+            <p class="text-base-content/60 mt-[var(--space-inline)] text-[var(--text-sm)]">
               <.icon name="hero-link" class="inline h-4 w-4" /> {gettext("Slug")}:
               <span class="font-mono">{@form[:slug].value}</span>
             </p>
@@ -29,11 +29,11 @@ defmodule HomesiteWeb.TagLive.Form do
         
     <!-- Similar tags warning -->
         <%= if @similar_tags != [] do %>
-          <div class="alert alert-warning mb-4">
+          <div class="alert alert-warning mb-[var(--space-sm)]">
             <.icon name="hero-information-circle" />
             <div>
               <p class="font-semibold">{gettext("Similar tags already exist:")}</p>
-              <div class="mt-2 flex flex-wrap gap-2">
+              <div class="mt-[var(--space-xs)] gap-[var(--space-xs)] flex flex-wrap">
                 <%= for tag <- @similar_tags do %>
                   <.link navigate={~p"/tags/#{tag}"} class="badge badge-lg badge-outline gap-1">
                     <.icon name="hero-tag" class="h-3 w-3" />
@@ -41,7 +41,7 @@ defmodule HomesiteWeb.TagLive.Form do
                   </.link>
                 <% end %>
               </div>
-              <p class="mt-2 text-sm">
+              <p class="mt-[var(--space-xs)] text-[var(--text-sm)]">
                 {gettext("Consider using one of these existing tags instead of creating a new one.")}
               </p>
             </div>
@@ -58,7 +58,7 @@ defmodule HomesiteWeb.TagLive.Form do
         <div class="divider"></div>
 
         <div class="form-control">
-          <label class="label cursor-pointer justify-start gap-3">
+          <label class="label gap-[var(--space-xs)] cursor-pointer justify-start">
             <input
               type="checkbox"
               name={@form[:is_public].name}
@@ -68,14 +68,14 @@ defmodule HomesiteWeb.TagLive.Form do
             />
             <span class="label-text font-semibold">{gettext("Make this tag publicly visible")}</span>
           </label>
-          <p class="text-base-content/60 ml-14 text-sm">
+          <p class="text-base-content/60 text-[var(--text-sm)] ml-14">
             {gettext("Public tags can be seen by everyone. Turn off to make this tag private.")}
           </p>
         </div>
 
         <div class="divider"></div>
 
-        <footer class="flex gap-3">
+        <footer class="gap-[var(--space-xs)] flex">
           <.button phx-disable-with={gettext("Saving...")} variant="primary">
             {gettext("Save Tag")}
           </.button>

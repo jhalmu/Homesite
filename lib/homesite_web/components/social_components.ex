@@ -61,7 +61,7 @@ defmodule HomesiteWeb.SocialComponents do
 
       <%!-- Platform Share Buttons (alternative options) --%>
       <div class="mb-[var(--space-xs)] text-[var(--text-xs)] opacity-40">Share:</div>
-      <div class="flex flex-wrap gap-[var(--space-xs)]">
+      <div class="gap-[var(--space-xs)] flex flex-wrap">
         <.share_button platform="bluesky" url={@url} title={@title} />
         <.share_button platform="mastodon" url={@url} title={@title} />
         <.share_button platform="twitter" url={@url} title={@title} />

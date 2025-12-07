@@ -43,9 +43,10 @@ defmodule Homesite.Media do
     * `:is_public` - Filter by public/private status
   """
   def list_galleries(%Scope{} = scope, opts \\ []) do
-    query = from g in Gallery,
-      where: g.user_id == ^scope.user.id,
-      order_by: [asc: g.display_order, desc: g.inserted_at]
+    query =
+      from g in Gallery,
+        where: g.user_id == ^scope.user.id,
+        order_by: [asc: g.display_order, desc: g.inserted_at]
 
     query = maybe_filter_by_type(query, opts[:gallery_type])
     query = maybe_filter_by_public(query, opts[:is_public])
@@ -54,12 +55,14 @@ defmodule Homesite.Media do
   end
 
   defp maybe_filter_by_type(query, nil), do: query
+
   defp maybe_filter_by_type(query, type) when type in ["portfolio", "library"] do
     is_portfolio = type == "portfolio"
     from g in query, where: g.is_portfolio == ^is_portfolio
   end
 
   defp maybe_filter_by_public(query, nil), do: query
+
   defp maybe_filter_by_public(query, is_public) when is_boolean(is_public) do
     from g in query, where: g.is_public == ^is_public
   end
@@ -106,7 +109,8 @@ defmodule Homesite.Media do
   Updates a gallery with scope check.
   """
   def update_gallery(%Scope{} = scope, %Gallery{} = gallery, attrs) do
-    true = gallery.user_id == scope.user.id  # Security check
+    # Security check
+    true = gallery.user_id == scope.user.id
 
     with {:ok, gallery} <-
            gallery
@@ -121,7 +125,8 @@ defmodule Homesite.Media do
   Deletes a gallery with scope check.
   """
   def delete_gallery(%Scope{} = scope, %Gallery{} = gallery) do
-    true = gallery.user_id == scope.user.id  # Security check
+    # Security check
+    true = gallery.user_id == scope.user.id
 
     with {:ok, gallery} <- Repo.delete(gallery) do
       broadcast_gallery(scope, {:deleted, gallery})
@@ -139,9 +144,10 @@ defmodule Homesite.Media do
     * `:aspect_category` - Filter by aspect category ("landscape", "portrait", "square")
   """
   def list_media_items(%Scope{} = scope, opts \\ []) do
-    query = from m in MediaItem,
-      where: m.user_id == ^scope.user.id,
-      order_by: [desc: m.inserted_at]
+    query =
+      from m in MediaItem,
+        where: m.user_id == ^scope.user.id,
+        order_by: [desc: m.inserted_at]
 
     query = maybe_filter_by_gallery(query, opts[:gallery_id])
     query = maybe_filter_by_aspect(query, opts[:aspect_category])
@@ -150,15 +156,19 @@ defmodule Homesite.Media do
   end
 
   defp maybe_filter_by_gallery(query, nil), do: query
+
   defp maybe_filter_by_gallery(query, gallery_id) do
     from m in query,
-      join: gm in GalleryMediaItem, on: gm.media_item_id == m.id,
+      join: gm in GalleryMediaItem,
+      on: gm.media_item_id == m.id,
       where: gm.gallery_id == ^gallery_id,
       order_by: [asc: gm.display_order]
   end
 
   defp maybe_filter_by_aspect(query, nil), do: query
-  defp maybe_filter_by_aspect(query, category) when category in ["landscape", "portrait", "square"] do
+
+  defp maybe_filter_by_aspect(query, category)
+       when category in ["landscape", "portrait", "square"] do
     from m in query, where: m.aspect_category == ^category
   end
 
@@ -210,7 +220,8 @@ defmodule Homesite.Media do
   Does not update image data.
   """
   def update_media_item(%Scope{} = scope, %MediaItem{} = item, attrs) do
-    true = item.user_id == scope.user.id  # Security check
+    # Security check
+    true = item.user_id == scope.user.id
 
     # Only allow updating metadata fields
     allowed_attrs = Map.take(attrs, ["title", "caption", "alt_text", :title, :caption, :alt_text])
@@ -228,7 +239,8 @@ defmodule Homesite.Media do
   Deletes a media item with scope check.
   """
   def delete_media_item(%Scope{} = scope, %MediaItem{} = item) do
-    true = item.user_id == scope.user.id  # Security check
+    # Security check
+    true = item.user_id == scope.user.id
 
     with {:ok, item} <- Repo.delete(item) do
       broadcast_media_item(scope, {:deleted, item})
@@ -286,7 +298,8 @@ defmodule Homesite.Media do
         where: m.user_id == ^scope.user.id,
         where: fragment("? % ? OR ? % ?", m.title, ^query, m.caption, ^query),
         order_by: [
-          desc: fragment("similarity(?, ?) + similarity(?, ?)", m.title, ^query, m.caption, ^query)
+          desc:
+            fragment("similarity(?, ?) + similarity(?, ?)", m.title, ^query, m.caption, ^query)
         ],
         limit: 50
       )
@@ -327,12 +340,14 @@ defmodule Homesite.Media do
   def get_media_usage(%Scope{} = scope, media_item_id) do
     media_item = get_media_item!(scope, media_item_id)
 
-    galleries = from(g in Gallery,
-      join: gm in GalleryMediaItem, on: gm.gallery_id == g.id,
-      where: gm.media_item_id == ^media_item.id and g.user_id == ^scope.user.id,
-      select: g
-    )
-    |> Repo.all()
+    galleries =
+      from(g in Gallery,
+        join: gm in GalleryMediaItem,
+        on: gm.gallery_id == g.id,
+        where: gm.media_item_id == ^media_item.id and g.user_id == ^scope.user.id,
+        select: g
+      )
+      |> Repo.all()
 
     %{
       media_item: media_item,

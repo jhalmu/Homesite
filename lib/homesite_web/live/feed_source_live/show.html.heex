@@ -1,7 +1,7 @@
 <Layouts.app flash={@flash} current_scope={@current_scope}>
   <div class="technical-main">
     <.header>
-      <div class="flex items-center gap-[var(--space-sm)]">
+      <div class="gap-[var(--space-sm)] flex items-center">
         <span class="text-4xl">{@feed_source.icon}</span>
         <div>
           {@feed_source.name}
@@ -53,7 +53,7 @@
     </.header>
 
     <div class="mt-[var(--space-md)]">
-      <div class="bg-base-200 space-y-[var(--space-xs)] rounded-lg p-[var(--space-sm)]">
+      <div class="bg-base-200 space-y-[var(--space-xs)] p-[var(--space-sm)] rounded-lg">
         <div class="flex justify-between">
           <span class="font-medium">Refresh Interval:</span>
           <span>{@feed_source.refresh_interval} minutes</span>
@@ -78,11 +78,13 @@
     </div>
 
     <div class="mt-[var(--space-md)]">
-      <h2 class="mb-[var(--space-sm)] text-[var(--text-xl)] font-semibold">Recent Items ({length(@feed_items)})</h2>
+      <h2 class="mb-[var(--space-sm)] text-[var(--text-xl)] font-semibold">
+        Recent Items ({length(@feed_items)})
+      </h2>
 
       <%= if Enum.empty?(@feed_items) do %>
         <div class="py-12 text-center opacity-60">
-          <.icon name="hero-rss" class="mx-auto mb-[var(--space-sm)] h-12 w-12 opacity-50" />
+          <.icon name="hero-rss" class="mb-[var(--space-sm)] mx-auto h-12 w-12 opacity-50" />
           <p class="text-[var(--text-lg)]">No feed items yet</p>
           <p class="mt-[var(--space-xs)] text-[var(--text-sm)]">
             <%= if @feed_source.enabled do %>
@@ -95,8 +97,8 @@
       <% else %>
         <div class="space-y-[var(--space-sm)]">
           <%= for item <- @feed_items do %>
-            <div class="border-base-300 bg-base-100 rounded-lg border p-[var(--space-sm)] transition-shadow hover:shadow-md">
-              <div class="flex items-start justify-between gap-[var(--space-sm)]">
+            <div class="border-base-300 bg-base-100 p-[var(--space-sm)] rounded-lg border transition-shadow hover:shadow-md">
+              <div class="gap-[var(--space-sm)] flex items-start justify-between">
                 <div class="flex-1">
                   <h3 class="text-[var(--text-lg)] font-semibold">
                     <%= if item.url do %>
@@ -108,7 +110,9 @@
                     <% end %>
                   </h3>
                   <%= if item.author_name do %>
-                    <p class="mt-[var(--space-xs)] text-[var(--text-sm)] opacity-70">by {item.author_name}</p>
+                    <p class="mt-[var(--space-xs)] text-[var(--text-sm)] opacity-70">
+                      by {item.author_name}
+                    </p>
                   <% end %>
                   <%= if item.content do %>
                     <div class="line-clamp-3 [&_img]:hidden mt-[var(--space-xs)] opacity-80">
@@ -116,7 +120,7 @@
                     </div>
                   <% end %>
                 </div>
-                <div class="whitespace-nowrap text-[var(--text-sm)] opacity-60">
+                <div class="text-[var(--text-sm)] whitespace-nowrap opacity-60">
                   {relative_time(item.published_at)}
                 </div>
               </div>

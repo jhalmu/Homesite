@@ -85,7 +85,10 @@ defmodule HomesiteWeb.FeedbackLiveTest do
       assert feedback.prompt_type == "passive"
     end
 
-    test "successfully submits feedback with all required fields filled", %{conn: conn, user: user} do
+    test "successfully submits feedback with all required fields filled", %{
+      conn: conn,
+      user: user
+    } do
       conn = log_in_user(conn, user)
       {:ok, view, _html} = live(conn, ~p"/feedback")
 

@@ -1,14 +1,14 @@
 <main class="mt-[var(--space-md)]">
   <.page_header>
-    <div class="flex items-center justify-center gap-[var(--space-sm)]">
+    <div class="gap-[var(--space-sm)] flex items-center justify-center">
       <.icon name="hero-magnifying-glass" class="h-8 w-8" />
       <span>{gettext("Search")}</span>
     </div>
   </.page_header>
 
   <div class="mt-[var(--space-md)]">
-    <form id="search-form" phx-submit="search" class="mx-auto mb-[var(--space-md)] max-w-3xl">
-      <div class="flex gap-[var(--space-xs)]">
+    <form id="search-form" phx-submit="search" class="mb-[var(--space-md)] mx-auto max-w-3xl">
+      <div class="gap-[var(--space-xs)] flex">
         <input
           type="text"
           name="query"
@@ -16,6 +16,7 @@
           placeholder={gettext("Search by title or content...")}
           phx-debounce="300"
           autocomplete="off"
+          aria-label={gettext("Search query")}
           class="input input-bordered flex-1"
         />
         <button type="submit" class="btn btn-primary">
@@ -23,7 +24,12 @@
           {gettext("Search")}
         </button>
         <%= if @query != "" do %>
-          <button type="button" phx-click="clear" class="btn btn-ghost">
+          <button
+            type="button"
+            phx-click="clear"
+            class="btn btn-ghost"
+            aria-label={gettext("Clear search")}
+          >
             <.icon name="hero-x-mark" class="h-5 w-5" />
           </button>
         <% end %>
@@ -51,7 +57,7 @@
         <%!-- Posts Section --%>
         <%= if not Enum.empty?(@posts) do %>
           <section>
-            <h2 class="mb-[var(--space-sm)] flex items-center gap-[var(--space-xs)] text-[var(--text-xl)] font-semibold">
+            <h2 class="mb-[var(--space-sm)] gap-[var(--space-xs)] text-[var(--text-xl)] flex items-center font-semibold">
               <.icon name="hero-document-text" class="text-primary h-6 w-6" />
               {gettext("Posts")}
               <span class="badge badge-primary">{length(@posts)}</span>
@@ -66,7 +72,7 @@
                       </.link>
                     </h3>
 
-                    <div class="text-base-content/60 flex items-center gap-[var(--space-xs)] text-[var(--text-sm)]">
+                    <div class="text-base-content/60 gap-[var(--space-xs)] text-[var(--text-sm)] flex items-center">
                       <.icon name="hero-user" class="h-4 w-4" />
                       <span>{post.user.email}</span>
                       <%= if post.published_at do %>
@@ -79,7 +85,7 @@
                     </div>
 
                     <%= if not Enum.empty?(post.tags) do %>
-                      <div class="mt-[var(--space-xs)] flex flex-wrap gap-[var(--space-xs)]">
+                      <div class="mt-[var(--space-xs)] gap-[var(--space-xs)] flex flex-wrap">
                         <%= for tag <- post.tags do %>
                           <.link
                             navigate={~p"/tags/#{tag.slug}"}
@@ -91,7 +97,7 @@
                       </div>
                     <% end %>
 
-                    <div class="line-clamp-3 prose prose-sm mt-[var(--space-xs)]">
+                    <div class="line-clamp-3 mt-[var(--space-xs)] prose prose-sm">
                       {raw(truncate_html(post.body, 200))}
                     </div>
 
@@ -109,12 +115,12 @@
         <%!-- Tags Section --%>
         <%= if not Enum.empty?(@tags) do %>
           <section>
-            <h2 class="mb-[var(--space-sm)] flex items-center gap-[var(--space-xs)] text-[var(--text-xl)] font-semibold">
+            <h2 class="mb-[var(--space-sm)] gap-[var(--space-xs)] text-[var(--text-xl)] flex items-center font-semibold">
               <.icon name="hero-tag" class="text-secondary h-6 w-6" />
               {gettext("Tags")}
               <span class="badge badge-secondary">{length(@tags)}</span>
             </h2>
-            <div class="flex flex-wrap gap-[var(--space-sm)]">
+            <div class="gap-[var(--space-sm)] flex flex-wrap">
               <%= for tag <- @tags do %>
                 <.link
                   navigate={~p"/tags/#{tag.slug}"}
@@ -130,7 +136,7 @@
         <%!-- FAQs Section --%>
         <%= if not Enum.empty?(@faqs) do %>
           <section>
-            <h2 class="mb-[var(--space-sm)] flex items-center gap-[var(--space-xs)] text-[var(--text-xl)] font-semibold">
+            <h2 class="mb-[var(--space-sm)] gap-[var(--space-xs)] text-[var(--text-xl)] flex items-center font-semibold">
               <.icon name="hero-question-mark-circle" class="text-accent h-6 w-6" />
               {gettext("FAQs")}
               <span class="badge badge-accent">{length(@faqs)}</span>
@@ -143,7 +149,7 @@
                       <.icon name="hero-chat-bubble-left-right" class="text-accent h-5 w-5" />
                       {faq.question}
                     </h3>
-                    <div class="prose prose-sm mt-[var(--space-xs)]">
+                    <div class="mt-[var(--space-xs)] prose prose-sm">
                       {raw(truncate_html(faq.answer, 200))}
                     </div>
                     <div class="card-actions mt-[var(--space-sm)] items-center justify-between">

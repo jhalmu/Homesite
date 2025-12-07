@@ -6,7 +6,8 @@ defmodule Homesite.Media.ImageProcessor do
 
   import Mogrify
 
-  @max_file_size 10 * 1024 * 1024  # 10MB
+  # 10MB
+  @max_file_size 10 * 1024 * 1024
   @allowed_types ["image/jpeg", "image/png", "image/webp"]
   @max_dimension 4000
   @sizes %{
@@ -39,11 +40,12 @@ defmodule Homesite.Media.ImageProcessor do
          {:ok, dimensions} <- get_dimensions(upload_path),
          {:ok, sizes} <- generate_sizes(upload_path, dimensions),
          {:ok, aspect_info} <- calculate_aspect_ratio(dimensions) do
-      {:ok, Map.merge(sizes, %{
-        dimensions: dimensions,
-        aspect_ratio: aspect_info.ratio,
-        aspect_category: aspect_info.category
-      })}
+      {:ok,
+       Map.merge(sizes, %{
+         dimensions: dimensions,
+         aspect_ratio: aspect_info.ratio,
+         aspect_category: aspect_info.category
+       })}
     end
   end
 
@@ -92,8 +94,10 @@ defmodule Homesite.Media.ImageProcessor do
         case get_dimensions(upload_path) do
           {:ok, {w, h}} when w > @max_dimension or h > @max_dimension ->
             {:error, "Image dimensions too large. Maximum dimension is #{@max_dimension}px."}
+
           {:ok, _} ->
             {:ok, :valid}
+
           error ->
             error
         end
@@ -118,17 +122,18 @@ defmodule Homesite.Media.ImageProcessor do
     with {:ok, thumb_bin} <- resize_to_binary(upload_path, @sizes.thumb),
          {:ok, medium_bin} <- resize_to_binary(upload_path, @sizes.medium),
          {:ok, large_bin} <- resize_to_binary(upload_path, @sizes.large) do
-      {:ok, %{
-        thumb: thumb_bin,
-        medium: medium_bin,
-        large: large_bin,
-        thumb_width: elem(thumb_dims, 0),
-        thumb_height: elem(thumb_dims, 1),
-        medium_width: elem(medium_dims, 0),
-        medium_height: elem(medium_dims, 1),
-        large_width: elem(large_dims, 0),
-        large_height: elem(large_dims, 1)
-      }}
+      {:ok,
+       %{
+         thumb: thumb_bin,
+         medium: medium_bin,
+         large: large_bin,
+         thumb_width: elem(thumb_dims, 0),
+         thumb_height: elem(thumb_dims, 1),
+         medium_width: elem(medium_dims, 0),
+         medium_height: elem(medium_dims, 1),
+         large_width: elem(large_dims, 0),
+         large_height: elem(large_dims, 1)
+       }}
     end
   end
 
@@ -140,7 +145,8 @@ defmodule Homesite.Media.ImageProcessor do
       open(upload_path)
       |> resize_to_limit("#{max_dimension}x#{max_dimension}")
       |> quality(85)
-      |> custom("strip")  # Remove EXIF data for privacy
+      # Remove EXIF data for privacy
+      |> custom("strip")
       |> save(path: temp_path)
 
       binary = File.read!(temp_path)
@@ -180,11 +186,12 @@ defmodule Homesite.Media.ImageProcessor do
     ratio = Decimal.div(Decimal.new(width), Decimal.new(height))
     float_ratio = Decimal.to_float(ratio)
 
-    category = cond do
-      float_ratio > 1.3 -> "landscape"
-      float_ratio < 0.77 -> "portrait"
-      true -> "square"
-    end
+    category =
+      cond do
+        float_ratio > 1.3 -> "landscape"
+        float_ratio < 0.77 -> "portrait"
+        true -> "square"
+      end
 
     {:ok, %{ratio: ratio, category: category}}
   end

@@ -91,7 +91,7 @@ defmodule HomesiteWeb.GalleryLive.Show do
             <div class="gap-[var(--spacing-md)] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               <%= for media <- @gallery.media_items do %>
                 <article class="card bg-base-200 overflow-hidden shadow-lg">
-                  <figure class="aspect-square overflow-hidden bg-base-300">
+                  <figure class="aspect-square bg-base-300 overflow-hidden">
                     <img
                       src={"data:#{media.content_type};base64,#{Base.encode64(media.medium_data)}"}
                       alt={media.alt_text}
@@ -102,7 +102,7 @@ defmodule HomesiteWeb.GalleryLive.Show do
                     <%= if media.title do %>
                       <h3 class="card-title text-[var(--text-sm)]">{media.title}</h3>
                     <% end %>
-                    <div class="gap-[var(--spacing-inline)] flex flex-wrap text-[var(--text-xs)] opacity-70">
+                    <div class="gap-[var(--spacing-inline)] text-[var(--text-xs)] flex flex-wrap opacity-70">
                       <span class="badge badge-xs badge-ghost">{media.aspect_category}</span>
                       <span>{media.width}×{media.height}</span>
                     </div>

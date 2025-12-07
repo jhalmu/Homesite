@@ -112,7 +112,7 @@ defmodule HomesiteWeb.GalleryLive.Index do
                       <% end %>
                     </div>
 
-                    <div class="card-actions mt-[var(--spacing-sm)] justify-end gap-[var(--spacing-xs)]">
+                    <div class="card-actions mt-[var(--spacing-sm)] gap-[var(--spacing-xs)] justify-end">
                       <.link navigate={~p"/galleries/#{gallery}"} class="btn btn-ghost btn-sm">
                         <.icon name="hero-eye" class="h-4 w-4" />
                         {gettext("View")}

@@ -41,7 +41,7 @@ defmodule HomesiteWeb.FaqLive.Index do
                 <div class="card-body text-center">
                   <p class="text-base-content/60">{gettext("No FAQs available yet.")}</p>
                   <%= if @is_admin do %>
-                    <p class="text-base-content/40 text-sm">
+                    <p class="text-base-content/40 text-[var(--text-sm)]">
                       {gettext("Click 'New FAQ' to create your first FAQ entry.")}
                     </p>
                   <% end %>

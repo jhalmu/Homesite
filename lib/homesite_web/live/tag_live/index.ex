@@ -102,16 +102,25 @@ defmodule HomesiteWeb.TagLive.Index do
 
                   <%= if @current_tab == "my" do %>
                     <div class="gap-[var(--spacing-inline)] flex flex-shrink-0">
-                      <.link navigate={~p"/tags/#{tag}"} class="btn btn-sm btn-ghost">
+                      <.link
+                        navigate={~p"/tags/#{tag}"}
+                        class="btn btn-sm btn-ghost"
+                        aria-label={gettext("View tag")}
+                      >
                         <.icon name="hero-eye" class="h-4 w-4" />
                       </.link>
-                      <.link navigate={~p"/tags/#{tag}/edit"} class="btn btn-sm btn-ghost">
+                      <.link
+                        navigate={~p"/tags/#{tag}/edit"}
+                        class="btn btn-sm btn-ghost"
+                        aria-label={gettext("Edit tag")}
+                      >
                         <.icon name="hero-pencil-square" class="h-4 w-4" />
                       </.link>
                       <.link
                         phx-click={JS.push("delete", value: %{id: tag.id}) |> hide("##{id}")}
                         data-confirm={gettext("Are you sure?")}
                         class="btn btn-sm btn-ghost text-error"
+                        aria-label={gettext("Delete tag")}
                       >
                         <.icon name="hero-trash" class="h-4 w-4" />
                       </.link>

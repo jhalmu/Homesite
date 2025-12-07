@@ -41,12 +41,12 @@ defmodule HomesiteWeb.PortfolioLive.Index do
                 <article class="listing-card card bg-base-200 duration-[var(--duration-normal)] shadow-lg transition-shadow hover:shadow-xl">
                   <!-- Cover image if available -->
                   <%= if gallery.cover_media_item do %>
-                    <figure class="aspect-video overflow-hidden bg-base-300">
+                    <figure class="aspect-video bg-base-300 overflow-hidden">
                       <.link navigate={~p"/portfolio/#{gallery.slug}"}>
                         <img
                           src={"data:#{gallery.cover_media_item.content_type};base64,#{Base.encode64(gallery.cover_media_item.medium_data)}"}
                           alt={gallery.cover_media_item.alt_text}
-                          class="h-full w-full object-cover duration-[var(--duration-normal)] transition-transform hover:scale-105"
+                          class="duration-[var(--duration-normal)] h-full w-full object-cover transition-transform hover:scale-105"
                         />
                       </.link>
                     </figure>
@@ -78,11 +78,11 @@ defmodule HomesiteWeb.PortfolioLive.Index do
                         <.icon name="hero-arrow-right" class="h-4 w-4" />
                       </.link>
                     </div>
-
-                    <!-- Author info -->
+                    
+    <!-- Author info -->
                     <%= if gallery.user do %>
                       <div class="divider"></div>
-                      <div class="text-base-content/60 flex items-center gap-[var(--spacing-xs)] text-[var(--text-xs)]">
+                      <div class="text-base-content/60 gap-[var(--spacing-xs)] text-[var(--text-xs)] flex items-center">
                         <.icon name="hero-user-circle" class="h-4 w-4" />
                         <span>{gallery.user.display_name || gallery.user.email}</span>
                       </div>

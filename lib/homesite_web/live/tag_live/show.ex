@@ -14,7 +14,11 @@ defmodule HomesiteWeb.TagLive.Show do
         <header class="gap-[var(--spacing-md)] mb-[var(--spacing-section)] flex flex-col">
           <div class="flex flex-wrap items-center justify-between gap-4">
             <div class="flex items-center gap-4">
-              <.link navigate={~p"/tags"} class="btn btn-circle btn-ghost">
+              <.link
+                navigate={~p"/tags"}
+                class="btn btn-circle btn-ghost"
+                aria-label={gettext("Back to tags")}
+              >
                 <.icon name="hero-arrow-left" class="h-6 w-6" />
               </.link>
               <div>

@@ -30,7 +30,7 @@ defmodule HomesiteWeb.PostLive.Show do
 
           <div class="my-[var(--spacing-md)]">
             <.author_byline user={@post.user} date={@post.published_at} />
-            <div class="mt-2 flex flex-wrap items-center gap-2 text-sm opacity-70">
+            <div class="gap-[var(--space-xs)] text-[var(--text-sm)] mt-2 flex flex-wrap items-center opacity-70">
               <.icon name="hero-clock" class="h-4 w-4" />
               <span>{@post.read_time_minutes} min read</span>
 

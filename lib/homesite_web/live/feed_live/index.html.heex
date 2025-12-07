@@ -14,7 +14,7 @@
     </.header>
     
 <!-- Filter controls -->
-    <div class="my-[var(--space-md)] flex flex-wrap items-center gap-[var(--space-sm)]">
+    <div class="my-[var(--space-md)] gap-[var(--space-sm)] flex flex-wrap items-center">
       <!-- Status filter tabs -->
       <div class="tabs tabs-boxed">
         <button
@@ -45,7 +45,7 @@
       
 <!-- Source filter dropdown -->
       <%= if length(@feed_sources) > 0 do %>
-        <div class="flex items-center gap-[var(--space-xs)]">
+        <div class="gap-[var(--space-xs)] flex items-center">
           <span class="text-base-content/70 text-[var(--text-sm)]">{gettext("Filter by:")}</span>
           <div class="dropdown">
             <div tabindex="0" role="button" class="btn btn-sm btn-ghost gap-[var(--space-inline)]">
@@ -60,7 +60,7 @@
             </div>
             <ul
               tabindex="0"
-              class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-[var(--space-xs)] shadow"
+              class="dropdown-content menu bg-base-100 rounded-box z-[1] p-[var(--space-xs)] w-52 shadow"
             >
               <li>
                 <.link

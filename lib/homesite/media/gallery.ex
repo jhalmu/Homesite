@@ -26,7 +26,14 @@ defmodule Homesite.Media.Gallery do
   @doc false
   def changeset(gallery, attrs, user_scope) do
     gallery
-    |> cast(attrs, [:name, :description, :is_public, :is_portfolio, :display_order, :cover_media_item_id])
+    |> cast(attrs, [
+      :name,
+      :description,
+      :is_public,
+      :is_portfolio,
+      :display_order,
+      :cover_media_item_id
+    ])
     |> validate_required([:name])
     |> validate_length(:name, min: 1, max: 200)
     |> validate_length(:description, max: 1000)

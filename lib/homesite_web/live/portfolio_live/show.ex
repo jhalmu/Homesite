@@ -40,8 +40,8 @@ defmodule HomesiteWeb.PortfolioLive.Show do
             </.link>
           </:actions>
         </.header>
-
-        <!-- Gallery metadata -->
+        
+    <!-- Gallery metadata -->
         <div class="mt-[var(--spacing-md)] gap-[var(--spacing-xs)] flex flex-wrap items-center">
           <div class="badge badge-primary gap-[var(--spacing-inline)]">
             <.icon name="hero-briefcase" class="h-3 w-3" />
@@ -54,14 +54,14 @@ defmodule HomesiteWeb.PortfolioLive.Show do
           </div>
 
           <%= if @gallery.user do %>
-            <div class="text-base-content/60 ml-[var(--spacing-sm)] flex items-center gap-[var(--spacing-xs)] text-[var(--text-sm)]">
+            <div class="text-base-content/60 ml-[var(--spacing-sm)] gap-[var(--spacing-xs)] text-[var(--text-sm)] flex items-center">
               <.icon name="hero-user-circle" class="h-4 w-4" />
               <span>{@gallery.user.display_name || @gallery.user.email}</span>
             </div>
           <% end %>
         </div>
-
-        <!-- Media items grid -->
+        
+    <!-- Media items grid -->
         <div class="mt-[var(--spacing-lg)]">
           <%= if Enum.empty?(@gallery.media_items) do %>
             <div class="alert">
@@ -78,13 +78,13 @@ defmodule HomesiteWeb.PortfolioLive.Show do
             <div class="mb-[var(--spacing-md)] text-base-content/60 text-[var(--text-sm)]">
               {gettext("%{count} image(s)", count: length(@gallery.media_items))}
             </div>
-
-            <!-- Masonry-style grid for varied aspect ratios -->
+            
+    <!-- Masonry-style grid for varied aspect ratios -->
             <div class="gap-[var(--spacing-md)] columns-1 sm:columns-2 md:columns-3 lg:columns-4">
               <%= for media <- @gallery.media_items do %>
-                <article class="break-inside-avoid mb-[var(--spacing-md)]">
-                  <div class="card bg-base-200 overflow-hidden shadow-lg duration-[var(--duration-normal)] transition-shadow hover:shadow-xl">
-                    <figure class="overflow-hidden bg-base-300">
+                <article class="mb-[var(--spacing-md)] break-inside-avoid">
+                  <div class="card bg-base-200 duration-[var(--duration-normal)] overflow-hidden shadow-lg transition-shadow hover:shadow-xl">
+                    <figure class="bg-base-300 overflow-hidden">
                       <img
                         src={"data:#{media.content_type};base64,#{Base.encode64(media.medium_data)}"}
                         alt={media.alt_text}
@@ -103,7 +103,7 @@ defmodule HomesiteWeb.PortfolioLive.Show do
                           <p class="text-base-content/70 text-[var(--text-xs)]">{media.caption}</p>
                         <% end %>
 
-                        <div class="mt-[var(--spacing-xs)] gap-[var(--spacing-inline)] flex flex-wrap text-[var(--text-xs)] opacity-70">
+                        <div class="mt-[var(--spacing-xs)] gap-[var(--spacing-inline)] text-[var(--text-xs)] flex flex-wrap opacity-70">
                           <span class="badge badge-xs badge-ghost">{media.aspect_category}</span>
                           <span>{media.width}×{media.height}</span>
                         </div>
