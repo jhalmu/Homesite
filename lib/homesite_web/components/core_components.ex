@@ -61,7 +61,7 @@ defmodule HomesiteWeb.CoreComponents do
       {@rest}
     >
       <div class={[
-        "alert max-w-80 text-wrap w-80 sm:max-w-96 sm:w-96",
+        "alert max-w-[var(--content-narrow-width)] text-wrap w-[var(--content-narrow-width)] sm:max-w-[var(--content-medium-width)] sm:w-[var(--content-medium-width)]",
         @kind == :info && "alert-info",
         @kind == :error && "alert-error"
       ]}>
@@ -846,7 +846,7 @@ defmodule HomesiteWeb.CoreComponents do
           <p class="text-secondary text-[var(--text-sm)]">{@title}</p>
           <p class="mt-[var(--space-xs)] text-[var(--text-2xl)] font-bold">{@value}</p>
         </div>
-        <div class={"#{@color} rounded-full p-3"}>
+        <div class={"#{@color} rounded-full p-[var(--space-sm)]"}>
           <.icon name={@icon} class="h-6 w-6" />
         </div>
       </div>
@@ -975,7 +975,7 @@ defmodule HomesiteWeb.CoreComponents do
   def empty_state(assigns) do
     ~H"""
     <div class="post-card text-center">
-      <.icon name={@icon} class="mx-auto h-12 w-12 text-gray-400" />
+      <.icon name={@icon} class="mx-auto h-12 w-12 opacity-40" />
       <p class="text-secondary mt-[var(--space-sm)]">{@message}</p>
       <%= if @action do %>
         <p class="text-secondary/70 mt-[var(--space-xs)] text-[var(--text-sm)]">{@action}</p>
@@ -1195,7 +1195,7 @@ defmodule HomesiteWeb.CoreComponents do
       </div>
       <div class="drawer-side">
         <label for={@id} aria-label="close sidebar" class="drawer-overlay"></label>
-        <div class="menu bg-base-200 min-h-full w-80 p-4">
+        <div class="menu bg-base-200 min-h-full w-80 p-[var(--space-sm)]">
           {render_slot(@content)}
         </div>
       </div>

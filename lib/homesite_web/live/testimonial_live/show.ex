@@ -47,7 +47,7 @@ defmodule HomesiteWeb.TestimonialLive.Show do
               <%!-- Header --%>
               <div class="mb-[var(--space-md)] flex items-start justify-between">
                 <div>
-                  <h1 class="mb-[var(--space-xs)] text-3xl font-bold">
+                  <h1 class="mb-[var(--space-xs)] text-[var(--text-3xl)]font-bold">
                     {gettext("User Testimonial")}
                   </h1>
                   <p class="text-base-content/60">
@@ -72,10 +72,10 @@ defmodule HomesiteWeb.TestimonialLive.Show do
               <%!-- Feedback Content --%>
               <%= if @testimonial.open_feedback do %>
                 <div class="mb-[var(--space-md)]">
-                  <h2 class="mb-[var(--space-sm)] text-xl font-semibold">
+                  <h2 class="mb-[var(--space-sm)] text-[var(--text-xl)]font-semibold">
                     {gettext("What they said:")}
                   </h2>
-                  <blockquote class="text-base-content/90 border-primary pl-[var(--space-sm)] border-l-4 text-lg italic">
+                  <blockquote class="text-base-content/90 border-primary pl-[var(--space-sm)] border-l-4 text-[var(--text-lg)]italic">
                     "{@testimonial.open_feedback}"
                   </blockquote>
                 </div>
@@ -84,7 +84,7 @@ defmodule HomesiteWeb.TestimonialLive.Show do
               <%!-- Additional Ratings --%>
               <%= if @testimonial.performance_rating do %>
                 <div class="mb-[var(--space-md)]">
-                  <h3 class="mb-[var(--space-xs)] text-lg font-semibold">
+                  <h3 class="mb-[var(--space-xs)] text-[var(--text-lg)]font-semibold">
                     {gettext("Performance Rating")}
                   </h3>
                   <div class="rating rating-md">
@@ -102,7 +102,7 @@ defmodule HomesiteWeb.TestimonialLive.Show do
               <%!-- Useful Features --%>
               <%= if @testimonial.feature_usefulness && map_size(@testimonial.feature_usefulness) > 0 do %>
                 <div class="mb-[var(--space-md)]">
-                  <h3 class="mb-[var(--space-xs)] text-lg font-semibold">
+                  <h3 class="mb-[var(--space-xs)] text-[var(--text-lg)]font-semibold">
                     {gettext("Features they found useful:")}
                   </h3>
                   <div class="gap-[var(--space-xs)] flex flex-wrap">
@@ -128,7 +128,7 @@ defmodule HomesiteWeb.TestimonialLive.Show do
                 </div>
                 <div>
                   <div class="text-lg font-semibold">{get_user_name(@testimonial)}</div>
-                  <div class="text-base-content/60 text-sm">
+                  <div class="text-base-content/60 text-[var(--text-sm)]">
                     {gettext("Rank")}: {rank_display(@testimonial.user_rank_at_time)}
                   </div>
                 </div>
@@ -138,7 +138,7 @@ defmodule HomesiteWeb.TestimonialLive.Show do
 
               <%!-- Social Sharing --%>
               <div class="mb-[var(--space-md)]">
-                <h3 class="mb-[var(--space-sm)] text-lg font-semibold">
+                <h3 class="mb-[var(--space-sm)] text-[var(--text-lg)]font-semibold">
                   {gettext("Share this testimonial:")}
                 </h3>
                 <div class="gap-[var(--space-sm)] flex flex-wrap">
@@ -146,25 +146,25 @@ defmodule HomesiteWeb.TestimonialLive.Show do
                   <a
                     href={twitter_share_url(@share_url, @testimonial)}
                     target="_blank"
-                    class="btn btn-sm gap-2"
+                    class="btn btn-sm gap-[var(--space-xs)]"
                   >
                     <.icon name="hero-at-symbol" /> X (Twitter)
                   </a>
 
                   <%!-- LinkedIn --%>
-                  <a href={linkedin_share_url(@share_url)} target="_blank" class="btn btn-sm gap-2">
+                  <a href={linkedin_share_url(@share_url)} target="_blank" class="btn btn-sm gap-[var(--space-xs)]">
                     <.icon name="hero-briefcase" /> LinkedIn
                   </a>
 
                   <%!-- Facebook --%>
-                  <a href={facebook_share_url(@share_url)} target="_blank" class="btn btn-sm gap-2">
+                  <a href={facebook_share_url(@share_url)} target="_blank" class="btn btn-sm gap-[var(--space-xs)]">
                     <.icon name="hero-user-group" /> Facebook
                   </a>
 
                   <%!-- Copy Link --%>
                   <button
                     type="button"
-                    class="btn btn-sm gap-2"
+                    class="btn btn-sm gap-[var(--space-xs)]"
                     phx-hook="CopyButton"
                     id="copy-testimonial-url"
                     data-clipboard-text={@share_url}
@@ -179,7 +179,7 @@ defmodule HomesiteWeb.TestimonialLive.Show do
                 <p>
                   {gettext("This testimonial is from a real user of Homesite.")}
                 </p>
-                <p class="mt-2">
+                <p class="mt-[var(--space-xs)]">
                   {gettext("Built with")} ❤️ {gettext("by")} Juha Halmu -
                   <.link navigate={~p"/"} class="link link-primary">
                     {gettext("Check out Homesite")}

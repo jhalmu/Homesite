@@ -47,7 +47,7 @@ defmodule HomesiteWeb.Layouts do
     <footer class="from-base-200 to-base-300 border-base-300 mt-[var(--spacing-section)] border-t bg-gradient-to-r">
       <div class="max-w-[var(--content-max-width)] px-[var(--spacing-card)] py-[var(--spacing-lg)] mx-auto">
         <div class={[
-          "grid gap-8",
+          "grid gap-[var(--space-lg)]",
           "grid-cols-1",
           "sm:grid-cols-2",
           "lg:grid-cols-4",
@@ -249,7 +249,7 @@ defmodule HomesiteWeb.Layouts do
                     <.avatar user={@current_scope.user} class="h-8 w-8" />
                     <span>{@current_scope.user.display_name || @current_scope.user.email}</span>
                   </summary>
-                  <ul class="bg-base-200 border-base-300 z-50 rounded-t-none border p-2 shadow-lg">
+                  <ul class="bg-base-200 border-base-300 z-50 rounded-t-none border p-[var(--space-xs)] shadow-lg">
                     <li>
                       <.link navigate={
                         if @current_scope.user.username,
@@ -306,7 +306,7 @@ defmodule HomesiteWeb.Layouts do
       <div class="modal-box">
         <form method="dialog">
           <button
-            class="btn btn-sm btn-circle btn-ghost absolute top-2 right-2"
+            class="btn btn-sm btn-circle btn-ghost absolute top-[var(--space-xs)] right-[var(--space-xs)]"
             aria-label={gettext("Close menu")}
           >
             <.icon name="hero-x-mark" class="h-5 w-5" />
@@ -350,10 +350,10 @@ defmodule HomesiteWeb.Layouts do
               </li>
             <% end %>
 
-            <div class="divider my-2"></div>
+            <div class="divider my-[var(--space-xs)]"></div>
 
             <li>
-              <div class="flex items-center gap-3 px-4 py-2">
+              <div class="flex items-center gap-[var(--space-sm)] px-[var(--space-sm)] py-[var(--space-xs)]">
                 <.avatar user={@current_scope.user} class="h-10 w-10" />
                 <div class="flex flex-col">
                   <span class="text-[var(--text-sm)] font-semibold">
@@ -371,7 +371,7 @@ defmodule HomesiteWeb.Layouts do
                     do: ~p"/users/@#{@current_scope.user.username}",
                     else: ~p"/users/#{@current_scope.user.id}"
                 }
-                class="text-base"
+                class="text-[var(--text-base)]"
               >
                 <.icon name="hero-user-circle" class="h-5 w-5" /> {gettext("My Profile")}
               </.link>
@@ -437,7 +437,7 @@ defmodule HomesiteWeb.Layouts do
       <div class="border-1 border-base-200 bg-base-100 [[data-locale=en]_&]:left-0 [[data-locale=fi]_&]:left-1/2 transition-[left] pointer-events-none absolute h-full w-1/2 rounded-full brightness-200" />
 
       <button
-        class="relative z-10 flex w-1/2 cursor-pointer items-center justify-center p-1 text-xs font-semibold opacity-75 hover:opacity-100"
+        class="relative z-10 flex w-1/2 cursor-pointer items-center justify-center p-[var(--space-inline)] text-[var(--text-xs)] font-semibold opacity-75 hover:opacity-100"
         phx-click={JS.dispatch("phx:set-locale")}
         data-phx-locale="en"
       >
@@ -445,7 +445,7 @@ defmodule HomesiteWeb.Layouts do
       </button>
 
       <button
-        class="relative z-10 flex w-1/2 cursor-pointer items-center justify-center p-1 text-xs font-semibold opacity-75 hover:opacity-100"
+        class="relative z-10 flex w-1/2 cursor-pointer items-center justify-center p-[var(--space-inline)] text-[var(--text-xs)] font-semibold opacity-75 hover:opacity-100"
         phx-click={JS.dispatch("phx:set-locale")}
         data-phx-locale="fi"
       >
@@ -477,7 +477,7 @@ defmodule HomesiteWeb.Layouts do
       </div>
       <ul
         tabindex="0"
-        class="dropdown-content menu bg-base-200 rounded-box z-[1] border-base-300 mt-2 w-52 border p-2 shadow-lg"
+        class="dropdown-content menu bg-base-200 rounded-box z-[1] border-base-300 mt-[var(--space-xs)] w-52 border p-[var(--space-xs)] shadow-lg"
       >
         <li>
           <button

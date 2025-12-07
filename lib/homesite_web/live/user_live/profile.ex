@@ -42,7 +42,7 @@ defmodule HomesiteWeb.UserLive.Profile do
                   href={@user.website_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="btn btn-outline btn-xs gap-1"
+                  class="btn btn-outline btn-xs gap-[var(--space-inline)]"
                 >
                   <.icon name="hero-globe-alt" class="h-3 w-3" /> Website
                 </.link>
@@ -52,7 +52,7 @@ defmodule HomesiteWeb.UserLive.Profile do
                   href={"https://bsky.app/profile/#{String.trim_leading(@user.bluesky_handle, "@")}"}
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="btn btn-outline btn-xs gap-1"
+                  class="btn btn-outline btn-xs gap-[var(--space-inline)]"
                 >
                   <.icon name="hero-cloud" class="h-3 w-3" /> Bluesky
                 </.link>
@@ -62,7 +62,7 @@ defmodule HomesiteWeb.UserLive.Profile do
                   href={mastodon_url(@user.mastodon_handle)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="btn btn-outline btn-xs gap-1"
+                  class="btn btn-outline btn-xs gap-[var(--space-inline)]"
                 >
                   <.icon name="hero-chat-bubble-left-right" class="h-3 w-3" /> Mastodon
                 </.link>
@@ -84,7 +84,7 @@ defmodule HomesiteWeb.UserLive.Profile do
               class="card card-compact bg-base-200 group transition-colors hover:bg-base-300"
             >
               <div class="card-body p-[var(--space-sm)]">
-                <h3 class="line-clamp-2 mb-[var(--space-xs)] text-base font-semibold transition-colors group-hover:text-primary">
+                <h3 class="line-clamp-2 mb-[var(--space-xs)] text-[var(--text-base)]font-semibold transition-colors group-hover:text-primary">
                   {post.title}
                 </h3>
                 <p class="text-base-content/60 line-clamp-3 mb-[var(--space-sm)] text-[var(--text-xs)]">
@@ -108,34 +108,34 @@ defmodule HomesiteWeb.UserLive.Profile do
           <%!-- Stats in columns --%>
           <div class="mb-[var(--space-sm)] gap-[var(--space-sm)] text-[var(--text-sm)] grid grid-cols-3 text-center">
             <div>
-              <div class="text-primary text-xl font-bold">{@stats.posts_count}</div>
-              <div class="text-base-content/60 text-xs">posts</div>
+              <div class="text-primary text-[var(--text-xl)]font-bold">{@stats.posts_count}</div>
+              <div class="text-base-content/60 text-[var(--text-xs)]">posts</div>
             </div>
             <div>
-              <div class="text-secondary text-xl font-bold">{@stats.avg_read_time}</div>
-              <div class="text-base-content/60 text-xs">min avg</div>
+              <div class="text-secondary text-[var(--text-xl)]font-bold">{@stats.avg_read_time}</div>
+              <div class="text-base-content/60 text-[var(--text-xs)]">min avg</div>
             </div>
             <div>
-              <div class="text-accent text-xl font-bold">{@stats.member_since}</div>
-              <div class="text-base-content/60 text-xs">since</div>
+              <div class="text-accent text-[var(--text-xl)]font-bold">{@stats.member_since}</div>
+              <div class="text-base-content/60 text-[var(--text-xs)]">since</div>
             </div>
           </div>
 
           <%!-- Actions row --%>
           <div class="border-base-300 gap-[var(--space-xs)] pt-[var(--space-sm)] flex flex-wrap justify-center border-t">
             <%= if @user.username do %>
-              <a href={~p"/users/@#{@user.username}/rss.xml"} class="btn btn-xs btn-ghost gap-1">
+              <a href={~p"/users/@#{@user.username}/rss.xml"} class="btn btn-xs btn-ghost gap-[var(--space-inline)]">
                 <.icon name="hero-rss" class="h-3 w-3" /> RSS
               </a>
             <% else %>
-              <a href={~p"/users/#{@user.id}/rss.xml"} class="btn btn-xs btn-ghost gap-1">
+              <a href={~p"/users/#{@user.id}/rss.xml"} class="btn btn-xs btn-ghost gap-[var(--space-inline)]">
                 <.icon name="hero-rss" class="h-3 w-3" /> RSS
               </a>
             <% end %>
-            <button type="button" phx-click="share_profile" class="btn btn-xs btn-ghost gap-1">
+            <button type="button" phx-click="share_profile" class="btn btn-xs btn-ghost gap-[var(--space-inline)]">
               <.icon name="hero-share" class="h-3 w-3" /> Share
             </button>
-            <button type="button" phx-click="copy_profile_url" class="btn btn-xs btn-ghost gap-1">
+            <button type="button" phx-click="copy_profile_url" class="btn btn-xs btn-ghost gap-[var(--space-inline)]">
               <.icon name="hero-clipboard" class="h-3 w-3" /> Copy
             </button>
           </div>
