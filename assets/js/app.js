@@ -313,6 +313,29 @@ const Hooks = {
         window.removeEventListener('scroll', this.scrollHandler)
       }
     }
+  },
+  DownloadHTML: {
+    mounted() {
+      this.handleEvent("download-html", ({filename, content}) => {
+        const blob = new Blob([content], {type: 'text/html'})
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = filename
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        URL.revokeObjectURL(url)
+        console.log("HTML file downloaded:", filename)
+      })
+    }
+  },
+  OpenWindow: {
+    mounted() {
+      this.handleEvent("open_window", ({url}) => {
+        window.open(url, '_blank', 'noopener,noreferrer')
+      })
+    }
   }
 }
 

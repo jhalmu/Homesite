@@ -10,16 +10,16 @@
 msgid ""
 msgstr ""
 
-#: lib/homesite_web/components/core_components.ex:464
+#: lib/homesite_web/components/core_components.ex:491
 #: lib/homesite_web/live/admin_live/feedback/index.ex:314
-#: lib/homesite_web/live/dashboard_live/index.html.heex:291
-#: lib/homesite_web/live/dashboard_live/index.html.heex:355
+#: lib/homesite_web/live/dashboard_live/index.html.heex:295
+#: lib/homesite_web/live/dashboard_live/index.html.heex:359
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:243
-#: lib/homesite_web/components/layouts.ex:348
+#: lib/homesite_web/components/layouts.ex:350
 #, elixir-autogen, elixir-format
 msgid "Admin"
 msgstr ""
@@ -31,7 +31,7 @@ msgid "Attempting to reconnect"
 msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:75
-#: lib/homesite_web/live/testimonial_live/show.ex:173
+#: lib/homesite_web/live/testimonial_live/show.ex:191
 #, elixir-autogen, elixir-format
 msgid "Built with"
 msgstr ""
@@ -43,7 +43,7 @@ msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:69
 #: lib/homesite_web/components/layouts.ex:227
-#: lib/homesite_web/components/layouts.ex:322
+#: lib/homesite_web/components/layouts.ex:324
 #, elixir-autogen, elixir-format
 msgid "Dashboard"
 msgstr ""
@@ -54,7 +54,7 @@ msgid "Home"
 msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:287
-#: lib/homesite_web/components/layouts.ex:397
+#: lib/homesite_web/components/layouts.ex:399
 #: lib/homesite_web/live/user_live/login.ex:15
 #: lib/homesite_web/live/user_live/registration.ex:19
 #, elixir-autogen, elixir-format
@@ -62,12 +62,12 @@ msgid "Log in"
 msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:269
-#: lib/homesite_web/components/layouts.ex:386
+#: lib/homesite_web/components/layouts.ex:388
 #, elixir-autogen, elixir-format
 msgid "Log out"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:316
+#: lib/homesite_web/components/layouts.ex:317
 #, elixir-autogen, elixir-format
 msgid "Menu"
 msgstr ""
@@ -79,15 +79,16 @@ msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:70
 #: lib/homesite_web/components/layouts.ex:233
-#: lib/homesite_web/components/layouts.ex:332
+#: lib/homesite_web/components/layouts.ex:334
 #: lib/homesite_web/live/search_live/index.html.heex:62
 #, elixir-autogen, elixir-format
 msgid "Posts"
 msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:264
-#: lib/homesite_web/components/layouts.ex:381
-#: lib/homesite_web/live/dashboard_live/index.html.heex:259
+#: lib/homesite_web/components/layouts.ex:383
+#: lib/homesite_web/live/dashboard_live/index.html.heex:263
+#: lib/homesite_web/live/project_live/stepped_form.ex:294
 #, elixir-autogen, elixir-format
 msgid "Settings"
 msgstr ""
@@ -100,14 +101,16 @@ msgstr ""
 #: lib/homesite_web/components/form_components.ex:62
 #: lib/homesite_web/components/layouts.ex:71
 #: lib/homesite_web/components/layouts.ex:236
-#: lib/homesite_web/components/layouts.ex:337
+#: lib/homesite_web/components/layouts.ex:339
+#: lib/homesite_web/live/portfolio_live/show.ex:189
 #: lib/homesite_web/live/post_live/form.ex:88
+#: lib/homesite_web/live/project_live/show.ex:83
 #: lib/homesite_web/live/search_live/index.html.heex:120
 #, elixir-autogen, elixir-format
 msgid "Tags"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:414
+#: lib/homesite_web/components/layouts.ex:416
 #, elixir-autogen, elixir-format
 msgid "Theme"
 msgstr ""
@@ -137,24 +140,24 @@ msgstr ""
 
 #: lib/homesite_web/live/faq_live/form.ex:100
 #: lib/homesite_web/live/feed_folder_live/index.html.heex:60
-#: lib/homesite_web/live/gallery_live/form.ex:102
-#: lib/homesite_web/live/post_live/form.ex:327
+#: lib/homesite_web/live/media_live/index.ex:295
+#: lib/homesite_web/live/post_live/form.ex:329
 #: lib/homesite_web/live/tag_live/form.ex:83
 #, elixir-autogen, elixir-format
 msgid "Cancel"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:315
-#: lib/homesite_web/live/dashboard_live/index.html.heex:395
+#: lib/homesite_web/live/dashboard_live/index.html.heex:319
+#: lib/homesite_web/live/dashboard_live/index.html.heex:399
 #: lib/homesite_web/live/faq_live/index.ex:65
-#: lib/homesite_web/live/gallery_live/index.ex:122
-#: lib/homesite_web/live/gallery_live/show.ex:38
+#: lib/homesite_web/live/project_live/index.ex:84
+#: lib/homesite_web/live/project_live/show.ex:51
 #: lib/homesite_web/live/tag_live/show.ex:86
 #, elixir-autogen, elixir-format
 msgid "Edit"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:362
+#: lib/homesite_web/live/post_live/form.ex:364
 #, elixir-autogen, elixir-format
 msgid "Edit Post"
 msgstr ""
@@ -170,19 +173,19 @@ msgstr ""
 msgid "Make this post publicly visible"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:247
-#: lib/homesite_web/live/post_live/form.ex:380
+#: lib/homesite_web/live/dashboard_live/index.html.heex:251
+#: lib/homesite_web/live/post_live/form.ex:382
 #: lib/homesite_web/live/post_live/index.ex:19
 #, elixir-autogen, elixir-format
 msgid "New Post"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:603
+#: lib/homesite_web/live/post_live/form.ex:605
 #, elixir-autogen, elixir-format
 msgid "Post created successfully"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:585
+#: lib/homesite_web/live/post_live/form.ex:587
 #, elixir-autogen, elixir-format
 msgid "Post updated successfully"
 msgstr ""
@@ -192,14 +195,13 @@ msgstr ""
 msgid "Publication Date & Time"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:324
+#: lib/homesite_web/live/post_live/form.ex:326
 #, elixir-autogen, elixir-format
 msgid "Save Post"
 msgstr ""
 
 #: lib/homesite_web/live/faq_live/form.ex:96
-#: lib/homesite_web/live/gallery_live/form.ex:104
-#: lib/homesite_web/live/post_live/form.ex:323
+#: lib/homesite_web/live/post_live/form.ex:325
 #: lib/homesite_web/live/tag_live/form.ex:79
 #: lib/homesite_web/live/user_live/settings.ex:161
 #: lib/homesite_web/live/user_live/settings.ex:230
@@ -213,7 +215,6 @@ msgstr ""
 msgid "Select when this post should be published"
 msgstr ""
 
-#: lib/homesite_web/live/gallery_live/form.ex:31
 #: lib/homesite_web/live/post_live/form.ex:26
 #: lib/homesite_web/live/tag_live/form.ex:24
 #: lib/homesite_web/live/tag_live/show.ex:29
@@ -221,8 +222,9 @@ msgstr ""
 msgid "Slug"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:289
+#: lib/homesite_web/live/dashboard_live/index.html.heex:293
 #: lib/homesite_web/live/post_live/form.ex:23
+#: lib/homesite_web/live/project_live/stepped_form.ex:519
 #, elixir-autogen, elixir-format
 msgid "Title"
 msgstr ""
@@ -332,12 +334,12 @@ msgstr ""
 msgid "Create an account"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:281
+#: lib/homesite_web/live/dashboard_live/index.html.heex:285
 #, elixir-autogen, elixir-format
 msgid "Create your first post"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:423
+#: lib/homesite_web/live/dashboard_live/index.html.heex:427
 #, elixir-autogen, elixir-format
 msgid "Create your first tag"
 msgstr ""
@@ -353,7 +355,7 @@ msgid "Display Name"
 msgstr ""
 
 #: lib/homesite_web/components/content_components.ex:107
-#: lib/homesite_web/live/dashboard_live/index.html.heex:306
+#: lib/homesite_web/live/dashboard_live/index.html.heex:310
 #: lib/homesite_web/live/post_live/index.ex:77
 #: lib/homesite_web/live/tag_live/show.ex:78
 #, elixir-autogen, elixir-format
@@ -366,6 +368,7 @@ msgstr ""
 msgid "Edit Tag"
 msgstr ""
 
+#: lib/homesite_web/live/project_live/show.ex:108
 #: lib/homesite_web/live/user_live/login.ex:72
 #: lib/homesite_web/live/user_live/login.ex:115
 #: lib/homesite_web/live/user_live/registration.ex:43
@@ -460,13 +463,14 @@ msgstr ""
 msgid "Mastodon Handle"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:351
+#: lib/homesite_web/live/dashboard_live/index.html.heex:355
+#: lib/homesite_web/live/project_live/stepped_form.ex:461
 #: lib/homesite_web/live/tag_live/form.ex:21
 #, elixir-autogen, elixir-format
 msgid "Name"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:250
+#: lib/homesite_web/live/dashboard_live/index.html.heex:254
 #: lib/homesite_web/live/tag_live/form.ex:121
 #: lib/homesite_web/live/tag_live/index.ex:18
 #, elixir-autogen, elixir-format
@@ -491,8 +495,6 @@ msgstr ""
 
 #: lib/homesite_web/components/content_components.ex:120
 #: lib/homesite_web/components/content_components.ex:225
-#: lib/homesite_web/live/gallery_live/index.ex:110
-#: lib/homesite_web/live/gallery_live/show.ex:69
 #: lib/homesite_web/live/post_live/index.ex:89
 #: lib/homesite_web/live/tag_live/index.ex:90
 #: lib/homesite_web/live/tag_live/show.ex:33
@@ -507,10 +509,10 @@ msgstr ""
 
 #: lib/homesite_web/components/content_components.ex:115
 #: lib/homesite_web/components/content_components.ex:220
-#: lib/homesite_web/live/gallery_live/index.ex:105
-#: lib/homesite_web/live/gallery_live/show.ex:64
-#: lib/homesite_web/live/portfolio_live/show.ex:53
+#: lib/homesite_web/live/portfolio_live/show.ex:161
 #: lib/homesite_web/live/post_live/index.ex:84
+#: lib/homesite_web/live/project_live/index.ex:64
+#: lib/homesite_web/live/project_live/show.ex:41
 #: lib/homesite_web/live/tag_live/index.ex:85
 #: lib/homesite_web/live/tag_live/show.ex:31
 #, elixir-autogen, elixir-format
@@ -518,18 +520,18 @@ msgid "Public"
 msgstr ""
 
 #: lib/homesite_web/components/content_components.ex:78
-#: lib/homesite_web/live/dashboard_live/index.html.heex:290
+#: lib/homesite_web/live/dashboard_live/index.html.heex:294
 #: lib/homesite_web/live/post_live/index.ex:48
 #, elixir-autogen, elixir-format
 msgid "Published"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:243
+#: lib/homesite_web/live/dashboard_live/index.html.heex:247
 #, elixir-autogen, elixir-format
 msgid "Quick Actions"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:268
+#: lib/homesite_web/live/dashboard_live/index.html.heex:272
 #, elixir-autogen, elixir-format
 msgid "Recent Posts"
 msgstr ""
@@ -594,12 +596,12 @@ msgstr ""
 msgid "To see sent emails, visit"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:106
+#: lib/homesite_web/live/dashboard_live/index.html.heex:108
 #, elixir-autogen, elixir-format
 msgid "Total Posts"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:124
+#: lib/homesite_web/live/dashboard_live/index.html.heex:126
 #, elixir-autogen, elixir-format
 msgid "Total Tags"
 msgstr ""
@@ -630,9 +632,9 @@ msgid "User management"
 msgstr ""
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:43
-#: lib/homesite_web/live/dashboard_live/index.html.heex:312
-#: lib/homesite_web/live/dashboard_live/index.html.heex:392
-#: lib/homesite_web/live/gallery_live/index.ex:118
+#: lib/homesite_web/live/dashboard_live/index.html.heex:316
+#: lib/homesite_web/live/dashboard_live/index.html.heex:396
+#: lib/homesite_web/live/project_live/index.ex:81
 #: lib/homesite_web/live/tag_live/show.ex:83
 #, elixir-autogen, elixir-format
 msgid "View"
@@ -653,12 +655,12 @@ msgstr ""
 msgid "View Profile"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:116
-#: lib/homesite_web/live/dashboard_live/index.html.heex:128
-#: lib/homesite_web/live/dashboard_live/index.html.heex:146
-#: lib/homesite_web/live/dashboard_live/index.html.heex:271
-#: lib/homesite_web/live/dashboard_live/index.html.heex:333
-#: lib/homesite_web/live/dashboard_live/index.html.heex:413
+#: lib/homesite_web/live/dashboard_live/index.html.heex:118
+#: lib/homesite_web/live/dashboard_live/index.html.heex:130
+#: lib/homesite_web/live/dashboard_live/index.html.heex:148
+#: lib/homesite_web/live/dashboard_live/index.html.heex:275
+#: lib/homesite_web/live/dashboard_live/index.html.heex:337
+#: lib/homesite_web/live/dashboard_live/index.html.heex:417
 #, elixir-autogen, elixir-format
 msgid "View all"
 msgstr ""
@@ -688,12 +690,12 @@ msgstr ""
 msgid "You have %{count} flower(s) - Admin Level %{level}"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:278
+#: lib/homesite_web/live/dashboard_live/index.html.heex:282
 #, elixir-autogen, elixir-format
 msgid "You haven't created any posts yet."
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:420
+#: lib/homesite_web/live/dashboard_live/index.html.heex:424
 #, elixir-autogen, elixir-format
 msgid "You haven't created any tags yet."
 msgstr ""
@@ -713,7 +715,7 @@ msgstr ""
 msgid "Your Posts"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:410
+#: lib/homesite_web/live/dashboard_live/index.html.heex:414
 #, elixir-autogen, elixir-format
 msgid "Your Tags"
 msgstr ""
@@ -738,18 +740,18 @@ msgstr ""
 msgid "to your account now."
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:407
+#: lib/homesite_web/components/layouts.ex:409
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr ""
 
-#: lib/homesite_web/live/page_live/home.html.heex:7
+#: lib/homesite_web/live/page_live/home.html.heex:10
 #, elixir-autogen, elixir-format
 msgid "No published posts yet. Be the first to share something!"
 msgstr ""
 
 #: lib/homesite_web/live/feed_live/index.html.heex:203
-#: lib/homesite_web/live/page_live/home.html.heex:193
+#: lib/homesite_web/live/page_live/home.html.heex:196
 #: lib/homesite_web/live/search_live/index.html.heex:106
 #, elixir-autogen, elixir-format
 msgid "Read more"
@@ -837,7 +839,7 @@ msgstr ""
 msgid "No posts yet. Create your first post to get started!"
 msgstr ""
 
-#: lib/homesite_web/live/gallery_live/form.ex:41
+#: lib/homesite_web/live/project_live/stepped_form.ex:373
 #: lib/homesite_web/live/tag_live/form.ex:54
 #, elixir-autogen, elixir-format
 msgid "Description"
@@ -863,7 +865,7 @@ msgstr ""
 msgid "Public tags can be seen by everyone. Turn off to make this tag private."
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:109
+#: lib/homesite_web/live/dashboard_live/index.html.heex:111
 #, elixir-autogen, elixir-format
 msgid "%{published} published, %{draft} drafts"
 msgstr ""
@@ -878,7 +880,7 @@ msgstr ""
 msgid "Consider using one of these existing tags instead of creating a new one."
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:461
+#: lib/homesite_web/live/post_live/form.ex:463
 #, elixir-autogen, elixir-format
 msgid "Could not create tag"
 msgstr ""
@@ -914,7 +916,7 @@ msgstr ""
 msgid "Profile updated successfully. Remember to also update your display name, bio, and social links to complete your profile!"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:158
+#: lib/homesite_web/live/dashboard_live/index.html.heex:160
 #, elixir-autogen, elixir-format
 msgid "Recent Activity"
 msgstr ""
@@ -1003,6 +1005,8 @@ msgid "Are you sure you want to delete this FAQ?"
 msgstr ""
 
 #: lib/homesite_web/live/faq_live/form.ex:23
+#: lib/homesite_web/live/project_live/show.ex:67
+#: lib/homesite_web/live/project_live/stepped_form.ex:396
 #, elixir-autogen, elixir-format
 msgid "Category"
 msgstr ""
@@ -1013,8 +1017,7 @@ msgid "Click 'New FAQ' to create your first FAQ entry."
 msgstr ""
 
 #: lib/homesite_web/live/faq_live/index.ex:74
-#: lib/homesite_web/live/gallery_live/index.ex:131
-#: lib/homesite_web/live/media_live/index.ex:254
+#: lib/homesite_web/live/media_live/index.ex:438
 #: lib/homesite_web/live/media_live/show.ex:71
 #, elixir-autogen, elixir-format
 msgid "Delete"
@@ -1022,7 +1025,6 @@ msgstr ""
 
 #: lib/homesite_web/live/faq_live/form.ex:40
 #: lib/homesite_web/live/feed_folder_live/index.html.heex:54
-#: lib/homesite_web/live/gallery_live/form.ex:50
 #, elixir-autogen, elixir-format
 msgid "Display Order"
 msgstr ""
@@ -1049,8 +1051,8 @@ msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:239
 #: lib/homesite_web/components/layouts.ex:279
-#: lib/homesite_web/components/layouts.ex:342
-#: lib/homesite_web/components/layouts.ex:392
+#: lib/homesite_web/components/layouts.ex:344
+#: lib/homesite_web/components/layouts.ex:394
 #: lib/homesite_web/live/faq_live/index.ex:173
 #: lib/homesite_web/live/search_live/index.html.heex:141
 #, elixir-autogen, elixir-format
@@ -1221,8 +1223,8 @@ msgstr ""
 msgid "min read"
 msgstr ""
 
-#: lib/homesite_web/live/page_live/home.html.heex:39
-#: lib/homesite_web/live/page_live/home.html.heex:106
+#: lib/homesite_web/live/page_live/home.html.heex:42
+#: lib/homesite_web/live/page_live/home.html.heex:109
 #, elixir-autogen, elixir-format
 msgid "read time"
 msgstr ""
@@ -1269,7 +1271,7 @@ msgstr ""
 msgid "Portal of JH - Blog Homepage"
 msgstr ""
 
-#: lib/homesite_web/live/page_live/home.html.heex:137
+#: lib/homesite_web/live/page_live/home.html.heex:140
 #, elixir-autogen, elixir-format
 msgid "Recent from Feeds"
 msgstr ""
@@ -1294,7 +1296,7 @@ msgstr ""
 msgid "Username"
 msgstr ""
 
-#: lib/homesite_web/live/page_live/home.html.heex:140
+#: lib/homesite_web/live/page_live/home.html.heex:143
 #, elixir-autogen, elixir-format
 msgid "View all feeds"
 msgstr ""
@@ -1330,7 +1332,7 @@ msgstr ""
 msgid "or sign in with password"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:139
+#: lib/homesite_web/live/dashboard_live/index.html.heex:141
 #, elixir-autogen, elixir-format
 msgid "%{enabled} enabled, %{disabled} disabled"
 msgstr ""
@@ -1342,12 +1344,12 @@ msgid_plural "%{count} unread items"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:211
+#: lib/homesite_web/live/dashboard_live/index.html.heex:213
 #, elixir-autogen, elixir-format
 msgid "Active Sources"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:343
+#: lib/homesite_web/live/dashboard_live/index.html.heex:347
 #, elixir-autogen, elixir-format
 msgid "Add your first feed source"
 msgstr ""
@@ -1378,33 +1380,33 @@ msgstr ""
 msgid "Bookmark"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:206
+#: lib/homesite_web/live/dashboard_live/index.html.heex:208
 #: lib/homesite_web/live/feed_live/index.html.heex:42
 #, elixir-autogen, elixir-format
 msgid "Bookmarks"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:506
+#: lib/homesite_web/components/layouts.ex:508
 #, elixir-autogen, elixir-format
 msgid "Business"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:470
+#: lib/homesite_web/components/layouts.ex:472
 #, elixir-autogen, elixir-format
 msgid "Change theme"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:95
+#: lib/homesite_web/live/dashboard_live/index.html.heex:97
 #, elixir-autogen, elixir-format
 msgid "Claim Your Username"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:72
+#: lib/homesite_web/live/dashboard_live/index.html.heex:74
 #, elixir-autogen, elixir-format
 msgid "Claim your username to create your personal homepage!"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:313
+#: lib/homesite_web/live/post_live/form.ex:315
 #: lib/homesite_web/live/user_live/settings.ex:268
 #, elixir-autogen, elixir-format
 msgid "Close"
@@ -1426,17 +1428,17 @@ msgstr ""
 msgid "Copy"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:515
+#: lib/homesite_web/components/layouts.ex:517
 #, elixir-autogen, elixir-format
 msgid "Corporate"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:524
+#: lib/homesite_web/components/layouts.ex:526
 #, elixir-autogen, elixir-format
 msgid "Cyberpunk"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:497
+#: lib/homesite_web/components/layouts.ex:499
 #, elixir-autogen, elixir-format
 msgid "Dark"
 msgstr ""
@@ -1444,6 +1446,7 @@ msgstr ""
 #: lib/homesite_web/components/form_components.ex:241
 #: lib/homesite_web/live/admin_live/feedback/index.ex:170
 #: lib/homesite_web/live/admin_live/feedback/index.ex:309
+#: lib/homesite_web/live/project_live/show.ex:75
 #, elixir-autogen, elixir-format
 msgid "Date"
 msgstr ""
@@ -1459,7 +1462,7 @@ msgstr ""
 msgid "Delete tag"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:376
+#: lib/homesite_web/live/dashboard_live/index.html.heex:380
 #, elixir-autogen, elixir-format
 msgid "Disabled"
 msgstr ""
@@ -1480,12 +1483,12 @@ msgstr ""
 msgid "Edit tag"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:374
+#: lib/homesite_web/live/dashboard_live/index.html.heex:378
 #, elixir-autogen, elixir-format
 msgid "Enabled"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:379
+#: lib/homesite_web/live/dashboard_live/index.html.heex:383
 #, elixir-autogen, elixir-format
 msgid "Error"
 msgstr ""
@@ -1511,14 +1514,14 @@ msgid "Failed to toggle bookmark"
 msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:230
-#: lib/homesite_web/components/layouts.ex:327
+#: lib/homesite_web/components/layouts.ex:329
 #: lib/homesite_web/live/feed_live/index.ex:33
 #: lib/homesite_web/live/feed_live/index.html.heex:4
 #, elixir-autogen, elixir-format
 msgid "Feed"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:185
+#: lib/homesite_web/live/dashboard_live/index.html.heex:187
 #, elixir-autogen, elixir-format
 msgid "Feed Analytics"
 msgstr ""
@@ -1529,7 +1532,7 @@ msgstr ""
 msgid "Feed Folders"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:136
+#: lib/homesite_web/live/dashboard_live/index.html.heex:138
 #, elixir-autogen, elixir-format
 msgid "Feed Sources"
 msgstr ""
@@ -1559,7 +1562,7 @@ msgstr ""
 msgid "Folder updated successfully"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:79
+#: lib/homesite_web/live/dashboard_live/index.html.heex:81
 #, elixir-autogen, elixir-format
 msgid "Get a memorable URL like"
 msgstr ""
@@ -1569,12 +1572,12 @@ msgstr ""
 msgid "Icon (emoji)"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:354
+#: lib/homesite_web/live/dashboard_live/index.html.heex:358
 #, elixir-autogen, elixir-format
 msgid "Last Updated"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:488
+#: lib/homesite_web/components/layouts.ex:490
 #, elixir-autogen, elixir-format
 msgid "Light"
 msgstr ""
@@ -1600,17 +1603,17 @@ msgid "Mark as unread"
 msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:259
-#: lib/homesite_web/components/layouts.ex:376
+#: lib/homesite_web/components/layouts.ex:378
 #, elixir-autogen, elixir-format
 msgid "My Profile"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:386
+#: lib/homesite_web/live/dashboard_live/index.html.heex:390
 #, elixir-autogen, elixir-format
 msgid "Never"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:253
+#: lib/homesite_web/live/dashboard_live/index.html.heex:257
 #, elixir-autogen, elixir-format
 msgid "New Feed Source"
 msgstr ""
@@ -1661,17 +1664,17 @@ msgstr ""
 msgid "Published Posts"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:61
+#: lib/homesite_web/live/dashboard_live/index.html.heex:63
 #, elixir-autogen, elixir-format
 msgid "RSS Subscribers"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:89
+#: lib/homesite_web/live/dashboard_live/index.html.heex:91
 #, elixir-autogen, elixir-format
 msgid "RSS feeds with your custom username"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:200
+#: lib/homesite_web/live/dashboard_live/index.html.heex:202
 #, elixir-autogen, elixir-format
 msgid "Read Today"
 msgstr ""
@@ -1701,6 +1704,7 @@ msgstr ""
 msgid "Set to current time"
 msgstr ""
 
+#: lib/homesite_web/live/portfolio_live/show.ex:108
 #: lib/homesite_web/live/user_live/settings.ex:258
 #, elixir-autogen, elixir-format
 msgid "Share"
@@ -1711,7 +1715,7 @@ msgstr ""
 msgid "Share this post"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:85
+#: lib/homesite_web/live/dashboard_live/index.html.heex:87
 #, elixir-autogen, elixir-format
 msgid "Share your blog with a professional link"
 msgstr ""
@@ -1731,7 +1735,7 @@ msgstr ""
 msgid "Sources"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:353
+#: lib/homesite_web/live/dashboard_live/index.html.heex:357
 #, elixir-autogen, elixir-format
 msgid "Status"
 msgstr ""
@@ -1741,23 +1745,23 @@ msgstr ""
 msgid "Time"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:219
+#: lib/homesite_web/live/dashboard_live/index.html.heex:222
 #, elixir-autogen, elixir-format
 msgid "Top Sources"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:194
+#: lib/homesite_web/live/dashboard_live/index.html.heex:196
 #, elixir-autogen, elixir-format
 msgid "Total Items"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:55
+#: lib/homesite_web/live/dashboard_live/index.html.heex:57
 #, elixir-autogen, elixir-format
 msgid "Total Views"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/feedback/index.ex:312
-#: lib/homesite_web/live/dashboard_live/index.html.heex:352
+#: lib/homesite_web/live/dashboard_live/index.html.heex:356
 #, elixir-autogen, elixir-format
 msgid "Type"
 msgstr ""
@@ -1772,22 +1776,22 @@ msgstr ""
 msgid "Username Help"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:188
+#: lib/homesite_web/live/dashboard_live/index.html.heex:190
 #, elixir-autogen, elixir-format
 msgid "View Feed"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:256
+#: lib/homesite_web/live/dashboard_live/index.html.heex:260
 #, elixir-autogen, elixir-format
 msgid "View Feeds"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:340
+#: lib/homesite_web/live/dashboard_live/index.html.heex:344
 #, elixir-autogen, elixir-format
 msgid "You haven't added any feed sources yet."
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:330
+#: lib/homesite_web/live/dashboard_live/index.html.heex:334
 #, elixir-autogen, elixir-format
 msgid "Your Feed Sources"
 msgstr ""
@@ -1807,7 +1811,7 @@ msgstr ""
 msgid "Your personal homepage is now available at:"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:228
+#: lib/homesite_web/live/dashboard_live/index.html.heex:232
 #, elixir-autogen, elixir-format
 msgid "bookmarked"
 msgstr ""
@@ -1817,23 +1821,23 @@ msgstr ""
 msgid "e.g., Tech News, Friends, Videos"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:228
+#: lib/homesite_web/live/dashboard_live/index.html.heex:232
 #, elixir-autogen, elixir-format
 msgid "read"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:202
+#: lib/homesite_web/live/dashboard_live/index.html.heex:204
 #, elixir-autogen, elixir-format
 msgid "this week"
 msgstr ""
 
-#: lib/homesite_web/live/dashboard_live/index.html.heex:196
+#: lib/homesite_web/live/dashboard_live/index.html.heex:198
 #, elixir-autogen, elixir-format
 msgid "unread"
 msgstr ""
 
-#: lib/homesite_web/live/page_live/home.html.heex:126
-#: lib/homesite_web/live/user_live/profile.ex:203
+#: lib/homesite_web/live/page_live/home.html.heex:129
+#: lib/homesite_web/live/user_live/profile.ex:220
 #, elixir-autogen, elixir-format
 msgid "Load More Posts"
 msgstr ""
@@ -1853,8 +1857,8 @@ msgstr ""
 msgid "90 Days"
 msgstr ""
 
-#: lib/homesite_web/live/happiness_live/index.ex:315
-#: lib/homesite_web/live/testimonial_live/show.ex:236
+#: lib/homesite_web/live/happiness_live/index.ex:319
+#: lib/homesite_web/live/testimonial_live/show.ex:254
 #, elixir-autogen, elixir-format
 msgid "Anonymous User"
 msgstr ""
@@ -1875,7 +1879,7 @@ msgstr ""
 msgid "Back to Happiness Meter"
 msgstr ""
 
-#: lib/homesite_web/live/testimonial_live/show.ex:175
+#: lib/homesite_web/live/testimonial_live/show.ex:193
 #, elixir-autogen, elixir-format
 msgid "Check out Homesite"
 msgstr ""
@@ -1885,7 +1889,8 @@ msgstr ""
 msgid "Confidence"
 msgstr ""
 
-#: lib/homesite_web/live/testimonial_live/show.ex:162
+#: lib/homesite_web/live/portfolio_live/show.ex:132
+#: lib/homesite_web/live/testimonial_live/show.ex:180
 #, elixir-autogen, elixir-format
 msgid "Copy Link"
 msgstr ""
@@ -1900,13 +1905,13 @@ msgstr ""
 msgid "Failed to unapprove testimonial."
 msgstr ""
 
-#: lib/homesite_web/live/testimonial_live/show.ex:99
+#: lib/homesite_web/live/testimonial_live/show.ex:106
 #, elixir-autogen, elixir-format
 msgid "Features they found useful:"
 msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:99
-#: lib/homesite_web/live/feedback_live/index.ex:123
+#: lib/homesite_web/live/feedback_live/index.ex:125
 #, elixir-autogen, elixir-format
 msgid "Feedback"
 msgstr ""
@@ -1938,7 +1943,7 @@ msgstr ""
 msgid "Help us improve!"
 msgstr ""
 
-#: lib/homesite_web/live/happiness_live/index.ex:290
+#: lib/homesite_web/live/happiness_live/index.ex:294
 #, elixir-autogen, elixir-format
 msgid "High"
 msgstr ""
@@ -1953,12 +1958,12 @@ msgstr ""
 msgid "How are we doing?"
 msgstr ""
 
-#: lib/homesite_web/live/happiness_live/index.ex:151
+#: lib/homesite_web/live/happiness_live/index.ex:155
 #, elixir-autogen, elixir-format
 msgid "How can we do better?"
 msgstr ""
 
-#: lib/homesite_web/live/feedback_live/index.ex:71
+#: lib/homesite_web/live/feedback_live/index.ex:73
 #, elixir-autogen, elixir-format
 msgid "How fast and responsive is the site?"
 msgstr ""
@@ -1973,18 +1978,18 @@ msgstr ""
 msgid "Last 90 days"
 msgstr ""
 
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:59
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:61
 #, elixir-autogen, elixir-format
 msgid "Later"
 msgstr ""
 
-#: lib/homesite_web/live/happiness_live/index.ex:168
-#: lib/homesite_web/live/testimonial_live/show.ex:199
+#: lib/homesite_web/live/happiness_live/index.ex:172
+#: lib/homesite_web/live/testimonial_live/show.ex:217
 #, elixir-autogen, elixir-format
 msgid "Log in to share feedback"
 msgstr ""
 
-#: lib/homesite_web/live/happiness_live/index.ex:288
+#: lib/homesite_web/live/happiness_live/index.ex:292
 #, elixir-autogen, elixir-format
 msgid "Low"
 msgstr ""
@@ -1994,8 +1999,8 @@ msgstr ""
 msgid "Low confidence"
 msgstr ""
 
-#: lib/homesite_web/live/happiness_live/index.ex:289
-#: lib/homesite_web/live/media_live/show.ex:157
+#: lib/homesite_web/live/happiness_live/index.ex:293
+#: lib/homesite_web/live/media_live/show.ex:159
 #, elixir-autogen, elixir-format
 msgid "Medium"
 msgstr ""
@@ -2016,7 +2021,7 @@ msgid "No"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/feedback/index.ex:406
-#: lib/homesite_web/live/happiness_live/index.ex:286
+#: lib/homesite_web/live/happiness_live/index.ex:290
 #, elixir-autogen, elixir-format
 msgid "No data"
 msgstr ""
@@ -2036,7 +2041,7 @@ msgstr ""
 msgid "No trend data available"
 msgstr ""
 
-#: lib/homesite_web/live/feedback_live/index.ex:52
+#: lib/homesite_web/live/feedback_live/index.ex:54
 #: lib/homesite_web/live/happiness_live/index.ex:62
 #, elixir-autogen, elixir-format
 msgid "Overall Satisfaction"
@@ -2052,14 +2057,14 @@ msgstr ""
 msgid "Pending Testimonials"
 msgstr ""
 
-#: lib/homesite_web/live/testimonial_live/show.ex:83
+#: lib/homesite_web/live/testimonial_live/show.ex:88
 #, elixir-autogen, elixir-format
 msgid "Performance Rating"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/feedback/index.ex:211
 #: lib/homesite_web/live/admin_live/feedback/index.ex:275
-#: lib/homesite_web/live/testimonial_live/show.ex:124
+#: lib/homesite_web/live/testimonial_live/show.ex:132
 #, elixir-autogen, elixir-format
 msgid "Rank"
 msgstr ""
@@ -2102,19 +2107,19 @@ msgid "See how our community feels about Homesite based on real user feedback"
 msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:105
-#: lib/homesite_web/live/feedback_live/index.ex:19
-#: lib/homesite_web/live/happiness_live/index.ex:162
-#: lib/homesite_web/live/testimonial_live/show.ex:193
+#: lib/homesite_web/live/feedback_live/index.ex:20
+#: lib/homesite_web/live/happiness_live/index.ex:166
+#: lib/homesite_web/live/testimonial_live/show.ex:211
 #, elixir-autogen, elixir-format
 msgid "Share Your Feedback"
 msgstr ""
 
-#: lib/homesite_web/live/testimonial_live/show.ex:133
+#: lib/homesite_web/live/testimonial_live/show.ex:142
 #, elixir-autogen, elixir-format
 msgid "Share this testimonial:"
 msgstr ""
 
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:41
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:42
 #, elixir-autogen, elixir-format
 msgid "Share your feedback and help us improve!"
 msgstr ""
@@ -2124,27 +2129,27 @@ msgstr ""
 msgid "Shared"
 msgstr ""
 
-#: lib/homesite_web/live/testimonial_live/show.ex:52
+#: lib/homesite_web/live/testimonial_live/show.ex:54
 #, elixir-autogen, elixir-format
 msgid "Shared on"
 msgstr ""
 
-#: lib/homesite_web/live/feedback_live/index.ex:104
+#: lib/homesite_web/live/feedback_live/index.ex:106
 #, elixir-autogen, elixir-format
 msgid "Submit Feedback"
 msgstr ""
 
-#: lib/homesite_web/live/feedback_live/index.ex:102
+#: lib/homesite_web/live/feedback_live/index.ex:104
 #, elixir-autogen, elixir-format
 msgid "Submitting..."
 msgstr ""
 
-#: lib/homesite_web/live/feedback_live/prompt_modal.ex:51
+#: lib/homesite_web/live/feedback_live/prompt_modal.ex:53
 #, elixir-autogen, elixir-format
 msgid "Sure!"
 msgstr ""
 
-#: lib/homesite_web/live/feedback_live/index.ex:92
+#: lib/homesite_web/live/feedback_live/index.ex:94
 #, elixir-autogen, elixir-format
 msgid "Tell us what you think..."
 msgstr ""
@@ -2169,12 +2174,12 @@ msgstr ""
 msgid "Testimonials awaiting review"
 msgstr ""
 
-#: lib/homesite_web/live/feedback_live/index.ex:147
+#: lib/homesite_web/live/feedback_live/index.ex:149
 #, elixir-autogen, elixir-format
 msgid "Thank you for your feedback! We appreciate your input."
 msgstr ""
 
-#: lib/homesite_web/live/testimonial_live/show.ex:170
+#: lib/homesite_web/live/testimonial_live/show.ex:188
 #, elixir-autogen, elixir-format
 msgid "This testimonial is from a real user of Homesite."
 msgstr ""
@@ -2190,7 +2195,7 @@ msgid "Unapprove"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/feedback/index.ex:411
-#: lib/homesite_web/live/happiness_live/index.ex:291
+#: lib/homesite_web/live/happiness_live/index.ex:295
 #, elixir-autogen, elixir-format
 msgid "Unknown"
 msgstr ""
@@ -2201,12 +2206,12 @@ msgid "User"
 msgstr ""
 
 #: lib/homesite_web/live/testimonial_live/show.ex:25
-#: lib/homesite_web/live/testimonial_live/show.ex:50
+#: lib/homesite_web/live/testimonial_live/show.ex:51
 #, elixir-autogen, elixir-format
 msgid "User Testimonial"
 msgstr ""
 
-#: lib/homesite_web/live/happiness_live/index.ex:287
+#: lib/homesite_web/live/happiness_live/index.ex:291
 #, elixir-autogen, elixir-format
 msgid "Very low"
 msgstr ""
@@ -2216,7 +2221,7 @@ msgstr ""
 msgid "Very low confidence"
 msgstr ""
 
-#: lib/homesite_web/live/happiness_live/index.ex:135
+#: lib/homesite_web/live/happiness_live/index.ex:139
 #, elixir-autogen, elixir-format
 msgid "View full testimonial"
 msgstr ""
@@ -2226,22 +2231,22 @@ msgstr ""
 msgid "Visual"
 msgstr ""
 
-#: lib/homesite_web/live/testimonial_live/show.ex:187
+#: lib/homesite_web/live/testimonial_live/show.ex:205
 #, elixir-autogen, elixir-format
 msgid "Want to share your experience?"
 msgstr ""
 
-#: lib/homesite_web/live/feedback_live/index.ex:21
+#: lib/homesite_web/live/feedback_live/index.ex:23
 #, elixir-autogen, elixir-format
 msgid "We'd love to hear your thoughts on how we're doing. Your feedback helps us improve!"
 msgstr ""
 
-#: lib/homesite_web/live/happiness_live/index.ex:87
+#: lib/homesite_web/live/happiness_live/index.ex:90
 #, elixir-autogen, elixir-format
 msgid "What Users Are Saying"
 msgstr ""
 
-#: lib/homesite_web/live/testimonial_live/show.ex:73
+#: lib/homesite_web/live/testimonial_live/show.ex:76
 #, elixir-autogen, elixir-format
 msgid "What they said:"
 msgstr ""
@@ -2251,7 +2256,7 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
-#: lib/homesite_web/live/feedback_live/index.ex:155
+#: lib/homesite_web/live/feedback_live/index.ex:157
 #, elixir-autogen, elixir-format
 msgid "You can only submit feedback once per week. Please try again later."
 msgstr ""
@@ -2261,17 +2266,17 @@ msgstr ""
 msgid "You must be an admin to access this page."
 msgstr ""
 
-#: lib/homesite_web/live/feedback_live/index.ex:166
+#: lib/homesite_web/live/feedback_live/index.ex:168
 #, elixir-autogen, elixir-format
 msgid "You've reached the limit for critical feedback. Please share some positive feedback too!"
 msgstr ""
 
-#: lib/homesite_web/live/happiness_live/index.ex:154
+#: lib/homesite_web/live/happiness_live/index.ex:158
 #, elixir-autogen, elixir-format
 msgid "Your feedback helps us improve. Share your thoughts and help shape the future of Homesite."
 msgstr ""
 
-#: lib/homesite_web/live/testimonial_live/show.ex:173
+#: lib/homesite_web/live/testimonial_live/show.ex:191
 #, elixir-autogen, elixir-format
 msgid "by"
 msgstr ""
@@ -2281,24 +2286,19 @@ msgstr ""
 msgid "days"
 msgstr ""
 
-#: lib/homesite_web/live/feedback_live/index.ex:39
+#: lib/homesite_web/live/feedback_live/index.ex:41
 #, elixir-autogen, elixir-format
 msgid "Please fix the following errors:"
 msgstr ""
 
-#: lib/homesite_web/live/portfolio_live/show.ex:79
+#: lib/homesite_web/live/portfolio_live/show.ex:264
 #, elixir-autogen, elixir-format
 msgid "%{count} image(s)"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:165
+#: lib/homesite_web/live/media_live/index.ex:348
 #, elixir-autogen, elixir-format
 msgid "All Aspect Ratios"
-msgstr ""
-
-#: lib/homesite_web/live/media_live/index.ex:185
-#, elixir-autogen, elixir-format
-msgid "All Galleries"
 msgstr ""
 
 #: lib/homesite_web/live/media_live/show.ex:104
@@ -2306,12 +2306,7 @@ msgstr ""
 msgid "Alt Text"
 msgstr ""
 
-#: lib/homesite_web/live/gallery_live/index.ex:127
-#, elixir-autogen, elixir-format
-msgid "Are you sure you want to delete this gallery?"
-msgstr ""
-
-#: lib/homesite_web/live/media_live/index.ex:252
+#: lib/homesite_web/live/media_live/index.ex:436
 #: lib/homesite_web/live/media_live/show.ex:67
 #, elixir-autogen, elixir-format
 msgid "Are you sure you want to delete this media item?"
@@ -2322,12 +2317,12 @@ msgstr ""
 msgid "Aspect Ratio"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/show.ex:147
+#: lib/homesite_web/live/media_live/show.ex:149
 #, elixir-autogen, elixir-format
 msgid "Available Sizes"
 msgstr ""
 
-#: lib/homesite_web/live/gallery_live/show.ex:42
+#: lib/homesite_web/live/project_live/stepped_form.ex:330
 #, elixir-autogen, elixir-format
 msgid "Back"
 msgstr ""
@@ -2337,35 +2332,19 @@ msgstr ""
 msgid "Back to Media Library"
 msgstr ""
 
-#: lib/homesite_web/live/portfolio_live/show.ex:39
+#: lib/homesite_web/live/portfolio_live/show.ex:147
 #, elixir-autogen, elixir-format
 msgid "Back to Portfolio"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:140
+#: lib/homesite_web/live/media_live/index.ex:248
 #, elixir-autogen, elixir-format
 msgid "Browse and manage your media items"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:103
-#: lib/homesite_web/live/media_live/show.ex:34
-#, elixir-autogen, elixir-format
-msgid "Cannot delete media item - it is used in %{count} gallery/galleries"
-msgstr ""
-
-#: lib/homesite_web/live/media_live/show.ex:205
-#, elixir-autogen, elixir-format
-msgid "Cannot delete this media item while it is in use. Remove it from all galleries first."
-msgstr ""
-
-#: lib/homesite_web/live/media_live/show.ex:122
+#: lib/homesite_web/live/media_live/show.ex:124
 #, elixir-autogen, elixir-format
 msgid "Content Type"
-msgstr ""
-
-#: lib/homesite_web/live/gallery_live/form.ex:17
-#, elixir-autogen, elixir-format
-msgid "Create or update a gallery to organize your media."
 msgstr ""
 
 #: lib/homesite_web/live/media_live/show.ex:109
@@ -2373,71 +2352,19 @@ msgstr ""
 msgid "Dimensions"
 msgstr ""
 
-#: lib/homesite_web/live/gallery_live/form.ex:129
-#, elixir-autogen, elixir-format
-msgid "Edit Gallery"
-msgstr ""
-
-#: lib/homesite_web/live/portfolio_live/index.ex:26
-#, elixir-autogen, elixir-format
-msgid "Explore our curated collection of galleries"
-msgstr ""
-
-#: lib/homesite_web/live/media_live/show.ex:127
+#: lib/homesite_web/live/media_live/show.ex:129
 #, elixir-autogen, elixir-format
 msgid "File Size"
 msgstr ""
 
-#: lib/homesite_web/live/gallery_live/index.ex:14
-#: lib/homesite_web/live/gallery_live/index.ex:45
-#, elixir-autogen, elixir-format
-msgid "Galleries"
-msgstr ""
-
-#: lib/homesite_web/live/gallery_live/form.ex:28
-#, elixir-autogen, elixir-format
-msgid "Gallery Name"
-msgstr ""
-
-#: lib/homesite_web/live/gallery_live/form.ex:176
-#, elixir-autogen, elixir-format
-msgid "Gallery created successfully"
-msgstr ""
-
-#: lib/homesite_web/live/gallery_live/index.ex:36
-#, elixir-autogen, elixir-format
-msgid "Gallery deleted successfully"
-msgstr ""
-
-#: lib/homesite_web/live/gallery_live/form.ex:163
-#, elixir-autogen, elixir-format
-msgid "Gallery updated successfully"
-msgstr ""
-
-#: lib/homesite_web/live/media_live/index.ex:167
+#: lib/homesite_web/live/media_live/index.ex:350
 #, elixir-autogen, elixir-format
 msgid "Landscape"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/show.ex:162
+#: lib/homesite_web/live/media_live/show.ex:164
 #, elixir-autogen, elixir-format
 msgid "Large"
-msgstr ""
-
-#: lib/homesite_web/live/gallery_live/index.ex:98
-#: lib/homesite_web/live/gallery_live/show.ex:57
-#, elixir-autogen, elixir-format
-msgid "Library"
-msgstr ""
-
-#: lib/homesite_web/live/gallery_live/form.ex:55
-#, elixir-autogen, elixir-format
-msgid "Lower numbers appear first"
-msgstr ""
-
-#: lib/homesite_web/live/gallery_live/form.ex:89
-#, elixir-autogen, elixir-format
-msgid "Make this gallery publicly visible"
 msgstr ""
 
 #: lib/homesite_web/live/media_live/show.ex:94
@@ -2445,48 +2372,26 @@ msgstr ""
 msgid "Media Details"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:16
-#: lib/homesite_web/live/media_live/index.ex:138
+#: lib/homesite_web/live/media_live/index.ex:18
+#: lib/homesite_web/live/media_live/index.ex:246
 #, elixir-autogen, elixir-format
 msgid "Media Library"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:112
+#: lib/homesite_web/live/media_live/index.ex:163
 #: lib/homesite_web/live/media_live/show.ex:43
 #, elixir-autogen, elixir-format
 msgid "Media item deleted successfully"
 msgstr ""
 
-#: lib/homesite_web/live/gallery_live/form.ex:139
-#: lib/homesite_web/live/gallery_live/index.ex:49
-#, elixir-autogen, elixir-format
-msgid "New Gallery"
-msgstr ""
-
-#: lib/homesite_web/live/gallery_live/index.ex:59
-#, elixir-autogen, elixir-format
-msgid "No galleries yet. Create your first gallery to organize your media!"
-msgstr ""
-
-#: lib/homesite_web/live/media_live/index.ex:202
+#: lib/homesite_web/live/media_live/index.ex:385
 #, elixir-autogen, elixir-format
 msgid "No media items found matching \"%{query}\""
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:204
-#, elixir-autogen, elixir-format
-msgid "No media items yet. Upload images to galleries to get started!"
-msgstr ""
-
-#: lib/homesite_web/live/gallery_live/show.ex:78
-#: lib/homesite_web/live/portfolio_live/show.ex:70
+#: lib/homesite_web/live/portfolio_live/show.ex:255
 #, elixir-autogen, elixir-format
 msgid "No media yet"
-msgstr ""
-
-#: lib/homesite_web/live/portfolio_live/index.ex:35
-#, elixir-autogen, elixir-format
-msgid "No public galleries available at this time."
 msgstr ""
 
 #: lib/homesite_web/live/media_live/show.ex:99
@@ -2494,102 +2399,57 @@ msgstr ""
 msgid "Original Filename"
 msgstr ""
 
-#: lib/homesite_web/live/gallery_live/index.ex:93
-#: lib/homesite_web/live/gallery_live/show.ex:52
-#: lib/homesite_web/live/portfolio_live/index.ex:14
-#: lib/homesite_web/live/portfolio_live/index.ex:24
-#: lib/homesite_web/live/portfolio_live/index.ex:71
-#: lib/homesite_web/live/portfolio_live/show.ex:48
+#: lib/homesite_web/live/portfolio_live/index.ex:16
+#: lib/homesite_web/live/portfolio_live/index.ex:45
+#: lib/homesite_web/live/portfolio_live/index.ex:93
+#: lib/homesite_web/live/portfolio_live/show.ex:156
+#: lib/homesite_web/live/project_live/index.ex:61
+#: lib/homesite_web/live/project_live/show.ex:38
 #, elixir-autogen, elixir-format
 msgid "Portfolio"
 msgstr ""
 
-#: lib/homesite_web/live/gallery_live/form.ex:71
-#, elixir-autogen, elixir-format
-msgid "Portfolio Gallery"
-msgstr ""
-
-#: lib/homesite_web/live/gallery_live/form.ex:75
-#, elixir-autogen, elixir-format
-msgid "Portfolio galleries showcase your work publicly. Turn off for media libraries."
-msgstr ""
-
-#: lib/homesite_web/live/media_live/index.ex:170
+#: lib/homesite_web/live/media_live/index.ex:353
 #, elixir-autogen, elixir-format
 msgid "Portrait"
 msgstr ""
 
-#: lib/homesite_web/live/gallery_live/form.ex:93
-#, elixir-autogen, elixir-format
-msgid "Public galleries are visible to everyone on your portfolio page."
-msgstr ""
-
-#: lib/homesite_web/live/gallery_live/form.ex:105
-#, elixir-autogen, elixir-format
-msgid "Save Gallery"
-msgstr ""
-
-#: lib/homesite_web/live/media_live/index.ex:154
+#: lib/homesite_web/live/media_live/index.ex:337
 #, elixir-autogen, elixir-format
 msgid "Search by title or caption..."
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:173
+#: lib/homesite_web/live/media_live/index.ex:356
 #, elixir-autogen, elixir-format
 msgid "Square"
 msgstr ""
 
-#: lib/homesite_web/live/portfolio_live/show.ex:72
+#: lib/homesite_web/live/portfolio_live/show.ex:257
 #, elixir-autogen, elixir-format
 msgid "This gallery is currently empty."
 msgstr ""
 
-#: lib/homesite_web/live/media_live/show.ex:179
-#, elixir-autogen, elixir-format
-msgid "This media item is not used in any galleries."
-msgstr ""
-
-#: lib/homesite_web/live/media_live/show.ex:152
+#: lib/homesite_web/live/media_live/show.ex:154
 #, elixir-autogen, elixir-format
 msgid "Thumbnail"
 msgstr ""
 
-#: lib/homesite_web/live/gallery_live/show.ex:86
-#, elixir-autogen, elixir-format
-msgid "Upload Media"
-msgstr ""
-
-#: lib/homesite_web/live/gallery_live/show.ex:80
-#, elixir-autogen, elixir-format
-msgid "Upload images to this gallery to get started."
-msgstr ""
-
-#: lib/homesite_web/live/media_live/show.ex:132
+#: lib/homesite_web/live/media_live/show.ex:134
 #, elixir-autogen, elixir-format
 msgid "Uploaded"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/show.ex:173
+#: lib/homesite_web/live/media_live/show.ex:175
 #, elixir-autogen, elixir-format
 msgid "Usage Statistics"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/show.ex:184
-#, elixir-autogen, elixir-format
-msgid "Used in %{count} gallery/galleries:"
-msgstr ""
-
-#: lib/homesite_web/live/portfolio_live/index.ex:77
-#, elixir-autogen, elixir-format
-msgid "View Gallery"
-msgstr ""
-
-#: lib/homesite_web/live/media_live/index.ex:245
+#: lib/homesite_web/live/media_live/index.ex:429
 #, elixir-autogen, elixir-format
 msgid "View usage"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:244
+#: lib/homesite_web/live/post_live/form.ex:246
 #, elixir-autogen, elixir-format
 msgid "Change Image"
 msgstr ""
@@ -2599,32 +2459,32 @@ msgstr ""
 msgid "Featured Image"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:277
+#: lib/homesite_web/live/post_live/form.ex:279
 #, elixir-autogen, elixir-format
 msgid "No media available. Upload images in the Media Library first."
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:227
+#: lib/homesite_web/live/post_live/form.ex:229
 #, elixir-autogen, elixir-format
 msgid "Remove"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:263
+#: lib/homesite_web/live/post_live/form.ex:265
 #, elixir-autogen, elixir-format
 msgid "Search media..."
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:244
+#: lib/homesite_web/live/post_live/form.ex:246
 #, elixir-autogen, elixir-format
 msgid "Select Image"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:257
+#: lib/homesite_web/live/post_live/form.ex:259
 #, elixir-autogen, elixir-format
 msgid "Select Media"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:249
+#: lib/homesite_web/live/post_live/form.ex:251
 #, elixir-autogen, elixir-format
 msgid "Select a featured image for your post"
 msgstr ""
@@ -2647,4 +2507,452 @@ msgstr ""
 #: lib/homesite_web/live/tag_live/index.ex:108
 #, elixir-autogen, elixir-format
 msgid "View tag"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:475
+#, elixir-autogen, elixir-format
+msgid "Add Collaborator"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:534
+#, elixir-autogen, elixir-format
+msgid "Add Link"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:393
+#, elixir-autogen, elixir-format
+msgid "Add context to help viewers understand your project. All fields are optional."
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:305
+#, elixir-autogen, elixir-format
+msgid "Add more details to make your project stand out!"
+msgstr ""
+
+#: lib/homesite_web/live/media_live/index.ex:368
+#, elixir-autogen, elixir-format
+msgid "All Projects"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/show.ex:32
+#: lib/homesite_web/live/project_live/stepped_form.ex:276
+#, elixir-autogen, elixir-format
+msgid "Back to projects"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:283
+#, elixir-autogen, elixir-format
+msgid "Basics"
+msgstr ""
+
+#: lib/homesite_web/live/media_live/index.ex:154
+#: lib/homesite_web/live/media_live/show.ex:34
+#, elixir-autogen, elixir-format
+msgid "Cannot delete media item - it is used in %{count} project(s)"
+msgstr ""
+
+#: lib/homesite_web/live/media_live/show.ex:207
+#, elixir-autogen, elixir-format
+msgid "Cannot delete this media item while it is in use. Remove it from all projects first."
+msgstr ""
+
+#: lib/homesite_web/live/media_live/index.ex:262
+#, elixir-autogen, elixir-format
+msgid "Choose Files"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:136
+#, elixir-autogen, elixir-format
+msgid "Collaborator added"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:159
+#, elixir-autogen, elixir-format
+msgid "Collaborator removed"
+msgstr ""
+
+#: lib/homesite_web/live/portfolio_live/show.ex:201
+#: lib/homesite_web/live/project_live/show.ex:95
+#: lib/homesite_web/live/project_live/stepped_form.ex:422
+#, elixir-autogen, elixir-format
+msgid "Collaborators"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:469
+#, elixir-autogen, elixir-format
+msgid "Contact (URL or email, optional)"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:557
+#, elixir-autogen, elixir-format
+msgid "Control how your project appears publicly. All settings are optional."
+msgstr ""
+
+#: lib/homesite_web/live/project_live/index.ex:50
+#, elixir-autogen, elixir-format
+msgid "Create Your First Project"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/index.ex:47
+#, elixir-autogen, elixir-format
+msgid "Create your first project to organize your media and showcase your work."
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:417
+#, elixir-autogen, elixir-format
+msgid "Credit collaborators and add related links. All fields are optional."
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:16
+#: lib/homesite_web/live/project_live/stepped_form.ex:57
+#, elixir-autogen, elixir-format
+msgid "Edit Project"
+msgstr ""
+
+#: lib/homesite_web/live/portfolio_live/index.ex:47
+#, elixir-autogen, elixir-format
+msgid "Explore our curated collection of projects"
+msgstr ""
+
+#: lib/homesite_web/live/portfolio_live/show.ex:139
+#, elixir-autogen, elixir-format
+msgid "Export HTML"
+msgstr ""
+
+#: lib/homesite_web/live/portfolio_live/show.ex:84
+#, elixir-autogen, elixir-format
+msgid "Exporting HTML..."
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:139
+#, elixir-autogen, elixir-format
+msgid "Failed to add collaborator"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:184
+#, elixir-autogen, elixir-format
+msgid "Failed to add link"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:162
+#, elixir-autogen, elixir-format
+msgid "Failed to remove collaborator"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:207
+#, elixir-autogen, elixir-format
+msgid "Failed to remove link"
+msgstr ""
+
+#: lib/homesite_web/live/media_live/index.ex:216
+#, elixir-autogen, elixir-format
+msgid "Failed to upload %{count} file(s)"
+msgstr ""
+
+#: lib/homesite_web/live/media_live/index.ex:473
+#, elixir-autogen, elixir-format
+msgid "File is too large (max 5MB)"
+msgstr ""
+
+#: lib/homesite_web/live/media_live/index.ex:477
+#, elixir-autogen, elixir-format
+msgid "File type not accepted (use JPG, PNG, GIF, or WebP)"
+msgstr ""
+
+#: lib/homesite_web/live/media_live/index.ex:270
+#, elixir-autogen, elixir-format
+msgid "JPG, PNG, GIF, WebP up to 5MB (max 10 files)"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:181
+#, elixir-autogen, elixir-format
+msgid "Link added"
+msgstr ""
+
+#: lib/homesite_web/live/portfolio_live/show.ex:72
+#, elixir-autogen, elixir-format
+msgid "Link copied to clipboard"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:204
+#, elixir-autogen, elixir-format
+msgid "Link removed"
+msgstr ""
+
+#: lib/homesite_web/live/media_live/index.ex:452
+#, elixir-autogen, elixir-format
+msgid "Load More Media"
+msgstr ""
+
+#: lib/homesite_web/live/portfolio_live/index.ex:121
+#, elixir-autogen, elixir-format
+msgid "Load More Projects"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:560
+#, elixir-autogen, elixir-format
+msgid "Make this project public"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/show.ex:139
+#, elixir-autogen, elixir-format
+msgid "Media"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:286
+#, elixir-autogen, elixir-format
+msgid "Metadata"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:405
+#, elixir-autogen, elixir-format
+msgid "Metadata helps viewers discover and understand your work. Add as much or as little as you want."
+msgstr ""
+
+#: lib/homesite_web/live/project_live/index.ex:37
+#: lib/homesite_web/live/project_live/stepped_form.ex:18
+#: lib/homesite_web/live/project_live/stepped_form.ex:45
+#, elixir-autogen, elixir-format
+msgid "New Project"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:345
+#, elixir-autogen, elixir-format
+msgid "Next"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:426
+#, elixir-autogen, elixir-format
+msgid "No collaborators added yet. Add team members who worked on this project."
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:486
+#, elixir-autogen, elixir-format
+msgid "No links added yet. Add client websites, press coverage, or related projects."
+msgstr ""
+
+#: lib/homesite_web/live/project_live/show.ex:155
+#, elixir-autogen, elixir-format
+msgid "No media items added to this project yet."
+msgstr ""
+
+#: lib/homesite_web/live/media_live/index.ex:387
+#, elixir-autogen, elixir-format
+msgid "No media items yet. Upload images to projects to get started!"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/index.ex:45
+#, elixir-autogen, elixir-format
+msgid "No projects yet"
+msgstr ""
+
+#: lib/homesite_web/live/portfolio_live/index.ex:56
+#, elixir-autogen, elixir-format
+msgid "No public projects available at this time."
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:400
+#, elixir-autogen, elixir-format
+msgid "Project Date"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:368
+#, elixir-autogen, elixir-format
+msgid "Project Name"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:303
+#, elixir-autogen, elixir-format
+msgid "Project completion"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:228
+#, elixir-autogen, elixir-format
+msgid "Project created successfully"
+msgstr ""
+
+#: lib/homesite_web/live/portfolio_live/show.ex:31
+#, elixir-autogen, elixir-format
+msgid "Project not found"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:249
+#, elixir-autogen, elixir-format
+msgid "Project updated successfully"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/index.ex:10
+#: lib/homesite_web/live/project_live/index.ex:21
+#, elixir-autogen, elixir-format
+msgid "Projects"
+msgstr ""
+
+#: lib/homesite_web/live/portfolio_live/show.ex:232
+#: lib/homesite_web/live/project_live/show.ex:120
+#: lib/homesite_web/live/project_live/stepped_form.ex:482
+#, elixir-autogen, elixir-format
+msgid "Related Links"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:445
+#, elixir-autogen, elixir-format
+msgid "Remove this collaborator?"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:503
+#, elixir-autogen, elixir-format
+msgid "Remove this link?"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:349
+#, elixir-autogen, elixir-format
+msgid "Save Project"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:143
+#, elixir-autogen, elixir-format
+msgid "Save the project first, then you can add collaborators"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:188
+#, elixir-autogen, elixir-format
+msgid "Save the project first, then you can add links"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:544
+#, elixir-autogen, elixir-format
+msgid "Save your project first to add collaborators and links. You can come back to this step after creating the project."
+msgstr ""
+
+#: lib/homesite_web/live/portfolio_live/show.ex:120
+#, elixir-autogen, elixir-format
+msgid "Share on LinkedIn"
+msgstr ""
+
+#: lib/homesite_web/live/portfolio_live/show.ex:114
+#, elixir-autogen, elixir-format
+msgid "Share on Twitter"
+msgstr ""
+
+#: lib/homesite_web/live/portfolio_live/show.ex:126
+#, elixir-autogen, elixir-format
+msgid "Share via Email"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:565
+#, elixir-autogen, elixir-format
+msgid "Show in portfolio gallery"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:339
+#, elixir-autogen, elixir-format
+msgid "Skip to Save"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:365
+#, elixir-autogen, elixir-format
+msgid "Start with the essential information about your project."
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:363
+#, elixir-autogen, elixir-format
+msgid "Step 1: Project Basics"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:391
+#, elixir-autogen, elixir-format
+msgid "Step 2: Project Metadata"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:415
+#, elixir-autogen, elixir-format
+msgid "Step 3: Team & Links"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:555
+#, elixir-autogen, elixir-format
+msgid "Step 4: Visibility & Settings"
+msgstr ""
+
+#: lib/homesite_web/live/media_live/index.ex:227
+#, elixir-autogen, elixir-format
+msgid "Successfully uploaded %{count} file(s)"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:398
+#, elixir-autogen, elixir-format
+msgid "Tags (comma-separated)"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:290
+#, elixir-autogen, elixir-format
+msgid "Team"
+msgstr ""
+
+#: lib/homesite_web/live/media_live/show.ex:181
+#, elixir-autogen, elixir-format
+msgid "This media item is not used in any projects."
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:381
+#, elixir-autogen, elixir-format
+msgid "Tip: Give your project a clear, descriptive name. You can add more details in the next steps."
+msgstr ""
+
+#: lib/homesite_web/live/media_live/index.ex:474
+#, elixir-autogen, elixir-format
+msgid "Too many files (max 10)"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:527
+#, elixir-autogen, elixir-format
+msgid "URL (https://...)"
+msgstr ""
+
+#: lib/homesite_web/live/media_live/index.ex:312
+#, elixir-autogen, elixir-format
+msgid "Upload %{count} file(s)"
+msgstr ""
+
+#: lib/homesite_web/live/media_live/index.ex:479
+#, elixir-autogen, elixir-format
+msgid "Upload failed"
+msgstr ""
+
+#: lib/homesite_web/live/media_live/show.ex:186
+#, elixir-autogen, elixir-format
+msgid "Used in %{count} project(s):"
+msgstr ""
+
+#: lib/homesite_web/live/portfolio_live/index.ex:99
+#, elixir-autogen, elixir-format
+msgid "View Project"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/show.ex:103
+#, elixir-autogen, elixir-format
+msgid "Website"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:571
+#, elixir-autogen, elixir-format
+msgid "You're ready to save! Click 'Save Project' to create your project."
+msgstr ""
+
+#: lib/homesite_web/live/project_live/index.ex:76
+#: lib/homesite_web/live/project_live/show.ex:45
+#, elixir-autogen, elixir-format
+msgid "complete"
+msgstr ""
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:287
+#: lib/homesite_web/live/project_live/stepped_form.ex:291
+#: lib/homesite_web/live/project_live/stepped_form.ex:295
+#, elixir-autogen, elixir-format
+msgid "optional"
+msgstr ""
+
+#: lib/homesite_web/live/media_live/index.ex:266
+#, elixir-autogen, elixir-format
+msgid "or drag and drop images here"
 msgstr ""

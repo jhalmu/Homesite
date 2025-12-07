@@ -44,7 +44,7 @@ defmodule HomesiteWeb.PortfolioLive.Index do
         <.header>
           {gettext("Portfolio")}
           <:subtitle>
-            {gettext("Explore our curated collection of galleries")}
+            {gettext("Explore our curated collection of projects")}
           </:subtitle>
         </.header>
 
@@ -118,7 +118,7 @@ defmodule HomesiteWeb.PortfolioLive.Index do
             <%= if @has_more do %>
               <div class="mt-[var(--spacing-lg)] text-center">
                 <button phx-click="load_more" class="btn btn-outline btn-wide">
-                  {gettext("Load More Galleries")}
+                  {gettext("Load More Projects")}
                 </button>
               </div>
             <% end %>

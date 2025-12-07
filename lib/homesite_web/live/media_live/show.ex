@@ -178,7 +178,7 @@ defmodule HomesiteWeb.MediaLive.Show do
                 <%= if @usage.project_count == 0 do %>
                   <div class="alert alert-info">
                     <.icon name="hero-information-circle" class="h-5 w-5" />
-                    <span>{gettext("This media item is not used in any galleries.")}</span>
+                    <span>{gettext("This media item is not used in any projects.")}</span>
                   </div>
                 <% else %>
                   <div class="mb-[var(--space-sm)]">
@@ -205,7 +205,7 @@ defmodule HomesiteWeb.MediaLive.Show do
                     <.icon name="hero-exclamation-triangle" class="h-5 w-5" />
                     <span>
                       {gettext(
-                        "Cannot delete this media item while it is in use. Remove it from all galleries first."
+                        "Cannot delete this media item while it is in use. Remove it from all projects first."
                       )}
                     </span>
                   </div>

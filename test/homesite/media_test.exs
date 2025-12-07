@@ -3,135 +3,135 @@ defmodule Homesite.MediaTest do
 
   alias Homesite.Media
 
-  describe "galleries" do
-    alias Homesite.Media.Gallery
+  describe "projects" do
+    alias Homesite.Media.Project
 
     import Homesite.AccountsFixtures, only: [user_scope_fixture: 0]
     import Homesite.MediaFixtures
 
     @invalid_attrs %{name: nil, slug: nil, is_public: nil}
 
-    test "list_galleries/1 returns all scoped galleries" do
+    test "list_projects/1 returns all scoped projects" do
       scope = user_scope_fixture()
       other_scope = user_scope_fixture()
-      gallery = gallery_fixture(scope)
-      other_gallery = gallery_fixture(other_scope)
-      assert Media.list_galleries(scope) == [gallery]
-      assert Media.list_galleries(other_scope) == [other_gallery]
+      project = project_fixture(scope)
+      other_project = project_fixture(other_scope)
+      assert Media.list_projects(scope) == [project]
+      assert Media.list_projects(other_scope) == [other_project]
     end
 
-    test "get_gallery!/2 returns the gallery with given id" do
+    test "get_project!/2 returns the project with given id" do
       scope = user_scope_fixture()
-      gallery = gallery_fixture(scope)
+      project = project_fixture(scope)
       other_scope = user_scope_fixture()
-      assert Media.get_gallery!(scope, gallery.id) == gallery
-      assert_raise Ecto.NoResultsError, fn -> Media.get_gallery!(other_scope, gallery.id) end
+      assert Media.get_project!(scope, project.id) == project
+      assert_raise Ecto.NoResultsError, fn -> Media.get_project!(other_scope, project.id) end
     end
 
-    test "create_gallery/2 with valid data creates a gallery" do
+    test "create_project/2 with valid data creates a project" do
       valid_attrs = %{
-        name: "Test Gallery",
-        description: "A test gallery",
+        name: "Test Project",
+        description: "A test project",
         is_public: true
       }
 
       scope = user_scope_fixture()
 
-      assert {:ok, %Gallery{} = gallery} = Media.create_gallery(scope, valid_attrs)
-      assert gallery.name == "Test Gallery"
-      assert gallery.description == "A test gallery"
-      assert String.starts_with?(gallery.slug, "test-gallery-")
-      assert gallery.is_public == true
-      assert gallery.user_id == scope.user.id
+      assert {:ok, %Project{} = project} = Media.create_project(scope, valid_attrs)
+      assert project.name == "Test Project"
+      assert project.description == "A test project"
+      assert String.starts_with?(project.slug, "test-project-")
+      assert project.is_public == true
+      assert project.user_id == scope.user.id
     end
 
-    test "create_gallery/2 auto-generates slug from name with timestamp" do
+    test "create_project/2 auto-generates slug from name with timestamp" do
       scope = user_scope_fixture()
-      attrs = %{name: "My Test Gallery", is_public: true}
+      attrs = %{name: "My Test Project", is_public: true}
 
-      assert {:ok, %Gallery{} = gallery} = Media.create_gallery(scope, attrs)
-      assert String.starts_with?(gallery.slug, "my-test-gallery-")
+      assert {:ok, %Project{} = project} = Media.create_project(scope, attrs)
+      assert String.starts_with?(project.slug, "my-test-project-")
     end
 
-    test "create_gallery/2 with invalid data returns error changeset" do
+    test "create_project/2 with invalid data returns error changeset" do
       scope = user_scope_fixture()
-      assert {:error, %Ecto.Changeset{}} = Media.create_gallery(scope, @invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Media.create_project(scope, @invalid_attrs)
     end
 
-    test "update_gallery/3 with valid data updates the gallery" do
+    test "update_project/3 with valid data updates the project" do
       scope = user_scope_fixture()
-      gallery = gallery_fixture(scope)
+      project = project_fixture(scope)
 
       update_attrs = %{
-        name: "Updated Gallery",
+        name: "Updated Project",
         description: "Updated description",
         is_public: false
       }
 
-      assert {:ok, %Gallery{} = gallery} = Media.update_gallery(scope, gallery, update_attrs)
-      assert gallery.name == "Updated Gallery"
-      assert gallery.description == "Updated description"
-      assert String.starts_with?(gallery.slug, "updated-gallery-")
-      assert gallery.is_public == false
+      assert {:ok, %Project{} = project} = Media.update_project(scope, project, update_attrs)
+      assert project.name == "Updated Project"
+      assert project.description == "Updated description"
+      assert String.starts_with?(project.slug, "updated-project-")
+      assert project.is_public == false
     end
 
-    test "update_gallery/3 with invalid scope raises" do
+    test "update_project/3 with invalid scope raises" do
       scope = user_scope_fixture()
       other_scope = user_scope_fixture()
-      gallery = gallery_fixture(scope)
+      project = project_fixture(scope)
 
       assert_raise MatchError, fn ->
-        Media.update_gallery(other_scope, gallery, %{})
+        Media.update_project(other_scope, project, %{})
       end
     end
 
-    test "update_gallery/3 with invalid data returns error changeset" do
+    test "update_project/3 with invalid data returns error changeset" do
       scope = user_scope_fixture()
-      gallery = gallery_fixture(scope)
-      assert {:error, %Ecto.Changeset{}} = Media.update_gallery(scope, gallery, @invalid_attrs)
-      assert gallery == Media.get_gallery!(scope, gallery.id)
+      project = project_fixture(scope)
+      assert {:error, %Ecto.Changeset{}} = Media.update_project(scope, project, @invalid_attrs)
+      assert project == Media.get_project!(scope, project.id)
     end
 
-    test "delete_gallery/2 deletes the gallery" do
+    test "delete_project/2 deletes the project" do
       scope = user_scope_fixture()
-      gallery = gallery_fixture(scope)
-      assert {:ok, %Gallery{}} = Media.delete_gallery(scope, gallery)
-      assert_raise Ecto.NoResultsError, fn -> Media.get_gallery!(scope, gallery.id) end
+      project = project_fixture(scope)
+      assert {:ok, %Project{}} = Media.delete_project(scope, project)
+      assert_raise Ecto.NoResultsError, fn -> Media.get_project!(scope, project.id) end
     end
 
-    test "delete_gallery/2 with invalid scope raises" do
+    test "delete_project/2 with invalid scope raises" do
       scope = user_scope_fixture()
       other_scope = user_scope_fixture()
-      gallery = gallery_fixture(scope)
-      assert_raise MatchError, fn -> Media.delete_gallery(other_scope, gallery) end
+      project = project_fixture(scope)
+      assert_raise MatchError, fn -> Media.delete_project(other_scope, project) end
     end
 
-    test "get_public_gallery_by_slug!/1 returns public portfolio gallery" do
+    test "get_public_project_by_slug!/1 returns public portfolio project" do
       scope = user_scope_fixture()
 
-      gallery =
-        gallery_fixture(scope, %{
-          name: "Public Gallery",
+      project =
+        project_fixture(scope, %{
+          name: "Public Project",
           is_public: true,
           is_portfolio: true
         })
 
-      found = Media.get_public_gallery_by_slug!(gallery.slug)
-      assert found.id == gallery.id
+      found = Media.get_public_project_by_slug!(project.slug)
+      assert found.id == project.id
     end
 
-    test "get_public_gallery_by_slug!/1 does not return non-portfolio gallery" do
+    test "get_public_project_by_slug!/1 does not return non-portfolio project" do
       scope = user_scope_fixture()
 
-      gallery =
-        gallery_fixture(scope, %{
+      project =
+        project_fixture(scope, %{
           name: "Public Non-Portfolio",
           is_public: true,
           is_portfolio: false
         })
 
       assert_raise Ecto.NoResultsError, fn ->
-        Media.get_public_gallery_by_slug!(gallery.slug)
+        Media.get_public_project_by_slug!(project.slug)
       end
     end
   end
@@ -302,47 +302,46 @@ defmodule Homesite.MediaTest do
     end
   end
 
-  describe "gallery media items" do
+  describe "project media items" do
     import Homesite.AccountsFixtures, only: [user_scope_fixture: 0]
     import Homesite.MediaFixtures
 
-    test "add_media_to_gallery/4 adds media to gallery" do
+    test "add_media_to_project/4 adds media to project" do
       scope = user_scope_fixture()
-      gallery = gallery_fixture(scope)
+      project = project_fixture(scope)
       media = media_item_fixture(scope)
 
-      assert {:ok, _} = Media.add_media_to_gallery(scope, gallery.id, media.id, 1)
+      assert {:ok, _} = Media.add_media_to_project(scope, project.id, media.id, 1)
 
       # Verify it was added
-      gallery = Media.get_gallery!(scope, gallery.id) |> Repo.preload(:media_items)
-      assert length(gallery.media_items) == 1
-      assert hd(gallery.media_items).id == media.id
+      project = Media.get_project!(scope, project.id) |> Repo.preload(:media_items)
+      assert length(project.media_items) == 1
+      assert hd(project.media_items).id == media.id
     end
 
-    test "add_media_to_gallery/4 with invalid scope raises" do
+    test "add_media_to_project/4 with invalid scope raises" do
       scope = user_scope_fixture()
       other_scope = user_scope_fixture()
-      gallery = gallery_fixture(scope)
+      project = project_fixture(scope)
       media = media_item_fixture(scope)
 
       assert_raise Ecto.NoResultsError, fn ->
-        Media.add_media_to_gallery(other_scope, gallery.id, media.id, 1)
+        Media.add_media_to_project(other_scope, project.id, media.id, 1)
       end
     end
 
-    test "remove_media_from_gallery/3 removes media from gallery" do
+    test "remove_media_from_project/3 removes media from project" do
       scope = user_scope_fixture()
-      gallery = gallery_fixture(scope)
+      project = project_fixture(scope)
       media = media_item_fixture(scope)
 
-      {:ok, _} = Media.add_media_to_gallery(scope, gallery.id, media.id, 1)
-      assert {:ok, _} = Media.remove_media_from_gallery(scope, gallery.id, media.id)
+      {:ok, _} = Media.add_media_to_project(scope, project.id, media.id, 1)
+      assert {:ok, _} = Media.remove_media_from_project(scope, project.id, media.id)
 
       # Verify it was removed
-      gallery = Media.get_gallery!(scope, gallery.id) |> Repo.preload(:media_items)
-      assert length(gallery.media_items) == 0
+      project = Media.get_project!(scope, project.id) |> Repo.preload(:media_items)
+      assert length(project.media_items) == 0
     end
-
   end
 
   describe "media usage tracking" do
@@ -352,17 +351,17 @@ defmodule Homesite.MediaTest do
     test "get_media_usage/2 returns usage statistics" do
       scope = user_scope_fixture()
       media = media_item_fixture(scope)
-      gallery1 = gallery_fixture(scope)
-      gallery2 = gallery_fixture(scope)
+      project1 = project_fixture(scope)
+      project2 = project_fixture(scope)
 
-      {:ok, _} = Media.add_media_to_gallery(scope, gallery1.id, media.id, 1)
-      {:ok, _} = Media.add_media_to_gallery(scope, gallery2.id, media.id, 1)
+      {:ok, _} = Media.add_media_to_project(scope, project1.id, media.id, 1)
+      {:ok, _} = Media.add_media_to_project(scope, project2.id, media.id, 1)
 
       usage = Media.get_media_usage(scope, media.id)
 
-      assert usage.gallery_count == 2
+      assert usage.project_count == 2
       assert usage.media_item.id == media.id
-      assert length(usage.galleries) == 2
+      assert length(usage.projects) == 2
     end
 
     test "get_media_usage/2 with no usage" do
@@ -371,26 +370,26 @@ defmodule Homesite.MediaTest do
 
       usage = Media.get_media_usage(scope, media.id)
 
-      assert usage.gallery_count == 0
+      assert usage.project_count == 0
       assert usage.media_item.id == media.id
-      assert usage.galleries == []
+      assert usage.projects == []
     end
   end
 
   describe "validation edge cases" do
     import Homesite.AccountsFixtures, only: [user_scope_fixture: 0]
 
-    test "create_gallery with empty name fails" do
+    test "create_project with empty name fails" do
       scope = user_scope_fixture()
-      assert {:error, changeset} = Media.create_gallery(scope, %{name: ""})
+      assert {:error, changeset} = Media.create_project(scope, %{name: ""})
       assert "can't be blank" in errors_on(changeset).name
     end
 
-    test "create_gallery with name over 200 chars fails" do
+    test "create_project with name over 200 chars fails" do
       scope = user_scope_fixture()
       long_name = String.duplicate("a", 300)
 
-      assert {:error, changeset} = Media.create_gallery(scope, %{name: long_name})
+      assert {:error, changeset} = Media.create_project(scope, %{name: long_name})
       assert "should be at most 200 character(s)" in errors_on(changeset).name
     end
   end

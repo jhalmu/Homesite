@@ -13,7 +13,8 @@ defmodule Homesite.Media.Collaborator do
   schema "collaborators" do
     field :name, :string
     field :contact, :string
-    field :contact_type, :string  # "url", "email", "none"
+    # "url", "email", "none"
+    field :contact_type, :string
     field :display_order, :integer, default: 0
 
     belongs_to :project, Homesite.Media.Project

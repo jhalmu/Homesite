@@ -25,14 +25,17 @@ defmodule Homesite.Media.Project do
     field :project_date, :date
     field :category, :string
     field :tags, {:array, :string}, default: []
-    field :field_visibility, :map, default: %{
-      "description" => true,
-      "category" => true,
-      "tags" => true,
-      "project_date" => true,
-      "collaborators" => true,
-      "affiliation_links" => true
-    }
+
+    field :field_visibility, :map,
+      default: %{
+        "description" => true,
+        "category" => true,
+        "tags" => true,
+        "project_date" => true,
+        "collaborators" => true,
+        "affiliation_links" => true
+      }
+
     field :completion_percentage, :integer, default: 0
 
     belongs_to :user, Homesite.Accounts.User
@@ -155,9 +158,9 @@ defmodule Homesite.Media.Project do
   defp calculate_completion(changeset) do
     data = apply_changes(changeset)
 
+    # Base (has name)
     percentage =
       20 +
-        # Base (has name)
         if(data.description && data.description != "", do: 15, else: 0) +
         if(data.category && data.category != "", do: 10, else: 0) +
         if(data.tags && length(data.tags) > 0, do: 10, else: 0) +

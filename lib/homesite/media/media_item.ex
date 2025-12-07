@@ -34,8 +34,8 @@ defmodule Homesite.Media.MediaItem do
 
     belongs_to :user, Homesite.Accounts.User
 
-    many_to_many :galleries, Homesite.Media.Gallery,
-      join_through: "gallery_media_items",
+    many_to_many :projects, Homesite.Media.Project,
+      join_through: "project_media_items",
       on_replace: :delete
 
     many_to_many :posts, Homesite.Content.Post,

@@ -5,7 +5,8 @@ defmodule Homesite.Repo.Migrations.CreateCollaborators do
     create table(:collaborators) do
       add :name, :string, null: false, size: 200
       add :contact, :string, size: 500
-      add :contact_type, :string, size: 20  # 'url', 'email', 'none'
+      # 'url', 'email', 'none'
+      add :contact_type, :string, size: 20
       add :display_order, :integer, default: 0
       add :project_id, references(:projects, on_delete: :delete_all), null: false
       add :user_id, references(:users, on_delete: :delete_all), null: false

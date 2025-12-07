@@ -6,7 +6,16 @@ defmodule Homesite.Media do
   import Ecto.Query, warn: false
 
   alias Homesite.Accounts.Scope
-  alias Homesite.Media.{Project, MediaItem, ProjectMediaItem, Collaborator, AffiliationLink, ImageProcessor}
+
+  alias Homesite.Media.{
+    Project,
+    MediaItem,
+    ProjectMediaItem,
+    Collaborator,
+    AffiliationLink,
+    ImageProcessor
+  }
+
   alias Homesite.Repo
 
   ## PubSub

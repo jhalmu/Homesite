@@ -29,34 +29,34 @@ defmodule HomesiteWeb.ProjectLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="w-full max-w-6xl mx-auto px-4 py-8">
+      <div class="mx-auto w-full max-w-6xl px-4 py-8">
         <%!-- Page Header --%>
-        <div class="flex justify-between items-center mb-8">
-          <h1 class="text-3xl font-bold"><%= @page_title %></h1>
+        <div class="mb-8 flex items-center justify-between">
+          <h1 class="text-3xl font-bold">{@page_title}</h1>
           <.link navigate={~p"/projects/new"} class="btn btn-primary">
-            <.icon name="hero-plus" class="w-5 h-5" /> {gettext("New Project")}
+            <.icon name="hero-plus" class="h-5 w-5" /> {gettext("New Project")}
           </.link>
         </div>
 
         <%!-- Projects Grid --%>
         <%= if Enum.empty?(@projects) do %>
-          <div class="text-center py-16">
-            <.icon name="hero-folder" class="w-16 h-16 mx-auto text-base-content/30 mb-4" />
-            <h2 class="text-2xl font-semibold mb-2">{gettext("No projects yet")}</h2>
+          <div class="py-16 text-center">
+            <.icon name="hero-folder" class="text-base-content/30 mx-auto mb-4 h-16 w-16" />
+            <h2 class="mb-2 text-2xl font-semibold">{gettext("No projects yet")}</h2>
             <p class="text-base-content/70 mb-6">
               {gettext("Create your first project to organize your media and showcase your work.")}
             </p>
             <.link navigate={~p"/projects/new"} class="btn btn-primary">
-              <.icon name="hero-plus" class="w-5 h-5" /> {gettext("Create Your First Project")}
+              <.icon name="hero-plus" class="h-5 w-5" /> {gettext("Create Your First Project")}
             </.link>
           </div>
         <% else %>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             <%= for project <- @projects do %>
-              <div class="card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow">
+              <div class="card bg-base-200 shadow-xl transition-shadow hover:shadow-2xl">
                 <div class="card-body">
                   <h2 class="card-title">
-                    <%= project.name %>
+                    {project.name}
                     <%= if project.is_portfolio do %>
                       <span class="badge badge-primary">{gettext("Portfolio")}</span>
                     <% end %>
@@ -66,17 +66,17 @@ defmodule HomesiteWeb.ProjectLive.Index do
                   </h2>
 
                   <%= if project.description do %>
-                    <p class="text-sm text-base-content/70 line-clamp-2">
-                      <%= project.description %>
+                    <p class="text-base-content/70 line-clamp-2 text-sm">
+                      {project.description}
                     </p>
                   <% end %>
 
-                  <div class="flex items-center gap-2 text-sm text-base-content/60 mt-2">
-                    <.icon name="hero-check-circle" class="w-4 h-4" />
-                    <span><%= project.completion_percentage %>% {gettext("complete")}</span>
+                  <div class="text-base-content/60 mt-2 flex items-center gap-2 text-sm">
+                    <.icon name="hero-check-circle" class="h-4 w-4" />
+                    <span>{project.completion_percentage}% {gettext("complete")}</span>
                   </div>
 
-                  <div class="card-actions justify-end mt-4">
+                  <div class="card-actions mt-4 justify-end">
                     <.link navigate={~p"/projects/#{project.id}"} class="btn btn-sm btn-ghost">
                       {gettext("View")}
                     </.link>

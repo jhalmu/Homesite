@@ -358,7 +358,7 @@ defmodule HomesiteWeb.MediaLive.Index do
             </select>
           </div>
           
-    <!-- Gallery Filter -->
+    <!-- Project Filter -->
           <div class="w-full md:w-48">
             <select
               phx-change="filter-gallery"
@@ -384,7 +384,7 @@ defmodule HomesiteWeb.MediaLive.Index do
                 <%= if @search_query != "" do %>
                   {gettext("No media items found matching \"%{query}\"", query: @search_query)}
                 <% else %>
-                  {gettext("No media items yet. Upload images to galleries to get started!")}
+                  {gettext("No media items yet. Upload images to projects to get started!")}
                 <% end %>
               </span>
             </div>
