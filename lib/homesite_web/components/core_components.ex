@@ -28,6 +28,7 @@ defmodule HomesiteWeb.CoreComponents do
   """
   use Phoenix.Component
   use Gettext, backend: HomesiteWeb.Gettext
+  import HomesiteWeb.Helpers.DateHelpers
 
   alias Phoenix.LiveView.JS
 
@@ -182,10 +183,18 @@ defmodule HomesiteWeb.CoreComponents do
   end
 
   def input(%{type: "checkbox"} = assigns) do
+    error_id = "#{assigns.id}-error"
+    has_errors = assigns.errors != []
+    is_required = assigns.rest[:required] == true
+
     assigns =
-      assign_new(assigns, :checked, fn ->
+      assigns
+      |> assign_new(:checked, fn ->
         Phoenix.HTML.Form.normalize_value("checkbox", assigns[:value])
       end)
+      |> assign(:error_id, error_id)
+      |> assign(:has_errors, has_errors)
+      |> assign(:is_required, is_required)
 
     ~H"""
     <div class={["field-with-help", @help == [] && "mb-[var(--space-xs)]"]}>
@@ -201,11 +210,16 @@ defmodule HomesiteWeb.CoreComponents do
                 value="true"
                 checked={@checked}
                 class={@class || "checkbox checkbox-sm"}
+                aria-describedby={@has_errors && @error_id}
+                aria-invalid={@has_errors && "true"}
+                aria-required={@is_required && "true"}
                 {@rest}
               />{@label}
             </span>
           </label>
-          <.error :for={msg <- @errors}>{msg}</.error>
+          <.error :for={{msg, index} <- Enum.with_index(@errors)} id={"#{@error_id}-#{index}"}>
+            {msg}
+          </.error>
         </div>
       </div>
       <div :if={@help != []} class="field-help">
@@ -226,6 +240,16 @@ defmodule HomesiteWeb.CoreComponents do
   end
 
   def input(%{type: "select"} = assigns) do
+    error_id = "#{assigns.id}-error"
+    has_errors = assigns.errors != []
+    is_required = assigns.rest[:required] == true
+
+    assigns =
+      assigns
+      |> assign(:error_id, error_id)
+      |> assign(:has_errors, has_errors)
+      |> assign(:is_required, is_required)
+
     ~H"""
     <div class={["field-with-help", @help == [] && "mb-[var(--space-xs)]"]}>
       <div class="field-input">
@@ -235,15 +259,20 @@ defmodule HomesiteWeb.CoreComponents do
             <select
               id={@id}
               name={@name}
-              class={[@class || "select w-full", @errors != [] && (@error_class || "select-error")]}
+              class={[@class || "select w-full", @has_errors && (@error_class || "select-error")]}
               multiple={@multiple}
+              aria-describedby={@has_errors && @error_id}
+              aria-invalid={@has_errors && "true"}
+              aria-required={@is_required && "true"}
               {@rest}
             >
               <option :if={@prompt} value="">{@prompt}</option>
               {Phoenix.HTML.Form.options_for_select(@options, @value)}
             </select>
           </label>
-          <.error :for={msg <- @errors}>{msg}</.error>
+          <.error :for={{msg, index} <- Enum.with_index(@errors)} id={"#{@error_id}-#{index}"}>
+            {msg}
+          </.error>
         </div>
       </div>
       <div :if={@help != []} class="field-help">
@@ -264,6 +293,16 @@ defmodule HomesiteWeb.CoreComponents do
   end
 
   def input(%{type: "textarea"} = assigns) do
+    error_id = "#{assigns.id}-error"
+    has_errors = assigns.errors != []
+    is_required = assigns.rest[:required] == true
+
+    assigns =
+      assigns
+      |> assign(:error_id, error_id)
+      |> assign(:has_errors, has_errors)
+      |> assign(:is_required, is_required)
+
     ~H"""
     <div class={["field-with-help", @help == [] && "mb-[var(--space-xs)]"]}>
       <div class="field-input">
@@ -273,14 +312,16 @@ defmodule HomesiteWeb.CoreComponents do
             <textarea
               id={@id}
               name={@name}
-              class={[
-                @class || "textarea w-full",
-                @errors != [] && (@error_class || "textarea-error")
-              ]}
+              class={[@class || "textarea w-full", @has_errors && (@error_class || "textarea-error")]}
+              aria-describedby={@has_errors && @error_id}
+              aria-invalid={@has_errors && "true"}
+              aria-required={@is_required && "true"}
               {@rest}
             >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
           </label>
-          <.error :for={msg <- @errors}>{msg}</.error>
+          <.error :for={{msg, index} <- Enum.with_index(@errors)} id={"#{@error_id}-#{index}"}>
+            {msg}
+          </.error>
         </div>
       </div>
       <div :if={@help != []} class="field-help">
@@ -302,6 +343,17 @@ defmodule HomesiteWeb.CoreComponents do
 
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
+    # Generate error ID for aria-describedby
+    error_id = "#{assigns.id}-error"
+    has_errors = assigns.errors != []
+    is_required = assigns.rest[:required] == true
+
+    assigns =
+      assigns
+      |> assign(:error_id, error_id)
+      |> assign(:has_errors, has_errors)
+      |> assign(:is_required, is_required)
+
     ~H"""
     <div class={["field-with-help", @help == [] && "mb-[var(--space-xs)]"]}>
       <div class="field-input">
@@ -313,11 +365,16 @@ defmodule HomesiteWeb.CoreComponents do
               name={@name}
               id={@id}
               value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-              class={[@class || "input w-full", @errors != [] && (@error_class || "input-error")]}
+              class={[@class || "input w-full", @has_errors && (@error_class || "input-error")]}
+              aria-describedby={@has_errors && @error_id}
+              aria-invalid={@has_errors && "true"}
+              aria-required={@is_required && "true"}
               {@rest}
             />
           </label>
-          <.error :for={msg <- @errors}>{msg}</.error>
+          <.error :for={{msg, index} <- Enum.with_index(@errors)} id={"#{@error_id}-#{index}"}>
+            {msg}
+          </.error>
         </div>
       </div>
       <div :if={@help != []} class="field-help">
@@ -338,9 +395,17 @@ defmodule HomesiteWeb.CoreComponents do
   end
 
   # Helper used by inputs to generate form errors
+  attr :id, :string, default: nil
+  slot :inner_block, required: true
+
   defp error(assigns) do
     ~H"""
-    <p class="text-error mt-[var(--space-xs)] gap-[var(--space-xs)] text-[var(--text-sm)] flex items-center">
+    <p
+      id={@id}
+      class="text-error mt-[var(--space-xs)] gap-[var(--space-xs)] text-[var(--text-sm)] flex items-center"
+      role="alert"
+      aria-live="polite"
+    >
       <.icon name="hero-exclamation-circle" class="size-5" />
       {render_slot(@inner_block)}
     </p>
@@ -667,7 +732,7 @@ defmodule HomesiteWeb.CoreComponents do
           data-relative={to_string(@relative)}
           id={"time-#{System.unique_integer([:positive])}"}
         >
-          {Calendar.strftime(@date, "%B %d, %Y")}
+          {format_date(@date)}
         </time>
       </div>
     </div>
@@ -1133,6 +1198,7 @@ defmodule HomesiteWeb.CoreComponents do
       <.loading type="spinner" />
       <.loading type="dots" />
       <.loading type="ring" size="lg" />
+      <.loading label="Loading posts..." />
 
   """
   attr :type, :string,
@@ -1146,10 +1212,19 @@ defmodule HomesiteWeb.CoreComponents do
     doc: "loading size"
 
   attr :class, :string, default: nil, doc: "additional CSS classes"
+  attr :label, :string, default: nil, doc: "accessible label for screen readers"
 
   def loading(assigns) do
+    assigns = assign_new(assigns, :sr_label, fn -> assigns[:label] || gettext("Loading...") end)
+
     ~H"""
-    <span class={["loading", "loading-#{@type}", "loading-#{@size}", @class]}></span>
+    <span
+      role="status"
+      aria-live="polite"
+      class={["loading", "loading-#{@type}", "loading-#{@size}", @class]}
+    >
+      <span class="sr-only">{@sr_label}</span>
+    </span>
     """
   end
 

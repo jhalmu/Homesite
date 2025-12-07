@@ -7,6 +7,8 @@ defmodule HomesiteWeb.AdminLive.Analytics.Index do
   """
   use HomesiteWeb, :live_view
 
+  import HomesiteWeb.Helpers.DateHelpers
+
   alias Homesite.Accounts
   alias Homesite.Content
   alias Homesite.Social

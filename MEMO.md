@@ -6,6 +6,85 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-08 00:30:00 - i18n, Accessibility, and Testing Improvements
+
+### Session: Code Quality and UX Enhancements
+
+#### Objectives Completed
+Completed internationalization for feed_source_live, improved accessibility with ARIA attributes, added comprehensive tests for FeedCache and Analytics contexts, and cleaned up redundant code.
+
+#### Major Changes
+
+**New Files Created**:
+- **CREATED**: `lib/homesite_web/helpers/date_helpers.ex`
+  - Locale-aware date formatting with Finnish/English support
+  - Functions: `format_date/2`, `format_datetime/2`, `format_relative/2`
+  - Full Finnish month names and short forms
+  - Fallback to English for unknown locales
+
+- **CREATED**: `test/homesite/feed_cache_test.exs` (29 tests)
+  - Tests for ETS-based FeedCache GenServer
+  - Covers: put/get, fetch with generator, invalidate, clear operations
+  - Tests for selective clearing: site-wide, user, tag feeds
+  - Stats/memory tracking tests
+
+- **CREATED**: `test/homesite/analytics_test.exs` (included in 29 tests)
+  - Tests for search query recording and analytics
+  - Tests for activity logging system
+  - Covers: popular_searches, no_result_searches, performance_stats
+  - Tests for activity_stats and user_activity_summary
+
+**i18n Improvements**:
+- **MODIFIED**: `lib/homesite_web/live/feed_source_live/show.html.heex`
+  - Wrapped all hardcoded strings with gettext()
+  - Strings: "Enabled", "Disabled", "Refresh Now", "Edit", "Back to Feeds"
+  - Pluralization: "minutes" for refresh interval
+  - Labels: "Last Fetched:", "Last Error:", "Recent Items"
+
+- **MODIFIED**: `priv/gettext/fi/LC_MESSAGES/default.po`
+  - Added 20+ Finnish translations for feed_source_live
+  - "just now" → "juuri nyt"
+  - "Feed refresh scheduled" → "Syötteen päivitys aikataulutettu"
+  - "%{count} minutes" → "%{count} minuuttia"
+
+**Accessibility Improvements**:
+- **MODIFIED**: `lib/homesite_web/components/form_components.ex`
+  - Tag input combobox: aria-expanded, aria-haspopup="listbox", aria-controls
+  - Dropdown listbox: id and role="listbox", role="option" on items
+
+- **MODIFIED**: `lib/homesite_web/components/layouts.ex`
+  - Mobile menu button: aria-controls="mobile_menu", aria-haspopup="dialog"
+  - Theme toggle: aria-haspopup="menu", role="menu", role="menuitem", role="none"
+
+- **MODIFIED**: `lib/homesite_web/components/core_components.ex`
+  - Loading spinner: role="status", aria-live="polite", screen reader text
+  - Added sr_label assign for customizable screen reader announcement
+
+- **MODIFIED**: `lib/homesite_web/live/search_live/index.html.heex`
+  - Search results: aria-live="polite", aria-atomic="true", role="status"
+  - Screen readers now announce result counts
+
+**Code Cleanup**:
+- Removed redundant `import HomesiteWeb.Gettext` from 14+ LiveView files
+  - Already included via `use HomesiteWeb, :live_view` → `html_helpers()`
+  - Files: feed_source_live, faq_live, post_live, tag_live, portfolio_live, media_live, happiness_live, testimonial_live, admin_live/feedback
+
+- **FIXED**: `lib/homesite_web/live/media_live/index.ex`
+  - Removed unused default parameter warning (`opts \\ []` → `opts`)
+
+**Verification**:
+- N+1 query concern in feed_live: Verified already optimized
+  - Uses LEFT JOIN for interactions (single query)
+  - Uses preload(:feed_source) for batch loading
+
+#### Session Statistics
+- **Tests**: 921 tests, 0 failures
+- **Files changed**: 45+ (including gettext)
+- **New test files**: 2 (feed_cache_test.exs, analytics_test.exs)
+- **New helper files**: 1 (date_helpers.ex)
+
+---
+
 ## 2025-12-07 23:45:00 - GitHub Issue Clarification
 
 ### Session: Issue #4 vs #47 Distinction

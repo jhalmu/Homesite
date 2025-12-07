@@ -4,6 +4,8 @@ defmodule HomesiteWeb.UserLive.Profile do
   """
   use HomesiteWeb, :live_view
 
+  import HomesiteWeb.Helpers.DateHelpers
+
   alias Homesite.Accounts
   alias Homesite.Content
   alias Homesite.ExternalFeeds
@@ -93,7 +95,7 @@ defmodule HomesiteWeb.UserLive.Profile do
                 </p>
                 <div class="text-base-content/50 gap-[var(--space-xs)] text-[var(--text-xs)] mt-auto flex items-center">
                   <time>
-                    {Calendar.strftime(post.published_at, "%b %d")}
+                    {format_date_short(post.published_at)}
                   </time>
                   <span>·</span>
                   <span>{post.read_time_minutes} min</span>
@@ -195,7 +197,7 @@ defmodule HomesiteWeb.UserLive.Profile do
                 </.link>
 
                 <div class="text-base-content/60 mt-[var(--space-inline)] gap-[var(--space-xs)] text-[var(--text-xs)] flex items-center">
-                  <time>{Calendar.strftime(post.published_at, "%B %d, %Y")}</time>
+                  <time>{format_date(post.published_at)}</time>
                   <span>·</span>
                   <span>{post.read_time_minutes} min</span>
                 </div>
@@ -262,7 +264,7 @@ defmodule HomesiteWeb.UserLive.Profile do
         # Calculate profile stats (using all posts)
         stats = %{
           posts_count: length(all_posts),
-          member_since: Calendar.strftime(user.inserted_at, "%B %Y"),
+          member_since: format_month_year(user.inserted_at),
           total_words: calculate_total_words(all_posts),
           avg_read_time: calculate_avg_read_time(all_posts)
         }

@@ -144,7 +144,7 @@
                 <%!-- Item metadata --%>
                 <div class="text-[var(--text-xs)] gap-[var(--spacing-inline)] flex items-center opacity-70">
                   <time datetime={item.feed_item.published_at}>
-                    {Calendar.strftime(item.feed_item.published_at, "%B %d, %Y")}
+                    {format_date(item.feed_item.published_at)}
                   </time>
                 </div>
 

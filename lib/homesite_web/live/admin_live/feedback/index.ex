@@ -12,7 +12,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
   use HomesiteWeb, :live_view
 
   alias Homesite.Feedback
-  import HomesiteWeb.Gettext
+  import HomesiteWeb.Helpers.DateHelpers
 
   @impl true
   def mount(_params, _session, socket) do
@@ -254,7 +254,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
                           <span class="text-orange-400">⭐</span>
                         <% end %>
                         <span class="text-base-content/60 text-[var(--text-sm)]">
-                          {Calendar.strftime(testimonial.inserted_at, "%B %d, %Y")}
+                          {format_date(testimonial.inserted_at)}
                         </span>
                       </div>
 
@@ -317,7 +317,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
                   <tbody>
                     <%= for feedback <- @recent_feedback do %>
                       <tr>
-                        <td>{Calendar.strftime(feedback.inserted_at, "%m/%d")}</td>
+                        <td>{format_date_short(feedback.inserted_at)}</td>
                         <td>
                           <%= if feedback.user do %>
                             <span class="text-sm">

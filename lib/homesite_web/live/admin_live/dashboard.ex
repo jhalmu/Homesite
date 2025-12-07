@@ -2,6 +2,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
   use HomesiteWeb, :live_view
 
   alias Homesite.Analytics
+  import HomesiteWeb.Helpers.DateHelpers
 
   @impl true
   def render(assigns) do
@@ -30,7 +31,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
                 <%= for log <- @activity_logs do %>
                   <tr>
                     <td class="text-[var(--text-xs)]">
-                      {Calendar.strftime(log.inserted_at, "%B %d, %Y at %H:%M")}
+                      {format_datetime(log.inserted_at)}
                     </td>
                     <td>{(log.user && log.user.email) || "Unknown"}</td>
                     <td>

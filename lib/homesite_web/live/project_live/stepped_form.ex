@@ -6,6 +6,10 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
 
   @steps [:basics, :metadata, :team, :settings]
 
+  # Whitelist of allowed field names to prevent atom exhaustion attacks
+  @allowed_collaborator_fields ~w(name contact contact_type)a
+  @allowed_link_fields ~w(title url)a
+
   @impl true
   def mount(params, _session, socket) do
     project_id = params["id"]
@@ -216,14 +220,39 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
 
   @impl true
   def handle_event("update_new_collaborator", %{"field" => field, "value" => value}, socket) do
-    new_collaborator = Map.put(socket.assigns.new_collaborator, String.to_atom(field), value)
-    {:noreply, assign(socket, :new_collaborator, new_collaborator)}
+    case safe_to_atom(field, @allowed_collaborator_fields) do
+      {:ok, field_atom} ->
+        new_collaborator = Map.put(socket.assigns.new_collaborator, field_atom, value)
+        {:noreply, assign(socket, :new_collaborator, new_collaborator)}
+
+      :error ->
+        {:noreply, socket}
+    end
   end
 
   @impl true
   def handle_event("update_new_link", %{"field" => field, "value" => value}, socket) do
-    new_link = Map.put(socket.assigns.new_link, String.to_atom(field), value)
-    {:noreply, assign(socket, :new_link, new_link)}
+    case safe_to_atom(field, @allowed_link_fields) do
+      {:ok, field_atom} ->
+        new_link = Map.put(socket.assigns.new_link, field_atom, value)
+        {:noreply, assign(socket, :new_link, new_link)}
+
+      :error ->
+        {:noreply, socket}
+    end
+  end
+
+  # Safely convert string to atom only if it's in the allowed list
+  defp safe_to_atom(field, allowed_fields) when is_binary(field) do
+    field_atom = String.to_existing_atom(field)
+
+    if field_atom in allowed_fields do
+      {:ok, field_atom}
+    else
+      :error
+    end
+  rescue
+    ArgumentError -> :error
   end
 
   defp save_project(socket, :new, project_params) do

@@ -10,7 +10,7 @@ defmodule HomesiteWeb.HappinessLive.Index do
   use HomesiteWeb, :live_view
 
   alias Homesite.Feedback
-  import HomesiteWeb.Gettext
+  import HomesiteWeb.Helpers.DateHelpers
 
   @impl true
   def mount(_params, _session, socket) do
@@ -124,7 +124,7 @@ defmodule HomesiteWeb.HappinessLive.Index do
                       <div>
                         <div class="font-semibold">{get_user_name(testimonial)}</div>
                         <div class="text-xs">
-                          {Calendar.strftime(testimonial.inserted_at, "%B %d, %Y")}
+                          {format_date(testimonial.inserted_at)}
                         </div>
                       </div>
                     </div>

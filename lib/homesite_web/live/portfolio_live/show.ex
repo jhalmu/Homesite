@@ -1,7 +1,7 @@
 defmodule HomesiteWeb.PortfolioLive.Show do
   use HomesiteWeb, :live_view
 
-  import HomesiteWeb.Gettext
+  import HomesiteWeb.Helpers.DateHelpers
 
   alias Homesite.Media
 
@@ -176,7 +176,7 @@ defmodule HomesiteWeb.PortfolioLive.Show do
           <%= if show_field?(@project, "project_date") && @project.project_date do %>
             <div class="badge badge-ghost gap-[var(--space-inline)]">
               <.icon name="hero-calendar" class="h-3 w-3" />
-              {Calendar.strftime(@project.project_date, "%B %Y")}
+              {format_month_year(@project.project_date)}
             </div>
           <% end %>
 

@@ -1,6 +1,8 @@
 defmodule HomesiteWeb.DashboardLive.Index do
   use HomesiteWeb, :live_view
 
+  import HomesiteWeb.Helpers.DateHelpers
+
   alias Homesite.Activities
   alias Homesite.Content
   alias Homesite.ExternalFeeds

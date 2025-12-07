@@ -1,6 +1,8 @@
 defmodule HomesiteWeb.ProjectLive.Show do
   use HomesiteWeb, :live_view
 
+  import HomesiteWeb.Helpers.DateHelpers
+
   alias Homesite.Media
 
   @impl true
@@ -81,7 +83,7 @@ defmodule HomesiteWeb.ProjectLive.Show do
             <div class="flex items-center gap-2">
               <.icon name="hero-calendar" class="text-base-content/60 h-5 w-5" />
               <span class="font-semibold">{gettext("Date")}:</span>
-              <span>{Calendar.strftime(@project.project_date, "%B %Y")}</span>
+              <span>{format_month_year(@project.project_date)}</span>
             </div>
           <% end %>
         </div>

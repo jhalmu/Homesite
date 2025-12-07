@@ -18,7 +18,7 @@
         <article class="post-card">
           <div class="post-meta mb-[var(--spacing-md)]">
             <time datetime={latest_post.published_at}>
-              {Calendar.strftime(latest_post.published_at, "%B %d, %Y")}
+              {format_date(latest_post.published_at)}
             </time>
             <span>•</span>
             <%= if latest_post.tags && length(latest_post.tags) > 0 do %>
@@ -54,7 +54,7 @@
             <article class="post-card">
               <div class="post-meta mb-[var(--spacing-sm)]">
                 <time datetime={post.published_at}>
-                  {Calendar.strftime(post.published_at, "%B %d, %Y")}
+                  {format_date(post.published_at)}
                 </time>
               </div>
 
@@ -85,7 +85,7 @@
               <article class="post-card">
                 <div class="post-meta mb-[var(--spacing-md)]">
                   <time datetime={post.published_at}>
-                    {Calendar.strftime(post.published_at, "%B %d, %Y")}
+                    {format_date(post.published_at)}
                   </time>
                   <span>•</span>
                   <%= if post.tags && length(post.tags) > 0 do %>
@@ -174,7 +174,7 @@
                   <div class="text-[var(--text-xs)] gap-[var(--spacing-inline)] flex items-center opacity-70">
                     <%= if item.published_at do %>
                       <time datetime={item.published_at}>
-                        {Calendar.strftime(item.published_at, "%B %d, %Y")}
+                        {format_date(item.published_at)}
                       </time>
                     <% end %>
                     <%= if item.author_name do %>

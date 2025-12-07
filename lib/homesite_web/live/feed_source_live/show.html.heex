@@ -6,7 +6,7 @@
         <div>
           {@feed_source.name}
           <.badge color={if @feed_source.enabled, do: :green, else: :gray}>
-            {if @feed_source.enabled, do: "Enabled", else: "Disabled"}
+            {if @feed_source.enabled, do: gettext("Enabled"), else: gettext("Disabled")}
           </.badge>
         </div>
       </div>
@@ -25,7 +25,7 @@
       <:actions>
         <.link navigate={~p"/feeds"}>
           <.button>
-            <.icon name="hero-arrow-left" class="h-4 w-4" /> Back to Feeds
+            <.icon name="hero-arrow-left" class="h-4 w-4" /> {gettext("Back to Feeds")}
           </.button>
         </.link>
         <.link
@@ -33,7 +33,7 @@
           class="text-[var(--text-sm)] font-semibold"
         >
           <.button>
-            {if @feed_source.enabled, do: "Disable", else: "Enable"}
+            {if @feed_source.enabled, do: gettext("Disable"), else: gettext("Enable")}
           </.button>
         </.link>
         <.link
@@ -41,12 +41,12 @@
           class="text-[var(--text-sm)] font-semibold"
         >
           <.button>
-            <.icon name="hero-arrow-path" class="h-4 w-4" /> Refresh Now
+            <.icon name="hero-arrow-path" class="h-4 w-4" /> {gettext("Refresh Now")}
           </.button>
         </.link>
         <.link navigate={~p"/feeds/#{@feed_source}/edit"}>
           <.button>
-            <.icon name="hero-pencil" class="h-4 w-4" /> Edit
+            <.icon name="hero-pencil" class="h-4 w-4" /> {gettext("Edit")}
           </.button>
         </.link>
       </:actions>
@@ -55,22 +55,22 @@
     <div class="mt-[var(--space-lg)]">
       <div class="bg-base-200 space-y-[var(--space-xs)] p-[var(--space-md)] rounded-lg">
         <div class="flex justify-between">
-          <span class="font-medium">Refresh Interval:</span>
-          <span>{@feed_source.refresh_interval} minutes</span>
+          <span class="font-medium">{gettext("Refresh Interval:")}</span>
+          <span>{gettext("%{count} minutes", count: @feed_source.refresh_interval)}</span>
         </div>
         <div class="flex justify-between">
-          <span class="font-medium">Last Fetched:</span>
+          <span class="font-medium">{gettext("Last Fetched:")}</span>
           <span>
             <%= if @feed_source.last_fetched_at do %>
               {relative_time(@feed_source.last_fetched_at)}
             <% else %>
-              <span class="opacity-50">Never</span>
+              <span class="opacity-50">{gettext("Never")}</span>
             <% end %>
           </span>
         </div>
         <%= if @feed_source.last_error do %>
           <div class="flex justify-between">
-            <span class="text-error font-medium">Last Error:</span>
+            <span class="text-error font-medium">{gettext("Last Error:")}</span>
             <span class="text-error text-[var(--text-sm)]">{@feed_source.last_error}</span>
           </div>
         <% end %>
@@ -79,18 +79,18 @@
 
     <div class="mt-[var(--space-lg)]">
       <h2 class="mb-[var(--space-md)] text-[var(--text-xl)] font-semibold">
-        Recent Items ({length(@feed_items)})
+        {gettext("Recent Items")} ({length(@feed_items)})
       </h2>
 
       <%= if Enum.empty?(@feed_items) do %>
         <div class="py-[var(--space-lg)] text-center opacity-60">
           <.icon name="hero-rss" class="mb-[var(--space-md)] mx-auto h-12 w-12 opacity-50" />
-          <p class="text-[var(--text-lg)]">No feed items yet</p>
+          <p class="text-[var(--text-lg)]">{gettext("No feed items yet")}</p>
           <p class="mt-[var(--space-xs)] text-[var(--text-sm)]">
             <%= if @feed_source.enabled do %>
-              Items will appear here after the first fetch.
+              {gettext("Items will appear here after the first fetch.")}
             <% else %>
-              Enable this feed to start fetching items.
+              {gettext("Enable this feed to start fetching items.")}
             <% end %>
           </p>
         </div>
@@ -111,7 +111,7 @@
                   </h3>
                   <%= if item.author_name do %>
                     <p class="mt-[var(--space-xs)] text-[var(--text-sm)] opacity-70">
-                      by {item.author_name}
+                      {gettext("by %{author}", author: item.author_name)}
                     </p>
                   <% end %>
                   <%= if item.content do %>

@@ -1,8 +1,6 @@
 defmodule HomesiteWeb.FaqLive.Index do
   use HomesiteWeb, :live_view
 
-  import HomesiteWeb.Gettext
-
   alias Homesite.Faqs
   alias HomesiteWeb.SEO.JsonLD
   alias HomesiteWeb.Components.TableOfContents

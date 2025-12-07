@@ -6,6 +6,7 @@ defmodule HomesiteWeb.FeedLive.Index do
   use HomesiteWeb, :live_view
 
   alias Homesite.ExternalFeeds
+  import HomesiteWeb.Helpers.DateHelpers
 
   @impl true
   def mount(_params, _session, socket) do

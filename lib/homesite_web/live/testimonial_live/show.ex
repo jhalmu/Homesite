@@ -8,7 +8,7 @@ defmodule HomesiteWeb.TestimonialLive.Show do
   use HomesiteWeb, :live_view
 
   alias Homesite.Feedback
-  import HomesiteWeb.Gettext
+  import HomesiteWeb.Helpers.DateHelpers
 
   @impl true
   def mount(%{"token" => token}, _session, socket) do
@@ -51,7 +51,7 @@ defmodule HomesiteWeb.TestimonialLive.Show do
                     {gettext("User Testimonial")}
                   </h1>
                   <p class="text-base-content/60">
-                    {gettext("Shared on")} {Calendar.strftime(@testimonial.inserted_at, "%B %d, %Y")}
+                    {gettext("Shared on")} {format_date(@testimonial.inserted_at)}
                   </p>
                 </div>
 

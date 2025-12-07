@@ -1,7 +1,7 @@
 defmodule HomesiteWeb.MediaLive.Show do
   use HomesiteWeb, :live_view
 
-  import HomesiteWeb.Gettext
+  import HomesiteWeb.Helpers.DateHelpers
 
   alias Homesite.Media
 
@@ -134,7 +134,7 @@ defmodule HomesiteWeb.MediaLive.Show do
                     <dt class="text-base-content/60 font-semibold">{gettext("Uploaded")}</dt>
                     <dd>
                       <time datetime={@media_item.inserted_at}>
-                        {Calendar.strftime(@media_item.inserted_at, "%B %d, %Y at %H:%M")}
+                        {format_datetime(@media_item.inserted_at)}
                       </time>
                     </dd>
                   </div>

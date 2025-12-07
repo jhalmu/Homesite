@@ -1,8 +1,6 @@
 defmodule HomesiteWeb.FaqLive.Form do
   use HomesiteWeb, :live_view
 
-  import HomesiteWeb.Gettext
-
   alias Homesite.Faqs
   alias Homesite.Faqs.Faq
 

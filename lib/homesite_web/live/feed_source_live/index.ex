@@ -2,6 +2,7 @@ defmodule HomesiteWeb.FeedSourceLive.Index do
   use HomesiteWeb, :live_view
 
   alias Homesite.ExternalFeeds
+  import HomesiteWeb.Helpers.DateHelpers
 
   @impl true
   def mount(_params, _session, socket) do
@@ -12,7 +13,7 @@ defmodule HomesiteWeb.FeedSourceLive.Index do
 
     {:ok,
      socket
-     |> assign(:page_title, "My Feed Sources")
+     |> assign(:page_title, gettext("My Feed Sources"))
      |> stream(:feed_sources, ExternalFeeds.list_feed_sources(socket.assigns.current_scope))}
   end
 
@@ -48,7 +49,7 @@ defmodule HomesiteWeb.FeedSourceLive.Index do
 
     {:noreply,
      socket
-     |> put_flash(:info, "Feed refresh scheduled. Check back in a moment!")}
+     |> put_flash(:info, gettext("Feed refresh scheduled. Check back in a moment!"))}
   end
 
   # Helper functions for template
@@ -57,11 +58,11 @@ defmodule HomesiteWeb.FeedSourceLive.Index do
     diff_seconds = DateTime.diff(now, datetime)
 
     cond do
-      diff_seconds < 60 -> "just now"
-      diff_seconds < 3600 -> "#{div(diff_seconds, 60)}m ago"
-      diff_seconds < 86_400 -> "#{div(diff_seconds, 3600)}h ago"
-      diff_seconds < 604_800 -> "#{div(diff_seconds, 86_400)}d ago"
-      true -> Calendar.strftime(datetime, "%B %d, %Y")
+      diff_seconds < 60 -> gettext("just now")
+      diff_seconds < 3600 -> gettext("%{count}m ago", count: div(diff_seconds, 60))
+      diff_seconds < 86_400 -> gettext("%{count}h ago", count: div(diff_seconds, 3600))
+      diff_seconds < 604_800 -> gettext("%{count}d ago", count: div(diff_seconds, 86_400))
+      true -> format_date(datetime)
     end
   end
 

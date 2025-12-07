@@ -171,7 +171,7 @@
                 <span class="font-medium">{activity.content}</span>
               </div>
               <div class="text-secondary mt-[var(--space-inline)] text-[var(--text-sm)]">
-                {Calendar.strftime(activity.inserted_at, "%B %d, %Y at %H:%M")}
+                {format_datetime(activity.inserted_at)}
               </div>
             </.dashboard_card>
           <% end %>
@@ -305,7 +305,7 @@
                 </td>
                 <td>
                   <%= if post.published_at do %>
-                    {Calendar.strftime(post.published_at, "%B %d, %Y")}
+                    {format_date(post.published_at)}
                   <% else %>
                     <span class="badge badge-ghost">{gettext("Draft")}</span>
                   <% end %>
@@ -385,7 +385,7 @@
                 </td>
                 <td>
                   <%= if feed.last_fetched_at do %>
-                    {Calendar.strftime(feed.last_fetched_at, "%B %d, %Y")}
+                    {format_date(feed.last_fetched_at)}
                   <% else %>
                     <span class="text-gray-400">{gettext("Never")}</span>
                   <% end %>

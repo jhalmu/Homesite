@@ -1,8 +1,6 @@
 defmodule HomesiteWeb.PortfolioLive.Index do
   use HomesiteWeb, :live_view
 
-  import HomesiteWeb.Gettext
-
   alias Homesite.Media
 
   @projects_per_page 20

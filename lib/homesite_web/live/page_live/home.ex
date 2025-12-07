@@ -6,6 +6,7 @@ defmodule HomesiteWeb.PageLive.Home do
   alias Homesite.Social
 
   import HomesiteWeb.SocialComponents
+  import HomesiteWeb.Helpers.DateHelpers
 
   @posts_per_page 10
 

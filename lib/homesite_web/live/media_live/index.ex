@@ -1,8 +1,6 @@
 defmodule HomesiteWeb.MediaLive.Index do
   use HomesiteWeb, :live_view
 
-  import HomesiteWeb.Gettext
-
   alias Homesite.Media
 
   @media_per_page 20
@@ -460,7 +458,7 @@ defmodule HomesiteWeb.MediaLive.Index do
     """
   end
 
-  defp list_media_items(scope, filters, opts \\ []) do
+  defp list_media_items(scope, filters, opts) do
     Media.list_media_items(
       scope,
       gallery_id: filters[:gallery_id],

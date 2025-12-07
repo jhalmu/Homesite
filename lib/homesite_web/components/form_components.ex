@@ -105,11 +105,15 @@ defmodule HomesiteWeb.FormComponents do
           autocomplete="off"
           class="input input-bordered w-full"
           aria-label={gettext("Search tags")}
+          aria-haspopup="listbox"
+          aria-expanded={@tag_suggestions != [] or @tag_search_query != ""}
+          aria-controls="tag-suggestions-listbox"
         />
         
     <!-- Suggestions dropdown -->
         <%= if @tag_suggestions != [] or @tag_search_query != "" do %>
           <div
+            id="tag-suggestions-listbox"
             class="border-base-300 bg-base-100 mt-[var(--space-xs)] absolute z-10 max-h-60 w-full overflow-y-auto rounded-lg border shadow-lg"
             role="listbox"
           >

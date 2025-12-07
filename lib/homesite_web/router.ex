@@ -32,6 +32,20 @@ defmodule HomesiteWeb.Router do
       by: {:conn, &__MODULE__.get_ip/1}
   end
 
+  # Rate limiting for search to prevent DoS
+  pipeline :rate_limit_search do
+    plug Hammer.Plug,
+      rate_limit: {"search", 60_000, 30},
+      by: {:conn, &__MODULE__.get_ip/1}
+  end
+
+  # Rate limiting for public feeds
+  pipeline :rate_limit_feeds do
+    plug Hammer.Plug,
+      rate_limit: {"feeds", 60_000, 20},
+      by: {:conn, &__MODULE__.get_ip/1}
+  end
+
   # Helper function to get IP address for rate limiting
   def get_ip(conn) do
     conn.remote_ip
@@ -55,9 +69,6 @@ defmodule HomesiteWeb.Router do
       # Public FAQ viewing
       live "/faqs", FaqLive.Index, :index
 
-      # Public search
-      live "/search", SearchLive.Index, :index
-
       # Public happiness meter and testimonials
       live "/happiness", HappinessLive.Index, :index
       live "/testimonials/:token", TestimonialLive.Show, :show
@@ -65,6 +76,23 @@ defmodule HomesiteWeb.Router do
       # Public portfolio showcase
       live "/portfolio", PortfolioLive.Index, :index
       live "/portfolio/:slug", PortfolioLive.Show, :show
+    end
+  end
+
+  # Public search with rate limiting
+  scope "/", HomesiteWeb do
+    if Mix.env() != :test do
+      pipe_through [:browser, :rate_limit_search]
+    else
+      pipe_through [:browser]
+    end
+
+    live_session :public_search,
+      on_mount: [
+        {HomesiteWeb.UserAuth, :mount_current_scope},
+        {HomesiteWeb.SetLocaleHook, :default}
+      ] do
+      live "/search", SearchLive.Index, :index
     end
   end
 
@@ -201,8 +229,13 @@ defmodule HomesiteWeb.Router do
     post "/users/log-in", UserSessionController, :create
   end
 
+  # Feed endpoints with rate limiting
   scope "/", HomesiteWeb do
-    pipe_through [:browser]
+    if Mix.env() != :test do
+      pipe_through [:browser, :rate_limit_feeds]
+    else
+      pipe_through [:browser]
+    end
 
     # Feeds - RSS, Atom, and JSON
     get "/rss.xml", FeedController, :index
@@ -216,6 +249,10 @@ defmodule HomesiteWeb.Router do
     get "/tags/:slug/rss.xml", FeedController, :tag
     get "/tags/:slug/feed.xml", FeedController, :tag
     get "/tags/:slug/feed.json", FeedController, :tag
+  end
+
+  scope "/", HomesiteWeb do
+    pipe_through [:browser]
 
     live_session :current_user,
       on_mount: [

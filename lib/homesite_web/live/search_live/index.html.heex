@@ -37,14 +37,18 @@
     </form>
 
     <%= if @searching and @query != "" do %>
-      <div class="text-base-content/70 mb-[var(--space-sm)] text-[var(--text-sm)]">
+      <div
+        class="text-base-content/70 mb-[var(--space-sm)] text-[var(--text-sm)]"
+        aria-live="polite"
+        aria-atomic="true"
+      >
         <%= if @total_count == 0 do %>
-          <div class="alert alert-info">
+          <div class="alert alert-info" role="status">
             <.icon name="hero-information-circle" class="h-5 w-5" />
             <span>{gettext("No results found for")} "{@query}"</span>
           </div>
         <% else %>
-          <p>
+          <p role="status">
             {ngettext("1 result found", "%{count} results found", @total_count)}
             {gettext("for")} "{@query}"
           </p>
@@ -79,7 +83,7 @@
                         <span>•</span>
                         <.icon name="hero-calendar" class="h-4 w-4" />
                         <time datetime={post.published_at}>
-                          {Calendar.strftime(post.published_at, "%B %d, %Y")}
+                          {format_date(post.published_at)}
                         </time>
                       <% end %>
                     </div>

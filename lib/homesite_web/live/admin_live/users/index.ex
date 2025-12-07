@@ -6,6 +6,8 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
   """
   use HomesiteWeb, :live_view
 
+  import HomesiteWeb.Helpers.DateHelpers
+
   alias Homesite.Accounts
 
   @impl true
@@ -103,7 +105,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
                     </td>
                     <td>
                       <span class="text-[var(--text-sm)]">
-                        {Calendar.strftime(user.inserted_at, "%B %d, %Y")}
+                        {format_date(user.inserted_at)}
                       </span>
                     </td>
                     <td>

@@ -16,6 +16,7 @@ defmodule HomesiteWeb.ContentComponents do
 
   alias Phoenix.LiveView.JS
   import HomesiteWeb.CoreComponents
+  import HomesiteWeb.Helpers.DateHelpers
 
   @doc """
   Renders a post card with title, preview, metadata, and optional actions.
@@ -80,7 +81,7 @@ defmodule HomesiteWeb.ContentComponents do
                 <div class="opacity-70">
                   <.icon name="hero-calendar" class="inline h-4 w-4" />
                   <time datetime={@post.published_at}>
-                    {Calendar.strftime(@post.published_at, "%B %d, %Y")}
+                    {format_date(@post.published_at)}
                   </time>
                 </div>
                 <div class="opacity-70">

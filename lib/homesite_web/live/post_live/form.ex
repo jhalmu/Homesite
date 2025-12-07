@@ -1,8 +1,6 @@
 defmodule HomesiteWeb.PostLive.Form do
   use HomesiteWeb, :live_view
 
-  # Note: "unused import" warning is false positive - gettext() used in HEEx template
-  import HomesiteWeb.Gettext
   import Ecto.Query
 
   alias Homesite.Content

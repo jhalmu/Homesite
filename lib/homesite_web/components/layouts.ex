@@ -5,9 +5,6 @@ defmodule HomesiteWeb.Layouts do
   """
   use HomesiteWeb, :html
 
-  # Note: "unused import" warning is false positive - gettext() used in HEEx templates
-  import HomesiteWeb.Gettext
-
   # Embed all files in layouts/* within this module.
   # The default root.html.heex file contains the HTML
   # skeleton of your application, namely HTML headers
@@ -204,6 +201,8 @@ defmodule HomesiteWeb.Layouts do
             class="btn btn-square btn-ghost"
             onclick="mobile_menu.showModal()"
             aria-label={gettext("Open menu")}
+            aria-controls="mobile_menu"
+            aria-haspopup="dialog"
           >
             <.icon name="hero-bars-3" class="h-6 w-6" />
           </button>
@@ -470,6 +469,7 @@ defmodule HomesiteWeb.Layouts do
         role="button"
         class="btn btn-sm btn-ghost gap-[var(--space-inline)]"
         aria-label={gettext("Change theme")}
+        aria-haspopup="menu"
       >
         <!-- Sun icon (visible in light theme) -->
         <.icon name="hero-sun" class="h-5 w-5 dark:hidden" />
@@ -479,10 +479,12 @@ defmodule HomesiteWeb.Layouts do
       </div>
       <ul
         tabindex="0"
+        role="menu"
         class="dropdown-content menu bg-base-200 rounded-box z-[1] border-base-300 mt-[var(--space-xs)] p-[var(--space-xs)] w-52 border shadow-lg"
       >
-        <li>
+        <li role="none">
           <button
+            role="menuitem"
             class="gap-[var(--space-xs)] flex items-center"
             phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "light"})}
           >
@@ -490,8 +492,9 @@ defmodule HomesiteWeb.Layouts do
             <span>{gettext("Light")}</span>
           </button>
         </li>
-        <li>
+        <li role="none">
           <button
+            role="menuitem"
             class="gap-[var(--space-xs)] flex items-center"
             phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "dark"})}
           >
@@ -499,8 +502,9 @@ defmodule HomesiteWeb.Layouts do
             <span>{gettext("Dark")}</span>
           </button>
         </li>
-        <li>
+        <li role="none">
           <button
+            role="menuitem"
             class="gap-[var(--space-xs)] flex items-center"
             phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "business"})}
           >
@@ -508,8 +512,9 @@ defmodule HomesiteWeb.Layouts do
             <span>{gettext("Business")}</span>
           </button>
         </li>
-        <li>
+        <li role="none">
           <button
+            role="menuitem"
             class="gap-[var(--space-xs)] flex items-center"
             phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "corporate"})}
           >
@@ -517,8 +522,9 @@ defmodule HomesiteWeb.Layouts do
             <span>{gettext("Corporate")}</span>
           </button>
         </li>
-        <li>
+        <li role="none">
           <button
+            role="menuitem"
             class="gap-[var(--space-xs)] flex items-center"
             phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "cyberpunk"})}
           >

@@ -1,8 +1,7 @@
 defmodule HomesiteWeb.PostLive.Index do
   use HomesiteWeb, :live_view
 
-  # Note: "unused import" warning is false positive - gettext() used in HEEx template
-  import HomesiteWeb.Gettext
+  import HomesiteWeb.Helpers.DateHelpers
 
   alias Homesite.Content
 
@@ -50,7 +49,7 @@ defmodule HomesiteWeb.PostLive.Index do
                         <div class="opacity-70">
                           <.icon name="hero-calendar" class="inline h-4 w-4" />
                           <time datetime={post.published_at}>
-                            {Calendar.strftime(post.published_at, "%B %d, %Y")}
+                            {format_date(post.published_at)}
                           </time>
                         </div>
                         <div class="opacity-70">

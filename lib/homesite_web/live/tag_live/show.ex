@@ -1,8 +1,7 @@
 defmodule HomesiteWeb.TagLive.Show do
   use HomesiteWeb, :live_view
 
-  # Note: "unused import" warning is false positive - gettext() used in HEEx template
-  import HomesiteWeb.Gettext
+  import HomesiteWeb.Helpers.DateHelpers
 
   alias Homesite.Content
 
@@ -73,7 +72,7 @@ defmodule HomesiteWeb.TagLive.Show do
                 <div class="card-actions items-center justify-between">
                   <div class="text-sm text-gray-600 dark:text-gray-400">
                     <%= if post.published_at do %>
-                      {Calendar.strftime(post.published_at, "%B %d, %Y")}
+                      {format_date(post.published_at)}
                     <% else %>
                       <span class="badge badge-ghost">{gettext("Draft")}</span>
                     <% end %>

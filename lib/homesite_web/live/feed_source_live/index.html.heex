@@ -1,19 +1,19 @@
 <Layouts.app flash={@flash} current_scope={@current_scope}>
   <div class="technical-main">
     <.header>
-      My Feed Sources
-      <:subtitle>Manage your RSS, Atom, and social media feeds</:subtitle>
+      {gettext("My Feed Sources")}
+      <:subtitle>{gettext("Manage your RSS, Atom, and social media feeds")}</:subtitle>
       <:actions>
         <.link
           href="https://github.com/jhalmu/Homesite/blob/main/docs/guides/SOCIAL_MEDIA_FEEDS.md"
           target="_blank"
           class="text-[var(--text-sm)] font-semibold text-zinc-900 hover:text-zinc-700 dark:text-zinc-100 dark:hover:text-zinc-300"
         >
-          <.icon name="hero-question-mark-circle" class="h-5 w-5" /> Help
+          <.icon name="hero-question-mark-circle" class="h-5 w-5" /> {gettext("Help")}
         </.link>
         <.link navigate={~p"/feeds/new"}>
           <.button>
-            <.icon name="hero-plus" class="h-4 w-4" /> New Feed Source
+            <.icon name="hero-plus" class="h-4 w-4" /> {gettext("New Feed Source")}
           </.button>
         </.link>
       </:actions>
@@ -24,7 +24,7 @@
       rows={@streams.feed_sources}
       row_click={fn {_id, feed_source} -> JS.navigate(~p"/feed?source=#{feed_source.id}") end}
     >
-      <:col :let={{_id, feed_source}} label="Name">
+      <:col :let={{_id, feed_source}} label={gettext("Name")}>
         <div class="gap-[var(--space-xs)] flex items-center">
           <span class="text-[var(--text-xl)]">{feed_source.icon}</span>
           <div>
@@ -43,20 +43,20 @@
         </div>
       </:col>
 
-      <:col :let={{_id, feed_source}} label="Status">
+      <:col :let={{_id, feed_source}} label={gettext("Status")}>
         <.badge color={if feed_source.enabled, do: :green, else: :gray}>
-          {if feed_source.enabled, do: "Enabled", else: "Disabled"}
+          {if feed_source.enabled, do: gettext("Enabled"), else: gettext("Disabled")}
         </.badge>
         <%= if feed_source.last_error do %>
-          <.badge color={:red}>Error</.badge>
+          <.badge color={:red}>{gettext("Error")}</.badge>
         <% end %>
       </:col>
 
-      <:col :let={{_id, feed_source}} label="Last Updated">
+      <:col :let={{_id, feed_source}} label={gettext("Last Updated")}>
         <%= if feed_source.last_fetched_at do %>
           {relative_time(feed_source.last_fetched_at)}
         <% else %>
-          <span class="text-gray-400">Never</span>
+          <span class="text-gray-400">{gettext("Never")}</span>
         <% end %>
       </:col>
 
@@ -65,7 +65,7 @@
           phx-click={JS.push("toggle_enabled", value: %{id: feed_source.id})}
           class="text-[var(--text-sm)] font-semibold"
         >
-          {if feed_source.enabled, do: "Disable", else: "Enable"}
+          {if feed_source.enabled, do: gettext("Disable"), else: gettext("Enable")}
         </.link>
       </:action>
 
@@ -74,20 +74,20 @@
           phx-click={JS.push("refresh_now", value: %{id: feed_source.id})}
           class="text-[var(--text-sm)] font-semibold"
         >
-          Refresh
+          {gettext("Refresh")}
         </.link>
       </:action>
 
       <:action :let={{_id, feed_source}}>
-        <.link navigate={~p"/feeds/#{feed_source}/edit"}>Edit</.link>
+        <.link navigate={~p"/feeds/#{feed_source}/edit"}>{gettext("Edit")}</.link>
       </:action>
 
       <:action :let={{_id, feed_source}}>
         <.link
           phx-click={JS.push("delete", value: %{id: feed_source.id})}
-          data-confirm="Are you sure?"
+          data-confirm={gettext("Are you sure?")}
         >
-          Delete
+          {gettext("Delete")}
         </.link>
       </:action>
     </.table>

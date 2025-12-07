@@ -1,9 +1,6 @@
 defmodule HomesiteWeb.TagLive.Index do
   use HomesiteWeb, :live_view
 
-  # Note: "unused import" warning is false positive - gettext() used in HEEx template
-  import HomesiteWeb.Gettext
-
   alias Homesite.Content
 
   @impl true
