@@ -64,10 +64,8 @@ defmodule HomesiteWeb.SocialComponents do
       <div class="gap-[var(--space-xs)] flex flex-wrap">
         <.share_button platform="bluesky" url={@url} title={@title} />
         <.share_button platform="mastodon" url={@url} title={@title} />
-        <.share_button platform="twitter" url={@url} title={@title} />
         <.share_button platform="facebook" url={@url} title={@title} />
         <.share_button platform="linkedin" url={@url} title={@title} />
-        <.share_button platform="instagram" url={@url} title={@title} />
         <.share_button platform="email" url={@url} title={@title} />
       </div>
     </div>
@@ -91,10 +89,8 @@ defmodule HomesiteWeb.SocialComponents do
       <div class="mb-[var(--space-xs)] text-[var(--text-xs)] w-full opacity-40">Share:</div>
       <.share_button platform="bluesky" url={@url} title={@title} />
       <.share_button platform="mastodon" url={@url} title={@title} />
-      <.share_button platform="twitter" url={@url} title={@title} />
       <.share_button platform="facebook" url={@url} title={@title} />
       <.share_button platform="linkedin" url={@url} title={@title} />
-      <.share_button platform="instagram" url={@url} title={@title} />
       <.share_button platform="email" url={@url} title={@title} />
     </div>
     """

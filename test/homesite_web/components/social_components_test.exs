@@ -51,12 +51,12 @@ defmodule HomesiteWeb.SocialComponentsTest do
 
       assert html =~ "Bluesky"
       assert html =~ "Mastodon"
-      # X is the label for Twitter
-      assert html =~ ">X</span>"
       assert html =~ "Facebook"
       assert html =~ "LinkedIn"
-      assert html =~ "Instagram"
       assert html =~ "Email"
+      # Twitter and Instagram are intentionally removed
+      refute html =~ ">X</span>"
+      refute html =~ "Instagram"
     end
 
     test "includes web share button" do
@@ -128,16 +128,6 @@ defmodule HomesiteWeb.SocialComponentsTest do
       assert html =~ "href=\"https://mastodonshare.com/"
     end
 
-    test "twitter share button has correct URL" do
-      html =
-        render_component(&SocialComponents.platform_share_buttons/1, %{
-          url: "https://example.com/post/1",
-          title: "Test Post"
-        })
-
-      assert html =~ "href=\"https://twitter.com/intent/tweet"
-    end
-
     test "facebook share button has correct URL" do
       html =
         render_component(&SocialComponents.platform_share_buttons/1, %{
@@ -167,16 +157,6 @@ defmodule HomesiteWeb.SocialComponentsTest do
 
       assert html =~ "href=\"mailto:?"
     end
-
-    test "instagram button links to instagram homepage" do
-      html =
-        render_component(&SocialComponents.platform_share_buttons/1, %{
-          url: "https://example.com/post/1",
-          title: "Test Post"
-        })
-
-      assert html =~ "href=\"https://www.instagram.com/\""
-    end
   end
 
   describe "share buttons accessibility" do
@@ -189,8 +169,8 @@ defmodule HomesiteWeb.SocialComponentsTest do
 
       # Count target="_blank" attributes
       matches = Regex.scan(~r/target="_blank"/, html)
-      # Should have at least 7 (one for each platform)
-      assert length(matches) >= 7
+      # Should have at least 5 (one for each platform: Bluesky, Mastodon, Facebook, LinkedIn, Email)
+      assert length(matches) >= 5
     end
 
     test "all share links have noopener noreferrer" do
@@ -201,7 +181,7 @@ defmodule HomesiteWeb.SocialComponentsTest do
         })
 
       matches = Regex.scan(~r/rel="noopener noreferrer"/, html)
-      assert length(matches) >= 7
+      assert length(matches) >= 5
     end
 
     test "share links have title attributes" do

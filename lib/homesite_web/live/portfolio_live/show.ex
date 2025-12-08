@@ -94,15 +94,26 @@ defmodule HomesiteWeb.PortfolioLive.Show do
   end
 
   @impl true
-  def handle_event("share_twitter", _params, socket) do
+  def handle_event("share_bluesky", _params, socket) do
     project = socket.assigns.project
     url = socket.assigns.current_url
-    text = "Check out #{project.name}"
+    text = "#{project.name} #{url}"
 
-    twitter_url =
-      "https://twitter.com/intent/tweet?text=#{URI.encode(text)}&url=#{URI.encode(url)}"
+    bluesky_url = "https://bsky.app/intent/compose?text=#{URI.encode_www_form(text)}"
 
-    {:noreply, push_event(socket, "open_window", %{url: twitter_url})}
+    {:noreply, push_event(socket, "open_window", %{url: bluesky_url})}
+  end
+
+  @impl true
+  def handle_event("share_mastodon", _params, socket) do
+    project = socket.assigns.project
+    url = socket.assigns.current_url
+    text = "#{project.name} #{url}"
+
+    # Uses mastodonshare.com to let user choose their instance
+    mastodon_url = "https://mastodonshare.com/?text=#{URI.encode_www_form(text)}"
+
+    {:noreply, push_event(socket, "open_window", %{url: mastodon_url})}
   end
 
   @impl true
@@ -164,7 +175,7 @@ defmodule HomesiteWeb.PortfolioLive.Show do
           </:subtitle>
           <:actions>
             <%!-- Share Menu --%>
-            <div class="dropdown dropdown-end">
+            <div id="share-menu" phx-hook="OpenWindow" class="dropdown dropdown-end">
               <button tabindex="0" class="btn btn-ghost btn-sm">
                 <.icon name="hero-share" class="h-4 w-4" />
                 {gettext("Share")}
@@ -174,9 +185,15 @@ defmodule HomesiteWeb.PortfolioLive.Show do
                 class="dropdown-content menu bg-base-200 rounded-box z-10 w-52 p-2 shadow-lg"
               >
                 <li>
-                  <a phx-click="share_twitter">
-                    <.icon name="hero-chat-bubble-left" class="h-4 w-4" />
-                    {gettext("Share on Twitter")}
+                  <a phx-click="share_bluesky">
+                    <.icon name="hero-chat-bubble-left-ellipsis" class="h-4 w-4" />
+                    {gettext("Share on Bluesky")}
+                  </a>
+                </li>
+                <li>
+                  <a phx-click="share_mastodon">
+                    <.icon name="hero-globe-alt" class="h-4 w-4" />
+                    {gettext("Share on Mastodon")}
                   </a>
                 </li>
                 <li>
