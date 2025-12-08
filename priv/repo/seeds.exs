@@ -168,11 +168,114 @@ if Mix.env() == :dev do
     end
   end)
 
+  # Seed Projects
+  IO.puts("\n🎨 Creating test projects...")
+
+  alias Homesite.Media.Project
+  alias Homesite.Accounts.Scope
+
+  # Create a scope for the test user
+  test_scope = Scope.for_user(test_user)
+
+  # Delete existing projects for test user to avoid duplicates
+  from(p in Project, where: p.user_id == ^test_user.id)
+  |> Repo.delete_all()
+
+  # Create sample projects
+  test_projects = [
+    %{
+      name: "My Photography Portfolio",
+      description:
+        "A collection of my best landscape and portrait photography from travels around the world.",
+      slug: "photography-portfolio-#{System.unique_integer([:positive])}",
+      template_type: "photography",
+      category: "Landscape",
+      tags: ["landscape", "portrait", "travel", "nature"],
+      is_public: true,
+      is_portfolio: true,
+      completion_percentage: 85
+    },
+    %{
+      name: "Homesite - Personal Website",
+      description:
+        "An Elixir/Phoenix web application for personal blogging and portfolio management. Built with LiveView and DaisyUI.",
+      slug: "homesite-project-#{System.unique_integer([:positive])}",
+      template_type: "coding",
+      category: "Elixir/Phoenix",
+      tags: ["elixir", "phoenix", "liveview", "postgresql", "open-source"],
+      is_public: true,
+      is_portfolio: true,
+      completion_percentage: 70
+    },
+    %{
+      name: "Technical Blog Writing",
+      description:
+        "Collection of technical articles about Elixir, Phoenix, and functional programming patterns.",
+      slug: "technical-writing-#{System.unique_integer([:positive])}",
+      template_type: "writing",
+      category: "Technical Tutorial",
+      tags: ["tutorial", "elixir", "phoenix", "technical"],
+      is_public: true,
+      is_portfolio: true,
+      completion_percentage: 60
+    },
+    %{
+      name: "My Camera Gear Setup",
+      description:
+        "The cameras, lenses, and accessories I use for professional and hobby photography.",
+      slug: "camera-gear-#{System.unique_integer([:positive])}",
+      template_type: "gears",
+      category: "Photography Equipment",
+      tags: ["camera", "lens", "sony", "accessories"],
+      is_public: true,
+      is_portfolio: true,
+      completion_percentage: 50
+    },
+    %{
+      name: "Book Reading List 2025",
+      description:
+        "Books I'm reading and have read this year - fiction, non-fiction, and technical books.",
+      slug: "reading-list-2025-#{System.unique_integer([:positive])}",
+      template_type: "books",
+      category: "Technical & Fiction",
+      tags: ["programming", "sci-fi", "non-fiction", "biography"],
+      is_public: true,
+      is_portfolio: true,
+      completion_percentage: 40
+    },
+    %{
+      name: "Short Film Project",
+      description: "A documentary about local artisans and their traditional crafts.",
+      slug: "short-film-#{System.unique_integer([:positive])}",
+      template_type: "movies",
+      category: "Documentary",
+      tags: ["documentary", "short-film", "artisans"],
+      is_public: true,
+      is_portfolio: true,
+      completion_percentage: 30
+    }
+  ]
+
+  Enum.each(test_projects, fn project_attrs ->
+    project_attrs = Map.put(project_attrs, :user_id, test_user.id)
+
+    case Repo.insert(%Project{} |> Project.changeset(project_attrs, test_scope)) do
+      {:ok, project} ->
+        IO.puts("  ✅ Created project: #{project.name}")
+
+      {:error, changeset} ->
+        IO.puts("  ❌ Failed to create project: #{inspect(changeset.errors)}")
+    end
+  end)
+
   IO.puts("\n🎉 Seeding complete!")
   IO.puts("\n📋 Test User Credentials:")
   IO.puts("  Email: test@example.com")
   IO.puts("  Password: TestPassword123!")
-  IO.puts("\n🔗 Access feeds at: http://localhost:4000/feeds")
+  IO.puts("\n🔗 Access at:")
+  IO.puts("  Feeds: http://localhost:4000/feeds")
+  IO.puts("  Portfolio: http://localhost:4000/portfolio")
+  IO.puts("  Projects: http://localhost:4000/projects")
 else
   IO.puts("⏭️  Skipping seeds (not in development environment)")
 end

@@ -229,6 +229,12 @@ defmodule HomesiteWeb.Layouts do
                 {gettext("Search")}
               </.link>
             </li>
+            <li class="nav-item">
+              <.link navigate={~p"/portfolio"}>
+                <.icon name="hero-folder" class="h-5 w-5" />
+                {gettext("Portfolio")}
+              </.link>
+            </li>
             <%= if @current_scope do %>
               <li class="nav-item">
                 <.link navigate={~p"/dashboard"}>{gettext("Dashboard")}</.link>
@@ -328,6 +334,11 @@ defmodule HomesiteWeb.Layouts do
         </h3>
 
         <ul class="menu menu-vertical gap-[var(--space-xs)]">
+          <li>
+            <.link navigate={~p"/portfolio"} class="text-base">
+              <.icon name="hero-folder" class="h-5 w-5" /> {gettext("Portfolio")}
+            </.link>
+          </li>
           <%= if @current_scope do %>
             <li>
               <.link navigate={~p"/dashboard"} class="text-base">

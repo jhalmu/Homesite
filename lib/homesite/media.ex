@@ -51,10 +51,12 @@ defmodule Homesite.Media do
   ## Options
     * `:project_type` - Filter by type ("portfolio" or "library")
     * `:is_public` - Filter by public/private status
+    * `:include_archived` - Include archived projects (default: false)
     * `:preload` - List of associations to preload (default: [])
   """
   def list_projects(%Scope{} = scope, opts \\ []) do
     preload = opts[:preload] || []
+    include_archived = opts[:include_archived] || false
 
     query =
       from p in Project,
@@ -64,8 +66,23 @@ defmodule Homesite.Media do
 
     query = maybe_filter_by_type(query, opts[:project_type])
     query = maybe_filter_by_public(query, opts[:is_public])
+    query = maybe_filter_archived(query, include_archived)
 
     Repo.all(query)
+  end
+
+  @doc """
+  Lists only archived projects for a user.
+  """
+  def list_archived_projects(%Scope{} = scope, opts \\ []) do
+    preload = opts[:preload] || []
+
+    from(p in Project,
+      where: p.user_id == ^scope.user.id and p.is_archived == true,
+      order_by: [desc: p.archived_at],
+      preload: ^preload
+    )
+    |> Repo.all()
   end
 
   defp maybe_filter_by_type(query, nil), do: query
@@ -79,6 +96,13 @@ defmodule Homesite.Media do
 
   defp maybe_filter_by_public(query, is_public) when is_boolean(is_public) do
     from p in query, where: p.is_public == ^is_public
+  end
+
+  # By default, exclude archived projects unless include_archived is true
+  defp maybe_filter_archived(query, true), do: query
+
+  defp maybe_filter_archived(query, false) do
+    from p in query, where: p.is_archived == false
   end
 
   @doc """
@@ -137,14 +161,67 @@ defmodule Homesite.Media do
 
   @doc """
   Deletes a project with scope check.
+  Only allows deleting archived projects to prevent accidental deletion.
   """
   def delete_project(%Scope{} = scope, %Project{} = project) do
     # Security check
     true = project.user_id == scope.user.id
 
-    with {:ok, project} <- Repo.delete(project) do
-      broadcast_project(scope, {:deleted, project})
-      {:ok, project}
+    if project.is_archived do
+      with {:ok, project} <- Repo.delete(project) do
+        broadcast_project(scope, {:deleted, project})
+        {:ok, project}
+      end
+    else
+      {:error, :must_archive_first}
+    end
+  end
+
+  @doc """
+  Archives a project (soft delete).
+  Archived projects are hidden from the main list but can be restored.
+  """
+  def archive_project(%Scope{} = scope, %Project{} = project) do
+    # Security check
+    true = project.user_id == scope.user.id
+
+    project
+    |> Ecto.Changeset.change(%{
+      is_archived: true,
+      archived_at: DateTime.utc_now(:second),
+      is_public: false
+    })
+    |> Repo.update()
+    |> case do
+      {:ok, project} ->
+        broadcast_project(scope, {:archived, project})
+        {:ok, project}
+
+      error ->
+        error
+    end
+  end
+
+  @doc """
+  Unarchives (restores) a project.
+  """
+  def unarchive_project(%Scope{} = scope, %Project{} = project) do
+    # Security check
+    true = project.user_id == scope.user.id
+
+    project
+    |> Ecto.Changeset.change(%{
+      is_archived: false,
+      archived_at: nil
+    })
+    |> Repo.update()
+    |> case do
+      {:ok, project} ->
+        broadcast_project(scope, {:unarchived, project})
+        {:ok, project}
+
+      error ->
+        error
     end
   end
 
@@ -368,7 +445,7 @@ defmodule Homesite.Media do
       order_by: [asc: p.display_order, desc: p.inserted_at],
       limit: ^limit,
       offset: ^offset,
-      preload: [:user]
+      preload: [:user, :cover_media_item]
     )
     |> Repo.all()
   end

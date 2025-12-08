@@ -362,6 +362,21 @@ const Hooks = {
       const threshold = 100
       return this.el.scrollHeight - this.el.scrollTop - this.el.clientHeight < threshold
     }
+  },
+  // Hook for select elements that need to send value without form conflicts
+  SelectValue: {
+    mounted() {
+      this.el.addEventListener("change", (e) => {
+        const event = this.el.dataset.event
+        const field = this.el.dataset.field
+        if (event) {
+          this.pushEvent(event, {
+            field: field,
+            value: e.target.value
+          })
+        }
+      })
+    }
   }
 }
 

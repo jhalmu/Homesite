@@ -6,6 +6,76 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-08 18:30:00 - Project Stepped Form Fixes & Archive/Delete Feature
+
+### Session: Bug Fixes and Feature Implementation
+
+#### Objectives Completed
+1. Fixed critical bugs in Project stepped form (Step 3)
+2. Implemented Archive/Delete functionality for projects
+3. Added comprehensive tests for all changes
+
+#### Bug Fixes
+
+**1. Contact Type Select Causing Page Refresh (Step 3)**
+- **Root cause**: `validate` handler only matched `%{"project" => ...}` params, causing `FunctionClauseError` when select elements sent different params
+- **Solution**: Added catch-all validate handler + `SelectValue` JavaScript hook for select elements
+- **Files**: `stepped_form.ex`, `app.js`
+
+**2. Can Only Add 1 Link/Collaborator (Step 3)**
+- **Root cause**: LiveView inputs weren't clearing after adding items
+- **Solution**: Added `input_reset_key` assign that increments after each add, forcing DOM re-render with new IDs
+- **Files**: `stepped_form.ex`
+
+**3. Default Shoot Date for New Projects**
+- New projects now default `project_date` to today's date
+- **Files**: `stepped_form.ex`
+
+#### New Feature: Project Archive/Delete
+
+**Database Changes**
+- Migration: `20251208161710_add_is_archived_to_projects.exs`
+- Added `is_archived` (boolean, default: false) and `archived_at` (datetime) fields
+- Added indexes for efficient querying
+
+**Context Functions (Media)**
+- `archive_project/2` - Archives project, sets `is_public: false`, records timestamp
+- `unarchive_project/2` - Restores an archived project
+- `delete_project/2` - Now requires project to be archived first (safety)
+- `list_projects/2` - Excludes archived by default, `include_archived: true` option
+- `list_archived_projects/2` - Returns only archived projects
+
+**UI Features**
+- Archive button in dropdown menu on each project card
+- "Archived (N)" toggle button when archived projects exist
+- Archived view with restore & permanent delete buttons
+- Confirmation dialogs for archive and delete actions
+- Safety: Projects must be archived before permanent deletion
+
+#### Files Modified
+- `lib/homesite/media.ex` - Added archive/unarchive/delete functions (+85 lines)
+- `lib/homesite/media/project.ex` - Added is_archived, archived_at fields
+- `lib/homesite_web/live/project_live/index.ex` - Archive/delete UI (+211 lines)
+- `lib/homesite_web/live/project_live/stepped_form.ex` - Bug fixes (+375 lines)
+- `assets/js/app.js` - Added SelectValue hook (+15 lines)
+- `test/homesite/media_test.exs` - Added archive/delete tests (+93 lines)
+- `test/homesite_web/live/project_live_test.exs` - Added comprehensive tests
+
+#### Files Created
+- `priv/repo/migrations/20251208161710_add_is_archived_to_projects.exs`
+
+#### Test Results
+- **Before**: 1203 tests
+- **After**: 1219 tests, 0 failures
+- Added 16 new tests for archive/delete functionality
+
+#### Next Steps
+- Consider adding bulk archive/delete functionality
+- Add archive/restore to project show page
+- Consider email notification on archive (if shared projects)
+
+---
+
 ## 2025-12-08 16:15:00 - IRC-Style Chat System (Phase 1 MVP)
 
 ### Session: Internal Chat System Implementation

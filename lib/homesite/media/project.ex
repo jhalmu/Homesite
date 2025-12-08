@@ -21,6 +21,8 @@ defmodule Homesite.Media.Project do
     field :slug, :string
     field :is_public, :boolean, default: false
     field :is_portfolio, :boolean, default: false
+    field :is_archived, :boolean, default: false
+    field :archived_at, :utc_datetime
     field :display_order, :integer, default: 0
     field :template_type, :string, default: "photography"
 

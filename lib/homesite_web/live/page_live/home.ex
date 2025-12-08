@@ -3,6 +3,7 @@ defmodule HomesiteWeb.PageLive.Home do
 
   alias Homesite.Content
   alias Homesite.ExternalFeeds
+  alias Homesite.Media
   alias Homesite.Social
 
   import HomesiteWeb.SocialComponents
@@ -22,11 +23,15 @@ defmodule HomesiteWeb.PageLive.Home do
         []
       end
 
+    # Fetch public projects for showcase
+    public_projects = Media.list_public_projects(limit: 6)
+
     socket =
       socket
       |> assign(:page_title, "Welcome")
       |> assign(:posts, posts)
       |> assign(:feed_items, feed_items)
+      |> assign(:public_projects, public_projects)
       |> assign(:has_more_posts, length(posts) == @posts_per_page)
 
     {:ok, socket}

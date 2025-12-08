@@ -20,7 +20,8 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
         project = Media.get_project!(socket.assigns.current_scope, project_id)
         {project, gettext("Edit Project")}
       else
-        {%Project{}, gettext("New Project")}
+        # Set default project_date to today for new projects
+        {%Project{project_date: Date.utc_today()}, gettext("New Project")}
       end
 
     {:ok,
@@ -38,6 +39,8 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
      |> assign(:editing_link, nil)
      |> assign(:new_collaborator, %{name: "", contact: "", contact_type: "none"})
      |> assign(:new_link, %{title: "", url: ""})
+     |> assign(:selected_post_id, nil)
+     |> assign(:input_reset_key, 0)
      |> assign_form(project)}
   end
 
@@ -47,8 +50,11 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
   end
 
   defp apply_action(socket, :new, _params) do
+    # Set default project_date to today for new projects
+    project = %Project{project_date: Date.utc_today()}
+
     socket
-    |> assign(:project, %Project{})
+    |> assign(:project, project)
     |> assign(:page_title, gettext("New Project"))
   end
 
@@ -84,26 +90,11 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
     {:noreply, assign_form(socket, changeset)}
   end
 
-  # Convert comma-separated tags string to list for Ecto
-  defp convert_tags_param(%{"tags" => tags} = params) when is_binary(tags) do
-    Map.put(params, "tags", string_to_tags(tags))
+  # Catch-all for validate events without project params (from non-form elements)
+  def handle_event("validate", _params, socket) do
+    {:noreply, socket}
   end
 
-  defp convert_tags_param(params), do: params
-
-  defp string_to_tags(string) when is_binary(string) do
-    string
-    |> String.split(",")
-    |> Enum.map(&String.trim/1)
-    |> Enum.reject(&(&1 == ""))
-  end
-
-  defp string_to_tags(_), do: []
-
-  defp tags_to_string(tags) when is_list(tags), do: Enum.join(tags, ", ")
-  defp tags_to_string(_), do: ""
-
-  @impl true
   def handle_event("next_step", _params, socket) do
     current_index = socket.assigns.step_index
 
@@ -120,7 +111,6 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
     end
   end
 
-  @impl true
   def handle_event("prev_step", _params, socket) do
     current_index = socket.assigns.step_index
 
@@ -137,7 +127,6 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
     end
   end
 
-  @impl true
   def handle_event("skip_to_save", _params, socket) do
     # Jump to final step (settings)
     {:noreply,
@@ -146,42 +135,55 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
      |> assign(:current_step, :settings)}
   end
 
-  @impl true
   def handle_event("save", %{"project" => project_params}, socket) do
     # Convert comma-separated tags string to list
     project_params = convert_tags_param(project_params)
     save_project(socket, socket.assigns.live_action, project_params)
   end
 
-  # Collaborator events
-  @impl true
-  def handle_event("add_collaborator", %{"collaborator" => collab_params}, socket) do
-    if socket.assigns.project.id do
-      # Edit mode: persist immediately
-      attrs = Map.put(collab_params, "project_id", socket.assigns.project.id)
+  # Collaborator events - reads from socket assigns (not form params)
+  def handle_event("add_collaborator", _params, socket) do
+    new_collab = socket.assigns.new_collaborator
 
-      case Media.create_collaborator(socket.assigns.current_scope, attrs) do
-        {:ok, _collaborator} ->
-          collaborators =
-            Media.list_collaborators(socket.assigns.current_scope, socket.assigns.project.id)
-
-          {:noreply,
-           socket
-           |> assign(:collaborators, collaborators)
-           |> assign(:new_collaborator, %{name: "", contact: "", contact_type: "none"})
-           |> put_flash(:info, gettext("Collaborator added"))}
-
-        {:error, _changeset} ->
-          {:noreply, put_flash(socket, :error, gettext("Failed to add collaborator"))}
-      end
+    if new_collab.name == "" do
+      {:noreply, put_flash(socket, :error, gettext("Collaborator name is required"))}
     else
-      # New mode: project doesn't exist yet, show message
-      {:noreply,
-       put_flash(socket, :info, gettext("Save the project first, then you can add collaborators"))}
+      if socket.assigns.project.id do
+        # Edit mode: persist immediately
+        attrs = %{
+          "name" => new_collab.name,
+          "contact" => new_collab.contact,
+          "contact_type" => new_collab.contact_type,
+          "project_id" => socket.assigns.project.id
+        }
+
+        case Media.create_collaborator(socket.assigns.current_scope, attrs) do
+          {:ok, _collaborator} ->
+            collaborators =
+              Media.list_collaborators(socket.assigns.current_scope, socket.assigns.project.id)
+
+            {:noreply,
+             socket
+             |> assign(:collaborators, collaborators)
+             |> assign(:new_collaborator, %{name: "", contact: "", contact_type: "none"})
+             |> assign(:input_reset_key, socket.assigns.input_reset_key + 1)
+             |> put_flash(:info, gettext("Collaborator added"))}
+
+          {:error, _changeset} ->
+            {:noreply, put_flash(socket, :error, gettext("Failed to add collaborator"))}
+        end
+      else
+        # New mode: project doesn't exist yet, show message
+        {:noreply,
+         put_flash(
+           socket,
+           :info,
+           gettext("Save the project first, then you can add collaborators")
+         )}
+      end
     end
   end
 
-  @impl true
   def handle_event("delete_collaborator", %{"id" => id}, socket) do
     id = String.to_integer(id)
     collaborator = Enum.find(socket.assigns.collaborators, &(&1.id == id))
@@ -201,35 +203,47 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
     end
   end
 
-  # Affiliation link events
-  @impl true
-  def handle_event("add_affiliation_link", %{"link" => link_params}, socket) do
-    if socket.assigns.project.id do
-      # Edit mode: persist immediately
-      attrs = Map.put(link_params, "project_id", socket.assigns.project.id)
+  # Affiliation link events - reads from socket assigns (not form params)
+  def handle_event("add_affiliation_link", _params, socket) do
+    new_link = socket.assigns.new_link
 
-      case Media.create_affiliation_link(socket.assigns.current_scope, attrs) do
-        {:ok, _link} ->
-          links =
-            Media.list_affiliation_links(socket.assigns.current_scope, socket.assigns.project.id)
-
-          {:noreply,
-           socket
-           |> assign(:affiliation_links, links)
-           |> assign(:new_link, %{title: "", url: ""})
-           |> put_flash(:info, gettext("Link added"))}
-
-        {:error, _changeset} ->
-          {:noreply, put_flash(socket, :error, gettext("Failed to add link"))}
-      end
+    if new_link.title == "" or new_link.url == "" do
+      {:noreply, put_flash(socket, :error, gettext("Link title and URL are required"))}
     else
-      # New mode: project doesn't exist yet, show message
-      {:noreply,
-       put_flash(socket, :info, gettext("Save the project first, then you can add links"))}
+      if socket.assigns.project.id do
+        # Edit mode: persist immediately
+        attrs = %{
+          "title" => new_link.title,
+          "url" => new_link.url,
+          "project_id" => socket.assigns.project.id
+        }
+
+        case Media.create_affiliation_link(socket.assigns.current_scope, attrs) do
+          {:ok, _link} ->
+            links =
+              Media.list_affiliation_links(
+                socket.assigns.current_scope,
+                socket.assigns.project.id
+              )
+
+            {:noreply,
+             socket
+             |> assign(:affiliation_links, links)
+             |> assign(:new_link, %{title: "", url: ""})
+             |> assign(:input_reset_key, socket.assigns.input_reset_key + 1)
+             |> put_flash(:info, gettext("Link added"))}
+
+          {:error, _changeset} ->
+            {:noreply, put_flash(socket, :error, gettext("Failed to add link"))}
+        end
+      else
+        # New mode: project doesn't exist yet, show message
+        {:noreply,
+         put_flash(socket, :info, gettext("Save the project first, then you can add links"))}
+      end
     end
   end
 
-  @impl true
   def handle_event("delete_affiliation_link", %{"id" => id}, socket) do
     id = String.to_integer(id)
     link = Enum.find(socket.assigns.affiliation_links, &(&1.id == id))
@@ -250,42 +264,28 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
   end
 
   # Blog post linking events
-  @impl true
-  def handle_event("link_post", %{"post_id" => ""}, socket) do
-    {:noreply, put_flash(socket, :error, gettext("Please select a blog post"))}
+  def handle_event("select_post", %{"value" => ""}, socket) do
+    {:noreply, assign(socket, :selected_post_id, nil)}
   end
 
-  @impl true
-  def handle_event("link_post", %{"post_id" => post_id}, socket) do
-    post_id = String.to_integer(post_id)
+  def handle_event("select_post", %{"value" => post_id}, socket) when is_binary(post_id) do
+    {:noreply, assign(socket, :selected_post_id, String.to_integer(post_id))}
+  end
 
-    case Media.link_post_to_project(
-           socket.assigns.current_scope,
-           socket.assigns.project.id,
-           post_id
-         ) do
-      {:ok, _} ->
-        linked_posts =
-          Media.list_project_posts(socket.assigns.current_scope, socket.assigns.project.id)
+  def handle_event("select_post", %{"value" => post_id}, socket) when is_integer(post_id) do
+    {:noreply, assign(socket, :selected_post_id, post_id)}
+  end
 
-        available_posts =
-          Media.list_available_posts_for_project(
-            socket.assigns.current_scope,
-            socket.assigns.project.id
-          )
+  def handle_event("link_post", _params, socket) do
+    case socket.assigns.selected_post_id do
+      nil ->
+        {:noreply, put_flash(socket, :error, gettext("Please select a blog post"))}
 
-        {:noreply,
-         socket
-         |> assign(:linked_posts, linked_posts)
-         |> assign(:available_posts, available_posts)
-         |> put_flash(:info, gettext("Blog post linked"))}
-
-      {:error, _changeset} ->
-        {:noreply, put_flash(socket, :error, gettext("Failed to link blog post"))}
+      post_id ->
+        link_post_to_project(socket, post_id)
     end
   end
 
-  @impl true
   def handle_event("unlink_post", %{"id" => id}, socket) do
     post_id = String.to_integer(id)
 
@@ -311,7 +311,6 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
      |> put_flash(:info, gettext("Blog post unlinked"))}
   end
 
-  @impl true
   def handle_event("update_new_collaborator", %{"field" => field, "value" => value}, socket) do
     case safe_to_atom(field, @allowed_collaborator_fields) do
       {:ok, field_atom} ->
@@ -323,7 +322,6 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
     end
   end
 
-  @impl true
   def handle_event("update_new_link", %{"field" => field, "value" => value}, socket) do
     case safe_to_atom(field, @allowed_link_fields) do
       {:ok, field_atom} ->
@@ -332,6 +330,35 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
 
       :error ->
         {:noreply, socket}
+    end
+  end
+
+  # Helper for linking posts to projects
+  defp link_post_to_project(socket, post_id) do
+    case Media.link_post_to_project(
+           socket.assigns.current_scope,
+           socket.assigns.project.id,
+           post_id
+         ) do
+      {:ok, _} ->
+        linked_posts =
+          Media.list_project_posts(socket.assigns.current_scope, socket.assigns.project.id)
+
+        available_posts =
+          Media.list_available_posts_for_project(
+            socket.assigns.current_scope,
+            socket.assigns.project.id
+          )
+
+        {:noreply,
+         socket
+         |> assign(:linked_posts, linked_posts)
+         |> assign(:available_posts, available_posts)
+         |> assign(:selected_post_id, nil)
+         |> put_flash(:info, gettext("Blog post linked"))}
+
+      {:error, _changeset} ->
+        {:noreply, put_flash(socket, :error, gettext("Failed to link blog post"))}
     end
   end
 
@@ -347,6 +374,25 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
   rescue
     ArgumentError -> :error
   end
+
+  # Convert comma-separated tags string to list for Ecto
+  defp convert_tags_param(%{"tags" => tags} = params) when is_binary(tags) do
+    Map.put(params, "tags", string_to_tags(tags))
+  end
+
+  defp convert_tags_param(params), do: params
+
+  defp string_to_tags(string) when is_binary(string) do
+    string
+    |> String.split(",")
+    |> Enum.map(&String.trim/1)
+    |> Enum.reject(&(&1 == ""))
+  end
+
+  defp string_to_tags(_), do: []
+
+  defp tags_to_string(tags) when is_list(tags), do: Enum.join(tags, ", ")
+  defp tags_to_string(_), do: ""
 
   defp save_project(socket, :new, project_params) do
     case Media.create_project(socket.assigns.current_scope, project_params) do
@@ -436,7 +482,27 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
         </div>
 
         <%!-- Step Content --%>
-        <.form for={@form} phx-submit="save" phx-change="validate" class="space-y-6">
+        <.form for={@form} id="project-form" phx-submit="save" phx-change="validate" class="space-y-6">
+          <%!-- Hidden fields to preserve data across steps --%>
+          <%= if @current_step != :basics do %>
+            <input type="hidden" name={@form[:name].name} value={@form[:name].value} />
+            <input type="hidden" name={@form[:description].name} value={@form[:description].value} />
+            <input
+              type="hidden"
+              name={@form[:template_type].name}
+              value={@form[:template_type].value}
+            />
+          <% end %>
+          <%= if @current_step != :metadata do %>
+            <input type="hidden" name={@form[:category].name} value={@form[:category].value} />
+            <input
+              type="hidden"
+              name={@form[:tags].name}
+              value={tags_to_string(@form[:tags].value)}
+            />
+            <input type="hidden" name={@form[:project_date].name} value={@form[:project_date].value} />
+          <% end %>
+
           <%= case @current_step do %>
             <% :basics -> %>
               <.render_basics_step form={@form} />
@@ -449,6 +515,10 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
                 affiliation_links={@affiliation_links}
                 linked_posts={@linked_posts}
                 available_posts={@available_posts}
+                new_collaborator={@new_collaborator}
+                new_link={@new_link}
+                selected_post_id={@selected_post_id}
+                input_reset_key={@input_reset_key}
               />
             <% :settings -> %>
               <.render_settings_step form={@form} />
@@ -678,30 +748,57 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
           </div>
         <% end %>
 
-        <%!-- Add Collaborator Form --%>
-        <form phx-submit="add_collaborator" class="space-y-3">
+        <%!-- Add Collaborator (using phx-click to avoid nested forms) --%>
+        <div class="space-y-3" id={"collaborator-inputs-#{@input_reset_key}"}>
           <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
             <input
               type="text"
-              name="collaborator[name]"
+              id={"collaborator-name-#{@input_reset_key}"}
               value={@new_collaborator.name}
               placeholder={gettext("Name")}
               class="input input-bordered w-full"
-              required
+              phx-keyup="update_new_collaborator"
+              phx-value-field="name"
             />
             <input
               type="text"
-              name="collaborator[contact]"
+              id={"collaborator-contact-#{@input_reset_key}"}
               value={@new_collaborator.contact}
               placeholder={gettext("Contact (URL or email, optional)")}
               class="input input-bordered w-full"
+              phx-keyup="update_new_collaborator"
+              phx-value-field="contact"
             />
           </div>
-          <button type="submit" class="btn btn-primary btn-sm">
-            <.icon name="hero-plus" class="h-4 w-4" />
-            {gettext("Add Collaborator")}
-          </button>
-        </form>
+          <div class="flex items-center gap-2">
+            <select
+              id={"collaborator-contact-type-#{@input_reset_key}"}
+              class="select select-bordered select-sm"
+              phx-hook="SelectValue"
+              data-event="update_new_collaborator"
+              data-field="contact_type"
+            >
+              <option value="none" selected={@new_collaborator.contact_type == "none"}>
+                {gettext("No contact type")}
+              </option>
+              <option value="url" selected={@new_collaborator.contact_type == "url"}>
+                {gettext("URL")}
+              </option>
+              <option value="email" selected={@new_collaborator.contact_type == "email"}>
+                {gettext("Email")}
+              </option>
+            </select>
+            <button
+              type="button"
+              phx-click="add_collaborator"
+              class="btn btn-primary btn-sm"
+              disabled={@new_collaborator.name == ""}
+            >
+              <.icon name="hero-plus" class="h-4 w-4" />
+              {gettext("Add Collaborator")}
+            </button>
+          </div>
+        </div>
       </div>
 
       <%!-- Affiliation Links Section --%>
@@ -736,31 +833,38 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
           </div>
         <% end %>
 
-        <%!-- Add Link Form --%>
-        <form phx-submit="add_affiliation_link" class="space-y-3">
+        <%!-- Add Link (using phx-click to avoid nested forms) --%>
+        <div class="space-y-3" id={"link-inputs-#{@input_reset_key}"}>
           <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
             <input
               type="text"
-              name="link[title]"
+              id={"link-title-#{@input_reset_key}"}
               value={@new_link.title}
               placeholder={gettext("Title")}
               class="input input-bordered w-full"
-              required
+              phx-keyup="update_new_link"
+              phx-value-field="title"
             />
             <input
-              type="url"
-              name="link[url]"
+              type="text"
+              id={"link-url-#{@input_reset_key}"}
               value={@new_link.url}
               placeholder={gettext("URL (https://...)")}
               class="input input-bordered w-full"
-              required
+              phx-keyup="update_new_link"
+              phx-value-field="url"
             />
           </div>
-          <button type="submit" class="btn btn-primary btn-sm">
+          <button
+            type="button"
+            phx-click="add_affiliation_link"
+            class="btn btn-primary btn-sm"
+            disabled={@new_link.title == "" || @new_link.url == ""}
+          >
             <.icon name="hero-plus" class="h-4 w-4" />
             {gettext("Add Link")}
           </button>
-        </form>
+        </div>
       </div>
 
       <%!-- Related Blog Posts Section --%>
@@ -807,20 +911,33 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
             </div>
           <% end %>
 
-          <%!-- Post Selector --%>
+          <%!-- Post Selector (using hook to avoid form conflicts) --%>
           <%= if not Enum.empty?(@available_posts) do %>
-            <form phx-submit="link_post" class="flex gap-2">
-              <select name="post_id" class="select select-bordered flex-1">
+            <div class="flex gap-2">
+              <select
+                id="post-selector"
+                class="select select-bordered flex-1"
+                phx-hook="SelectValue"
+                data-event="select_post"
+                data-field="post_id"
+              >
                 <option value="">{gettext("Select a blog post to link...")}</option>
                 <%= for post <- @available_posts do %>
-                  <option value={post.id}>{post.title}</option>
+                  <option value={post.id} selected={@selected_post_id == post.id}>
+                    {post.title}
+                  </option>
                 <% end %>
               </select>
-              <button type="submit" class="btn btn-primary btn-sm">
+              <button
+                type="button"
+                phx-click="link_post"
+                class="btn btn-primary btn-sm"
+                disabled={is_nil(@selected_post_id)}
+              >
                 <.icon name="hero-plus" class="h-4 w-4" />
                 {gettext("Link")}
               </button>
-            </form>
+            </div>
           <% else %>
             <%= if Enum.empty?(@linked_posts) do %>
               <p class="text-base-content/60 text-sm">

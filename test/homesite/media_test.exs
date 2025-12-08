@@ -92,11 +92,24 @@ defmodule Homesite.MediaTest do
       assert project == Media.get_project!(scope, project.id)
     end
 
-    test "delete_project/2 deletes the project" do
+    test "delete_project/2 deletes an archived project" do
       scope = user_scope_fixture()
       project = project_fixture(scope)
-      assert {:ok, %Project{}} = Media.delete_project(scope, project)
+
+      # Archive the project first (required before deletion)
+      {:ok, archived_project} = Media.archive_project(scope, project)
+
+      assert {:ok, %Project{}} = Media.delete_project(scope, archived_project)
       assert_raise Ecto.NoResultsError, fn -> Media.get_project!(scope, project.id) end
+    end
+
+    test "delete_project/2 returns error for non-archived project" do
+      scope = user_scope_fixture()
+      project = project_fixture(scope)
+
+      assert {:error, :must_archive_first} = Media.delete_project(scope, project)
+      # Project should still exist
+      assert Media.get_project!(scope, project.id)
     end
 
     test "delete_project/2 with invalid scope raises" do
@@ -104,6 +117,82 @@ defmodule Homesite.MediaTest do
       other_scope = user_scope_fixture()
       project = project_fixture(scope)
       assert_raise MatchError, fn -> Media.delete_project(other_scope, project) end
+    end
+
+    test "archive_project/2 archives a project" do
+      scope = user_scope_fixture()
+      project = project_fixture(scope, %{is_public: true})
+
+      assert {:ok, archived} = Media.archive_project(scope, project)
+      assert archived.is_archived == true
+      assert archived.archived_at != nil
+      # Archiving should also make it private
+      assert archived.is_public == false
+    end
+
+    test "archive_project/2 with invalid scope raises" do
+      scope = user_scope_fixture()
+      other_scope = user_scope_fixture()
+      project = project_fixture(scope)
+
+      assert_raise MatchError, fn -> Media.archive_project(other_scope, project) end
+    end
+
+    test "unarchive_project/2 restores an archived project" do
+      scope = user_scope_fixture()
+      project = project_fixture(scope)
+
+      {:ok, archived} = Media.archive_project(scope, project)
+      assert archived.is_archived == true
+
+      assert {:ok, restored} = Media.unarchive_project(scope, archived)
+      assert restored.is_archived == false
+      assert restored.archived_at == nil
+    end
+
+    test "unarchive_project/2 with invalid scope raises" do
+      scope = user_scope_fixture()
+      other_scope = user_scope_fixture()
+      project = project_fixture(scope)
+
+      {:ok, archived} = Media.archive_project(scope, project)
+
+      assert_raise MatchError, fn -> Media.unarchive_project(other_scope, archived) end
+    end
+
+    test "list_projects/2 excludes archived projects by default" do
+      scope = user_scope_fixture()
+      active = project_fixture(scope, %{name: "Active"})
+      to_archive = project_fixture(scope, %{name: "ToArchive"})
+
+      {:ok, _archived} = Media.archive_project(scope, to_archive)
+
+      projects = Media.list_projects(scope)
+      assert length(projects) == 1
+      assert hd(projects).id == active.id
+    end
+
+    test "list_projects/2 includes archived when option set" do
+      scope = user_scope_fixture()
+      _active = project_fixture(scope, %{name: "Active"})
+      to_archive = project_fixture(scope, %{name: "ToArchive"})
+
+      {:ok, _archived} = Media.archive_project(scope, to_archive)
+
+      projects = Media.list_projects(scope, include_archived: true)
+      assert length(projects) == 2
+    end
+
+    test "list_archived_projects/2 returns only archived projects" do
+      scope = user_scope_fixture()
+      _active = project_fixture(scope, %{name: "Active"})
+      to_archive = project_fixture(scope, %{name: "ToArchive"})
+
+      {:ok, archived} = Media.archive_project(scope, to_archive)
+
+      projects = Media.list_archived_projects(scope)
+      assert length(projects) == 1
+      assert hd(projects).id == archived.id
     end
 
     test "get_public_project_by_slug!/1 returns public portfolio project" do
