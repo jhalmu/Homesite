@@ -13,6 +13,8 @@ defmodule Homesite.Media.Project do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @valid_template_types ~w(photography coding writing books gears movies custom)
+
   schema "projects" do
     field :name, :string
     field :description, :string
@@ -20,6 +22,7 @@ defmodule Homesite.Media.Project do
     field :is_public, :boolean, default: false
     field :is_portfolio, :boolean, default: false
     field :display_order, :integer, default: 0
+    field :template_type, :string, default: "photography"
 
     # Project-specific metadata
     field :project_date, :date
@@ -49,6 +52,10 @@ defmodule Homesite.Media.Project do
       join_through: "project_media_items",
       on_replace: :delete
 
+    many_to_many :posts, Homesite.Content.Post,
+      join_through: "project_posts",
+      on_replace: :delete
+
     timestamps(type: :utc_datetime)
   end
 
@@ -58,10 +65,11 @@ defmodule Homesite.Media.Project do
   """
   def basic_changeset(project, attrs, user_scope) do
     project
-    |> cast(attrs, [:name, :slug, :description])
+    |> cast(attrs, [:name, :slug, :description, :template_type])
     |> validate_required([:name])
     |> validate_length(:name, min: 1, max: 200)
     |> validate_length(:description, max: 1000)
+    |> validate_inclusion(:template_type, @valid_template_types)
     |> maybe_generate_slug()
     |> validate_required([:slug])
     |> unique_constraint(:slug, name: :projects_user_id_slug_index)
@@ -79,6 +87,7 @@ defmodule Homesite.Media.Project do
       :name,
       :slug,
       :description,
+      :template_type,
       :is_public,
       :is_portfolio,
       :display_order,
@@ -92,6 +101,7 @@ defmodule Homesite.Media.Project do
     |> validate_length(:name, min: 1, max: 200)
     |> validate_length(:description, max: 1000)
     |> validate_length(:category, max: 100)
+    |> validate_inclusion(:template_type, @valid_template_types)
     |> validate_tags()
     |> maybe_generate_slug()
     |> validate_required([:slug])

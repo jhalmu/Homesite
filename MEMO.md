@@ -6,6 +6,57 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-08 16:00:00 - Project Visibility & Display Features
+
+### Session: Project Ordering, User Profile Projects, and Dedicated Projects Page
+
+#### Objectives Completed
+Implemented user-controlled project ordering with drag-and-drop, added projects section to user profiles, and created dedicated user projects showcase page.
+
+#### Features Implemented
+
+**1. Drag-and-Drop Project Ordering**
+- Added SortableJS for drag-and-drop reordering
+- Created `assets/js/hooks/sortable.js` with SortableProjects hook
+- Added `Media.reorder_projects/2` for atomic reordering via display_order
+- Updated `/projects` list with drag handles and phx-hook
+
+**2. Project Card Component**
+- Created reusable `project_card/1` in `media_components.ex`
+- Shows cover image or template icon placeholder
+- Optional template badge, category display
+- Links to `/portfolio/:slug`
+
+**3. Projects on User Profile**
+- Added `Media.list_public_projects_for_user/2` context function
+- Shows up to 6 public projects on `/users/@username`
+- "View all" link to dedicated projects page
+
+**4. Dedicated Projects Page**
+- Created `UserLive.Projects` at `/users/@username/projects`
+- Displays all user's public projects with template badges
+- Grid layout with project cards
+
+#### Files Created
+- `assets/js/hooks/sortable.js` - Drag-and-drop hook
+- `lib/homesite_web/live/user_live/projects.ex` - Projects showcase page
+
+#### Files Modified
+- `assets/js/app.js` - Registered SortableProjects hook
+- `lib/homesite/media.ex` - Added reorder_projects/2, list_public_projects_for_user/2
+- `lib/homesite_web/components/media_components.ex` - Added project_card/1
+- `lib/homesite_web/live/project_live/index.ex` - Added drag-and-drop UI
+- `lib/homesite_web/live/user_live/profile.ex` - Added projects section
+- `lib/homesite_web/router.ex` - Added /users/:user_identifier/projects route
+
+#### Test Results
+- **1132 tests, 0 failures**
+
+#### Plan Reference
+Plan file: `.claude/plans/tidy-toasting-sketch.md` - Project Visibility, Display & User Pages
+
+---
+
 ## 2025-12-08 15:15:00 - Bug Fix: LiveStream Enum.empty? & Test Quality
 
 ### Session: Critical Bug Fix and Test Policy Enforcement

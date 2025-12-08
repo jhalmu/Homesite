@@ -456,8 +456,10 @@ defmodule HomesiteWeb.CoreComponents do
   slot :actions
 
   def page_header(assigns) do
+    # Note: Using <div> instead of <header> to avoid duplicate banner landmarks.
+    # The page-level <header role="banner"> is already in the navbar.
     ~H"""
-    <header class={[
+    <div class={[
       @actions != [] && "gap-[var(--space-md)] flex items-center justify-between",
       "mb-[var(--space-md)]"
     ]}>
@@ -473,7 +475,7 @@ defmodule HomesiteWeb.CoreComponents do
         </p>
       </div>
       <div :if={@actions != []} class="flex-none">{render_slot(@actions)}</div>
-    </header>
+    </div>
     """
   end
 

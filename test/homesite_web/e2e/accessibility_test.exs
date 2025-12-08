@@ -23,12 +23,19 @@ defmodule HomesiteWeb.E2E.AccessibilityTest do
      PW_HEADLESS=false mix test --include playwright test/homesite_web/e2e/accessibility_test.exs
      ```
   """
-  use HomesiteWeb.ConnCase
+  # Note: Only use Playwright.Case, NOT ConnCase - they conflict on sandbox setup
   use PhoenixTest.Playwright.Case, async: false
+  use HomesiteWeb, :verified_routes
 
   import HomesiteWeb.PlaywrightAuthHelper
   import HomesiteWeb.PlaywrightJsHelper
   import Homesite.AccountsFixtures
+
+  setup do
+    # Playwright.Case handles sandbox, but we need test invitation for fixtures
+    Homesite.DataCase.ensure_test_invitation()
+    :ok
+  end
 
   # Helper to run axe-core accessibility audit
   defp audit_page(session) do
@@ -54,6 +61,17 @@ defmodule HomesiteWeb.E2E.AccessibilityTest do
   defp audit_page_dark_theme(session) do
     # Force dark theme for accessibility testing
     session = run_js(session, "document.documentElement.setAttribute('data-theme', 'dark')")
+
+    # Wait for CSS to recalculate after theme change
+    # Use requestAnimationFrame to ensure styles are applied
+    session =
+      run_js(session, """
+        await new Promise(resolve => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(resolve);
+          });
+        });
+      """)
 
     # Inject axe-core library
     session = run_js(session, A11yAudit.JS.axe_core())

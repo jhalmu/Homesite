@@ -26,6 +26,12 @@ defmodule HomesiteWeb.ProjectLive.Index do
   end
 
   @impl true
+  def handle_event("reorder_projects", %{"order" => ordered_ids}, socket) do
+    Media.reorder_projects(socket.assigns.current_scope, ordered_ids)
+    {:noreply, assign(socket, :projects, list_projects(socket))}
+  end
+
+  @impl true
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
@@ -51,19 +57,31 @@ defmodule HomesiteWeb.ProjectLive.Index do
             </.link>
           </div>
         <% else %>
-          <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div
+            id="project-list"
+            phx-hook="SortableProjects"
+            class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+          >
             <%= for project <- @projects do %>
-              <div class="card bg-base-200 shadow-xl transition-shadow hover:shadow-2xl">
+              <div
+                data-id={project.id}
+                class="card bg-base-200 shadow-xl transition-shadow hover:shadow-2xl"
+              >
                 <div class="card-body">
-                  <h2 class="card-title">
-                    {project.name}
-                    <%= if project.is_portfolio do %>
-                      <span class="badge badge-primary">{gettext("Portfolio")}</span>
-                    <% end %>
-                    <%= if project.is_public do %>
-                      <span class="badge badge-success">{gettext("Public")}</span>
-                    <% end %>
-                  </h2>
+                  <div class="flex items-start gap-2">
+                    <span class="drag-handle text-base-content/40 mt-1 cursor-grab hover:text-base-content active:cursor-grabbing">
+                      <.icon name="hero-bars-3" class="h-5 w-5" />
+                    </span>
+                    <h2 class="card-title flex-1">
+                      {project.name}
+                      <%= if project.is_portfolio do %>
+                        <span class="badge badge-primary">{gettext("Portfolio")}</span>
+                      <% end %>
+                      <%= if project.is_public do %>
+                        <span class="badge badge-success">{gettext("Public")}</span>
+                      <% end %>
+                    </h2>
+                  </div>
 
                   <%= if project.description do %>
                     <p class="text-base-content/70 line-clamp-2 text-sm">

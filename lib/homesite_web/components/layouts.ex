@@ -223,30 +223,30 @@ defmodule HomesiteWeb.Layouts do
           aria-label={gettext("Main navigation")}
         >
           <ul class="menu menu-horizontal gap-[var(--spacing-xs)]">
-            <li>
+            <li class="nav-item">
               <.link navigate={~p"/search"}>
                 <.icon name="hero-magnifying-glass" class="h-5 w-5" />
                 {gettext("Search")}
               </.link>
             </li>
             <%= if @current_scope do %>
-              <li>
+              <li class="nav-item">
                 <.link navigate={~p"/dashboard"}>{gettext("Dashboard")}</.link>
               </li>
-              <li>
+              <li class="nav-item">
                 <.link navigate={~p"/feed"}>{gettext("Feed")}</.link>
               </li>
-              <li>
+              <li class="nav-item">
                 <.link navigate={~p"/posts"}>{gettext("Posts")}</.link>
               </li>
-              <li>
+              <li class="nav-item">
                 <.link navigate={~p"/tags"}>{gettext("Tags")}</.link>
               </li>
-              <li>
+              <li class="nav-item">
                 <.link navigate={~p"/faqs"}>{gettext("FAQs")}</.link>
               </li>
               <%= if Homesite.Accounts.Scope.admin?(@current_scope) do %>
-                <li>
+                <li class="nav-item">
                   <.link navigate={~p"/admin"}>{gettext("Admin")}</.link>
                 </li>
               <% end %>
@@ -282,14 +282,14 @@ defmodule HomesiteWeb.Layouts do
                 </details>
               </li>
             <% else %>
-              <li>
+              <li class="nav-item">
                 <.link navigate={~p"/faqs"}>{gettext("FAQs")}</.link>
               </li>
               <%!-- Registration disabled for testing phase --%>
               <%!-- <li>
               <.link navigate={~p"/users/register"}>{gettext("Register")}</.link>
             </li> --%>
-              <li>
+              <li class="nav-item">
                 <.link navigate={~p"/users/log-in"}>
                   {gettext("Log in")}
                 </.link>

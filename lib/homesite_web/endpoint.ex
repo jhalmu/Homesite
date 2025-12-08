@@ -43,8 +43,9 @@ defmodule HomesiteWeb.Endpoint do
   end
 
   # Enable SQL sandbox for E2E/Playwright tests
+  # PhoenixTest.Playwright.Case automatically provides sandbox metadata via user-agent
   if Application.compile_env(:homesite, :sql_sandbox) do
-    plug Phoenix.Ecto.SQL.Sandbox
+    plug Phoenix.Ecto.SQL.Sandbox, repo: Homesite.Repo
   end
 
   plug Phoenix.LiveDashboard.RequestLogger,

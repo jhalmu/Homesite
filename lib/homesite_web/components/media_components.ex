@@ -4,6 +4,11 @@ defmodule HomesiteWeb.MediaComponents do
   """
   use Phoenix.Component
   use Gettext, backend: HomesiteWeb.Gettext
+  use Phoenix.VerifiedRoutes, endpoint: HomesiteWeb.Endpoint, router: HomesiteWeb.Router
+
+  import HomesiteWeb.CoreComponents, only: [icon: 1]
+
+  alias Homesite.Media.ProjectTemplate
 
   @doc """
   Renders a lightbox component for full-screen image viewing.
@@ -188,5 +193,75 @@ defmodule HomesiteWeb.MediaComponents do
       />
     </button>
     """
+  end
+
+  @doc """
+  Renders a project card for use in profile pages, project lists, and portfolio galleries.
+
+  ## Examples
+
+      <.project_card project={project} />
+      <.project_card project={project} show_template_badge={true} />
+  """
+  attr :project, :map, required: true, doc: "Project struct with name, slug, template_type, etc."
+
+  attr :show_template_badge, :boolean,
+    default: false,
+    doc: "Whether to show the template type badge"
+
+  attr :class, :string, default: "", doc: "Additional CSS classes"
+
+  def project_card(assigns) do
+    ~H"""
+    <.link
+      navigate={~p"/portfolio/#{@project.slug}"}
+      class={["card bg-base-100 shadow transition-shadow hover:shadow-lg", @class]}
+    >
+      <figure class="bg-base-200 aspect-video">
+        <%= if @project.cover_media_item do %>
+          <img
+            src={"data:#{@project.cover_media_item.content_type};base64,#{Base.encode64(@project.cover_media_item.medium_data)}"}
+            alt={@project.name}
+            class="h-full w-full object-cover"
+          />
+        <% else %>
+          <div class="flex h-full w-full items-center justify-center">
+            <.icon
+              name={template_icon(@project.template_type)}
+              class="text-base-content/30 h-12 w-12"
+            />
+          </div>
+        <% end %>
+      </figure>
+      <div class="card-body p-4">
+        <h3 class="card-title text-lg">{@project.name}</h3>
+        <%= if @show_template_badge do %>
+          <span class="badge badge-ghost badge-sm">{template_name(@project.template_type)}</span>
+        <% end %>
+        <%= if @project.category do %>
+          <p class="text-base-content/60 text-sm">{@project.category}</p>
+        <% end %>
+      </div>
+    </.link>
+    """
+  end
+
+  # Helper functions for template icons and names
+  defp template_icon(nil), do: "hero-folder"
+  defp template_icon("photography"), do: "hero-camera"
+  defp template_icon("coding"), do: "hero-code-bracket"
+  defp template_icon("writing"), do: "hero-document-text"
+  defp template_icon("books"), do: "hero-book-open"
+  defp template_icon("gears"), do: "hero-wrench-screwdriver"
+  defp template_icon("movies"), do: "hero-film"
+  defp template_icon(_), do: "hero-squares-plus"
+
+  defp template_name(nil), do: gettext("Project")
+
+  defp template_name(type) when is_binary(type) do
+    case ProjectTemplate.get(type) do
+      nil -> type
+      template -> template.name
+    end
   end
 end

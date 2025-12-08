@@ -17,7 +17,7 @@ defmodule HomesiteWeb.PostLive.Show do
             {@post.title}
             <:subtitle>Published post</:subtitle>
             <:actions>
-              <.button navigate={~p"/"}>
+              <.button navigate={~p"/"} aria-label={gettext("Back to home")}>
                 <.icon name="hero-arrow-left" />
               </.button>
               <%= if @can_edit do %>

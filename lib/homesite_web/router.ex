@@ -260,6 +260,7 @@ defmodule HomesiteWeb.Router do
         {HomesiteWeb.SetLocaleHook, :default}
       ] do
       live "/users/:user_identifier", UserLive.Profile, :show
+      live "/users/:user_identifier/projects", UserLive.Projects, :index
       live "/posts/:id", PostLive.Show, :show
     end
 

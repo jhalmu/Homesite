@@ -25,6 +25,10 @@ defmodule Homesite.Content.Post do
       join_through: "post_media_items",
       on_replace: :delete
 
+    many_to_many :projects, Homesite.Media.Project,
+      join_through: "project_posts",
+      on_replace: :delete
+
     timestamps(type: :utc_datetime)
   end
 

@@ -1141,3 +1141,42 @@ dialog button:focus-visible {
         outline-color: currentColor;
     }
 }
+
+/* ============================================================================
+   ACCESSIBILITY: COLOR CONTRAST FIXES
+   WCAG 2.1 AA requires 4.5:1 contrast ratio for normal text
+   ============================================================================ */
+
+/* DaisyUI stat component - improve contrast for stat-title and stat-desc */
+.stat-title,
+.stat-desc {
+    color: #595959; /* Darker than default #6e6e6f for 4.5:1 ratio on light backgrounds */
+}
+
+[data-theme="dark"] .stat-title,
+[data-theme="dark"] .stat-desc {
+    color: #a8a8a8; /* Lighter for dark mode contrast */
+}
+
+/* Tab buttons - improve contrast for inactive tabs */
+.tab:not(.tab-active) {
+    color: #595959; /* Darker than default #8b8b8d for 4.5:1 ratio */
+}
+
+[data-theme="dark"] .tab:not(.tab-active) {
+    color: #a8a8a8;
+}
+
+/* Navbar menu links - improve contrast in dark mode */
+/* Using very specific selector to override DaisyUI's menu styles */
+/* Background #1d232a requires ~#9ca3af or lighter for 4.5:1 ratio */
+html[data-theme="dark"] .nav-item > a,
+[data-theme="dark"] .nav-item > a {
+    color: #ffffff !important; /* White: Maximum contrast on dark */
+    opacity: 1 !important; /* Ensure no opacity reduction */
+}
+
+html[data-theme="dark"] .nav-item > a:hover,
+[data-theme="dark"] .nav-item > a:hover {
+    color: #ffffff !important;
+}

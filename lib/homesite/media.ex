@@ -148,6 +148,29 @@ defmodule Homesite.Media do
     end
   end
 
+  @doc """
+  Reorders projects based on the provided list of IDs.
+  Updates display_order for each project atomically.
+  """
+  def reorder_projects(%Scope{} = scope, ordered_ids) when is_list(ordered_ids) do
+    Repo.transaction(fn ->
+      ordered_ids
+      |> Enum.with_index()
+      |> Enum.each(&update_project_order(scope, &1))
+    end)
+
+    :ok
+  end
+
+  defp update_project_order(scope, {id_str, index}) do
+    id = if is_binary(id_str), do: String.to_integer(id_str), else: id_str
+    project = get_project!(scope, id)
+
+    project
+    |> Ecto.Changeset.change(display_order: index)
+    |> Repo.update!()
+  end
+
   ## Media Items
 
   @doc """
@@ -346,6 +369,27 @@ defmodule Homesite.Media do
       limit: ^limit,
       offset: ^offset,
       preload: [:user]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns public projects for a specific user.
+  Used for user profile pages and dedicated project showcase pages.
+
+  ## Options
+    * `:limit` - Maximum number of projects to return (default: 20)
+    * `:preload` - List of associations to preload (default: [:cover_media_item])
+  """
+  def list_public_projects_for_user(user_id, opts \\ []) do
+    limit = opts[:limit] || 20
+    preload = opts[:preload] || [:cover_media_item]
+
+    from(p in Project,
+      where: p.user_id == ^user_id and p.is_public == true,
+      order_by: [asc: p.display_order, desc: p.inserted_at],
+      limit: ^limit,
+      preload: ^preload
     )
     |> Repo.all()
   end
@@ -731,6 +775,78 @@ defmodule Homesite.Media do
     do: "#{Float.round(bytes / (1024 * 1024), 1)} MB"
 
   defp format_bytes(bytes), do: "#{Float.round(bytes / (1024 * 1024 * 1024), 2)} GB"
+
+  ## Project-Post Linking
+
+  alias Homesite.Media.ProjectPost
+  alias Homesite.Content
+
+  @doc """
+  Links a blog post to a project.
+  Both project and post must belong to the same user.
+  """
+  def link_post_to_project(%Scope{} = scope, project_id, post_id) do
+    # Verify ownership of project
+    project = get_project!(scope, project_id)
+
+    # Verify ownership of post
+    _post = Content.get_post!(scope, post_id)
+
+    %ProjectPost{}
+    |> ProjectPost.changeset(%{project_id: project.id, post_id: post_id})
+    |> Repo.insert()
+  end
+
+  @doc """
+  Unlinks a blog post from a project.
+  """
+  def unlink_post_from_project(%Scope{} = scope, project_id, post_id) do
+    # Verify ownership of project
+    _project = get_project!(scope, project_id)
+
+    Repo.delete_all(
+      from pp in ProjectPost,
+        where: pp.project_id == ^project_id and pp.post_id == ^post_id
+    )
+
+    :ok
+  end
+
+  @doc """
+  Returns the list of posts linked to a project.
+  """
+  def list_project_posts(%Scope{} = scope, project_id) do
+    # Verify ownership of project
+    _project = get_project!(scope, project_id)
+
+    from(p in Homesite.Content.Post,
+      join: pp in ProjectPost,
+      on: pp.post_id == p.id,
+      where: pp.project_id == ^project_id and p.user_id == ^scope.user.id,
+      order_by: [asc: pp.display_order, desc: p.inserted_at]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns posts that can be linked to a project (not already linked).
+  """
+  def list_available_posts_for_project(%Scope{} = scope, project_id) do
+    # Get already linked post IDs
+    linked_post_ids =
+      from(pp in ProjectPost,
+        where: pp.project_id == ^project_id,
+        select: pp.post_id
+      )
+      |> Repo.all()
+
+    # Get all user posts that aren't linked
+    from(p in Homesite.Content.Post,
+      where: p.user_id == ^scope.user.id and p.id not in ^linked_post_ids,
+      order_by: [desc: p.published_at, desc: p.inserted_at]
+    )
+    |> Repo.all()
+  end
 
   ## Admin Statistics
 

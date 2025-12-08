@@ -9,6 +9,9 @@ defmodule HomesiteWeb.UserLive.Profile do
   alias Homesite.Accounts
   alias Homesite.Content
   alias Homesite.ExternalFeeds
+  alias Homesite.Media
+
+  import HomesiteWeb.MediaComponents, only: [project_card: 1]
 
   @posts_per_page 10
 
@@ -102,6 +105,34 @@ defmodule HomesiteWeb.UserLive.Profile do
                 </div>
               </div>
             </.link>
+          </div>
+        </div>
+        
+    <!-- Projects Section -->
+        <div :if={@projects != []} class="my-[var(--space-lg)]">
+          <div class="mb-[var(--space-md)] flex items-center justify-between">
+            <h2 class="text-[var(--font-size-fluid-lg)] gap-[var(--space-xs)] flex items-center font-bold">
+              <.icon name="hero-folder" class="h-5 w-5" /> Projects
+            </h2>
+            <%= if @user.username do %>
+              <.link
+                navigate={~p"/users/@#{@user.username}/projects"}
+                class="link link-primary text-[var(--text-sm)]"
+              >
+                {gettext("View all")} →
+              </.link>
+            <% else %>
+              <.link
+                navigate={~p"/users/#{@user.id}/projects"}
+                class="link link-primary text-[var(--text-sm)]"
+              >
+                {gettext("View all")} →
+              </.link>
+            <% end %>
+          </div>
+
+          <div class="gap-[var(--space-sm)] grid grid-cols-2 md:grid-cols-3">
+            <.project_card :for={project <- @projects} project={project} />
           </div>
         </div>
         
@@ -261,6 +292,9 @@ defmodule HomesiteWeb.UserLive.Profile do
           |> Enum.sort_by(& &1.display_order)
           |> Enum.take(12)
 
+        # Load user's public projects (max 6 for profile)
+        projects = Media.list_public_projects_for_user(user.id, limit: 6)
+
         # Calculate profile stats (using all posts)
         stats = %{
           posts_count: length(all_posts),
@@ -276,6 +310,7 @@ defmodule HomesiteWeb.UserLive.Profile do
          |> assign(:posts, posts)
          |> assign(:recent_posts, recent_posts)
          |> assign(:feed_sources, feed_sources)
+         |> assign(:projects, projects)
          |> assign(:stats, stats)
          |> assign(:has_more_posts, length(posts) == @posts_per_page)}
     end

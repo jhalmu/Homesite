@@ -45,6 +45,7 @@ defmodule HomesiteWeb.UserLive.Settings do
                 upload={@uploads.avatar}
                 class="file-input file-input-bordered"
                 style="min-width: 20rem;"
+                aria-label={gettext("Choose avatar image file")}
               />
               <p class="mb-[var(--space-md)] text-[var(--text-sm)] text-gray-600 dark:text-gray-400">
                 {gettext(

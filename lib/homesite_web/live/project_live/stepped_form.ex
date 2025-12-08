@@ -3,6 +3,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
 
   alias Homesite.Media
   alias Homesite.Media.Project
+  alias Homesite.Media.ProjectTemplate
 
   @steps [:basics, :metadata, :team, :settings]
 
@@ -30,6 +31,8 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
      |> assign(:step_index, 0)
      |> assign(:collaborators, [])
      |> assign(:affiliation_links, [])
+     |> assign(:linked_posts, [])
+     |> assign(:available_posts, [])
      |> assign(:completion_percentage, project.completion_percentage || 0)
      |> assign(:editing_collaborator, nil)
      |> assign(:editing_link, nil)
@@ -52,20 +55,27 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
   defp apply_action(socket, :edit, %{"id" => id}) do
     project = Media.get_project!(socket.assigns.current_scope, id)
 
-    # Load collaborators and affiliation links
+    # Load collaborators, affiliation links, and linked posts
     collaborators = Media.list_collaborators(socket.assigns.current_scope, id)
     affiliation_links = Media.list_affiliation_links(socket.assigns.current_scope, id)
+    linked_posts = Media.list_project_posts(socket.assigns.current_scope, id)
+    available_posts = Media.list_available_posts_for_project(socket.assigns.current_scope, id)
 
     socket
     |> assign(:project, project)
     |> assign(:page_title, gettext("Edit Project"))
     |> assign(:collaborators, collaborators)
     |> assign(:affiliation_links, affiliation_links)
+    |> assign(:linked_posts, linked_posts)
+    |> assign(:available_posts, available_posts)
     |> assign(:completion_percentage, project.completion_percentage || 0)
   end
 
   @impl true
   def handle_event("validate", %{"project" => project_params}, socket) do
+    # Convert comma-separated tags string to list
+    project_params = convert_tags_param(project_params)
+
     changeset =
       socket.assigns.project
       |> Project.changeset(project_params, socket.assigns.current_scope)
@@ -73,6 +83,25 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
 
     {:noreply, assign_form(socket, changeset)}
   end
+
+  # Convert comma-separated tags string to list for Ecto
+  defp convert_tags_param(%{"tags" => tags} = params) when is_binary(tags) do
+    Map.put(params, "tags", string_to_tags(tags))
+  end
+
+  defp convert_tags_param(params), do: params
+
+  defp string_to_tags(string) when is_binary(string) do
+    string
+    |> String.split(",")
+    |> Enum.map(&String.trim/1)
+    |> Enum.reject(&(&1 == ""))
+  end
+
+  defp string_to_tags(_), do: []
+
+  defp tags_to_string(tags) when is_list(tags), do: Enum.join(tags, ", ")
+  defp tags_to_string(_), do: ""
 
   @impl true
   def handle_event("next_step", _params, socket) do
@@ -119,6 +148,8 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
 
   @impl true
   def handle_event("save", %{"project" => project_params}, socket) do
+    # Convert comma-separated tags string to list
+    project_params = convert_tags_param(project_params)
     save_project(socket, socket.assigns.live_action, project_params)
   end
 
@@ -216,6 +247,68 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
       {:error, _} ->
         {:noreply, put_flash(socket, :error, gettext("Failed to remove link"))}
     end
+  end
+
+  # Blog post linking events
+  @impl true
+  def handle_event("link_post", %{"post_id" => ""}, socket) do
+    {:noreply, put_flash(socket, :error, gettext("Please select a blog post"))}
+  end
+
+  @impl true
+  def handle_event("link_post", %{"post_id" => post_id}, socket) do
+    post_id = String.to_integer(post_id)
+
+    case Media.link_post_to_project(
+           socket.assigns.current_scope,
+           socket.assigns.project.id,
+           post_id
+         ) do
+      {:ok, _} ->
+        linked_posts =
+          Media.list_project_posts(socket.assigns.current_scope, socket.assigns.project.id)
+
+        available_posts =
+          Media.list_available_posts_for_project(
+            socket.assigns.current_scope,
+            socket.assigns.project.id
+          )
+
+        {:noreply,
+         socket
+         |> assign(:linked_posts, linked_posts)
+         |> assign(:available_posts, available_posts)
+         |> put_flash(:info, gettext("Blog post linked"))}
+
+      {:error, _changeset} ->
+        {:noreply, put_flash(socket, :error, gettext("Failed to link blog post"))}
+    end
+  end
+
+  @impl true
+  def handle_event("unlink_post", %{"id" => id}, socket) do
+    post_id = String.to_integer(id)
+
+    Media.unlink_post_from_project(
+      socket.assigns.current_scope,
+      socket.assigns.project.id,
+      post_id
+    )
+
+    linked_posts =
+      Media.list_project_posts(socket.assigns.current_scope, socket.assigns.project.id)
+
+    available_posts =
+      Media.list_available_posts_for_project(
+        socket.assigns.current_scope,
+        socket.assigns.project.id
+      )
+
+    {:noreply,
+     socket
+     |> assign(:linked_posts, linked_posts)
+     |> assign(:available_posts, available_posts)
+     |> put_flash(:info, gettext("Blog post unlinked"))}
   end
 
   @impl true
@@ -351,8 +444,11 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
               <.render_metadata_step form={@form} />
             <% :team -> %>
               <.render_team_step
+                project={@project}
                 collaborators={@collaborators}
                 affiliation_links={@affiliation_links}
+                linked_posts={@linked_posts}
+                available_posts={@available_posts}
               />
             <% :settings -> %>
               <.render_settings_step form={@form} />
@@ -393,12 +489,46 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
   end
 
   defp render_basics_step(assigns) do
+    templates = ProjectTemplate.all()
+    current_template = assigns.form[:template_type].value || "photography"
+    assigns = assign(assigns, :templates, templates)
+    assigns = assign(assigns, :current_template, current_template)
+
     ~H"""
     <div class="space-y-6">
       <h2 class="text-2xl font-semibold">{gettext("Step 1: Project Basics")}</h2>
       <p class="text-base-content/70">
         {gettext("Start with the essential information about your project.")}
       </p>
+
+      <%!-- Template Selector --%>
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text font-medium">{gettext("Project Type")}</span>
+        </label>
+        <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
+          <%= for template <- @templates do %>
+            <label class={[
+              "card cursor-pointer border-2 p-4 text-center transition-all hover:shadow-md",
+              @current_template == template.id && "border-primary bg-primary/10",
+              @current_template != template.id && "border-base-300 bg-base-100"
+            ]}>
+              <input
+                type="radio"
+                name={@form[:template_type].name}
+                value={template.id}
+                checked={@current_template == template.id}
+                class="hidden"
+              />
+              <.icon name={template.icon} class="mx-auto mb-2 h-8 w-8" />
+              <span class="text-sm font-medium">{template.name}</span>
+            </label>
+          <% end %>
+        </div>
+        <p class="text-base-content/60 mt-2 text-sm">
+          {gettext("Choose a project type to get customized labels and suggestions.")}
+        </p>
+      </div>
 
       <.input field={@form[:name]} type="text" label={gettext("Project Name")} required />
 
@@ -423,6 +553,19 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
   end
 
   defp render_metadata_step(assigns) do
+    # Get template-specific configuration
+    template_type = assigns.form[:template_type].value || "photography"
+    template = ProjectTemplate.get(template_type) || ProjectTemplate.get("photography")
+
+    # Convert tags array to comma-separated string for display
+    tags_value = tags_to_string(assigns.form[:tags].value)
+
+    assigns =
+      assigns
+      |> assign(:tags_display, tags_value)
+      |> assign(:template, template)
+      |> assign(:suggested_tags, template.suggested_tags)
+
     ~H"""
     <div class="space-y-6">
       <h2 class="text-2xl font-semibold">{gettext("Step 2: Project Metadata")}</h2>
@@ -430,11 +573,56 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
         {gettext("Add context to help viewers understand your project. All fields are optional.")}
       </p>
 
-      <.input field={@form[:category]} type="text" label={gettext("Category")} />
+      <%!-- Template indicator --%>
+      <div class="bg-base-200 flex items-center gap-2 rounded-lg p-3">
+        <.icon name={@template.icon} class="text-primary h-5 w-5" />
+        <span class="text-sm">{gettext("Project type:")} <strong>{@template.name}</strong></span>
+      </div>
 
-      <.input field={@form[:tags]} type="text" label={gettext("Tags (comma-separated)")} />
+      <.input
+        field={@form[:category]}
+        type="text"
+        label={@template.fields.category.label}
+        placeholder={@template.fields.category.placeholder}
+      />
 
-      <.input field={@form[:project_date]} type="date" label={gettext("Project Date")} />
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text">{@template.fields.tags.label} {gettext("(comma-separated)")}</span>
+        </label>
+        <input
+          type="text"
+          name={@form[:tags].name}
+          value={@tags_display}
+          placeholder={@template.fields.tags.placeholder}
+          class="input input-bordered w-full"
+        />
+        <%= if @form[:tags].errors != [] do %>
+          <p class="text-error mt-1 text-sm">
+            <%= for {msg, opts} <- @form[:tags].errors do %>
+              {translate_error({msg, opts})}
+            <% end %>
+          </p>
+        <% end %>
+
+        <%!-- Suggested tags --%>
+        <%= if length(@suggested_tags) > 0 do %>
+          <div class="mt-2">
+            <span class="text-base-content/60 text-sm">{gettext("Suggestions:")}</span>
+            <div class="mt-1 flex flex-wrap gap-1">
+              <%= for tag <- @suggested_tags do %>
+                <span class="badge badge-outline badge-sm">{tag}</span>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <.input
+        field={@form[:project_date]}
+        type="date"
+        label={@template.fields.project_date.label}
+      />
 
       <div class="alert alert-info">
         <.icon name="hero-information-circle" class="h-5 w-5" />
@@ -575,13 +763,85 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
         </form>
       </div>
 
+      <%!-- Related Blog Posts Section --%>
+      <div class="border-base-300 rounded-lg border p-4">
+        <h3 class="mb-4 text-lg font-semibold">
+          <.icon name="hero-document-text" class="inline h-5 w-5" />
+          {gettext("Related Blog Posts")}
+        </h3>
+
+        <%= if is_nil(@project.id) do %>
+          <p class="text-base-content/60 text-sm">
+            {gettext("Save the project first to link blog posts.")}
+          </p>
+        <% else %>
+          <%= if Enum.empty?(@linked_posts) do %>
+            <p class="text-base-content/60 mb-4 text-sm">
+              {gettext("No blog posts linked. Connect your project to related articles.")}
+            </p>
+          <% else %>
+            <div class="mb-4 space-y-2">
+              <%= for post <- @linked_posts do %>
+                <div class="bg-base-200 flex items-center justify-between rounded-lg p-3">
+                  <div class="flex-1">
+                    <.link navigate={~p"/posts/#{post.id}"} class="link link-hover font-medium">
+                      {post.title}
+                    </.link>
+                    <%= if post.published_at do %>
+                      <span class="text-base-content/60 ml-2 text-sm">
+                        {Calendar.strftime(post.published_at, "%Y-%m-%d")}
+                      </span>
+                    <% end %>
+                  </div>
+                  <button
+                    type="button"
+                    phx-click="unlink_post"
+                    phx-value-id={post.id}
+                    class="btn btn-ghost btn-sm text-error"
+                    data-confirm={gettext("Remove this blog post from the project?")}
+                  >
+                    <.icon name="hero-x-mark" class="h-4 w-4" />
+                  </button>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+
+          <%!-- Post Selector --%>
+          <%= if not Enum.empty?(@available_posts) do %>
+            <form phx-submit="link_post" class="flex gap-2">
+              <select name="post_id" class="select select-bordered flex-1">
+                <option value="">{gettext("Select a blog post to link...")}</option>
+                <%= for post <- @available_posts do %>
+                  <option value={post.id}>{post.title}</option>
+                <% end %>
+              </select>
+              <button type="submit" class="btn btn-primary btn-sm">
+                <.icon name="hero-plus" class="h-4 w-4" />
+                {gettext("Link")}
+              </button>
+            </form>
+          <% else %>
+            <%= if Enum.empty?(@linked_posts) do %>
+              <p class="text-base-content/60 text-sm">
+                {gettext("No blog posts available to link. Create some blog posts first.")}
+              </p>
+            <% else %>
+              <p class="text-base-content/60 text-sm">
+                {gettext("All your blog posts are already linked to this project.")}
+              </p>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+
       <%!-- Info Alert for New Projects --%>
       <%= if is_nil(@project.id) do %>
         <div class="alert alert-info">
           <.icon name="hero-information-circle" class="h-5 w-5" />
           <span>
             {gettext(
-              "Save your project first to add collaborators and links. You can come back to this step after creating the project."
+              "Save your project first to add collaborators, links, and blog posts. You can come back to this step after creating the project."
             )}
           </span>
         </div>

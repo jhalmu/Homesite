@@ -38,14 +38,16 @@ defmodule HomesiteWeb.E2E.TagWorkflowsTest do
 
   This would enable testing all the authenticated flows commented out below.
   """
-  use HomesiteWeb.ConnCase
+  # Note: Only use Playwright.Case, NOT ConnCase - they conflict on sandbox setup
   use PhoenixTest.Playwright.Case, async: false
+  use HomesiteWeb, :verified_routes
 
   import Homesite.AccountsFixtures
-  import Homesite.ContentFixtures
   import HomesiteWeb.PlaywrightAuthHelper
 
   setup do
+    # Playwright.Case handles sandbox, but we need test invitation for fixtures
+    Homesite.DataCase.ensure_test_invitation()
     # Create test data for public viewing
     user = user_fixture()
     scope = %Homesite.Accounts.Scope{user: user}
@@ -62,6 +64,7 @@ defmodule HomesiteWeb.E2E.TagWorkflowsTest do
         "title" => "Getting Started with Elixir",
         "body" => "Elixir is a functional programming language...",
         "is_public" => "true",
+        "published_at" => DateTime.utc_now(:second),
         "tag_ids" => [to_string(tag.id)]
       })
 
@@ -69,20 +72,18 @@ defmodule HomesiteWeb.E2E.TagWorkflowsTest do
   end
 
   @tag :playwright
-  test "public tag page renders correctly with slug-based URL", %{conn: conn, tag: tag} do
+  test "authenticated user can view tag page", %{conn: conn, tag: tag, user: user} do
     conn
-    |> visit(~p"/tags/#{tag.slug}")
+    |> playwright_log_in_user(user)
+    |> visit(~p"/tags/#{tag}")
     |> assert_has("body .phx-connected")
     |> assert_has("h1", text: "Elixir")
-
-    # Verify slug-based URL works (not ID-based)
-    # This test verifies the Phoenix.Param implementation
   end
 
   @tag :playwright
-  test "public post shows tags", %{conn: conn, post: post, tag: tag} do
+  test "public post shows tags", %{conn: conn, post: post} do
     conn
-    |> visit(~p"/blog/#{post.slug}")
+    |> visit(~p"/posts/#{post}")
     |> assert_has("body .phx-connected")
     |> assert_has("h1", text: "Getting Started with Elixir")
     # Should show the tag badge

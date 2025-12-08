@@ -25,6 +25,7 @@ import {LiveSocket} from "phoenix_live_view"
 import {hooks as colocatedHooks} from "phoenix-colocated/homesite"
 import topbar from "../vendor/topbar"
 import WebShareApi from "./hooks/webShareApi"
+import { SortableProjects } from "./hooks/sortable"
 
 // Custom hooks for date formatting
 const Hooks = {
@@ -156,6 +157,7 @@ const Hooks = {
     }
   },
   WebShareApi,
+  SortableProjects,
   CopyButton: {
     mounted() {
       this.el.addEventListener('click', () => {
