@@ -183,7 +183,7 @@ defmodule Homesite.MediaTest do
 
       # Filter for landscape should return empty
       landscape = Media.list_media_items(scope, aspect_category: "landscape")
-      assert length(landscape) == 0
+      assert landscape == []
     end
 
     test "get_media_item!/2 returns the media item with given id" do
@@ -340,7 +340,7 @@ defmodule Homesite.MediaTest do
 
       # Verify it was removed
       project = Media.get_project!(scope, project.id) |> Repo.preload(:media_items)
-      assert length(project.media_items) == 0
+      assert project.media_items == []
     end
   end
 
@@ -373,6 +373,118 @@ defmodule Homesite.MediaTest do
       assert usage.project_count == 0
       assert usage.media_item.id == media.id
       assert usage.projects == []
+    end
+  end
+
+  describe "collections" do
+    import Homesite.AccountsFixtures, only: [user_scope_fixture: 0]
+    import Homesite.MediaFixtures
+
+    test "list_collections/2 returns all collections for a project" do
+      scope = user_scope_fixture()
+      project = project_fixture(scope)
+      collection1 = collection_fixture(scope, project.id, %{name: "Collection A"})
+      collection2 = collection_fixture(scope, project.id, %{name: "Collection B"})
+
+      collections = Media.list_collections(scope, project.id)
+      assert length(collections) == 2
+      collection_ids = Enum.map(collections, & &1.id)
+      assert collection1.id in collection_ids
+      assert collection2.id in collection_ids
+    end
+
+    test "create_collection/2 creates a collection" do
+      scope = user_scope_fixture()
+      project = project_fixture(scope)
+
+      attrs = %{name: "Behind the Scenes", project_id: project.id}
+      assert {:ok, collection} = Media.create_collection(scope, attrs)
+      assert collection.name == "Behind the Scenes"
+      assert collection.project_id == project.id
+      assert collection.user_id == scope.user.id
+      assert String.starts_with?(collection.slug, "behind-the-scenes-")
+    end
+
+    test "update_collection/3 updates a collection" do
+      scope = user_scope_fixture()
+      project = project_fixture(scope)
+      collection = collection_fixture(scope, project.id)
+
+      attrs = %{name: "Updated Name", description: "New description"}
+      assert {:ok, updated} = Media.update_collection(scope, collection, attrs)
+      assert updated.name == "Updated Name"
+      assert updated.description == "New description"
+    end
+
+    test "update_collection/3 with wrong scope raises" do
+      scope = user_scope_fixture()
+      other_scope = user_scope_fixture()
+      project = project_fixture(scope)
+      collection = collection_fixture(scope, project.id)
+
+      assert_raise MatchError, fn ->
+        Media.update_collection(other_scope, collection, %{name: "Hacked"})
+      end
+    end
+
+    test "delete_collection/2 deletes a collection" do
+      scope = user_scope_fixture()
+      project = project_fixture(scope)
+      collection = collection_fixture(scope, project.id)
+
+      assert {:ok, _} = Media.delete_collection(scope, collection)
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Media.get_collection!(scope, collection.id)
+      end
+    end
+
+    test "delete_collection/2 with wrong scope raises" do
+      scope = user_scope_fixture()
+      other_scope = user_scope_fixture()
+      project = project_fixture(scope)
+      collection = collection_fixture(scope, project.id)
+
+      assert_raise MatchError, fn ->
+        Media.delete_collection(other_scope, collection)
+      end
+    end
+
+    test "assign_media_to_collection/4 assigns media to a collection" do
+      scope = user_scope_fixture()
+      project = project_fixture(scope)
+      media = media_item_fixture(scope)
+      collection = collection_fixture(scope, project.id)
+
+      # First add media to project
+      {:ok, _} = Media.add_media_to_project(scope, project.id, media.id, 1)
+
+      # Then assign to collection
+      assert {:ok, _pmi} =
+               Media.assign_media_to_collection(scope, project.id, media.id, collection.id)
+
+      # Verify media is in collection
+      collection_media = Media.list_collection_media_items(scope, collection.id)
+      assert length(collection_media) == 1
+      assert hd(collection_media).id == media.id
+    end
+
+    test "unassign_media_from_collection/3 removes media from collection" do
+      scope = user_scope_fixture()
+      project = project_fixture(scope)
+      media = media_item_fixture(scope)
+      collection = collection_fixture(scope, project.id)
+
+      # Add media to project and collection
+      {:ok, _} = Media.add_media_to_project(scope, project.id, media.id, 1)
+      {:ok, _} = Media.assign_media_to_collection(scope, project.id, media.id, collection.id)
+
+      # Unassign from collection
+      assert {:ok, _} = Media.unassign_media_from_collection(scope, project.id, media.id)
+
+      # Verify media is no longer in collection
+      collection_media = Media.list_collection_media_items(scope, collection.id)
+      assert Enum.empty?(collection_media)
     end
   end
 

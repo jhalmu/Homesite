@@ -19,6 +19,7 @@ defmodule HomesiteWeb.MediaLive.Index do
      |> assign(:gallery_filter, nil)
      |> assign(:page, 1)
      |> assign(:has_more, length(media_items) == @media_per_page)
+     |> assign(:media_empty, media_items == [])
      |> assign(:uploaded_files, [])
      |> allow_upload(:images,
        accept: ~w(.jpg .jpeg .png .gif .webp),
@@ -31,7 +32,10 @@ defmodule HomesiteWeb.MediaLive.Index do
 
   @impl true
   def handle_info({:created, media_item}, socket) do
-    {:noreply, stream_insert(socket, :media_items, media_item, at: 0)}
+    {:noreply,
+     socket
+     |> assign(:media_empty, false)
+     |> stream_insert(:media_items, media_item, at: 0)}
   end
 
   def handle_info({:updated, media_item}, socket) do
@@ -65,6 +69,7 @@ defmodule HomesiteWeb.MediaLive.Index do
      |> assign(:search_query, search_query)
      |> assign(:page, 1)
      |> assign(:has_more, length(media_items) == @media_per_page)
+     |> assign(:media_empty, media_items == [])
      |> stream(:media_items, media_items, reset: true)}
   end
 
@@ -87,6 +92,7 @@ defmodule HomesiteWeb.MediaLive.Index do
      |> assign(:search_query, "")
      |> assign(:page, 1)
      |> assign(:has_more, length(media_items) == @media_per_page)
+     |> assign(:media_empty, media_items == [])
      |> stream(:media_items, media_items, reset: true)}
   end
 
@@ -113,6 +119,7 @@ defmodule HomesiteWeb.MediaLive.Index do
      |> assign(:search_query, "")
      |> assign(:page, 1)
      |> assign(:has_more, length(media_items) == @media_per_page)
+     |> assign(:media_empty, media_items == [])
      |> stream(:media_items, media_items, reset: true)}
   end
 
@@ -375,7 +382,7 @@ defmodule HomesiteWeb.MediaLive.Index do
         
     <!-- Media Grid -->
         <div class="mt-[var(--spacing-lg)]">
-          <%= if Enum.empty?(@streams.media_items) do %>
+          <%= if @media_empty do %>
             <div class="alert">
               <.icon name="hero-information-circle" class="h-6 w-6" />
               <span>

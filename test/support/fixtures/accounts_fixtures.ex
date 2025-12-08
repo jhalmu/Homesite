@@ -28,12 +28,53 @@ defmodule Homesite.AccountsFixtures do
   end
 
   def unconfirmed_user_fixture(attrs \\ %{}) do
+    # Ensure test invitation exists before registering
+    ensure_test_invitation_exists()
+
     {:ok, user} =
       attrs
       |> valid_user_attributes()
       |> Accounts.register_user()
 
     user
+  end
+
+  # Inline invitation creation for fixtures that might run before ConnCase setup
+  defp ensure_test_invitation_exists do
+    alias Homesite.Accounts.Invitation
+
+    case Homesite.Repo.get_by(Invitation, code: "TEST-INVITE") do
+      nil ->
+        # Create test admin first if needed
+        test_admin =
+          case Homesite.Repo.get_by(Homesite.Accounts.User, email: "test-admin@example.com") do
+            nil ->
+              {:ok, admin} =
+                Accounts.register_admin(%{
+                  email: "test-admin@example.com",
+                  password: "test-password-123",
+                  role: "admin",
+                  admin_flowers: 5
+                })
+
+              admin
+
+            existing ->
+              existing
+          end
+
+        Homesite.Repo.insert!(%Invitation{
+          code: "TEST-INVITE",
+          created_by_user_id: test_admin.id,
+          max_uses: nil,
+          current_uses: 0,
+          expires_at: nil,
+          default_role: "user"
+        })
+
+      _existing ->
+        :ok
+    end
   end
 
   @doc """

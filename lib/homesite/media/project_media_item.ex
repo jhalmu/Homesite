@@ -10,6 +10,7 @@ defmodule Homesite.Media.ProjectMediaItem do
 
     belongs_to :project, Homesite.Media.Project
     belongs_to :media_item, Homesite.Media.MediaItem
+    belongs_to :collection, Homesite.Media.Collection
 
     timestamps(type: :utc_datetime)
   end
@@ -17,11 +18,12 @@ defmodule Homesite.Media.ProjectMediaItem do
   @doc false
   def changeset(project_media_item, attrs) do
     project_media_item
-    |> cast(attrs, [:project_id, :media_item_id, :display_order])
+    |> cast(attrs, [:project_id, :media_item_id, :display_order, :collection_id])
     |> validate_required([:project_id, :media_item_id])
     |> validate_number(:display_order, greater_than_or_equal_to: 0)
     |> unique_constraint([:project_id, :media_item_id])
     |> foreign_key_constraint(:project_id)
     |> foreign_key_constraint(:media_item_id)
+    |> foreign_key_constraint(:collection_id)
   end
 end

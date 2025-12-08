@@ -4,10 +4,12 @@ defmodule HomesiteWeb.SecurityTest do
   import Phoenix.LiveViewTest
   import Homesite.AccountsFixtures
   import Homesite.ContentFixtures
+  import Homesite.MediaFixtures
   import Homesite.DataCase, only: [errors_on: 1]
 
   alias Homesite.Accounts
   alias Homesite.Content
+  alias Homesite.Media
 
   describe "Scope Isolation: Users cannot access other users' data" do
     test "user A cannot view user B's settings page", %{conn: conn} do
@@ -995,6 +997,577 @@ defmodule HomesiteWeb.SecurityTest do
       result = Feedback.get_testimonial_by_token("invalid-token-123")
 
       assert result == nil
+    end
+  end
+
+  describe "Media Security: Project Scope Isolation" do
+    test "user A cannot view user B's projects via context", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      # Create project for user B
+      project_b = project_fixture(scope_b)
+
+      # User A tries to get user B's project
+      assert_raise Ecto.NoResultsError, fn ->
+        Media.get_project!(scope_a, project_b.id)
+      end
+
+      # User A's project list should not include user B's projects
+      user_a_projects = Media.list_projects(scope_a)
+      project_ids = Enum.map(user_a_projects, & &1.id)
+
+      refute project_b.id in project_ids
+    end
+
+    test "user A cannot update user B's projects", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      # Create project for user B
+      project_b = project_fixture(scope_b)
+
+      # User A tries to update user B's project
+      assert_raise MatchError, fn ->
+        Media.update_project(scope_a, project_b, %{name: "Hacked Name"})
+      end
+
+      # Verify project unchanged
+      original = Media.get_project!(scope_b, project_b.id)
+      refute original.name == "Hacked Name"
+    end
+
+    test "user A cannot delete user B's projects", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      # Create project for user B
+      project_b = project_fixture(scope_b)
+
+      # User A tries to delete user B's project
+      assert_raise MatchError, fn ->
+        Media.delete_project(scope_a, project_b)
+      end
+
+      # Verify project still exists
+      assert Media.get_project!(scope_b, project_b.id).id == project_b.id
+    end
+
+    test "list_projects returns only current user's projects", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      # Create projects for both users
+      _project_a = project_fixture(scope_a, %{name: "User A Project"})
+      _project_b = project_fixture(scope_b, %{name: "User B Project"})
+
+      # Each user should only see their own projects
+      projects_a = Media.list_projects(scope_a)
+      projects_b = Media.list_projects(scope_b)
+
+      assert length(projects_a) == 1
+      assert length(projects_b) == 1
+
+      assert Enum.all?(projects_a, &(&1.user_id == user_a.id))
+      assert Enum.all?(projects_b, &(&1.user_id == user_b.id))
+    end
+  end
+
+  describe "Media Security: Media Item Scope Isolation" do
+    test "user A cannot view user B's media items", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      # Create media item for user B
+      media_b = media_item_fixture(scope_b)
+
+      # User A tries to get user B's media item
+      assert_raise Ecto.NoResultsError, fn ->
+        Media.get_media_item!(scope_a, media_b.id)
+      end
+
+      # User A's media list should not include user B's items
+      user_a_media = Media.list_media_items(scope_a)
+      media_ids = Enum.map(user_a_media, & &1.id)
+
+      refute media_b.id in media_ids
+    end
+
+    test "user A cannot update user B's media items", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      # Create media item for user B
+      media_b = media_item_fixture(scope_b, %{title: "Original Title"})
+
+      # User A tries to update user B's media item
+      assert_raise MatchError, fn ->
+        Media.update_media_item(scope_a, media_b, %{title: "Hacked Title"})
+      end
+
+      # Verify media unchanged
+      original = Media.get_media_item!(scope_b, media_b.id)
+      assert original.title == "Original Title"
+    end
+
+    test "user A cannot delete user B's media items", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      # Create media item for user B
+      media_b = media_item_fixture(scope_b)
+
+      # User A tries to delete user B's media item
+      assert_raise MatchError, fn ->
+        Media.delete_media_item(scope_a, media_b)
+      end
+
+      # Verify media still exists
+      assert Media.get_media_item!(scope_b, media_b.id).id == media_b.id
+    end
+
+    test "user A cannot add media to user B's project", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      # Create project for user B and media for user A
+      project_b = project_fixture(scope_b)
+      media_a = media_item_fixture(scope_a)
+
+      # User A tries to add their media to user B's project
+      assert_raise Ecto.NoResultsError, fn ->
+        Media.add_media_to_project(scope_a, project_b.id, media_a.id, 1)
+      end
+    end
+
+    test "user A cannot remove media from user B's project", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      # Create project and media for user B
+      project_b = project_fixture(scope_b)
+      media_b = media_item_fixture(scope_b)
+
+      # Add media to project
+      {:ok, _} = Media.add_media_to_project(scope_b, project_b.id, media_b.id, 1)
+
+      # User A tries to remove media from user B's project
+      assert_raise Ecto.NoResultsError, fn ->
+        Media.remove_media_from_project(scope_a, project_b.id, media_b.id)
+      end
+
+      # Verify media still in project
+      project = Media.get_project!(scope_b, project_b.id) |> Homesite.Repo.preload(:media_items)
+      assert length(project.media_items) == 1
+    end
+  end
+
+  describe "Media Security: Collaborator Scope Isolation" do
+    test "user A cannot create collaborator for user B's project", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      # Create project for user B
+      project_b = project_fixture(scope_b)
+
+      # User A tries to add collaborator to user B's project
+      assert_raise Ecto.NoResultsError, fn ->
+        Media.create_collaborator(scope_a, %{
+          name: "Hacker",
+          project_id: project_b.id
+        })
+      end
+    end
+
+    test "user A cannot delete user B's collaborators", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      # Create project and collaborator for user B
+      project_b = project_fixture(scope_b)
+      collab_b = collaborator_fixture(scope_b, project_b.id)
+
+      # User A tries to delete user B's collaborator
+      assert_raise MatchError, fn ->
+        Media.delete_collaborator(scope_a, collab_b)
+      end
+
+      # Verify collaborator still exists
+      collaborators = Media.list_collaborators(scope_b, project_b.id)
+      assert length(collaborators) == 1
+    end
+
+    test "user A cannot update user B's collaborators", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      # Create project and collaborator for user B
+      project_b = project_fixture(scope_b)
+      collab_b = collaborator_fixture(scope_b, project_b.id, %{name: "Original Name"})
+
+      # User A tries to update user B's collaborator
+      assert_raise MatchError, fn ->
+        Media.update_collaborator(scope_a, collab_b, %{name: "Hacked Name"})
+      end
+
+      # Verify collaborator unchanged
+      [collab] = Media.list_collaborators(scope_b, project_b.id)
+      assert collab.name == "Original Name"
+    end
+  end
+
+  describe "Media Security: Affiliation Link Scope Isolation" do
+    test "user A cannot create affiliation link for user B's project", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      # Create project for user B
+      project_b = project_fixture(scope_b)
+
+      # User A tries to add link to user B's project
+      assert_raise Ecto.NoResultsError, fn ->
+        Media.create_affiliation_link(scope_a, %{
+          title: "Malicious Link",
+          url: "https://malicious.com",
+          project_id: project_b.id
+        })
+      end
+    end
+
+    test "user A cannot delete user B's affiliation links", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      # Create project and link for user B
+      project_b = project_fixture(scope_b)
+      link_b = affiliation_link_fixture(scope_b, project_b.id)
+
+      # User A tries to delete user B's link
+      assert_raise MatchError, fn ->
+        Media.delete_affiliation_link(scope_a, link_b)
+      end
+
+      # Verify link still exists
+      links = Media.list_affiliation_links(scope_b, project_b.id)
+      assert length(links) == 1
+    end
+
+    test "user A cannot update user B's affiliation links", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      # Create project and link for user B
+      project_b = project_fixture(scope_b)
+      link_b = affiliation_link_fixture(scope_b, project_b.id, %{title: "Original Link"})
+
+      # User A tries to update user B's link
+      assert_raise MatchError, fn ->
+        Media.update_affiliation_link(scope_a, link_b, %{title: "Hacked Link"})
+      end
+
+      # Verify link unchanged
+      [link] = Media.list_affiliation_links(scope_b, project_b.id)
+      assert link.title == "Original Link"
+    end
+  end
+
+  describe "Media Security: Public Portfolio Access" do
+    test "public portfolios are accessible without authentication", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      # Create public portfolio project
+      project =
+        project_fixture(scope, %{
+          name: "Public Portfolio",
+          is_public: true,
+          is_portfolio: true
+        })
+
+      # Should be accessible via public function (no scope required)
+      {:ok, public_project} = Media.get_public_project_by_slug(project.slug)
+      assert public_project.id == project.id
+    end
+
+    test "private projects are not accessible via public endpoint", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      # Create private project
+      project =
+        project_fixture(scope, %{
+          name: "Private Project",
+          is_public: false,
+          is_portfolio: true
+        })
+
+      # Should NOT be accessible via public function
+      assert {:error, :not_found} = Media.get_public_project_by_slug(project.slug)
+    end
+
+    test "non-portfolio projects are not accessible via public endpoint", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      # Create public but non-portfolio project (media library)
+      project =
+        project_fixture(scope, %{
+          name: "Media Library",
+          is_public: true,
+          is_portfolio: false
+        })
+
+      # Should NOT be accessible via public function
+      assert {:error, :not_found} = Media.get_public_project_by_slug(project.slug)
+    end
+
+    test "list_public_projects only returns public portfolio projects", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      # Create various project types
+      _public_portfolio =
+        project_fixture(scope, %{
+          name: "Public Portfolio",
+          is_public: true,
+          is_portfolio: true
+        })
+
+      private_portfolio =
+        project_fixture(scope, %{
+          name: "Private Portfolio",
+          is_public: false,
+          is_portfolio: true
+        })
+
+      public_library =
+        project_fixture(scope, %{
+          name: "Public Library",
+          is_public: true,
+          is_portfolio: false
+        })
+
+      # List public projects
+      public_projects = Media.list_public_projects()
+
+      # Should only include public portfolios
+      project_ids = Enum.map(public_projects, & &1.id)
+      refute private_portfolio.id in project_ids
+      refute public_library.id in project_ids
+    end
+  end
+
+  describe "Media Security: Collection Scope Isolation" do
+    test "user A cannot view user B's collections", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      # Create project and collection for user B
+      project_b = project_fixture(scope_b)
+      collection_b = collection_fixture(scope_b, project_b.id)
+
+      # User A tries to get user B's collection
+      assert_raise Ecto.NoResultsError, fn ->
+        Media.get_collection!(scope_a, collection_b.id)
+      end
+    end
+
+    test "user A cannot create collection in user B's project", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      # Create project for user B
+      project_b = project_fixture(scope_b)
+
+      # User A tries to create collection in user B's project
+      assert_raise Ecto.NoResultsError, fn ->
+        Media.create_collection(scope_a, %{
+          name: "Hacker Collection",
+          project_id: project_b.id
+        })
+      end
+    end
+
+    test "user A cannot update user B's collections", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      # Create project and collection for user B
+      project_b = project_fixture(scope_b)
+      collection_b = collection_fixture(scope_b, project_b.id, %{name: "Original Name"})
+
+      # User A tries to update user B's collection
+      assert_raise MatchError, fn ->
+        Media.update_collection(scope_a, collection_b, %{name: "Hacked Name"})
+      end
+
+      # Verify collection unchanged
+      collection = Media.get_collection!(scope_b, collection_b.id)
+      assert collection.name == "Original Name"
+    end
+
+    test "user A cannot delete user B's collections", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      # Create project and collection for user B
+      project_b = project_fixture(scope_b)
+      collection_b = collection_fixture(scope_b, project_b.id)
+
+      # User A tries to delete user B's collection
+      assert_raise MatchError, fn ->
+        Media.delete_collection(scope_a, collection_b)
+      end
+
+      # Verify collection still exists
+      assert Media.get_collection!(scope_b, collection_b.id).id == collection_b.id
+    end
+  end
+
+  describe "Media Security: Search Scope Isolation" do
+    test "search_media_items only returns current user's media", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      # Create media items with same searchable title
+      media_a = media_item_fixture(scope_a, %{title: "Beach Sunset Photo"})
+      _media_b = media_item_fixture(scope_b, %{title: "Beach Sunset Picture"})
+
+      # User A searches - should only see their own media
+      results_a = Media.search_media_items(scope_a, "Beach Sunset")
+      assert length(results_a) == 1
+      assert hd(results_a).id == media_a.id
+      assert Enum.all?(results_a, &(&1.user_id == user_a.id))
+    end
+
+    test "search does not leak sensitive media data between users", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      # Create media with potentially sensitive titles
+      _media_a = media_item_fixture(scope_a, %{title: "Secret Project Alpha"})
+      _media_b = media_item_fixture(scope_b, %{title: "Secret Project Beta"})
+
+      # User A searches for "Secret Project"
+      results_a = Media.search_media_items(scope_a, "Secret Project")
+
+      # Should only see their own secret
+      assert length(results_a) == 1
+      assert hd(results_a).title =~ "Alpha"
+      refute Enum.any?(results_a, &(&1.title =~ "Beta"))
+
+      # User B searches
+      results_b = Media.search_media_items(scope_b, "Secret Project")
+      assert length(results_b) == 1
+      assert hd(results_b).title =~ "Beta"
+      refute Enum.any?(results_b, &(&1.title =~ "Alpha"))
+    end
+  end
+
+  describe "Media Security: Authorization Routes" do
+    test "non-authenticated users are redirected from /projects", %{conn: conn} do
+      conn = get(conn, ~p"/projects")
+      assert redirected_to(conn) == ~p"/users/log-in"
+    end
+
+    test "non-authenticated users are redirected from /media", %{conn: conn} do
+      conn = get(conn, ~p"/media")
+      assert redirected_to(conn) == ~p"/users/log-in"
+    end
+
+    test "authenticated users can access /projects", %{conn: conn} do
+      user = user_fixture() |> set_password()
+      conn = log_in_user(conn, user)
+
+      {:ok, _view, html} = live(conn, ~p"/projects")
+      assert html =~ "Projects"
+    end
+
+    test "authenticated users can access /media", %{conn: conn} do
+      user = user_fixture() |> set_password()
+      conn = log_in_user(conn, user)
+
+      {:ok, _view, html} = live(conn, ~p"/media")
+      assert html =~ "Media Library"
+    end
+
+    test "public portfolio is accessible without authentication", %{conn: conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      project =
+        project_fixture(scope, %{
+          name: "Public Portfolio",
+          is_public: true,
+          is_portfolio: true
+        })
+
+      # Should be accessible without auth
+      {:ok, _view, html} = live(conn, ~p"/portfolio/#{project.slug}")
+      assert html =~ "Public Portfolio"
     end
   end
 

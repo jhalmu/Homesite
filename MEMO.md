@@ -6,6 +6,75 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-08 15:15:00 - Bug Fix: LiveStream Enum.empty? & Test Quality
+
+### Session: Critical Bug Fix and Test Policy Enforcement
+
+#### Objectives Completed
+Fixed critical RuntimeError in Media Library caused by calling `Enum.empty?` on LiveStream, removed all `@tag :skip` from tests, and created integration tests for MediaLive.Index.
+
+#### Bug Fixed
+
+**Problem**: `GET /media` threw RuntimeError:
+```
+RuntimeError: not implemented
+Enumerable.Phoenix.LiveView.LiveStream.slice/1
+```
+
+**Cause**: `Enum.empty?(@streams.media_items)` at line 378 - LiveStream does NOT implement Enumerable protocol.
+
+**Solution**: Track empty state with separate assign:
+```elixir
+# In mount/handle_events - BEFORE streaming
+|> assign(:media_empty, media_items == [])
+|> stream(:media_items, media_items)
+
+# In template
+<%= if @media_empty do %>
+```
+
+#### Test Policy: No Skipped Tests
+
+**Policy Established**: Never use `@tag :skip` - fix tests or delete them.
+
+**Action Taken**:
+- Removed 7 `@tag :skip` instances total
+- Fixed 2 tests (security_test.exs, feedback_live_test.exs)
+- Deleted 5 tests (dev_faqs_live - dev-only route can't run in test env)
+
+**Why**: The LiveStream bug was missed because the only test that would have caught it was skipped. Skipped tests create false confidence.
+
+#### New Files Created
+
+- **`.claude/insights/session-2025-12-08-124500.md`** - Logged 2 critical insights:
+  1. LiveStream Enumerable limitation (#critical #liveview #gotcha)
+  2. No Skipped Tests policy (#important #testing)
+
+- **`test/homesite_web/live/media_live/index_test.exs`** - 5 integration tests:
+  - renders empty media library
+  - renders media library with items
+  - search filters media items
+  - aspect filter works
+  - empty search shows message
+
+#### Files Modified
+
+- `lib/homesite_web/live/media_live/index.ex` - Added `@media_empty` assign
+- `test/homesite_web/security_test.exs` - Removed @tag :skip at line 1549
+- `test/homesite_web/live/feedback_live_test.exs` - Removed @tag :skip, fixed assertion
+- `test/homesite_web/live/dev_faqs_live/index_test.exs` - Deleted 5 skipped tests
+- `test/homesite/media_test.exs` - Fixed Credo warning (length==0 → list==[])
+
+#### Test Results
+- 1132 tests, 0 failures (28 Playwright excluded)
+- All @tag :skip removed from codebase
+
+#### Deferred (Non-blocking)
+- 125 Finnish strings need translation (works with English fallbacks)
+- Playwright E2E needs sandbox configuration (infrastructure task)
+
+---
+
 ## 2025-12-07 22:00:00 - Visual Polish: Background Squares and Readability Overlays
 
 ### Session: "Beautiful but Dim" UX Enhancements

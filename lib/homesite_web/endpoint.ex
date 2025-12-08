@@ -42,6 +42,11 @@ defmodule HomesiteWeb.Endpoint do
     plug Phoenix.Ecto.CheckRepoStatus, otp_app: :homesite
   end
 
+  # Enable SQL sandbox for E2E/Playwright tests
+  if Application.compile_env(:homesite, :sql_sandbox) do
+    plug Phoenix.Ecto.SQL.Sandbox
+  end
+
   plug Phoenix.LiveDashboard.RequestLogger,
     param_key: "request_logger",
     cookie_key: "request_logger"

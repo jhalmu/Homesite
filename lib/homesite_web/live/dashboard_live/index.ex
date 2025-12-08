@@ -6,6 +6,7 @@ defmodule HomesiteWeb.DashboardLive.Index do
   alias Homesite.Activities
   alias Homesite.Content
   alias Homesite.ExternalFeeds
+  alias Homesite.Media
 
   @impl true
   def mount(_params, _session, socket) do
@@ -15,6 +16,10 @@ defmodule HomesiteWeb.DashboardLive.Index do
     tags = Content.list_tags(scope)
     feed_sources = ExternalFeeds.list_feed_sources(scope)
     activities = Activities.list_recent_activities(user_id: scope.user.id, limit: 10)
+
+    # Media/Projects stats
+    media_stats = Media.get_dashboard_stats(scope)
+    recent_projects = Media.list_recent_projects(scope, 5)
 
     # Count published vs draft
     published_count = Enum.count(posts, fn post -> not is_nil(post.published_at) end)
@@ -56,6 +61,8 @@ defmodule HomesiteWeb.DashboardLive.Index do
       |> assign(:disabled_feeds, disabled_feeds)
       |> assign(:profile_stats, profile_stats)
       |> assign(:feed_stats, feed_stats)
+      |> assign(:media_stats, media_stats)
+      |> assign(:recent_projects, recent_projects)
 
     {:ok, socket}
   end

@@ -31,6 +31,66 @@ defmodule HomesiteWeb.PortfolioLive.Show do
          |> put_flash(:error, gettext("Project not found"))
          |> redirect(to: ~p"/portfolio")}
     end
+    |> then(fn {:noreply, socket} ->
+      {:noreply,
+       socket
+       |> assign(:lightbox_open, false)
+       |> assign(:lightbox_index, 0)}
+    end)
+  end
+
+  # Lightbox event handlers
+  @impl true
+  def handle_event("open_lightbox", %{"index" => index}, socket) do
+    {:noreply,
+     socket
+     |> assign(:lightbox_open, true)
+     |> assign(:lightbox_index, String.to_integer(index))}
+  end
+
+  @impl true
+  def handle_event("close_lightbox", _params, socket) do
+    {:noreply, assign(socket, :lightbox_open, false)}
+  end
+
+  @impl true
+  def handle_event("lightbox_prev", _params, socket) do
+    new_index = max(0, socket.assigns.lightbox_index - 1)
+    {:noreply, assign(socket, :lightbox_index, new_index)}
+  end
+
+  @impl true
+  def handle_event("lightbox_next", _params, socket) do
+    max_index = length(socket.assigns.project.media_items) - 1
+    new_index = min(max_index, socket.assigns.lightbox_index + 1)
+    {:noreply, assign(socket, :lightbox_index, new_index)}
+  end
+
+  @impl true
+  def handle_event("lightbox_keydown", %{"key" => "Escape"}, socket) do
+    {:noreply, assign(socket, :lightbox_open, false)}
+  end
+
+  def handle_event("lightbox_keydown", %{"key" => "ArrowLeft"}, socket) do
+    if socket.assigns.lightbox_index > 0 do
+      {:noreply, assign(socket, :lightbox_index, socket.assigns.lightbox_index - 1)}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  def handle_event("lightbox_keydown", %{"key" => "ArrowRight"}, socket) do
+    max_index = length(socket.assigns.project.media_items) - 1
+
+    if socket.assigns.lightbox_index < max_index do
+      {:noreply, assign(socket, :lightbox_index, socket.assigns.lightbox_index + 1)}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  def handle_event("lightbox_keydown", _params, socket) do
+    {:noreply, socket}
   end
 
   @impl true
@@ -274,16 +334,26 @@ defmodule HomesiteWeb.PortfolioLive.Show do
             
     <!-- Masonry-style grid for varied aspect ratios -->
             <div class="gap-[var(--space-md)] columns-1 sm:columns-2 md:columns-3 lg:columns-4">
-              <%= for media <- @project.media_items do %>
+              <%= for {media, idx} <- Enum.with_index(@project.media_items) do %>
                 <article class="mb-[var(--space-md)] break-inside-avoid">
                   <div class="card bg-base-200 duration-[var(--duration-normal)] overflow-hidden shadow-lg transition-shadow hover:shadow-xl">
                     <figure class="bg-base-300 overflow-hidden">
-                      <img
-                        src={"data:#{media.content_type};base64,#{Base.encode64(media.medium_data)}"}
-                        alt={media.alt_text}
-                        class="w-full object-cover"
-                        loading="lazy"
-                      />
+                      <button
+                        type="button"
+                        class="w-full cursor-zoom-in focus:ring-primary focus:outline-none focus:ring-2"
+                        phx-click="open_lightbox"
+                        phx-value-index={idx}
+                        aria-label={
+                          gettext("View %{title} in fullscreen", title: media.title || media.alt_text)
+                        }
+                      >
+                        <img
+                          src={"data:#{media.content_type};base64,#{Base.encode64(media.medium_data)}"}
+                          alt={media.alt_text}
+                          class="w-full object-cover transition-transform duration-200 hover:scale-105"
+                          loading="lazy"
+                        />
+                      </button>
                     </figure>
 
                     <%= if media.title || media.caption do %>
@@ -308,6 +378,18 @@ defmodule HomesiteWeb.PortfolioLive.Show do
             </div>
           <% end %>
         </div>
+
+        <%!-- Lightbox overlay --%>
+        <%= if @lightbox_open && length(@project.media_items) > 0 do %>
+          <.lightbox
+            id="portfolio-lightbox"
+            images={@project.media_items}
+            current_index={@lightbox_index}
+            on_close="close_lightbox"
+            on_prev="lightbox_prev"
+            on_next="lightbox_next"
+          />
+        <% end %>
       </div>
     </Layouts.app>
     """

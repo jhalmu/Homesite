@@ -150,6 +150,41 @@
             </div>
           </div>
         </.dashboard_card>
+
+        <%!-- Projects Stats --%>
+        <.dashboard_card variant="stat" class="stats">
+          <div class="stat">
+            <div class="stat-title">{gettext("Projects")}</div>
+            <div class="stat-value text-info">{@media_stats.projects.total}</div>
+            <div class="stat-desc">
+              {gettext("%{portfolios} portfolios, %{libraries} libraries",
+                portfolios: @media_stats.projects.portfolios,
+                libraries: @media_stats.projects.libraries
+              )}
+            </div>
+            <div class="stat-actions">
+              <.link navigate={~p"/projects"} class="btn btn-sm btn-info">
+                {gettext("View all")}
+              </.link>
+            </div>
+          </div>
+        </.dashboard_card>
+
+        <%!-- Media Stats --%>
+        <.dashboard_card variant="stat" class="stats">
+          <div class="stat">
+            <div class="stat-title">{gettext("Media Library")}</div>
+            <div class="stat-value text-warning">{@media_stats.media.total}</div>
+            <div class="stat-desc">
+              {gettext("%{size} total", size: @media_stats.media.total_size_formatted)}
+            </div>
+            <div class="stat-actions">
+              <.link navigate={~p"/media"} class="btn btn-sm btn-warning">
+                {gettext("View all")}
+              </.link>
+            </div>
+          </div>
+        </.dashboard_card>
       </div>
     </header>
 
@@ -250,14 +285,20 @@
         <.link navigate={~p"/posts/new"} class="btn btn-primary gap-[var(--space-xs)]">
           <.icon name="hero-plus" class="h-5 w-5" /> {gettext("New Post")}
         </.link>
+        <.link navigate={~p"/projects/new"} class="btn btn-info gap-[var(--space-xs)]">
+          <.icon name="hero-folder-plus" class="h-5 w-5" /> {gettext("New Project")}
+        </.link>
+        <.link navigate={~p"/media"} class="btn btn-warning gap-[var(--space-xs)]">
+          <.icon name="hero-photo" class="h-5 w-5" /> {gettext("Upload Media")}
+        </.link>
         <.link navigate={~p"/tags/new"} class="btn btn-secondary gap-[var(--space-xs)]">
           <.icon name="hero-plus" class="h-5 w-5" /> {gettext("New Tag")}
         </.link>
         <.link navigate={~p"/feeds/new"} class="btn btn-accent gap-[var(--space-xs)]">
           <.icon name="hero-rss" class="h-5 w-5" /> {gettext("New Feed Source")}
         </.link>
-        <.link navigate={~p"/feeds"} class="btn btn-outline gap-[var(--space-xs)]">
-          <.icon name="hero-list-bullet" class="h-5 w-5" /> {gettext("View Feeds")}
+        <.link navigate={~p"/portfolio"} class="btn btn-outline gap-[var(--space-xs)]">
+          <.icon name="hero-squares-2x2" class="h-5 w-5" /> {gettext("View Portfolio")}
         </.link>
         <.link navigate={~p"/users/settings"} class="btn btn-outline gap-[var(--space-xs)]">
           <.icon name="hero-cog-6-tooth" class="h-5 w-5" /> {gettext("Settings")}
@@ -318,6 +359,96 @@
                     <.link navigate={~p"/posts/#{post}/edit"} class="btn btn-ghost btn-xs">
                       {gettext("Edit")}
                     </.link>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <%!-- Recent Projects --%>
+    <section class="mb-[var(--spacing-section)]">
+      <div class="mb-[var(--spacing-md)] flex items-center justify-between">
+        <h2 class="text-[var(--font-size-fluid-xl)] font-semibold">
+          {gettext("Recent Projects")}
+        </h2>
+        <.link navigate={~p"/projects"} class="link link-primary">
+          {gettext("View all")} →
+        </.link>
+      </div>
+
+      <div :if={@media_stats.projects.total == 0} class="alert alert-info">
+        <.icon name="hero-information-circle" class="h-6 w-6" />
+        <span>
+          {gettext("You haven't created any projects yet.")} <.link
+            navigate={~p"/projects/new"}
+            class="link"
+          >{gettext("Create your first project")}</.link>!
+        </span>
+      </div>
+
+      <div :if={@media_stats.projects.total > 0} class="overflow-x-auto">
+        <table class="table-zebra table">
+          <thead>
+            <tr>
+              <th>{gettext("Name")}</th>
+              <th>{gettext("Type")}</th>
+              <th>{gettext("Visibility")}</th>
+              <th>{gettext("Completion")}</th>
+              <th>{gettext("Actions")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <%= for project <- @recent_projects do %>
+              <tr>
+                <td>
+                  <.link navigate={~p"/projects/#{project}"} class="link link-hover font-medium">
+                    {project.name}
+                  </.link>
+                </td>
+                <td>
+                  <%= if project.is_portfolio do %>
+                    <span class="badge badge-primary badge-sm">{gettext("Portfolio")}</span>
+                  <% else %>
+                    <span class="badge badge-ghost badge-sm">{gettext("Library")}</span>
+                  <% end %>
+                </td>
+                <td>
+                  <%= if project.is_public do %>
+                    <span class="badge badge-success badge-sm">{gettext("Public")}</span>
+                  <% else %>
+                    <span class="badge badge-warning badge-sm">{gettext("Private")}</span>
+                  <% end %>
+                </td>
+                <td>
+                  <div class="flex items-center gap-2">
+                    <progress
+                      class="progress progress-primary w-16"
+                      value={project.completion_percentage}
+                      max="100"
+                    >
+                    </progress>
+                    <span class="text-[var(--text-xs)]">{project.completion_percentage}%</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="gap-[var(--space-xs)] flex">
+                    <.link navigate={~p"/projects/#{project}"} class="btn btn-ghost btn-xs">
+                      {gettext("View")}
+                    </.link>
+                    <.link navigate={~p"/projects/#{project}/edit"} class="btn btn-ghost btn-xs">
+                      {gettext("Edit")}
+                    </.link>
+                    <%= if project.is_public && project.is_portfolio do %>
+                      <.link
+                        navigate={~p"/portfolio/#{project.slug}"}
+                        class="btn btn-ghost btn-xs"
+                      >
+                        <.icon name="hero-globe-alt" class="h-3 w-3" />
+                      </.link>
+                    <% end %>
                   </div>
                 </td>
               </tr>

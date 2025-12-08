@@ -39,6 +39,9 @@ config :phoenix, :plug_init_mode, :runtime
 config :phoenix_live_view,
   enable_expensive_runtime_checks: true
 
+# Enable SQL sandbox for E2E/Playwright tests
+config :homesite, sql_sandbox: true
+
 # Use English locale for tests (assertions are written in English)
 config :homesite, HomesiteWeb.Gettext, default_locale: "en"
 

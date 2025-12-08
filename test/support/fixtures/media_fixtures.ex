@@ -53,11 +53,13 @@ defmodule Homesite.MediaFixtures do
   Generate a project.
   """
   def project_fixture(scope, attrs \\ %{}) do
+    unique_id = System.unique_integer([:positive])
+
     attrs =
       Enum.into(attrs, %{
-        name: unique_project_name(),
+        name: "project #{unique_id}",
         description: "Test project description",
-        slug: "will-be-generated",
+        slug: "project-#{unique_id}",
         is_public: true
       })
 
@@ -150,5 +152,21 @@ defmodule Homesite.MediaFixtures do
 
     {:ok, link} = Homesite.Media.create_affiliation_link(scope, attrs)
     link
+  end
+
+  @doc """
+  Generate a collection for a project.
+  """
+  def collection_fixture(scope, project_id, attrs \\ %{}) do
+    attrs =
+      Enum.into(attrs, %{
+        name: "Collection #{System.unique_integer([:positive])}",
+        description: "Test collection description",
+        display_order: 0,
+        project_id: project_id
+      })
+
+    {:ok, collection} = Homesite.Media.create_collection(scope, attrs)
+    collection
   end
 end

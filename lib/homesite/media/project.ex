@@ -43,6 +43,7 @@ defmodule Homesite.Media.Project do
 
     has_many :collaborators, Homesite.Media.Collaborator, on_delete: :delete_all
     has_many :affiliation_links, Homesite.Media.AffiliationLink, on_delete: :delete_all
+    has_many :collections, Homesite.Media.Collection, on_delete: :delete_all
 
     many_to_many :media_items, Homesite.Media.MediaItem,
       join_through: "project_media_items",
@@ -57,11 +58,11 @@ defmodule Homesite.Media.Project do
   """
   def basic_changeset(project, attrs, user_scope) do
     project
-    |> cast(attrs, [:name, :description])
+    |> cast(attrs, [:name, :slug, :description])
     |> validate_required([:name])
     |> validate_length(:name, min: 1, max: 200)
     |> validate_length(:description, max: 1000)
-    |> generate_slug()
+    |> maybe_generate_slug()
     |> validate_required([:slug])
     |> unique_constraint(:slug, name: :projects_user_id_slug_index)
     |> put_change(:user_id, user_scope.user.id)
@@ -76,6 +77,7 @@ defmodule Homesite.Media.Project do
     project
     |> cast(attrs, [
       :name,
+      :slug,
       :description,
       :is_public,
       :is_portfolio,
@@ -91,7 +93,7 @@ defmodule Homesite.Media.Project do
     |> validate_length(:description, max: 1000)
     |> validate_length(:category, max: 100)
     |> validate_tags()
-    |> generate_slug()
+    |> maybe_generate_slug()
     |> validate_required([:slug])
     |> unique_constraint(:slug, name: :projects_user_id_slug_index)
     |> foreign_key_constraint(:user_id)
@@ -100,22 +102,28 @@ defmodule Homesite.Media.Project do
     |> calculate_completion()
   end
 
-  defp generate_slug(changeset) do
-    case get_change(changeset, :name) do
-      nil ->
-        changeset
+  # Only generate a slug if one wasn't provided and there's a name change
+  defp maybe_generate_slug(changeset) do
+    # If a slug was already provided, don't overwrite it
+    if get_change(changeset, :slug) do
+      changeset
+    else
+      case get_change(changeset, :name) do
+        nil ->
+          changeset
 
-      name ->
-        base_slug =
-          name
-          |> String.downcase()
-          |> transliterate()
-          # Keep only alphanumeric and hyphens
-          |> String.replace(~r/[^a-z0-9-]+/, "-")
-          |> String.trim("-")
+        name ->
+          base_slug =
+            name
+            |> String.downcase()
+            |> transliterate()
+            # Keep only alphanumeric and hyphens
+            |> String.replace(~r/[^a-z0-9-]+/, "-")
+            |> String.trim("-")
 
-        slug = "#{base_slug}-#{:os.system_time(:millisecond)}"
-        put_change(changeset, :slug, slug)
+          slug = "#{base_slug}-#{:os.system_time(:millisecond)}"
+          put_change(changeset, :slug, slug)
+      end
     end
   end
 

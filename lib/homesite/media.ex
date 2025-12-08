@@ -11,6 +11,7 @@ defmodule Homesite.Media do
     Project,
     MediaItem,
     ProjectMediaItem,
+    Collection,
     Collaborator,
     AffiliationLink,
     ImageProcessor
@@ -398,6 +399,132 @@ defmodule Homesite.Media do
     }
   end
 
+  ## Collections
+
+  @doc """
+  Returns the list of collections for a project.
+  """
+  def list_collections(%Scope{} = scope, project_id) do
+    # Verify project ownership
+    _project = get_project!(scope, project_id)
+
+    from(c in Collection,
+      where: c.project_id == ^project_id and c.user_id == ^scope.user.id,
+      order_by: [asc: c.display_order, asc: c.inserted_at]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Gets a single collection with scope check.
+  """
+  def get_collection!(%Scope{} = scope, id) do
+    from(c in Collection, where: c.id == ^id and c.user_id == ^scope.user.id)
+    |> Repo.one!()
+  end
+
+  @doc """
+  Creates a collection for a project.
+  """
+  def create_collection(%Scope{} = scope, attrs) do
+    # Verify project ownership if project_id is provided
+    if attrs["project_id"] || attrs[:project_id] do
+      project_id = attrs["project_id"] || attrs[:project_id]
+      _project = get_project!(scope, project_id)
+    end
+
+    %Collection{}
+    |> Collection.changeset(attrs, scope)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a collection with scope check.
+  """
+  def update_collection(%Scope{} = scope, %Collection{} = collection, attrs) do
+    # Security check
+    true = collection.user_id == scope.user.id
+
+    collection
+    |> Collection.changeset(attrs, scope)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a collection with scope check.
+  Media items in the collection are NOT deleted, just their collection_id is set to nil.
+  """
+  def delete_collection(%Scope{} = scope, %Collection{} = collection) do
+    # Security check
+    true = collection.user_id == scope.user.id
+
+    Repo.delete(collection)
+  end
+
+  @doc """
+  Assigns a media item to a collection within a project.
+  """
+  def assign_media_to_collection(%Scope{} = scope, project_id, media_item_id, collection_id) do
+    # Verify project and collection ownership
+    _project = get_project!(scope, project_id)
+    _collection = get_collection!(scope, collection_id)
+
+    # Find the junction record
+    query =
+      from(pmi in ProjectMediaItem,
+        where: pmi.project_id == ^project_id and pmi.media_item_id == ^media_item_id
+      )
+
+    case Repo.one(query) do
+      nil ->
+        {:error, :not_found}
+
+      pmi ->
+        pmi
+        |> Ecto.Changeset.change(%{collection_id: collection_id})
+        |> Repo.update()
+    end
+  end
+
+  @doc """
+  Removes a media item from its collection (sets collection_id to nil).
+  """
+  def unassign_media_from_collection(%Scope{} = scope, project_id, media_item_id) do
+    # Verify project ownership
+    _project = get_project!(scope, project_id)
+
+    # Find the junction record
+    query =
+      from(pmi in ProjectMediaItem,
+        where: pmi.project_id == ^project_id and pmi.media_item_id == ^media_item_id
+      )
+
+    case Repo.one(query) do
+      nil ->
+        {:error, :not_found}
+
+      pmi ->
+        pmi
+        |> Ecto.Changeset.change(%{collection_id: nil})
+        |> Repo.update()
+    end
+  end
+
+  @doc """
+  Lists media items in a collection.
+  """
+  def list_collection_media_items(%Scope{} = scope, collection_id) do
+    _collection = get_collection!(scope, collection_id)
+
+    from(mi in MediaItem,
+      join: pmi in ProjectMediaItem,
+      on: pmi.media_item_id == mi.id,
+      where: pmi.collection_id == ^collection_id and mi.user_id == ^scope.user.id,
+      order_by: [asc: pmi.display_order, asc: mi.inserted_at]
+    )
+    |> Repo.all()
+  end
+
   ## Collaborators
 
   @doc """
@@ -534,5 +661,131 @@ defmodule Homesite.Media do
     else
       {:ok, project}
     end
+  end
+
+  ## Statistics
+
+  @doc """
+  Returns dashboard statistics for media and projects.
+  """
+  def get_dashboard_stats(%Scope{} = scope) do
+    user_id = scope.user.id
+
+    # Project counts
+    project_counts =
+      from(p in Project,
+        where: p.user_id == ^user_id,
+        select: %{
+          total: count(p.id),
+          portfolios: count(fragment("CASE WHEN ? = true THEN 1 END", p.is_portfolio)),
+          libraries: count(fragment("CASE WHEN ? = false THEN 1 END", p.is_portfolio)),
+          public: count(fragment("CASE WHEN ? = true THEN 1 END", p.is_public)),
+          private: count(fragment("CASE WHEN ? = false THEN 1 END", p.is_public))
+        }
+      )
+      |> Repo.one() || %{total: 0, portfolios: 0, libraries: 0, public: 0, private: 0}
+
+    # Media counts
+    media_counts =
+      from(m in MediaItem,
+        where: m.user_id == ^user_id,
+        select: %{
+          total: count(m.id),
+          total_size_bytes: sum(m.file_size_bytes)
+        }
+      )
+      |> Repo.one() || %{total: 0, total_size_bytes: 0}
+
+    # Collection count
+    collection_count =
+      from(c in Collection, where: c.user_id == ^user_id, select: count(c.id))
+      |> Repo.one() || 0
+
+    %{
+      projects: project_counts,
+      media: %{
+        total: media_counts.total,
+        total_size_bytes: media_counts.total_size_bytes || 0,
+        total_size_formatted: format_bytes(media_counts.total_size_bytes || 0)
+      },
+      collections: collection_count
+    }
+  end
+
+  @doc """
+  Returns the most recent projects for the dashboard.
+  """
+  def list_recent_projects(%Scope{} = scope, limit \\ 5) do
+    from(p in Project,
+      where: p.user_id == ^scope.user.id,
+      order_by: [desc: p.updated_at],
+      limit: ^limit
+    )
+    |> Repo.all()
+  end
+
+  defp format_bytes(bytes) when bytes < 1024, do: "#{bytes} B"
+  defp format_bytes(bytes) when bytes < 1024 * 1024, do: "#{Float.round(bytes / 1024, 1)} KB"
+
+  defp format_bytes(bytes) when bytes < 1024 * 1024 * 1024,
+    do: "#{Float.round(bytes / (1024 * 1024), 1)} MB"
+
+  defp format_bytes(bytes), do: "#{Float.round(bytes / (1024 * 1024 * 1024), 2)} GB"
+
+  ## Admin Statistics
+
+  @doc """
+  Returns system-wide media statistics for the admin dashboard.
+  """
+  def get_admin_media_stats do
+    now = DateTime.utc_now(:second)
+    seven_days_ago = DateTime.add(now, -7, :day)
+    thirty_days_ago = DateTime.add(now, -30, :day)
+
+    # Total projects
+    total_projects = Repo.aggregate(Project, :count, :id)
+
+    portfolio_count =
+      from(p in Project, where: p.is_portfolio == true)
+      |> Repo.aggregate(:count, :id)
+
+    public_count =
+      from(p in Project, where: p.is_public == true)
+      |> Repo.aggregate(:count, :id)
+
+    # Total media items
+    total_media = Repo.aggregate(MediaItem, :count, :id)
+
+    media_7d =
+      from(m in MediaItem, where: m.inserted_at >= ^seven_days_ago)
+      |> Repo.aggregate(:count, :id)
+
+    media_30d =
+      from(m in MediaItem, where: m.inserted_at >= ^thirty_days_ago)
+      |> Repo.aggregate(:count, :id)
+
+    # Storage usage
+    total_size_bytes =
+      from(m in MediaItem, select: sum(m.file_size_bytes))
+      |> Repo.one() || 0
+
+    # Collections count
+    total_collections = Repo.aggregate(Collection, :count, :id)
+
+    # Collaborators count
+    total_collaborators = Repo.aggregate(Collaborator, :count, :id)
+
+    %{
+      total_projects: total_projects,
+      portfolio_count: portfolio_count,
+      public_count: public_count,
+      total_media: total_media,
+      media_7d: media_7d,
+      media_30d: media_30d,
+      total_size_bytes: total_size_bytes,
+      total_size_formatted: format_bytes(total_size_bytes),
+      total_collections: total_collections,
+      total_collaborators: total_collaborators
+    }
   end
 end

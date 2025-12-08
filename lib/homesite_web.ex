@@ -86,6 +86,8 @@ defmodule HomesiteWeb do
       import Phoenix.HTML
       # Core UI components
       import HomesiteWeb.CoreComponents
+      # Media components (lightbox, thumbnails)
+      import HomesiteWeb.MediaComponents
 
       # Common modules used in templates
       alias HomesiteWeb.Layouts

@@ -989,6 +989,7 @@ defmodule Homesite.Content do
       |> Repo.one()
       |> case do
         nil -> 0
+        %Decimal{} = avg -> avg |> Decimal.to_float() |> round()
         avg -> round(avg)
       end
 
