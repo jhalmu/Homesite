@@ -159,6 +159,9 @@ defmodule HomesiteWeb.Router do
       live "/media", MediaLive.Index, :index
       live "/media/:id", MediaLive.Show, :show
 
+      live "/chat", ChatLive.Index, :index
+      live "/chat/:slug", ChatLive.Show, :show
+
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
 

@@ -6,6 +6,75 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-08 16:15:00 - IRC-Style Chat System (Phase 1 MVP)
+
+### Session: Internal Chat System Implementation
+
+#### Objectives Completed
+Implemented IRC-style channel-based chat system, combining GitHub issues #47 (Messaging) and #4 (Microblogging) into a unified real-time chat feature.
+
+#### Features Implemented
+
+**1. Database Schema**
+- `chat_channels` table - IRC-style #channels with name, slug, description, is_default
+- `chat_messages` table - 280 character messages with user/channel references
+- Seeded default #general channel in migration
+
+**2. Chat Context (`Homesite.Chat`)**
+- Channel-scoped PubSub for real-time updates
+- `subscribe_channel/1`, `broadcast_channel/2` for real-time messaging
+- Channel CRUD with unique name/slug constraints
+- Message creation with 280 char limit
+- User-scoped message deletion (can only delete own messages)
+
+**3. LiveView Interface**
+- `ChatLive.Index` - Channel list with default badge
+- `ChatLive.Show` - Real-time chat interface with:
+  - DaisyUI chat bubbles (own messages right, others left)
+  - LiveView streams for efficient rendering
+  - Character counter (280 limit)
+  - Delete own messages
+  - PubSub subscription for real-time updates
+
+**4. Auto-Scroll JS Hook**
+- `ChatScroll` hook in app.js
+- Scrolls to bottom on mount and new messages
+- Smart scroll (only auto-scroll if near bottom)
+
+**5. Navigation Integration**
+- Added Chat link to desktop navbar
+- Added Chat link to mobile menu with icon
+
+#### Files Created
+- `priv/repo/migrations/20251208140258_create_chat_tables.exs`
+- `lib/homesite/chat.ex` - Context module
+- `lib/homesite/chat/channel.ex` - Channel schema
+- `lib/homesite/chat/message.ex` - Message schema
+- `lib/homesite_web/live/chat_live/index.ex` - Channel list
+- `lib/homesite_web/live/chat_live/show.ex` - Chat interface
+- `test/homesite/chat_test.exs` - 30 context tests
+- `test/support/fixtures/chat_fixtures.ex` - Test fixtures
+
+#### Files Modified
+- `lib/homesite_web/router.ex` - Added /chat routes
+- `lib/homesite_web/components/layouts.ex` - Added Chat to navigation
+- `assets/js/app.js` - Added ChatScroll hook
+
+#### GitHub Issues
+- Closed #47 (Messaging System) - replaced by chat
+- Closed #4 (Public Microblogging) - replaced by chat
+- Created #60 (Chat Moderation: Ban/Mute) - Phase 2/3 feature
+
+#### Test Results
+- 30 new chat tests
+- 1162 total tests, 0 failures
+
+#### Routes Added
+- `/chat` - Channel list (authenticated)
+- `/chat/:slug` - Chat interface (authenticated)
+
+---
+
 ## 2025-12-08 16:00:00 - Project Visibility & Display Features
 
 ### Session: Project Ordering, User Profile Projects, and Dedicated Projects Page

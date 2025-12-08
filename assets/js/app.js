@@ -338,6 +338,30 @@ const Hooks = {
         window.open(url, '_blank', 'noopener,noreferrer')
       })
     }
+  },
+  ChatScroll: {
+    mounted() {
+      // Scroll to bottom on mount
+      this.scrollToBottom()
+
+      // Listen for scroll_to_bottom event from server
+      this.handleEvent("scroll_to_bottom", () => {
+        this.scrollToBottom()
+      })
+    },
+    updated() {
+      // Auto-scroll if user is near bottom (within 100px)
+      if (this.isNearBottom()) {
+        this.scrollToBottom()
+      }
+    },
+    scrollToBottom() {
+      this.el.scrollTop = this.el.scrollHeight
+    },
+    isNearBottom() {
+      const threshold = 100
+      return this.el.scrollHeight - this.el.scrollTop - this.el.clientHeight < threshold
+    }
   }
 }
 

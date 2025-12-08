@@ -243,6 +243,9 @@ defmodule HomesiteWeb.Layouts do
                 <.link navigate={~p"/tags"}>{gettext("Tags")}</.link>
               </li>
               <li class="nav-item">
+                <.link navigate={~p"/chat"}>{gettext("Chat")}</.link>
+              </li>
+              <li class="nav-item">
                 <.link navigate={~p"/faqs"}>{gettext("FAQs")}</.link>
               </li>
               <%= if Homesite.Accounts.Scope.admin?(@current_scope) do %>
@@ -344,6 +347,11 @@ defmodule HomesiteWeb.Layouts do
             <li>
               <.link navigate={~p"/tags"} class="text-base">
                 <.icon name="hero-tag" class="h-5 w-5" /> {gettext("Tags")}
+              </.link>
+            </li>
+            <li>
+              <.link navigate={~p"/chat"} class="text-base">
+                <.icon name="hero-chat-bubble-left-right" class="h-5 w-5" /> {gettext("Chat")}
               </.link>
             </li>
             <li>
