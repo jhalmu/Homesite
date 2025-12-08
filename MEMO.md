@@ -6,6 +6,31 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-08 20:45:00 - Social Share Buttons Update
+
+### Session: Replace Twitter with Bluesky/Mastodon
+
+#### Changes Made
+1. **Removed Twitter/Instagram** from share components (no share intent URLs for Instagram/TikTok)
+2. **Added Bluesky and Mastodon** share buttons to portfolio and posts
+3. **Fixed portfolio share dropdown** - was missing `phx-hook="OpenWindow"` for push events
+4. **Updated tests** to reflect new button configuration
+
+#### Files Modified
+- `lib/homesite_web/components/social_components.ex` - Removed Twitter/Instagram from platform_share_buttons
+- `lib/homesite_web/live/portfolio_live/show.ex` - Added Bluesky/Mastodon handlers, fixed OpenWindow hook
+- `test/homesite_web/components/social_components_test.exs` - Updated tests (26 tests, 0 failures)
+
+#### Technical Notes
+- Instagram and TikTok don't support share intent URLs (mobile-app focused)
+- Bluesky uses: `https://bsky.app/intent/compose?text=...`
+- Mastodon uses: `https://mastodonshare.com/?text=...` (lets user choose instance)
+
+#### Commits
+- `35081c0` - fix: Update share buttons - replace Twitter with Bluesky/Mastodon
+
+---
+
 ## 2025-12-08 18:30:00 - Project Stepped Form Fixes & Archive/Delete Feature
 
 ### Session: Bug Fixes and Feature Implementation
