@@ -44,8 +44,18 @@
 - ✅ **Gettext Integration** - Easy translation management
 - ✅ **User Preferences** - Per-user language selection
 
+### Portfolio & Media
+- ✅ **Project Portfolio** - Showcase projects with media galleries
+- ✅ **Image Galleries** - Lightbox, masonry layout, multiple sizes
+- ✅ **Archive/Delete** - Safe project archiving before deletion
+- ✅ **Social Sharing** - Bluesky, Mastodon, LinkedIn, Email share buttons
+
+### Real-time Features
+- ✅ **IRC-Style Chat** - Real-time messaging with PubSub
+- ✅ **Live Updates** - Content changes broadcast instantly
+
 ### Developer Experience
-- ✅ **613 Tests** - All passing (ExUnit + Phoenix.LiveViewTest)
+- ✅ **1217 Tests** - All passing (ExUnit + Phoenix.LiveViewTest)
 - ✅ **Playwright E2E** - End-to-end testing foundation
 - ✅ **Credo** - Code quality analysis
 - ✅ **Sobelow** - Security scanning
@@ -320,11 +330,12 @@ Comprehensive documentation is available in the repository:
 
 ### Test Suite Overview
 
-- **584 ExUnit tests** - All passing
+- **1217 ExUnit tests** - All passing
 - **23 Invitation tests** - Full coverage of invite system
 - **Security tests** - Scope isolation, authorization
 - **LiveView tests** - User interactions, form submissions
 - **Context tests** - Business logic validation
+- **Media tests** - Image processing, galleries, portfolios
 
 ### Running Tests
 
@@ -447,18 +458,20 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Internationalization (EN/FI)
 - External feed aggregation (#29) - Mastodon, Bluesky, YouTube, RSS
 - Username routing system - Custom @username URLs
+- Portfolio system with image galleries
+- Social sharing (Bluesky, Mastodon, LinkedIn, Email)
+- IRC-style chat system
+- Project archive/delete functionality
+- Design system migration (CSS custom properties)
 
 ### In Progress 🚧
-- User management UI (#10)
-- Dashboard activity feed (#6)
+- Chat moderation features (#60)
 - Playwright E2E test expansion (#27)
 
 ### Planned 📋
 - Search functionality (#11)
 - Analytics dashboard (#14)
 - Email notifications (#13)
-- Image gallery (#2)
-- Social sharing system (#5)
 
 ---
 
