@@ -363,21 +363,6 @@ defmodule HomesiteWeb.MediaLive.Index do
             </select>
           </div>
           
-    <!-- Project Filter -->
-          <div class="w-full md:w-48">
-            <select
-              phx-change="filter-gallery"
-              name="project"
-              class="select select-bordered w-full"
-            >
-              <option value="">{gettext("All Projects")}</option>
-              <%= for project <- Media.list_projects(@current_scope) do %>
-                <option value={project.id} selected={@project_filter == project.id}>
-                  {project.name}
-                </option>
-              <% end %>
-            </select>
-          </div>
         </div>
         
     <!-- Media Grid -->
