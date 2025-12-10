@@ -20,6 +20,7 @@ defmodule Homesite.Chat do
   alias Homesite.Accounts
   alias Homesite.Accounts.Scope
   alias Homesite.Chat.{Ban, Block, Channel, Message, ModerationLog, Mute}
+  alias Homesite.Moderation
   alias Homesite.Repo
 
   ## PubSub
@@ -641,14 +642,25 @@ defmodule Homesite.Chat do
   end
 
   @doc """
-  Returns the list of user IDs that the current user has blocked.
+  Returns list of user IDs that should be hidden from the current user.
+
+  Combines both chat-specific blocks AND user moderation mutes.
+  This provides unified filtering for chat messages.
   """
   def blocked_user_ids(%Scope{} = scope) do
-    from(b in Block,
-      where: b.user_id == ^scope.user.id,
-      select: b.blocked_user_id
-    )
-    |> Repo.all()
+    # Chat-specific blocks
+    chat_blocked =
+      from(b in Block,
+        where: b.user_id == ^scope.user.id,
+        select: b.blocked_user_id
+      )
+      |> Repo.all()
+
+    # User moderation mutes (global mutes)
+    moderation_muted = Moderation.muted_user_ids(scope)
+
+    # Combine and deduplicate
+    Enum.uniq(chat_blocked ++ moderation_muted)
   end
 
   @doc """

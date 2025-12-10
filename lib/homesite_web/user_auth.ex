@@ -10,6 +10,7 @@ defmodule HomesiteWeb.UserAuth do
 
   alias Homesite.Accounts
   alias Homesite.Accounts.Scope
+  alias Homesite.Moderation
 
   # Make the remember me cookie valid for 14 days. This should match
   # the session validity setting in UserToken.
@@ -67,15 +68,45 @@ defmodule HomesiteWeb.UserAuth do
   Authenticates the user by looking into the session and remember me token.
 
   Will reissue the session token if it is older than the configured age.
+  Checks if user is banned or suspended and prevents access if so.
   """
   def fetch_current_scope_for_user(conn, _opts) do
     with {token, conn} <- ensure_user_token(conn),
-         {user, token_inserted_at} <- Accounts.get_user_by_session_token(token) do
+         {user, token_inserted_at} <- Accounts.get_user_by_session_token(token),
+         :ok <- check_user_moderation_status(user) do
       conn
       |> assign(:current_scope, Scope.for_user(user))
       |> maybe_reissue_user_session_token(user, token_inserted_at)
     else
-      nil -> assign(conn, :current_scope, Scope.for_user(nil))
+      nil ->
+        assign(conn, :current_scope, Scope.for_user(nil))
+
+      {:banned, ban} ->
+        conn
+        |> delete_session(:user_token)
+        |> delete_resp_cookie(@remember_me_cookie)
+        |> assign(:current_scope, Scope.for_user(nil))
+        |> assign(:moderation_ban, ban)
+
+      {:suspended, suspension} ->
+        conn
+        |> delete_session(:user_token)
+        |> delete_resp_cookie(@remember_me_cookie)
+        |> assign(:current_scope, Scope.for_user(nil))
+        |> assign(:moderation_suspension, suspension)
+    end
+  end
+
+  defp check_user_moderation_status(user) do
+    cond do
+      ban = Moderation.get_active_ban(user.id) ->
+        {:banned, ban}
+
+      suspension = Moderation.get_active_suspension(user.id) ->
+        {:suspended, suspension}
+
+      true ->
+        :ok
     end
   end
 
@@ -278,7 +309,16 @@ defmodule HomesiteWeb.UserAuth do
           Accounts.get_user_by_session_token(user_token)
         end || {nil, nil}
 
-      Scope.for_user(user)
+      # Check moderation status for authenticated users
+      if user do
+        case check_user_moderation_status(user) do
+          :ok -> Scope.for_user(user)
+          {:banned, _ban} -> Scope.for_user(nil)
+          {:suspended, _suspension} -> Scope.for_user(nil)
+        end
+      else
+        Scope.for_user(nil)
+      end
     end)
   end
 

@@ -8,6 +8,7 @@ defmodule Homesite.Content do
   alias Homesite.Accounts.Scope
   alias Homesite.Activities
   alias Homesite.Content.{Post, Tag}
+  alias Homesite.Moderation
   alias Homesite.Repo
 
   @doc """
@@ -365,21 +366,46 @@ defmodule Homesite.Content do
   Returns all public posts (non-authenticated access).
 
   Only returns posts with a published_at date, ordered by published_at descending.
-  No scope required - this is for public viewing.
+  When called with a scope, posts from muted users are filtered out.
 
   ## Examples
 
       iex> list_public_posts()
       [%Post{}, ...]
 
+      iex> list_public_posts(scope)
+      [%Post{}, ...]  # excludes posts from muted users
+
   """
-  def list_public_posts do
+  def list_public_posts(scope \\ nil)
+
+  def list_public_posts(nil) do
     from(p in Post,
       where: not is_nil(p.published_at),
       order_by: [desc: p.published_at],
       preload: [:user, :tags]
     )
     |> Repo.all()
+  end
+
+  def list_public_posts(%Scope{} = scope) do
+    muted_ids = Moderation.muted_user_ids(scope)
+
+    query =
+      from(p in Post,
+        where: not is_nil(p.published_at),
+        order_by: [desc: p.published_at],
+        preload: [:user, :tags]
+      )
+
+    query =
+      if muted_ids != [] do
+        from(p in query, where: p.user_id not in ^muted_ids)
+      else
+        query
+      end
+
+    Repo.all(query)
   end
 
   @doc """
@@ -438,14 +464,20 @@ defmodule Homesite.Content do
   Returns public posts from other users that have the specified tag.
 
   Excludes posts from the specified user_id.
+  When called with a scope, posts from muted users are filtered out.
 
   ## Examples
 
       iex> list_public_posts_by_tag(tag_id, exclude_user_id)
       [%Post{}, ...]
 
+      iex> list_public_posts_by_tag(tag_id, exclude_user_id, scope)
+      [%Post{}, ...]  # excludes posts from muted users
+
   """
-  def list_public_posts_by_tag(tag_id, exclude_user_id \\ nil) do
+  def list_public_posts_by_tag(tag_id, exclude_user_id \\ nil, scope \\ nil)
+
+  def list_public_posts_by_tag(tag_id, exclude_user_id, nil) do
     query =
       from(p in Post,
         join: pt in "post_tags",
@@ -458,6 +490,35 @@ defmodule Homesite.Content do
     query =
       if exclude_user_id do
         from(p in query, where: p.user_id != ^exclude_user_id)
+      else
+        query
+      end
+
+    Repo.all(query)
+  end
+
+  def list_public_posts_by_tag(tag_id, exclude_user_id, %Scope{} = scope) do
+    muted_ids = Moderation.muted_user_ids(scope)
+
+    query =
+      from(p in Post,
+        join: pt in "post_tags",
+        on: pt.post_id == p.id,
+        where: pt.tag_id == ^tag_id and not is_nil(p.published_at),
+        order_by: [desc: p.published_at],
+        preload: [:user]
+      )
+
+    query =
+      if exclude_user_id do
+        from(p in query, where: p.user_id != ^exclude_user_id)
+      else
+        query
+      end
+
+    query =
+      if muted_ids != [] do
+        from(p in query, where: p.user_id not in ^muted_ids)
       else
         query
       end
@@ -760,6 +821,7 @@ defmodule Homesite.Content do
     * `:limit` - Maximum number of results (default: 20)
     * `:tag_id` - Filter by tag ID (optional)
     * `:user_id` - Filter by user ID (optional)
+    * `:scope` - Filter out posts from muted users (optional)
 
   ## Examples
 
@@ -768,6 +830,9 @@ defmodule Homesite.Content do
 
       iex> search_posts("phoenix", limit: 10, tag_id: 5)
       [%Post{}, ...]
+
+      iex> search_posts("phoenix", scope: scope)
+      [%Post{}, ...]  # excludes posts from muted users
 
   """
   def search_posts(query, opts \\ []) when is_binary(query) do
@@ -782,6 +847,7 @@ defmodule Homesite.Content do
         limit = max(limit, 0)
         tag_id = Keyword.get(opts, :tag_id)
         user_id = Keyword.get(opts, :user_id)
+        scope = Keyword.get(opts, :scope)
 
         base_query =
           from(p in Post,
@@ -808,7 +874,20 @@ defmodule Homesite.Content do
         base_query
         |> maybe_filter_by_tag(tag_id)
         |> maybe_filter_by_user(user_id)
+        |> maybe_filter_muted_users(scope)
         |> Repo.all()
+    end
+  end
+
+  defp maybe_filter_muted_users(query, nil), do: query
+
+  defp maybe_filter_muted_users(query, %Scope{} = scope) do
+    muted_ids = Moderation.muted_user_ids(scope)
+
+    if muted_ids != [] do
+      from(p in query, where: p.user_id not in ^muted_ids)
+    else
+      query
     end
   end
 

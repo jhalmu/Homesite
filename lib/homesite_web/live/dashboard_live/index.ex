@@ -7,6 +7,7 @@ defmodule HomesiteWeb.DashboardLive.Index do
   alias Homesite.Content
   alias Homesite.ExternalFeeds
   alias Homesite.Media
+  alias Homesite.Moderation
 
   @impl true
   def mount(_params, _session, socket) do
@@ -20,6 +21,9 @@ defmodule HomesiteWeb.DashboardLive.Index do
     # Media/Projects stats
     media_stats = Media.get_dashboard_stats(scope)
     recent_projects = Media.list_recent_projects(scope, 5)
+
+    # Active warning banners
+    active_banners = Moderation.list_active_banners(scope.user.id)
 
     # Count published vs draft
     published_count = Enum.count(posts, fn post -> not is_nil(post.published_at) end)
@@ -63,6 +67,7 @@ defmodule HomesiteWeb.DashboardLive.Index do
       |> assign(:feed_stats, feed_stats)
       |> assign(:media_stats, media_stats)
       |> assign(:recent_projects, recent_projects)
+      |> assign(:active_banners, active_banners)
 
     {:ok, socket}
   end
@@ -78,6 +83,21 @@ defmodule HomesiteWeb.DashboardLive.Index do
      |> push_event("copy-to-clipboard", %{text: profile_url})}
   end
 
+  @impl true
+  def handle_event("dismiss_banner", %{"id" => id}, socket) do
+    banner_id = String.to_integer(id)
+    user_id = socket.assigns.current_scope.user.id
+
+    case Moderation.dismiss_banner(user_id, banner_id) do
+      {:ok, _} ->
+        active_banners = Moderation.list_active_banners(user_id)
+        {:noreply, assign(socket, :active_banners, active_banners)}
+
+      {:error, :not_found} ->
+        {:noreply, put_flash(socket, :error, gettext("Banner not found"))}
+    end
+  end
+
   defp has_feed_sources?(scope) do
     ExternalFeeds.list_feed_sources(scope) |> length() > 0
   end
@@ -86,5 +106,24 @@ defmodule HomesiteWeb.DashboardLive.Index do
     # Placeholder - implement view tracking in future
     # For now, return nil
     nil
+  end
+
+  # Banner severity styling
+  defp banner_alert_class(severity) do
+    case severity do
+      "info" -> "alert-info"
+      "warning" -> "alert-warning"
+      "error" -> "alert-error"
+      _ -> "alert-warning"
+    end
+  end
+
+  defp banner_icon(severity) do
+    case severity do
+      "info" -> "hero-information-circle"
+      "warning" -> "hero-exclamation-triangle"
+      "error" -> "hero-exclamation-circle"
+      _ -> "hero-exclamation-triangle"
+    end
   end
 end

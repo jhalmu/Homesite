@@ -62,6 +62,15 @@ defmodule HomesiteWeb.ModerationLive.Report do
          |> put_flash(:info, gettext("Report submitted successfully. Our team will review it."))
          |> redirect(to: ~p"/dashboard")}
 
+      {:error, :rate_limited} ->
+        {:noreply,
+         socket
+         |> put_flash(
+           :error,
+           gettext("You have submitted too many reports. Please try again later.")
+         )
+         |> assign(:form, to_form(%{"reason" => reason}))}
+
       {:error, %Ecto.Changeset{} = changeset} ->
         errors = format_errors(changeset)
 

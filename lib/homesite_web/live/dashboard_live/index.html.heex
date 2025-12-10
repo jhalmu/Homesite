@@ -1,4 +1,38 @@
 <Layouts.app flash={@flash} current_scope={@current_scope}>
+  <!-- Warning Banners from Moderation -->
+  <%= if @active_banners != [] do %>
+    <div class="space-y-[var(--space-sm)] mb-[var(--spacing-section)]">
+      <%= for banner <- @active_banners do %>
+        <div
+          class={["alert shadow-lg", banner_alert_class(banner.severity)]}
+          id={"banner-#{banner.id}"}
+        >
+          <div class="flex-1">
+            <div class="gap-[var(--space-sm)] flex items-start">
+              <.icon name={banner_icon(banner.severity)} class="h-6 w-6 flex-shrink-0" />
+              <div class="flex-1">
+                <p class="whitespace-pre-wrap font-medium">{banner.message}</p>
+                <p class="text-[var(--text-xs)] mt-[var(--space-xs)] opacity-70">
+                  {gettext("From: %{admin}",
+                    admin: banner.created_by.display_name || banner.created_by.email
+                  )} · {Calendar.strftime(banner.inserted_at, "%Y-%m-%d %H:%M")}
+                </p>
+              </div>
+            </div>
+          </div>
+          <button
+            phx-click="dismiss_banner"
+            phx-value-id={banner.id}
+            class="btn btn-sm btn-ghost"
+            title={gettext("Dismiss")}
+          >
+            <.icon name="hero-x-mark" class="h-5 w-5" />
+          </button>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
   <div class="technical-main">
     <!-- Header -->
     <header class="gap-[var(--spacing-md)] mb-[var(--spacing-section)] flex flex-col">

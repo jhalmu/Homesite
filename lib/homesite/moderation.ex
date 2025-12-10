@@ -157,15 +157,33 @@ defmodule Homesite.Moderation do
   @doc """
   Creates a report for another user.
 
-  Creates a moderation log entry.
+  Rate limited to 5 reports per hour per user to prevent abuse.
+  Returns `{:error, :rate_limited}` if user exceeds the limit.
+  Creates a moderation log entry on success.
 
   ## Examples
 
       iex> create_report(scope, reported_user_id, "This user is spamming")
       {:ok, %UserReport{}}
 
+      iex> create_report(scope, reported_user_id, "spam")  # after 5 reports/hour
+      {:error, :rate_limited}
+
   """
   def create_report(%Scope{} = scope, reported_user_id, reason, metadata \\ %{}) do
+    # Rate limiting: 5 reports per hour per user
+    rate_key = "moderation:report:#{scope.user.id}"
+
+    case Hammer.check_rate(rate_key, 3_600_000, 5) do
+      {:allow, _count} ->
+        do_create_report(scope, reported_user_id, reason, metadata)
+
+      {:deny, _limit} ->
+        {:error, :rate_limited}
+    end
+  end
+
+  defp do_create_report(scope, reported_user_id, reason, metadata) do
     attrs = %{
       "reporter_id" => scope.user.id,
       "reported_user_id" => reported_user_id,

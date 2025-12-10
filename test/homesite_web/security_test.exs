@@ -2062,4 +2062,228 @@ defmodule HomesiteWeb.SecurityTest do
       assert messages == []
     end
   end
+
+  describe "Moderation Security" do
+    alias Homesite.Moderation
+
+    test "suspended user cannot access authenticated pages", %{conn: conn} do
+      user = user_fixture() |> set_password()
+      admin = admin_fixture()
+      admin_scope = Accounts.Scope.for_user(admin)
+
+      # Log in user first
+      conn = log_in_user(conn, user)
+
+      # Verify user can access dashboard
+      {:ok, _view, html} = live(conn, ~p"/dashboard")
+      assert html =~ "Welcome back"
+
+      # Admin suspends the user
+      expires_at = DateTime.add(DateTime.utc_now(), 3600, :second)
+
+      {:ok, _suspension} =
+        Moderation.suspend_user(admin_scope, user.id, "Test suspension", expires_at)
+
+      # User tries to access dashboard after suspension - should be redirected
+      # The session should be invalidated
+      conn = recycle(conn)
+      conn = get(conn, ~p"/dashboard")
+
+      # Should redirect to login or home
+      assert redirected_to(conn) == ~p"/users/log-in" or redirected_to(conn) == ~p"/"
+    end
+
+    test "banned user cannot access authenticated pages", %{conn: conn} do
+      user = user_fixture() |> set_password()
+      admin = admin_fixture()
+      admin_scope = Accounts.Scope.for_user(admin)
+
+      # Log in user first
+      conn = log_in_user(conn, user)
+
+      # Admin bans the user
+      {:ok, _ban} = Moderation.ban_user(admin_scope, user.id, "Test ban for security test")
+
+      # User tries to access dashboard after ban
+      conn = recycle(conn)
+      conn = get(conn, ~p"/dashboard")
+
+      # Should redirect to login or home
+      assert redirected_to(conn) == ~p"/users/log-in" or redirected_to(conn) == ~p"/"
+    end
+
+    test "regular user cannot access admin moderation routes", %{conn: conn} do
+      user = user_fixture() |> set_password()
+      conn = log_in_user(conn, user)
+
+      # Try to access admin moderation pages
+      assert {:error, {:redirect, %{to: "/"}}} = live(conn, ~p"/admin/moderation")
+      assert {:error, {:redirect, %{to: "/"}}} = live(conn, ~p"/admin/moderation/reports")
+      assert {:error, {:redirect, %{to: "/"}}} = live(conn, ~p"/admin/moderation/suspensions")
+      assert {:error, {:redirect, %{to: "/"}}} = live(conn, ~p"/admin/moderation/bans")
+    end
+
+    test "user cannot mute themselves", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      # Try to mute self
+      result = Moderation.mute_user(scope, user.id)
+      assert {:error, _} = result
+    end
+
+    test "user cannot report themselves", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      # Try to report self
+      result = Moderation.create_report(scope, user.id, "Testing self-report")
+      assert {:error, _} = result
+    end
+
+    test "only admin can suspend users", %{conn: _conn} do
+      user = user_fixture()
+      target = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      expires_at = DateTime.add(DateTime.utc_now(), 3600, :second)
+
+      # Regular user tries to suspend
+      assert_raise MatchError, fn ->
+        Moderation.suspend_user(scope, target.id, "Unauthorized", expires_at)
+      end
+    end
+
+    test "only admin can ban users", %{conn: _conn} do
+      user = user_fixture()
+      target = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      # Regular user tries to ban
+      assert_raise MatchError, fn ->
+        Moderation.ban_user(scope, target.id, "Unauthorized")
+      end
+    end
+
+    test "only admin can create warning banners", %{conn: _conn} do
+      user = user_fixture()
+      target = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      # Regular user tries to create banner
+      assert_raise MatchError, fn ->
+        Moderation.create_banner(scope, target.id, "Unauthorized warning")
+      end
+    end
+
+    test "only admin can resolve reports", %{conn: _conn} do
+      user = user_fixture()
+      admin = admin_fixture()
+      reporter = user_fixture()
+
+      admin_scope = Accounts.Scope.for_user(admin)
+      user_scope = Accounts.Scope.for_user(user)
+      reporter_scope = Accounts.Scope.for_user(reporter)
+
+      # Create a report
+      {:ok, report} = Moderation.create_report(reporter_scope, user.id, "Test report")
+
+      # Regular user tries to resolve
+      assert_raise MatchError, fn ->
+        Moderation.resolve_report(user_scope, report.id, "Unauthorized resolve")
+      end
+
+      # Admin can resolve
+      {:ok, resolved} = Moderation.resolve_report(admin_scope, report.id, "Admin resolved")
+      assert resolved.status == "resolved"
+    end
+
+    test "user A cannot access user B's mutes list", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+      target = user_fixture()
+
+      scope_a = %Accounts.Scope{user: user_a}
+      scope_b = %Accounts.Scope{user: user_b}
+
+      # User B mutes target
+      {:ok, _mute} = Moderation.mute_user(scope_b, target.id)
+
+      # User A's mute list should be empty
+      mutes_a = Moderation.list_muted_users(scope_a)
+      assert mutes_a == []
+
+      # User B's mute list should have target
+      mutes_b = Moderation.list_muted_users(scope_b)
+      assert length(mutes_b) == 1
+    end
+
+    test "muted users' content is filtered from list_public_posts", %{conn: _conn} do
+      user = user_fixture()
+      muted_user = user_fixture()
+
+      scope = %Accounts.Scope{user: user}
+      muted_scope = %Accounts.Scope{user: muted_user}
+
+      # Create post by muted user
+      post = post_fixture(muted_scope)
+      # Publish it
+      {:ok, _published} =
+        Content.update_post(muted_scope, post, %{published_at: DateTime.utc_now()})
+
+      # Without scope, post appears in public posts
+      all_posts = Content.list_public_posts()
+      assert Enum.any?(all_posts, fn p -> p.user_id == muted_user.id end)
+
+      # Mute the user
+      {:ok, _mute} = Moderation.mute_user(scope, muted_user.id)
+
+      # With scope, muted user's posts are filtered
+      filtered_posts = Content.list_public_posts(scope)
+      refute Enum.any?(filtered_posts, fn p -> p.user_id == muted_user.id end)
+    end
+
+    test "rate limiting prevents report spam", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      # Create 6 different users to report
+      targets = for _i <- 1..6, do: user_fixture()
+
+      # First 5 reports should succeed
+      results =
+        Enum.map(Enum.take(targets, 5), fn target ->
+          Moderation.create_report(scope, target.id, "Report #{target.id}")
+        end)
+
+      assert Enum.all?(results, fn
+               {:ok, _} -> true
+               _ -> false
+             end)
+
+      # 6th report should be rate limited
+      sixth_target = Enum.at(targets, 5)
+
+      assert {:error, :rate_limited} =
+               Moderation.create_report(scope, sixth_target.id, "Too many")
+    end
+
+    test "user can only dismiss their own banners", %{conn: _conn} do
+      user_a = user_fixture()
+      user_b = user_fixture()
+      admin = admin_fixture()
+
+      admin_scope = Accounts.Scope.for_user(admin)
+
+      # Create banner for user A
+      {:ok, banner} = Moderation.create_banner(admin_scope, user_a.id, "Warning for A")
+
+      # User B cannot dismiss user A's banner
+      assert {:error, :not_found} = Moderation.dismiss_banner(user_b.id, banner.id)
+
+      # User A can dismiss their own banner
+      assert {:ok, dismissed} = Moderation.dismiss_banner(user_a.id, banner.id)
+      assert dismissed.dismissed_at != nil
+    end
+  end
 end

@@ -6,6 +6,86 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-10 23:15:00 - User Moderation System Phase 5 & 6 (Integration & Polish)
+
+### Session: Complete UserAuth Integration, Content/Chat Filtering, Dashboard Banners & Security
+
+#### Phase 5: Integration (Complete)
+
+**UserAuth Integration** (`lib/homesite_web/user_auth.ex`):
+- Added `check_user_moderation_status/1` to verify ban/suspension status
+- Modified `fetch_current_scope_for_user/2` to block suspended/banned users
+- Modified `mount_current_scope/2` for LiveView suspension/ban checks
+- Banned/suspended users are logged out and sessions invalidated
+
+**Content Mute Filtering** (`lib/homesite/content.ex`):
+- `list_public_posts/1` - Now accepts optional scope to filter muted users
+- `list_public_posts_by_tag/3` - Added scope parameter for mute filtering
+- `search_posts/2` - Added `:scope` option to filter muted users
+- `maybe_filter_muted_users/2` - Private helper for consistent filtering
+
+**Chat Mute Integration** (`lib/homesite/chat.ex`):
+- `blocked_user_ids/1` - Now combines chat blocks AND moderation mutes
+- All chat message filtering automatically includes moderation mutes
+
+**Dashboard Banner Display** (`lib/homesite_web/live/dashboard_live/index.ex`):
+- Loads active warning banners on mount
+- `handle_event("dismiss_banner", ...)` - User can dismiss their banners
+- `banner_alert_class/1` & `banner_icon/1` - Severity-based styling
+- Template updated with banner display at top of dashboard
+
+#### Phase 6: Polish (Complete)
+
+**Rate Limiting** (`lib/homesite/moderation.ex`):
+- `create_report/4` - Rate limited to 5 reports per hour per user
+- Uses Hammer library consistent with existing rate limiting
+- Returns `{:error, :rate_limited}` when exceeded
+
+**Report LiveView Update** (`lib/homesite_web/live/moderation_live/report.ex`):
+- Handles `{:error, :rate_limited}` with user-friendly message
+
+**Security Tests** (`test/homesite_web/security_test.exs`):
+Added 13 new tests in "Moderation Security" describe block:
+- Suspended user cannot access authenticated pages
+- Banned user cannot access authenticated pages
+- Regular user cannot access admin moderation routes
+- User cannot mute themselves
+- User cannot report themselves
+- Only admin can suspend/ban/create banners/resolve reports
+- User A cannot access user B's mutes list
+- Muted users' content is filtered from list_public_posts
+- Rate limiting prevents report spam
+- User can only dismiss their own banners
+
+#### Files Modified
+
+**Integration:**
+- `lib/homesite_web/user_auth.ex` - Suspension/ban checks
+- `lib/homesite/content.ex` - Mute filtering for public content
+- `lib/homesite/chat.ex` - Combined chat blocks + moderation mutes
+- `lib/homesite_web/live/dashboard_live/index.ex` - Banner display
+- `lib/homesite_web/live/dashboard_live/index.html.heex` - Banner template
+
+**Polish:**
+- `lib/homesite/moderation.ex` - Rate limiting for reports
+- `lib/homesite_web/live/moderation_live/report.ex` - Rate limit handling
+
+**Tests:**
+- `test/homesite_web/security_test.exs` - 13 new security tests
+
+#### Test Results
+- **1456 tests, 0 failures** (13 new security tests)
+
+#### User Moderation System Complete
+
+All 6 phases of the plan are now complete:
+- ✅ Phase 1: Database + Core schemas
+- ✅ Phase 2: LiveViews for users and admins
+- ✅ Phase 5: Integration (UserAuth, Content, Chat, Dashboard)
+- ✅ Phase 6: Polish (rate limiting, security tests)
+
+---
+
 ## 2025-12-10 22:00:00 - User Moderation System Phase 1 & 2
 
 ### Session: Complete Database, Schemas, Context, LiveViews & Tests
