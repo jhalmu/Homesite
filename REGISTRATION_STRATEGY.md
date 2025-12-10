@@ -13,12 +13,15 @@ The application uses **passwordless authentication via magic links** as the prim
 
 **Implementation**: `HomesiteWeb.UserAuth` module handles token generation/validation
 
-### Password Authentication (Secondary)
-Password login exists as a fallback:
+### Password Authentication (Legacy Fallback)
+Password login exists as an **optional fallback** for users who prefer it:
+- Users register **without passwords** (passwordless by default)
+- Users can optionally add a password later in Settings
 - Uses Argon2 for secure password hashing
-- Passwords optional during registration
-- Login form accepts email + password
+- Login form shows magic link first, password second
 - Rate limited: 5 attempts per minute per IP
+
+**Note:** Password is a safety net, not the primary method. If email delivery fails, users with passwords can still log in.
 
 ## Email System Configuration
 
@@ -284,5 +287,5 @@ Current email templates in `lib/homesite_web/`:
 ---
 
 **Document created:** 2025-11-24
-**Last updated:** 2025-11-28
-**Status:** Invitation-only - registration enabled with invite requirement
+**Last updated:** 2025-12-10
+**Status:** Invitation-only - passwordless-first with optional password fallback
