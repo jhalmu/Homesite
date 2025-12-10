@@ -109,6 +109,14 @@ defmodule HomesiteWeb.AdminLive.Invitations.Index do
     {:noreply, socket}
   end
 
+  @impl true
+  def handle_event("copy_link", %{"code" => _code}, socket) do
+    # This is handled by JavaScript on the client side
+    # Just return success flash
+    socket = put_flash(socket, :info, "Registration link copied to clipboard!")
+    {:noreply, socket}
+  end
+
   defp maybe_generate_code(attrs) do
     case Map.get(attrs, "code") do
       nil -> Map.put(attrs, "code", Invitation.generate_code())

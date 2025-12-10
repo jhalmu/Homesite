@@ -97,16 +97,30 @@
                     <code class="font-mono text-primary font-bold">
                       {invitation.code}
                     </code>
-                    <button
-                      type="button"
-                      class="btn btn-xs btn-ghost ml-[var(--space-xs)]"
-                      phx-click="copy"
-                      phx-value-code={invitation.code}
-                      onclick={"navigator.clipboard.writeText('#{invitation.code}')"}
-                      title="Copy code"
-                    >
-                      <.icon name="hero-clipboard" class="h-4 w-4" />
-                    </button>
+                    <div class="mt-1 flex gap-1">
+                      <button
+                        type="button"
+                        class="btn btn-xs btn-ghost"
+                        phx-click="copy"
+                        phx-value-code={invitation.code}
+                        onclick={"navigator.clipboard.writeText('#{invitation.code}')"}
+                        title="Copy code only"
+                      >
+                        <.icon name="hero-clipboard" class="h-4 w-4" />
+                        Code
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-xs btn-primary"
+                        phx-click="copy_link"
+                        phx-value-code={invitation.code}
+                        onclick={"navigator.clipboard.writeText('#{HomesiteWeb.Endpoint.url()}/users/register?invite=#{invitation.code}')"}
+                        title="Copy registration link"
+                      >
+                        <.icon name="hero-link" class="h-4 w-4" />
+                        Link
+                      </button>
+                    </div>
                   </td>
                   <td>{invitation.created_by.email}</td>
                   <td>
