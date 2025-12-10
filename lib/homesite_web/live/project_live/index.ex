@@ -94,7 +94,8 @@ defmodule HomesiteWeb.ProjectLive.Index do
          |> assign(:archived_count, count_archived(socket))}
 
       {:error, :must_archive_first} ->
-        {:noreply, put_flash(socket, :error, gettext("Archive the project first before deleting"))}
+        {:noreply,
+         put_flash(socket, :error, gettext("Archive the project first before deleting"))}
 
       {:error, _} ->
         {:noreply, put_flash(socket, :error, gettext("Failed to delete project"))}
@@ -114,11 +115,7 @@ defmodule HomesiteWeb.ProjectLive.Index do
               <button
                 type="button"
                 phx-click="toggle_archived"
-                class={[
-                  "btn btn-sm",
-                  @show_archived && "btn-warning",
-                  !@show_archived && "btn-ghost"
-                ]}
+                class={["btn btn-sm", @show_archived && "btn-warning", !@show_archived && "btn-ghost"]}
               >
                 <.icon name="hero-archive-box" class="h-4 w-4" />
                 {gettext("Archived")} ({@archived_count})
@@ -134,7 +131,11 @@ defmodule HomesiteWeb.ProjectLive.Index do
         <%= if @show_archived do %>
           <div class="alert alert-warning mb-6">
             <.icon name="hero-archive-box" class="h-5 w-5" />
-            <span>{gettext("Showing archived projects. These are hidden from your main list and public views.")}</span>
+            <span>
+              {gettext(
+                "Showing archived projects. These are hidden from your main list and public views."
+              )}
+            </span>
           </div>
         <% end %>
 
@@ -226,7 +227,11 @@ defmodule HomesiteWeb.ProjectLive.Index do
                         type="button"
                         phx-click="delete_project"
                         phx-value-id={project.id}
-                        data-confirm={gettext("Are you sure? This will permanently delete the project and all its data. This cannot be undone.")}
+                        data-confirm={
+                          gettext(
+                            "Are you sure? This will permanently delete the project and all its data. This cannot be undone."
+                          )
+                        }
                         class="btn btn-sm btn-error"
                       >
                         <.icon name="hero-trash" class="h-4 w-4" />
@@ -237,7 +242,10 @@ defmodule HomesiteWeb.ProjectLive.Index do
                       <.link navigate={~p"/projects/#{project.id}"} class="btn btn-sm btn-ghost">
                         {gettext("View")}
                       </.link>
-                      <.link navigate={~p"/projects/#{project.id}/edit"} class="btn btn-sm btn-primary">
+                      <.link
+                        navigate={~p"/projects/#{project.id}/edit"}
+                        class="btn btn-sm btn-primary"
+                      >
                         {gettext("Edit")}
                       </.link>
                       <div class="dropdown dropdown-end">
@@ -253,7 +261,11 @@ defmodule HomesiteWeb.ProjectLive.Index do
                               type="button"
                               phx-click="archive_project"
                               phx-value-id={project.id}
-                              data-confirm={gettext("Archive this project? It will be hidden from your main list but can be restored later.")}
+                              data-confirm={
+                                gettext(
+                                  "Archive this project? It will be hidden from your main list but can be restored later."
+                                )
+                              }
                             >
                               <.icon name="hero-archive-box" class="h-4 w-4" />
                               {gettext("Archive")}

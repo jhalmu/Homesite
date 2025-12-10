@@ -169,6 +169,7 @@ defmodule HomesiteWeb.SocialComponentsTest do
 
       # Count target="_blank" attributes
       matches = Regex.scan(~r/target="_blank"/, html)
+
       # Should have at least 5 (one for each platform: Bluesky, Mastodon, Facebook, LinkedIn, Email)
       assert length(matches) >= 5
     end

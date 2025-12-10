@@ -6,6 +6,80 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-10 10:30:00 - Chat Moderation System (Complete)
+
+### Session: Ban/Mute/Block Implementation
+
+#### Objectives Completed
+Implemented comprehensive chat moderation system with admin controls and personal blocking.
+
+#### Features Implemented
+
+**1. Database Schema** (Migration: `20251210080100_create_chat_moderation_tables.exs`)
+- `chat_bans` - Global chat bans with expiry, reason, banned_by tracking
+- `chat_mutes` - Channel-specific or global mutes with duration
+- `chat_blocks` - Personal user blocks (hide messages from specific users)
+- `chat_moderation_logs` - Full audit trail of all moderation actions
+
+**2. Admin Moderation Controls**
+- **Ban User** - Permanent or temporary global chat ban
+- **Mute User** - 10 min or 1 hour mutes (channel-specific or global)
+- **Unban/Unmute** - Restore user access
+- All actions logged to moderation_logs with timestamp and reason
+
+**3. Personal Blocking**
+- Users can block other users to hide their messages
+- Block/unblock from message dropdown menu
+- Blocked messages filtered in real-time via PubSub
+- Reload messages on block to hide existing messages
+
+**4. UI Integration** (`ChatLive.Show`)
+- Dropdown menu on other users' messages with:
+  - Block user (all users)
+  - Mute 10 min / 1 hour (admin only)
+  - Ban user (admin only)
+- Confirmation dialogs for all moderation actions
+- Ban/mute status indicators replacing message input
+
+**5. Message Flow Protection**
+- `can_send_message?/2` - Checks ban and mute status
+- `create_message_with_checks/3` - Validates before creating
+- `list_messages_for_user/3` - Filters blocked users' messages
+
+#### Files Created
+- `priv/repo/migrations/20251210080100_create_chat_moderation_tables.exs`
+- `lib/homesite/chat/ban.ex` - Ban schema with validate_not_self_ban, active?
+- `lib/homesite/chat/mute.ex` - Mute schema with validate_future_expiry, active?
+- `lib/homesite/chat/block.ex` - Block schema with validate_not_self_block
+- `lib/homesite/chat/moderation_log.ex` - Audit log schema
+
+#### Files Modified
+- `lib/homesite/chat.ex` - Added ~500 lines of moderation API
+- `lib/homesite_web/live/chat_live/show.ex` - UI integration for moderation
+- `test/homesite/chat_test.exs` - Added 39 comprehensive tests
+
+#### Technical Notes
+- **Ecto Nil Comparison Fix**: Used conditional query building for nullable channel_id
+  ```elixir
+  if channel_id do
+    from(m in Mute, where: m.channel_id == ^channel_id)
+  else
+    from(m in Mute, where: is_nil(m.channel_id))
+  end
+  ```
+- **DateTime Precision**: Truncate to seconds for database consistency
+- **Scope Pattern**: Admin check via `Accounts.Scope.admin?(scope)`
+
+#### Test Results
+- **Before**: 1217 tests
+- **After**: 1256 tests, 0 failures
+- Added 39 new tests covering bans, mutes, blocks, and moderation logs
+
+#### GitHub Issues
+- Closed #60 (Chat Moderation - Ban/Mute feature)
+
+---
+
 ## 2025-12-08 20:45:00 - Social Share Buttons Update
 
 ### Session: Replace Twitter with Bluesky/Mastodon

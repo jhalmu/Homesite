@@ -511,18 +511,21 @@ defmodule HomesiteWeb.ProjectLiveTest do
       view
       |> element("[id^='collaborator-name-']")
       |> render_keyup(%{"field" => "name", "value" => "Alice"})
+
       view |> element("button", "Add Collaborator") |> render_click()
 
       # Add second collaborator
       view
       |> element("[id^='collaborator-name-']")
       |> render_keyup(%{"field" => "name", "value" => "Bob"})
+
       view |> element("button", "Add Collaborator") |> render_click()
 
       # Add third collaborator
       view
       |> element("[id^='collaborator-name-']")
       |> render_keyup(%{"field" => "name", "value" => "Charlie"})
+
       html = view |> element("button", "Add Collaborator") |> render_click()
 
       # All three should be in the list
@@ -650,27 +653,33 @@ defmodule HomesiteWeb.ProjectLiveTest do
       view
       |> element("[id^='link-title-']")
       |> render_keyup(%{"field" => "title", "value" => "GitHub"})
+
       view
       |> element("[id^='link-url-']")
       |> render_keyup(%{"field" => "url", "value" => "https://github.com"})
+
       view |> element("button", "Add Link") |> render_click()
 
       # Add second link
       view
       |> element("[id^='link-title-']")
       |> render_keyup(%{"field" => "title", "value" => "Website"})
+
       view
       |> element("[id^='link-url-']")
       |> render_keyup(%{"field" => "url", "value" => "https://website.com"})
+
       view |> element("button", "Add Link") |> render_click()
 
       # Add third link
       view
       |> element("[id^='link-title-']")
       |> render_keyup(%{"field" => "title", "value" => "Documentation"})
+
       view
       |> element("[id^='link-url-']")
       |> render_keyup(%{"field" => "url", "value" => "https://docs.com"})
+
       html = view |> element("button", "Add Link") |> render_click()
 
       # All three should be in the list
@@ -872,7 +881,8 @@ defmodule HomesiteWeb.ProjectLiveTest do
     end
 
     test "saves project with both visibility options enabled", %{conn: conn, scope: scope} do
-      project = project_fixture(scope, %{name: "Both Options Test", is_public: false, is_portfolio: false})
+      project =
+        project_fixture(scope, %{name: "Both Options Test", is_public: false, is_portfolio: false})
 
       {:ok, view, _html} = live(conn, ~p"/projects/#{project.id}/edit")
 
@@ -934,11 +944,14 @@ defmodule HomesiteWeb.ProjectLiveTest do
 
       # Step 1: Fill basics
       view
-      |> form("#project-form", project: %{name: "Preserved Data Test", description: "My description"})
+      |> form("#project-form",
+        project: %{name: "Preserved Data Test", description: "My description"}
+      )
       |> render_change()
 
       # Step 2: Add metadata
       view |> element("button", "Next") |> render_click()
+
       view
       |> form("#project-form", project: %{category: "Test Category"})
       |> render_change()
@@ -964,7 +977,8 @@ defmodule HomesiteWeb.ProjectLiveTest do
 
     test "existing visibility settings are shown correctly", %{conn: conn, scope: scope} do
       # Create project with specific visibility settings
-      project = project_fixture(scope, %{name: "Existing Settings", is_public: true, is_portfolio: true})
+      project =
+        project_fixture(scope, %{name: "Existing Settings", is_public: true, is_portfolio: true})
 
       {:ok, view, _html} = live(conn, ~p"/projects/#{project.id}/edit")
 

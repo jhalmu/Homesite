@@ -2,9 +2,9 @@ defmodule Homesite.ChatTest do
   use Homesite.DataCase
 
   alias Homesite.Chat
-  alias Homesite.Chat.{Channel, Message}
+  alias Homesite.Chat.{Ban, Block, Channel, Message, ModerationLog, Mute}
 
-  import Homesite.AccountsFixtures, only: [user_scope_fixture: 0]
+  import Homesite.AccountsFixtures, only: [user_scope_fixture: 0, admin_scope_fixture: 0]
   import Homesite.ChatFixtures
 
   describe "channels" do
@@ -278,6 +278,492 @@ defmodule Homesite.ChatTest do
       {:ok, _message} = Chat.create_message(scope, channel.id, %{"body" => "No broadcast"})
 
       refute_receive {:new_message, _}, 100
+    end
+  end
+
+  describe "bans" do
+    setup do
+      admin_scope = admin_scope_fixture()
+      user_scope = user_scope_fixture()
+      channel = channel_fixture()
+      %{admin_scope: admin_scope, user_scope: user_scope, channel: channel}
+    end
+
+    test "ban_user/3 bans a user", %{admin_scope: admin_scope, user_scope: user_scope} do
+      assert {:ok, %Ban{} = ban} = Chat.ban_user(admin_scope, user_scope.user.id, reason: "Spam")
+
+      assert ban.user_id == user_scope.user.id
+      assert ban.banned_by_user_id == admin_scope.user.id
+      assert ban.reason == "Spam"
+      assert ban.expires_at == nil
+    end
+
+    test "ban_user/3 creates a moderation log entry", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope
+    } do
+      {:ok, _ban} = Chat.ban_user(admin_scope, user_scope.user.id, reason: "Spam")
+
+      logs = Chat.list_moderation_logs()
+
+      assert Enum.any?(logs, fn log ->
+               log.action == "ban" &&
+                 log.target_user_id == user_scope.user.id &&
+                 log.moderator_id == admin_scope.user.id
+             end)
+    end
+
+    test "ban_user/3 with expiration date creates temporary ban", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope
+    } do
+      # Use truncated datetime to match database precision
+      expires_at = DateTime.utc_now() |> DateTime.add(1, :day) |> DateTime.truncate(:second)
+
+      assert {:ok, %Ban{} = ban} =
+               Chat.ban_user(admin_scope, user_scope.user.id, expires_at: expires_at)
+
+      assert DateTime.compare(ban.expires_at, expires_at) == :eq
+    end
+
+    test "ban_user/3 requires admin scope", %{user_scope: user_scope} do
+      other_user = user_scope_fixture()
+
+      assert_raise MatchError, fn ->
+        Chat.ban_user(user_scope, other_user.user.id)
+      end
+    end
+
+    test "banned?/1 returns true for banned users", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope
+    } do
+      refute Chat.banned?(user_scope.user.id)
+
+      {:ok, _ban} = Chat.ban_user(admin_scope, user_scope.user.id)
+
+      assert Chat.banned?(user_scope.user.id)
+    end
+
+    test "banned?/1 returns false for expired bans", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope
+    } do
+      # Create a ban that expired 1 second ago
+      expires_at = DateTime.add(DateTime.utc_now(), -1, :second)
+      {:ok, _ban} = Chat.ban_user(admin_scope, user_scope.user.id, expires_at: expires_at)
+
+      refute Chat.banned?(user_scope.user.id)
+    end
+
+    test "unban_user/2 removes the ban", %{admin_scope: admin_scope, user_scope: user_scope} do
+      {:ok, _ban} = Chat.ban_user(admin_scope, user_scope.user.id)
+      assert Chat.banned?(user_scope.user.id)
+
+      {:ok, _} = Chat.unban_user(admin_scope, user_scope.user.id)
+      refute Chat.banned?(user_scope.user.id)
+    end
+
+    test "unban_user/2 creates a moderation log entry", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope
+    } do
+      {:ok, _ban} = Chat.ban_user(admin_scope, user_scope.user.id)
+      {:ok, _} = Chat.unban_user(admin_scope, user_scope.user.id)
+
+      logs = Chat.list_moderation_logs()
+
+      assert Enum.any?(logs, fn log ->
+               log.action == "unban" && log.target_user_id == user_scope.user.id
+             end)
+    end
+
+    test "unban_user/2 returns error if user not banned", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope
+    } do
+      assert {:error, :not_found} = Chat.unban_user(admin_scope, user_scope.user.id)
+    end
+
+    test "list_bans/0 returns active bans", %{admin_scope: admin_scope, user_scope: user_scope} do
+      {:ok, ban} = Chat.ban_user(admin_scope, user_scope.user.id)
+
+      bans = Chat.list_bans()
+      assert Enum.any?(bans, fn b -> b.id == ban.id end)
+    end
+
+    test "get_active_ban/1 returns the ban with preloaded banned_by", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope
+    } do
+      {:ok, _ban} = Chat.ban_user(admin_scope, user_scope.user.id, reason: "Test")
+
+      ban = Chat.get_active_ban(user_scope.user.id)
+      assert ban.banned_by.id == admin_scope.user.id
+      assert ban.reason == "Test"
+    end
+  end
+
+  describe "mutes" do
+    setup do
+      admin_scope = admin_scope_fixture()
+      user_scope = user_scope_fixture()
+      channel = channel_fixture()
+      %{admin_scope: admin_scope, user_scope: user_scope, channel: channel}
+    end
+
+    test "mute_user/3 mutes a user in a channel", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope,
+      channel: channel
+    } do
+      assert {:ok, %Mute{} = mute} =
+               Chat.mute_user(admin_scope, user_scope.user.id,
+                 duration: 10,
+                 channel_id: channel.id,
+                 reason: "Timeout"
+               )
+
+      assert mute.user_id == user_scope.user.id
+      assert mute.muted_by_user_id == admin_scope.user.id
+      assert mute.channel_id == channel.id
+      assert mute.reason == "Timeout"
+      assert mute.expires_at != nil
+    end
+
+    test "mute_user/3 creates global mute when channel_id is nil", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope
+    } do
+      assert {:ok, %Mute{} = mute} = Chat.mute_user(admin_scope, user_scope.user.id, duration: 10)
+
+      assert mute.channel_id == nil
+    end
+
+    test "mute_user/3 creates a moderation log entry", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope
+    } do
+      {:ok, _mute} = Chat.mute_user(admin_scope, user_scope.user.id, duration: 10, reason: "Spam")
+
+      logs = Chat.list_moderation_logs()
+
+      assert Enum.any?(logs, fn log ->
+               log.action == "mute" && log.target_user_id == user_scope.user.id
+             end)
+    end
+
+    test "mute_user/3 requires admin scope", %{user_scope: user_scope} do
+      other_user = user_scope_fixture()
+
+      assert_raise MatchError, fn ->
+        Chat.mute_user(user_scope, other_user.user.id, duration: 10)
+      end
+    end
+
+    test "muted?/2 returns true for muted users in channel", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope,
+      channel: channel
+    } do
+      refute Chat.muted?(user_scope.user.id, channel.id)
+
+      {:ok, _mute} =
+        Chat.mute_user(admin_scope, user_scope.user.id, duration: 10, channel_id: channel.id)
+
+      assert Chat.muted?(user_scope.user.id, channel.id)
+    end
+
+    test "muted?/2 returns true for globally muted users", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope,
+      channel: channel
+    } do
+      {:ok, _mute} = Chat.mute_user(admin_scope, user_scope.user.id, duration: 10)
+
+      # Global mute applies to all channels
+      assert Chat.muted?(user_scope.user.id, channel.id)
+    end
+
+    test "unmute_user/3 removes the mute", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope,
+      channel: channel
+    } do
+      {:ok, _mute} =
+        Chat.mute_user(admin_scope, user_scope.user.id, duration: 10, channel_id: channel.id)
+
+      assert Chat.muted?(user_scope.user.id, channel.id)
+
+      {:ok, _} = Chat.unmute_user(admin_scope, user_scope.user.id, channel_id: channel.id)
+      refute Chat.muted?(user_scope.user.id, channel.id)
+    end
+
+    test "unmute_user/3 creates a moderation log entry", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope,
+      channel: channel
+    } do
+      {:ok, _mute} =
+        Chat.mute_user(admin_scope, user_scope.user.id, duration: 10, channel_id: channel.id)
+
+      {:ok, _} = Chat.unmute_user(admin_scope, user_scope.user.id, channel_id: channel.id)
+
+      logs = Chat.list_moderation_logs()
+
+      assert Enum.any?(logs, fn log ->
+               log.action == "unmute" && log.target_user_id == user_scope.user.id
+             end)
+    end
+
+    test "list_mutes/1 returns active mutes", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope,
+      channel: channel
+    } do
+      {:ok, mute} =
+        Chat.mute_user(admin_scope, user_scope.user.id, duration: 10, channel_id: channel.id)
+
+      mutes = Chat.list_mutes()
+      assert Enum.any?(mutes, fn m -> m.id == mute.id end)
+    end
+
+    test "list_mutes/1 filters by channel", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope,
+      channel: channel
+    } do
+      {:ok, mute} =
+        Chat.mute_user(admin_scope, user_scope.user.id, duration: 10, channel_id: channel.id)
+
+      mutes = Chat.list_mutes(channel_id: channel.id)
+      assert Enum.any?(mutes, fn m -> m.id == mute.id end)
+
+      other_channel = channel_fixture(%{name: "other-channel"})
+      mutes_other = Chat.list_mutes(channel_id: other_channel.id)
+      refute Enum.any?(mutes_other, fn m -> m.id == mute.id end)
+    end
+  end
+
+  describe "blocks (personal)" do
+    setup do
+      user1_scope = user_scope_fixture()
+      user2_scope = user_scope_fixture()
+      channel = channel_fixture()
+      %{user1_scope: user1_scope, user2_scope: user2_scope, channel: channel}
+    end
+
+    test "block_user/2 blocks another user", %{user1_scope: user1_scope, user2_scope: user2_scope} do
+      assert {:ok, %Block{} = block} = Chat.block_user(user1_scope, user2_scope.user.id)
+
+      assert block.user_id == user1_scope.user.id
+      assert block.blocked_user_id == user2_scope.user.id
+    end
+
+    test "block_user/2 prevents self-blocking", %{user1_scope: user1_scope} do
+      assert {:error, changeset} = Chat.block_user(user1_scope, user1_scope.user.id)
+      assert "cannot block yourself" in errors_on(changeset).blocked_user_id
+    end
+
+    test "blocked?/2 returns true for blocked users", %{
+      user1_scope: user1_scope,
+      user2_scope: user2_scope
+    } do
+      refute Chat.blocked?(user1_scope, user2_scope.user.id)
+
+      {:ok, _block} = Chat.block_user(user1_scope, user2_scope.user.id)
+
+      assert Chat.blocked?(user1_scope, user2_scope.user.id)
+    end
+
+    test "unblock_user/2 removes the block", %{user1_scope: user1_scope, user2_scope: user2_scope} do
+      {:ok, _block} = Chat.block_user(user1_scope, user2_scope.user.id)
+      assert Chat.blocked?(user1_scope, user2_scope.user.id)
+
+      {:ok, _} = Chat.unblock_user(user1_scope, user2_scope.user.id)
+      refute Chat.blocked?(user1_scope, user2_scope.user.id)
+    end
+
+    test "unblock_user/2 returns error if user not blocked", %{
+      user1_scope: user1_scope,
+      user2_scope: user2_scope
+    } do
+      assert {:error, :not_found} = Chat.unblock_user(user1_scope, user2_scope.user.id)
+    end
+
+    test "list_blocks/1 returns blocked users", %{
+      user1_scope: user1_scope,
+      user2_scope: user2_scope
+    } do
+      {:ok, block} = Chat.block_user(user1_scope, user2_scope.user.id)
+
+      blocks = Chat.list_blocks(user1_scope)
+      assert Enum.any?(blocks, fn b -> b.id == block.id end)
+    end
+
+    test "blocked_user_ids/1 returns list of blocked user ids", %{
+      user1_scope: user1_scope,
+      user2_scope: user2_scope
+    } do
+      {:ok, _block} = Chat.block_user(user1_scope, user2_scope.user.id)
+
+      blocked_ids = Chat.blocked_user_ids(user1_scope)
+      assert user2_scope.user.id in blocked_ids
+    end
+
+    test "list_messages_for_user/3 filters out blocked users' messages", %{
+      user1_scope: user1_scope,
+      user2_scope: user2_scope,
+      channel: channel
+    } do
+      # User2 creates a message
+      {:ok, blocked_message} =
+        Chat.create_message(user2_scope, channel.id, %{"body" => "Hello from user2"})
+
+      # User1 creates a message
+      {:ok, own_message} =
+        Chat.create_message(user1_scope, channel.id, %{"body" => "Hello from user1"})
+
+      # Before blocking - user1 sees both messages
+      messages_before = Chat.list_messages_for_user(user1_scope, channel.id)
+      assert Enum.any?(messages_before, fn m -> m.id == blocked_message.id end)
+      assert Enum.any?(messages_before, fn m -> m.id == own_message.id end)
+
+      # User1 blocks user2
+      {:ok, _block} = Chat.block_user(user1_scope, user2_scope.user.id)
+
+      # After blocking - user1 only sees their own messages
+      messages_after = Chat.list_messages_for_user(user1_scope, channel.id)
+      refute Enum.any?(messages_after, fn m -> m.id == blocked_message.id end)
+      assert Enum.any?(messages_after, fn m -> m.id == own_message.id end)
+    end
+  end
+
+  describe "moderation checks on messaging" do
+    setup do
+      admin_scope = admin_scope_fixture()
+      user_scope = user_scope_fixture()
+      channel = channel_fixture()
+      %{admin_scope: admin_scope, user_scope: user_scope, channel: channel}
+    end
+
+    test "create_message_with_checks/3 succeeds for normal users", %{
+      user_scope: user_scope,
+      channel: channel
+    } do
+      assert {:ok, %Message{}} =
+               Chat.create_message_with_checks(user_scope, channel.id, %{"body" => "Hello"})
+    end
+
+    test "create_message_with_checks/3 returns :banned for banned users", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope,
+      channel: channel
+    } do
+      {:ok, _ban} = Chat.ban_user(admin_scope, user_scope.user.id)
+
+      assert {:error, :banned} =
+               Chat.create_message_with_checks(user_scope, channel.id, %{"body" => "Hello"})
+    end
+
+    test "create_message_with_checks/3 returns :muted for muted users", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope,
+      channel: channel
+    } do
+      {:ok, _mute} =
+        Chat.mute_user(admin_scope, user_scope.user.id, duration: 10, channel_id: channel.id)
+
+      assert {:error, :muted} =
+               Chat.create_message_with_checks(user_scope, channel.id, %{"body" => "Hello"})
+    end
+
+    test "can_send_message?/2 returns :ok for normal users", %{
+      user_scope: user_scope,
+      channel: channel
+    } do
+      assert :ok = Chat.can_send_message?(user_scope, channel.id)
+    end
+
+    test "can_send_message?/2 returns {:error, :banned} for banned users", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope,
+      channel: channel
+    } do
+      {:ok, _ban} = Chat.ban_user(admin_scope, user_scope.user.id)
+
+      assert {:error, :banned} = Chat.can_send_message?(user_scope, channel.id)
+    end
+
+    test "can_send_message?/2 returns {:error, :muted} for muted users", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope,
+      channel: channel
+    } do
+      {:ok, _mute} =
+        Chat.mute_user(admin_scope, user_scope.user.id, duration: 10, channel_id: channel.id)
+
+      assert {:error, :muted} = Chat.can_send_message?(user_scope, channel.id)
+    end
+  end
+
+  describe "moderation logs" do
+    setup do
+      admin_scope = admin_scope_fixture()
+      user_scope = user_scope_fixture()
+      %{admin_scope: admin_scope, user_scope: user_scope}
+    end
+
+    test "list_moderation_logs/1 returns logs ordered by date", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope
+    } do
+      {:ok, _ban} = Chat.ban_user(admin_scope, user_scope.user.id)
+      {:ok, _} = Chat.unban_user(admin_scope, user_scope.user.id)
+
+      logs = Chat.list_moderation_logs()
+      assert length(logs) >= 2
+
+      # Verify both actions are recorded for this user
+      actions = Enum.map(logs, & &1.action)
+      assert "ban" in actions
+      assert "unban" in actions
+    end
+
+    test "list_moderation_logs/1 filters by action", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope
+    } do
+      {:ok, _ban} = Chat.ban_user(admin_scope, user_scope.user.id)
+      {:ok, _} = Chat.unban_user(admin_scope, user_scope.user.id)
+
+      ban_logs = Chat.list_moderation_logs(action: "ban")
+      assert Enum.all?(ban_logs, fn log -> log.action == "ban" end)
+
+      unban_logs = Chat.list_moderation_logs(action: "unban")
+      assert Enum.all?(unban_logs, fn log -> log.action == "unban" end)
+    end
+
+    test "list_moderation_logs/1 respects limit option", %{admin_scope: admin_scope} do
+      # Create multiple users to ban
+      for _ <- 1..5 do
+        user = user_scope_fixture()
+        {:ok, _ban} = Chat.ban_user(admin_scope, user.user.id)
+      end
+
+      logs = Chat.list_moderation_logs(limit: 3)
+      assert length(logs) == 3
+    end
+
+    test "moderation logs have preloaded associations", %{
+      admin_scope: admin_scope,
+      user_scope: user_scope
+    } do
+      {:ok, _ban} = Chat.ban_user(admin_scope, user_scope.user.id, reason: "Test")
+
+      [log | _] = Chat.list_moderation_logs()
+      assert log.moderator.id == admin_scope.user.id
+      assert log.target_user.id == user_scope.user.id
     end
   end
 end
