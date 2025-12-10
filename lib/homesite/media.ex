@@ -440,8 +440,18 @@ defmodule Homesite.Media do
     limit = opts[:limit] || 20
     offset = opts[:offset] || 0
 
+    # Subquery to count media items per project
+    media_count_query =
+      from(pmi in "project_media_items",
+        where: pmi.project_id == parent_as(:project).id,
+        select: count(pmi.id)
+      )
+
     from(p in Project,
+      as: :project,
       where: p.is_public == true and p.is_portfolio == true,
+      # Only show portfolios with at least one media item
+      where: subquery(media_count_query) > 0,
       order_by: [asc: p.display_order, desc: p.inserted_at],
       limit: ^limit,
       offset: ^offset,
