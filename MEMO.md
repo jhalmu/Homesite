@@ -6,6 +6,51 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-10 14:40:00 - External Feeds Feature Verification & Archive
+
+### Session: Verify External Feeds Features Complete
+
+#### Discovery
+User asked to implement Reddit support, read/unread tracking, and bookmarks for feed items.
+Upon investigation, **ALL THREE FEATURES WERE ALREADY FULLY IMPLEMENTED**:
+
+1. **Reddit Adapter** (`lib/homesite/external_feeds/adapters/reddit_adapter.ex`)
+   - Supports subreddits and user posts
+   - Uses native Reddit RSS (no API key needed)
+   - 20+ tests in `reddit_adapter_test.exs`
+
+2. **Read/Unread Tracking**
+   - Schema: `FeedItemInteraction` with `read_at` field
+   - Context: `mark_item_as_read/2`, `mark_item_as_unread/2`
+   - UI: `FeedLive.Index` with read/unread events
+
+3. **Bookmarks**
+   - Schema: `bookmarked_at` field in `FeedItemInteraction`
+   - Context: `bookmark_item/2` (toggle)
+   - UI: Filter by bookmarks, toggle bookmark button
+
+#### Changes Made
+- Archived `EXTERNAL_FEEDS.md` (539 lines) to `archived_docs/`
+- Fixed unused alias warning in `external_feeds_test.exs`
+- Updated `archived_docs/README.md` with current active docs
+
+#### Test Results
+- 1314 tests, 0 failures
+- 79 feed-specific tests passing
+
+#### Commits
+- `ad059c8` - docs: Archive EXTERNAL_FEEDS.md - feature fully implemented
+
+#### Root MD Files Now (8 files)
+- Essential: README.md, CLAUDE.md, AGENTS.md, MEMO.md
+- Active guides: MODERN_CSS_GUIDE.md, DESIGN_SYSTEM_MIGRATION_GUIDE.md
+- Active feature docs: REGISTRATION_STRATEGY.md, DEPLOYMENT.md
+
+#### Open Issues
+- #13 - Email Notifications for New Posts (priority:medium)
+
+---
+
 ## 2025-12-10 11:00:00 - Test Coverage Expansion
 
 ### Session: Comprehensive Test Coverage for Edge Cases & Security
