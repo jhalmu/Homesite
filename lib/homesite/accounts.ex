@@ -754,10 +754,15 @@ defmodule Homesite.Accounts do
 
   """
   def create_invitation(%User{} = creator, attrs \\ %{}) do
+    # Normalize to string keys to avoid mixed key errors
     attrs =
       attrs
-      |> Map.put_new(:code, Invitation.generate_code())
-      |> Map.put(:created_by_user_id, creator.id)
+      |> Enum.into(%{}, fn
+        {k, v} when is_atom(k) -> {Atom.to_string(k), v}
+        {k, v} -> {k, v}
+      end)
+      |> Map.put_new("code", Invitation.generate_code())
+      |> Map.put("created_by_user_id", creator.id)
 
     %Invitation{}
     |> Invitation.changeset(attrs)
