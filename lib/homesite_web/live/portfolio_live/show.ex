@@ -226,40 +226,40 @@ defmodule HomesiteWeb.PortfolioLive.Show do
 
             <.link navigate={~p"/portfolio"} class="btn btn-ghost btn-sm">
               <.icon name="hero-arrow-left" class="h-4 w-4" />
-              {gettext("Back to Portfolio")}
+              {gettext("Back")}
             </.link>
           </:actions>
         </.header>
-        
-    <!-- Project metadata badges -->
-        <div class="mt-[var(--space-md)] gap-[var(--space-xs)] flex flex-wrap items-center">
-          <div class="badge badge-primary gap-[var(--space-inline)]">
+
+        <%!-- Project metadata badges --%>
+        <div class="mt-[var(--spacing-sm)] gap-[var(--spacing-sm)] text-[var(--text-sm)] flex flex-wrap items-center">
+          <div class="badge badge-primary gap-[var(--spacing-inline)]">
             <.icon name="hero-briefcase" class="h-3 w-3" />
             {gettext("Portfolio")}
           </div>
 
-          <div class="badge badge-success gap-[var(--space-inline)]">
+          <div class="badge badge-success gap-[var(--spacing-inline)]">
             <.icon name="hero-globe-alt" class="h-3 w-3" />
             {gettext("Public")}
           </div>
 
           <%= if show_field?(@project, "category") && @project.category do %>
-            <div class="badge badge-secondary gap-[var(--space-inline)]">
+            <div class="badge badge-secondary gap-[var(--spacing-inline)]">
               <.icon name="hero-tag" class="h-3 w-3" />
               {@project.category}
             </div>
           <% end %>
 
           <%= if show_field?(@project, "project_date") && @project.project_date do %>
-            <div class="badge badge-ghost gap-[var(--space-inline)]">
-              <.icon name="hero-calendar" class="h-3 w-3" />
+            <div class="opacity-70">
+              <.icon name="hero-calendar" class="inline h-4 w-4" />
               {format_month_year(@project.project_date)}
             </div>
           <% end %>
 
           <%= if @project.user do %>
-            <div class="text-base-content/60 ml-[var(--space-sm)] gap-[var(--space-xs)] text-[var(--text-sm)] flex items-center">
-              <.icon name="hero-user-circle" class="h-4 w-4" />
+            <div class="opacity-70">
+              <.icon name="hero-user-circle" class="inline h-4 w-4" />
               <span>{@project.user.display_name || @project.user.email}</span>
             </div>
           <% end %>
@@ -267,9 +267,11 @@ defmodule HomesiteWeb.PortfolioLive.Show do
 
         <%!-- Tags Section --%>
         <%= if show_field?(@project, "tags") && @project.tags && length(@project.tags) > 0 do %>
-          <div class="mt-[var(--space-md)]">
-            <h3 class="text-base-content/70 mb-2 text-sm font-semibold">{gettext("Tags")}</h3>
-            <div class="flex flex-wrap gap-2">
+          <div class="mt-[var(--spacing-md)]">
+            <h3 class="mb-[var(--spacing-sm)] text-[var(--text-sm)] font-semibold opacity-70">
+              {gettext("Tags")}
+            </h3>
+            <div class="gap-[var(--spacing-inline)] flex flex-wrap">
               <%= for tag <- @project.tags do %>
                 <span class="badge badge-outline badge-sm">{tag}</span>
               <% end %>
@@ -279,19 +281,21 @@ defmodule HomesiteWeb.PortfolioLive.Show do
 
         <%!-- Collaborators Section --%>
         <%= if show_field?(@project, "collaborators") && length(@project.collaborators) > 0 do %>
-          <div class="mt-[var(--space-lg)]">
-            <h3 class="mb-4 text-lg font-semibold">{gettext("Collaborators")}</h3>
-            <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div class="mt-[var(--spacing-lg)]">
+            <h3 class="mb-[var(--spacing-sm)] text-[var(--text-base)] font-semibold">
+              {gettext("Collaborators")}
+            </h3>
+            <div class="gap-[var(--spacing-sm)] grid grid-cols-1 md:grid-cols-2">
               <%= for collab <- Enum.sort_by(@project.collaborators, & &1.display_order) do %>
-                <div class="bg-base-200 flex items-center gap-3 rounded-lg p-3">
-                  <.icon name="hero-user" class="text-base-content/60 h-5 w-5" />
+                <div class="gap-[var(--spacing-sm)] bg-base-200 p-[var(--spacing-sm)] flex items-center rounded-lg">
+                  <.icon name="hero-user" class="h-5 w-5 opacity-60" />
                   <div class="flex-1">
                     <span class="font-medium">{collab.name}</span>
                     <%= if collab.contact_type == "url" do %>
                       <a
                         href={collab.contact}
                         target="_blank"
-                        class="text-primary ml-2 text-sm hover:underline"
+                        class="text-primary ml-[var(--spacing-inline)] text-[var(--text-sm)] hover:underline"
                       >
                         <.icon name="hero-link" class="inline h-3 w-3" />
                       </a>
@@ -299,7 +303,7 @@ defmodule HomesiteWeb.PortfolioLive.Show do
                     <%= if collab.contact_type == "email" do %>
                       <a
                         href={"mailto:#{collab.contact}"}
-                        class="text-primary ml-2 text-sm hover:underline"
+                        class="text-primary ml-[var(--spacing-inline)] text-[var(--text-sm)] hover:underline"
                       >
                         <.icon name="hero-envelope" class="inline h-3 w-3" />
                       </a>
@@ -313,28 +317,30 @@ defmodule HomesiteWeb.PortfolioLive.Show do
 
         <%!-- Affiliation Links Section --%>
         <%= if show_field?(@project, "affiliation_links") && length(@project.affiliation_links) > 0 do %>
-          <div class="mt-[var(--space-lg)]">
-            <h3 class="mb-4 text-lg font-semibold">{gettext("Related Links")}</h3>
-            <div class="space-y-2">
+          <div class="mt-[var(--spacing-lg)]">
+            <h3 class="mb-[var(--spacing-sm)] text-[var(--text-base)] font-semibold">
+              {gettext("Related Links")}
+            </h3>
+            <div class="space-y-[var(--spacing-inline)]">
               <%= for link <- Enum.sort_by(@project.affiliation_links, & &1.display_order) do %>
                 <a
                   href={link.url}
                   target="_blank"
-                  class="bg-base-200 flex items-center gap-2 rounded-lg p-3 transition-colors hover:bg-base-300"
+                  class="gap-[var(--spacing-sm)] bg-base-200 duration-[var(--duration-fast)] p-[var(--spacing-sm)] flex items-center rounded-lg transition-colors hover:bg-base-300"
                 >
                   <.icon name="hero-link" class="text-primary h-5 w-5" />
                   <span class="flex-1 font-medium">{link.title}</span>
-                  <.icon name="hero-arrow-top-right-on-square" class="text-base-content/60 h-4 w-4" />
+                  <.icon name="hero-arrow-top-right-on-square" class="h-4 w-4 opacity-60" />
                 </a>
               <% end %>
             </div>
           </div>
         <% end %>
-        
-    <!-- Media items grid -->
+
+        <%!-- Media items grid --%>
         <div class="mt-[var(--spacing-lg)]">
           <%= if Enum.empty?(@project.media_items) do %>
-            <div class="alert">
+            <div class="alert alert-info">
               <.icon name="hero-information-circle" class="h-6 w-6" />
               <div>
                 <h3 class="font-bold">{gettext("No media yet")}</h3>
@@ -344,15 +350,15 @@ defmodule HomesiteWeb.PortfolioLive.Show do
               </div>
             </div>
           <% else %>
-            <!-- Statistics -->
-            <div class="mb-[var(--space-md)] text-base-content/60 text-[var(--text-sm)]">
+            <%!-- Statistics --%>
+            <div class="mb-[var(--spacing-md)] text-[var(--text-sm)] opacity-70">
               {gettext("%{count} image(s)", count: length(@project.media_items))}
             </div>
-            
-    <!-- Masonry-style grid for varied aspect ratios -->
-            <div class="gap-[var(--space-md)] columns-1 sm:columns-2 md:columns-3 lg:columns-4">
+
+            <%!-- Masonry-style grid for varied aspect ratios --%>
+            <div class="gap-[var(--spacing-md)] columns-1 sm:columns-2 md:columns-3 lg:columns-4">
               <%= for {media, idx} <- Enum.with_index(@project.media_items) do %>
-                <article class="mb-[var(--space-md)] break-inside-avoid">
+                <article class="mb-[var(--spacing-md)] break-inside-avoid">
                   <div class="card bg-base-200 duration-[var(--duration-normal)] overflow-hidden shadow-lg transition-shadow hover:shadow-xl">
                     <figure class="bg-base-300 overflow-hidden">
                       <button
@@ -367,24 +373,24 @@ defmodule HomesiteWeb.PortfolioLive.Show do
                         <img
                           src={"data:#{media.content_type};base64,#{Base.encode64(media.medium_data)}"}
                           alt={media.alt_text}
-                          class="w-full object-cover transition-transform duration-200 hover:scale-105"
+                          class="duration-[var(--duration-normal)] w-full object-cover transition-transform hover:scale-105"
                           loading="lazy"
                         />
                       </button>
                     </figure>
 
                     <%= if media.title || media.caption do %>
-                      <div class="card-body p-[var(--space-sm)]">
+                      <div class="card-body p-[var(--spacing-sm)]">
                         <%= if media.title do %>
                           <h3 class="card-title text-[var(--text-sm)]">{media.title}</h3>
                         <% end %>
 
                         <%= if media.caption do %>
-                          <p class="text-base-content/70 text-[var(--text-xs)]">{media.caption}</p>
+                          <p class="text-[var(--text-xs)] opacity-70">{media.caption}</p>
                         <% end %>
 
-                        <div class="mt-[var(--space-xs)] gap-[var(--space-inline)] text-[var(--text-xs)] flex flex-wrap opacity-70">
-                          <span class="badge badge-xs badge-ghost">{media.aspect_category}</span>
+                        <div class="mt-[var(--spacing-xs)] gap-[var(--spacing-inline)] text-[var(--text-xs)] flex flex-wrap opacity-70">
+                          <span class="badge badge-ghost badge-xs">{media.aspect_category}</span>
                           <span>{media.width}×{media.height}</span>
                         </div>
                       </div>
