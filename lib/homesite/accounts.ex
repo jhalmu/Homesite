@@ -6,7 +6,12 @@ defmodule Homesite.Accounts do
   import Ecto.Query, warn: false
   alias Homesite.Repo
 
-  alias Homesite.Accounts.{Invitation, User, UserNotifier, UserToken}
+  alias Homesite.Accounts.{AuthLog, Invitation, User, UserNotifier, UserToken}
+
+  # Account lockout settings
+  @lockout_threshold 5
+  @lockout_window_minutes 15
+  @suspicious_threshold 10
 
   ## Database getters
 
@@ -999,5 +1004,329 @@ defmodule Homesite.Accounts do
         {:ok, {user, tokens_to_expire}}
       end
     end)
+  end
+
+  ## Authentication Logging & Security
+
+  @doc """
+  Logs an authentication event.
+
+  ## Parameters
+  - `event_type` - Type of event (see AuthLog.event_types/0)
+  - `email` - Email address involved
+  - `opts` - Optional parameters:
+    - `:success` - Whether the event was successful (default: false)
+    - `:user` - User struct if known
+    - `:ip_address` - Client IP address
+    - `:user_agent` - Client user agent
+    - `:failure_reason` - Reason for failure if applicable
+    - `:metadata` - Additional metadata map
+
+  ## Examples
+
+      iex> log_auth_event("login_success", "user@example.com", success: true, user: user)
+      {:ok, %AuthLog{}}
+
+      iex> log_auth_event("login_failure", "user@example.com", failure_reason: "invalid_password")
+      {:ok, %AuthLog{}}
+
+  """
+  def log_auth_event(event_type, email, opts \\ []) do
+    attrs = %{
+      event_type: event_type,
+      email: email,
+      success: Keyword.get(opts, :success, false),
+      user_id: get_in(opts, [:user, Access.key(:id)]),
+      ip_address: Keyword.get(opts, :ip_address),
+      user_agent: Keyword.get(opts, :user_agent),
+      failure_reason: Keyword.get(opts, :failure_reason),
+      metadata: Keyword.get(opts, :metadata, %{})
+    }
+
+    %AuthLog{}
+    |> AuthLog.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Checks if an account is locked out due to too many failed login attempts.
+
+  Returns `true` if the account should be locked out.
+
+  ## Examples
+
+      iex> account_locked_out?("user@example.com")
+      false
+
+      iex> account_locked_out?("attacker@example.com")
+      true
+
+  """
+  def account_locked_out?(email) when is_binary(email) do
+    window_start = DateTime.add(DateTime.utc_now(), -@lockout_window_minutes, :minute)
+
+    count =
+      from(l in AuthLog,
+        where: l.email == ^email,
+        where: l.success == false,
+        where: l.event_type in ["login_failure", "magic_link_failure"],
+        where: l.inserted_at >= ^window_start,
+        select: count(l.id)
+      )
+      |> Repo.one()
+
+    count >= @lockout_threshold
+  end
+
+  @doc """
+  Returns the number of minutes remaining in the lockout period.
+
+  Returns `0` if not locked out.
+
+  ## Examples
+
+      iex> lockout_remaining_minutes("user@example.com")
+      0
+
+      iex> lockout_remaining_minutes("locked@example.com")
+      12
+
+  """
+  def lockout_remaining_minutes(email) when is_binary(email) do
+    window_start = DateTime.add(DateTime.utc_now(), -@lockout_window_minutes, :minute)
+
+    oldest_failure =
+      from(l in AuthLog,
+        where: l.email == ^email,
+        where: l.success == false,
+        where: l.event_type in ["login_failure", "magic_link_failure"],
+        where: l.inserted_at >= ^window_start,
+        order_by: [asc: l.inserted_at],
+        limit: 1,
+        select: l.inserted_at
+      )
+      |> Repo.one()
+
+    case oldest_failure do
+      nil ->
+        0
+
+      timestamp ->
+        lockout_ends = DateTime.add(timestamp, @lockout_window_minutes, :minute)
+        diff = DateTime.diff(lockout_ends, DateTime.utc_now(), :minute)
+        max(0, diff)
+    end
+  end
+
+  @doc """
+  Detects suspicious activity patterns for an email or IP.
+
+  Returns a map with detection results:
+  - `:suspicious` - boolean indicating if activity is suspicious
+  - `:reason` - reason for suspicion if applicable
+  - `:details` - additional details
+
+  ## Examples
+
+      iex> detect_suspicious_activity("user@example.com", ip_address: "1.2.3.4")
+      %{suspicious: false, reason: nil, details: %{}}
+
+  """
+  def detect_suspicious_activity(email, opts \\ []) do
+    ip_address = Keyword.get(opts, :ip_address)
+    window_start = DateTime.add(DateTime.utc_now(), -60, :minute)
+
+    # Check for rapid failures from same email
+    email_failures =
+      from(l in AuthLog,
+        where: l.email == ^email,
+        where: l.success == false,
+        where: l.inserted_at >= ^window_start,
+        select: count(l.id)
+      )
+      |> Repo.one()
+
+    # Check for failures from same IP across different emails
+    ip_failures =
+      if ip_address do
+        from(l in AuthLog,
+          where: l.ip_address == ^ip_address,
+          where: l.success == false,
+          where: l.inserted_at >= ^window_start,
+          select: count(l.id)
+        )
+        |> Repo.one()
+      else
+        0
+      end
+
+    # Check for multiple emails from same IP (credential stuffing indicator)
+    unique_emails_from_ip =
+      if ip_address do
+        from(l in AuthLog,
+          where: l.ip_address == ^ip_address,
+          where: l.inserted_at >= ^window_start,
+          select: count(l.email, :distinct)
+        )
+        |> Repo.one()
+      else
+        0
+      end
+
+    cond do
+      email_failures >= @suspicious_threshold ->
+        %{
+          suspicious: true,
+          reason: "high_failure_rate",
+          details: %{failures: email_failures, window_minutes: 60}
+        }
+
+      ip_failures >= @suspicious_threshold * 2 ->
+        %{
+          suspicious: true,
+          reason: "ip_abuse",
+          details: %{ip_failures: ip_failures, window_minutes: 60}
+        }
+
+      unique_emails_from_ip >= 5 ->
+        %{
+          suspicious: true,
+          reason: "credential_stuffing",
+          details: %{unique_emails: unique_emails_from_ip, window_minutes: 60}
+        }
+
+      true ->
+        %{suspicious: false, reason: nil, details: %{}}
+    end
+  end
+
+  @doc """
+  Logs suspicious activity and optionally notifies admins.
+
+  ## Examples
+
+      iex> log_suspicious_activity("attacker@example.com", "credential_stuffing", %{ip: "1.2.3.4"})
+      {:ok, %AuthLog{}}
+
+  """
+  def log_suspicious_activity(email, reason, details \\ %{}, opts \\ []) do
+    log_auth_event("suspicious_activity", email,
+      success: false,
+      failure_reason: reason,
+      metadata: details,
+      ip_address: Keyword.get(opts, :ip_address),
+      user_agent: Keyword.get(opts, :user_agent)
+    )
+
+    # TODO: Add admin notification here when notification system is implemented
+    # For now, just log it
+  end
+
+  @doc """
+  Returns recent auth logs for an email (for admin review).
+
+  ## Examples
+
+      iex> get_auth_logs_for_email("user@example.com", limit: 20)
+      [%AuthLog{}, ...]
+
+  """
+  def get_auth_logs_for_email(email, opts \\ []) do
+    limit = Keyword.get(opts, :limit, 50)
+
+    from(l in AuthLog,
+      where: l.email == ^email,
+      order_by: [desc: l.inserted_at],
+      limit: ^limit
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns recent auth logs for an IP address (for admin review).
+
+  ## Examples
+
+      iex> get_auth_logs_for_ip("192.168.1.1", limit: 20)
+      [%AuthLog{}, ...]
+
+  """
+  def get_auth_logs_for_ip(ip_address, opts \\ []) do
+    limit = Keyword.get(opts, :limit, 50)
+
+    from(l in AuthLog,
+      where: l.ip_address == ^ip_address,
+      order_by: [desc: l.inserted_at],
+      limit: ^limit
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns auth statistics for the analytics dashboard.
+
+  ## Examples
+
+      iex> get_auth_stats()
+      %{
+        total_logins_24h: 150,
+        failed_logins_24h: 12,
+        locked_accounts: 2,
+        suspicious_ips: ["1.2.3.4"]
+      }
+
+  """
+  def get_auth_stats do
+    now = DateTime.utc_now()
+    day_ago = DateTime.add(now, -24, :hour)
+    window_start = DateTime.add(now, -@lockout_window_minutes, :minute)
+
+    total_logins =
+      from(l in AuthLog,
+        where: l.event_type in ["login_success", "magic_link_success"],
+        where: l.inserted_at >= ^day_ago,
+        select: count(l.id)
+      )
+      |> Repo.one()
+
+    failed_logins =
+      from(l in AuthLog,
+        where: l.event_type in ["login_failure", "magic_link_failure"],
+        where: l.inserted_at >= ^day_ago,
+        select: count(l.id)
+      )
+      |> Repo.one()
+
+    # Find currently locked out emails
+    locked_emails =
+      from(l in AuthLog,
+        where: l.success == false,
+        where: l.event_type in ["login_failure", "magic_link_failure"],
+        where: l.inserted_at >= ^window_start,
+        group_by: l.email,
+        having: count(l.id) >= ^@lockout_threshold,
+        select: l.email
+      )
+      |> Repo.all()
+
+    # Find suspicious IPs (many failures)
+    suspicious_ips =
+      from(l in AuthLog,
+        where: l.success == false,
+        where: l.inserted_at >= ^day_ago,
+        where: not is_nil(l.ip_address),
+        group_by: l.ip_address,
+        having: count(l.id) >= ^@suspicious_threshold,
+        select: l.ip_address
+      )
+      |> Repo.all()
+
+    %{
+      total_logins_24h: total_logins,
+      failed_logins_24h: failed_logins,
+      locked_accounts: length(locked_emails),
+      locked_emails: locked_emails,
+      suspicious_ips: suspicious_ips
+    }
   end
 end
