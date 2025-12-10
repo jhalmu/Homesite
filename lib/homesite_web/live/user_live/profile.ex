@@ -7,6 +7,7 @@ defmodule HomesiteWeb.UserLive.Profile do
   import HomesiteWeb.Helpers.DateHelpers
 
   alias Homesite.Accounts
+  alias Homesite.Accounts.Scope
   alias Homesite.Content
   alias Homesite.ExternalFeeds
   alias Homesite.Media
@@ -284,7 +285,7 @@ defmodule HomesiteWeb.UserLive.Profile do
         recent_posts = Enum.take(all_posts, 6)
 
         # Load user's public feed sources (what they're reading)
-        user_scope = Homesite.Accounts.Scope.for_user(user)
+        user_scope = Scope.for_user(user)
 
         feed_sources =
           ExternalFeeds.list_feed_sources(user_scope)

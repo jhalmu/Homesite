@@ -1,6 +1,7 @@
 defmodule HomesiteWeb.FaqLive.Index do
   use HomesiteWeb, :live_view
 
+  alias Homesite.Accounts.Scope
   alias Homesite.Faqs
   alias HomesiteWeb.SEO.JsonLD
   alias HomesiteWeb.Components.TableOfContents
@@ -102,7 +103,7 @@ defmodule HomesiteWeb.FaqLive.Index do
 
     is_admin =
       socket.assigns[:current_scope] &&
-        Homesite.Accounts.Scope.admin?(socket.assigns.current_scope)
+        Scope.admin?(socket.assigns.current_scope)
 
     {:ok, assign(socket, locale: locale, is_admin: is_admin)}
   end

@@ -4,6 +4,7 @@ defmodule HomesiteWeb.PortfolioLive.Show do
   import HomesiteWeb.Helpers.DateHelpers
 
   alias Homesite.Media
+  alias HomesiteWeb.Export.ProjectHTML
 
   @impl true
   def mount(_params, _session, socket) do
@@ -148,7 +149,7 @@ defmodule HomesiteWeb.PortfolioLive.Show do
   @impl true
   def handle_event("export_html", _params, socket) do
     project = socket.assigns.project
-    html_content = HomesiteWeb.Export.ProjectHTML.generate(project)
+    html_content = ProjectHTML.generate(project)
     filename = "#{project.slug}.html"
 
     {:noreply,

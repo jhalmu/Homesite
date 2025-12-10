@@ -9,6 +9,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
   import HomesiteWeb.Helpers.DateHelpers
 
   alias Homesite.Accounts
+  alias Phoenix.HTML.Form
 
   @impl true
   def render(assigns) do
@@ -317,7 +318,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
   def handle_event("role_changed", %{"role" => role}, socket) do
     # Update form when role changes
     current_flowers =
-      Phoenix.HTML.Form.input_value(socket.assigns.form, :admin_flowers) || 0
+      Form.input_value(socket.assigns.form, :admin_flowers) || 0
 
     form =
       %{
