@@ -51,10 +51,10 @@ defmodule HomesiteWeb.AdminLive.Invitations.Index do
   def handle_event("create", %{"invitation" => invitation_params}, socket) do
     scope = socket.assigns.current_scope
 
-    # Generate code if not provided
+    # Generate code if not provided or empty
     attrs =
       invitation_params
-      |> Map.put_new("code", Invitation.generate_code())
+      |> maybe_generate_code()
       |> maybe_parse_expires_at()
 
     case Accounts.create_invitation(scope.user, attrs) do
@@ -107,6 +107,14 @@ defmodule HomesiteWeb.AdminLive.Invitations.Index do
     # Just return success flash
     socket = put_flash(socket, :info, "Code copied to clipboard!")
     {:noreply, socket}
+  end
+
+  defp maybe_generate_code(attrs) do
+    case Map.get(attrs, "code") do
+      nil -> Map.put(attrs, "code", Invitation.generate_code())
+      "" -> Map.put(attrs, "code", Invitation.generate_code())
+      _ -> attrs
+    end
   end
 
   defp maybe_parse_expires_at(attrs) do
