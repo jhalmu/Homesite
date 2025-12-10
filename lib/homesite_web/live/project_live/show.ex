@@ -37,13 +37,13 @@ defmodule HomesiteWeb.ProjectLive.Show do
           <div>
             <.link
               navigate={~p"/projects"}
-              class="text-base-content/70 mb-2 inline-block text-sm hover:text-base-content"
+              class="text-base-content/70 mb-2 inline-block text-[var(--text-sm)] hover:text-base-content"
             >
               <.icon name="hero-arrow-left" class="inline h-4 w-4" /> {gettext("Back to projects")}
             </.link>
             <h1 class="text-4xl font-bold">{@project.name}</h1>
 
-            <div class="mt-3 flex gap-2">
+            <div class="mt-3 flex gap-[var(--space-xs)]">
               <%= if @project.is_portfolio do %>
                 <span class="badge badge-primary">{gettext("Portfolio")}</span>
               <% end %>
@@ -70,9 +70,9 @@ defmodule HomesiteWeb.ProjectLive.Show do
         <% end %>
 
         <%!-- Project Metadata --%>
-        <div class="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div class="mb-8 grid grid-cols-1 gap-[var(--space-sm)] md:grid-cols-2">
           <%= if @project.category do %>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-[var(--space-xs)]">
               <.icon name="hero-tag" class="text-base-content/60 h-5 w-5" />
               <span class="font-semibold">{gettext("Category")}:</span>
               <span class="badge badge-primary">{@project.category}</span>
@@ -80,7 +80,7 @@ defmodule HomesiteWeb.ProjectLive.Show do
           <% end %>
 
           <%= if @project.project_date do %>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-[var(--space-xs)]">
               <.icon name="hero-calendar" class="text-base-content/60 h-5 w-5" />
               <span class="font-semibold">{gettext("Date")}:</span>
               <span>{format_month_year(@project.project_date)}</span>
@@ -90,8 +90,8 @@ defmodule HomesiteWeb.ProjectLive.Show do
 
         <%= if @project.tags && length(@project.tags) > 0 do %>
           <div class="mb-8">
-            <h3 class="mb-3 text-lg font-semibold">{gettext("Tags")}</h3>
-            <div class="flex flex-wrap gap-2">
+            <h3 class="mb-3 text-[var(--text-lg)] font-semibold">{gettext("Tags")}</h3>
+            <div class="flex flex-wrap gap-[var(--space-xs)]">
               <%= for tag <- @project.tags do %>
                 <span class="badge badge-ghost">{tag}</span>
               <% end %>
@@ -102,19 +102,19 @@ defmodule HomesiteWeb.ProjectLive.Show do
         <%!-- Collaborators --%>
         <%= if length(@project.collaborators) > 0 do %>
           <div class="mb-8">
-            <h3 class="mb-3 text-lg font-semibold">{gettext("Collaborators")}</h3>
+            <h3 class="mb-3 text-[var(--text-lg)] font-semibold">{gettext("Collaborators")}</h3>
             <div class="space-y-2">
               <%= for collab <- @project.collaborators do %>
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-[var(--space-xs)]">
                   <.icon name="hero-user" class="text-base-content/60 h-5 w-5" />
                   <span class="font-medium">{collab.name}</span>
                   <%= if collab.contact_type == "url" do %>
-                    <a href={collab.contact} target="_blank" class="link link-primary text-sm">
+                    <a href={collab.contact} target="_blank" class="link link-primary text-[var(--text-sm)]">
                       <.icon name="hero-link" class="inline h-4 w-4" /> {gettext("Website")}
                     </a>
                   <% end %>
                   <%= if collab.contact_type == "email" do %>
-                    <a href={"mailto:#{collab.contact}"} class="link link-primary text-sm">
+                    <a href={"mailto:#{collab.contact}"} class="link link-primary text-[var(--text-sm)]">
                       <.icon name="hero-envelope" class="inline h-4 w-4" /> {gettext("Email")}
                     </a>
                   <% end %>
@@ -127,13 +127,13 @@ defmodule HomesiteWeb.ProjectLive.Show do
         <%!-- Affiliation Links --%>
         <%= if length(@project.affiliation_links) > 0 do %>
           <div class="mb-8">
-            <h3 class="mb-3 text-lg font-semibold">{gettext("Related Links")}</h3>
+            <h3 class="mb-3 text-[var(--text-lg)] font-semibold">{gettext("Related Links")}</h3>
             <div class="space-y-2">
               <%= for link <- @project.affiliation_links do %>
                 <a
                   href={link.url}
                   target="_blank"
-                  class="flex items-center gap-2 transition-colors hover:text-primary"
+                  class="flex items-center gap-[var(--space-xs)] transition-colors hover:text-primary"
                 >
                   <.icon name="hero-arrow-top-right-on-square" class="h-4 w-4" />
                   <span>{link.title}</span>
@@ -146,8 +146,8 @@ defmodule HomesiteWeb.ProjectLive.Show do
         <%!-- Media Items --%>
         <%= if length(@project.media_items) > 0 do %>
           <div class="mb-8">
-            <h3 class="mb-4 text-lg font-semibold">{gettext("Media")}</h3>
-            <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+            <h3 class="mb-4 text-[var(--text-lg)] font-semibold">{gettext("Media")}</h3>
+            <div class="grid grid-cols-2 gap-[var(--space-sm)] md:grid-cols-3 lg:grid-cols-4">
               <%= for media <- @project.media_items do %>
                 <div class="aspect-square bg-base-200 overflow-hidden rounded-lg">
                   <img

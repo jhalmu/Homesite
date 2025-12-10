@@ -210,7 +210,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
           <h3 class="card-title">Popular Tags</h3>
           <div class="gap-[var(--space-xs)] flex flex-wrap">
             <%= for tag <- @content_stats.popular_tags do %>
-              <span class="badge badge-outline gap-1">
+              <span class="badge badge-outline gap-[var(--space-inline)]">
                 {tag.name}
                 <span class="badge badge-sm badge-primary">{tag.usage_count}</span>
               </span>

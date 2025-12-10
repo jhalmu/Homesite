@@ -35,7 +35,7 @@ defmodule HomesiteWeb.HappinessLive.Index do
         <%!-- Header --%>
         <div class="mb-[var(--space-2xl)] text-center">
           <h1 class="mb-[var(--space-sm)] text-4xl font-bold">{gettext("Happiness Meter")}</h1>
-          <p class="text-base-content/70 mx-auto max-w-2xl text-lg">
+          <p class="text-base-content/70 mx-auto max-w-2xl text-[var(--text-lg)]">
             {gettext("See how our community feels about Homesite based on real user feedback")}
           </p>
         </div>
@@ -58,7 +58,7 @@ defmodule HomesiteWeb.HappinessLive.Index do
                 <div class="text-primary text-[var(--text-5xl)] font-bold">
                   {@happiness.score}%
                 </div>
-                <div class="text-base-content/70 mt-[var(--space-xs)] text-lg">
+                <div class="text-base-content/70 mt-[var(--space-xs)] text-[var(--text-lg)]">
                   {gettext("Overall Satisfaction")}
                 </div>
               </div>
@@ -116,14 +116,14 @@ defmodule HomesiteWeb.HappinessLive.Index do
                     <div class="text-base-content/60 mt-[var(--space-sm)] gap-[var(--space-xs)] text-[var(--text-sm)] flex items-center">
                       <div class="avatar placeholder">
                         <div class="bg-neutral text-neutral-content w-8 rounded-full">
-                          <span class="text-xs">
+                          <span class="text-[var(--text-xs)]">
                             {get_initial(testimonial)}
                           </span>
                         </div>
                       </div>
                       <div>
                         <div class="font-semibold">{get_user_name(testimonial)}</div>
-                        <div class="text-xs">
+                        <div class="text-[var(--text-xs)]">
                           {format_date(testimonial.inserted_at)}
                         </div>
                       </div>
@@ -134,7 +134,7 @@ defmodule HomesiteWeb.HappinessLive.Index do
                       <div class="card-actions mt-[var(--space-xs)] justify-end">
                         <.link
                           navigate={~p"/testimonials/#{testimonial.share_token}"}
-                          class="link link-primary text-xs"
+                          class="link link-primary text-[var(--text-xs)]"
                         >
                           {gettext("View full testimonial")} →
                         </.link>

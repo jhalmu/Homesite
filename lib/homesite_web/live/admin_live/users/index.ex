@@ -97,7 +97,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
                     </td>
                     <td>
                       <%= if user.role == "admin" do %>
-                        <span class="text-lg">
+                        <span class="text-[var(--text-lg)]">
                           {String.duplicate("🌸", user.admin_flowers || 0)}
                         </span>
                       <% else %>

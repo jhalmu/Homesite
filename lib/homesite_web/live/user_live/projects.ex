@@ -36,11 +36,11 @@ defmodule HomesiteWeb.UserLive.Projects do
       <div class="mx-auto max-w-6xl px-4 py-8">
         <header class="mb-8">
           <%= if @user.username do %>
-            <.link navigate={~p"/users/@#{@user.username}"} class="link text-sm">
+            <.link navigate={~p"/users/@#{@user.username}"} class="link text-[var(--text-sm)]">
               ← {gettext("Back to profile")}
             </.link>
           <% else %>
-            <.link navigate={~p"/users/#{@user.id}"} class="link text-sm">
+            <.link navigate={~p"/users/#{@user.id}"} class="link text-[var(--text-sm)]">
               ← {gettext("Back to profile")}
             </.link>
           <% end %>
@@ -55,7 +55,7 @@ defmodule HomesiteWeb.UserLive.Projects do
             <p class="text-base-content/60">{gettext("No public projects yet.")}</p>
           </div>
         <% else %>
-          <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div class="grid grid-cols-1 gap-[var(--space-md)] md:grid-cols-2 lg:grid-cols-3">
             <.project_card
               :for={project <- @projects}
               project={project}

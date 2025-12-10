@@ -72,10 +72,10 @@ defmodule HomesiteWeb.TestimonialLive.Show do
               <%!-- Feedback Content --%>
               <%= if @testimonial.open_feedback do %>
                 <div class="mb-[var(--space-md)]">
-                  <h2 class="mb-[var(--space-sm)] text-[var(--text-xl)]font-semibold">
+                  <h2 class="mb-[var(--space-sm)] text-[var(--text-[var(--text-xl)])]font-semibold">
                     {gettext("What they said:")}
                   </h2>
-                  <blockquote class="text-base-content/90 border-primary pl-[var(--space-sm)] text-[var(--text-lg)]italic border-l-4">
+                  <blockquote class="text-base-content/90 border-primary pl-[var(--space-sm)] text-[var(--text-[var(--text-lg)])]italic border-l-4">
                     "{@testimonial.open_feedback}"
                   </blockquote>
                 </div>
@@ -84,7 +84,7 @@ defmodule HomesiteWeb.TestimonialLive.Show do
               <%!-- Additional Ratings --%>
               <%= if @testimonial.performance_rating do %>
                 <div class="mb-[var(--space-md)]">
-                  <h3 class="mb-[var(--space-xs)] text-[var(--text-lg)]font-semibold">
+                  <h3 class="mb-[var(--space-xs)] text-[var(--text-[var(--text-lg)])]font-semibold">
                     {gettext("Performance Rating")}
                   </h3>
                   <div class="rating rating-md">
@@ -102,7 +102,7 @@ defmodule HomesiteWeb.TestimonialLive.Show do
               <%!-- Useful Features --%>
               <%= if @testimonial.feature_usefulness && map_size(@testimonial.feature_usefulness) > 0 do %>
                 <div class="mb-[var(--space-md)]">
-                  <h3 class="mb-[var(--space-xs)] text-[var(--text-lg)]font-semibold">
+                  <h3 class="mb-[var(--space-xs)] text-[var(--text-[var(--text-lg)])]font-semibold">
                     {gettext("Features they found useful:")}
                   </h3>
                   <div class="gap-[var(--space-xs)] flex flex-wrap">
@@ -121,13 +121,13 @@ defmodule HomesiteWeb.TestimonialLive.Show do
               <div class="mb-[var(--space-md)] gap-[var(--space-sm)] flex items-center">
                 <div class="avatar placeholder">
                   <div class="bg-primary text-primary-content w-12 rounded-full">
-                    <span class="text-lg">
+                    <span class="text-[var(--text-lg)]">
                       {get_initial(@testimonial)}
                     </span>
                   </div>
                 </div>
                 <div>
-                  <div class="text-lg font-semibold">{get_user_name(@testimonial)}</div>
+                  <div class="text-[var(--text-lg)] font-semibold">{get_user_name(@testimonial)}</div>
                   <div class="text-base-content/60 text-[var(--text-sm)]">
                     {gettext("Rank")}: {rank_display(@testimonial.user_rank_at_time)}
                   </div>
@@ -138,7 +138,7 @@ defmodule HomesiteWeb.TestimonialLive.Show do
 
               <%!-- Social Sharing --%>
               <div class="mb-[var(--space-md)]">
-                <h3 class="mb-[var(--space-sm)] text-[var(--text-lg)]font-semibold">
+                <h3 class="mb-[var(--space-sm)] text-[var(--text-[var(--text-lg)])]font-semibold">
                   {gettext("Share this testimonial:")}
                 </h3>
                 <div class="gap-[var(--space-sm)] flex flex-wrap">
@@ -201,7 +201,7 @@ defmodule HomesiteWeb.TestimonialLive.Show do
           <div class="mt-[var(--space-2xl)] text-center">
             <div class="card bg-base-200 shadow-xl">
               <div class="card-body">
-                <h3 class="card-title mb-[var(--space-sm)] justify-center text-xl">
+                <h3 class="card-title mb-[var(--space-sm)] justify-center text-[var(--text-xl)]">
                   {gettext("Want to share your experience?")}
                 </h3>
 

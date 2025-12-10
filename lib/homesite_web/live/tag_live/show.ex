@@ -11,8 +11,8 @@ defmodule HomesiteWeb.TagLive.Show do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="technical-main">
         <header class="gap-[var(--spacing-md)] mb-[var(--spacing-section)] flex flex-col">
-          <div class="flex flex-wrap items-center justify-between gap-4">
-            <div class="flex items-center gap-4">
+          <div class="flex flex-wrap items-center justify-between gap-[var(--space-sm)]">
+            <div class="flex items-center gap-[var(--space-sm)]">
               <.link
                 navigate={~p"/tags"}
                 class="btn btn-circle btn-ghost"
@@ -24,7 +24,7 @@ defmodule HomesiteWeb.TagLive.Show do
                 <h1 class="text-[var(--font-size-fluid-2xl)] font-bold">
                   {@tag.name}
                 </h1>
-                <p class="text-sm text-gray-600 dark:text-gray-400">
+                <p class="text-[var(--text-sm)] text-gray-600 dark:text-gray-400">
                   {gettext("Slug")}: {@tag.slug}
                   <%= if @tag.is_public do %>
                     <span class="badge badge-success ml-2">{gettext("Public")}</span>
@@ -35,7 +35,7 @@ defmodule HomesiteWeb.TagLive.Show do
               </div>
             </div>
             <%= if @can_edit do %>
-              <.link navigate={~p"/tags/#{@tag}/edit?return_to=show"} class="btn btn-primary gap-2">
+              <.link navigate={~p"/tags/#{@tag}/edit?return_to=show"} class="btn btn-primary gap-[var(--space-xs)]">
                 <.icon name="hero-pencil-square" class="h-5 w-5" /> {gettext("Edit Tag")}
               </.link>
             <% end %>
@@ -66,18 +66,18 @@ defmodule HomesiteWeb.TagLive.Show do
                     {post.title}
                   </.link>
                 </h3>
-                <p :if={post.body} class="line-clamp-2 text-sm">
+                <p :if={post.body} class="line-clamp-2 text-[var(--text-sm)]">
                   {String.slice(post.body, 0, 150)}{if String.length(post.body) > 150, do: "..."}
                 </p>
                 <div class="card-actions items-center justify-between">
-                  <div class="text-sm text-gray-600 dark:text-gray-400">
+                  <div class="text-[var(--text-sm)] text-gray-600 dark:text-gray-400">
                     <%= if post.published_at do %>
                       {format_date(post.published_at)}
                     <% else %>
                       <span class="badge badge-ghost">{gettext("Draft")}</span>
                     <% end %>
                   </div>
-                  <div class="flex gap-2">
+                  <div class="flex gap-[var(--space-xs)]">
                     <.link navigate={~p"/posts/#{post}"} class="btn btn-sm btn-ghost">
                       {gettext("View")}
                     </.link>
@@ -99,7 +99,7 @@ defmodule HomesiteWeb.TagLive.Show do
           <div class="space-y-4">
             <%= for post <- @public_posts do %>
               <div class="listing-card">
-                <div class="flex items-start justify-between gap-4">
+                <div class="flex items-start justify-between gap-[var(--space-sm)]">
                   <div class="flex-1">
                     <h3 class="listing-title">
                       <.link navigate={~p"/users/#{post.user.id}"} class="link link-hover">
@@ -109,7 +109,7 @@ defmodule HomesiteWeb.TagLive.Show do
                     <.author_byline user={post.user} date={post.published_at} class="mt-2" />
                   </div>
                 </div>
-                <p :if={post.body} class="line-clamp-2 mt-2 text-sm">
+                <p :if={post.body} class="line-clamp-2 mt-2 text-[var(--text-sm)]">
                   {String.slice(post.body, 0, 150)}{if String.length(post.body) > 150, do: "..."}
                 </p>
                 <div class="card-actions justify-end">

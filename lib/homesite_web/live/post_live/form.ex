@@ -254,7 +254,7 @@ defmodule HomesiteWeb.PostLive.Form do
         <%= if @show_media_picker do %>
           <div class="modal modal-open">
             <div class="modal-box max-w-4xl">
-              <h3 class="text-lg font-bold">{gettext("Select Media")}</h3>
+              <h3 class="text-[var(--text-lg)] font-bold">{gettext("Select Media")}</h3>
               
     <!-- Search -->
               <div class="form-control mt-[var(--space-sm)]">

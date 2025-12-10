@@ -253,12 +253,12 @@ defmodule HomesiteWeb.UserLive.Settings do
                 🎉 {gettext("Congratulations! Your Username is Live!")}
               </h3>
 
-              <p class="mb-[var(--space-md)] text-lg">
+              <p class="mb-[var(--space-md)] text-[var(--text-lg)]">
                 {gettext("Your personal homepage is now available at:")}
               </p>
 
               <div class="bg-base-200 mb-[var(--space-md)] p-[var(--space-sm)] rounded-lg">
-                <code class="break-all text-lg">
+                <code class="break-all text-[var(--text-lg)]">
                   {url(~p"/users/@#{@current_scope.user.username}")}
                 </code>
               </div>

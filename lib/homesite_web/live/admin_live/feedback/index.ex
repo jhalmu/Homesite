@@ -120,11 +120,11 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
           <%!-- Happiness Score Card --%>
           <div class="card bg-base-200 shadow-xl">
             <div class="card-body">
-              <h2 class="card-title text-[var(--text-sm)]">{gettext("Happiness Score")}</h2>
+              <h2 class="card-title text-[var(--text-[var(--text-sm)])]">{gettext("Happiness Score")}</h2>
               <div class="text-primary text-4xl font-bold">
                 {@analytics.happiness.score}%
               </div>
-              <p class="text-base-content/60 text-[var(--text-sm)]">
+              <p class="text-base-content/60 text-[var(--text-[var(--text-sm)])]">
                 {confidence_text(@analytics.happiness.confidence)}
               </p>
             </div>
@@ -133,11 +133,11 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
           <%!-- Total Responses Card --%>
           <div class="card bg-base-200 shadow-xl">
             <div class="card-body">
-              <h2 class="card-title text-[var(--text-sm)]">{gettext("Total Responses")}</h2>
+              <h2 class="card-title text-[var(--text-[var(--text-sm)])]">{gettext("Total Responses")}</h2>
               <div class="text-secondary text-4xl font-bold">
                 {@analytics.happiness.total_responses}
               </div>
-              <p class="text-base-content/60 text-[var(--text-sm)]">
+              <p class="text-base-content/60 text-[var(--text-[var(--text-sm)])]">
                 {gettext("Last")} {@days} {gettext("days")}
               </p>
             </div>
@@ -146,11 +146,11 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
           <%!-- Pending Testimonials Card --%>
           <div class="card bg-base-200 shadow-xl">
             <div class="card-body">
-              <h2 class="card-title text-[var(--text-sm)]">{gettext("Pending Approval")}</h2>
+              <h2 class="card-title text-[var(--text-[var(--text-sm)])]">{gettext("Pending Approval")}</h2>
               <div class="text-warning text-4xl font-bold">
                 {length(@pending_testimonials)}
               </div>
-              <p class="text-base-content/60 text-[var(--text-sm)]">
+              <p class="text-base-content/60 text-[var(--text-[var(--text-sm)])]">
                 {gettext("Testimonials awaiting review")}
               </p>
             </div>
@@ -219,7 +219,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
                         <td>{rank_stat.rank}</td>
                         <td>{rank_stat.count}</td>
                         <td>
-                          <div class="flex items-center gap-1">
+                          <div class="flex items-center gap-[var(--space-inline)]">
                             {Float.round(rank_stat.avg_rating, 1)}
                             <span class="text-orange-400">⭐</span>
                           </div>
@@ -240,7 +240,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
           <div class="card bg-base-200 mb-[var(--space-md)] shadow-xl">
             <div class="card-body">
               <h2 class="card-title">{gettext("Pending Testimonials")}</h2>
-              <p class="text-base-content/60 mb-[var(--space-md)] text-[var(--text-sm)]">
+              <p class="text-base-content/60 mb-[var(--space-md)] text-[var(--text-[var(--text-sm)])]">
                 {gettext("Review and approve testimonials for public display")}
               </p>
 
@@ -253,7 +253,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
                         <%= for _star <- 1..testimonial.overall_satisfaction do %>
                           <span class="text-orange-400">⭐</span>
                         <% end %>
-                        <span class="text-base-content/60 text-[var(--text-sm)]">
+                        <span class="text-base-content/60 text-[var(--text-[var(--text-sm)])]">
                           {format_date(testimonial.inserted_at)}
                         </span>
                       </div>
@@ -266,7 +266,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
                       <% end %>
 
                       <%!-- User Info --%>
-                      <div class="mb-[var(--space-md)] gap-[var(--space-xs)] text-[var(--text-sm)] flex items-center">
+                      <div class="mb-[var(--space-md)] gap-[var(--space-xs)] text-[var(--text-[var(--text-sm)])] flex items-center">
                         <%= if testimonial.user do %>
                           <span class="font-semibold">
                             {testimonial.user.display_name || testimonial.user.email}
@@ -320,7 +320,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
                         <td>{format_date_short(feedback.inserted_at)}</td>
                         <td>
                           <%= if feedback.user do %>
-                            <span class="text-sm">
+                            <span class="text-[var(--text-sm)]">
                               {feedback.user.display_name ||
                                 String.split(feedback.user.email, "@") |> hd()}
                             </span>
