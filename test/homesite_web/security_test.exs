@@ -1720,4 +1720,346 @@ defmodule HomesiteWeb.SecurityTest do
       refute Enum.any?(public_testimonials, &(&1.id == unapproved.id))
     end
   end
+
+  describe "Concurrent Update Safety" do
+    test "concurrent post updates do not lose data", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      # Create a post (published_at required)
+      {:ok, post} =
+        Content.create_post(scope, %{
+          title: "Original Title",
+          body: "Original body content",
+          published_at: DateTime.utc_now()
+        })
+
+      # Simulate 5 concurrent update attempts
+      tasks =
+        for i <- 1..5 do
+          Task.async(fn ->
+            # Reload post to get fresh version
+            current_post = Content.get_post!(scope, post.id)
+
+            Content.update_post(scope, current_post, %{
+              title: "Updated Title #{i}",
+              body: "Updated body #{i}"
+            })
+          end)
+        end
+
+      results = Enum.map(tasks, &Task.await/1)
+
+      # All updates should succeed (last writer wins in Ecto)
+      successes = Enum.count(results, fn result -> match?({:ok, _}, result) end)
+      assert successes == 5
+
+      # Final post should have one of the updates
+      final_post = Content.get_post!(scope, post.id)
+      assert String.starts_with?(final_post.title, "Updated Title")
+      assert String.starts_with?(final_post.body, "Updated body")
+    end
+
+    test "concurrent tag updates do not lose data", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      # Create a tag
+      {:ok, tag} = Content.create_tag(scope, %{name: "original-tag"})
+
+      # Simulate 5 concurrent update attempts
+      tasks =
+        for i <- 1..5 do
+          Task.async(fn ->
+            # Reload tag to get fresh version
+            current_tag = Content.get_tag!(scope, tag.id)
+
+            Content.update_tag(scope, current_tag, %{
+              name: "updated-tag-#{i}"
+            })
+          end)
+        end
+
+      results = Enum.map(tasks, &Task.await/1)
+
+      # All updates should succeed
+      successes = Enum.count(results, fn result -> match?({:ok, _}, result) end)
+      assert successes == 5
+
+      # Final tag should have one of the updates
+      final_tag = Content.get_tag!(scope, tag.id)
+      assert String.starts_with?(final_tag.name, "updated-tag-")
+    end
+
+    test "concurrent message creation in chat channel", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      # Get or create a channel
+      channel =
+        case Homesite.Chat.get_default_channel() do
+          nil -> Homesite.Chat.create_channel!(%{name: "test-concurrent", is_default: true})
+          ch -> ch
+        end
+
+      # Simulate 10 concurrent message sends
+      tasks =
+        for i <- 1..10 do
+          Task.async(fn ->
+            Homesite.Chat.create_message(scope, channel.id, %{body: "Message #{i}"})
+          end)
+        end
+
+      results = Enum.map(tasks, &Task.await/1)
+
+      # All messages should be created successfully
+      successes = Enum.count(results, fn result -> match?({:ok, _}, result) end)
+      assert successes == 10
+
+      # Verify all messages exist
+      messages = Homesite.Chat.list_messages(channel.id, limit: 20)
+      assert length(messages) >= 10
+    end
+  end
+
+  describe "Edge Cases: Unicode and Special Characters" do
+    test "post handles unicode in title and body", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      unicode_title = "日本語タイトル 中文标题 한국어 제목 🎉"
+      unicode_body = "Content with émojis 🚀 and spëcial châräctérs àéïõü"
+
+      {:ok, post} =
+        Content.create_post(scope, %{
+          title: unicode_title,
+          body: unicode_body,
+          published_at: DateTime.utc_now()
+        })
+
+      assert post.title == unicode_title
+      assert post.body == unicode_body
+
+      # Verify it's retrievable
+      retrieved = Content.get_post!(scope, post.id)
+      assert retrieved.title == unicode_title
+      assert retrieved.body == unicode_body
+    end
+
+    test "tag handles unicode characters", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      # Note: tag names are typically slugified, but special chars should be handled
+      {:ok, tag} = Content.create_tag(scope, %{name: "日本語タグ"})
+
+      assert tag.name == "日本語タグ"
+    end
+
+    test "chat message handles unicode and emojis", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      channel =
+        case Homesite.Chat.get_default_channel() do
+          nil -> Homesite.Chat.create_channel!(%{name: "unicode-test", is_default: true})
+          ch -> ch
+        end
+
+      unicode_message = "Hello 世界! 🌍 Привет мир! مرحبا بالعالم"
+
+      {:ok, message} = Homesite.Chat.create_message(scope, channel.id, %{body: unicode_message})
+
+      assert message.body == unicode_message
+    end
+
+    test "post handles HTML-like content safely", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      html_content = "<script>alert('xss')</script><img onerror='alert(1)' src='x'>"
+
+      {:ok, post} =
+        Content.create_post(scope, %{
+          title: "Test XSS",
+          body: html_content,
+          published_at: DateTime.utc_now()
+        })
+
+      # Content is stored as-is (XSS protection happens at render time via Phoenix)
+      assert post.body == html_content
+    end
+
+    test "search handles SQL injection attempts safely", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      # Create a normal post
+      {:ok, _post} =
+        Content.create_post(scope, %{
+          title: "Normal Post",
+          body: "Normal content",
+          published_at: DateTime.utc_now()
+        })
+
+      # These should not cause SQL errors or data leakage
+      dangerous_queries = [
+        "'; DROP TABLE posts; --",
+        "1 OR 1=1",
+        "UNION SELECT * FROM users",
+        "'; DELETE FROM posts WHERE '1'='1"
+      ]
+
+      for query <- dangerous_queries do
+        # Should not raise, should return empty or safe results
+        results = Content.search_user_posts(scope, query)
+        assert is_list(results)
+      end
+    end
+  end
+
+  describe "Edge Cases: Boundary Conditions" do
+    test "post title at maximum length", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      # Post title max is 200 chars per Post schema validation
+      max_title = String.duplicate("a", 200)
+
+      {:ok, post} =
+        Content.create_post(scope, %{
+          title: max_title,
+          body: "Body content with at least 10 characters",
+          published_at: DateTime.utc_now()
+        })
+
+      assert String.length(post.title) == 200
+    end
+
+    test "chat message at maximum length (280 chars)", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      channel =
+        case Homesite.Chat.get_default_channel() do
+          nil -> Homesite.Chat.create_channel!(%{name: "length-test", is_default: true})
+          ch -> ch
+        end
+
+      max_message = String.duplicate("a", 280)
+
+      {:ok, message} = Homesite.Chat.create_message(scope, channel.id, %{body: max_message})
+      assert String.length(message.body) == 280
+    end
+
+    test "chat message exceeding maximum length rejected", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      channel =
+        case Homesite.Chat.get_default_channel() do
+          nil -> Homesite.Chat.create_channel!(%{name: "overlength-test", is_default: true})
+          ch -> ch
+        end
+
+      too_long = String.duplicate("a", 281)
+
+      {:error, changeset} = Homesite.Chat.create_message(scope, channel.id, %{body: too_long})
+      assert "must be between 1 and 280 characters" in errors_on(changeset).body
+    end
+
+    test "empty string handling in required fields", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      # Empty title should fail
+      {:error, changeset} =
+        Content.create_post(scope, %{
+          title: "",
+          body: "Some body content with at least 10 characters",
+          published_at: DateTime.utc_now()
+        })
+
+      assert "can't be blank" in errors_on(changeset).title
+    end
+
+    test "whitespace-only content handling", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      channel =
+        case Homesite.Chat.get_default_channel() do
+          nil -> Homesite.Chat.create_channel!(%{name: "whitespace-test", is_default: true})
+          ch -> ch
+        end
+
+      # Whitespace-only message should fail
+      {:error, changeset} = Homesite.Chat.create_message(scope, channel.id, %{body: "   "})
+      # Either rejected as blank or length validation
+      errors = errors_on(changeset)
+      assert Map.has_key?(errors, :body)
+    end
+  end
+
+  describe "Cascading Deletes" do
+    test "deleting user's post removes associated data", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      # Create post with tags
+      {:ok, tag} = Content.create_tag(scope, %{name: "cascade-test-tag"})
+
+      {:ok, post} =
+        Content.create_post(scope, %{
+          title: "Post to Delete",
+          body: "Body content with at least 10 characters",
+          tag_ids: [tag.id],
+          published_at: DateTime.utc_now()
+        })
+
+      post_id = post.id
+
+      # Delete the post
+      {:ok, _} = Content.delete_post(scope, post)
+
+      # Post should be gone
+      assert_raise Ecto.NoResultsError, fn ->
+        Content.get_post!(scope, post_id)
+      end
+
+      # Tag should still exist (not cascaded)
+      assert Content.get_tag!(scope, tag.id).id == tag.id
+    end
+
+    test "deleting chat channel removes messages", %{conn: _conn} do
+      user = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      # Create a test channel (requires admin scope)
+      admin = admin_fixture()
+      admin_scope = %Accounts.Scope{user: admin}
+
+      {:ok, channel} =
+        Homesite.Chat.create_channel(admin_scope, %{
+          name: "delete-me-channel-#{System.unique_integer([:positive])}",
+          is_default: false
+        })
+
+      # Add some messages
+      {:ok, _msg1} = Homesite.Chat.create_message(scope, channel.id, %{body: "Message 1"})
+      {:ok, _msg2} = Homesite.Chat.create_message(scope, channel.id, %{body: "Message 2"})
+
+      # Delete channel
+      {:ok, _} = Homesite.Chat.delete_channel(channel)
+
+      # Channel should be gone
+      assert_raise Ecto.NoResultsError, fn ->
+        Homesite.Chat.get_channel!(channel.id)
+      end
+
+      # Messages should also be gone (cascade)
+      messages = Homesite.Chat.list_messages(channel.id)
+      assert messages == []
+    end
+  end
 end

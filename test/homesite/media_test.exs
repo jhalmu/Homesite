@@ -594,4 +594,262 @@ defmodule Homesite.MediaTest do
       assert "should be at most 200 character(s)" in errors_on(changeset).name
     end
   end
+
+  describe "file upload validation" do
+    import Homesite.AccountsFixtures, only: [user_scope_fixture: 0]
+    import Homesite.MediaFixtures, only: [create_test_image: 0, create_test_image: 1]
+
+    test "upload_media accepts valid JPEG image" do
+      scope = user_scope_fixture()
+      temp_path = create_test_image("valid-upload.jpg")
+      %{size: file_size} = File.stat!(temp_path)
+
+      attrs = %{
+        original_filename: "valid.jpg",
+        alt_text: "Valid upload",
+        content_type: "image/jpeg",
+        file_size_bytes: file_size
+      }
+
+      assert {:ok, media} = Media.upload_media(scope, temp_path, "image/jpeg", attrs)
+      assert media.content_type == "image/jpeg"
+      assert is_binary(media.thumb_data)
+
+      File.rm(temp_path)
+    end
+
+    test "upload_media stores original filename" do
+      scope = user_scope_fixture()
+      temp_path = create_test_image("original-name.jpg")
+      %{size: file_size} = File.stat!(temp_path)
+
+      attrs = %{
+        original_filename: "my_photo_with_spaces and (special) chars!.jpg",
+        alt_text: "Photo with special filename",
+        content_type: "image/jpeg",
+        file_size_bytes: file_size
+      }
+
+      assert {:ok, media} = Media.upload_media(scope, temp_path, "image/jpeg", attrs)
+      assert media.original_filename == "my_photo_with_spaces and (special) chars!.jpg"
+
+      File.rm(temp_path)
+    end
+
+    test "upload_media stores unicode filenames" do
+      scope = user_scope_fixture()
+      temp_path = create_test_image("unicode.jpg")
+      %{size: file_size} = File.stat!(temp_path)
+
+      attrs = %{
+        original_filename: "日本語ファイル名.jpg",
+        alt_text: "Japanese filename test",
+        content_type: "image/jpeg",
+        file_size_bytes: file_size
+      }
+
+      assert {:ok, media} = Media.upload_media(scope, temp_path, "image/jpeg", attrs)
+      assert media.original_filename == "日本語ファイル名.jpg"
+
+      File.rm(temp_path)
+    end
+
+    test "upload_media calculates image dimensions" do
+      scope = user_scope_fixture()
+      temp_path = create_test_image("dimensions.jpg")
+      %{size: file_size} = File.stat!(temp_path)
+
+      attrs = %{
+        original_filename: "dimensions.jpg",
+        alt_text: "Dimensions test",
+        content_type: "image/jpeg",
+        file_size_bytes: file_size
+      }
+
+      assert {:ok, media} = Media.upload_media(scope, temp_path, "image/jpeg", attrs)
+      # Test image is 100x100
+      assert media.width == 100
+      assert media.height == 100
+      assert media.aspect_category == "square"
+
+      File.rm(temp_path)
+    end
+
+    test "upload_media generates all image sizes" do
+      scope = user_scope_fixture()
+      temp_path = create_test_image("sizes.jpg")
+      %{size: file_size} = File.stat!(temp_path)
+
+      attrs = %{
+        original_filename: "sizes.jpg",
+        alt_text: "Sizes test",
+        content_type: "image/jpeg",
+        file_size_bytes: file_size
+      }
+
+      assert {:ok, media} = Media.upload_media(scope, temp_path, "image/jpeg", attrs)
+
+      # All three sizes should be generated
+      assert is_binary(media.thumb_data) and byte_size(media.thumb_data) > 0
+      assert is_binary(media.medium_data) and byte_size(media.medium_data) > 0
+      assert is_binary(media.large_data) and byte_size(media.large_data) > 0
+
+      File.rm(temp_path)
+    end
+
+    test "upload_media handles filename at database limit (255 chars)" do
+      scope = user_scope_fixture()
+      temp_path = create_test_image("long-name.jpg")
+      %{size: file_size} = File.stat!(temp_path)
+
+      # 255 char filename (at database limit for varchar(255))
+      long_name = String.duplicate("a", 251) <> ".jpg"
+
+      attrs = %{
+        original_filename: long_name,
+        alt_text: "Long filename test",
+        content_type: "image/jpeg",
+        file_size_bytes: file_size
+      }
+
+      # Should succeed at the limit
+      {:ok, media} = Media.upload_media(scope, temp_path, "image/jpeg", attrs)
+      assert String.length(media.original_filename) == 255
+
+      File.rm(temp_path)
+    end
+
+    test "upload_media rejects filename exceeding database limit" do
+      scope = user_scope_fixture()
+      temp_path = create_test_image("too-long.jpg")
+      %{size: file_size} = File.stat!(temp_path)
+
+      # 260 char filename (beyond database varchar(255) limit)
+      long_name = String.duplicate("a", 256) <> ".jpg"
+
+      attrs = %{
+        original_filename: long_name,
+        alt_text: "Too long filename test",
+        content_type: "image/jpeg",
+        file_size_bytes: file_size
+      }
+
+      # Should raise a database error due to varchar(255) constraint
+      assert_raise Postgrex.Error, fn ->
+        Media.upload_media(scope, temp_path, "image/jpeg", attrs)
+      end
+
+      File.rm(temp_path)
+    end
+
+    test "upload_media requires alt_text" do
+      scope = user_scope_fixture()
+      temp_path = create_test_image("no-alt.jpg")
+      %{size: file_size} = File.stat!(temp_path)
+
+      attrs = %{
+        original_filename: "no-alt.jpg",
+        content_type: "image/jpeg",
+        file_size_bytes: file_size
+        # Missing alt_text - should be required
+      }
+
+      {:error, changeset} = Media.upload_media(scope, temp_path, "image/jpeg", attrs)
+      assert "can't be blank" in errors_on(changeset).alt_text
+
+      File.rm(temp_path)
+    end
+
+    test "upload_media with special chars in title" do
+      scope = user_scope_fixture()
+      temp_path = create_test_image("special-title.jpg")
+      %{size: file_size} = File.stat!(temp_path)
+
+      attrs = %{
+        original_filename: "special-title.jpg",
+        alt_text: "Special title test",
+        content_type: "image/jpeg",
+        file_size_bytes: file_size,
+        title: "<script>alert('xss')</script> & \"quotes\""
+      }
+
+      assert {:ok, media} = Media.upload_media(scope, temp_path, "image/jpeg", attrs)
+      # Title stored as-is (XSS protection at render time)
+      assert media.title == "<script>alert('xss')</script> & \"quotes\""
+
+      File.rm(temp_path)
+    end
+  end
+
+  describe "media security" do
+    import Homesite.AccountsFixtures, only: [user_scope_fixture: 0]
+    import Homesite.MediaFixtures
+
+    test "user A cannot access user B's media items" do
+      scope_a = user_scope_fixture()
+      scope_b = user_scope_fixture()
+
+      media_b = media_item_fixture(scope_b)
+
+      # User A should not find user B's media in their list
+      scope_a_items = Media.list_media_items(scope_a)
+      refute Enum.any?(scope_a_items, fn m -> m.id == media_b.id end)
+
+      # User A should not be able to get user B's media directly
+      assert_raise Ecto.NoResultsError, fn ->
+        Media.get_media_item!(scope_a, media_b.id)
+      end
+    end
+
+    test "user A cannot update user B's media items" do
+      scope_a = user_scope_fixture()
+      scope_b = user_scope_fixture()
+
+      media_b = media_item_fixture(scope_b)
+
+      assert_raise MatchError, fn ->
+        Media.update_media_item(scope_a, media_b, %{title: "Hacked"})
+      end
+    end
+
+    test "user A cannot delete user B's media items" do
+      scope_a = user_scope_fixture()
+      scope_b = user_scope_fixture()
+
+      media_b = media_item_fixture(scope_b)
+
+      assert_raise MatchError, fn ->
+        Media.delete_media_item(scope_a, media_b)
+      end
+
+      # Verify media still exists
+      assert Media.get_media_item!(scope_b, media_b.id).id == media_b.id
+    end
+
+    test "user A cannot add media to user B's project" do
+      scope_a = user_scope_fixture()
+      scope_b = user_scope_fixture()
+
+      project_b = project_fixture(scope_b)
+      media_a = media_item_fixture(scope_a)
+
+      # Raises NoResultsError because project is not found for scope_a
+      assert_raise Ecto.NoResultsError, fn ->
+        Media.add_media_to_project(scope_a, media_a.id, project_b.id)
+      end
+    end
+
+    test "search_media_items only returns user's own media" do
+      scope_a = user_scope_fixture()
+      scope_b = user_scope_fixture()
+
+      media_a = media_item_fixture(scope_a, %{title: "Searchable Photo"})
+      _media_b = media_item_fixture(scope_b, %{title: "Searchable Photo B"})
+
+      results = Media.search_media_items(scope_a, "Searchable")
+
+      assert length(results) == 1
+      assert hd(results).id == media_a.id
+    end
+  end
 end

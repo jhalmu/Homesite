@@ -6,6 +6,85 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-10 11:00:00 - Test Coverage Expansion
+
+### Session: Comprehensive Test Coverage for Edge Cases & Security
+
+#### Objectives Completed
+Added comprehensive tests covering previously untested modules, concurrent operations, edge cases, and security scenarios.
+
+#### New Test Files Created
+
+**1. Activities Context Tests** (`test/homesite/activities_test.exs`)
+- 18 tests for activity logging system
+- Tests: create_activity, list_recent_activities, delete_old_activities
+- Edge cases: Unicode content, long strings, subject type extraction
+
+**2. UserNotifier Tests** (`test/homesite/accounts/user_notifier_test.exs`)
+- 11 tests for email notification system
+- Tests: deliver_update_email_instructions, deliver_login_instructions
+- Edge cases: special characters in email, unicode URLs
+
+#### Security Test Additions (`test/homesite_web/security_test.exs`)
+
+**Concurrent Update Safety** (3 tests)
+- Concurrent post updates (5 simultaneous)
+- Concurrent tag updates
+- Concurrent chat message creation (10 simultaneous)
+
+**Unicode & Special Characters** (5 tests)
+- Unicode in post title/body (Japanese, Chinese, Korean, emojis)
+- Unicode tag names
+- Unicode chat messages
+- HTML/XSS content storage
+- SQL injection attempts in search
+
+**Boundary Conditions** (5 tests)
+- Post title at max length (200 chars)
+- Chat message at max length (280 chars)
+- Chat message exceeding limit rejected
+- Empty string handling in required fields
+- Whitespace-only content handling
+
+**Cascading Deletes** (2 tests)
+- Deleting post preserves tags
+- Deleting chat channel removes messages
+
+#### Media Test Additions (`test/homesite/media_test.exs`)
+
+**File Upload Validation** (9 tests)
+- Valid JPEG upload
+- Original filename storage
+- Unicode filenames
+- Image dimension calculation
+- Image size generation (thumb/medium/large)
+- Filename at database limit (255 chars)
+- Filename exceeding limit (raises error)
+- Required alt_text validation
+- Special characters in title
+
+**Media Security** (5 tests)
+- User A cannot access User B's media
+- User A cannot update User B's media
+- User A cannot delete User B's media
+- User A cannot add media to User B's project
+- Search only returns user's own media
+
+#### Test Results
+- **Before**: 1256 tests
+- **After**: 1314 tests, 0 failures
+- **New Tests Added**: 58 tests
+
+#### Files Modified
+- `test/homesite_web/security_test.exs` (+330 lines)
+- `test/homesite/media_test.exs` (+220 lines)
+
+#### Files Created
+- `test/homesite/activities_test.exs` (172 lines)
+- `test/homesite/accounts/user_notifier_test.exs` (122 lines)
+
+---
+
 ## 2025-12-10 10:30:00 - Chat Moderation System (Complete)
 
 ### Session: Ban/Mute/Block Implementation
