@@ -42,6 +42,7 @@ defmodule HomesiteWeb.AdminLive.Invitations.Index do
       socket
       |> assign(:form, to_form(changeset))
       |> assign(:invitation, nil)
+      |> assign(:default_expires_at, default_expires_at())
 
     {:noreply, socket}
   end
@@ -125,5 +126,12 @@ defmodule HomesiteWeb.AdminLive.Invitations.Index do
             attrs
         end
     end
+  end
+
+  defp default_expires_at do
+    DateTime.utc_now()
+    |> DateTime.add(1, :day)
+    |> DateTime.truncate(:second)
+    |> Calendar.strftime("%Y-%m-%dT%H:%M")
   end
 end

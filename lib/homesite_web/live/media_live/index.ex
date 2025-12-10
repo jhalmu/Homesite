@@ -362,7 +362,6 @@ defmodule HomesiteWeb.MediaLive.Index do
               </option>
             </select>
           </div>
-          
         </div>
         
     <!-- Media Grid -->

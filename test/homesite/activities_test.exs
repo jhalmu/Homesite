@@ -112,8 +112,11 @@ defmodule Homesite.ActivitiesTest do
       user1 = user_fixture()
       user2 = user_fixture()
 
-      {:ok, activity1} = Activities.create_activity(user1, "blog_published", nil, "User 1 activity")
-      {:ok, _activity2} = Activities.create_activity(user2, "blog_published", nil, "User 2 activity")
+      {:ok, activity1} =
+        Activities.create_activity(user1, "blog_published", nil, "User 1 activity")
+
+      {:ok, _activity2} =
+        Activities.create_activity(user2, "blog_published", nil, "User 2 activity")
 
       activities = Activities.list_recent_activities(user_id: user1.id)
 
