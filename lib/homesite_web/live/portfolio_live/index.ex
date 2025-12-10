@@ -50,9 +50,14 @@ defmodule HomesiteWeb.PortfolioLive.Index do
           <%= if Enum.empty?(@projects) do %>
             <div class="alert alert-info">
               <.icon name="hero-information-circle" class="h-6 w-6" />
-              <span>
-                {gettext("No public projects available at this time.")}
-              </span>
+              <div>
+                <h3 class="font-bold">{gettext("No projects available")}</h3>
+                <div class="text-[var(--text-sm)]">
+                  {gettext(
+                    "Only portfolios with images are shown here. Add media items to your projects to display them."
+                  )}
+                </div>
+              </div>
             </div>
           <% else %>
             <%= for project <- @projects do %>
