@@ -74,7 +74,7 @@ defmodule HomesiteWeb.UserLive.Login do
                   required
                   phx-mounted={JS.focus()}
                 />
-                <.button class="btn btn-primary w-full gap-[var(--space-xs)]">
+                <.button class="btn btn-primary gap-[var(--space-xs)] w-full">
                   <.icon name="hero-paper-airplane" class="h-5 w-5" />
                   {gettext("Send magic link")}
                 </.button>
@@ -126,14 +126,14 @@ defmodule HomesiteWeb.UserLive.Login do
 
                 <div class="space-y-2">
                   <.button
-                    class="btn btn-primary w-full gap-[var(--space-xs)]"
+                    class="btn btn-primary gap-[var(--space-xs)] w-full"
                     name={@form[:remember_me].name}
                     value="true"
                   >
                     <.icon name="hero-clock" class="h-5 w-5" />
                     {gettext("Stay logged in")}
                   </.button>
-                  <.button class="btn btn-outline w-full gap-[var(--space-xs)]">
+                  <.button class="btn btn-outline gap-[var(--space-xs)] w-full">
                     <.icon name="hero-arrow-right-on-rectangle" class="h-5 w-5" />
                     {gettext("Log in only this time")}
                   </.button>

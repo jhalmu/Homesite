@@ -6,6 +6,102 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-10 22:00:00 - User Moderation System Phase 1 & 2
+
+### Session: Complete Database, Schemas, Context, LiveViews & Tests
+
+#### Implemented Comprehensive User Moderation System
+
+**Phase 1: Database + Core (Complete)**
+
+Created migration `20251210185502_create_moderation_tables.exs` with 6 tables:
+- `user_mutes` - Users can mute other users (hide content)
+- `user_reports` - Report queue with status workflow (pending → resolved/dismissed)
+- `user_banners` - Admin warning messages with severity levels
+- `user_suspensions` - Temporary account restrictions with expiration
+- `user_bans` - Permanent account disable
+- `moderation_action_logs` - Comprehensive audit trail
+
+**Schema Modules Created** (6 files in `lib/homesite/moderation/`):
+- `user_mute.ex` - Pattern: Chat.Block
+- `user_report.ex` - Status workflow: pending → reviewing → resolved/dismissed
+- `user_banner.ex` - Severity: info/warning/error, auto-dismiss support
+- `user_suspension.ex` - Temporary restrictions with expiration
+- `user_ban.ex` - Permanent bans
+- `moderation_action_log.ex` - Audit trail
+
+**Context Module** (`lib/homesite/moderation.ex`):
+- ~550 lines of comprehensive CRUD operations
+- Scope-based authorization throughout
+- Automatic audit logging for all admin actions
+- Statistics and query functions
+
+**Phase 2: LiveViews (Complete)**
+
+**User LiveViews** (`lib/homesite_web/live/moderation_live/`):
+- `mutes.ex` - List and unmute users
+- `report.ex` - Report form with user validation
+
+**Admin LiveViews** (`lib/homesite_web/live/admin_live/moderation/`):
+- `dashboard.ex` - Stats overview, quick actions, recent activity
+- `reports.ex` - Report queue with filtering, detail view, resolve/dismiss
+- `suspensions.ex` - Create/lift temporary suspensions
+- `bans.ex` - Create/lift permanent bans
+- `banners.ex` - Send warning banners with severity and auto-dismiss
+- `logs.ex` - Full audit log with action type filtering
+
+**Router Updates** (`lib/homesite_web/router.ex`):
+```elixir
+# User routes in :require_authenticated_user
+live "/moderation/mutes", ModerationLive.Mutes, :index
+live "/moderation/report/:user_id", ModerationLive.Report, :new
+
+# Admin routes in :require_admin
+live "/admin/moderation", AdminLive.Moderation.Dashboard, :index
+live "/admin/moderation/reports", AdminLive.Moderation.Reports, :index
+live "/admin/moderation/reports/:id", AdminLive.Moderation.Reports, :show
+live "/admin/moderation/suspensions", AdminLive.Moderation.Suspensions, :index
+live "/admin/moderation/bans", AdminLive.Moderation.Bans, :index
+live "/admin/moderation/banners", AdminLive.Moderation.Banners, :index
+live "/admin/moderation/logs", AdminLive.Moderation.Logs, :index
+```
+
+#### Test Coverage
+
+**Context Tests** (`test/homesite/moderation_test.exs`):
+- 64 tests covering all CRUD operations
+- Scope isolation verification
+- Status transitions
+- Audit logging validation
+
+**LiveView Tests** (8 test files):
+- `test/homesite_web/live/moderation_live/mutes_test.exs` - 6 tests
+- `test/homesite_web/live/moderation_live/report_test.exs` - 5 tests
+- `test/homesite_web/live/admin_live/moderation/dashboard_test.exs` - 5 tests
+- `test/homesite_web/live/admin_live/moderation/reports_test.exs` - 7 tests
+- `test/homesite_web/live/admin_live/moderation/suspensions_test.exs` - 6 tests
+- `test/homesite_web/live/admin_live/moderation/bans_test.exs` - 6 tests
+- `test/homesite_web/live/admin_live/moderation/banners_test.exs` - 6 tests
+- `test/homesite_web/live/admin_live/moderation/logs_test.exs` - 6 tests
+
+#### Bug Fixes During Implementation
+- Renamed `stat_card` to `moderation_stat_card` (CoreComponents conflict)
+- Fixed `get_user!/1` usage with try/rescue for error handling
+- Changed `Accounts.get_scope/1` to `Scope.for_user/1` in tests
+- Fixed banner template `expires_at` → `auto_dismiss_after`
+- Fixed banners form map→keyword list conversion
+- Fixed ambiguous button selectors in tests
+- Fixed `follow_redirect` → `assert_redirect` for LiveView navigation
+
+#### Test Results
+- **1443 tests, 0 failures** (111 new tests from moderation system)
+
+#### Remaining Phases (Plan File)
+- Phase 5: Integration (UserAuth checks, Content/Chat mute filtering, Dashboard banners)
+- Phase 6: Polish (rate limiting, security tests, documentation)
+
+---
+
 ## 2025-12-10 19:30:00 - Security Features Implementation
 
 ### Session: Auth Logging, Account Lockout & Suspicious Activity Detection

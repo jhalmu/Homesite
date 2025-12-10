@@ -55,7 +55,7 @@ defmodule HomesiteWeb.UserLive.Projects do
             <p class="text-base-content/60">{gettext("No public projects yet.")}</p>
           </div>
         <% else %>
-          <div class="grid grid-cols-1 gap-[var(--space-md)] md:grid-cols-2 lg:grid-cols-3">
+          <div class="gap-[var(--space-md)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             <.project_card
               :for={project <- @projects}
               project={project}

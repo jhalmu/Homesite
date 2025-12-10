@@ -258,7 +258,7 @@ defmodule HomesiteWeb.UserLive.Settings do
               </p>
 
               <div class="bg-base-200 mb-[var(--space-md)] p-[var(--space-sm)] rounded-lg">
-                <code class="break-all text-[var(--text-lg)]">
+                <code class="text-[var(--text-lg)] break-all">
                   {url(~p"/users/@#{@current_scope.user.username}")}
                 </code>
               </div>

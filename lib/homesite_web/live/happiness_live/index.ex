@@ -35,7 +35,7 @@ defmodule HomesiteWeb.HappinessLive.Index do
         <%!-- Header --%>
         <div class="mb-[var(--space-2xl)] text-center">
           <h1 class="mb-[var(--space-sm)] text-4xl font-bold">{gettext("Happiness Meter")}</h1>
-          <p class="text-base-content/70 mx-auto max-w-2xl text-[var(--text-lg)]">
+          <p class="text-base-content/70 text-[var(--text-lg)] mx-auto max-w-2xl">
             {gettext("See how our community feels about Homesite based on real user feedback")}
           </p>
         </div>

@@ -50,7 +50,7 @@ defmodule HomesiteWeb.PostLive.Show do
           </div>
           
     <!-- Main Content with Sidebar -->
-          <div class="my-[var(--spacing-lg)] flex gap-[var(--space-lg)]">
+          <div class="my-[var(--spacing-lg)] gap-[var(--space-lg)] flex">
             <!-- Article Content -->
             <div class="prose prose-slate max-w-none flex-1 prose-pre:bg-gray-900 prose-pre:text-gray-100 dark:prose-invert">
               {Phoenix.HTML.raw(@rendered_html)}

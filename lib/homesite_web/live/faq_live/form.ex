@@ -90,7 +90,7 @@ defmodule HomesiteWeb.FaqLive.Form do
           </:help>
         </.input>
 
-        <div class="flex gap-[var(--space-xs)]">
+        <div class="gap-[var(--space-xs)] flex">
           <.button variant="primary" phx-disable-with={gettext("Saving...")}>
             {gettext("Save FAQ")}
           </.button>

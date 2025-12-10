@@ -31,7 +31,16 @@ defmodule Homesite.Accounts.AuthLog do
   """
   def changeset(auth_log, attrs) do
     auth_log
-    |> cast(attrs, [:email, :event_type, :success, :ip_address, :user_agent, :failure_reason, :metadata, :user_id])
+    |> cast(attrs, [
+      :email,
+      :event_type,
+      :success,
+      :ip_address,
+      :user_agent,
+      :failure_reason,
+      :metadata,
+      :user_id
+    ])
     |> validate_required([:email, :event_type])
     |> validate_inclusion(:event_type, @event_types)
     |> validate_length(:email, max: 160)

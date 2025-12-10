@@ -167,6 +167,10 @@ defmodule HomesiteWeb.Router do
 
       # Feedback submission (authenticated users only)
       live "/feedback", FeedbackLive.Index, :index
+
+      # User moderation
+      live "/moderation/mutes", ModerationLive.Mutes, :index
+      live "/moderation/report/:user_id", ModerationLive.Report, :new
     end
 
     post "/users/update-password", UserSessionController, :update_password
@@ -187,6 +191,15 @@ defmodule HomesiteWeb.Router do
       live "/admin/invitations", AdminLive.Invitations.Index, :index
       live "/admin/analytics", AdminLive.Analytics.Index, :index
       live "/admin/feedback", AdminLive.Feedback.Index, :index
+
+      # Admin moderation
+      live "/admin/moderation", AdminLive.Moderation.Dashboard, :index
+      live "/admin/moderation/reports", AdminLive.Moderation.Reports, :index
+      live "/admin/moderation/reports/:id", AdminLive.Moderation.Reports, :show
+      live "/admin/moderation/suspensions", AdminLive.Moderation.Suspensions, :index
+      live "/admin/moderation/bans", AdminLive.Moderation.Bans, :index
+      live "/admin/moderation/banners", AdminLive.Moderation.Banners, :index
+      live "/admin/moderation/logs", AdminLive.Moderation.Logs, :index
 
       # Admin FAQ management
       live "/faqs/new", FaqLive.Form, :new

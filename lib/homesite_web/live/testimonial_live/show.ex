@@ -201,7 +201,7 @@ defmodule HomesiteWeb.TestimonialLive.Show do
           <div class="mt-[var(--space-2xl)] text-center">
             <div class="card bg-base-200 shadow-xl">
               <div class="card-body">
-                <h3 class="card-title mb-[var(--space-sm)] justify-center text-[var(--text-xl)]">
+                <h3 class="card-title mb-[var(--space-sm)] text-[var(--text-xl)] justify-center">
                   {gettext("Want to share your experience?")}
                 </h3>
 

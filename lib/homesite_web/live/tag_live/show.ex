@@ -11,8 +11,8 @@ defmodule HomesiteWeb.TagLive.Show do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="technical-main">
         <header class="gap-[var(--spacing-md)] mb-[var(--spacing-section)] flex flex-col">
-          <div class="flex flex-wrap items-center justify-between gap-[var(--space-sm)]">
-            <div class="flex items-center gap-[var(--space-sm)]">
+          <div class="gap-[var(--space-sm)] flex flex-wrap items-center justify-between">
+            <div class="gap-[var(--space-sm)] flex items-center">
               <.link
                 navigate={~p"/tags"}
                 class="btn btn-circle btn-ghost"
@@ -35,7 +35,10 @@ defmodule HomesiteWeb.TagLive.Show do
               </div>
             </div>
             <%= if @can_edit do %>
-              <.link navigate={~p"/tags/#{@tag}/edit?return_to=show"} class="btn btn-primary gap-[var(--space-xs)]">
+              <.link
+                navigate={~p"/tags/#{@tag}/edit?return_to=show"}
+                class="btn btn-primary gap-[var(--space-xs)]"
+              >
                 <.icon name="hero-pencil-square" class="h-5 w-5" /> {gettext("Edit Tag")}
               </.link>
             <% end %>
@@ -77,7 +80,7 @@ defmodule HomesiteWeb.TagLive.Show do
                       <span class="badge badge-ghost">{gettext("Draft")}</span>
                     <% end %>
                   </div>
-                  <div class="flex gap-[var(--space-xs)]">
+                  <div class="gap-[var(--space-xs)] flex">
                     <.link navigate={~p"/posts/#{post}"} class="btn btn-sm btn-ghost">
                       {gettext("View")}
                     </.link>
@@ -99,7 +102,7 @@ defmodule HomesiteWeb.TagLive.Show do
           <div class="space-y-4">
             <%= for post <- @public_posts do %>
               <div class="listing-card">
-                <div class="flex items-start justify-between gap-[var(--space-sm)]">
+                <div class="gap-[var(--space-sm)] flex items-start justify-between">
                   <div class="flex-1">
                     <h3 class="listing-title">
                       <.link navigate={~p"/users/#{post.user.id}"} class="link link-hover">
@@ -109,7 +112,7 @@ defmodule HomesiteWeb.TagLive.Show do
                     <.author_byline user={post.user} date={post.published_at} class="mt-2" />
                   </div>
                 </div>
-                <p :if={post.body} class="line-clamp-2 mt-2 text-[var(--text-sm)]">
+                <p :if={post.body} class="line-clamp-2 text-[var(--text-sm)] mt-2">
                   {String.slice(post.body, 0, 150)}{if String.length(post.body) > 150, do: "..."}
                 </p>
                 <div class="card-actions justify-end">

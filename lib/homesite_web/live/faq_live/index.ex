@@ -33,7 +33,7 @@ defmodule HomesiteWeb.FaqLive.Index do
           </:actions>
         </.header>
 
-        <div class="mt-8 flex gap-[var(--space-lg)]">
+        <div class="gap-[var(--space-lg)] mt-8 flex">
           <div class="flex-1 space-y-4">
             <%= if Enum.empty?(@faqs) do %>
               <div class="card bg-base-200">

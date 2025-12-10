@@ -110,7 +110,7 @@ defmodule HomesiteWeb.ProjectLive.Index do
         <%!-- Page Header --%>
         <div class="mb-8 flex items-center justify-between">
           <h1 class="text-3xl font-bold">{@page_title}</h1>
-          <div class="flex items-center gap-[var(--space-xs)]">
+          <div class="gap-[var(--space-xs)] flex items-center">
             <%= if @archived_count > 0 do %>
               <button
                 type="button"
@@ -144,13 +144,15 @@ defmodule HomesiteWeb.ProjectLive.Index do
           <div class="py-16 text-center">
             <%= if @show_archived do %>
               <.icon name="hero-archive-box" class="text-base-content/30 mx-auto mb-4 h-16 w-16" />
-              <h2 class="mb-2 text-[var(--text-2xl)] font-semibold">{gettext("No archived projects")}</h2>
+              <h2 class="text-[var(--text-2xl)] mb-2 font-semibold">
+                {gettext("No archived projects")}
+              </h2>
               <p class="text-base-content/70 mb-6">
                 {gettext("Projects you archive will appear here.")}
               </p>
             <% else %>
               <.icon name="hero-folder" class="text-base-content/30 mx-auto mb-4 h-16 w-16" />
-              <h2 class="mb-2 text-[var(--text-2xl)] font-semibold">{gettext("No projects yet")}</h2>
+              <h2 class="text-[var(--text-2xl)] mb-2 font-semibold">{gettext("No projects yet")}</h2>
               <p class="text-base-content/70 mb-6">
                 {gettext("Create your first project to organize your media and showcase your work.")}
               </p>
@@ -163,7 +165,7 @@ defmodule HomesiteWeb.ProjectLive.Index do
           <div
             id="project-list"
             phx-hook="SortableProjects"
-            class="grid grid-cols-1 gap-[var(--space-md)] md:grid-cols-2 lg:grid-cols-3"
+            class="gap-[var(--space-md)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
           >
             <%= for project <- @projects do %>
               <div
@@ -174,7 +176,7 @@ defmodule HomesiteWeb.ProjectLive.Index do
                 ]}
               >
                 <div class="card-body">
-                  <div class="flex items-start gap-[var(--space-xs)]">
+                  <div class="gap-[var(--space-xs)] flex items-start">
                     <%= unless @show_archived do %>
                       <span class="drag-handle text-base-content/40 mt-1 cursor-grab hover:text-base-content active:cursor-grabbing">
                         <.icon name="hero-bars-3" class="h-5 w-5" />
@@ -200,13 +202,13 @@ defmodule HomesiteWeb.ProjectLive.Index do
                     </p>
                   <% end %>
 
-                  <div class="text-base-content/60 mt-2 flex items-center gap-[var(--space-xs)] text-[var(--text-sm)]">
+                  <div class="text-base-content/60 gap-[var(--space-xs)] text-[var(--text-sm)] mt-2 flex items-center">
                     <.icon name="hero-check-circle" class="h-4 w-4" />
                     <span>{project.completion_percentage}% {gettext("complete")}</span>
                   </div>
 
                   <%= if project.archived_at do %>
-                    <div class="text-base-content/50 mt-1 text-[var(--text-xs)]">
+                    <div class="text-base-content/50 text-[var(--text-xs)] mt-1">
                       {gettext("Archived")} {Calendar.strftime(project.archived_at, "%Y-%m-%d")}
                     </div>
                   <% end %>

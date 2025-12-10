@@ -120,7 +120,9 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
           <%!-- Happiness Score Card --%>
           <div class="card bg-base-200 shadow-xl">
             <div class="card-body">
-              <h2 class="card-title text-[var(--text-[var(--text-sm)])]">{gettext("Happiness Score")}</h2>
+              <h2 class="card-title text-[var(--text-[var(--text-sm)])]">
+                {gettext("Happiness Score")}
+              </h2>
               <div class="text-primary text-4xl font-bold">
                 {@analytics.happiness.score}%
               </div>
@@ -133,7 +135,9 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
           <%!-- Total Responses Card --%>
           <div class="card bg-base-200 shadow-xl">
             <div class="card-body">
-              <h2 class="card-title text-[var(--text-[var(--text-sm)])]">{gettext("Total Responses")}</h2>
+              <h2 class="card-title text-[var(--text-[var(--text-sm)])]">
+                {gettext("Total Responses")}
+              </h2>
               <div class="text-secondary text-4xl font-bold">
                 {@analytics.happiness.total_responses}
               </div>
@@ -146,7 +150,9 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
           <%!-- Pending Testimonials Card --%>
           <div class="card bg-base-200 shadow-xl">
             <div class="card-body">
-              <h2 class="card-title text-[var(--text-[var(--text-sm)])]">{gettext("Pending Approval")}</h2>
+              <h2 class="card-title text-[var(--text-[var(--text-sm)])]">
+                {gettext("Pending Approval")}
+              </h2>
               <div class="text-warning text-4xl font-bold">
                 {length(@pending_testimonials)}
               </div>
@@ -219,7 +225,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
                         <td>{rank_stat.rank}</td>
                         <td>{rank_stat.count}</td>
                         <td>
-                          <div class="flex items-center gap-[var(--space-inline)]">
+                          <div class="gap-[var(--space-inline)] flex items-center">
                             {Float.round(rank_stat.avg_rating, 1)}
                             <span class="text-orange-400">⭐</span>
                           </div>

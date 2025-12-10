@@ -446,7 +446,10 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
         <%!-- Page Header --%>
         <div class="mb-8">
           <h1 class="text-3xl font-bold">{@page_title}</h1>
-          <.link navigate={~p"/projects"} class="text-base-content/70 text-[var(--text-sm)] hover:text-base-content">
+          <.link
+            navigate={~p"/projects"}
+            class="text-base-content/70 text-[var(--text-sm)] hover:text-base-content"
+          >
             <.icon name="hero-arrow-left" class="inline h-4 w-4" /> {gettext("Back to projects")}
           </.link>
         </div>
@@ -458,15 +461,21 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
           </li>
           <li class={"#{if @step_index >= 1, do: "step-primary"} step"}>
             {gettext("Metadata")}
-            <span class="text-base-content/60 ml-1 text-[var(--text-xs)]">({gettext("optional")})</span>
+            <span class="text-base-content/60 text-[var(--text-xs)] ml-1">
+              ({gettext("optional")})
+            </span>
           </li>
           <li class={"#{if @step_index >= 2, do: "step-primary"} step"}>
             {gettext("Team")}
-            <span class="text-base-content/60 ml-1 text-[var(--text-xs)]">({gettext("optional")})</span>
+            <span class="text-base-content/60 text-[var(--text-xs)] ml-1">
+              ({gettext("optional")})
+            </span>
           </li>
           <li class={"#{if @step_index >= 3, do: "step-primary"} step"}>
             {gettext("Settings")}
-            <span class="text-base-content/60 ml-1 text-[var(--text-xs)]">({gettext("optional")})</span>
+            <span class="text-base-content/60 text-[var(--text-xs)] ml-1">
+              ({gettext("optional")})
+            </span>
           </li>
         </ul>
 
@@ -534,7 +543,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
               <div></div>
             <% end %>
 
-            <div class="flex gap-[var(--space-xs)]">
+            <div class="gap-[var(--space-xs)] flex">
               <%= if @step_index > 0 && @step_index < 3 do %>
                 <button type="button" phx-click="skip_to_save" class="btn btn-ghost">
                   {gettext("Skip to Save")}
@@ -576,7 +585,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
         <label class="label">
           <span class="label-text font-medium">{gettext("Project Type")}</span>
         </label>
-        <div class="grid grid-cols-2 gap-[var(--space-xs)] md:grid-cols-4">
+        <div class="gap-[var(--space-xs)] grid grid-cols-2 md:grid-cols-4">
           <%= for template <- @templates do %>
             <label class={[
               "card cursor-pointer border-2 p-4 text-center transition-all hover:shadow-md",
@@ -595,7 +604,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
             </label>
           <% end %>
         </div>
-        <p class="text-base-content/60 mt-2 text-[var(--text-sm)]">
+        <p class="text-base-content/60 text-[var(--text-sm)] mt-2">
           {gettext("Choose a project type to get customized labels and suggestions.")}
         </p>
       </div>
@@ -644,9 +653,11 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
       </p>
 
       <%!-- Template indicator --%>
-      <div class="bg-base-200 flex items-center gap-[var(--space-xs)] rounded-lg p-3">
+      <div class="bg-base-200 gap-[var(--space-xs)] flex items-center rounded-lg p-3">
         <.icon name={@template.icon} class="text-primary h-5 w-5" />
-        <span class="text-[var(--text-sm)]">{gettext("Project type:")} <strong>{@template.name}</strong></span>
+        <span class="text-[var(--text-sm)]">
+          {gettext("Project type:")} <strong>{@template.name}</strong>
+        </span>
       </div>
 
       <.input
@@ -668,7 +679,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
           class="input input-bordered w-full"
         />
         <%= if @form[:tags].errors != [] do %>
-          <p class="text-error mt-1 text-[var(--text-sm)]">
+          <p class="text-error text-[var(--text-sm)] mt-1">
             <%= for {msg, opts} <- @form[:tags].errors do %>
               {translate_error({msg, opts})}
             <% end %>
@@ -679,7 +690,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
         <%= if length(@suggested_tags) > 0 do %>
           <div class="mt-2">
             <span class="text-base-content/60 text-[var(--text-sm)]">{gettext("Suggestions:")}</span>
-            <div class="mt-1 flex flex-wrap gap-[var(--space-inline)]">
+            <div class="gap-[var(--space-inline)] mt-1 flex flex-wrap">
               <%= for tag <- @suggested_tags do %>
                 <span class="badge badge-outline badge-sm">{tag}</span>
               <% end %>
@@ -716,10 +727,10 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
 
       <%!-- Collaborators Section --%>
       <div class="border-base-300 rounded-lg border p-4">
-        <h3 class="mb-4 text-[var(--text-lg)] font-semibold">{gettext("Collaborators")}</h3>
+        <h3 class="text-[var(--text-lg)] mb-4 font-semibold">{gettext("Collaborators")}</h3>
 
         <%= if Enum.empty?(@collaborators) do %>
-          <p class="text-base-content/60 mb-4 text-[var(--text-sm)]">
+          <p class="text-base-content/60 text-[var(--text-sm)] mb-4">
             {gettext("No collaborators added yet. Add team members who worked on this project.")}
           </p>
         <% else %>
@@ -729,7 +740,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
                 <div class="flex-1">
                   <span class="font-medium">{collaborator.name}</span>
                   <%= if collaborator.contact_type != "none" do %>
-                    <span class="text-base-content/60 ml-2 text-[var(--text-sm)]">
+                    <span class="text-base-content/60 text-[var(--text-sm)] ml-2">
                       ({collaborator.contact_type}: {collaborator.contact})
                     </span>
                   <% end %>
@@ -750,7 +761,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
 
         <%!-- Add Collaborator (using phx-click to avoid nested forms) --%>
         <div class="space-y-3" id={"collaborator-inputs-#{@input_reset_key}"}>
-          <div class="grid grid-cols-1 gap-[var(--space-xs)] md:grid-cols-2">
+          <div class="gap-[var(--space-xs)] grid grid-cols-1 md:grid-cols-2">
             <input
               type="text"
               id={"collaborator-name-#{@input_reset_key}"}
@@ -770,7 +781,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
               phx-value-field="contact"
             />
           </div>
-          <div class="flex items-center gap-[var(--space-xs)]">
+          <div class="gap-[var(--space-xs)] flex items-center">
             <select
               id={"collaborator-contact-type-#{@input_reset_key}"}
               class="select select-bordered select-sm"
@@ -803,10 +814,10 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
 
       <%!-- Affiliation Links Section --%>
       <div class="border-base-300 rounded-lg border p-4">
-        <h3 class="mb-4 text-[var(--text-lg)] font-semibold">{gettext("Related Links")}</h3>
+        <h3 class="text-[var(--text-lg)] mb-4 font-semibold">{gettext("Related Links")}</h3>
 
         <%= if Enum.empty?(@affiliation_links) do %>
-          <p class="text-base-content/60 mb-4 text-[var(--text-sm)]">
+          <p class="text-base-content/60 text-[var(--text-sm)] mb-4">
             {gettext("No links added yet. Add client websites, press coverage, or related projects.")}
           </p>
         <% else %>
@@ -815,7 +826,11 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
               <div class="bg-base-200 flex items-center justify-between rounded-lg p-3">
                 <div class="flex-1">
                   <span class="font-medium">{link.title}</span>
-                  <a href={link.url} target="_blank" class="text-primary ml-2 text-[var(--text-sm)] hover:underline">
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    class="text-primary text-[var(--text-sm)] ml-2 hover:underline"
+                  >
                     {link.url} <.icon name="hero-arrow-top-right-on-square" class="inline h-3 w-3" />
                   </a>
                 </div>
@@ -835,7 +850,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
 
         <%!-- Add Link (using phx-click to avoid nested forms) --%>
         <div class="space-y-3" id={"link-inputs-#{@input_reset_key}"}>
-          <div class="grid grid-cols-1 gap-[var(--space-xs)] md:grid-cols-2">
+          <div class="gap-[var(--space-xs)] grid grid-cols-1 md:grid-cols-2">
             <input
               type="text"
               id={"link-title-#{@input_reset_key}"}
@@ -869,7 +884,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
 
       <%!-- Related Blog Posts Section --%>
       <div class="border-base-300 rounded-lg border p-4">
-        <h3 class="mb-4 text-[var(--text-lg)] font-semibold">
+        <h3 class="text-[var(--text-lg)] mb-4 font-semibold">
           <.icon name="hero-document-text" class="inline h-5 w-5" />
           {gettext("Related Blog Posts")}
         </h3>
@@ -880,7 +895,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
           </p>
         <% else %>
           <%= if Enum.empty?(@linked_posts) do %>
-            <p class="text-base-content/60 mb-4 text-[var(--text-sm)]">
+            <p class="text-base-content/60 text-[var(--text-sm)] mb-4">
               {gettext("No blog posts linked. Connect your project to related articles.")}
             </p>
           <% else %>
@@ -892,7 +907,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
                       {post.title}
                     </.link>
                     <%= if post.published_at do %>
-                      <span class="text-base-content/60 ml-2 text-[var(--text-sm)]">
+                      <span class="text-base-content/60 text-[var(--text-sm)] ml-2">
                         {Calendar.strftime(post.published_at, "%Y-%m-%d")}
                       </span>
                     <% end %>
@@ -913,7 +928,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
 
           <%!-- Post Selector (using hook to avoid form conflicts) --%>
           <%= if not Enum.empty?(@available_posts) do %>
-            <div class="flex gap-[var(--space-xs)]">
+            <div class="gap-[var(--space-xs)] flex">
               <select
                 id="post-selector"
                 class="select select-bordered flex-1"

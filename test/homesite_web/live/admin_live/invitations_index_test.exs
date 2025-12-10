@@ -99,7 +99,9 @@ defmodule HomesiteWeb.AdminLive.Invitations.IndexTest do
       {:ok, lv, _html} = live(conn, ~p"/admin/invitations")
 
       # Click the copy link button - should not crash
-      lv |> element("button[phx-value-code='#{invitation.code}'][phx-click='copy_link']") |> render_click()
+      lv
+      |> element("button[phx-value-code='#{invitation.code}'][phx-click='copy_link']")
+      |> render_click()
 
       # Page still renders after click
       assert has_element?(lv, "button[phx-click='copy_link']")
@@ -113,7 +115,9 @@ defmodule HomesiteWeb.AdminLive.Invitations.IndexTest do
       {:ok, lv, _html} = live(conn, ~p"/admin/invitations")
 
       # Click the copy code button - should not crash
-      lv |> element("button[phx-value-code='#{invitation.code}'][phx-click='copy']") |> render_click()
+      lv
+      |> element("button[phx-value-code='#{invitation.code}'][phx-click='copy']")
+      |> render_click()
 
       # Page still renders after click
       assert has_element?(lv, "button[phx-click='copy']")

@@ -27,7 +27,9 @@ defmodule HomesiteWeb.UserSessionController do
 
       _ ->
         # Log failed magic link attempt (we don't know the email here)
-        log_auth_event(conn, "magic_link_failure", "unknown", failure_reason: "invalid_or_expired_token")
+        log_auth_event(conn, "magic_link_failure", "unknown",
+          failure_reason: "invalid_or_expired_token"
+        )
 
         conn
         |> put_flash(:error, "The link is invalid or it has expired.")
