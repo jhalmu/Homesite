@@ -72,5 +72,51 @@ defmodule HomesiteWeb.AdminLive.Invitations.IndexTest do
       assert {:redirect, %{to: path}} = redirect
       assert path =~ "/users/log-in"
     end
+
+    test "displays copy code and copy link buttons for invitations", %{conn: conn} do
+      admin = admin_fixture()
+      {:ok, invitation} = Homesite.Accounts.create_invitation(admin, %{"default_role" => "user"})
+      conn = log_in_user(conn, admin)
+
+      {:ok, lv, html} = live(conn, ~p"/admin/invitations")
+
+      # Check invitation code is displayed
+      assert html =~ invitation.code
+
+      # Check both copy buttons exist
+      assert has_element?(lv, "button[title='Copy code only']")
+      assert has_element?(lv, "button[title='Copy registration link']")
+
+      # Check the link button contains the registration URL pattern
+      assert html =~ "/users/register?invite=#{invitation.code}"
+    end
+
+    test "copy link button works", %{conn: conn} do
+      admin = admin_fixture()
+      {:ok, invitation} = Homesite.Accounts.create_invitation(admin, %{"default_role" => "user"})
+      conn = log_in_user(conn, admin)
+
+      {:ok, lv, _html} = live(conn, ~p"/admin/invitations")
+
+      # Click the copy link button - should not crash
+      lv |> element("button[phx-value-code='#{invitation.code}'][phx-click='copy_link']") |> render_click()
+
+      # Page still renders after click
+      assert has_element?(lv, "button[phx-click='copy_link']")
+    end
+
+    test "copy code button works", %{conn: conn} do
+      admin = admin_fixture()
+      {:ok, invitation} = Homesite.Accounts.create_invitation(admin, %{"default_role" => "user"})
+      conn = log_in_user(conn, admin)
+
+      {:ok, lv, _html} = live(conn, ~p"/admin/invitations")
+
+      # Click the copy code button - should not crash
+      lv |> element("button[phx-value-code='#{invitation.code}'][phx-click='copy']") |> render_click()
+
+      # Page still renders after click
+      assert has_element?(lv, "button[phx-click='copy']")
+    end
   end
 end
