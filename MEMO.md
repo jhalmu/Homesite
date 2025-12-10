@@ -6,6 +6,60 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-10 19:30:00 - Security Features Implementation
+
+### Session: Auth Logging, Account Lockout & Suspicious Activity Detection
+
+#### Security Features Implemented
+Completed comprehensive authentication security system:
+
+**Database & Schema:**
+- Created `auth_logs` table with 6 indexes for efficient queries
+- `AuthLog` schema tracking: email, event_type, success, IP, user agent, metadata
+- Event types: login_success/failure, magic_link_*, password_change, suspicious_activity
+
+**Account Lockout:**
+- `account_locked_out?/1` - Checks if >= 5 failures in 15 min window
+- `lockout_remaining_minutes/1` - Shows time until unlock
+- Integrated into login controller - blocks login attempts when locked
+
+**Suspicious Activity Detection:**
+- `detect_suspicious_activity/2` - Detects 3 patterns:
+  - High failure rate (>=10 failures/hour)
+  - IP abuse (>=20 failures from same IP/hour)
+  - Credential stuffing (>=5 unique emails from same IP)
+- `log_suspicious_activity/4` - Records suspicious events
+- `get_auth_stats/0` - Dashboard statistics
+
+**Login Controller Integration:**
+- Logs all login attempts (success/failure)
+- Logs magic link success/failure
+- Logs password changes
+- Checks lockout before allowing login
+- Detects and logs suspicious activity after failures
+- Captures IP address (with X-Forwarded-For support) and user agent
+
+#### Previous Session Work (also today)
+- Updated REGISTRATION_STRATEGY.md - clarified password is legacy fallback
+- Added copy link button to invitation management
+- Tests for copy functionality
+
+#### Test Results
+- 15 new security tests added
+- 1332 tests total, 0 failures
+
+#### Commits
+- `9421002` - docs: Clarify password is legacy fallback in auth strategy
+- `078dfc0` - feat: Add copy link button to invitation management
+- `6fd64c2` - test: Add tests for copy code and copy link buttons
+- `17e7275` - feat: Add authentication logging and account lockout security
+- `48cb8f1` - test: Add security tests and fix lockout NaiveDateTime bug
+
+#### Open Issue
+- #13 - Email Notifications for New Posts (not related to today's work)
+
+---
+
 ## 2025-12-10 15:05:00 - Design System Migration & Documentation Consolidation
 
 ### Session: Complete Design Token Migration
