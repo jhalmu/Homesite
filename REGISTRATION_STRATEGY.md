@@ -203,13 +203,16 @@ Table: `invitations`
 - ✅ Secure session handling
 - ✅ Signed tokens for magic links (1-hour expiry)
 
-### Additional Recommendations
+### Additional Protections (Implemented 2025-12-10)
+- ✅ Log authentication attempts (`auth_logs` table with IP, user agent, event type)
+- ✅ Alert on suspicious activity (credential stuffing detection)
+- ✅ Account lockout after 5 failed attempts (15 minute window)
+- ✅ Monitor for credential stuffing attacks (multi-email from same IP detection)
+
+### Future Recommendations
 - [ ] Add email verification for password resets
-- [ ] Log authentication attempts
-- [ ] Alert on suspicious activity
-- [ ] Implement account lockout after N failed attempts
 - [ ] Add CAPTCHA for repeated failed logins
-- [ ] Monitor for credential stuffing attacks
+- [ ] Admin notification system for suspicious activity alerts
 
 ## Email Templates
 

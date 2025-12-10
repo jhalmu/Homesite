@@ -1112,7 +1112,9 @@ defmodule Homesite.Accounts do
         0
 
       timestamp ->
-        lockout_ends = DateTime.add(timestamp, @lockout_window_minutes, :minute)
+        # Convert NaiveDateTime to DateTime (inserted_at is naive)
+        {:ok, datetime} = DateTime.from_naive(timestamp, "Etc/UTC")
+        lockout_ends = DateTime.add(datetime, @lockout_window_minutes, :minute)
         diff = DateTime.diff(lockout_ends, DateTime.utc_now(), :minute)
         max(0, diff)
     end
