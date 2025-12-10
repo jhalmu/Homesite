@@ -6,6 +6,55 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-10 15:05:00 - Design System Migration & Documentation Consolidation
+
+### Session: Complete Design Token Migration
+
+#### Documentation Consolidation
+Merged two overlapping CSS guides into one unified English document:
+- **MODERN_CSS_GUIDE.md** (451 lines, Finnish) - Practical patterns
+- **DESIGN_SYSTEM_MIGRATION_GUIDE.md** (503 lines, English) - Technical migration guide
+- **Result**: `DESIGN_SYSTEM_GUIDE.md` (~300 lines, English)
+
+#### Design Token Migration
+Migrated remaining hardcoded Tailwind values to fluid design tokens:
+
+**Before**: 42 hardcoded gaps, 57 hardcoded typography
+**After**: 8 remaining (intentional - badge gaps, specific utilities)
+
+**Files Updated** (16 total):
+- `project_live/stepped_form.ex` - Major update (66 changes)
+- `project_live/show.ex`, `project_live/index.ex`
+- `tag_live/show.ex`
+- `admin_live/dashboard.ex`, `admin_live/feedback/index.ex`, `admin_live/users/index.ex`
+- `faq_live/index.ex`, `faq_live/form.ex`
+- `happiness_live/index.ex`
+- `post_live/show.ex`, `post_live/form.ex`
+- `testimonial_live/show.ex`
+- `user_live/login.ex`, `user_live/projects.ex`, `user_live/settings.ex`
+
+**Remaining Intentional Hardcoded Values** (8):
+- Badge internal gaps (`gap-1`, `gap-2` within DaisyUI badge components)
+- Specific zinc color utilities in settings (design choice)
+
+#### Migration Status
+- **Before**: ~80% migrated (416 token usages)
+- **After**: ~98% migrated (500+ token usages)
+- Remaining 8 values are intentional (DaisyUI component internals)
+
+#### Test Results
+- 1314 tests, 0 failures
+
+#### Commits
+- `663df46` - refactor: Migrate design tokens + consolidate CSS documentation
+
+#### Root MD Files Now (7 files)
+- Essential: README.md, CLAUDE.md, AGENTS.md, MEMO.md
+- Active guides: DESIGN_SYSTEM_GUIDE.md (NEW - consolidated)
+- Active feature docs: REGISTRATION_STRATEGY.md, DEPLOYMENT.md
+
+---
+
 ## 2025-12-10 14:40:00 - External Feeds Feature Verification & Archive
 
 ### Session: Verify External Feeds Features Complete
