@@ -289,8 +289,6 @@ defmodule Homesite.ExternalFeedsTest do
   end
 
   describe "feed_item_interactions" do
-    alias Homesite.ExternalFeeds.FeedItemInteraction
-
     import Homesite.AccountsFixtures
 
     @valid_item_attrs %{

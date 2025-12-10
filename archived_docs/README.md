@@ -2,7 +2,7 @@
 
 This folder contains completed implementation plans, summaries, and historical documentation that have been superseded by current documentation or implementation.
 
-**Archived:** 2025-11-30
+**Archived:** 2025-12-10
 
 ## Contents
 
@@ -17,10 +17,11 @@ This folder contains completed implementation plans, summaries, and historical d
   - **Superseded by:** `.claude/skills/design-system/` (active skill)
 
 **External Feeds:**
+- `EXTERNAL_FEEDS.md` - Complete external feeds system documentation (539 lines)
+  - **Status:** Fully implemented - Reddit support, read/unread tracking, bookmarks all complete
+  - **Archived:** 2025-12-10 (implementation verified complete)
 - `EXTERNAL_FEEDS_PLAN.md` - Original planning document
-  - **Superseded by:** `EXTERNAL_FEEDS.md` (comprehensive current docs)
 - `EXTERNAL_FEEDS_IMPLEMENTATION.md` - Implementation summary
-  - **Superseded by:** `EXTERNAL_FEEDS.md` (comprehensive current docs)
 
 **Accessibility:**
 - `ACCESSIBILITY.md` - Original accessibility guidelines
@@ -49,6 +50,7 @@ See the root directory for current, actively-maintained documentation:
 - `AGENTS.md` - Primary project guidelines
 - `CLAUDE.md` - Project instructions for Claude Code
 - `MEMO.md` - Current session notes
-- `EXTERNAL_FEEDS.md` - External feeds system documentation
-- `ACCESSIBILITY_COMPLETE.md` - Final accessibility audit report
-- And more...
+- `DEPLOYMENT.md` - Consolidated deployment guide
+- `REGISTRATION_STRATEGY.md` - Authentication system documentation
+- `MODERN_CSS_GUIDE.md` - CSS/Tailwind patterns
+- `DESIGN_SYSTEM_MIGRATION_GUIDE.md` - Template migration guide
