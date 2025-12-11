@@ -2,7 +2,7 @@ defmodule Homesite.Chat.Channel do
   @moduledoc """
   Schema for chat channels (IRC-style rooms).
 
-  Channels are public spaces where all registered users can participate.
+  Channels can be public (all authenticated users) or admin-only.
   """
   use Ecto.Schema
   import Ecto.Changeset
@@ -12,6 +12,7 @@ defmodule Homesite.Chat.Channel do
     field :slug, :string
     field :description, :string
     field :is_default, :boolean, default: false
+    field :is_admin_only, :boolean, default: false
 
     belongs_to :created_by, Homesite.Accounts.User, foreign_key: :created_by_user_id
     has_many :messages, Homesite.Chat.Message
@@ -22,7 +23,7 @@ defmodule Homesite.Chat.Channel do
   @doc false
   def changeset(channel, attrs) do
     channel
-    |> cast(attrs, [:name, :description, :is_default])
+    |> cast(attrs, [:name, :description, :is_default, :is_admin_only])
     |> validate_required([:name])
     |> validate_length(:name, min: 2, max: 30)
     |> validate_format(:name, ~r/^[a-z0-9-]+$/,

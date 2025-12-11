@@ -707,6 +707,90 @@ defmodule Homesite.ChatTest do
     end
   end
 
+  describe "admin-only channels" do
+    setup do
+      admin_scope = admin_scope_fixture()
+      user_scope = user_scope_fixture()
+      %{admin_scope: admin_scope, user_scope: user_scope}
+    end
+
+    test "list_channels_for_user/1 returns all channels for admins", %{admin_scope: admin_scope} do
+      regular_channel = channel_fixture(%{name: "public-channel", is_admin_only: false})
+      admin_channel = channel_fixture(%{name: "admin-channel", is_admin_only: true})
+
+      channels = Chat.list_channels_for_user(admin_scope)
+      channel_ids = Enum.map(channels, & &1.id)
+
+      assert regular_channel.id in channel_ids
+      assert admin_channel.id in channel_ids
+    end
+
+    test "list_channels_for_user/1 filters out admin-only channels for regular users", %{
+      user_scope: user_scope
+    } do
+      regular_channel = channel_fixture(%{name: "public-channel-2", is_admin_only: false})
+      admin_channel = channel_fixture(%{name: "admin-channel-2", is_admin_only: true})
+
+      channels = Chat.list_channels_for_user(user_scope)
+      channel_ids = Enum.map(channels, & &1.id)
+
+      assert regular_channel.id in channel_ids
+      refute admin_channel.id in channel_ids
+    end
+
+    test "can_access_channel?/2 returns true for public channels for any user", %{
+      user_scope: user_scope
+    } do
+      channel = channel_fixture(%{name: "public-access-test", is_admin_only: false})
+      assert Chat.can_access_channel?(user_scope, channel)
+    end
+
+    test "can_access_channel?/2 returns true for admin-only channels for admins", %{
+      admin_scope: admin_scope
+    } do
+      channel = channel_fixture(%{name: "admin-access-test", is_admin_only: true})
+      assert Chat.can_access_channel?(admin_scope, channel)
+    end
+
+    test "can_access_channel?/2 returns false for admin-only channels for regular users", %{
+      user_scope: user_scope
+    } do
+      channel = channel_fixture(%{name: "admin-access-denied", is_admin_only: true})
+      refute Chat.can_access_channel?(user_scope, channel)
+    end
+
+    test "get_accessible_channel/2 returns {:ok, channel} for accessible channels", %{
+      user_scope: user_scope
+    } do
+      channel = channel_fixture(%{name: "accessible-get-test", is_admin_only: false})
+      assert {:ok, found_channel} = Chat.get_accessible_channel(user_scope, channel.slug)
+      assert found_channel.id == channel.id
+    end
+
+    test "get_accessible_channel/2 returns {:ok, channel} for admin accessing admin-only channel",
+         %{
+           admin_scope: admin_scope
+         } do
+      channel = channel_fixture(%{name: "admin-get-test", is_admin_only: true})
+      assert {:ok, found_channel} = Chat.get_accessible_channel(admin_scope, channel.slug)
+      assert found_channel.id == channel.id
+    end
+
+    test "get_accessible_channel/2 returns {:error, :not_authorized} for regular user on admin channel",
+         %{
+           user_scope: user_scope
+         } do
+      channel = channel_fixture(%{name: "admin-denied-get", is_admin_only: true})
+      assert {:error, :not_authorized} = Chat.get_accessible_channel(user_scope, channel.slug)
+    end
+
+    test "get_accessible_channel/2 raises for non-existent channel", %{user_scope: user_scope} do
+      assert_raise Ecto.NoResultsError, fn ->
+        Chat.get_accessible_channel(user_scope, "nonexistent-channel")
+      end
+    end
+  end
+
   describe "moderation logs" do
     setup do
       admin_scope = admin_scope_fixture()

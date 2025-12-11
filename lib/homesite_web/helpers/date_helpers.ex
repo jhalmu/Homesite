@@ -133,6 +133,64 @@ defmodule HomesiteWeb.Helpers.DateHelpers do
     end
   end
 
+  @doc """
+  Formats a datetime as a relative time string (e.g., "2 hours ago", "just now").
+  Locale-aware.
+
+  ## Examples
+
+      iex> format_relative_time(DateTime.utc_now())
+      "just now"
+
+      iex> format_relative_time(DateTime.add(DateTime.utc_now(), -3600, :second))
+      "1 hour ago"
+
+  """
+  def format_relative_time(datetime, locale \\ nil)
+  def format_relative_time(nil, _locale), do: ""
+
+  def format_relative_time(datetime, locale) do
+    locale = locale || get_current_locale()
+    now = DateTime.utc_now()
+    diff_seconds = DateTime.diff(now, datetime, :second)
+
+    cond do
+      diff_seconds < 60 ->
+        if locale == "fi", do: "juuri nyt", else: "just now"
+
+      diff_seconds < 3600 ->
+        minutes = div(diff_seconds, 60)
+
+        if locale == "fi" do
+          "#{minutes} #{if minutes == 1, do: "minuutti", else: "minuuttia"} sitten"
+        else
+          "#{minutes} #{if minutes == 1, do: "minute", else: "minutes"} ago"
+        end
+
+      diff_seconds < 86400 ->
+        hours = div(diff_seconds, 3600)
+
+        if locale == "fi" do
+          "#{hours} #{if hours == 1, do: "tunti", else: "tuntia"} sitten"
+        else
+          "#{hours} #{if hours == 1, do: "hour", else: "hours"} ago"
+        end
+
+      diff_seconds < 604_800 ->
+        days = div(diff_seconds, 86400)
+
+        if locale == "fi" do
+          "#{days} #{if days == 1, do: "päivä", else: "päivää"} sitten"
+        else
+          "#{days} #{if days == 1, do: "day", else: "days"} ago"
+        end
+
+      true ->
+        # Fall back to regular date format for older dates
+        format_date_short(datetime, locale)
+    end
+  end
+
   # Private helpers
 
   defp format_date_en(date) do

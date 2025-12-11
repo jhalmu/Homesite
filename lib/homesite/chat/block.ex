@@ -16,11 +16,12 @@ defmodule Homesite.Chat.Block do
   end
 
   @doc false
-  def changeset(block, attrs) do
+  def changeset(block, attrs, opts \\ []) do
     block
     |> cast(attrs, [:user_id, :blocked_user_id])
     |> validate_required([:user_id, :blocked_user_id])
     |> validate_not_self_block()
+    |> validate_not_blocking_admin(opts)
     |> unique_constraint([:user_id, :blocked_user_id])
     |> foreign_key_constraint(:user_id)
     |> foreign_key_constraint(:blocked_user_id)
@@ -34,6 +35,37 @@ defmodule Homesite.Chat.Block do
       add_error(changeset, :blocked_user_id, "cannot block yourself")
     else
       changeset
+    end
+  end
+
+  defp validate_not_blocking_admin(changeset, opts) do
+    # Allow passing a custom function for testing
+    get_user_fn = Keyword.get(opts, :get_user_fn, &default_get_user/1)
+
+    case get_change(changeset, :blocked_user_id) do
+      nil ->
+        changeset
+
+      blocked_user_id ->
+        case get_user_fn.(blocked_user_id) do
+          nil ->
+            changeset
+
+          user ->
+            if user.role == "admin" do
+              add_error(changeset, :blocked_user_id, "cannot block admin accounts")
+            else
+              changeset
+            end
+        end
+    end
+  end
+
+  defp default_get_user(id) do
+    try do
+      Homesite.Accounts.get_user!(id)
+    rescue
+      Ecto.NoResultsError -> nil
     end
   end
 end

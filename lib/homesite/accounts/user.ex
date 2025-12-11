@@ -82,6 +82,10 @@ defmodule Homesite.Accounts.User do
     field :positive_feedback_count, :integer, default: 0
     field :negative_feedback_count, :integer, default: 0
 
+    # Notification preferences
+    field :notification_preferences, :map,
+      default: %{"new_follower" => true, "show_toast" => true}
+
     has_many :posts, Homesite.Content.Post
     has_many :tags, Homesite.Content.Tag
     has_many :feed_sources, Homesite.ExternalFeeds.FeedSource
@@ -302,6 +306,13 @@ defmodule Homesite.Accounts.User do
   defp validate_social_handle(changeset, field) do
     changeset
     |> validate_length(field, max: 255)
+  end
+
+  @doc """
+  A user changeset for updating notification preferences.
+  """
+  def notification_preferences_changeset(user, preferences) when is_map(preferences) do
+    change(user, notification_preferences: preferences)
   end
 
   @doc """

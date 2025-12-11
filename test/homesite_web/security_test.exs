@@ -2063,6 +2063,141 @@ defmodule HomesiteWeb.SecurityTest do
     end
   end
 
+  describe "Chat Block Admin Protection" do
+    alias Homesite.Chat
+    alias Homesite.Moderation
+
+    test "users cannot block admin accounts" do
+      user = user_fixture()
+      admin = admin_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      # Try to block admin
+      result = Chat.block_user(scope, admin.id)
+
+      assert {:error, changeset} = result
+      assert "cannot block admin accounts" in errors_on(changeset).blocked_user_id
+    end
+
+    test "users can block regular users" do
+      user = user_fixture()
+      target = user_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      # Should succeed
+      assert {:ok, _block} = Chat.block_user(scope, target.id)
+    end
+
+    test "users CAN report admin accounts" do
+      user = user_fixture()
+      admin = admin_fixture()
+      scope = %Accounts.Scope{user: user}
+
+      # Users should be able to report admins
+      result = Moderation.create_report(scope, admin.id, "Admin misbehavior")
+      assert {:ok, report} = result
+      assert report.reported_user_id == admin.id
+    end
+
+    test "admin actions have 2x weight in violation tracking" do
+      admin = admin_fixture()
+      target = user_fixture()
+
+      # Regular user creates violation
+      regular_user = user_fixture()
+
+      {:ok, regular_violation} =
+        Moderation.record_violation(
+          %{user_id: target.id, action_type: "report", reason_text: "Test", source: "chat"},
+          regular_user
+        )
+
+      # Admin creates violation
+      {:ok, admin_violation} =
+        Moderation.record_violation(
+          %{
+            user_id: target.id,
+            action_type: "suspend",
+            reason_text: "Test",
+            source: "admin_panel"
+          },
+          admin
+        )
+
+      # Verify weight difference
+      assert regular_violation.weight == 1
+      assert admin_violation.weight == 2
+    end
+  end
+
+  describe "Admin-Only Channel Security" do
+    alias Homesite.Chat
+
+    import Homesite.ChatFixtures, only: [channel_fixture: 1]
+
+    test "regular users cannot access admin-only channels via direct URL", %{conn: conn} do
+      user = user_fixture() |> set_password()
+      conn = log_in_user(conn, user)
+
+      # Create an admin-only channel
+      admin_channel = channel_fixture(%{name: "secret-admin", is_admin_only: true})
+
+      # User tries to access admin-only channel directly - should get redirected
+      result = live(conn, ~p"/chat/#{admin_channel.slug}")
+
+      # Should be redirected with error flash (the mount redirects unauthorized users)
+      assert {:error, {:redirect, redirect_info}} = result
+      assert redirect_info.to == "/chat"
+      assert redirect_info.flash["error"] == "You don't have access to this channel"
+    end
+
+    test "admins can access admin-only channels", %{conn: conn} do
+      admin = admin_fixture() |> set_password()
+      conn = log_in_user(conn, admin)
+
+      # Create an admin-only channel
+      admin_channel = channel_fixture(%{name: "admin-secret", is_admin_only: true})
+
+      # Admin should be able to access it
+      {:ok, view, html} = live(conn, ~p"/chat/#{admin_channel.slug}")
+
+      assert html =~ "#admin-secret"
+      assert has_element?(view, "h1", "#admin-secret")
+    end
+
+    test "admin-only channels don't appear in regular user's channel list", %{conn: conn} do
+      user = user_fixture() |> set_password()
+      conn = log_in_user(conn, user)
+
+      # Create channels
+      public_channel = channel_fixture(%{name: "public-list-test", is_admin_only: false})
+      admin_channel = channel_fixture(%{name: "admin-list-test", is_admin_only: true})
+
+      # View channel list
+      {:ok, _view, html} = live(conn, ~p"/chat")
+
+      # Should see public channel but not admin channel
+      assert html =~ public_channel.name
+      refute html =~ admin_channel.name
+    end
+
+    test "admin-only channels appear in admin's channel list with badge", %{conn: conn} do
+      admin = admin_fixture() |> set_password()
+      conn = log_in_user(conn, admin)
+
+      # Create admin-only channel
+      admin_channel = channel_fixture(%{name: "admin-badge-test", is_admin_only: true})
+
+      # View channel list as admin
+      {:ok, _view, html} = live(conn, ~p"/chat")
+
+      # Should see admin channel
+      assert html =~ admin_channel.name
+      # Should have admin badge
+      assert html =~ "admin"
+    end
+  end
+
   describe "Moderation Security" do
     alias Homesite.Moderation
 

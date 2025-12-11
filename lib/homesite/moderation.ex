@@ -27,11 +27,14 @@ defmodule Homesite.Moderation do
 
   alias Homesite.Moderation.{
     ModerationActionLog,
+    ModerationSetting,
+    ReasonPreset,
     UserBan,
     UserBanner,
     UserMute,
     UserReport,
-    UserSuspension
+    UserSuspension,
+    UserViolation
   }
 
   alias Homesite.Repo
@@ -933,6 +936,439 @@ defmodule Homesite.Moderation do
       active_bans: Repo.aggregate(from(b in UserBan, where: is_nil(b.lifted_at)), :count),
       total_mutes: Repo.aggregate(UserMute, :count)
     }
+  end
+
+  ## Violation Tracking
+
+  @doc """
+  Records a violation against a user with appropriate weight.
+  Admin actions automatically get 2x weight based on settings.
+
+  ## Examples
+
+      iex> record_violation(%{user_id: 1, action_type: "report", reason_text: "spam"}, reporter)
+      {:ok, %UserViolation{}}
+
+  """
+  def record_violation(attrs, reporter \\ nil) do
+    weight = calculate_violation_weight(reporter)
+
+    attrs =
+      attrs
+      |> Map.put(:weight, weight)
+      |> Map.put(:reporter_id, reporter && reporter.id)
+
+    case %UserViolation{} |> UserViolation.changeset(attrs) |> Repo.insert() do
+      {:ok, violation} ->
+        check_alert_threshold(violation)
+        {:ok, violation}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
+  end
+
+  defp calculate_violation_weight(nil), do: 1
+
+  defp calculate_violation_weight(reporter) do
+    if reporter.role == "admin" do
+      get_admin_weight_multiplier()
+    else
+      1
+    end
+  end
+
+  @doc """
+  Gets the admin weight multiplier from settings (default: 2).
+  """
+  def get_admin_weight_multiplier do
+    case get_setting("admin_multiplier") do
+      %{value: %{"weight" => weight}} -> weight
+      _ -> 2
+    end
+  end
+
+  @doc """
+  Gets the admin duration multiplier from settings (default: 2).
+  """
+  def get_admin_duration_multiplier do
+    case get_setting("admin_multiplier") do
+      %{value: %{"duration" => duration}} -> duration
+      _ -> 2
+    end
+  end
+
+  @doc """
+  Calculates duration for mute/suspension with admin multiplier applied.
+  """
+  def calculate_duration(base_minutes, acting_user) do
+    multiplier =
+      if acting_user && acting_user.role == "admin" do
+        get_admin_duration_multiplier()
+      else
+        1
+      end
+
+    base_minutes * multiplier
+  end
+
+  @doc """
+  Checks if user has exceeded alert threshold and broadcasts alert if so.
+  """
+  def check_alert_threshold(%UserViolation{user_id: user_id}) do
+    threshold = get_alert_threshold()
+    window_start = DateTime.add(DateTime.utc_now(), -threshold.window_hours, :hour)
+
+    query =
+      from(v in UserViolation,
+        where: v.user_id == ^user_id,
+        where: is_nil(v.resolved_at),
+        where: v.inserted_at >= ^window_start,
+        select: %{
+          total_weight: coalesce(sum(v.weight), 0),
+          unique_reporters: count(v.reporter_id, :distinct)
+        }
+      )
+
+    case Repo.one(query) do
+      %{total_weight: weight, unique_reporters: reporters}
+      when weight >= threshold.count and reporters >= 2 ->
+        broadcast_violation_alert(user_id, weight, reporters)
+
+      _ ->
+        :ok
+    end
+  end
+
+  defp get_alert_threshold do
+    case get_setting("alert_threshold") do
+      %{value: %{"count" => count, "window_hours" => hours}} ->
+        %{count: count, window_hours: hours}
+
+      _ ->
+        %{count: 3, window_hours: 24}
+    end
+  end
+
+  defp broadcast_violation_alert(user_id, weight, reporter_count) do
+    Phoenix.PubSub.broadcast(
+      Homesite.PubSub,
+      "moderation:alerts",
+      {:violation_threshold_reached,
+       %{
+         user_id: user_id,
+         total_weight: weight,
+         unique_reporters: reporter_count,
+         timestamp: DateTime.utc_now()
+       }}
+    )
+  end
+
+  @doc """
+  Lists violations for a user with optional filters.
+
+  ## Options
+
+    * `:unresolved_only` - Only return unresolved violations (default: false)
+    * `:limit` - Maximum number to return (default: 50)
+
+  """
+  def list_user_violations(user_id, opts \\ []) do
+    unresolved_only = Keyword.get(opts, :unresolved_only, false)
+    limit = Keyword.get(opts, :limit, 50)
+
+    query =
+      from(v in UserViolation,
+        where: v.user_id == ^user_id,
+        preload: [:reporter, :resolved_by],
+        order_by: [desc: v.inserted_at],
+        limit: ^limit
+      )
+
+    query =
+      if unresolved_only do
+        from(v in query, where: is_nil(v.resolved_at))
+      else
+        query
+      end
+
+    Repo.all(query)
+  end
+
+  @doc """
+  Gets violation statistics for a user.
+
+  Returns a map with:
+    * `:by_type` - Map of action_type => count
+    * `:total_unresolved_weight` - Sum of weights for unresolved violations
+    * `:total_count` - Total violation count
+
+  """
+  def get_user_violation_stats(user_id) do
+    by_type_query =
+      from(v in UserViolation,
+        where: v.user_id == ^user_id,
+        group_by: v.action_type,
+        select: {v.action_type, count(v.id)}
+      )
+
+    stats = Repo.all(by_type_query) |> Enum.into(%{})
+
+    total_weight =
+      from(v in UserViolation,
+        where: v.user_id == ^user_id,
+        where: is_nil(v.resolved_at),
+        select: coalesce(sum(v.weight), 0)
+      )
+      |> Repo.one() || 0
+
+    %{
+      by_type: stats,
+      total_unresolved_weight: total_weight,
+      total_count: Enum.reduce(stats, 0, fn {_, count}, acc -> acc + count end)
+    }
+  end
+
+  @doc """
+  Lists users with unresolved violations, sorted by total weight.
+
+  ## Options
+
+    * `:limit` - Maximum number of users to return (default: 50)
+
+  """
+  def list_users_with_violations(opts \\ []) do
+    limit = Keyword.get(opts, :limit, 50)
+
+    query =
+      from(v in UserViolation,
+        where: is_nil(v.resolved_at),
+        group_by: v.user_id,
+        select: %{
+          user_id: v.user_id,
+          total_weight: sum(v.weight),
+          violation_count: count(v.id)
+        },
+        order_by: [desc: sum(v.weight)],
+        limit: ^limit
+      )
+
+    results = Repo.all(query)
+
+    # Preload user data
+    user_ids = Enum.map(results, & &1.user_id)
+    users = from(u in Accounts.User, where: u.id in ^user_ids) |> Repo.all()
+    users_map = Map.new(users, &{&1.id, &1})
+
+    Enum.map(results, fn result ->
+      Map.put(result, :user, Map.get(users_map, result.user_id))
+    end)
+  end
+
+  @doc """
+  Resolves all violations for a user.
+
+  ## Examples
+
+      iex> resolve_all_violations(user_id, admin_id)
+      {count, nil}
+
+  """
+  def resolve_all_violations(user_id, resolver_id) do
+    from(v in UserViolation,
+      where: v.user_id == ^user_id and is_nil(v.resolved_at)
+    )
+    |> Repo.update_all(
+      set: [
+        resolved_at: DateTime.utc_now(:second),
+        resolved_by_id: resolver_id
+      ]
+    )
+  end
+
+  @doc """
+  Creates a user report with tracking.
+  Also records a violation for threshold tracking.
+
+  ## Examples
+
+      iex> create_report_with_tracking(attrs, reporter)
+      {:ok, %UserReport{}}
+
+  """
+  def create_report_with_tracking(%Scope{} = scope, reported_user_id, reason, metadata \\ %{}) do
+    # Rate limiting: 5 reports per hour per user
+    rate_key = "moderation:report:#{scope.user.id}"
+
+    case Hammer.check_rate(rate_key, 3_600_000, 5) do
+      {:allow, _count} ->
+        do_create_report_with_tracking(scope, reported_user_id, reason, metadata)
+
+      {:deny, _limit} ->
+        {:error, :rate_limited}
+    end
+  end
+
+  defp do_create_report_with_tracking(scope, reported_user_id, reason, metadata) do
+    attrs = %{
+      "reporter_id" => scope.user.id,
+      "reported_user_id" => reported_user_id,
+      "reason" => reason,
+      "status" => "pending",
+      "metadata" => metadata,
+      "content_type" => metadata[:content_type] || metadata["content_type"],
+      "content_id" => metadata[:content_id] || metadata["content_id"]
+    }
+
+    Repo.transaction(fn ->
+      case %UserReport{} |> UserReport.changeset(attrs) |> Repo.insert() do
+        {:ok, report} ->
+          log_action(scope, reported_user_id, "report_user", reason, nil, metadata)
+
+          # Record violation for threshold tracking
+          record_violation(
+            %{
+              user_id: reported_user_id,
+              action_type: "report",
+              reason_category: metadata[:reason_category] || metadata["reason_category"],
+              reason_text: reason,
+              source: determine_source(metadata),
+              content_type: metadata[:content_type] || metadata["content_type"],
+              content_id: metadata[:content_id] || metadata["content_id"]
+            },
+            scope.user
+          )
+
+          Repo.preload(report, [:reporter, :reported_user])
+
+        {:error, changeset} ->
+          Repo.rollback(changeset)
+      end
+    end)
+  end
+
+  defp determine_source(metadata) do
+    content_type = metadata[:content_type] || metadata["content_type"]
+
+    cond do
+      content_type == "chat_message" -> "chat"
+      content_type in ["post", "comment"] -> "content"
+      true -> "admin_panel"
+    end
+  end
+
+  ## Moderation Settings
+
+  @doc """
+  Gets a setting by key.
+
+  ## Examples
+
+      iex> get_setting("alert_threshold")
+      %ModerationSetting{key: "alert_threshold", value: %{"count" => 3, "window_hours" => 24}}
+
+  """
+  def get_setting(key) do
+    Repo.get_by(ModerationSetting, key: key)
+  end
+
+  @doc """
+  Updates a setting.
+
+  Requires admin scope.
+
+  ## Examples
+
+      iex> update_setting("alert_threshold", %{"count" => 5}, admin_user)
+      {:ok, %ModerationSetting{}}
+
+  """
+  def update_setting(key, value, %Scope{} = scope) do
+    true = Accounts.Scope.admin?(scope)
+
+    case get_setting(key) do
+      nil ->
+        {:error, :not_found}
+
+      setting ->
+        setting
+        |> ModerationSetting.changeset(%{value: value, updated_by_id: scope.user.id})
+        |> Repo.update()
+    end
+  end
+
+  @doc """
+  Lists all moderation settings.
+  """
+  def list_settings do
+    Repo.all(ModerationSetting)
+  end
+
+  ## Reason Presets
+
+  @doc """
+  Lists reason presets for a category.
+
+  ## Examples
+
+      iex> list_reason_presets("report")
+      [%ReasonPreset{}, ...]
+
+  """
+  def list_reason_presets(category) when category in ["report", "mute", "suspend", "ban"] do
+    from(p in ReasonPreset,
+      where: p.category == ^category and p.is_active == true,
+      order_by: p.display_order
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Gets a reason preset by ID.
+
+  Raises `Ecto.NoResultsError` if not found.
+  """
+  def get_reason_preset!(id), do: Repo.get!(ReasonPreset, id)
+
+  @doc """
+  Gets a reason preset by ID, returns nil if not found.
+  """
+  def get_reason_preset(id), do: Repo.get(ReasonPreset, id)
+
+  @doc """
+  Creates a reason preset.
+
+  Requires admin scope.
+  """
+  def create_reason_preset(%Scope{} = scope, attrs) do
+    true = Accounts.Scope.admin?(scope)
+
+    %ReasonPreset{}
+    |> ReasonPreset.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a reason preset.
+
+  Requires admin scope.
+  """
+  def update_reason_preset(%Scope{} = scope, %ReasonPreset{} = preset, attrs) do
+    true = Accounts.Scope.admin?(scope)
+
+    preset
+    |> ReasonPreset.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a reason preset.
+
+  Requires admin scope.
+  """
+  def delete_reason_preset(%Scope{} = scope, %ReasonPreset{} = preset) do
+    true = Accounts.Scope.admin?(scope)
+    Repo.delete(preset)
   end
 
   ## Private helpers

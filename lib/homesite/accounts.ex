@@ -1331,4 +1331,40 @@ defmodule Homesite.Accounts do
       suspicious_ips: suspicious_ips
     }
   end
+
+  ## Notification Preferences
+
+  @doc """
+  Gets a user by ID for profile viewing.
+  """
+  def get_user_profile(user_id) when is_integer(user_id) do
+    Repo.get(User, user_id)
+  end
+
+  @doc """
+  Gets notification preferences for the current user.
+  Returns the stored preferences or defaults if nil.
+  """
+  def get_notification_preferences(%Homesite.Accounts.Scope{} = scope) do
+    scope.user.notification_preferences ||
+      %{"new_follower" => true, "show_toast" => true}
+  end
+
+  @doc """
+  Updates notification preferences for the current user.
+  """
+  def update_notification_preferences(%Homesite.Accounts.Scope{} = scope, preferences)
+      when is_map(preferences) do
+    scope.user
+    |> User.notification_preferences_changeset(preferences)
+    |> Repo.update()
+  end
+
+  @doc """
+  Checks if a user wants notifications of a specific type.
+  """
+  def notification_enabled?(%User{} = user, type) when is_binary(type) do
+    prefs = user.notification_preferences || %{}
+    Map.get(prefs, type, true)
+  end
 end

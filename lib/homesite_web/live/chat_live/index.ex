@@ -8,7 +8,8 @@ defmodule HomesiteWeb.ChatLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    channels = Chat.list_channels()
+    # Filter channels based on user role (admin sees all, others see non-admin-only)
+    channels = Chat.list_channels_for_user(socket.assigns.current_scope)
 
     {:ok,
      assign(socket,
@@ -48,6 +49,9 @@ defmodule HomesiteWeb.ChatLive.Index do
                       <span class="font-medium">{channel.name}</span>
                       <%= if channel.is_default do %>
                         <span class="badge badge-primary badge-xs">{gettext("default")}</span>
+                      <% end %>
+                      <%= if channel.is_admin_only do %>
+                        <span class="badge badge-warning badge-xs">{gettext("admin")}</span>
                       <% end %>
                     </div>
                     <%= if channel.description do %>

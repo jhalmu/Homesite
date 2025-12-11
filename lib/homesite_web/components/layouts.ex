@@ -5,6 +5,8 @@ defmodule HomesiteWeb.Layouts do
   """
   use HomesiteWeb, :html
 
+  import HomesiteWeb.Components.NotificationBell
+
   # Embed all files in layouts/* within this module.
   # The default root.html.heex file contains the HTML
   # skeleton of your application, namely HTML headers
@@ -260,6 +262,9 @@ defmodule HomesiteWeb.Layouts do
                 </li>
               <% end %>
               <li>
+                <.notification_bell unread_count={0} />
+              </li>
+              <li>
                 <details>
                   <summary class="gap-[var(--space-xs)] flex items-center">
                     <.avatar user={@current_scope.user} class="h-8 w-8" />
@@ -402,6 +407,11 @@ defmodule HomesiteWeb.Layouts do
                 class="text-[var(--text-base)]"
               >
                 <.icon name="hero-user-circle" class="h-5 w-5" /> {gettext("My Profile")}
+              </.link>
+            </li>
+            <li>
+              <.link navigate={~p"/notifications"} class="text-base">
+                <.icon name="hero-bell" class="h-5 w-5" /> {gettext("Notifications")}
               </.link>
             </li>
             <li>

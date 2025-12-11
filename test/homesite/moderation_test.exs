@@ -2,10 +2,20 @@ defmodule Homesite.ModerationTest do
   use Homesite.DataCase
 
   alias Homesite.Moderation
-  alias Homesite.Moderation.{UserBan, UserBanner, UserMute, UserReport, UserSuspension}
+
+  alias Homesite.Moderation.{
+    ModerationSetting,
+    ReasonPreset,
+    UserBan,
+    UserBanner,
+    UserMute,
+    UserReport,
+    UserSuspension,
+    UserViolation
+  }
 
   import Homesite.AccountsFixtures,
-    only: [user_scope_fixture: 0, user_fixture: 0, admin_scope_fixture: 0]
+    only: [user_scope_fixture: 0, user_fixture: 0, admin_scope_fixture: 0, admin_fixture: 0]
 
   describe "user mutes" do
     test "list_muted_users/1 returns all users muted by the current user" do
@@ -741,6 +751,354 @@ defmodule Homesite.ModerationTest do
       assert stats.active_suspensions >= 1
       assert is_integer(stats.active_bans)
       assert is_integer(stats.total_mutes)
+    end
+  end
+
+  describe "violation tracking" do
+    test "record_violation/2 creates a violation record" do
+      target_user = user_fixture()
+      reporter = user_fixture()
+
+      attrs = %{
+        user_id: target_user.id,
+        action_type: "report",
+        reason_text: "Spam content",
+        source: "chat"
+      }
+
+      assert {:ok, %UserViolation{} = violation} = Moderation.record_violation(attrs, reporter)
+      assert violation.user_id == target_user.id
+      assert violation.reporter_id == reporter.id
+      assert violation.action_type == "report"
+      assert violation.weight == 1
+      assert violation.source == "chat"
+    end
+
+    test "record_violation/2 gives admin actions 2x weight" do
+      target_user = user_fixture()
+      admin = admin_fixture()
+
+      attrs = %{
+        user_id: target_user.id,
+        action_type: "suspend",
+        reason_text: "Repeated violations",
+        source: "admin_panel"
+      }
+
+      assert {:ok, %UserViolation{} = violation} = Moderation.record_violation(attrs, admin)
+      assert violation.weight == 2
+    end
+
+    test "list_user_violations/2 returns violations for a user" do
+      target_user = user_fixture()
+      reporter = user_fixture()
+
+      attrs = %{
+        user_id: target_user.id,
+        action_type: "report",
+        reason_text: "Test violation",
+        source: "chat"
+      }
+
+      {:ok, _} = Moderation.record_violation(attrs, reporter)
+
+      violations = Moderation.list_user_violations(target_user.id)
+      assert length(violations) >= 1
+      assert Enum.all?(violations, fn v -> v.user_id == target_user.id end)
+    end
+
+    test "list_user_violations/2 with unresolved_only option" do
+      target_user = user_fixture()
+      reporter = user_fixture()
+
+      attrs = %{
+        user_id: target_user.id,
+        action_type: "report",
+        reason_text: "Test violation",
+        source: "chat"
+      }
+
+      {:ok, _} = Moderation.record_violation(attrs, reporter)
+
+      # All should be unresolved initially
+      violations = Moderation.list_user_violations(target_user.id, unresolved_only: true)
+      assert length(violations) >= 1
+      assert Enum.all?(violations, fn v -> is_nil(v.resolved_at) end)
+    end
+
+    test "get_user_violation_stats/1 returns statistics" do
+      target_user = user_fixture()
+      reporter = user_fixture()
+
+      # Create multiple violations
+      for _ <- 1..3 do
+        Moderation.record_violation(
+          %{
+            user_id: target_user.id,
+            action_type: "report",
+            reason_text: "Test",
+            source: "chat"
+          },
+          reporter
+        )
+      end
+
+      stats = Moderation.get_user_violation_stats(target_user.id)
+      assert stats.total_count >= 3
+      assert stats.total_unresolved_weight >= 3
+      assert Map.has_key?(stats.by_type, "report")
+    end
+
+    test "list_users_with_violations/1 returns flagged users" do
+      target_user = user_fixture()
+      reporter = user_fixture()
+
+      Moderation.record_violation(
+        %{
+          user_id: target_user.id,
+          action_type: "report",
+          reason_text: "Test violation",
+          source: "chat"
+        },
+        reporter
+      )
+
+      flagged = Moderation.list_users_with_violations()
+      assert Enum.any?(flagged, fn f -> f.user_id == target_user.id end)
+    end
+
+    test "resolve_all_violations/2 marks all violations as resolved" do
+      target_user = user_fixture()
+      reporter = user_fixture()
+      admin = admin_fixture()
+
+      # Create violations
+      for _ <- 1..3 do
+        Moderation.record_violation(
+          %{
+            user_id: target_user.id,
+            action_type: "report",
+            reason_text: "Test",
+            source: "chat"
+          },
+          reporter
+        )
+      end
+
+      # Resolve all
+      {count, _} = Moderation.resolve_all_violations(target_user.id, admin.id)
+      assert count >= 3
+
+      # Verify all resolved
+      violations = Moderation.list_user_violations(target_user.id, unresolved_only: true)
+      assert violations == []
+    end
+  end
+
+  describe "create_report_with_tracking/4" do
+    test "creates both report and violation" do
+      scope = user_scope_fixture()
+      target_user = user_fixture()
+
+      {:ok, report} =
+        Moderation.create_report_with_tracking(
+          scope,
+          target_user.id,
+          "This user is spamming content",
+          %{content_type: "chat_message", content_id: 123}
+        )
+
+      assert report.reported_user_id == target_user.id
+      assert report.content_type == "chat_message"
+      assert report.content_id == 123
+
+      # Verify violation was also created
+      violations = Moderation.list_user_violations(target_user.id)
+      assert length(violations) >= 1
+      assert Enum.any?(violations, fn v -> v.action_type == "report" end)
+    end
+
+    test "rate limits reports" do
+      scope = user_scope_fixture()
+
+      # Create 6 different users to report
+      targets = for _ <- 1..6, do: user_fixture()
+
+      # First 5 should succeed
+      results =
+        Enum.map(Enum.take(targets, 5), fn target ->
+          Moderation.create_report_with_tracking(scope, target.id, "Report #{target.id}")
+        end)
+
+      assert Enum.all?(results, fn
+               {:ok, _} -> true
+               _ -> false
+             end)
+
+      # 6th should be rate limited
+      sixth_target = Enum.at(targets, 5)
+
+      assert {:error, :rate_limited} =
+               Moderation.create_report_with_tracking(scope, sixth_target.id, "Too many")
+    end
+  end
+
+  describe "moderation settings" do
+    test "get_setting/1 returns a setting by key" do
+      setting = Moderation.get_setting("alert_threshold")
+      assert %ModerationSetting{} = setting
+      assert setting.key == "alert_threshold"
+    end
+
+    test "update_setting/3 requires admin scope" do
+      scope = user_scope_fixture()
+
+      assert_raise MatchError, fn ->
+        Moderation.update_setting("alert_threshold", %{"count" => 10}, scope)
+      end
+    end
+
+    test "update_setting/3 updates a setting with admin scope" do
+      admin_scope = admin_scope_fixture()
+
+      {:ok, updated} =
+        Moderation.update_setting(
+          "alert_threshold",
+          %{"count" => 10, "window_hours" => 48},
+          admin_scope
+        )
+
+      assert updated.value == %{"count" => 10, "window_hours" => 48}
+    end
+
+    test "list_settings/0 returns all settings" do
+      settings = Moderation.list_settings()
+      assert is_list(settings)
+      assert length(settings) >= 2
+
+      keys = Enum.map(settings, & &1.key)
+      assert "alert_threshold" in keys
+      assert "admin_multiplier" in keys
+    end
+
+    test "get_admin_weight_multiplier/0 returns multiplier from settings" do
+      multiplier = Moderation.get_admin_weight_multiplier()
+      assert is_integer(multiplier)
+      assert multiplier >= 1
+    end
+
+    test "get_admin_duration_multiplier/0 returns multiplier from settings" do
+      multiplier = Moderation.get_admin_duration_multiplier()
+      assert is_integer(multiplier)
+      assert multiplier >= 1
+    end
+
+    test "calculate_duration/2 applies multiplier for admin" do
+      admin = admin_fixture()
+      regular_user = user_fixture()
+
+      # Admin should get multiplied duration
+      admin_duration = Moderation.calculate_duration(30, admin)
+      regular_duration = Moderation.calculate_duration(30, regular_user)
+
+      assert admin_duration > regular_duration
+      assert regular_duration == 30
+    end
+  end
+
+  describe "reason presets" do
+    test "list_reason_presets/1 returns presets for a category" do
+      presets = Moderation.list_reason_presets("report")
+      assert is_list(presets)
+      assert length(presets) >= 1
+      assert Enum.all?(presets, fn p -> p.category == "report" end)
+    end
+
+    test "list_reason_presets/1 only returns active presets" do
+      presets = Moderation.list_reason_presets("report")
+      assert Enum.all?(presets, fn p -> p.is_active == true end)
+    end
+
+    test "get_reason_preset!/1 returns a preset by ID" do
+      [preset | _] = Moderation.list_reason_presets("report")
+      fetched = Moderation.get_reason_preset!(preset.id)
+      assert fetched.id == preset.id
+    end
+
+    test "create_reason_preset/2 creates a preset with admin scope" do
+      admin_scope = admin_scope_fixture()
+
+      attrs = %{
+        category: "report",
+        label_en: "Test Label",
+        label_fi: "Testi Otsikko",
+        text_en: "Test description text",
+        text_fi: "Testi kuvaus teksti",
+        display_order: 99,
+        is_active: true
+      }
+
+      assert {:ok, %ReasonPreset{} = preset} = Moderation.create_reason_preset(admin_scope, attrs)
+      assert preset.label_en == "Test Label"
+      assert preset.category == "report"
+    end
+
+    test "create_reason_preset/2 requires admin scope" do
+      scope = user_scope_fixture()
+
+      assert_raise MatchError, fn ->
+        Moderation.create_reason_preset(scope, %{category: "report", label_en: "Test"})
+      end
+    end
+
+    test "update_reason_preset/3 updates a preset" do
+      admin_scope = admin_scope_fixture()
+      [preset | _] = Moderation.list_reason_presets("report")
+
+      {:ok, updated} =
+        Moderation.update_reason_preset(admin_scope, preset, %{label_en: "Updated Label"})
+
+      assert updated.label_en == "Updated Label"
+    end
+
+    test "delete_reason_preset/2 deletes a preset" do
+      admin_scope = admin_scope_fixture()
+
+      # Create a test preset to delete
+      {:ok, preset} =
+        Moderation.create_reason_preset(admin_scope, %{
+          category: "report",
+          label_en: "To Delete",
+          label_fi: "Poistettava",
+          text_en: "Will be deleted",
+          text_fi: "Poistetaan",
+          display_order: 999
+        })
+
+      {:ok, _deleted} = Moderation.delete_reason_preset(admin_scope, preset)
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Moderation.get_reason_preset!(preset.id)
+      end
+    end
+  end
+
+  describe "user reports with content reference" do
+    test "create_report/4 accepts content_type and content_id" do
+      scope = user_scope_fixture()
+      target_user = user_fixture()
+
+      metadata = %{
+        content_type: "chat_message",
+        content_id: 123
+      }
+
+      {:ok, report} =
+        Moderation.create_report(scope, target_user.id, "Inappropriate message", metadata)
+
+      # Content reference should be in metadata
+      assert report.metadata["content_type"] == "chat_message" or
+               report.metadata[:content_type] == "chat_message"
     end
   end
 end

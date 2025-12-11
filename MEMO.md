@@ -6,6 +6,73 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-11 17:30:00 - Finnish Translations for Notification System
+
+### Session: Added Finnish translations for notification/follow system
+
+#### GitHub Issues
+- Closed #13 (Email Notifications) - Replaced by Internal Notification Center
+- Created and closed #62 (Internal Notification Center with Follow System) - Completed
+
+#### Finnish Translations Added (~25 strings)
+Key notification-related translations in `priv/gettext/fi/LC_MESSAGES/default.po`:
+
+**Core Notification UI:**
+- "Notifications" → "Ilmoitukset"
+- "No notifications yet" → "Ei vielä ilmoituksia"
+- "Back to notifications" → "Takaisin ilmoituksiin"
+- "Notification Settings" → "Ilmoitusasetukset"
+- "Notification Types" → "Ilmoitustyypit"
+- "Display Settings" → "Näyttöasetukset"
+- "Toast notifications" → "Ponnahdusikkunailmoitukset"
+
+**Follow System:**
+- "Follow" → "Seuraa"
+- "Follow back" → "Seuraa takaisin"
+- "Followed back!" → "Seuraat nyt takaisin!"
+- "Followed successfully" → "Seuraaminen onnistui"
+- "Followers" → "Seuraajat"
+- "Following" → "Seurattavat"
+- "Unfollow" → "Lopeta seuraaminen"
+- "Unfollowed successfully" → "Seuraaminen lopetettu"
+- "No followers yet" → "Ei vielä seuraajia"
+- "Not following anyone yet" → "Ei seuraa vielä ketään"
+- "New followers" → "Uudet seuraajat"
+
+**Messages:**
+- "%{name} started following you" → "%{name} alkoi seuraamaan sinua"
+- "Someone started following you" → "Joku alkoi seuraamaan sinua"
+- "Get notified when someone follows you" → "Saat ilmoituksen kun joku seuraa sinua"
+- "Show pop-up notifications..." → "Näytä ponnahdusikkunailmoitukset..."
+- "Choose which notifications you want to receive" → "Valitse mitä ilmoituksia haluat vastaanottaa"
+- "Configure how notifications are displayed" → "Määritä miten ilmoitukset näytetään"
+
+**Plurals:**
+- "follower/followers" → "seuraaja/seuraajaa"
+- "Marked X notification(s) as read" → "Merkittiin X ilmoitus(ta) luetuksi"
+- "You have X unread notification(s)" → "Sinulla on X lukematon(ta) ilmoitus(ta)"
+
+**Error/Status Messages:**
+- "Could not follow user" → "Käyttäjän seuraaminen epäonnistui"
+- "Could not mark notification as read" → "Ilmoituksen merkitseminen luetuksi epäonnistui"
+- "You are not following this user" → "Et seuraa tätä käyttäjää"
+- "You have a new notification" → "Sinulla on uusi ilmoitus"
+- "Click to dismiss" → "Klikkaa hylätäksesi"
+- "Since" → "Alkaen"
+
+#### Fixed Fuzzy Translations
+Corrected mistranslations caused by gettext fuzzy matching:
+- "Back to notifications" was "Takaisin tageihin" → "Takaisin ilmoituksiin"
+- "New followers" was "Uusi kansio" → "Uudet seuraajat"
+
+#### Remaining Work
+~160 untranslated strings remain (chat moderation, projects, admin features)
+
+#### Test Results
+- **1533 tests, 0 failures**
+
+---
+
 ## 2025-12-10 23:15:00 - User Moderation System Phase 5 & 6 (Integration & Polish)
 
 ### Session: Complete UserAuth Integration, Content/Chat Filtering, Dashboard Banners & Security

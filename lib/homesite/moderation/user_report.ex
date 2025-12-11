@@ -10,12 +10,16 @@ defmodule Homesite.Moderation.UserReport do
 
   @status_values ~w(pending reviewing resolved dismissed)
 
+  @valid_content_types ~w(post chat_message)
+
   schema "user_reports" do
     field :reason, :string
     field :status, :string, default: "pending"
     field :resolved_at, :utc_datetime
     field :resolution_notes, :string
     field :metadata, :map, default: %{}
+    field :content_type, :string
+    field :content_id, :integer
 
     belongs_to :reporter, Homesite.Accounts.User
     belongs_to :reported_user, Homesite.Accounts.User
@@ -27,11 +31,20 @@ defmodule Homesite.Moderation.UserReport do
   @doc false
   def changeset(report, attrs) do
     report
-    |> cast(attrs, [:reporter_id, :reported_user_id, :reason, :status, :metadata])
+    |> cast(attrs, [
+      :reporter_id,
+      :reported_user_id,
+      :reason,
+      :status,
+      :metadata,
+      :content_type,
+      :content_id
+    ])
     |> validate_required([:reporter_id, :reported_user_id, :reason])
     |> validate_length(:reason, min: 10, max: 5000)
     |> validate_inclusion(:status, @status_values)
     |> validate_not_self_report()
+    |> validate_content_reference()
     |> foreign_key_constraint(:reporter_id)
     |> foreign_key_constraint(:reported_user_id)
   end
@@ -58,5 +71,33 @@ defmodule Homesite.Moderation.UserReport do
     end
   end
 
+  defp validate_content_reference(changeset) do
+    content_type = get_field(changeset, :content_type)
+    content_id = get_field(changeset, :content_id)
+
+    cond do
+      is_nil(content_type) and is_nil(content_id) ->
+        changeset
+
+      is_nil(content_type) or is_nil(content_id) ->
+        add_error(
+          changeset,
+          :content_type,
+          "both content_type and content_id must be provided together"
+        )
+
+      content_type not in @valid_content_types ->
+        add_error(
+          changeset,
+          :content_type,
+          "must be one of: #{Enum.join(@valid_content_types, ", ")}"
+        )
+
+      true ->
+        changeset
+    end
+  end
+
   def status_values, do: @status_values
+  def valid_content_types, do: @valid_content_types
 end

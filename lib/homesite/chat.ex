@@ -66,6 +66,80 @@ defmodule Homesite.Chat do
   end
 
   @doc """
+  Returns chat channels accessible to the user based on their role.
+
+  Admin users see all channels. Regular users only see non-admin channels.
+
+  ## Examples
+
+      iex> list_channels_for_user(admin_scope)
+      [%Channel{}, ...]  # includes admin-only channels
+
+      iex> list_channels_for_user(user_scope)
+      [%Channel{}, ...]  # excludes admin-only channels
+
+  """
+  def list_channels_for_user(%Scope{} = scope) do
+    query = from(c in Channel, order_by: [desc: c.is_default, asc: c.name])
+
+    query =
+      if Accounts.Scope.admin?(scope) do
+        query
+      else
+        from(c in query, where: c.is_admin_only == false)
+      end
+
+    Repo.all(query)
+  end
+
+  @doc """
+  Checks if a user can access a channel.
+
+  Regular users cannot access admin-only channels.
+
+  ## Examples
+
+      iex> can_access_channel?(admin_scope, admin_channel)
+      true
+
+      iex> can_access_channel?(user_scope, admin_channel)
+      false
+
+  """
+  def can_access_channel?(%Scope{} = scope, %Channel{} = channel) do
+    cond do
+      not channel.is_admin_only -> true
+      Accounts.Scope.admin?(scope) -> true
+      true -> false
+    end
+  end
+
+  @doc """
+  Gets a channel by slug if the user can access it.
+
+  Raises `Ecto.NoResultsError` if channel doesn't exist.
+  Returns `{:error, :not_authorized}` if user cannot access the channel.
+
+  ## Examples
+
+      iex> get_accessible_channel(admin_scope, "admin")
+      {:ok, %Channel{}}
+
+      iex> get_accessible_channel(user_scope, "admin")
+      {:error, :not_authorized}
+
+  """
+  def get_accessible_channel(%Scope{} = scope, slug) when is_binary(slug) do
+    channel = Repo.get_by!(Channel, slug: slug)
+
+    if can_access_channel?(scope, channel) do
+      {:ok, channel}
+    else
+      {:error, :not_authorized}
+    end
+  end
+
+  @doc """
   Gets a single channel by ID.
 
   Raises `Ecto.NoResultsError` if the Channel does not exist.

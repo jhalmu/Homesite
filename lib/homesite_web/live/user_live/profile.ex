@@ -10,7 +10,9 @@ defmodule HomesiteWeb.UserLive.Profile do
   alias Homesite.Accounts.Scope
   alias Homesite.Content
   alias Homesite.ExternalFeeds
+  alias Homesite.Follows
   alias Homesite.Media
+  alias Homesite.Notifications
 
   import HomesiteWeb.MediaComponents, only: [project_card: 1]
 
@@ -27,9 +29,60 @@ defmodule HomesiteWeb.UserLive.Profile do
             <.avatar user={@user} class="h-20 w-20 shrink-0 sm:h-24 sm:w-24" />
 
             <div class="flex-1 text-center sm:text-left">
-              <h1 class="text-[var(--font-size-fluid-xl)] font-bold">
-                {@user.display_name || String.split(@user.email, "@") |> List.first()}
-              </h1>
+              <div class="gap-[var(--space-sm)] flex flex-col items-center sm:flex-row sm:items-start sm:justify-between">
+                <h1 class="text-[var(--font-size-fluid-xl)] font-bold">
+                  {@user.display_name || String.split(@user.email, "@") |> List.first()}
+                </h1>
+
+                <%!-- Follow/Unfollow button - only show if not own profile --%>
+                <%= if @current_scope && !@is_own_profile do %>
+                  <%= if @is_following do %>
+                    <button
+                      type="button"
+                      phx-click="unfollow"
+                      class="btn btn-outline btn-sm gap-[var(--space-inline)]"
+                    >
+                      <.icon name="hero-user-minus" class="h-4 w-4" /> {gettext("Unfollow")}
+                    </button>
+                  <% else %>
+                    <button
+                      type="button"
+                      phx-click="follow"
+                      class="btn btn-primary btn-sm gap-[var(--space-inline)]"
+                    >
+                      <.icon name="hero-user-plus" class="h-4 w-4" /> {gettext("Follow")}
+                    </button>
+                  <% end %>
+                <% end %>
+              </div>
+
+              <%!-- Follower/Following counts --%>
+              <div class="mt-[var(--space-xs)] gap-[var(--space-sm)] text-[var(--text-sm)] flex justify-center sm:justify-start">
+                <.link
+                  navigate={
+                    if @user.username,
+                      do: ~p"/users/@#{@user.username}/followers",
+                      else: ~p"/users/#{@user.id}/followers"
+                  }
+                  class="transition-colors hover:text-primary"
+                >
+                  <span class="font-bold">{@follow_counts.followers}</span>
+                  <span class="text-base-content/60">
+                    {ngettext("follower", "followers", @follow_counts.followers)}
+                  </span>
+                </.link>
+                <.link
+                  navigate={
+                    if @user.username,
+                      do: ~p"/users/@#{@user.username}/following",
+                      else: ~p"/users/#{@user.id}/following"
+                  }
+                  class="transition-colors hover:text-primary"
+                >
+                  <span class="font-bold">{@follow_counts.following}</span>
+                  <span class="text-base-content/60">{gettext("following")}</span>
+                </.link>
+              </div>
 
               <p
                 :if={@user.bio}
@@ -296,6 +349,20 @@ defmodule HomesiteWeb.UserLive.Profile do
         # Load user's public projects (max 6 for profile)
         projects = Media.list_public_projects_for_user(user.id, limit: 6)
 
+        # Get follow counts for the profile user
+        follow_counts = Follows.get_follow_counts(user.id)
+
+        # Check if current user is following this profile (if logged in)
+        current_scope = socket.assigns[:current_scope]
+        is_own_profile = current_scope && current_scope.user.id == user.id
+
+        is_following =
+          if current_scope && !is_own_profile do
+            Follows.following?(current_scope, user.id)
+          else
+            false
+          end
+
         # Calculate profile stats (using all posts)
         stats = %{
           posts_count: length(all_posts),
@@ -313,7 +380,10 @@ defmodule HomesiteWeb.UserLive.Profile do
          |> assign(:feed_sources, feed_sources)
          |> assign(:projects, projects)
          |> assign(:stats, stats)
-         |> assign(:has_more_posts, length(posts) == @posts_per_page)}
+         |> assign(:has_more_posts, length(posts) == @posts_per_page)
+         |> assign(:follow_counts, follow_counts)
+         |> assign(:is_following, is_following)
+         |> assign(:is_own_profile, is_own_profile)}
     end
   end
 
@@ -356,6 +426,53 @@ defmodule HomesiteWeb.UserLive.Profile do
      socket
      |> put_flash(:info, "Profile URL copied!")
      |> push_event("copy-to-clipboard", %{text: profile_url})}
+  end
+
+  @impl true
+  def handle_event("follow", _params, socket) do
+    current_scope = socket.assigns.current_scope
+    user = socket.assigns.user
+
+    case Follows.follow_user(current_scope, user.id) do
+      {:ok, _follower} ->
+        # Create notification for the followed user
+        if Accounts.notification_enabled?(user, "new_follower") do
+          Notifications.notify_new_follower(user.id, current_scope.user)
+        end
+
+        # Update follow counts
+        follow_counts = Follows.get_follow_counts(user.id)
+
+        {:noreply,
+         socket
+         |> assign(:is_following, true)
+         |> assign(:follow_counts, follow_counts)
+         |> put_flash(:info, "You are now following #{user.display_name || "this user"}")}
+
+      {:error, _changeset} ->
+        {:noreply, put_flash(socket, :error, "Could not follow user")}
+    end
+  end
+
+  @impl true
+  def handle_event("unfollow", _params, socket) do
+    current_scope = socket.assigns.current_scope
+    user = socket.assigns.user
+
+    case Follows.unfollow_user(current_scope, user.id) do
+      {:ok, _follower} ->
+        # Update follow counts
+        follow_counts = Follows.get_follow_counts(user.id)
+
+        {:noreply,
+         socket
+         |> assign(:is_following, false)
+         |> assign(:follow_counts, follow_counts)
+         |> put_flash(:info, "You unfollowed #{user.display_name || "this user"}")}
+
+      {:error, :not_found} ->
+        {:noreply, put_flash(socket, :error, "You are not following this user")}
+    end
   end
 
   defp calculate_total_words(posts) do

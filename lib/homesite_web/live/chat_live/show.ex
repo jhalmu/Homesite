@@ -19,35 +19,44 @@ defmodule HomesiteWeb.ChatLive.Show do
 
   @impl true
   def mount(%{"slug" => slug}, _session, socket) do
-    channel = Chat.get_channel_by_slug!(slug)
     scope = socket.assigns.current_scope
 
-    if connected?(socket) do
-      Chat.subscribe_channel(channel.id)
+    # Check if user can access this channel (admin-only check)
+    case Chat.get_accessible_channel(scope, slug) do
+      {:ok, channel} ->
+        if connected?(socket) do
+          Chat.subscribe_channel(channel.id)
+        end
+
+        # Use filtered messages that respect blocks
+        messages = Chat.list_messages_for_user(scope, channel.id, limit: 50)
+
+        # Check if user can send messages
+        can_send = Chat.can_send_message?(scope, channel.id)
+
+        # Get blocked user IDs for real-time filtering
+        blocked_ids = Chat.blocked_user_ids(scope)
+
+        # Check admin status
+        is_admin = Accounts.Scope.admin?(scope)
+
+        {:ok,
+         socket
+         |> assign(:channel, channel)
+         |> assign(:page_title, "##{channel.name}")
+         |> assign(:char_count, 0)
+         |> assign(:can_send, can_send)
+         |> assign(:blocked_ids, blocked_ids)
+         |> assign(:is_admin, is_admin)
+         |> assign_form(Chat.change_message(%Message{}))
+         |> stream(:messages, messages)}
+
+      {:error, :not_authorized} ->
+        {:ok,
+         socket
+         |> put_flash(:error, gettext("You don't have access to this channel"))
+         |> redirect(to: ~p"/chat")}
     end
-
-    # Use filtered messages that respect blocks
-    messages = Chat.list_messages_for_user(scope, channel.id, limit: 50)
-
-    # Check if user can send messages
-    can_send = Chat.can_send_message?(scope, channel.id)
-
-    # Get blocked user IDs for real-time filtering
-    blocked_ids = Chat.blocked_user_ids(scope)
-
-    # Check admin status
-    is_admin = Accounts.Scope.admin?(scope)
-
-    {:ok,
-     socket
-     |> assign(:channel, channel)
-     |> assign(:page_title, "##{channel.name}")
-     |> assign(:char_count, 0)
-     |> assign(:can_send, can_send)
-     |> assign(:blocked_ids, blocked_ids)
-     |> assign(:is_admin, is_admin)
-     |> assign_form(Chat.change_message(%Message{}))
-     |> stream(:messages, messages)}
   end
 
   @impl true
@@ -290,7 +299,7 @@ defmodule HomesiteWeb.ChatLive.Show do
                     </button>
                     <ul
                       tabindex="0"
-                      class="dropdown-content menu bg-base-100 rounded-box text-[var(--text-sm)] z-10 w-40 p-1 shadow-lg"
+                      class="dropdown-content menu bg-base-100 rounded-box text-[var(--text-sm)] z-10 w-48 p-1 shadow-lg"
                     >
                       <li>
                         <button
@@ -302,6 +311,17 @@ defmodule HomesiteWeb.ChatLive.Show do
                           <.icon name="hero-no-symbol" class="h-4 w-4" />
                           {gettext("Block user")}
                         </button>
+                      </li>
+                      <li>
+                        <.link
+                          navigate={
+                            ~p"/moderation/report/#{message.user_id}?source=chat&content_type=chat_message&content_id=#{message.id}"
+                          }
+                          class="text-error"
+                        >
+                          <.icon name="hero-flag" class="h-4 w-4" />
+                          {gettext("Report user")}
+                        </.link>
                       </li>
                       <%!-- Admin actions --%>
                       <%= if @is_admin do %>

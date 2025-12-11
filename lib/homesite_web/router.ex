@@ -171,6 +171,10 @@ defmodule HomesiteWeb.Router do
       # User moderation
       live "/moderation/mutes", ModerationLive.Mutes, :index
       live "/moderation/report/:user_id", ModerationLive.Report, :new
+
+      # Notifications
+      live "/notifications", NotificationLive.Index, :index
+      live "/notifications/settings", NotificationLive.Settings, :index
     end
 
     post "/users/update-password", UserSessionController, :update_password
@@ -200,6 +204,8 @@ defmodule HomesiteWeb.Router do
       live "/admin/moderation/bans", AdminLive.Moderation.Bans, :index
       live "/admin/moderation/banners", AdminLive.Moderation.Banners, :index
       live "/admin/moderation/logs", AdminLive.Moderation.Logs, :index
+      live "/admin/moderation/violations", AdminLive.Moderation.Violations, :index
+      live "/admin/moderation/settings", AdminLive.Moderation.Settings, :index
 
       # Admin FAQ management
       live "/faqs/new", FaqLive.Form, :new
@@ -277,6 +283,8 @@ defmodule HomesiteWeb.Router do
       ] do
       live "/users/:user_identifier", UserLive.Profile, :show
       live "/users/:user_identifier/projects", UserLive.Projects, :index
+      live "/users/:user_identifier/followers", UserLive.Followers, :followers
+      live "/users/:user_identifier/following", UserLive.Followers, :following
       live "/posts/:id", PostLive.Show, :show
     end
 

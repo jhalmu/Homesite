@@ -3,14 +3,17 @@ defmodule HomesiteWeb.ModerationLive.Report do
   LiveView for reporting a user.
 
   Users can submit reports about other users for admin review.
+  Supports content context (e.g., reporting from a chat message or post)
+  and reason presets for common report types.
   """
   use HomesiteWeb, :live_view
 
   alias Homesite.Accounts
   alias Homesite.Moderation
+  alias Homesite.Moderation.ReasonPreset
 
   @impl true
-  def mount(%{"user_id" => user_id}, _session, socket) do
+  def mount(%{"user_id" => user_id} = params, _session, socket) do
     user_id = String.to_integer(user_id)
     current_user = socket.assigns.current_scope.user
 
@@ -23,12 +26,28 @@ defmodule HomesiteWeb.ModerationLive.Report do
     else
       try do
         reported_user = Accounts.get_user!(user_id)
+        reason_presets = Moderation.list_reason_presets("report")
+
+        # Extract content context from params
+        content_context = %{
+          source: params["source"],
+          content_type: params["content_type"],
+          content_id: parse_content_id(params["content_id"])
+        }
+
+        # Determine locale for preset labels
+        locale = socket.assigns[:locale] || "en"
 
         {:ok,
          socket
          |> assign(:page_title, gettext("Report User"))
          |> assign(:reported_user, reported_user)
-         |> assign(:form, to_form(%{"reason" => ""}))}
+         |> assign(:reason_presets, reason_presets)
+         |> assign(:content_context, content_context)
+         |> assign(:selected_preset_id, nil)
+         |> assign(:custom_reason, "")
+         |> assign(:locale, locale)
+         |> assign(:form, to_form(%{"reason" => "", "preset_id" => ""}))}
       rescue
         Ecto.NoResultsError ->
           {:ok,
@@ -39,28 +58,75 @@ defmodule HomesiteWeb.ModerationLive.Report do
     end
   end
 
+  defp parse_content_id(nil), do: nil
+  defp parse_content_id(id) when is_binary(id), do: String.to_integer(id)
+  defp parse_content_id(id) when is_integer(id), do: id
+
   @impl true
-  def handle_event("validate", %{"reason" => reason}, socket) do
-    {:noreply, assign(socket, :form, to_form(%{"reason" => reason}))}
+  def handle_event("validate", params, socket) do
+    reason = params["reason"] || ""
+    preset_id = params["preset_id"] || ""
+
+    {:noreply,
+     socket
+     |> assign(:custom_reason, reason)
+     |> assign(:form, to_form(%{"reason" => reason, "preset_id" => preset_id}))}
+  end
+
+  @impl true
+  def handle_event("select_preset", %{"preset_id" => ""}, socket) do
+    {:noreply,
+     socket
+     |> assign(:selected_preset_id, nil)
+     |> assign(:custom_reason, "")
+     |> assign(:form, to_form(%{"reason" => "", "preset_id" => ""}))}
+  end
+
+  @impl true
+  def handle_event("select_preset", %{"preset_id" => "custom"}, socket) do
+    {:noreply,
+     socket
+     |> assign(:selected_preset_id, "custom")
+     |> assign(
+       :form,
+       to_form(%{"reason" => socket.assigns.custom_reason, "preset_id" => "custom"})
+     )}
+  end
+
+  @impl true
+  def handle_event("select_preset", %{"preset_id" => preset_id}, socket) do
+    preset = Moderation.get_reason_preset!(preset_id)
+    preset_text = ReasonPreset.text(preset, socket.assigns.locale)
+
+    {:noreply,
+     socket
+     |> assign(:selected_preset_id, preset_id)
+     |> assign(:custom_reason, preset_text)
+     |> assign(:form, to_form(%{"reason" => preset_text, "preset_id" => preset_id}))}
   end
 
   @impl true
   def handle_event("submit", %{"reason" => reason}, socket) do
     scope = socket.assigns.current_scope
     reported_user = socket.assigns.reported_user
+    content_context = socket.assigns.content_context
 
-    # Add metadata about where the report came from
-    metadata = %{
-      reported_from: "web",
-      reporter_ip: to_string(:inet.ntoa(socket.assigns[:peer_ip] || {0, 0, 0, 0}))
-    }
+    # Build metadata including content context
+    metadata =
+      %{
+        reported_from: content_context.source || "web",
+        reporter_ip: to_string(:inet.ntoa(socket.assigns[:peer_ip] || {0, 0, 0, 0}))
+      }
+      |> maybe_add_content_context(content_context)
+      |> maybe_add_reason_category(socket.assigns)
 
-    case Moderation.create_report(scope, reported_user.id, reason, metadata) do
+    # Use the new tracking function
+    case Moderation.create_report_with_tracking(scope, reported_user.id, reason, metadata) do
       {:ok, _report} ->
         {:noreply,
          socket
          |> put_flash(:info, gettext("Report submitted successfully. Our team will review it."))
-         |> redirect(to: ~p"/dashboard")}
+         |> redirect(to: redirect_path(content_context))}
 
       {:error, :rate_limited} ->
         {:noreply,
@@ -69,7 +135,10 @@ defmodule HomesiteWeb.ModerationLive.Report do
            :error,
            gettext("You have submitted too many reports. Please try again later.")
          )
-         |> assign(:form, to_form(%{"reason" => reason}))}
+         |> assign(
+           :form,
+           to_form(%{"reason" => reason, "preset_id" => socket.assigns.selected_preset_id || ""})
+         )}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         errors = format_errors(changeset)
@@ -77,9 +146,34 @@ defmodule HomesiteWeb.ModerationLive.Report do
         {:noreply,
          socket
          |> put_flash(:error, errors)
-         |> assign(:form, to_form(%{"reason" => reason}))}
+         |> assign(
+           :form,
+           to_form(%{"reason" => reason, "preset_id" => socket.assigns.selected_preset_id || ""})
+         )}
     end
   end
+
+  defp maybe_add_content_context(metadata, %{content_type: nil}), do: metadata
+
+  defp maybe_add_content_context(metadata, %{content_type: type, content_id: id}) do
+    Map.merge(metadata, %{content_type: type, content_id: id})
+  end
+
+  defp maybe_add_reason_category(metadata, %{selected_preset_id: nil}), do: metadata
+
+  defp maybe_add_reason_category(metadata, %{selected_preset_id: "custom"}),
+    do: Map.put(metadata, :reason_category, "custom")
+
+  defp maybe_add_reason_category(metadata, %{
+         selected_preset_id: preset_id,
+         reason_presets: presets
+       }) do
+    preset = Enum.find(presets, &(&1.id == String.to_integer(preset_id)))
+    if preset, do: Map.put(metadata, :reason_category, preset.label_en), else: metadata
+  end
+
+  defp redirect_path(%{source: "chat"}), do: ~p"/chat"
+  defp redirect_path(_), do: ~p"/dashboard"
 
   defp format_errors(changeset) do
     Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
@@ -105,6 +199,14 @@ defmodule HomesiteWeb.ModerationLive.Report do
       </.header>
 
       <div class="mt-6 max-w-2xl">
+        <%!-- Content context alert --%>
+        <%= if @content_context.source == "chat" do %>
+          <div class="alert alert-info mb-6">
+            <.icon name="hero-chat-bubble-left-right" class="h-5 w-5" />
+            <span>{gettext("Reporting based on a chat message")}</span>
+          </div>
+        <% end %>
+
         <div class="alert alert-warning mb-6">
           <.icon name="hero-exclamation-triangle" class="h-5 w-5" />
           <span>
@@ -138,9 +240,32 @@ defmodule HomesiteWeb.ModerationLive.Report do
         </div>
 
         <.form for={@form} phx-change="validate" phx-submit="submit" id="report-form">
+          <%!-- Reason preset dropdown --%>
+          <div class="form-control mb-4">
+            <label class="label">
+              <span class="label-text font-medium">{gettext("Select a reason")}</span>
+            </label>
+            <select
+              name="preset_id"
+              class="select select-bordered w-full"
+              phx-change="select_preset"
+            >
+              <option value="">{gettext("Choose a reason...")}</option>
+              <%= for preset <- @reason_presets do %>
+                <option value={preset.id} selected={@selected_preset_id == to_string(preset.id)}>
+                  {Homesite.Moderation.ReasonPreset.label(preset, @locale)}
+                </option>
+              <% end %>
+              <option value="custom" selected={@selected_preset_id == "custom"}>
+                {gettext("Other (custom reason)")}
+              </option>
+            </select>
+          </div>
+
+          <%!-- Reason textarea --%>
           <div class="form-control">
             <label class="label">
-              <span class="label-text font-medium">{gettext("Reason for reporting")}</span>
+              <span class="label-text font-medium">{gettext("Reason details")}</span>
             </label>
             <textarea
               name="reason"
@@ -169,7 +294,7 @@ defmodule HomesiteWeb.ModerationLive.Report do
               <.icon name="hero-flag" class="h-4 w-4" />
               {gettext("Submit Report")}
             </button>
-            <.link navigate={~p"/dashboard"} class="btn btn-ghost">
+            <.link navigate={redirect_path(@content_context)} class="btn btn-ghost">
               {gettext("Cancel")}
             </.link>
           </div>
