@@ -29,6 +29,20 @@ defmodule Homesite.Accounts do
   end
 
   @doc """
+  Returns the list of all admin users.
+
+  ## Examples
+
+      iex> list_admins()
+      [%User{role: "admin"}, ...]
+
+  """
+  def list_admins do
+    from(u in User, where: u.role == "admin")
+    |> Repo.all()
+  end
+
+  @doc """
   Gets a user by email.
 
   ## Examples
@@ -1220,8 +1234,28 @@ defmodule Homesite.Accounts do
       user_agent: Keyword.get(opts, :user_agent)
     )
 
-    # TODO: Add admin notification here when notification system is implemented
-    # For now, just log it
+    # Notify all admins about suspicious activity
+    notify_admins_suspicious_activity(email, reason, details)
+  end
+
+  # Notifies all admin users about suspicious activity
+  defp notify_admins_suspicious_activity(email, reason, details) do
+    alias Homesite.Notifications
+
+    for admin <- list_admins() do
+      Notifications.create_notification(
+        admin.id,
+        "suspicious_activity",
+        nil,
+        %{
+          "email" => email,
+          "reason" => reason,
+          "details" => details
+        }
+      )
+    end
+
+    :ok
   end
 
   @doc """

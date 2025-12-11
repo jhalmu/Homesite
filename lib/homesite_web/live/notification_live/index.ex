@@ -264,6 +264,7 @@ defmodule HomesiteWeb.NotificationLive.Index do
 
   defp notification_icon("new_follower"), do: "hero-user-plus"
   defp notification_icon("post_published"), do: "hero-document-text"
+  defp notification_icon("suspicious_activity"), do: "hero-exclamation-triangle"
   defp notification_icon(_), do: "hero-bell"
 
   defp notification_message(%{type: "new_follower", actor: actor}) when not is_nil(actor) do
@@ -278,6 +279,12 @@ defmodule HomesiteWeb.NotificationLive.Index do
   defp notification_message(%{type: "post_published", data: data}) do
     title = Map.get(data, "post_title", gettext("a post"))
     gettext("Your post \"%{title}\" was published", title: title)
+  end
+
+  defp notification_message(%{type: "suspicious_activity", data: data}) do
+    email = Map.get(data, "email", "unknown")
+    reason = Map.get(data, "reason", "unknown")
+    gettext("Suspicious activity detected: %{reason} from %{email}", reason: reason, email: email)
   end
 
   defp notification_message(_notification) do

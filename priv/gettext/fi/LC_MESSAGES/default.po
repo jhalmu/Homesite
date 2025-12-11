@@ -153,7 +153,7 @@ msgstr "Sisältö"
 #: lib/homesite_web/live/faq_live/form.ex:98
 #: lib/homesite_web/live/feed_folder_live/index.html.heex:60
 #: lib/homesite_web/live/media_live/index.ex:300
-#: lib/homesite_web/live/moderation_live/report.ex:282
+#: lib/homesite_web/live/moderation_live/report.ex:298
 #: lib/homesite_web/live/post_live/form.ex:327
 #: lib/homesite_web/live/tag_live/form.ex:80
 #, elixir-autogen, elixir-format
@@ -655,7 +655,7 @@ msgid "User management"
 msgstr "Käyttäjien hallinta"
 
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:197
-#: lib/homesite_web/live/admin_live/moderation/violations.ex:123
+#: lib/homesite_web/live/admin_live/moderation/violations.ex:124
 #: lib/homesite_web/live/dashboard_live/index.html.heex:77
 #: lib/homesite_web/live/dashboard_live/index.html.heex:391
 #: lib/homesite_web/live/dashboard_live/index.html.heex:473
@@ -692,8 +692,8 @@ msgstr "Näytä profiili"
 #: lib/homesite_web/live/dashboard_live/index.html.heex:502
 #: lib/homesite_web/live/dashboard_live/index.html.heex:582
 #: lib/homesite_web/live/page_live/home.html.heex:90
-#: lib/homesite_web/live/user_live/profile.ex:166
-#: lib/homesite_web/live/user_live/profile.ex:173
+#: lib/homesite_web/live/user_live/profile.ex:176
+#: lib/homesite_web/live/user_live/profile.ex:183
 #, elixir-autogen, elixir-format
 msgid "View all"
 msgstr "Näytä kaikki"
@@ -1011,7 +1011,7 @@ msgstr "⚠️ Avatar-kuva valittu, mutta ei vielä tallennettu. Klikkaa 'Päivi
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:273
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:337
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:373
-#: lib/homesite_web/live/admin_live/moderation/violations.ex:258
+#: lib/homesite_web/live/admin_live/moderation/violations.ex:261
 #: lib/homesite_web/live/faq_live/form.ex:87
 #, elixir-autogen, elixir-format
 msgid "Active"
@@ -1474,7 +1474,7 @@ msgstr "Tumma"
 #: lib/homesite_web/components/form_components.ex:245
 #: lib/homesite_web/live/admin_live/feedback/index.ex:176
 #: lib/homesite_web/live/admin_live/feedback/index.ex:315
-#: lib/homesite_web/live/admin_live/moderation/violations.ex:230
+#: lib/homesite_web/live/admin_live/moderation/violations.ex:231
 #: lib/homesite_web/live/project_live/show.ex:85
 #, elixir-autogen, elixir-format
 msgid "Date"
@@ -1628,7 +1628,7 @@ msgid "Manage Sources"
 msgstr "Hallitse lähteitä"
 
 #: lib/homesite_web/live/feed_live/index.html.heex:169
-#: lib/homesite_web/live/notification_live/index.ex:126
+#: lib/homesite_web/live/notification_live/index.ex:138
 #, elixir-autogen, elixir-format
 msgid "Mark as read"
 msgstr "Merkitse luetuksi"
@@ -1777,7 +1777,7 @@ msgstr "Lähteet"
 
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:243
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:161
-#: lib/homesite_web/live/admin_live/moderation/violations.ex:235
+#: lib/homesite_web/live/admin_live/moderation/violations.ex:236
 #: lib/homesite_web/live/dashboard_live/index.html.heex:522
 #: lib/homesite_web/live/feed_source_live/index.html.heex:46
 #, elixir-autogen, elixir-format
@@ -1806,7 +1806,7 @@ msgid "Total Views"
 msgstr "Katselukertoja yhteensä"
 
 #: lib/homesite_web/live/admin_live/feedback/index.ex:318
-#: lib/homesite_web/live/admin_live/moderation/violations.ex:231
+#: lib/homesite_web/live/admin_live/moderation/violations.ex:232
 #: lib/homesite_web/live/dashboard_live/index.html.heex:431
 #: lib/homesite_web/live/dashboard_live/index.html.heex:521
 #, elixir-autogen, elixir-format
@@ -1879,7 +1879,7 @@ msgid "unread"
 msgstr "lukematon"
 
 #: lib/homesite_web/live/page_live/home.html.heex:182
-#: lib/homesite_web/live/user_live/profile.ex:297
+#: lib/homesite_web/live/user_live/profile.ex:307
 #, elixir-autogen, elixir-format
 msgid "Load More Posts"
 msgstr "Lataa lisää kirjoituksia"
@@ -1933,9 +1933,9 @@ msgstr "Luotettavuus"
 
 #: lib/homesite_web/live/portfolio_live/show.ex:215
 #: lib/homesite_web/live/testimonial_live/show.ex:180
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Copy Link"
-msgstr "Kopioi"
+msgstr "Kopioi linkki"
 
 #: lib/homesite_web/live/admin_live/feedback/index.ex:53
 #, elixir-autogen, elixir-format
@@ -1954,15 +1954,15 @@ msgstr "Hyödylliset ominaisuudet:"
 
 #: lib/homesite_web/components/layouts.ex:106
 #: lib/homesite_web/live/feedback_live/index.ex:125
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Feedback"
-msgstr "Syöte"
+msgstr "Palaute"
 
 #: lib/homesite_web/live/admin_live/feedback/index.ex:85
 #: lib/homesite_web/live/admin_live/feedback/index.ex:409
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Feedback Analytics"
-msgstr "Syöteanalytiikka"
+msgstr "Palauteanalytiikka"
 
 #: lib/homesite_web/live/happiness_live/index.ex:25
 #: lib/homesite_web/live/happiness_live/index.ex:37
@@ -2058,9 +2058,9 @@ msgid "Monitor user feedback, happiness trends, and moderate testimonials"
 msgstr "Seuraa käyttäjäpalautetta, onnellisuustrendejä ja moderoi suosituksia"
 
 #: lib/homesite_web/live/admin_live/feedback/index.ex:350
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "No"
-msgstr "Nyt"
+msgstr "Ei"
 
 #: lib/homesite_web/live/admin_live/feedback/index.ex:412
 #: lib/homesite_web/live/happiness_live/index.ex:290
@@ -2157,9 +2157,9 @@ msgid "Share Your Feedback"
 msgstr "Jaa palautteesi"
 
 #: lib/homesite_web/live/testimonial_live/show.ex:142
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Share this testimonial:"
-msgstr "Jaa tämä kirjoitus"
+msgstr "Jaa tämä suositus:"
 
 #: lib/homesite_web/live/feedback_live/prompt_modal.ex:42
 #, elixir-autogen, elixir-format
@@ -2167,14 +2167,14 @@ msgid "Share your feedback and help us improve!"
 msgstr "Jaa palautteesi ja auta meitä parantamaan!"
 
 #: lib/homesite_web/live/admin_live/feedback/index.ex:319
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Shared"
-msgstr "Jaa"
+msgstr "Jaettu"
 
 #: lib/homesite_web/live/testimonial_live/show.ex:54
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Shared on"
-msgstr "Jaa"
+msgstr "Jaettu"
 
 #: lib/homesite_web/live/feedback_live/index.ex:106
 #, elixir-autogen, elixir-format
@@ -2247,9 +2247,9 @@ msgstr "Tuntematon"
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:183
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:206
 #: lib/homesite_web/live/moderation_live/mutes.ex:64
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "User"
-msgstr "Käyttäjä-UKK"
+msgstr "Käyttäjä"
 
 #: lib/homesite_web/live/testimonial_live/show.ex:25
 #: lib/homesite_web/live/testimonial_live/show.ex:51
@@ -3116,178 +3116,178 @@ msgid "Brownie"
 msgstr "Brownie"
 
 #: lib/homesite_web/components/core_components.ex:1220
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Loading..."
-msgstr "Tallennetaan..."
+msgstr "Ladataan..."
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:194
 #, elixir-autogen, elixir-format
 msgid "%{portfolios} portfolios, %{libraries} libraries"
-msgstr ""
+msgstr "%{portfolios} portfoliota, %{libraries} kirjastoa"
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:213
 #, elixir-autogen, elixir-format
 msgid "%{size} total"
-msgstr ""
+msgstr "%{size} yhteensä"
 
 #: lib/homesite_web/components/media_components.ex:68
 #, elixir-autogen, elixir-format
 msgid "Close lightbox"
-msgstr ""
+msgstr "Sulje valokuvaruutu"
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:433
 #, elixir-autogen, elixir-format
 msgid "Completion"
-msgstr ""
+msgstr "Valmistuminen"
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:422
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Create your first project"
-msgstr "Luo ensimmäinen kirjoituksesi"
+msgstr "Luo ensimmäinen projektisi"
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:449
 #, elixir-autogen, elixir-format
 msgid "Library"
-msgstr ""
+msgstr "Kirjasto"
 
 #: lib/homesite_web/components/media_components.ex:116
 #, elixir-autogen, elixir-format
 msgid "Next image"
-msgstr ""
+msgstr "Seuraava kuva"
 
 #: lib/homesite_web/components/media_components.ex:97
 #, elixir-autogen, elixir-format
 msgid "Previous image"
-msgstr ""
+msgstr "Edellinen kuva"
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:409
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Recent Projects"
-msgstr "Viimeisimmät kirjoitukset"
+msgstr "Viimeisimmät projektit"
 
 #: lib/homesite_web/live/user_live/settings.ex:145
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Timezone"
-msgstr "Aika"
+msgstr "Aikavyöhyke"
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:326
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Upload Media"
-msgstr ""
+msgstr "Lataa media"
 
 #: lib/homesite_web/live/portfolio_live/show.ex:371
 #, elixir-autogen, elixir-format
 msgid "View %{title} in fullscreen"
-msgstr ""
+msgstr "Näytä %{title} koko näytöllä"
 
 #: lib/homesite_web/components/media_components.ex:186
 #, elixir-autogen, elixir-format
 msgid "View %{title} in lightbox"
-msgstr ""
+msgstr "Näytä %{title} valokuvaruudussa"
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:335
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "View Portfolio"
-msgstr "Näytä profiili"
+msgstr "Näytä portfolio"
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:432
 #, elixir-autogen, elixir-format
 msgid "Visibility"
-msgstr ""
+msgstr "Näkyvyys"
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:419
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "You haven't created any projects yet."
-msgstr "Et ole vielä luonut yhtään kirjoitusta."
+msgstr "Et ole vielä luonut yhtään projektia."
 
 #: lib/homesite_web/live/user_live/settings.ex:149
 #, elixir-autogen, elixir-format
 msgid "Your timezone affects how dates and times are displayed. The 'Now' button when creating posts will use this timezone."
-msgstr ""
+msgstr "Aikavyöhykkeesi vaikuttaa päivämäärien ja aikojen näyttämiseen. 'Nyt'-painike kirjoituksia luodessa käyttää tätä aikavyöhykettä."
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:672
 #, elixir-autogen, elixir-format
 msgid "(comma-separated)"
-msgstr ""
+msgstr "(pilkuilla erotettuna)"
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:963
 #, elixir-autogen, elixir-format
 msgid "All your blog posts are already linked to this project."
-msgstr ""
+msgstr "Kaikki blogikirjoituksesi on jo linkitetty tähän projektiin."
 
 #: lib/homesite_web/live/project_live/index.ex:273
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Archive"
-msgstr "Aktiivinen"
+msgstr "Arkistoi"
 
 #: lib/homesite_web/live/project_live/index.ex:98
 #, elixir-autogen, elixir-format
 msgid "Archive the project first before deleting"
-msgstr ""
+msgstr "Arkistoi projekti ennen poistamista"
 
 #: lib/homesite_web/live/project_live/index.ex:267
 #, elixir-autogen, elixir-format
 msgid "Archive this project? It will be hidden from your main list but can be restored later."
-msgstr ""
+msgstr "Arkistoidaanko tämä projekti? Se piilotetaan päälistaltasi mutta voidaan palauttaa myöhemmin."
 
 #: lib/homesite_web/live/project_live/index.ex:121
 #: lib/homesite_web/live/project_live/index.ex:194
 #: lib/homesite_web/live/project_live/index.ex:212
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Archived"
-msgstr "Aktiivinen"
+msgstr "Arkistoitu"
 
 #: lib/homesite_web/live/chat_live/show.ex:285
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Are you sure you want to delete this message?"
-msgstr "Haluatko varmasti poistaa tämän UKK:n?"
+msgstr "Haluatko varmasti poistaa tämän viestin?"
 
 #: lib/homesite_web/live/project_live/index.ex:233
 #, elixir-autogen, elixir-format
 msgid "Are you sure? This will permanently delete the project and all its data. This cannot be undone."
-msgstr ""
+msgstr "Oletko varma? Tämä poistaa projektin ja kaiken sen tiedon pysyvästi. Tätä ei voi perua."
 
 #: lib/homesite_web/live/post_live/show.ex:20
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Back to home"
-msgstr ""
+msgstr "Takaisin etusivulle"
 
-#: lib/homesite_web/live/user_live/followers.ex:25
+#: lib/homesite_web/live/user_live/followers.ex:27
 #: lib/homesite_web/live/user_live/projects.ex:40
 #: lib/homesite_web/live/user_live/projects.ex:44
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Back to profile"
-msgstr ""
+msgstr "Takaisin profiiliin"
 
-#: lib/homesite_web/live/chat_live/show.ex:355
+#: lib/homesite_web/live/chat_live/show.ex:357
 #, elixir-autogen, elixir-format
 msgid "Ban this user from chat? This is permanent."
-msgstr ""
+msgstr "Estetäänkö tämä käyttäjä chatista? Tämä on pysyvä."
 
-#: lib/homesite_web/live/chat_live/show.ex:359
+#: lib/homesite_web/live/chat_live/show.ex:361
 #, elixir-autogen, elixir-format
 msgid "Ban user"
-msgstr ""
+msgstr "Estä käyttäjä"
 
 #: lib/homesite_web/live/chat_live/show.ex:308
 #, elixir-autogen, elixir-format
 msgid "Block this user? You won't see their messages."
-msgstr ""
+msgstr "Estetäänkö tämä käyttäjä? Et näe hänen viestejään."
 
 #: lib/homesite_web/live/chat_live/show.ex:312
 #, elixir-autogen, elixir-format
 msgid "Block user"
-msgstr ""
+msgstr "Estä käyttäjä"
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:358
 #, elixir-autogen, elixir-format
 msgid "Blog post linked"
-msgstr ""
+msgstr "Blogikirjoitus linkitetty"
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:311
 #, elixir-autogen, elixir-format
 msgid "Blog post unlinked"
-msgstr ""
+msgstr "Blogikirjoituksen linkitys poistettu"
 
 #: lib/homesite_web/components/layouts.ex:254
 #: lib/homesite_web/components/layouts.ex:370
@@ -3295,137 +3295,137 @@ msgstr ""
 #: lib/homesite_web/live/chat_live/index.ex:27
 #, elixir-autogen, elixir-format
 msgid "Chat"
-msgstr ""
+msgstr "Chat"
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:608
 #, elixir-autogen, elixir-format
 msgid "Choose a project type to get customized labels and suggestions."
-msgstr ""
+msgstr "Valitse projektityyppi saadaksesi mukautettuja otsikoita ja ehdotuksia."
 
 #: lib/homesite_web/live/user_live/settings.ex:48
 #, elixir-autogen, elixir-format
 msgid "Choose avatar image file"
-msgstr ""
+msgstr "Valitse avatar-kuvatiedosto"
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:149
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Collaborator name is required"
-msgstr ""
+msgstr "Yhteistyökumppanin nimi on pakollinen"
 
 #: lib/homesite_web/live/chat_live/show.ex:152
 #, elixir-autogen, elixir-format
 msgid "Could not ban user"
-msgstr ""
+msgstr "Käyttäjän estäminen epäonnistui"
 
 #: lib/homesite_web/live/chat_live/show.ex:118
 #, elixir-autogen, elixir-format
 msgid "Could not block user"
-msgstr ""
+msgstr "Käyttäjän estäminen epäonnistui"
 
 #: lib/homesite_web/live/chat_live/show.ex:194
 #, elixir-autogen, elixir-format
 msgid "Could not delete message"
-msgstr ""
+msgstr "Viestin poistaminen epäonnistui"
 
 #: lib/homesite_web/live/chat_live/show.ex:178
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Could not mute user"
-msgstr "Tagin luominen epäonnistui"
+msgstr "Käyttäjän mykistäminen epäonnistui"
 
 #: lib/homesite_web/live/chat_live/show.ex:137
 #, elixir-autogen, elixir-format
 msgid "Could not unblock user"
-msgstr ""
+msgstr "Käyttäjän eston poistaminen epäonnistui"
 
 #: lib/homesite_web/live/chat_live/show.ex:287
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Delete message"
-msgstr "Poista tunniste"
+msgstr "Poista viesti"
 
 #: lib/homesite_web/live/project_live/index.ex:65
 #, elixir-autogen, elixir-format
 msgid "Failed to archive project"
-msgstr ""
+msgstr "Projektin arkistointi epäonnistui"
 
 #: lib/homesite_web/live/project_live/index.ex:101
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Failed to delete project"
-msgstr "Kansion poistaminen epäonnistui"
+msgstr "Projektin poistaminen epäonnistui"
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:361
 #, elixir-autogen, elixir-format
 msgid "Failed to link blog post"
-msgstr ""
+msgstr "Blogikirjoituksen linkittäminen epäonnistui"
 
 #: lib/homesite_web/live/project_live/index.ex:81
 #, elixir-autogen, elixir-format
 msgid "Failed to restore project"
-msgstr ""
+msgstr "Projektin palauttaminen epäonnistui"
 
 #: lib/homesite_web/live/page_live/home.html.heex:84
 #, elixir-autogen, elixir-format
 msgid "Featured Projects"
-msgstr ""
+msgstr "Esitellyt projektit"
 
 #: lib/homesite_web/live/chat_live/index.ex:29
 #, elixir-autogen, elixir-format
 msgid "IRC-style channels for real-time discussion"
-msgstr ""
+msgstr "IRC-tyyliset kanavat reaaliaikaiseen keskusteluun"
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:953
 #, elixir-autogen, elixir-format
 msgid "Link"
-msgstr ""
+msgstr "Linkki"
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:211
 #, elixir-autogen, elixir-format
 msgid "Link title and URL are required"
-msgstr ""
+msgstr "Linkin otsikko ja URL ovat pakollisia"
 
-#: lib/homesite_web/live/chat_live/show.ex:347
+#: lib/homesite_web/live/chat_live/show.ex:349
 #, elixir-autogen, elixir-format
 msgid "Mute 1 hour"
-msgstr ""
+msgstr "Mykistä 1 tunti"
 
-#: lib/homesite_web/live/chat_live/show.ex:335
+#: lib/homesite_web/live/chat_live/show.ex:337
 #, elixir-autogen, elixir-format
 msgid "Mute 10 min"
-msgstr ""
+msgstr "Mykistä 10 min"
 
-#: lib/homesite_web/live/chat_live/show.ex:343
+#: lib/homesite_web/live/chat_live/show.ex:345
 #, elixir-autogen, elixir-format
 msgid "Mute this user for 1 hour?"
-msgstr ""
+msgstr "Mykistetäänkö käyttäjä 1 tunniksi?"
 
-#: lib/homesite_web/live/chat_live/show.ex:331
+#: lib/homesite_web/live/chat_live/show.ex:333
 #, elixir-autogen, elixir-format
 msgid "Mute this user for 10 minutes?"
-msgstr ""
+msgstr "Mykistetäänkö käyttäjä 10 minuutiksi?"
 
 #: lib/homesite_web/live/project_live/index.ex:148
 #, elixir-autogen, elixir-format
 msgid "No archived projects"
-msgstr ""
+msgstr "Ei arkistoituja projekteja"
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:959
 #, elixir-autogen, elixir-format
 msgid "No blog posts available to link. Create some blog posts first."
-msgstr ""
+msgstr "Ei linkitettäviä blogikirjoituksia. Luo ensin blogikirjoituksia."
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:899
 #, elixir-autogen, elixir-format
 msgid "No blog posts linked. Connect your project to related articles."
-msgstr ""
+msgstr "Ei linkitettyjä blogikirjoituksia. Yhdistä projektisi liittyviin artikkeleihin."
 
 #: lib/homesite_web/live/chat_live/index.ex:37
 #, elixir-autogen, elixir-format
 msgid "No channels available yet."
-msgstr ""
+msgstr "Ei vielä kanavia saatavilla."
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:793
 #, elixir-autogen, elixir-format
 msgid "No contact type"
-msgstr ""
+msgstr "Ei yhteystietotyyppiä"
 
 #: lib/homesite_web/live/portfolio_live/index.ex:54
 #, elixir-autogen, elixir-format
@@ -3433,15 +3433,15 @@ msgid "No projects available"
 msgstr "Ei projekteja saatavilla"
 
 #: lib/homesite_web/live/user_live/projects.ex:55
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "No public projects yet."
-msgstr ""
+msgstr "Ei vielä julkisia projekteja."
 
 #: lib/homesite_web/live/chat_live/show.ex:155
 #: lib/homesite_web/live/chat_live/show.ex:181
 #, elixir-autogen, elixir-format
 msgid "Not authorized"
-msgstr ""
+msgstr "Ei valtuuksia"
 
 #: lib/homesite_web/live/portfolio_live/index.ex:56
 #, elixir-autogen, elixir-format
@@ -3451,260 +3451,260 @@ msgstr "Vain portfoliot joissa on kuvia näytetään täällä. Lisää mediaa p
 #: lib/homesite_web/live/project_live/stepped_form.ex:282
 #, elixir-autogen, elixir-format
 msgid "Please select a blog post"
-msgstr ""
+msgstr "Valitse blogikirjoitus"
 
 #: lib/homesite_web/components/media_components.ex:259
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Project"
-msgstr ""
+msgstr "Projekti"
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:586
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Project Type"
-msgstr ""
+msgstr "Projektityyppi"
 
 #: lib/homesite_web/live/project_live/index.ex:60
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Project archived"
-msgstr ""
+msgstr "Projekti arkistoitu"
 
 #: lib/homesite_web/live/project_live/index.ex:92
 #, elixir-autogen, elixir-format
 msgid "Project permanently deleted"
-msgstr ""
+msgstr "Projekti poistettu pysyvästi"
 
 #: lib/homesite_web/live/project_live/index.ex:76
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Project restored"
-msgstr ""
+msgstr "Projekti palautettu"
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:659
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Project type:"
-msgstr ""
+msgstr "Projektityyppi:"
 
 #: lib/homesite_web/live/user_live/projects.ex:48
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Projects by %{name}"
-msgstr ""
+msgstr "Projektit: %{name}"
 
 #: lib/homesite_web/live/project_live/index.ex:151
 #, elixir-autogen, elixir-format
 msgid "Projects you archive will appear here."
-msgstr ""
+msgstr "Arkistoimasi projektit näkyvät täällä."
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:889
 #, elixir-autogen, elixir-format
 msgid "Related Blog Posts"
-msgstr ""
+msgstr "Liittyvät blogikirjoitukset"
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:920
 #, elixir-autogen, elixir-format
 msgid "Remove this blog post from the project?"
-msgstr ""
+msgstr "Poistetaanko tämä blogikirjoitus projektista?"
 
 #: lib/homesite_web/live/project_live/index.ex:226
 #, elixir-autogen, elixir-format
 msgid "Restore"
-msgstr ""
+msgstr "Palauta"
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:894
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Save the project first to link blog posts."
-msgstr ""
+msgstr "Tallenna projekti ensin linkittääksesi blogikirjoituksia."
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:975
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Save your project first to add collaborators, links, and blog posts. You can come back to this step after creating the project."
-msgstr ""
+msgstr "Tallenna projekti ensin lisätäksesi yhteistyökumppaneita, linkkejä ja blogikirjoituksia. Voit palata tähän vaiheeseen projektin luomisen jälkeen."
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:939
 #, elixir-autogen, elixir-format
 msgid "Select a blog post to link..."
-msgstr ""
+msgstr "Valitse linkitettävä blogikirjoitus..."
 
 #: lib/homesite_web/live/portfolio_live/show.ex:191
 #, elixir-autogen, elixir-format
 msgid "Share on Bluesky"
-msgstr ""
+msgstr "Jaa Blueskyssa"
 
 #: lib/homesite_web/live/portfolio_live/show.ex:197
 #, elixir-autogen, elixir-format
 msgid "Share on Mastodon"
-msgstr ""
+msgstr "Jaa Mastodonissa"
 
 #: lib/homesite_web/live/project_live/index.ex:135
 #, elixir-autogen, elixir-format
 msgid "Showing archived projects. These are hidden from your main list and public views."
-msgstr ""
+msgstr "Näytetään arkistoidut projektit. Nämä on piilotettu päälistaltasi ja julkisista näkymistä."
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:692
 #, elixir-autogen, elixir-format
 msgid "Suggestions:"
-msgstr ""
+msgstr "Ehdotukset:"
 
-#: lib/homesite_web/live/chat_live/show.ex:393
+#: lib/homesite_web/live/chat_live/show.ex:395
 #, elixir-autogen, elixir-format
 msgid "Type a message..."
-msgstr ""
+msgstr "Kirjoita viesti..."
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:796
 #, elixir-autogen, elixir-format
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: lib/homesite_web/live/chat_live/show.ex:149
 #, elixir-autogen, elixir-format
 msgid "User banned from chat"
-msgstr ""
+msgstr "Käyttäjä estetty chatista"
 
 #: lib/homesite_web/live/chat_live/show.ex:114
 #, elixir-autogen, elixir-format
 msgid "User blocked. Their messages are now hidden."
-msgstr ""
+msgstr "Käyttäjä estetty. Hänen viestinsä on nyt piilotettu."
 
 #: lib/homesite_web/live/chat_live/show.ex:174
 #, elixir-autogen, elixir-format
 msgid "User muted for %{minutes} minutes"
-msgstr ""
+msgstr "Käyttäjä mykistetty %{minutes} minuutiksi"
 
 #: lib/homesite_web/live/moderation_live/mutes.ex:35
 #: lib/homesite_web/live/moderation_live/report.ex:55
 #: lib/homesite_web/live/user_live/projects.ex:18
 #, elixir-autogen, elixir-format
 msgid "User not found"
-msgstr ""
+msgstr "Käyttäjää ei löytynyt"
 
 #: lib/homesite_web/live/chat_live/show.ex:133
 #, elixir-autogen, elixir-format
 msgid "User unblocked."
-msgstr ""
+msgstr "Käyttäjän esto poistettu."
 
 #: lib/homesite_web/live/chat_live/show.ex:92
 #, elixir-autogen, elixir-format
 msgid "You are banned from chat"
-msgstr ""
+msgstr "Sinut on estetty chatista"
 
-#: lib/homesite_web/live/chat_live/show.ex:418
+#: lib/homesite_web/live/chat_live/show.ex:420
 #, elixir-autogen, elixir-format
 msgid "You are banned from chat and cannot send messages."
-msgstr ""
+msgstr "Sinut on estetty chatista etkä voi lähettää viestejä."
 
 #: lib/homesite_web/live/chat_live/show.ex:95
 #, elixir-autogen, elixir-format
 msgid "You are muted in this channel"
-msgstr ""
+msgstr "Sinut on mykistetty tällä kanavalla"
 
-#: lib/homesite_web/live/chat_live/show.ex:423
+#: lib/homesite_web/live/chat_live/show.ex:425
 #, elixir-autogen, elixir-format
 msgid "You are temporarily muted in this channel."
-msgstr ""
+msgstr "Sinut on väliaikaisesti mykistetty tällä kanavalla."
 
 #: lib/homesite_web/live/chat_live/show.ex:198
 #, elixir-autogen, elixir-format
 msgid "You can only delete your own messages"
-msgstr ""
+msgstr "Voit poistaa vain omat viestisi"
 
 #: lib/homesite_web/live/chat_live/index.ex:51
 #, elixir-autogen, elixir-format
 msgid "default"
-msgstr ""
+msgstr "oletus"
 
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:280
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{count} days"
-msgstr "%{count} pv sitten"
+msgstr "%{count} päivää"
 
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:279
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{count} hours"
-msgstr "%{count} t sitten"
+msgstr "%{count} tuntia"
 
 #: lib/homesite_web/components/toast_notification.ex:48
-#: lib/homesite_web/live/notification_live/index.ex:253
+#: lib/homesite_web/live/notification_live/index.ex:272
 #, elixir-autogen, elixir-format
 msgid "%{name} started following you"
 msgstr "%{name} alkoi seuraamaan sinua"
 
 #: lib/homesite_web/live/admin_live/moderation/logs.ex:109
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Action"
-msgstr "Toiminnot"
+msgstr "Toiminto"
 
 #: lib/homesite_web/live/admin_live/moderation/dashboard.ex:51
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Active Bans"
-msgstr "Aktiivinen"
+msgstr "Aktiiviset porttikiellot"
 
 #: lib/homesite_web/live/admin_live/moderation/dashboard.ex:44
 #, elixir-autogen, elixir-format
 msgid "Active Suspensions"
-msgstr ""
+msgstr "Aktiiviset estot"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:229
 #, elixir-autogen, elixir-format
 msgid "Add Preset"
-msgstr ""
+msgstr "Lisää malli"
 
 #: lib/homesite_web/live/admin_live/moderation/logs.ex:84
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "All actions"
-msgstr "Toiminnot"
+msgstr "Kaikki toiminnot"
 
 #: lib/homesite_web/live/admin_live/moderation/violations.ex:87
 #, elixir-autogen, elixir-format
 msgid "All violations resolved"
-msgstr ""
+msgstr "Kaikki rikkomukset ratkaistu"
 
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:155
 #, elixir-autogen, elixir-format
 msgid "Are you absolutely sure? This action permanently bans the user."
-msgstr ""
+msgstr "Oletko aivan varma? Tämä toiminto antaa käyttäjälle pysyvän porttikiellon."
 
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:284
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Are you sure you want to delete this banner?"
-msgstr "Haluatko varmasti poistaa tämän kansion?"
+msgstr "Haluatko varmasti poistaa tämän bannerin?"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:396
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Are you sure you want to delete this preset?"
-msgstr "Haluatko varmasti poistaa tämän UKK:n?"
+msgstr "Haluatko varmasti poistaa tämän mallin?"
 
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:215
 #, elixir-autogen, elixir-format
 msgid "Are you sure you want to unban this user? This is rare and should only be done if the ban was issued in error."
-msgstr ""
+msgstr "Haluatko varmasti poistaa tämän käyttäjän porttikiellon? Tämä on harvinaista ja tulisi tehdä vain jos porttikielto annettiin virheellisesti."
 
 #: lib/homesite_web/live/moderation_live/mutes.ex:106
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Are you sure you want to unmute this user?"
-msgstr "Haluatko varmasti poistaa tämän UKK:n?"
+msgstr "Haluatko varmasti poistaa tämän käyttäjän mykistyksen?"
 
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:242
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Are you sure you want to unsuspend this user?"
-msgstr "Haluatko varmasti poistaa tämän UKK:n?"
+msgstr "Haluatko varmasti poistaa tämän käyttäjän eston?"
 
 #: lib/homesite_web/live/admin_live/moderation/logs.ex:66
 #, elixir-autogen, elixir-format
 msgid "Audit trail of all moderation actions"
-msgstr ""
+msgstr "Kaikkien moderointitoimintojen jälkiketju"
 
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:199
 #, elixir-autogen, elixir-format
 msgid "Auto-dismiss after (hours)"
-msgstr ""
+msgstr "Automaattinen hylkääminen (tunnit)"
 
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:108
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Back to Dashboard"
-msgstr "Takaisin käyttäjän kojelautaan"
+msgstr "Takaisin kojelautaan"
 
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:220
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Back to Reports"
-msgstr "Takaisin projekteihin"
+msgstr "Takaisin raportteihin"
 
 #: lib/homesite_web/live/notification_live/settings.ex:22
 #, elixir-autogen, elixir-format
@@ -3714,71 +3714,71 @@ msgstr "Takaisin ilmoituksiin"
 #: lib/homesite_web/live/admin_live/moderation/dashboard.ex:180
 #: lib/homesite_web/live/admin_live/moderation/logs.ex:179
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:256
-#: lib/homesite_web/live/admin_live/moderation/violations.ex:281
+#: lib/homesite_web/live/admin_live/moderation/violations.ex:284
 #, elixir-autogen, elixir-format
 msgid "Ban"
-msgstr ""
+msgstr "Porttikielto"
 
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:104
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:113
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Ban User"
-msgstr ""
+msgstr "Anna porttikielto"
 
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:159
 #, elixir-autogen, elixir-format
 msgid "Ban User Permanently"
-msgstr ""
+msgstr "Anna pysyvä porttikielto"
 
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:74
 #, elixir-autogen, elixir-format
 msgid "Ban not found"
-msgstr ""
+msgstr "Porttikieltoa ei löytynyt"
 
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:185
 #, elixir-autogen, elixir-format
 msgid "Banned By"
-msgstr ""
+msgstr "Porttikiellon antaja"
 
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:186
 #, elixir-autogen, elixir-format
 msgid "Banned On"
-msgstr ""
+msgstr "Porttikiellon päivämäärä"
 
 #: lib/homesite_web/live/admin_live/moderation/logs.ex:189
 #, elixir-autogen, elixir-format
 msgid "Banner Dismissed"
-msgstr ""
+msgstr "Banneri hylätty"
 
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:79
 #, elixir-autogen, elixir-format
 msgid "Banner deleted"
-msgstr ""
+msgstr "Banneri poistettu"
 
 #: lib/homesite_web/live/dashboard_live/index.ex:97
 #, elixir-autogen, elixir-format
 msgid "Banner not found"
-msgstr ""
+msgstr "Banneria ei löytynyt"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:265
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Bans"
-msgstr ""
+msgstr "Porttikiellot"
 
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:117
 #, elixir-autogen, elixir-format
 msgid "Bans are permanent and should only be used for serious violations. Consider suspension for temporary issues."
-msgstr ""
+msgstr "Porttikiellot ovat pysyviä ja niitä tulisi käyttää vain vakaviin rikkomuksiin. Harkitse keskeytystä väliaikaisiin ongelmiin."
 
 #: lib/homesite_web/live/notification_live/settings.ex:97
 #, elixir-autogen, elixir-format
 msgid "Changes are saved automatically."
-msgstr ""
+msgstr "Muutokset tallennetaan automaattisesti."
 
-#: lib/homesite_web/live/moderation_live/report.ex:237
+#: lib/homesite_web/live/moderation_live/report.ex:253
 #, elixir-autogen, elixir-format
 msgid "Choose a reason..."
-msgstr ""
+msgstr "Valitse syy..."
 
 #: lib/homesite_web/live/notification_live/settings.ex:40
 #, elixir-autogen, elixir-format
@@ -3798,48 +3798,48 @@ msgstr "Määritä miten ilmoitukset näytetään."
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:152
 #, elixir-autogen, elixir-format
 msgid "Configure moderation parameters and reason presets"
-msgstr ""
+msgstr "Määritä moderoinnin parametrit ja syymalleja"
 
-#: lib/homesite_web/live/notification_live/index.ex:231
-#: lib/homesite_web/live/user_live/followers.ex:201
-#, elixir-autogen, elixir-format, fuzzy
+#: lib/homesite_web/live/notification_live/index.ex:249
+#: lib/homesite_web/live/user_live/followers.ex:224
+#, elixir-autogen, elixir-format
 msgid "Could not follow user"
 msgstr "Käyttäjän seuraaminen epäonnistui"
 
-#: lib/homesite_web/live/notification_live/index.ex:188
+#: lib/homesite_web/live/notification_live/index.ex:200
 #, elixir-autogen, elixir-format
 msgid "Could not mark notification as read"
 msgstr "Ilmoituksen merkitseminen luetuksi epäonnistui"
 
 #: lib/homesite_web/live/notification_live/settings.ex:135
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Could not update preferences"
-msgstr "Tagin luominen epäonnistui"
+msgstr "Asetusten päivittäminen epäonnistui"
 
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:244
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:162
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Created"
-msgstr "Luo"
+msgstr "Luotu"
 
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:314
 #, elixir-autogen, elixir-format
 msgid "Describe what action was taken..."
-msgstr ""
+msgstr "Kuvaile mitä toimenpiteitä tehtiin..."
 
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:329
-#: lib/homesite_web/live/admin_live/moderation/violations.ex:130
+#: lib/homesite_web/live/admin_live/moderation/violations.ex:131
 #: lib/homesite_web/live/dashboard_live/index.html.heex:27
 #, elixir-autogen, elixir-format
 msgid "Dismiss"
-msgstr ""
+msgstr "Hylkää"
 
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:268
 #: lib/homesite_web/live/admin_live/moderation/dashboard.ex:188
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:134
 #, elixir-autogen, elixir-format
 msgid "Dismissed"
-msgstr ""
+msgstr "Hylätty"
 
 #: lib/homesite_web/live/notification_live/settings.ex:68
 #, elixir-autogen, elixir-format
@@ -3849,114 +3849,114 @@ msgstr "Näyttöasetukset"
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:144
 #, elixir-autogen, elixir-format
 msgid "Document the serious violation that warrants a permanent ban..."
-msgstr ""
+msgstr "Dokumentoi vakava rikkomus joka oikeuttaa pysyvän porttikiellon..."
 
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:163
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:132
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:150
 #, elixir-autogen, elixir-format
 msgid "Enter user ID"
-msgstr ""
+msgstr "Syötä käyttäjä-ID"
 
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:179
 #, elixir-autogen, elixir-format
 msgid "Error / Critical"
-msgstr ""
+msgstr "Virhe / Kriittinen"
 
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:271
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:277
 #, elixir-autogen, elixir-format
 msgid "Expired"
-msgstr ""
+msgstr "Vanhentunut"
 
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:209
 #, elixir-autogen, elixir-format
 msgid "Expires"
-msgstr ""
+msgstr "Vanhenee"
 
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:156
 #, elixir-autogen, elixir-format
 msgid "Expires At"
-msgstr ""
+msgstr "Vanhenee"
 
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:174
 #, elixir-autogen, elixir-format
 msgid "Explain why this user is being suspended..."
-msgstr ""
+msgstr "Selitä miksi tämä käyttäjä estetään..."
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:108
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Failed to create preset"
-msgstr "Kansion poistaminen epäonnistui"
+msgstr "Mallin luominen epäonnistui"
 
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:82
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Failed to delete banner"
-msgstr "Kansion poistaminen epäonnistui"
+msgstr "Bannerin poistaminen epäonnistui"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:141
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Failed to delete preset"
-msgstr "Kansion poistaminen epäonnistui"
+msgstr "Mallin poistaminen epäonnistui"
 
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:81
 #, elixir-autogen, elixir-format
 msgid "Failed to dismiss report"
-msgstr ""
+msgstr "Raportin hylkääminen epäonnistui"
 
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:64
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Failed to resolve report"
-msgstr ""
+msgstr "Raportin ratkaiseminen epäonnistui"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:125
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Failed to update preset"
-msgstr "Kansion poistaminen epäonnistui"
+msgstr "Mallin päivittäminen epäonnistui"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:64
 #, elixir-autogen, elixir-format
 msgid "Failed to update setting"
-msgstr ""
+msgstr "Asetuksen päivittäminen epäonnistui"
 
 #: lib/homesite_web/live/admin_live/moderation/logs.ex:80
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Filter by action"
-msgstr "Suodata:"
+msgstr "Suodata toiminnon mukaan"
 
-#: lib/homesite_web/live/admin_live/moderation/violations.ex:143
-#, elixir-autogen, elixir-format, fuzzy
+#: lib/homesite_web/live/admin_live/moderation/violations.ex:144
+#, elixir-autogen, elixir-format
 msgid "Flagged Users"
-msgstr "Hallitse käyttäjiä"
+msgstr "Merkityt käyttäjät"
 
-#: lib/homesite_web/live/user_live/followers.ex:113
+#: lib/homesite_web/live/user_live/followers.ex:136
 #: lib/homesite_web/live/user_live/profile.ex:53
 #, elixir-autogen, elixir-format
 msgid "Follow"
 msgstr "Seuraa"
 
-#: lib/homesite_web/live/notification_live/index.ex:111
+#: lib/homesite_web/live/notification_live/index.ex:123
 #, elixir-autogen, elixir-format
 msgid "Follow back"
 msgstr "Seuraa takaisin"
 
-#: lib/homesite_web/live/notification_live/index.ex:228
+#: lib/homesite_web/live/notification_live/index.ex:246
 #, elixir-autogen, elixir-format
 msgid "Followed back!"
 msgstr "Seuraat nyt takaisin!"
 
-#: lib/homesite_web/live/user_live/followers.ex:198
+#: lib/homesite_web/live/user_live/followers.ex:221
 #, elixir-autogen, elixir-format
 msgid "Followed successfully"
 msgstr "Seuraaminen onnistui"
 
-#: lib/homesite_web/live/user_live/followers.ex:48
+#: lib/homesite_web/live/user_live/followers.ex:56
 #, elixir-autogen, elixir-format
 msgid "Followers"
 msgstr "Seuraajat"
 
-#: lib/homesite_web/live/notification_live/index.ex:102
-#: lib/homesite_web/live/user_live/followers.ex:54
+#: lib/homesite_web/live/notification_live/index.ex:114
+#: lib/homesite_web/live/user_live/followers.ex:66
 #, elixir-autogen, elixir-format
 msgid "Following"
 msgstr "Seurattavat"
@@ -3974,61 +3974,61 @@ msgstr "Saat ilmoituksen kun joku seuraa sinua"
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:173
 #, elixir-autogen, elixir-format
 msgid "Info"
-msgstr ""
+msgstr "Tiedote"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:68
 #, elixir-autogen, elixir-format
 msgid "Invalid JSON format"
-msgstr ""
+msgstr "Virheellinen JSON-muoto"
 
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:63
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:55
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:80
 #, elixir-autogen, elixir-format
 msgid "Invalid input"
-msgstr ""
+msgstr "Virheellinen syöte"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:371
 #, elixir-autogen, elixir-format
 msgid "Label (EN)"
-msgstr ""
+msgstr "Otsikko (EN)"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:278
 #, elixir-autogen, elixir-format
 msgid "Label (English)"
-msgstr ""
+msgstr "Otsikko (englanniksi)"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:372
 #, elixir-autogen, elixir-format
 msgid "Label (FI)"
-msgstr ""
+msgstr "Otsikko (FI)"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:289
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Label (Finnish)"
-msgstr "Vastaus (suomeksi)"
+msgstr "Otsikko (suomeksi)"
 
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:201
 #, elixir-autogen, elixir-format
 msgid "Leave empty for manual dismiss only"
-msgstr ""
+msgstr "Jätä tyhjäksi vain manuaalista hylkäämistä varten"
 
 #: lib/homesite_web/live/admin_live/moderation/dashboard.ex:84
 #, elixir-autogen, elixir-format
 msgid "Manage Bans"
-msgstr ""
+msgstr "Hallitse porttikieltoja"
 
 #: lib/homesite_web/live/admin_live/moderation/dashboard.ex:80
 #, elixir-autogen, elixir-format
 msgid "Manage Suspensions"
-msgstr ""
+msgstr "Hallitse estoja"
 
 #: lib/homesite_web/live/notification_live/index.ex:32
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Mark all read"
-msgstr "Merkitse luetuksi"
+msgstr "Merkitse kaikki luetuksi"
 
-#: lib/homesite_web/live/notification_live/index.ex:205
+#: lib/homesite_web/live/notification_live/index.ex:219
 #, elixir-autogen, elixir-format
 msgid "Marked %{count} notification as read"
 msgid_plural "Marked %{count} notifications as read"
@@ -4039,76 +4039,76 @@ msgstr[1] "Merkittiin %{count} ilmoitusta luetuksi"
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:241
 #, elixir-autogen, elixir-format
 msgid "Message"
-msgstr ""
+msgstr "Viesti"
 
-#: lib/homesite_web/live/moderation_live/report.ex:268
+#: lib/homesite_web/live/moderation_live/report.ex:284
 #, elixir-autogen, elixir-format
 msgid "Minimum 10 characters required"
-msgstr ""
+msgstr "Vähintään 10 merkkiä vaaditaan"
 
 #: lib/homesite_web/live/admin_live/moderation/dashboard.ex:18
 #: lib/homesite_web/live/admin_live/moderation/dashboard.ex:28
 #, elixir-autogen, elixir-format
 msgid "Moderation Dashboard"
-msgstr ""
+msgstr "Moderoinnin kojelauta"
 
 #: lib/homesite_web/live/admin_live/moderation/logs.ex:32
 #: lib/homesite_web/live/admin_live/moderation/logs.ex:64
 #, elixir-autogen, elixir-format
 msgid "Moderation Logs"
-msgstr ""
+msgstr "Moderointiloki"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:22
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:150
 #, elixir-autogen, elixir-format
 msgid "Moderation Settings"
-msgstr ""
+msgstr "Moderoinnin asetukset"
 
 #: lib/homesite_web/live/admin_live/moderation/logs.ex:111
 #, elixir-autogen, elixir-format
 msgid "Moderator"
-msgstr ""
+msgstr "Moderaattori"
 
 #: lib/homesite_web/live/admin_live/moderation/violations.ex:100
 #, elixir-autogen, elixir-format
 msgid "Monitor users with violations and take action"
-msgstr ""
+msgstr "Seuraa rikkomuksia ja ryhdy toimenpiteisiin"
 
 #: lib/homesite_web/live/admin_live/moderation/dashboard.ex:184
 #, elixir-autogen, elixir-format
 msgid "Mute"
-msgstr ""
+msgstr "Mykistä"
 
 #: lib/homesite_web/live/admin_live/moderation/logs.ex:183
 #, elixir-autogen, elixir-format
 msgid "Mute User"
-msgstr ""
+msgstr "Mykistä käyttäjä"
 
 #: lib/homesite_web/live/moderation_live/mutes.ex:65
 #, elixir-autogen, elixir-format
 msgid "Muted On"
-msgstr ""
+msgstr "Mykistetty"
 
 #: lib/homesite_web/live/moderation_live/mutes.ex:17
 #: lib/homesite_web/live/moderation_live/mutes.ex:44
 #, elixir-autogen, elixir-format
 msgid "Muted Users"
-msgstr ""
+msgstr "Mykistetyt käyttäjät"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:249
 #, elixir-autogen, elixir-format
 msgid "Mutes"
-msgstr ""
+msgstr "Mykistykset"
 
 #: lib/homesite_web/live/admin_live/moderation/logs.ex:132
 #, elixir-autogen, elixir-format
 msgid "N/A"
-msgstr ""
+msgstr "Ei saatavilla"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:273
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "New Preset"
-msgstr "Uusi kirjoitus"
+msgstr "Uusi malli"
 
 #: lib/homesite_web/live/notification_live/settings.ex:53
 #, elixir-autogen, elixir-format
@@ -4118,34 +4118,34 @@ msgstr "Uudet seuraajat"
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:173
 #, elixir-autogen, elixir-format
 msgid "No active bans"
-msgstr ""
+msgstr "Ei aktiivisia porttikieltoja"
 
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:196
 #, elixir-autogen, elixir-format
 msgid "No active suspensions"
-msgstr ""
+msgstr "Ei aktiivisia estoja"
 
-#: lib/homesite_web/live/user_live/followers.ex:65
+#: lib/homesite_web/live/user_live/followers.ex:80
 #, elixir-autogen, elixir-format
 msgid "No followers yet"
 msgstr "Ei vielä seuraajia"
 
 #: lib/homesite_web/live/admin_live/moderation/logs.ex:98
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "No logs found"
-msgstr "Tageja ei löytynyt."
+msgstr "Lokeja ei löytynyt"
 
 #: lib/homesite_web/live/admin_live/moderation/logs.ex:100
 #, elixir-autogen, elixir-format
 msgid "No moderation actions match the current filter."
-msgstr ""
+msgstr "Nykyisellä suodattimella ei löydy moderointitoimia."
 
 #: lib/homesite_web/live/moderation_live/mutes.ex:54
 #, elixir-autogen, elixir-format
 msgid "No muted users"
-msgstr ""
+msgstr "Ei mykistettyjä käyttäjiä"
 
-#: lib/homesite_web/live/notification_live/index.ex:61
+#: lib/homesite_web/live/notification_live/index.ex:67
 #, elixir-autogen, elixir-format
 msgid "No notifications yet"
 msgstr "Ei vielä ilmoituksia"
@@ -4153,39 +4153,39 @@ msgstr "Ei vielä ilmoituksia"
 #: lib/homesite_web/live/moderation_live/mutes.ex:99
 #, elixir-autogen, elixir-format
 msgid "No reason provided"
-msgstr ""
+msgstr "Ei syytä annettu"
 
 #: lib/homesite_web/live/admin_live/moderation/dashboard.ex:105
 #, elixir-autogen, elixir-format
 msgid "No recent moderation activity"
-msgstr ""
+msgstr "Ei viimeaikaista moderointitoimintaa"
 
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:148
 #, elixir-autogen, elixir-format
 msgid "No reports"
-msgstr ""
+msgstr "Ei raportteja"
 
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:150
 #, elixir-autogen, elixir-format
 msgid "No reports match the current filter."
-msgstr ""
+msgstr "Nykyisellä suodattimella ei löydy raportteja."
 
-#: lib/homesite_web/live/admin_live/moderation/violations.ex:145
+#: lib/homesite_web/live/admin_live/moderation/violations.ex:146
 #, elixir-autogen, elixir-format
 msgid "No users with violations"
-msgstr ""
+msgstr "Ei käyttäjiä rikkomuksilla"
 
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:230
 #, elixir-autogen, elixir-format
 msgid "No warning banners"
-msgstr ""
+msgstr "Ei varoitusbannereita"
 
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:232
 #, elixir-autogen, elixir-format
 msgid "No warning banners have been sent yet."
-msgstr ""
+msgstr "Varoitusbannereita ei ole vielä lähetetty."
 
-#: lib/homesite_web/live/user_live/followers.ex:67
+#: lib/homesite_web/live/user_live/followers.ex:82
 #, elixir-autogen, elixir-format
 msgid "Not following anyone yet"
 msgstr "Ei seuraa vielä ketään"
@@ -4204,7 +4204,7 @@ msgstr "Ilmoitustyypit"
 #: lib/homesite_web/components/layouts.ex:414
 #: lib/homesite_web/components/notification_bell.ex:29
 #: lib/homesite_web/live/notification_live/index.ex:21
-#: lib/homesite_web/live/notification_live/index.ex:161
+#: lib/homesite_web/live/notification_live/index.ex:173
 #, elixir-autogen, elixir-format
 msgid "Notifications"
 msgstr "Ilmoitukset"
@@ -4212,57 +4212,57 @@ msgstr "Ilmoitukset"
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:370
 #, elixir-autogen, elixir-format
 msgid "Order"
-msgstr ""
+msgstr "Järjestys"
 
-#: lib/homesite_web/live/moderation_live/report.ex:244
+#: lib/homesite_web/live/moderation_live/report.ex:260
 #, elixir-autogen, elixir-format
 msgid "Other (custom reason)"
-msgstr ""
+msgstr "Muu (oma syy)"
 
 #: lib/homesite_web/live/admin_live/moderation/dashboard.ex:30
 #, elixir-autogen, elixir-format
 msgid "Overview of moderation activity and actions"
-msgstr ""
+msgstr "Yleiskatsaus moderoinnin toimintaan ja toimenpiteisiin"
 
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:120
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Pending"
-msgstr "Odottaa hyväksyntää"
+msgstr "Odottaa"
 
 #: lib/homesite_web/live/admin_live/moderation/dashboard.ex:37
 #, elixir-autogen, elixir-format
 msgid "Pending Reports"
-msgstr ""
+msgstr "Odottavat raportit"
 
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:95
 #, elixir-autogen, elixir-format
 msgid "Permanently restrict user access"
-msgstr ""
+msgstr "Rajoita käyttäjän pääsyä pysyvästi"
 
-#: lib/homesite_web/live/moderation_live/report.ex:258
+#: lib/homesite_web/live/moderation_live/report.ex:274
 #, elixir-autogen, elixir-format
 msgid "Please describe in detail why you are reporting this user. Include specific examples if possible..."
-msgstr ""
+msgstr "Kuvaile yksityiskohtaisesti miksi raportoit tämän käyttäjän. Sisällytä konkreettisia esimerkkejä jos mahdollista..."
 
-#: lib/homesite_web/live/moderation_live/report.ex:197
+#: lib/homesite_web/live/moderation_live/report.ex:213
 #, elixir-autogen, elixir-format
 msgid "Please provide a detailed description of why you are reporting this user. False reports may result in action against your account."
-msgstr ""
+msgstr "Anna yksityiskohtainen kuvaus miksi raportoit tämän käyttäjän. Väärät raportit voivat johtaa toimenpiteisiin tiliäsi kohtaan."
 
 #: lib/homesite_web/live/notification_live/settings.ex:132
 #, elixir-autogen, elixir-format
 msgid "Preferences updated"
-msgstr ""
+msgstr "Asetukset päivitetty"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:103
 #, elixir-autogen, elixir-format
 msgid "Preset created"
-msgstr ""
+msgstr "Malli luotu"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:137
 #, elixir-autogen, elixir-format
 msgid "Preset deleted"
-msgstr ""
+msgstr "Malli poistettu"
 
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:138
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:184
@@ -4270,289 +4270,289 @@ msgstr ""
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:160
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:169
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:207
-#: lib/homesite_web/live/admin_live/moderation/violations.ex:233
+#: lib/homesite_web/live/admin_live/moderation/violations.ex:234
 #: lib/homesite_web/live/moderation_live/mutes.ex:66
 #, elixir-autogen, elixir-format
 msgid "Reason"
-msgstr ""
+msgstr "Syy"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:226
 #, elixir-autogen, elixir-format
 msgid "Reason Presets"
-msgstr ""
+msgstr "Syymallit"
 
-#: lib/homesite_web/live/moderation_live/report.ex:252
+#: lib/homesite_web/live/moderation_live/report.ex:268
 #, elixir-autogen, elixir-format
 msgid "Reason details"
-msgstr ""
+msgstr "Syyn tiedot"
 
 #: lib/homesite_web/live/admin_live/moderation/dashboard.ex:186
 #, elixir-autogen, elixir-format
 msgid "Report"
-msgstr ""
+msgstr "Raportti"
 
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:28
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:213
 #, elixir-autogen, elixir-format
 msgid "Report #%{id}"
-msgstr ""
+msgstr "Raportti #%{id}"
 
-#: lib/homesite_web/live/moderation_live/report.ex:179
+#: lib/homesite_web/live/moderation_live/report.ex:195
 #, elixir-autogen, elixir-format
 msgid "Report %{user} for violating community guidelines"
-msgstr ""
+msgstr "Raportoi %{user} yhteisöohjeiden rikkomisesta"
 
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:292
 #, elixir-autogen, elixir-format
 msgid "Report Details"
-msgstr ""
+msgstr "Raportin tiedot"
 
 #: lib/homesite_web/live/admin_live/moderation/logs.ex:187
 #, elixir-autogen, elixir-format
 msgid "Report Dismissed"
-msgstr ""
+msgstr "Raportti hylätty"
 
 #: lib/homesite_web/live/admin_live/moderation/logs.ex:186
 #, elixir-autogen, elixir-format
 msgid "Report Resolved"
-msgstr ""
+msgstr "Raportti ratkaistu"
 
 #: lib/homesite_web/live/admin_live/moderation/logs.ex:185
 #: lib/homesite_web/live/moderation_live/report.ex:43
-#: lib/homesite_web/live/moderation_live/report.ex:177
+#: lib/homesite_web/live/moderation_live/report.ex:193
 #, elixir-autogen, elixir-format
 msgid "Report User"
-msgstr ""
+msgstr "Raportoi käyttäjä"
 
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:77
 #, elixir-autogen, elixir-format
 msgid "Report dismissed"
-msgstr ""
+msgstr "Raportti hylätty"
 
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:60
 #, elixir-autogen, elixir-format
 msgid "Report resolved successfully"
-msgstr ""
+msgstr "Raportti ratkaistu onnistuneesti"
 
-#: lib/homesite_web/live/moderation_live/report.ex:125
+#: lib/homesite_web/live/moderation_live/report.ex:128
 #, elixir-autogen, elixir-format
 msgid "Report submitted successfully. Our team will review it."
-msgstr ""
+msgstr "Raportti lähetetty onnistuneesti. Tiimimme käsittelee sen."
 
-#: lib/homesite_web/live/chat_live/show.ex:321
+#: lib/homesite_web/live/chat_live/show.ex:323
 #, elixir-autogen, elixir-format
 msgid "Report user"
-msgstr ""
+msgstr "Raportoi käyttäjä"
 
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:158
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:229
 #, elixir-autogen, elixir-format
 msgid "Reported User"
-msgstr ""
+msgstr "Raportoitu käyttäjä"
 
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:159
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:271
-#: lib/homesite_web/live/admin_live/moderation/violations.ex:232
+#: lib/homesite_web/live/admin_live/moderation/violations.ex:233
 #, elixir-autogen, elixir-format
 msgid "Reporter"
-msgstr ""
+msgstr "Raportoija"
 
-#: lib/homesite_web/live/moderation_live/report.ex:190
+#: lib/homesite_web/live/moderation_live/report.ex:206
 #, elixir-autogen, elixir-format
 msgid "Reporting based on a chat message"
-msgstr ""
+msgstr "Raportointi keskusteluviestin perusteella"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:241
 #, elixir-autogen, elixir-format
 msgid "Reports"
-msgstr ""
+msgstr "Raportit"
 
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:305
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:339
 #, elixir-autogen, elixir-format
 msgid "Resolution"
-msgstr ""
+msgstr "Ratkaisu"
 
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:309
 #, elixir-autogen, elixir-format
 msgid "Resolution Notes"
-msgstr ""
+msgstr "Ratkaisun muistiinpanot"
 
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:320
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Resolve"
-msgstr "Poista"
+msgstr "Ratkaise"
 
-#: lib/homesite_web/live/admin_live/moderation/violations.ex:285
+#: lib/homesite_web/live/admin_live/moderation/violations.ex:288
 #, elixir-autogen, elixir-format
 msgid "Resolve All"
-msgstr ""
+msgstr "Ratkaise kaikki"
 
 #: lib/homesite_web/live/admin_live/moderation/dashboard.ex:187
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:127
-#: lib/homesite_web/live/admin_live/moderation/violations.ex:256
-#, elixir-autogen, elixir-format, fuzzy
+#: lib/homesite_web/live/admin_live/moderation/violations.ex:258
+#, elixir-autogen, elixir-format
 msgid "Resolved"
-msgstr "Poista"
+msgstr "Ratkaistu"
 
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:341
 #, elixir-autogen, elixir-format
 msgid "Resolved by %{user} on %{date}"
-msgstr ""
+msgstr "Ratkaisija %{user} päivämäärällä %{date}"
 
 #: lib/homesite_web/live/admin_live/moderation/dashboard.ex:76
 #, elixir-autogen, elixir-format
 msgid "Review Reports"
-msgstr ""
+msgstr "Tarkastele raportteja"
 
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:103
 #, elixir-autogen, elixir-format
 msgid "Review and manage user reports"
-msgstr ""
+msgstr "Tarkastele ja hallitse käyttäjäraportteja"
 
-#: lib/homesite_web/live/moderation_live/report.ex:230
+#: lib/homesite_web/live/moderation_live/report.ex:246
 #, elixir-autogen, elixir-format
 msgid "Select a reason"
-msgstr ""
+msgstr "Valitse syy"
 
-#: lib/homesite_web/live/admin_live/moderation/violations.ex:294
+#: lib/homesite_web/live/admin_live/moderation/violations.ex:297
 #, elixir-autogen, elixir-format
 msgid "Select a user to view details"
-msgstr ""
+msgstr "Valitse käyttäjä nähdäksesi tiedot"
 
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:142
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:216
 #, elixir-autogen, elixir-format
 msgid "Send Warning"
-msgstr ""
+msgstr "Lähetä varoitus"
 
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:151
 #, elixir-autogen, elixir-format
 msgid "Send Warning Banner"
-msgstr ""
+msgstr "Lähetä varoitusbanneri"
 
 #: lib/homesite_web/live/admin_live/moderation/dashboard.ex:88
 #, elixir-autogen, elixir-format
 msgid "Send Warnings"
-msgstr ""
+msgstr "Lähetä varoituksia"
 
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:133
 #, elixir-autogen, elixir-format
 msgid "Send warning messages to users"
-msgstr ""
+msgstr "Lähetä varoitusviestejä käyttäjille"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:166
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Setting"
-msgstr "Asetukset"
+msgstr "Asetus"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:59
 #, elixir-autogen, elixir-format
 msgid "Setting updated"
-msgstr ""
+msgstr "Asetus päivitetty"
 
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:169
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:242
 #, elixir-autogen, elixir-format
 msgid "Severity"
-msgstr ""
+msgstr "Vakavuus"
 
 #: lib/homesite_web/live/notification_live/settings.ex:87
 #, elixir-autogen, elixir-format
 msgid "Show pop-up notifications when you receive new notifications"
 msgstr "Näytä ponnahdusikkunailmoitukset kun saat uusia ilmoituksia"
 
-#: lib/homesite_web/live/user_live/followers.ex:91
+#: lib/homesite_web/live/user_live/followers.ex:114
 #, elixir-autogen, elixir-format
 msgid "Since"
 msgstr "Alkaen"
 
 #: lib/homesite_web/components/toast_notification.ex:52
-#: lib/homesite_web/live/notification_live/index.ex:257
+#: lib/homesite_web/live/notification_live/index.ex:276
 #, elixir-autogen, elixir-format
 msgid "Someone started following you"
 msgstr "Joku alkoi seuraamaan sinua"
 
-#: lib/homesite_web/live/moderation_live/report.ex:279
+#: lib/homesite_web/live/moderation_live/report.ex:295
 #, elixir-autogen, elixir-format
 msgid "Submit Report"
-msgstr ""
+msgstr "Lähetä raportti"
 
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:215
 #, elixir-autogen, elixir-format
 msgid "Submitted %{date}"
-msgstr ""
+msgstr "Lähetetty %{date}"
 
 #: lib/homesite_web/live/admin_live/moderation/dashboard.ex:182
 #: lib/homesite_web/live/admin_live/moderation/logs.ex:181
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:249
-#: lib/homesite_web/live/admin_live/moderation/violations.ex:274
+#: lib/homesite_web/live/admin_live/moderation/violations.ex:277
 #, elixir-autogen, elixir-format
 msgid "Suspend"
-msgstr ""
+msgstr "Estä"
 
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:129
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:138
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:182
 #, elixir-autogen, elixir-format
 msgid "Suspend User"
-msgstr ""
+msgstr "Estä käyttäjä"
 
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:208
 #, elixir-autogen, elixir-format
 msgid "Suspended By"
-msgstr ""
+msgstr "Estäjä"
 
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:99
 #, elixir-autogen, elixir-format
 msgid "Suspension not found"
-msgstr ""
+msgstr "Estoa ei löytynyt"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:257
 #, elixir-autogen, elixir-format
 msgid "Suspensions"
-msgstr ""
+msgstr "Estot"
 
 #: lib/homesite_web/live/admin_live/moderation/logs.ex:141
-#: lib/homesite_web/live/admin_live/moderation/violations.ex:247
+#: lib/homesite_web/live/admin_live/moderation/violations.ex:248
 #, elixir-autogen, elixir-format
 msgid "System"
-msgstr ""
+msgstr "Järjestelmä"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:160
 #, elixir-autogen, elixir-format
 msgid "System Settings"
-msgstr ""
+msgstr "Järjestelmäasetukset"
 
 #: lib/homesite_web/live/admin_live/moderation/logs.ex:110
 #, elixir-autogen, elixir-format
 msgid "Target User"
-msgstr ""
+msgstr "Kohdekäyttäjä"
 
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:120
 #, elixir-autogen, elixir-format
 msgid "Temporarily restrict user access"
-msgstr ""
+msgstr "Rajoita käyttäjän pääsyä väliaikaisesti"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:302
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Text (English)"
-msgstr "Englanti"
+msgstr "Teksti (englanniksi)"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:313
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Text (Finnish)"
-msgstr "Suomi"
+msgstr "Teksti (suomeksi)"
 
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:175
 #, elixir-autogen, elixir-format
 msgid "There are no users currently banned."
-msgstr ""
+msgstr "Porttikiellossa ei ole tällä hetkellä käyttäjiä."
 
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:198
 #, elixir-autogen, elixir-format
 msgid "There are no users currently suspended."
-msgstr ""
+msgstr "Estettyjä käyttäjiä ei ole tällä hetkellä."
 
 #: lib/homesite_web/live/notification_live/settings.ex:85
 #, elixir-autogen, elixir-format
@@ -4560,29 +4560,29 @@ msgid "Toast notifications"
 msgstr "Ponnahdusikkunailmoitukset"
 
 #: lib/homesite_web/live/admin_live/moderation/dashboard.ex:58
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Total Mutes"
-msgstr "Kohteita yhteensä"
+msgstr "Mykistyksiä yhteensä"
 
-#: lib/homesite_web/live/admin_live/moderation/violations.ex:205
+#: lib/homesite_web/live/admin_live/moderation/violations.ex:206
 #, elixir-autogen, elixir-format
 msgid "Total Violations"
-msgstr ""
+msgstr "Rikkomuksia yhteensä"
 
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:221
 #: lib/homesite_web/live/admin_live/moderation/dashboard.ex:181
 #: lib/homesite_web/live/admin_live/moderation/logs.ex:180
 #, elixir-autogen, elixir-format
 msgid "Unban"
-msgstr ""
+msgstr "Poista porttikielto"
 
-#: lib/homesite_web/live/user_live/followers.ex:104
+#: lib/homesite_web/live/user_live/followers.ex:127
 #: lib/homesite_web/live/user_live/profile.ex:45
 #, elixir-autogen, elixir-format
 msgid "Unfollow"
 msgstr "Lopeta seuraaminen"
 
-#: lib/homesite_web/live/user_live/followers.ex:222
+#: lib/homesite_web/live/user_live/followers.ex:245
 #, elixir-autogen, elixir-format
 msgid "Unfollowed successfully"
 msgstr "Seuraaminen lopetettu"
@@ -4591,154 +4591,154 @@ msgstr "Seuraaminen lopetettu"
 #: lib/homesite_web/live/moderation_live/mutes.ex:110
 #, elixir-autogen, elixir-format
 msgid "Unmute"
-msgstr ""
+msgstr "Poista mykistys"
 
 #: lib/homesite_web/live/admin_live/moderation/logs.ex:184
 #, elixir-autogen, elixir-format
 msgid "Unmute User"
-msgstr ""
+msgstr "Poista käyttäjän mykistys"
 
-#: lib/homesite_web/live/admin_live/moderation/violations.ex:209
+#: lib/homesite_web/live/admin_live/moderation/violations.ex:210
 #, elixir-autogen, elixir-format
 msgid "Unresolved Weight"
-msgstr ""
+msgstr "Ratkaisematon paino"
 
 #: lib/homesite_web/live/admin_live/moderation/dashboard.ex:183
 #: lib/homesite_web/live/admin_live/moderation/logs.ex:182
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:245
 #, elixir-autogen, elixir-format
 msgid "Unsuspend"
-msgstr ""
+msgstr "Poista esto"
 
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:18
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:93
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "User Bans"
-msgstr "Käyttäjä-UKK"
+msgstr "Käyttäjien porttikiellot"
 
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:156
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:125
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:143
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "User ID"
-msgstr "Käyttäjä-UKK"
+msgstr "Käyttäjä-ID"
 
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:15
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:101
 #, elixir-autogen, elixir-format
 msgid "User Reports"
-msgstr ""
+msgstr "Käyttäjäraportit"
 
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:18
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:118
 #, elixir-autogen, elixir-format
 msgid "User Suspensions"
-msgstr ""
+msgstr "Käyttäjien estot"
 
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:48
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "User banned successfully"
-msgstr "UKK luotu onnistuneesti."
+msgstr "Käyttäjän porttikielto onnistui"
 
-#: lib/homesite_web/live/moderation_live/report.ex:205
+#: lib/homesite_web/live/moderation_live/report.ex:221
 #, elixir-autogen, elixir-format
 msgid "User being reported"
-msgstr ""
+msgstr "Raportoitava käyttäjä"
 
 #: lib/homesite_web/live/admin_live/moderation/violations.ex:112
 #, elixir-autogen, elixir-format
 msgid "User has reached %{weight} violation weight from %{reporters} different reporters"
-msgstr ""
+msgstr "Käyttäjä on saavuttanut %{weight} rikkomuspainon %{reporters} eri raportoijalta"
 
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:73
 #, elixir-autogen, elixir-format
 msgid "User suspended successfully"
-msgstr ""
+msgstr "Käyttäjän esto onnistui"
 
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:71
 #, elixir-autogen, elixir-format
 msgid "User unbanned successfully"
-msgstr ""
+msgstr "Käyttäjän porttikielto poistettu onnistuneesti"
 
 #: lib/homesite_web/live/moderation_live/mutes.ex:32
 #, elixir-autogen, elixir-format
 msgid "User unmuted successfully"
-msgstr ""
+msgstr "Käyttäjän mykistys poistettu onnistuneesti"
 
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:96
 #, elixir-autogen, elixir-format
 msgid "User unsuspended successfully"
-msgstr ""
+msgstr "Käyttäjän esto poistettu onnistuneesti"
 
 #: lib/homesite_web/live/moderation_live/mutes.ex:46
 #, elixir-autogen, elixir-format
 msgid "Users you've muted won't appear in your feed or chat"
-msgstr ""
+msgstr "Mykistämäsi käyttäjät eivät näy syötteessäsi tai keskusteluissa"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:167
 #, elixir-autogen, elixir-format
 msgid "Value"
-msgstr ""
+msgstr "Arvo"
 
 #: lib/homesite_web/live/admin_live/moderation/dashboard.ex:92
 #, elixir-autogen, elixir-format
 msgid "View Full Audit Log"
-msgstr ""
+msgstr "Näytä koko tapahtumaloki"
 
-#: lib/homesite_web/live/admin_live/moderation/violations.ex:225
+#: lib/homesite_web/live/admin_live/moderation/violations.ex:226
 #, elixir-autogen, elixir-format
 msgid "Violation History"
-msgstr ""
+msgstr "Rikkomushistoria"
 
 #: lib/homesite_web/live/admin_live/moderation/violations.ex:21
 #: lib/homesite_web/live/admin_live/moderation/violations.ex:98
 #, elixir-autogen, elixir-format
 msgid "Violation Tracking"
-msgstr ""
+msgstr "Rikkomusten seuranta"
 
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:263
 #, elixir-autogen, elixir-format
 msgid "Warn"
-msgstr ""
+msgstr "Varoita"
 
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:176
 #: lib/homesite_web/live/admin_live/moderation/dashboard.ex:189
 #, elixir-autogen, elixir-format
 msgid "Warning"
-msgstr ""
+msgstr "Varoitus"
 
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:18
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:131
 #, elixir-autogen, elixir-format
 msgid "Warning Banners"
-msgstr ""
+msgstr "Varoitusbannerit"
 
 #: lib/homesite_web/live/admin_live/moderation/logs.ex:188
 #, elixir-autogen, elixir-format
 msgid "Warning Sent"
-msgstr ""
+msgstr "Varoitus lähetetty"
 
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:56
 #, elixir-autogen, elixir-format
 msgid "Warning banner sent successfully"
-msgstr ""
+msgstr "Varoitusbanneri lähetetty onnistuneesti"
 
-#: lib/homesite_web/live/admin_live/moderation/violations.ex:234
-#, elixir-autogen, elixir-format, fuzzy
+#: lib/homesite_web/live/admin_live/moderation/violations.ex:235
+#, elixir-autogen, elixir-format
 msgid "Weight"
-msgstr "Vaalea"
+msgstr "Paino"
 
-#: lib/homesite_web/live/notification_live/index.ex:63
+#: lib/homesite_web/live/notification_live/index.ex:69
 #, elixir-autogen, elixir-format
 msgid "When someone follows you or interacts with your content, you'll see it here."
-msgstr ""
+msgstr "Kun joku seuraa sinua tai on vuorovaikutuksessa sisältösi kanssa, näet sen täällä."
 
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:191
 #, elixir-autogen, elixir-format
 msgid "Write a clear warning message for the user..."
-msgstr ""
+msgstr "Kirjoita käyttäjälle selkeä varoitusviesti..."
 
-#: lib/homesite_web/live/user_live/followers.ex:225
+#: lib/homesite_web/live/user_live/followers.ex:248
 #, elixir-autogen, elixir-format
 msgid "You are not following this user"
 msgstr "Et seuraa tätä käyttäjää"
@@ -4746,12 +4746,12 @@ msgstr "Et seuraa tätä käyttäjää"
 #: lib/homesite_web/live/moderation_live/report.ex:24
 #, elixir-autogen, elixir-format
 msgid "You cannot report yourself"
-msgstr ""
+msgstr "Et voi raportoida itseäsi"
 
 #: lib/homesite_web/live/chat_live/show.ex:57
 #, elixir-autogen, elixir-format
 msgid "You don't have access to this channel"
-msgstr ""
+msgstr "Sinulla ei ole pääsyä tähän kanavaan"
 
 #: lib/homesite_web/live/notification_live/index.ex:51
 #, elixir-autogen, elixir-format
@@ -4761,48 +4761,53 @@ msgstr[0] "Sinulla on %{count} lukematon ilmoitus"
 msgstr[1] "Sinulla on %{count} lukematonta ilmoitusta"
 
 #: lib/homesite_web/components/toast_notification.ex:61
-#: lib/homesite_web/live/notification_live/index.ex:266
+#: lib/homesite_web/live/notification_live/index.ex:291
 #, elixir-autogen, elixir-format
 msgid "You have a new notification"
 msgstr "Sinulla on uusi ilmoitus"
 
-#: lib/homesite_web/live/moderation_live/report.ex:133
+#: lib/homesite_web/live/moderation_live/report.ex:136
 #, elixir-autogen, elixir-format
 msgid "You have submitted too many reports. Please try again later."
-msgstr ""
+msgstr "Olet lähettänyt liian monta raporttia. Yritä myöhemmin uudelleen."
 
 #: lib/homesite_web/live/moderation_live/mutes.ex:56
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "You haven't muted anyone yet."
-msgstr "Et ole vielä luonut yhtään kirjoitusta."
+msgstr "Et ole vielä mykistänyt ketään."
 
 #: lib/homesite_web/components/toast_notification.ex:57
-#: lib/homesite_web/live/notification_live/index.ex:262
+#: lib/homesite_web/live/notification_live/index.ex:281
 #, elixir-autogen, elixir-format
 msgid "Your post \"%{title}\" was published"
-msgstr ""
+msgstr "Kirjoituksesi \"%{title}\" julkaistiin"
 
 #: lib/homesite_web/components/toast_notification.ex:56
-#: lib/homesite_web/live/notification_live/index.ex:261
-#, elixir-autogen, elixir-format, fuzzy
+#: lib/homesite_web/live/notification_live/index.ex:280
+#, elixir-autogen, elixir-format
 msgid "a post"
 msgstr "kirjoitus"
 
 #: lib/homesite_web/live/chat_live/index.ex:54
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "admin"
-msgstr "Ylläpito"
+msgstr "ylläpitäjä"
 
-#: lib/homesite_web/live/user_live/followers.ex:37
-#: lib/homesite_web/live/user_live/profile.ex:66
+#: lib/homesite_web/live/user_live/followers.ex:39
+#: lib/homesite_web/live/user_live/profile.ex:71
 #, elixir-autogen, elixir-format
 msgid "follower"
 msgid_plural "followers"
 msgstr[0] "seuraaja"
 msgstr[1] "seuraajaa"
 
-#: lib/homesite_web/live/user_live/followers.ex:37
-#: lib/homesite_web/live/user_live/profile.ex:73
+#: lib/homesite_web/live/user_live/followers.ex:39
+#: lib/homesite_web/live/user_live/profile.ex:83
 #, elixir-autogen, elixir-format
 msgid "following"
 msgstr "seurattavaa"
+
+#: lib/homesite_web/live/notification_live/index.ex:287
+#, elixir-autogen, elixir-format
+msgid "Suspicious activity detected: %{reason} from %{email}"
+msgstr "Epäilyttävää toimintaa havaittu: %{reason} osoitteesta %{email}"
