@@ -7,6 +7,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Dashboard do
   use HomesiteWeb, :live_view
 
   alias Homesite.Moderation
+  import HomesiteWeb.Helpers.ModerationHelpers
 
   @impl true
   def mount(_params, _session, socket) do
@@ -111,7 +112,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Dashboard do
                         <tr>
                           <td class="whitespace-nowrap">
                             <span class={["badge badge-sm", action_badge_class(log.action)]}>
-                              {format_action(log.action)}
+                              {format_action_short(log.action)}
                             </span>
                           </td>
                           <td>
@@ -157,37 +158,5 @@ defmodule HomesiteWeb.AdminLive.Moderation.Dashboard do
       </div>
     </.link>
     """
-  end
-
-  defp action_badge_class(action) do
-    case action do
-      "ban" -> "badge-error"
-      "unban" -> "badge-success"
-      "suspend" -> "badge-warning"
-      "unsuspend" -> "badge-success"
-      "mute_user" -> "badge-info"
-      "unmute_user" -> "badge-info"
-      "report_user" -> "badge-warning"
-      "report_resolve" -> "badge-success"
-      "report_dismiss" -> "badge-ghost"
-      "banner_create" -> "badge-warning"
-      _ -> "badge-ghost"
-    end
-  end
-
-  defp format_action(action) do
-    case action do
-      "ban" -> gettext("Ban")
-      "unban" -> gettext("Unban")
-      "suspend" -> gettext("Suspend")
-      "unsuspend" -> gettext("Unsuspend")
-      "mute_user" -> gettext("Mute")
-      "unmute_user" -> gettext("Unmute")
-      "report_user" -> gettext("Report")
-      "report_resolve" -> gettext("Resolved")
-      "report_dismiss" -> gettext("Dismissed")
-      "banner_create" -> gettext("Warning")
-      _ -> action
-    end
   end
 end

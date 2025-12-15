@@ -22,7 +22,7 @@
 - **Ubuntu 24.04 LTS**
 - **Docker + Docker Compose** (rootless mode, ei Kubernetes)
 - **Caddy 2** - automaattinen HTTPS
-- **PostgreSQL 17.2-alpine** kontti
+- **PostgreSQL 18-alpine** kontti
 - **Ei-root käyttäjä** (deploy) - turvallisuus!
 
 ### CI/CD & Versiot

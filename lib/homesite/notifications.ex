@@ -68,6 +68,63 @@ defmodule Homesite.Notifications do
   end
 
   @doc """
+  Creates a new_user_registered notification for admins.
+  """
+  def notify_new_user_registered(admin_user_id, %{id: user_id, email: user_email}) do
+    create_notification(
+      admin_user_id,
+      "new_user_registered",
+      user_id,
+      %{"user_email" => user_email}
+    )
+  end
+
+  @doc """
+  Creates a report_submitted notification for admins.
+  """
+  def notify_report_submitted(admin_user_id, reporter, reported_user, reason) do
+    create_notification(
+      admin_user_id,
+      "report_submitted",
+      reporter.id,
+      %{
+        "reporter_email" => reporter.email,
+        "reported_user_email" => reported_user.email,
+        "reported_user_id" => reported_user.id,
+        "reason" => reason
+      }
+    )
+  end
+
+  @doc """
+  Creates a follower_post notification when someone you follow publishes.
+  """
+  def notify_follower_post(follower_user_id, author, post) do
+    create_notification(
+      follower_user_id,
+      "follower_post",
+      author.id,
+      %{
+        "post_id" => post.id,
+        "post_title" => post.title,
+        "author_name" => author.display_name || author.email
+      }
+    )
+  end
+
+  @doc """
+  Creates a system_alert notification for admins.
+  """
+  def notify_system_alert(admin_user_id, alert_type, message, metadata \\ %{}) do
+    create_notification(
+      admin_user_id,
+      "system_alert",
+      nil,
+      Map.merge(%{"alert_type" => alert_type, "message" => message}, metadata)
+    )
+  end
+
+  @doc """
   Lists notifications for the current user.
 
   Options:

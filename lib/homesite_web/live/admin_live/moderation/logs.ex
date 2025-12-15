@@ -7,6 +7,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Logs do
   use HomesiteWeb, :live_view
 
   alias Homesite.Moderation
+  import HomesiteWeb.Helpers.ModerationHelpers
 
   @actions [
     "mute_user",
@@ -155,39 +156,5 @@ defmodule HomesiteWeb.AdminLive.Moderation.Logs do
       </div>
     </Layouts.app>
     """
-  end
-
-  defp action_badge_class(action) do
-    case action do
-      "ban" -> "badge-error"
-      "unban" -> "badge-success"
-      "suspend" -> "badge-warning"
-      "unsuspend" -> "badge-success"
-      "mute_user" -> "badge-info"
-      "unmute_user" -> "badge-info"
-      "report_user" -> "badge-warning"
-      "report_resolve" -> "badge-success"
-      "report_dismiss" -> "badge-ghost"
-      "banner_create" -> "badge-warning"
-      "banner_dismiss" -> "badge-ghost"
-      _ -> "badge-ghost"
-    end
-  end
-
-  defp format_action(action) do
-    case action do
-      "ban" -> gettext("Ban")
-      "unban" -> gettext("Unban")
-      "suspend" -> gettext("Suspend")
-      "unsuspend" -> gettext("Unsuspend")
-      "mute_user" -> gettext("Mute User")
-      "unmute_user" -> gettext("Unmute User")
-      "report_user" -> gettext("Report User")
-      "report_resolve" -> gettext("Report Resolved")
-      "report_dismiss" -> gettext("Report Dismissed")
-      "banner_create" -> gettext("Warning Sent")
-      "banner_dismiss" -> gettext("Banner Dismissed")
-      _ -> action
-    end
   end
 end

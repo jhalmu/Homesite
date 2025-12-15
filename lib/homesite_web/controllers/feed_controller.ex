@@ -324,6 +324,15 @@ defmodule HomesiteWeb.FeedController do
         post_url = url(~p"/posts/#{post.id}")
         content = if full_content, do: post.body, else: truncate_html(post.body, 500)
 
+        image_enclosure =
+          if post.featured_image_url && post.featured_image_url != "" do
+            """
+                  <enclosure url="#{post.featured_image_url}" type="image/jpeg" />
+            """
+          else
+            ""
+          end
+
         """
             <item>
               <title><![CDATA[#{post.title}]]></title>
@@ -332,7 +341,7 @@ defmodule HomesiteWeb.FeedController do
               <pubDate>#{pub_date}</pubDate>
               <author>#{post.user.email} (#{post.user.display_name || post.user.email})</author>
               <description><![CDATA[#{content}]]></description>
-            </item>
+        #{image_enclosure}      </item>
         """
       end)
 
@@ -361,7 +370,7 @@ defmodule HomesiteWeb.FeedController do
         # Prefer username in URLs if available
         user_path = if post.user.username, do: "@#{post.user.username}", else: post.user.id
 
-        %{
+        base_item = %{
           id: url(~p"/posts/#{post.id}"),
           url: url(~p"/posts/#{post.id}"),
           title: post.title,
@@ -373,6 +382,13 @@ defmodule HomesiteWeb.FeedController do
             url: url(~p"/users/#{user_path}")
           }
         }
+
+        # Add image if available
+        if post.featured_image_url && post.featured_image_url != "" do
+          Map.put(base_item, :image, post.featured_image_url)
+        else
+          base_item
+        end
       end)
 
     %{
@@ -401,5 +417,5 @@ defmodule HomesiteWeb.FeedController do
   # NOTE: Feed caching with ETS is implemented via Homesite.FeedCache
   # NOTE: Pagination is implemented via ?page=2 query parameter
   # NOTE: Full content option is implemented via ?full=true query parameter
-  # TODO: Add feed images/thumbnails if posts have featured images
+  # NOTE: Featured images are included in JSON Feed (image), RSS (enclosure)
 end

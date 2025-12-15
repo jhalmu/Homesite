@@ -269,6 +269,10 @@ defmodule HomesiteWeb.NotificationLive.Index do
   defp notification_icon("new_follower"), do: "hero-user-plus"
   defp notification_icon("post_published"), do: "hero-document-text"
   defp notification_icon("suspicious_activity"), do: "hero-exclamation-triangle"
+  defp notification_icon("new_user_registered"), do: "hero-user-plus"
+  defp notification_icon("report_submitted"), do: "hero-flag"
+  defp notification_icon("follower_post"), do: "hero-pencil-square"
+  defp notification_icon("system_alert"), do: "hero-exclamation-circle"
   defp notification_icon(_), do: "hero-bell"
 
   defp notification_message(%{type: "new_follower", actor: actor}) when not is_nil(actor) do
@@ -289,6 +293,36 @@ defmodule HomesiteWeb.NotificationLive.Index do
     email = Map.get(data, "email", "unknown")
     reason = Map.get(data, "reason", "unknown")
     gettext("Suspicious activity detected: %{reason} from %{email}", reason: reason, email: email)
+  end
+
+  defp notification_message(%{type: "new_user_registered", data: data}) do
+    email = Map.get(data, "user_email", "unknown")
+    gettext("New user registered: %{email}", email: email)
+  end
+
+  defp notification_message(%{type: "report_submitted", data: data}) do
+    reporter = Map.get(data, "reporter_email", "someone")
+    reported = Map.get(data, "reported_user_email", "a user")
+
+    gettext("New report: %{reporter} reported %{reported}",
+      reporter: reporter,
+      reported: reported
+    )
+  end
+
+  defp notification_message(%{type: "follower_post", data: data, actor: actor}) do
+    name =
+      if actor,
+        do: actor.display_name || String.split(actor.email, "@") |> List.first(),
+        else: Map.get(data, "author_name", "Someone")
+
+    title = Map.get(data, "post_title", "a new post")
+    gettext("%{name} published \"%{title}\"", name: name, title: title)
+  end
+
+  defp notification_message(%{type: "system_alert", data: data}) do
+    message = Map.get(data, "message", "System alert")
+    message
   end
 
   defp notification_message(_notification) do

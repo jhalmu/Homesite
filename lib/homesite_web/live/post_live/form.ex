@@ -248,6 +248,21 @@ defmodule HomesiteWeb.PostLive.Form do
             <.icon name="hero-information-circle" class="inline h-4 w-4" />
             {gettext("Select a featured image for your post")}
           </p>
+
+          <div class="divider text-[var(--text-xs)]">{gettext("OR use external URL")}</div>
+
+          <.input
+            field={@form[:featured_image_url]}
+            type="url"
+            label={gettext("Featured Image URL")}
+            placeholder="https://example.com/image.jpg"
+          />
+          <.input
+            field={@form[:featured_image_alt]}
+            type="text"
+            label={gettext("Image Alt Text")}
+            placeholder={gettext("Describe the image for accessibility")}
+          />
         </div>
         
     <!-- Media Picker Modal -->

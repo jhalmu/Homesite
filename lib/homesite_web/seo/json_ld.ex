@@ -106,10 +106,15 @@ defmodule HomesiteWeb.SEO.JsonLD do
     }
   end
 
-  defp maybe_add_image(json_ld, _post) do
-    # TODO: Add image field to posts schema
-    # For now, use default OG image
-    Map.put(json_ld, "image", "https://example.com/og-default.jpg")
+  defp maybe_add_image(json_ld, post) do
+    case post.featured_image_url do
+      url when is_binary(url) and url != "" ->
+        Map.put(json_ld, "image", url)
+
+      _ ->
+        # Default OG image when no featured image set
+        json_ld
+    end
   end
 
   defp strip_html(html) when is_binary(html) do

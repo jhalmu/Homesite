@@ -25,7 +25,7 @@ msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:289
 #: lib/homesite_web/components/layouts.ex:409
-#: lib/homesite_web/live/chat_live/show.ex:299
+#: lib/homesite_web/live/chat_live/show.ex:301
 #, elixir-autogen, elixir-format
 msgid "Admin"
 msgstr ""
@@ -155,7 +155,7 @@ msgstr ""
 #: lib/homesite_web/live/feed_folder_live/index.html.heex:60
 #: lib/homesite_web/live/media_live/index.ex:300
 #: lib/homesite_web/live/moderation_live/report.ex:298
-#: lib/homesite_web/live/post_live/form.ex:327
+#: lib/homesite_web/live/post_live/form.ex:342
 #: lib/homesite_web/live/tag_live/form.ex:80
 #, elixir-autogen, elixir-format
 msgid "Cancel"
@@ -175,7 +175,7 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:362
+#: lib/homesite_web/live/post_live/form.ex:377
 #, elixir-autogen, elixir-format
 msgid "Edit Post"
 msgstr ""
@@ -192,18 +192,18 @@ msgid "Make this post publicly visible"
 msgstr ""
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:320
-#: lib/homesite_web/live/post_live/form.ex:380
+#: lib/homesite_web/live/post_live/form.ex:395
 #: lib/homesite_web/live/post_live/index.ex:18
 #, elixir-autogen, elixir-format
 msgid "New Post"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:610
+#: lib/homesite_web/live/post_live/form.ex:625
 #, elixir-autogen, elixir-format
 msgid "Post created successfully"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:592
+#: lib/homesite_web/live/post_live/form.ex:607
 #, elixir-autogen, elixir-format
 msgid "Post updated successfully"
 msgstr ""
@@ -213,13 +213,13 @@ msgstr ""
 msgid "Publication Date & Time"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:324
+#: lib/homesite_web/live/post_live/form.ex:339
 #, elixir-autogen, elixir-format
 msgid "Save Post"
 msgstr ""
 
 #: lib/homesite_web/live/faq_live/form.ex:94
-#: lib/homesite_web/live/post_live/form.ex:323
+#: lib/homesite_web/live/post_live/form.ex:338
 #: lib/homesite_web/live/tag_live/form.ex:76
 #: lib/homesite_web/live/user_live/settings.ex:174
 #: lib/homesite_web/live/user_live/settings.ex:243
@@ -549,7 +549,7 @@ msgstr ""
 msgid "Published"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:71
+#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:72
 #: lib/homesite_web/live/dashboard_live/index.html.heex:316
 #, elixir-autogen, elixir-format
 msgid "Quick Actions"
@@ -915,7 +915,7 @@ msgstr ""
 msgid "Consider using one of these existing tags instead of creating a new one."
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:461
+#: lib/homesite_web/live/post_live/form.ex:476
 #, elixir-autogen, elixir-format
 msgid "Could not create tag"
 msgstr ""
@@ -952,7 +952,7 @@ msgstr ""
 msgid "Profile updated successfully. Remember to also update your display name, bio, and social links to complete your profile!"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:102
+#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:103
 #: lib/homesite_web/live/dashboard_live/index.html.heex:229
 #, elixir-autogen, elixir-format
 msgid "Recent Activity"
@@ -1445,7 +1445,7 @@ msgstr ""
 msgid "Claim your username to create your personal homepage!"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:313
+#: lib/homesite_web/live/post_live/form.ex:328
 #: lib/homesite_web/live/user_live/settings.ex:281
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Close"
@@ -1629,7 +1629,7 @@ msgid "Manage Sources"
 msgstr ""
 
 #: lib/homesite_web/live/feed_live/index.html.heex:169
-#: lib/homesite_web/live/notification_live/index.ex:138
+#: lib/homesite_web/live/notification_live/index.ex:140
 #, elixir-autogen, elixir-format
 msgid "Mark as read"
 msgstr ""
@@ -1786,7 +1786,7 @@ msgid "Status"
 msgstr ""
 
 #: lib/homesite_web/components/form_components.ex:253
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:108
+#: lib/homesite_web/live/admin_live/moderation/logs.ex:109
 #, elixir-autogen, elixir-format
 msgid "Time"
 msgstr ""
@@ -2371,7 +2371,7 @@ msgstr ""
 
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:138
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:100
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:71
+#: lib/homesite_web/live/admin_live/moderation/logs.ex:72
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:125
 #: lib/homesite_web/live/portfolio_live/show.ex:230
 #: lib/homesite_web/live/project_live/stepped_form.ex:540
@@ -2510,7 +2510,7 @@ msgstr ""
 msgid "Featured Image"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:277
+#: lib/homesite_web/live/post_live/form.ex:292
 #, elixir-autogen, elixir-format
 msgid "No media available. Upload images in the Media Library first."
 msgstr ""
@@ -2520,7 +2520,7 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:263
+#: lib/homesite_web/live/post_live/form.ex:278
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Search media..."
 msgstr ""
@@ -2530,7 +2530,7 @@ msgstr ""
 msgid "Select Image"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/form.ex:257
+#: lib/homesite_web/live/post_live/form.ex:272
 #, elixir-autogen, elixir-format
 msgid "Select Media"
 msgstr ""
@@ -3238,7 +3238,7 @@ msgstr ""
 msgid "Archived"
 msgstr ""
 
-#: lib/homesite_web/live/chat_live/show.ex:309
+#: lib/homesite_web/live/chat_live/show.ex:311
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Are you sure you want to delete this message?"
 msgstr ""
@@ -3260,22 +3260,22 @@ msgstr ""
 msgid "Back to profile"
 msgstr ""
 
-#: lib/homesite_web/live/chat_live/show.ex:382
+#: lib/homesite_web/live/chat_live/show.ex:384
 #, elixir-autogen, elixir-format
 msgid "Ban this user from chat? This is permanent."
 msgstr ""
 
-#: lib/homesite_web/live/chat_live/show.ex:387
+#: lib/homesite_web/live/chat_live/show.ex:389
 #, elixir-autogen, elixir-format
 msgid "Ban user"
 msgstr ""
 
-#: lib/homesite_web/live/chat_live/show.ex:330
+#: lib/homesite_web/live/chat_live/show.ex:332
 #, elixir-autogen, elixir-format
 msgid "Block this user? You won't see their messages."
 msgstr ""
 
-#: lib/homesite_web/live/chat_live/show.ex:335
+#: lib/homesite_web/live/chat_live/show.ex:337
 #, elixir-autogen, elixir-format
 msgid "Block user"
 msgstr ""
@@ -3339,7 +3339,7 @@ msgstr ""
 msgid "Could not unblock user"
 msgstr ""
 
-#: lib/homesite_web/live/chat_live/show.ex:311
+#: lib/homesite_web/live/chat_live/show.ex:313
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Delete message"
 msgstr ""
@@ -3384,22 +3384,22 @@ msgstr ""
 msgid "Link title and URL are required"
 msgstr ""
 
-#: lib/homesite_web/live/chat_live/show.ex:374
+#: lib/homesite_web/live/chat_live/show.ex:376
 #, elixir-autogen, elixir-format
 msgid "Mute 1 hour"
 msgstr ""
 
-#: lib/homesite_web/live/chat_live/show.ex:361
+#: lib/homesite_web/live/chat_live/show.ex:363
 #, elixir-autogen, elixir-format
 msgid "Mute 10 min"
 msgstr ""
 
-#: lib/homesite_web/live/chat_live/show.ex:369
+#: lib/homesite_web/live/chat_live/show.ex:371
 #, elixir-autogen, elixir-format
 msgid "Mute this user for 1 hour?"
 msgstr ""
 
-#: lib/homesite_web/live/chat_live/show.ex:356
+#: lib/homesite_web/live/chat_live/show.ex:358
 #, elixir-autogen, elixir-format
 msgid "Mute this user for 10 minutes?"
 msgstr ""
@@ -3545,7 +3545,7 @@ msgstr ""
 msgid "Suggestions:"
 msgstr ""
 
-#: lib/homesite_web/live/chat_live/show.ex:425
+#: lib/homesite_web/live/chat_live/show.ex:427
 #, elixir-autogen, elixir-format
 msgid "Type a message..."
 msgstr ""
@@ -3587,7 +3587,7 @@ msgstr ""
 msgid "You are banned from chat"
 msgstr ""
 
-#: lib/homesite_web/live/chat_live/show.ex:450
+#: lib/homesite_web/live/chat_live/show.ex:452
 #, elixir-autogen, elixir-format
 msgid "You are banned from chat and cannot send messages."
 msgstr ""
@@ -3597,7 +3597,7 @@ msgstr ""
 msgid "You are muted in this channel"
 msgstr ""
 
-#: lib/homesite_web/live/chat_live/show.ex:455
+#: lib/homesite_web/live/chat_live/show.ex:457
 #, elixir-autogen, elixir-format
 msgid "You are temporarily muted in this channel."
 msgstr ""
@@ -3623,22 +3623,22 @@ msgid "%{count} hours"
 msgstr ""
 
 #: lib/homesite_web/components/toast_notification.ex:48
-#: lib/homesite_web/live/notification_live/index.ex:272
+#: lib/homesite_web/live/notification_live/index.ex:280
 #, elixir-autogen, elixir-format
 msgid "%{name} started following you"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:109
+#: lib/homesite_web/live/admin_live/moderation/logs.ex:110
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Action"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:51
+#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:52
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Active Bans"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:44
+#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:45
 #, elixir-autogen, elixir-format
 msgid "Active Suspensions"
 msgstr ""
@@ -3648,7 +3648,7 @@ msgstr ""
 msgid "Add Preset"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:84
+#: lib/homesite_web/live/admin_live/moderation/logs.ex:85
 #, elixir-autogen, elixir-format, fuzzy
 msgid "All actions"
 msgstr ""
@@ -3688,7 +3688,7 @@ msgstr ""
 msgid "Are you sure you want to unsuspend this user?"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:66
+#: lib/homesite_web/live/admin_live/moderation/logs.ex:67
 #, elixir-autogen, elixir-format
 msgid "Audit trail of all moderation actions"
 msgstr ""
@@ -3713,8 +3713,8 @@ msgstr ""
 msgid "Back to notifications"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:180
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:179
+#: lib/homesite_web/helpers/moderation_helpers.ex:40
+#: lib/homesite_web/helpers/moderation_helpers.ex:63
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:256
 #: lib/homesite_web/live/admin_live/moderation/violations.ex:284
 #, elixir-autogen, elixir-format
@@ -3747,7 +3747,7 @@ msgstr ""
 msgid "Banned On"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:189
+#: lib/homesite_web/helpers/moderation_helpers.ex:50
 #, elixir-autogen, elixir-format
 msgid "Banner Dismissed"
 msgstr ""
@@ -3802,13 +3802,13 @@ msgstr ""
 msgid "Configure moderation parameters and reason presets"
 msgstr ""
 
-#: lib/homesite_web/live/notification_live/index.ex:249
+#: lib/homesite_web/live/notification_live/index.ex:253
 #: lib/homesite_web/live/user_live/followers.ex:224
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Could not follow user"
 msgstr ""
 
-#: lib/homesite_web/live/notification_live/index.ex:200
+#: lib/homesite_web/live/notification_live/index.ex:202
 #, elixir-autogen, elixir-format
 msgid "Could not mark notification as read"
 msgstr ""
@@ -3836,8 +3836,9 @@ msgstr ""
 msgid "Dismiss"
 msgstr ""
 
+#: lib/homesite_web/helpers/moderation_helpers.ex:71
+#: lib/homesite_web/helpers/moderation_helpers.ex:73
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:268
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:188
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:134
 #, elixir-autogen, elixir-format
 msgid "Dismissed"
@@ -3921,7 +3922,7 @@ msgstr ""
 msgid "Failed to update setting"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:80
+#: lib/homesite_web/live/admin_live/moderation/logs.ex:81
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Filter by action"
 msgstr ""
@@ -3937,12 +3938,12 @@ msgstr ""
 msgid "Follow"
 msgstr ""
 
-#: lib/homesite_web/live/notification_live/index.ex:123
+#: lib/homesite_web/live/notification_live/index.ex:125
 #, elixir-autogen, elixir-format
 msgid "Follow back"
 msgstr ""
 
-#: lib/homesite_web/live/notification_live/index.ex:246
+#: lib/homesite_web/live/notification_live/index.ex:250
 #, elixir-autogen, elixir-format
 msgid "Followed back!"
 msgstr ""
@@ -3957,7 +3958,7 @@ msgstr ""
 msgid "Followers"
 msgstr ""
 
-#: lib/homesite_web/live/notification_live/index.ex:114
+#: lib/homesite_web/live/notification_live/index.ex:116
 #: lib/homesite_web/live/user_live/followers.ex:66
 #, elixir-autogen, elixir-format
 msgid "Following"
@@ -4015,12 +4016,12 @@ msgstr ""
 msgid "Leave empty for manual dismiss only"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:84
+#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:85
 #, elixir-autogen, elixir-format
 msgid "Manage Bans"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:80
+#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:81
 #, elixir-autogen, elixir-format
 msgid "Manage Suspensions"
 msgstr ""
@@ -4030,7 +4031,7 @@ msgstr ""
 msgid "Mark all read"
 msgstr ""
 
-#: lib/homesite_web/live/notification_live/index.ex:219
+#: lib/homesite_web/live/notification_live/index.ex:221
 #, elixir-autogen, elixir-format
 msgid "Marked %{count} notification as read"
 msgid_plural "Marked %{count} notifications as read"
@@ -4048,14 +4049,14 @@ msgstr ""
 msgid "Minimum 10 characters required"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:18
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:28
+#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:19
+#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:29
 #, elixir-autogen, elixir-format
 msgid "Moderation Dashboard"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:32
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:64
+#: lib/homesite_web/live/admin_live/moderation/logs.ex:33
+#: lib/homesite_web/live/admin_live/moderation/logs.ex:65
 #, elixir-autogen, elixir-format
 msgid "Moderation Logs"
 msgstr ""
@@ -4066,7 +4067,7 @@ msgstr ""
 msgid "Moderation Settings"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:111
+#: lib/homesite_web/live/admin_live/moderation/logs.ex:112
 #, elixir-autogen, elixir-format
 msgid "Moderator"
 msgstr ""
@@ -4076,12 +4077,12 @@ msgstr ""
 msgid "Monitor users with violations and take action"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:184
+#: lib/homesite_web/helpers/moderation_helpers.ex:67
 #, elixir-autogen, elixir-format
 msgid "Mute"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:183
+#: lib/homesite_web/helpers/moderation_helpers.ex:44
 #, elixir-autogen, elixir-format
 msgid "Mute User"
 msgstr ""
@@ -4102,7 +4103,7 @@ msgstr ""
 msgid "Mutes"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:132
+#: lib/homesite_web/live/admin_live/moderation/logs.ex:133
 #, elixir-autogen, elixir-format
 msgid "N/A"
 msgstr ""
@@ -4132,12 +4133,12 @@ msgstr ""
 msgid "No followers yet"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:98
+#: lib/homesite_web/live/admin_live/moderation/logs.ex:99
 #, elixir-autogen, elixir-format, fuzzy
 msgid "No logs found"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:100
+#: lib/homesite_web/live/admin_live/moderation/logs.ex:101
 #, elixir-autogen, elixir-format
 msgid "No moderation actions match the current filter."
 msgstr ""
@@ -4147,7 +4148,7 @@ msgstr ""
 msgid "No muted users"
 msgstr ""
 
-#: lib/homesite_web/live/notification_live/index.ex:67
+#: lib/homesite_web/live/notification_live/index.ex:69
 #, elixir-autogen, elixir-format
 msgid "No notifications yet"
 msgstr ""
@@ -4157,7 +4158,7 @@ msgstr ""
 msgid "No reason provided"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:105
+#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:106
 #, elixir-autogen, elixir-format
 msgid "No recent moderation activity"
 msgstr ""
@@ -4206,7 +4207,7 @@ msgstr ""
 #: lib/homesite_web/components/layouts.ex:442
 #: lib/homesite_web/components/notification_bell.ex:29
 #: lib/homesite_web/live/notification_live/index.ex:21
-#: lib/homesite_web/live/notification_live/index.ex:173
+#: lib/homesite_web/live/notification_live/index.ex:175
 #, elixir-autogen, elixir-format
 msgid "Notifications"
 msgstr ""
@@ -4221,7 +4222,7 @@ msgstr ""
 msgid "Other (custom reason)"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:30
+#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:31
 #, elixir-autogen, elixir-format
 msgid "Overview of moderation activity and actions"
 msgstr ""
@@ -4231,7 +4232,7 @@ msgstr ""
 msgid "Pending"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:37
+#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:38
 #, elixir-autogen, elixir-format
 msgid "Pending Reports"
 msgstr ""
@@ -4268,7 +4269,7 @@ msgstr ""
 
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:138
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:184
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:112
+#: lib/homesite_web/live/admin_live/moderation/logs.ex:113
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:160
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:169
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:207
@@ -4288,7 +4289,7 @@ msgstr ""
 msgid "Reason details"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:186
+#: lib/homesite_web/helpers/moderation_helpers.ex:69
 #, elixir-autogen, elixir-format
 msgid "Report"
 msgstr ""
@@ -4309,17 +4310,17 @@ msgstr ""
 msgid "Report Details"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:187
+#: lib/homesite_web/helpers/moderation_helpers.ex:48
 #, elixir-autogen, elixir-format
 msgid "Report Dismissed"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:186
+#: lib/homesite_web/helpers/moderation_helpers.ex:47
 #, elixir-autogen, elixir-format
 msgid "Report Resolved"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:185
+#: lib/homesite_web/helpers/moderation_helpers.ex:46
 #: lib/homesite_web/live/moderation_live/report.ex:43
 #: lib/homesite_web/live/moderation_live/report.ex:193
 #, elixir-autogen, elixir-format
@@ -4341,7 +4342,7 @@ msgstr ""
 msgid "Report submitted successfully. Our team will review it."
 msgstr ""
 
-#: lib/homesite_web/live/chat_live/show.ex:346
+#: lib/homesite_web/live/chat_live/show.ex:348
 #, elixir-autogen, elixir-format
 msgid "Report user"
 msgstr ""
@@ -4390,7 +4391,7 @@ msgstr ""
 msgid "Resolve All"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:187
+#: lib/homesite_web/helpers/moderation_helpers.ex:70
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:127
 #: lib/homesite_web/live/admin_live/moderation/violations.ex:258
 #, elixir-autogen, elixir-format, fuzzy
@@ -4402,7 +4403,7 @@ msgstr ""
 msgid "Resolved by %{user} on %{date}"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:76
+#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:77
 #, elixir-autogen, elixir-format
 msgid "Review Reports"
 msgstr ""
@@ -4433,7 +4434,7 @@ msgstr ""
 msgid "Send Warning Banner"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:88
+#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:89
 #, elixir-autogen, elixir-format
 msgid "Send Warnings"
 msgstr ""
@@ -4470,7 +4471,7 @@ msgid "Since"
 msgstr ""
 
 #: lib/homesite_web/components/toast_notification.ex:52
-#: lib/homesite_web/live/notification_live/index.ex:276
+#: lib/homesite_web/live/notification_live/index.ex:284
 #, elixir-autogen, elixir-format
 msgid "Someone started following you"
 msgstr ""
@@ -4485,8 +4486,8 @@ msgstr ""
 msgid "Submitted %{date}"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:182
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:181
+#: lib/homesite_web/helpers/moderation_helpers.ex:42
+#: lib/homesite_web/helpers/moderation_helpers.ex:65
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:249
 #: lib/homesite_web/live/admin_live/moderation/violations.ex:277
 #, elixir-autogen, elixir-format
@@ -4515,7 +4516,7 @@ msgstr ""
 msgid "Suspensions"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:141
+#: lib/homesite_web/live/admin_live/moderation/logs.ex:142
 #: lib/homesite_web/live/admin_live/moderation/violations.ex:248
 #, elixir-autogen, elixir-format
 msgid "System"
@@ -4526,7 +4527,7 @@ msgstr ""
 msgid "System Settings"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:110
+#: lib/homesite_web/live/admin_live/moderation/logs.ex:111
 #, elixir-autogen, elixir-format
 msgid "Target User"
 msgstr ""
@@ -4561,7 +4562,7 @@ msgstr ""
 msgid "Toast notifications"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:58
+#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:59
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Total Mutes"
 msgstr ""
@@ -4571,9 +4572,9 @@ msgstr ""
 msgid "Total Violations"
 msgstr ""
 
+#: lib/homesite_web/helpers/moderation_helpers.ex:41
+#: lib/homesite_web/helpers/moderation_helpers.ex:64
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:221
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:181
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:180
 #, elixir-autogen, elixir-format
 msgid "Unban"
 msgstr ""
@@ -4589,13 +4590,13 @@ msgstr ""
 msgid "Unfollowed successfully"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:185
+#: lib/homesite_web/helpers/moderation_helpers.ex:68
 #: lib/homesite_web/live/moderation_live/mutes.ex:110
 #, elixir-autogen, elixir-format
 msgid "Unmute"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:184
+#: lib/homesite_web/helpers/moderation_helpers.ex:45
 #, elixir-autogen, elixir-format
 msgid "Unmute User"
 msgstr ""
@@ -4605,8 +4606,8 @@ msgstr ""
 msgid "Unresolved Weight"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:183
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:182
+#: lib/homesite_web/helpers/moderation_helpers.ex:43
+#: lib/homesite_web/helpers/moderation_helpers.ex:66
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:245
 #, elixir-autogen, elixir-format
 msgid "Unsuspend"
@@ -4682,7 +4683,7 @@ msgstr ""
 msgid "Value"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:92
+#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:93
 #, elixir-autogen, elixir-format
 msgid "View Full Audit Log"
 msgstr ""
@@ -4703,8 +4704,8 @@ msgstr ""
 msgid "Warn"
 msgstr ""
 
+#: lib/homesite_web/helpers/moderation_helpers.ex:72
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:176
-#: lib/homesite_web/live/admin_live/moderation/dashboard.ex:189
 #, elixir-autogen, elixir-format
 msgid "Warning"
 msgstr ""
@@ -4715,7 +4716,7 @@ msgstr ""
 msgid "Warning Banners"
 msgstr ""
 
-#: lib/homesite_web/live/admin_live/moderation/logs.ex:188
+#: lib/homesite_web/helpers/moderation_helpers.ex:49
 #, elixir-autogen, elixir-format
 msgid "Warning Sent"
 msgstr ""
@@ -4730,7 +4731,7 @@ msgstr ""
 msgid "Weight"
 msgstr ""
 
-#: lib/homesite_web/live/notification_live/index.ex:69
+#: lib/homesite_web/live/notification_live/index.ex:71
 #, elixir-autogen, elixir-format
 msgid "When someone follows you or interacts with your content, you'll see it here."
 msgstr ""
@@ -4763,7 +4764,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: lib/homesite_web/components/toast_notification.ex:61
-#: lib/homesite_web/live/notification_live/index.ex:291
+#: lib/homesite_web/live/notification_live/index.ex:325
 #, elixir-autogen, elixir-format
 msgid "You have a new notification"
 msgstr ""
@@ -4779,13 +4780,13 @@ msgid "You haven't muted anyone yet."
 msgstr ""
 
 #: lib/homesite_web/components/toast_notification.ex:57
-#: lib/homesite_web/live/notification_live/index.ex:281
+#: lib/homesite_web/live/notification_live/index.ex:289
 #, elixir-autogen, elixir-format
 msgid "Your post \"%{title}\" was published"
 msgstr ""
 
 #: lib/homesite_web/components/toast_notification.ex:56
-#: lib/homesite_web/live/notification_live/index.ex:280
+#: lib/homesite_web/live/notification_live/index.ex:288
 #, elixir-autogen, elixir-format, fuzzy
 msgid "a post"
 msgstr ""
@@ -4809,7 +4810,7 @@ msgstr[1] ""
 msgid "following"
 msgstr ""
 
-#: lib/homesite_web/live/notification_live/index.ex:287
+#: lib/homesite_web/live/notification_live/index.ex:295
 #, elixir-autogen, elixir-format
 msgid "Suspicious activity detected: %{reason} from %{email}"
 msgstr ""
@@ -4832,4 +4833,39 @@ msgstr ""
 #: lib/homesite_web/components/layouts.ex:137
 #, elixir-autogen, elixir-format
 msgid "Site Admins"
+msgstr ""
+
+#: lib/homesite_web/live/notification_live/index.ex:316
+#, elixir-autogen, elixir-format
+msgid "%{name} published \"%{title}\""
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:264
+#, elixir-autogen, elixir-format
+msgid "Describe the image for accessibility"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:257
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Featured Image URL"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:263
+#, elixir-autogen, elixir-format
+msgid "Image Alt Text"
+msgstr ""
+
+#: lib/homesite_web/live/notification_live/index.ex:306
+#, elixir-autogen, elixir-format
+msgid "New report: %{reporter} reported %{reported}"
+msgstr ""
+
+#: lib/homesite_web/live/notification_live/index.ex:300
+#, elixir-autogen, elixir-format
+msgid "New user registered: %{email}"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:252
+#, elixir-autogen, elixir-format
+msgid "OR use external URL"
 msgstr ""

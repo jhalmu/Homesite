@@ -13,7 +13,8 @@ defmodule Homesite.Content.Post do
     field :published_at, :utc_datetime
     field :is_public, :boolean, default: true
     field :read_time_minutes, :integer, default: 1
-    # field :user_id, :id
+    field :featured_image_url, :string
+    field :featured_image_alt, :string
 
     belongs_to :user, Homesite.Accounts.User
 
@@ -35,7 +36,15 @@ defmodule Homesite.Content.Post do
   @doc false
   def changeset(post, attrs, user_scope) do
     post
-    |> cast(attrs, [:title, :body, :slug, :published_at, :is_public])
+    |> cast(attrs, [
+      :title,
+      :body,
+      :slug,
+      :published_at,
+      :is_public,
+      :featured_image_url,
+      :featured_image_alt
+    ])
     |> validate_required([:title, :body, :published_at])
     |> validate_length(:title, min: 3, max: 200)
     |> validate_length(:body, min: 10)
