@@ -7,6 +7,40 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-15 - New Machine Setup (Fedora Bluefin)
+
+### Session: Project setup on new development machine
+
+**Environment:**
+- Fedora Bluefin (immutable Linux with Homebrew)
+- PostgreSQL 18 via `brew services`
+- Node.js installed for npm dependencies
+
+**Setup Steps Completed:**
+1. Installed Hex and Rebar: `mix local.hex --force && mix local.rebar --force`
+2. Installed dependencies: `mix deps.get`
+3. Created PostgreSQL role: `CREATE ROLE postgres WITH LOGIN SUPERUSER PASSWORD 'postgres'`
+4. Created database and ran migrations (59 migrations)
+5. Installed JS dependencies: `npm install` in assets directory
+6. Created admin user: `admin@example.com` / `adminpassword123` (5 admin flowers)
+
+**Tests:** 1549 tests (some connection pool timeouts with high concurrency - use `--max-cases 4` if needed)
+
+**Known Issues:**
+- GitHub CLI not accessible from this machine (network/firewall)
+
+---
+
+### 🔴 DATA MIGRATION REMINDER
+
+**FAQ SQLs need to be exported from the other machine:**
+- User FAQs (DevFaqs) - development documentation data
+- Admin FAQs (Faqs) - bilingual FAQ content
+
+**Future consideration:** Create SQL dump utilities for easier data portability between development machines.
+
+---
+
 ## 2025-12-15 - Admin System Version & Changelog Page
 
 ### Session: Automated version and changelog system for admins
