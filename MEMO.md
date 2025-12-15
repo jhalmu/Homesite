@@ -7,6 +7,55 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-15 - Admin Visibility in Chat, Deployment Docs Update
+
+### Session: Chat admin indicators, footer admin list, deployment version updates
+
+#### Completed Tasks
+
+**1. Admin Visibility in Chat**
+- Added 🌸 flower emoji after admin usernames in chat messages
+- Improved block error message: "Name is an admin and cannot be blocked" (with username)
+- Fixed dropdown overflow: Changed from dropdown to DaisyUI modal dialog
+- Fixed flash z-index: Changed from `z-50` to `z-[9999]` to appear above navbar
+
+**2. Admin List in Footer**
+- Added "Site Admins" section to footer
+- Displays admins horizontally, sorted by `admin_flowers` (most to least)
+- Each admin shows: `Name 🌸🌸🌸` (flower count)
+- Added `list_admins/0` function to Accounts context
+
+**3. Atom Feed Link in Footer**
+- Added Atom feed link alongside existing JSON feed
+- Uses existing `/feed.xml` route (already serves Atom format)
+
+**4. Deployment Documentation Updates**
+- Updated HOMESITE_DEPLOYMENT_PLAN.md with current versions:
+  - Elixir 1.19.4 (was 1.18.4)
+  - Phoenix 1.8.3 (was 1.7.19)
+  - PostgreSQL 18 (was 17)
+- Updated DEPLOYMENT.md PostgreSQL version to 18
+
+**5. Finnish Translations Added**
+- "%{name} is an admin and cannot be blocked" → "%{name} on ylläpitäjä eikä häntä voi estää"
+- "Site Admins" → "Ylläpitäjät"
+- "Atom Feed" → "Atom-syöte"
+
+#### Files Modified
+- `lib/homesite_web/live/chat_live/show.ex` - Modal for actions, admin emoji, error handling
+- `lib/homesite_web/components/core_components.ex` - Flash z-index fix
+- `lib/homesite_web/components/layouts.ex` - Admin list in footer, Atom feed link
+- `priv/gettext/fi/LC_MESSAGES/default.po` - Finnish translations
+- `HOMESITE_DEPLOYMENT_PLAN.md` - Version updates
+- `DEPLOYMENT.md` - Version updates
+
+#### Open GitHub Issues
+- #63 - Code Quality: Credo Refactoring (45 opportunities)
+- #64 - Feature: Post Featured Images
+- #65 - Feature: Extended Notification Types
+
+---
+
 ## 2025-12-11 22:00:00 - Translations Complete, Admin Notifications, MEMO Cleanup
 
 ### Session: Completed Finnish translations, wired admin notifications, cleaned MEMO.md

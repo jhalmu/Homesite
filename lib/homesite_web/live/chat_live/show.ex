@@ -114,6 +114,27 @@ defmodule HomesiteWeb.ChatLive.Show do
          |> put_flash(:info, gettext("User blocked. Their messages are now hidden."))
          |> reload_messages()}
 
+      {:error, %Ecto.Changeset{} = changeset} ->
+        # Check for specific errors
+        errors = Ecto.Changeset.traverse_errors(changeset, fn {msg, _opts} -> msg end)
+
+        error_message =
+          cond do
+            "cannot block admin accounts" in Map.get(errors, :blocked_user_id, []) ->
+              # Get the admin's name for a better error message
+              user = Accounts.get_user!(user_id)
+              name = user.display_name || String.split(user.email, "@") |> hd()
+              gettext("%{name} is an admin and cannot be blocked", name: name)
+
+            "cannot block yourself" in Map.get(errors, :blocked_user_id, []) ->
+              gettext("Cannot block yourself")
+
+            true ->
+              gettext("Could not block user")
+          end
+
+        {:noreply, put_flash(socket, :error, error_message)}
+
       {:error, _} ->
         {:noreply, put_flash(socket, :error, gettext("Could not block user"))}
     end
@@ -272,8 +293,13 @@ defmodule HomesiteWeb.ChatLive.Show do
               id={dom_id}
               class={["chat", (my_message?(message, @current_scope) && "chat-end") || "chat-start"]}
             >
-              <div class="chat-header gap-[var(--space-xs)] flex items-center">
-                <span class="font-medium">{message.user.email |> String.split("@") |> hd()}</span>
+              <div class="chat-header gap-[var(--space-xs)] relative flex items-center overflow-visible">
+                <span class="font-medium">
+                  {message.user.display_name || message.user.email |> String.split("@") |> hd()}
+                </span>
+                <%= if message.user.role == "admin" do %>
+                  <span class="text-xs" title={gettext("Admin")}>🌸</span>
+                <% end %>
                 <time class="text-base-content/50 text-[var(--text-xs)]">
                   {format_time(message.inserted_at)}
                 </time>
@@ -289,81 +315,87 @@ defmodule HomesiteWeb.ChatLive.Show do
                     <.icon name="hero-trash" class="h-3 w-3" />
                   </button>
                 <% else %>
-                  <%!-- Block user button (for other users' messages) --%>
-                  <div class="dropdown dropdown-end">
-                    <button
-                      tabindex="0"
-                      class="text-base-content/50 text-[var(--text-xs)] hover:text-base-content"
-                    >
-                      <.icon name="hero-ellipsis-horizontal" class="h-3 w-3" />
-                    </button>
-                    <ul
-                      tabindex="0"
-                      class="dropdown-content menu bg-base-100 rounded-box text-[var(--text-sm)] z-10 w-48 p-1 shadow-lg"
-                    >
-                      <li>
-                        <button
-                          phx-click="block_user"
-                          phx-value-user-id={message.user_id}
-                          data-confirm={gettext("Block this user? You won't see their messages.")}
-                          class="text-warning"
-                        >
-                          <.icon name="hero-no-symbol" class="h-4 w-4" />
-                          {gettext("Block user")}
-                        </button>
-                      </li>
-                      <li>
-                        <.link
-                          navigate={
-                            ~p"/moderation/report/#{message.user_id}?source=chat&content_type=chat_message&content_id=#{message.id}"
-                          }
-                          class="text-error"
-                        >
-                          <.icon name="hero-flag" class="h-4 w-4" />
-                          {gettext("Report user")}
-                        </.link>
-                      </li>
-                      <%!-- Admin actions --%>
-                      <%= if @is_admin do %>
+                  <%!-- Message actions menu --%>
+                  <button
+                    class="text-base-content/50 text-[var(--text-xs)] hover:text-base-content"
+                    onclick={"document.getElementById('msg-actions-#{message.id}').showModal()"}
+                  >
+                    <.icon name="hero-ellipsis-horizontal" class="h-3 w-3" />
+                  </button>
+                  <dialog id={"msg-actions-#{message.id}"} class="modal">
+                    <div class="modal-box w-64 p-2">
+                      <ul class="menu p-0">
                         <li>
                           <button
-                            phx-click="mute_user"
+                            phx-click="block_user"
                             phx-value-user-id={message.user_id}
-                            phx-value-duration="10"
-                            data-confirm={gettext("Mute this user for 10 minutes?")}
+                            data-confirm={gettext("Block this user? You won't see their messages.")}
                             class="text-warning"
+                            onclick={"document.getElementById('msg-actions-#{message.id}').close()"}
                           >
-                            <.icon name="hero-speaker-x-mark" class="h-4 w-4" />
-                            {gettext("Mute 10 min")}
+                            <.icon name="hero-no-symbol" class="h-4 w-4" />
+                            {gettext("Block user")}
                           </button>
                         </li>
                         <li>
-                          <button
-                            phx-click="mute_user"
-                            phx-value-user-id={message.user_id}
-                            phx-value-duration="60"
-                            data-confirm={gettext("Mute this user for 1 hour?")}
-                            class="text-warning"
-                          >
-                            <.icon name="hero-speaker-x-mark" class="h-4 w-4" />
-                            {gettext("Mute 1 hour")}
-                          </button>
-                        </li>
-                        <li>
-                          <button
-                            phx-click="ban_user"
-                            phx-value-user-id={message.user_id}
-                            phx-value-reason="Violation of chat rules"
-                            data-confirm={gettext("Ban this user from chat? This is permanent.")}
+                          <.link
+                            navigate={
+                              ~p"/moderation/report/#{message.user_id}?source=chat&content_type=chat_message&content_id=#{message.id}"
+                            }
                             class="text-error"
                           >
-                            <.icon name="hero-x-circle" class="h-4 w-4" />
-                            {gettext("Ban user")}
-                          </button>
+                            <.icon name="hero-flag" class="h-4 w-4" />
+                            {gettext("Report user")}
+                          </.link>
                         </li>
-                      <% end %>
-                    </ul>
-                  </div>
+                        <%!-- Admin actions --%>
+                        <%= if @is_admin do %>
+                          <li>
+                            <button
+                              phx-click="mute_user"
+                              phx-value-user-id={message.user_id}
+                              phx-value-duration="10"
+                              data-confirm={gettext("Mute this user for 10 minutes?")}
+                              class="text-warning"
+                              onclick={"document.getElementById('msg-actions-#{message.id}').close()"}
+                            >
+                              <.icon name="hero-speaker-x-mark" class="h-4 w-4" />
+                              {gettext("Mute 10 min")}
+                            </button>
+                          </li>
+                          <li>
+                            <button
+                              phx-click="mute_user"
+                              phx-value-user-id={message.user_id}
+                              phx-value-duration="60"
+                              data-confirm={gettext("Mute this user for 1 hour?")}
+                              class="text-warning"
+                              onclick={"document.getElementById('msg-actions-#{message.id}').close()"}
+                            >
+                              <.icon name="hero-speaker-x-mark" class="h-4 w-4" />
+                              {gettext("Mute 1 hour")}
+                            </button>
+                          </li>
+                          <li>
+                            <button
+                              phx-click="ban_user"
+                              phx-value-user-id={message.user_id}
+                              phx-value-reason="Violation of chat rules"
+                              data-confirm={gettext("Ban this user from chat? This is permanent.")}
+                              class="text-error"
+                              onclick={"document.getElementById('msg-actions-#{message.id}').close()"}
+                            >
+                              <.icon name="hero-x-circle" class="h-4 w-4" />
+                              {gettext("Ban user")}
+                            </button>
+                          </li>
+                        <% end %>
+                      </ul>
+                    </div>
+                    <form method="dialog" class="modal-backdrop">
+                      <button>close</button>
+                    </form>
+                  </dialog>
                 <% end %>
               </div>
               <div class={[

@@ -1,6 +1,6 @@
 # Homesite Deployment Guide
 
-**Created:** 2025-12-02 | **Updated:** 2025-12-10
+**Created:** 2025-12-02 | **Updated:** 2025-12-15
 **Stack:** Phoenix + PostgreSQL + Docker + Coolify + Tailscale
 **Status:** Ready for Implementation
 
@@ -115,7 +115,7 @@ Add DNS records (same pattern as above).
 **In Coolify UI:**
 
 1. Resources → Databases → New Database
-2. Select: **PostgreSQL 16**
+2. Select: **PostgreSQL 18**
 3. Configure:
    - Database name: `homesite_prod`
    - Username: `homesite`

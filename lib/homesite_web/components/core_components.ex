@@ -58,7 +58,7 @@ defmodule HomesiteWeb.CoreComponents do
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
       phx-hook="AutoDismissFlash"
       role="alert"
-      class="toast toast-top toast-center z-50"
+      class="toast toast-top toast-center z-[9999]"
       {@rest}
     >
       <div class={[

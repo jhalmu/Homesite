@@ -51,7 +51,9 @@ defmodule HomesiteWeb.NotificationLive.Index do
               {ngettext(
                 "You have %{count} unread notification",
                 "You have %{count} unread notifications",
-                @unread_count, count: @unread_count)}
+                @unread_count,
+                count: @unread_count
+              )}
             </span>
           </div>
         <% end %>
@@ -219,7 +221,9 @@ defmodule HomesiteWeb.NotificationLive.Index do
        ngettext(
          "Marked %{count} notification as read",
          "Marked %{count} notifications as read",
-         count, count: count)
+         count,
+         count: count
+       )
      )}
   end
 

@@ -36,6 +36,13 @@ defmodule HomesiteWeb.Layouts do
   slot :inner_block, required: true
 
   def app(assigns) do
+    # Fetch admins sorted by flower count (most to least)
+    admins =
+      Homesite.Accounts.list_admins()
+      |> Enum.sort_by(& &1.admin_flowers, :desc)
+
+    assigns = assign(assigns, :admins, admins)
+
     ~H"""
     <main
       id="main-content"
@@ -100,6 +107,13 @@ defmodule HomesiteWeb.Layouts do
               <.icon name="hero-code-bracket" class="h-4 w-4" />
               {gettext("JSON Feed")}
             </.link>
+            <.link
+              href={~p"/feed.xml"}
+              class="link-hover link gap-[var(--spacing-inline)] flex items-center"
+            >
+              <.icon name="hero-rss" class="h-4 w-4" />
+              {gettext("Atom Feed")}
+            </.link>
           </div>
           <%= if @current_scope do %>
             <div class="gap-[var(--space-xs)] flex flex-col">
@@ -117,6 +131,20 @@ defmodule HomesiteWeb.Layouts do
             </div>
           <% end %>
         </div>
+        <%!-- Admin list --%>
+        <%= if @admins != [] do %>
+          <div class="mt-[var(--space-md)] pt-[var(--space-md)] border-base-300 border-t">
+            <span class="footer-title">{gettext("Site Admins")}</span>
+            <div class="gap-[var(--space-sm)] mt-[var(--space-xs)] flex flex-wrap">
+              <%= for admin <- @admins do %>
+                <span class="whitespace-nowrap opacity-70">
+                  {admin.display_name || admin.email |> String.split("@") |> hd()}
+                  <span class="ml-1">{String.duplicate("🌸", admin.admin_flowers || 1)}</span>
+                </span>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
       </div>
       <div class="border-base-300 bg-base-200/50 px-[var(--spacing-card)] py-[var(--spacing-md)] text-[var(--text-sm)] border-t text-center opacity-70">
         <p>© {Date.utc_today().year} Portal of JH. {gettext("Built with ❤️ and Elixir.")}</p>
