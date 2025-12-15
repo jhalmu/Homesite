@@ -7,13 +7,13 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
-## 2025-12-15 - Admin Visibility in Chat, Deployment Docs Update
+## 2025-12-15 - Admin Visibility, Issues #63, #64, #65
 
-### Session: Chat admin indicators, footer admin list, deployment version updates
+### Session: Chat admin indicators, Credo refactoring, featured images, notification types
 
-#### Completed Tasks
+#### Part 1: Admin Visibility in Chat
 
-**1. Admin Visibility in Chat**
+**1. Chat Admin Indicators**
 - Added 🌸 flower emoji after admin usernames in chat messages
 - Improved block error message: "Name is an admin and cannot be blocked" (with username)
 - Fixed dropdown overflow: Changed from dropdown to DaisyUI modal dialog
@@ -22,37 +22,54 @@ Session notes and progress tracking for the Homesite project.
 **2. Admin List in Footer**
 - Added "Site Admins" section to footer
 - Displays admins horizontally, sorted by `admin_flowers` (most to least)
-- Each admin shows: `Name 🌸🌸🌸` (flower count)
-- Added `list_admins/0` function to Accounts context
-
-**3. Atom Feed Link in Footer**
 - Added Atom feed link alongside existing JSON feed
-- Uses existing `/feed.xml` route (already serves Atom format)
 
-**4. Deployment Documentation Updates**
+**3. Deployment Documentation Updates**
 - Updated HOMESITE_DEPLOYMENT_PLAN.md with current versions:
-  - Elixir 1.19.4 (was 1.18.4)
-  - Phoenix 1.8.3 (was 1.7.19)
-  - PostgreSQL 18 (was 17)
-- Updated DEPLOYMENT.md PostgreSQL version to 18
+  - Elixir 1.19.4, Phoenix 1.8.3, PostgreSQL 18
 
-**5. Finnish Translations Added**
-- "%{name} is an admin and cannot be blocked" → "%{name} on ylläpitäjä eikä häntä voi estää"
-- "Site Admins" → "Ylläpitäjät"
-- "Atom Feed" → "Atom-syöte"
+#### Part 2: GitHub Issues Resolved
+
+**#63 Credo Refactoring (Closed)**
+- Created `lib/homesite_web/helpers/moderation_helpers.ex` with shared functions
+- `action_badge_class/1` and `format_action/1` now use maps instead of case statements
+- Refactored logs.ex and dashboard.ex to import shared helpers
+- Reduced Credo warnings from 45 to 41
+
+**#64 Post Featured Images (Closed)**
+- Migration: Added `featured_image_url` and `featured_image_alt` to posts
+- Schema: Updated Post changeset to include new fields
+- Form: Added URL input fields to post form (alternative to media picker)
+- SEO: Updated JSON-LD `maybe_add_image/2` to use featured_image_url
+- Feeds: Added image to JSON Feed items, enclosure to RSS items
+
+**#65 Extended Notification Types (Closed)**
+- Added new types: `new_user_registered`, `report_submitted`, `follower_post`, `system_alert`
+- Added helper functions: `notify_new_user_registered/2`, `notify_report_submitted/4`, `notify_follower_post/3`, `notify_system_alert/4`
+- Added icons and message formatters in notification LiveView
+- Added Finnish translations for all new strings
+
+#### Files Created
+- `lib/homesite_web/helpers/moderation_helpers.ex` - Shared moderation formatting
+- `priv/repo/migrations/20251215084619_add_featured_image_to_posts.exs`
 
 #### Files Modified
-- `lib/homesite_web/live/chat_live/show.ex` - Modal for actions, admin emoji, error handling
-- `lib/homesite_web/components/core_components.ex` - Flash z-index fix
-- `lib/homesite_web/components/layouts.ex` - Admin list in footer, Atom feed link
+- `lib/homesite/content/post.ex` - Featured image fields
+- `lib/homesite/notifications.ex` - New notification types
+- `lib/homesite_web/controllers/feed_controller.ex` - Image support
+- `lib/homesite_web/live/admin_live/moderation/dashboard.ex` - Use shared helpers
+- `lib/homesite_web/live/admin_live/moderation/logs.ex` - Use shared helpers
+- `lib/homesite_web/live/notification_live/index.ex` - New type rendering
+- `lib/homesite_web/live/post_live/form.ex` - Featured image URL inputs
+- `lib/homesite_web/seo/json_ld.ex` - Featured image support
 - `priv/gettext/fi/LC_MESSAGES/default.po` - Finnish translations
-- `HOMESITE_DEPLOYMENT_PLAN.md` - Version updates
-- `DEPLOYMENT.md` - Version updates
 
-#### Open GitHub Issues
-- #63 - Code Quality: Credo Refactoring (45 opportunities)
-- #64 - Feature: Post Featured Images
-- #65 - Feature: Extended Notification Types
+#### Test Results
+- **1533 tests, 0 failures**
+- Credo warnings reduced: 45 → 41
+
+#### GitHub Issues Status
+- All issues closed (#63, #64, #65)
 
 ---
 
