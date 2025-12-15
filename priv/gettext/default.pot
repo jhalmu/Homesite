@@ -4763,7 +4763,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: lib/homesite_web/components/toast_notification.ex:61
-#: lib/homesite_web/live/notification_live/index.ex:325
+#: lib/homesite_web/live/notification_live/index.ex:329
 #, elixir-autogen, elixir-format
 msgid "You have a new notification"
 msgstr ""
@@ -4834,7 +4834,7 @@ msgstr ""
 msgid "Site Admins"
 msgstr ""
 
-#: lib/homesite_web/live/notification_live/index.ex:316
+#: lib/homesite_web/live/notification_live/index.ex:320
 #, elixir-autogen, elixir-format
 msgid "%{name} published \"%{title}\""
 msgstr ""
@@ -4854,7 +4854,7 @@ msgstr ""
 msgid "Image Alt Text"
 msgstr ""
 
-#: lib/homesite_web/live/notification_live/index.ex:306
+#: lib/homesite_web/live/notification_live/index.ex:307
 #, elixir-autogen, elixir-format
 msgid "New report: %{reporter} reported %{reported}"
 msgstr ""
@@ -4867,4 +4867,104 @@ msgstr ""
 #: lib/homesite_web/live/post_live/form.ex:252
 #, elixir-autogen, elixir-format
 msgid "OR use external URL"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/system/index.ex:135
+#, elixir-autogen, elixir-format
+msgid "Bug Fixes"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/system/index.ex:23
+#, elixir-autogen, elixir-format
+msgid "Built"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/system/index.ex:139
+#, elixir-autogen, elixir-format
+msgid "Chores"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/system/index.ex:39
+#, elixir-autogen, elixir-format
+msgid "Database"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/system/index.ex:136
+#, elixir-autogen, elixir-format
+msgid "Documentation"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/system/index.ex:134
+#, elixir-autogen, elixir-format
+msgid "Features"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/system/index.ex:142
+#, elixir-autogen, elixir-format
+msgid "Internationalization"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/system/index.ex:105
+#, elixir-autogen, elixir-format
+msgid "No changelog entries available"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/system/index.ex:143
+#, elixir-autogen, elixir-format
+msgid "Other"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/system/index.ex:141
+#, elixir-autogen, elixir-format
+msgid "Performance"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/system/index.ex:83
+#, elixir-autogen, elixir-format
+msgid "Recent Changes"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/system/index.ex:138
+#, elixir-autogen, elixir-format
+msgid "Refactoring"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/system/index.ex:50
+#, elixir-autogen, elixir-format
+msgid "Runtime Environment"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/system/index.ex:140
+#, elixir-autogen, elixir-format
+msgid "Security"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/system/index.ex:118
+#, elixir-autogen, elixir-format
+msgid "System Info"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/system/index.ex:11
+#, elixir-autogen, elixir-format
+msgid "System Information"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/system/index.ex:137
+#, elixir-autogen, elixir-format
+msgid "Tests"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/system/index.ex:30
+#, elixir-autogen, elixir-format
+msgid "Uptime"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/system/index.ex:21
+#, elixir-autogen, elixir-format
+msgid "Version"
+msgstr ""
+
+#: lib/homesite_web/live/admin_live/system/index.ex:12
+#, elixir-autogen, elixir-format
+msgid "Version, build info, and changelog"
 msgstr ""

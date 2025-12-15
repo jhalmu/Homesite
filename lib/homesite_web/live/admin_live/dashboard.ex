@@ -80,6 +80,9 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
             <.link navigate={~p"/admin/feedback"} class="btn btn-outline btn-sm">
               <.icon name="hero-chat-bubble-left-right" class="h-4 w-4" /> Feedback
             </.link>
+            <.link navigate={~p"/admin/system"} class="btn btn-outline btn-sm">
+              <.icon name="hero-cog-6-tooth" class="h-4 w-4" /> System Info
+            </.link>
           </div>
         </.dashboard_card>
       </div>

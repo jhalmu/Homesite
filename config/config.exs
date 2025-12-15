@@ -61,6 +61,9 @@ config :homesite, :external_feeds,
     "nitter.unixfox.eu"
   ]
 
+# System information configuration
+config :homesite, Homesite.System, changelog_depth: 50
+
 # Configures the endpoint
 config :homesite, HomesiteWeb.Endpoint,
   url: [host: "localhost"],

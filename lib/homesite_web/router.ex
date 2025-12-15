@@ -195,6 +195,7 @@ defmodule HomesiteWeb.Router do
       live "/admin/invitations", AdminLive.Invitations.Index, :index
       live "/admin/analytics", AdminLive.Analytics.Index, :index
       live "/admin/feedback", AdminLive.Feedback.Index, :index
+      live "/admin/system", AdminLive.System.Index, :index
 
       # Admin moderation
       live "/admin/moderation", AdminLive.Moderation.Dashboard, :index

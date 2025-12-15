@@ -7,6 +7,47 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-15 - Admin System Version & Changelog Page
+
+### Session: Automated version and changelog system for admins
+
+**New Feature: `/admin/system` page**
+
+Implemented an automated system version and changelog page for admins:
+
+1. **Version Format**: `YYYY.MM.DD-xxxxxxx` (date + git short hash)
+   - Example: `2025.12.15-1a1e98c`
+   - Generated at compile-time (works in releases without git)
+
+2. **Auto-Generated Changelog**:
+   - Parses last 50 git commits at compile-time
+   - Groups by conventional commit type (feat, fix, docs, security, etc.)
+   - Shows commit hash and description
+
+3. **System Info**:
+   - Elixir, OTP, Phoenix, Ecto versions
+   - Uptime and environment
+   - Database version (PostgreSQL)
+
+**Files Created:**
+- `lib/homesite/system.ex` - Context with compile-time version/changelog
+- `lib/homesite_web/live/admin_live/system/index.ex` - LiveView page
+- `test/homesite/system_test.exs` - 9 unit tests
+- `test/homesite_web/live/admin_live/system/index_test.exs` - 7 LiveView tests
+
+**Files Modified:**
+- `config/config.exs` - Added `changelog_depth: 50` config
+- `router.ex` - Added `/admin/system` route
+- `dashboard.ex` - Added "System Info" quick action button
+- Finnish translations - 15 new translations
+
+**Also in this session:**
+- Shrunk `homesite/CLAUDE.md` from 1140 to 107 lines (91% reduction)
+
+**Tests:** 1549 tests, 0 failures
+
+---
+
 ## 2025-12-15 - Admin Visibility, Issues #63, #64, #65
 
 ### Session: Chat admin indicators, Credo refactoring, featured images, notification types
