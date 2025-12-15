@@ -372,18 +372,23 @@ archived_docs/
    - Identifies modified files
    - Categorizes changes (new features, bug fixes, docs, etc.)
 
-3. **Draft MEMO.md Entry** ✍️
+3. **Check & Sync GitHub Issues** 📋
+   - Runs: `gh issue list --state open` to see current open issues
+   - Compares open issues against work completed in session
+   - For each issue worked on:
+     - If completed: Close with summary comment using `gh issue close <num> --comment "..."`
+     - If partially done: Add progress comment using `gh issue comment <num> --body "..."`
+   - Identifies issues mentioned in code/commits (looks for "fixes #", "closes #")
+   - Creates new issues for TODOs discovered in code if needed
+   - Reports issue sync status in summary
+
+4. **Draft MEMO.md Entry** ✍️
    - Generates timestamp (ISO 8601 format)
    - Summarizes what was accomplished based on git changes
+   - Lists GitHub issues status (opened/closed/updated)
    - Identifies files created/modified
    - Notes test results
    - Appends to MEMO.md automatically
-
-4. **Update GitHub Issues** 📋
-   - Identifies issues mentioned in code/commits
-   - Suggests which issues to close (looks for "fixes #", "closes #")
-   - Updates issue comments with progress
-   - Creates new issues for TODOs discovered in code
 
 5. **Check for Insights** 💡
    - Asks: "Did we discover any patterns worth logging?"
@@ -392,7 +397,7 @@ archived_docs/
 
 6. **Generate Commit Message** 📝
    - Creates descriptive commit message from changes
-   - Includes issue references
+   - Includes issue references (Closes #X, Fixes #Y)
    - Adds standard footer:
      ```
      🤖 Generated with [Claude Code](https://claude.com/claude-code)
@@ -409,10 +414,11 @@ archived_docs/
 8. **Summary Report** 📊
    - Shows what was done:
      - ✅ Tests passed
+     - ✅ GitHub issues synced (#X closed, #Y updated, #Z remaining)
      - ✅ MEMO.md updated
-     - ✅ Issues updated (#X closed, #Y commented)
      - ✅ Committed: [hash]
      - ✅ Pushed to GitHub
+     - 📋 Open issues remaining: list any still open
 
 **Manual Override**:
 If you want to review before pushing, say:
