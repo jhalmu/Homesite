@@ -4,7 +4,7 @@ defmodule Homesite.Analytics do
   """
 
   import Ecto.Query, warn: false
-  alias Homesite.Analytics.{SearchQuery, ActivityLog}
+  alias Homesite.Analytics.{ActivityLog, SearchQuery}
   alias Homesite.Repo
 
   ## Search Analytics

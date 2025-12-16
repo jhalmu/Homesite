@@ -7,9 +7,9 @@ defmodule Homesite.Feedback do
   import Ecto.Query, warn: false
   require Logger
 
-  alias Homesite.Repo
-  alias Homesite.Accounts.{User, Scope}
+  alias Homesite.Accounts.{Scope, User}
   alias Homesite.Feedback.{FeedbackResponse, RankHistory}
+  alias Homesite.Repo
 
   ## Feedback Collection
 

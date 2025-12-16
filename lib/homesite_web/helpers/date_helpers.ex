@@ -167,7 +167,7 @@ defmodule HomesiteWeb.Helpers.DateHelpers do
           "#{minutes} #{if minutes == 1, do: "minute", else: "minutes"} ago"
         end
 
-      diff_seconds < 86400 ->
+      diff_seconds < 86_400 ->
         hours = div(diff_seconds, 3600)
 
         if locale == "fi" do
@@ -177,7 +177,7 @@ defmodule HomesiteWeb.Helpers.DateHelpers do
         end
 
       diff_seconds < 604_800 ->
-        days = div(diff_seconds, 86400)
+        days = div(diff_seconds, 86_400)
 
         if locale == "fi" do
           "#{days} #{if days == 1, do: "päivä", else: "päivää"} sitten"

@@ -8,13 +8,13 @@ defmodule Homesite.Media do
   alias Homesite.Accounts.Scope
 
   alias Homesite.Media.{
-    Project,
-    MediaItem,
-    ProjectMediaItem,
+    AffiliationLink,
     Collection,
     Collaborator,
-    AffiliationLink,
-    ImageProcessor
+    ImageProcessor,
+    MediaItem,
+    Project,
+    ProjectMediaItem
   }
 
   alias Homesite.Repo

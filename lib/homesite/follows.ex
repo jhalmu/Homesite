@@ -6,10 +6,10 @@ defmodule Homesite.Follows do
   """
 
   import Ecto.Query
-  alias Homesite.Repo
-  alias Homesite.Accounts.Scope
+
+  alias Homesite.Accounts.{Scope, User}
   alias Homesite.Follows.Follower
-  alias Homesite.Accounts.User
+  alias Homesite.Repo
 
   # PubSub topic helpers
   defp followers_topic(user_id), do: "user:#{user_id}:followers"

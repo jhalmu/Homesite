@@ -17,8 +17,8 @@ defmodule Homesite.Workers.FeedCleanupWorker do
   import Ecto.Query
   require Logger
 
-  alias Homesite.Repo
   alias Homesite.ExternalFeeds.{FeedItem, FeedItemInteraction}
+  alias Homesite.Repo
 
   @read_retention_days 30
   @unread_retention_days 90

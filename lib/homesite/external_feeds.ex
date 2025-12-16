@@ -6,7 +6,7 @@ defmodule Homesite.ExternalFeeds do
 
   import Ecto.Query, warn: false
   alias Homesite.Accounts.Scope
-  alias Homesite.ExternalFeeds.{FeedSource, FeedItem, FeedItemInteraction, FeedFolder}
+  alias Homesite.ExternalFeeds.{FeedFolder, FeedItem, FeedItemInteraction, FeedSource}
   alias Homesite.Repo
 
   # Helper: Check if map has string keys (for form params)

@@ -268,9 +268,7 @@ defmodule HomesiteWeb.Export.ProjectHTML do
 
   defp render_tags(tags) do
     tags_html =
-      tags
-      |> Enum.map(&"<span class=\"badge badge-outline\">#{escape_html(&1)}</span>")
-      |> Enum.join("\n")
+      Enum.map_join(tags, "\n", &"<span class=\"badge badge-outline\">#{escape_html(&1)}</span>")
 
     """
     <div class="project-meta" style="margin-top: 1rem;">
@@ -283,8 +281,7 @@ defmodule HomesiteWeb.Export.ProjectHTML do
     collaborators_html =
       collaborators
       |> Enum.sort_by(& &1.display_order)
-      |> Enum.map(&render_collaborator/1)
-      |> Enum.join("\n")
+      |> Enum.map_join("\n", &render_collaborator/1)
 
     """
     <div class="section">
@@ -322,8 +319,7 @@ defmodule HomesiteWeb.Export.ProjectHTML do
     links_html =
       links
       |> Enum.sort_by(& &1.display_order)
-      |> Enum.map(&render_affiliation_link/1)
-      |> Enum.join("\n")
+      |> Enum.map_join("\n", &render_affiliation_link/1)
 
     """
     <div class="section">
@@ -346,10 +342,7 @@ defmodule HomesiteWeb.Export.ProjectHTML do
   end
 
   defp render_media_items(media_items) do
-    media_html =
-      media_items
-      |> Enum.map(&render_media_item/1)
-      |> Enum.join("\n")
+    media_html = Enum.map_join(media_items, "\n", &render_media_item/1)
 
     """
     <div class="section">

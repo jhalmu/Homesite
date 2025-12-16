@@ -6,9 +6,10 @@ defmodule Homesite.Notifications do
   """
 
   import Ecto.Query
-  alias Homesite.Repo
+
   alias Homesite.Accounts.Scope
   alias Homesite.Notifications.Notification
+  alias Homesite.Repo
 
   # PubSub topic
   defp notifications_topic(user_id), do: "user:#{user_id}:notifications"

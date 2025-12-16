@@ -7,7 +7,7 @@ defmodule Homesite.ExternalFeeds.FeedSource do
   import Ecto.Changeset
 
   alias Homesite.Accounts.User
-  alias Homesite.ExternalFeeds.{FeedItem, FeedFolder}
+  alias Homesite.ExternalFeeds.{FeedFolder, FeedItem}
 
   @feed_types ~w(rss atom json bluesky mastodon youtube instagram twitter reddit tiktok)
   @default_icons %{
