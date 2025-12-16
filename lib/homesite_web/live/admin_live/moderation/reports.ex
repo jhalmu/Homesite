@@ -186,7 +186,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Reports do
                       {report.status}
                     </span>
                   </td>
-                  <td class="text-base-content/60 text-sm">
+                  <td class="text-base-content/60 text-[var(--text-sm)]">
                     {Calendar.strftime(report.inserted_at, "%Y-%m-%d %H:%M")}
                   </td>
                   <td>
@@ -337,7 +337,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Reports do
             <div class="card bg-base-200">
               <div class="card-body">
                 <h3 class="card-title text-[var(--text-sm)]">{gettext("Resolution")}</h3>
-                <p class="text-base-content/60 text-sm">
+                <p class="text-base-content/60 text-[var(--text-sm)]">
                   {gettext("Resolved by %{user} on %{date}",
                     user:
                       @report.resolved_by &&

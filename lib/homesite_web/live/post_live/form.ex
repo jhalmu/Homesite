@@ -123,7 +123,7 @@ defmodule HomesiteWeb.PostLive.Form do
             
     <!-- Suggestions dropdown -->
             <%= if @tag_suggestions != [] or @tag_search_query != "" do %>
-              <div class="border-base-300 bg-base-100 absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border shadow-lg">
+              <div class="border-base-300 bg-base-100 absolute z-10 mt-[var(--space-inline)] max-h-60 w-full overflow-y-auto rounded-lg border shadow-lg">
                 <%= for {tag, post_count} <- @tag_suggestions do %>
                   <button
                     type="button"
@@ -173,7 +173,7 @@ defmodule HomesiteWeb.PostLive.Form do
               <.icon name="hero-information-circle" />
               <div>
                 <p class="font-semibold">{gettext("Similar tags exist:")}</p>
-                <div class="gap-[var(--space-xs)] mt-1 flex flex-wrap">
+                <div class="gap-[var(--space-xs)] mt-[var(--space-inline)] flex flex-wrap">
                   <%= for tag <- @similar_tags_warning do %>
                     <button
                       type="button"

@@ -51,8 +51,8 @@ defmodule HomesiteWeb.ModerationLive.Mutes do
         <%= if @muted_users == [] do %>
           <div class="py-[var(--space-xl)] text-center">
             <.icon name="hero-speaker-x-mark" class="text-base-content/40 mx-auto h-12 w-12" />
-            <h3 class="mt-2 text-sm font-semibold">{gettext("No muted users")}</h3>
-            <p class="text-base-content/60 mt-1 text-sm">
+            <h3 class="mt-2 text-[var(--text-sm)] font-semibold">{gettext("No muted users")}</h3>
+            <p class="text-base-content/60 mt-[var(--space-inline)] text-[var(--text-sm)]">
               {gettext("You haven't muted anyone yet.")}
             </p>
           </div>
@@ -71,7 +71,7 @@ defmodule HomesiteWeb.ModerationLive.Mutes do
                 <%= for mute <- @muted_users do %>
                   <tr id={"mute-#{mute.id}"}>
                     <td>
-                      <div class="flex items-center gap-3">
+                      <div class="flex items-center gap-[var(--space-xs)]">
                         <div class="avatar placeholder">
                           <div class="bg-neutral text-neutral-content w-10 rounded-full">
                             <span class="text-sm">
@@ -95,7 +95,7 @@ defmodule HomesiteWeb.ModerationLive.Mutes do
                       </time>
                     </td>
                     <td>
-                      <span class="text-base-content/60 text-sm">
+                      <span class="text-base-content/60 text-[var(--text-sm)]">
                         {mute.reason || gettext("No reason provided")}
                       </span>
                     </td>

@@ -465,17 +465,17 @@ defmodule HomesiteWeb.Layouts do
             </li>
           <% end %>
 
-          <div class="divider my-2"></div>
+          <div class="divider my-[var(--space-xs)]"></div>
 
           <%= if !@current_scope do %>
-            <li class="px-4">
+            <li class="px-[var(--space-sm)]">
               <div class="flex items-center justify-between">
                 <span class="text-[var(--text-sm)] opacity-70">{gettext("Language")}</span>
                 <.language_toggle />
               </div>
             </li>
           <% end %>
-          <li class="px-4">
+          <li class="px-[var(--space-sm)]">
             <div class="flex items-center justify-between">
               <span class="text-[var(--text-sm)] opacity-70">{gettext("Theme")}</span>
               <.theme_toggle />

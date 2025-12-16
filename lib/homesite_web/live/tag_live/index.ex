@@ -18,7 +18,7 @@ defmodule HomesiteWeb.TagLive.Index do
         </.header>
         
     <!-- Tabs -->
-        <div role="tablist" class="tabs tabs-boxed mt-6">
+        <div role="tablist" class="tabs tabs-boxed mt-[var(--space-md)]">
           <button
             role="tab"
             class={["tab", @current_tab == "my" && "tab-active"]}
@@ -41,7 +41,7 @@ defmodule HomesiteWeb.TagLive.Index do
         
     <!-- Search bar (only in All Tags tab) -->
         <%= if @current_tab == "all" do %>
-          <div class="mt-4">
+          <div class="mt-[var(--space-sm)]">
             <.input
               type="text"
               name="query"
@@ -77,19 +77,19 @@ defmodule HomesiteWeb.TagLive.Index do
                     <div class="gap-[var(--spacing-sm)] text-[var(--text-sm)] flex flex-wrap">
                       <%= if @current_tab == "my" do %>
                         <%= if tag.is_public do %>
-                          <div class="badge badge-ghost gap-2">
+                          <div class="badge badge-ghost gap-[var(--space-xs)]">
                             <.icon name="hero-globe-alt" class="h-3 w-3" />
                             {gettext("Public")}
                           </div>
                         <% else %>
-                          <div class="badge badge-ghost gap-2">
+                          <div class="badge badge-ghost gap-[var(--space-xs)]">
                             <.icon name="hero-lock-closed" class="h-3 w-3" />
                             {gettext("Private")}
                           </div>
                         <% end %>
                       <% else %>
                         <!-- Show post count in All Tags tab -->
-                        <div class="badge badge-neutral gap-2">
+                        <div class="badge badge-neutral gap-[var(--space-xs)]">
                           <.icon name="hero-document-text" class="h-3 w-3" />
                           {tag.post_count} {ngettext("post", "posts", tag.post_count)}
                         </div>

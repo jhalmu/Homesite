@@ -75,7 +75,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Logs do
       </.header>
 
       <div class="mt-[var(--space-md)]">
-        <form phx-change="filter" class="mb-4">
+        <form phx-change="filter" class="mb-[var(--space-sm)]">
           <div class="form-control w-full max-w-xs">
             <label class="label">
               <span class="label-text">{gettext("Filter by action")}</span>
@@ -96,8 +96,8 @@ defmodule HomesiteWeb.AdminLive.Moderation.Logs do
         <%= if @logs == [] do %>
           <div class="py-[var(--space-xl)] text-center">
             <.icon name="hero-clipboard-document-list" class="text-base-content/40 mx-auto h-12 w-12" />
-            <h3 class="mt-2 text-sm font-semibold">{gettext("No logs found")}</h3>
-            <p class="text-base-content/60 mt-1 text-sm">
+            <h3 class="mt-2 text-[var(--text-sm)] font-semibold">{gettext("No logs found")}</h3>
+            <p class="text-base-content/60 mt-[var(--space-inline)] text-[var(--text-sm)]">
               {gettext("No moderation actions match the current filter.")}
             </p>
           </div>
@@ -116,7 +116,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Logs do
               <tbody>
                 <%= for log <- @logs do %>
                   <tr id={"log-#{log.id}"}>
-                    <td class="text-base-content/60 whitespace-nowrap text-sm">
+                    <td class="text-base-content/60 whitespace-nowrap text-[var(--text-sm)]">
                       {Calendar.strftime(log.inserted_at, "%Y-%m-%d %H:%M:%S")}
                     </td>
                     <td>
@@ -130,7 +130,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Logs do
                           {log.target_user.display_name || log.target_user.email}
                         </div>
                       <% else %>
-                        <span class="text-base-content/40 text-sm">{gettext("N/A")}</span>
+                        <span class="text-base-content/40 text-[var(--text-sm)]">{gettext("N/A")}</span>
                       <% end %>
                     </td>
                     <td>
@@ -139,11 +139,11 @@ defmodule HomesiteWeb.AdminLive.Moderation.Logs do
                           {log.moderator.display_name || log.moderator.email}
                         </div>
                       <% else %>
-                        <span class="text-base-content/40 text-sm">{gettext("System")}</span>
+                        <span class="text-base-content/40 text-[var(--text-sm)]">{gettext("System")}</span>
                       <% end %>
                     </td>
                     <td>
-                      <div class="text-base-content/70 max-w-md truncate text-sm">
+                      <div class="text-base-content/70 max-w-md truncate text-[var(--text-sm)]">
                         {log.reason || "-"}
                       </div>
                     </td>

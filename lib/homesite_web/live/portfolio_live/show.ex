@@ -215,7 +215,7 @@ defmodule HomesiteWeb.PortfolioLive.Show do
                     {gettext("Copy Link")}
                   </a>
                 </li>
-                <div class="divider my-1"></div>
+                <div class="divider my-[var(--space-inline)]"></div>
                 <li>
                   <a phx-click="export_html">
                     <.icon name="hero-arrow-down-tray" class="h-4 w-4" />

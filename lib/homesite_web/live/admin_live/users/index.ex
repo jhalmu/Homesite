@@ -41,7 +41,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
         </.form>
 
         <%!-- User Stats --%>
-        <div class="stats stats-horizontal mb-6 w-full shadow">
+        <div class="stats stats-horizontal mb-[var(--space-md)] w-full shadow">
           <div class="stat">
             <div class="stat-title">Total Users</div>
             <div class="stat-value text-primary">{@total_count}</div>
@@ -74,7 +74,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
             <tbody>
               <%= if @users == [] do %>
                 <tr>
-                  <td colspan="8" class="py-8 text-center">
+                  <td colspan="8" class="py-[var(--space-lg)] text-center">
                     <p class="text-base-content/70">No users found</p>
                   </td>
                 </tr>
@@ -175,7 +175,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
               <:subtitle>Update role and flower permissions</:subtitle>
             </.header>
 
-            <.form for={@form} phx-submit="save_user" class="mt-4 space-y-4">
+            <.form for={@form} phx-submit="save_user" class="mt-[var(--space-sm)] space-y-[var(--space-sm)]">
               <.input
                 field={@form[:role]}
                 type="select"

@@ -106,9 +106,9 @@ defmodule HomesiteWeb.ProjectLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="mx-auto w-full max-w-6xl px-4 py-8">
+      <div class="mx-auto w-full max-w-6xl px-4 py-[var(--space-lg)]">
         <%!-- Page Header --%>
-        <div class="mb-8 flex items-center justify-between">
+        <div class="mb-[var(--space-lg)] flex items-center justify-between">
           <h1 class="text-3xl font-bold">{@page_title}</h1>
           <div class="gap-[var(--space-xs)] flex items-center">
             <%= if @archived_count > 0 do %>
@@ -129,7 +129,7 @@ defmodule HomesiteWeb.ProjectLive.Index do
 
         <%!-- Archived Notice --%>
         <%= if @show_archived do %>
-          <div class="alert alert-warning mb-6">
+          <div class="alert alert-warning mb-[var(--space-md)]">
             <.icon name="hero-archive-box" class="h-5 w-5" />
             <span>
               {gettext(
@@ -141,19 +141,19 @@ defmodule HomesiteWeb.ProjectLive.Index do
 
         <%!-- Projects Grid --%>
         <%= if Enum.empty?(@projects) do %>
-          <div class="py-16 text-center">
+          <div class="py-[var(--space-xl)] text-center">
             <%= if @show_archived do %>
               <.icon name="hero-archive-box" class="text-base-content/30 mx-auto mb-[var(--space-sm)] h-16 w-16" />
               <h2 class="text-[var(--text-2xl)] mb-[var(--space-xs)] font-semibold">
                 {gettext("No archived projects")}
               </h2>
-              <p class="text-base-content/70 mb-6">
+              <p class="text-base-content/70 mb-[var(--space-md)]">
                 {gettext("Projects you archive will appear here.")}
               </p>
             <% else %>
               <.icon name="hero-folder" class="text-base-content/30 mx-auto mb-[var(--space-sm)] h-16 w-16" />
               <h2 class="text-[var(--text-2xl)] mb-[var(--space-xs)] font-semibold">{gettext("No projects yet")}</h2>
-              <p class="text-base-content/70 mb-6">
+              <p class="text-base-content/70 mb-[var(--space-md)]">
                 {gettext("Create your first project to organize your media and showcase your work.")}
               </p>
               <.link navigate={~p"/projects/new"} class="btn btn-primary">
@@ -178,7 +178,7 @@ defmodule HomesiteWeb.ProjectLive.Index do
                 <div class="card-body">
                   <div class="gap-[var(--space-xs)] flex items-start">
                     <%= unless @show_archived do %>
-                      <span class="drag-handle text-base-content/40 mt-1 cursor-grab hover:text-base-content active:cursor-grabbing">
+                      <span class="drag-handle text-base-content/40 mt-[var(--space-inline)] cursor-grab hover:text-base-content active:cursor-grabbing">
                         <.icon name="hero-bars-3" class="h-5 w-5" />
                       </span>
                     <% end %>
@@ -208,12 +208,12 @@ defmodule HomesiteWeb.ProjectLive.Index do
                   </div>
 
                   <%= if project.archived_at do %>
-                    <div class="text-base-content/50 text-[var(--text-xs)] mt-1">
+                    <div class="text-base-content/50 text-[var(--text-xs)] mt-[var(--space-inline)]">
                       {gettext("Archived")} {Calendar.strftime(project.archived_at, "%Y-%m-%d")}
                     </div>
                   <% end %>
 
-                  <div class="card-actions mt-4 justify-end">
+                  <div class="card-actions mt-[var(--space-sm)] justify-end">
                     <%= if @show_archived do %>
                       <%!-- Archived project actions --%>
                       <button

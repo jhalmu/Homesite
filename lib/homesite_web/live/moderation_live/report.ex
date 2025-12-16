@@ -198,16 +198,16 @@ defmodule HomesiteWeb.ModerationLive.Report do
         </:subtitle>
       </.header>
 
-      <div class="mt-6 max-w-2xl">
+      <div class="mt-[var(--space-md)] max-w-2xl">
         <%!-- Content context alert --%>
         <%= if @content_context.source == "chat" do %>
-          <div class="alert alert-info mb-6">
+          <div class="alert alert-info mb-[var(--space-md)]">
             <.icon name="hero-chat-bubble-left-right" class="h-5 w-5" />
             <span>{gettext("Reporting based on a chat message")}</span>
           </div>
         <% end %>
 
-        <div class="alert alert-warning mb-6">
+        <div class="alert alert-warning mb-[var(--space-md)]">
           <.icon name="hero-exclamation-triangle" class="h-5 w-5" />
           <span>
             {gettext(
@@ -216,10 +216,10 @@ defmodule HomesiteWeb.ModerationLive.Report do
           </span>
         </div>
 
-        <div class="card bg-base-200 mb-6">
+        <div class="card bg-base-200 mb-[var(--space-md)]">
           <div class="card-body">
-            <h3 class="card-title text-sm">{gettext("User being reported")}</h3>
-            <div class="flex items-center gap-3">
+            <h3 class="card-title text-[var(--text-sm)]">{gettext("User being reported")}</h3>
+            <div class="flex items-center gap-[var(--space-xs)]">
               <div class="avatar placeholder">
                 <div class="bg-neutral text-neutral-content w-12 rounded-full">
                   <span>
@@ -241,7 +241,7 @@ defmodule HomesiteWeb.ModerationLive.Report do
 
         <.form for={@form} phx-change="validate" phx-submit="submit" id="report-form">
           <%!-- Reason preset dropdown --%>
-          <div class="form-control mb-4">
+          <div class="form-control mb-[var(--space-sm)]">
             <label class="label">
               <span class="label-text font-medium">{gettext("Select a reason")}</span>
             </label>
@@ -289,7 +289,7 @@ defmodule HomesiteWeb.ModerationLive.Report do
             </label>
           </div>
 
-          <div class="mt-6 flex gap-4">
+          <div class="mt-[var(--space-md)] flex gap-[var(--space-sm)]">
             <button type="submit" class="btn btn-primary">
               <.icon name="hero-flag" class="h-4 w-4" />
               {gettext("Submit Report")}

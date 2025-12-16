@@ -84,7 +84,7 @@ defmodule HomesiteWeb.MediaComponents do
       </button>
 
       <%!-- Image counter --%>
-      <div class="text-white/80 absolute top-4 left-4 text-sm font-medium">
+      <div class="text-white/80 absolute top-4 left-4 text-[var(--text-sm)] font-medium">
         {@current_index + 1} / {@total_images}
       </div>
 
@@ -140,14 +140,14 @@ defmodule HomesiteWeb.MediaComponents do
           />
 
           <%!-- Image info --%>
-          <div class="mt-4 text-center text-white">
+          <div class="mt-[var(--space-sm)] text-center text-white">
             <%= if @current_image.title do %>
-              <h3 class="text-lg font-semibold">{@current_image.title}</h3>
+              <h3 class="text-[var(--text-lg)] font-semibold">{@current_image.title}</h3>
             <% end %>
             <%= if @current_image.caption do %>
-              <p class="text-white/70 mt-1 max-w-2xl text-sm">{@current_image.caption}</p>
+              <p class="text-white/70 mt-[var(--space-inline)] max-w-2xl text-[var(--text-sm)]">{@current_image.caption}</p>
             <% end %>
-            <p class="text-white/50 mt-2 text-xs">
+            <p class="text-white/50 mt-[var(--space-xs)] text-[var(--text-xs)]">
               {@current_image.width}&times;{@current_image.height}
             </p>
           </div>
@@ -234,12 +234,12 @@ defmodule HomesiteWeb.MediaComponents do
         <% end %>
       </figure>
       <div class="card-body p-4">
-        <h3 class="card-title text-lg">{@project.name}</h3>
+        <h3 class="card-title text-[var(--text-lg)]">{@project.name}</h3>
         <%= if @show_template_badge do %>
           <span class="badge badge-ghost badge-sm">{template_name(@project.template_type)}</span>
         <% end %>
         <%= if @project.category do %>
-          <p class="text-base-content/60 text-sm">{@project.category}</p>
+          <p class="text-base-content/60 text-[var(--text-sm)]">{@project.category}</p>
         <% end %>
       </div>
     </.link>

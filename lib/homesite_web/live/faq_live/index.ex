@@ -33,8 +33,8 @@ defmodule HomesiteWeb.FaqLive.Index do
           </:actions>
         </.header>
 
-        <div class="gap-[var(--space-lg)] mt-8 flex">
-          <div class="flex-1 space-y-4">
+        <div class="gap-[var(--space-lg)] mt-[var(--space-lg)] flex">
+          <div class="flex-1 space-y-[var(--space-sm)]">
             <%= if Enum.empty?(@faqs) do %>
               <div class="card bg-base-200">
                 <div class="card-body text-center">
@@ -58,7 +58,7 @@ defmodule HomesiteWeb.FaqLive.Index do
                       {raw(TableOfContents.add_heading_ids(faq.answer))}
                     </div>
                     <%= if @is_admin do %>
-                      <div class="card-actions mt-4 justify-end">
+                      <div class="card-actions mt-[var(--space-sm)] justify-end">
                         <.link navigate={~p"/faqs/#{faq}/edit"} class="btn btn-sm">
                           <.icon name="hero-pencil" class="h-4 w-4" />
                           {gettext("Edit")}

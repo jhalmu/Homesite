@@ -61,7 +61,7 @@ defmodule HomesiteWeb.TagLive.Show do
             <span>{gettext("You don't have any posts with this tag yet.")}</span>
           </div>
 
-          <div :if={length(@user_posts) > 0} class="space-y-4">
+          <div :if={length(@user_posts) > 0} class="space-y-[var(--space-sm)]">
             <%= for post <- @user_posts do %>
               <div class="listing-card">
                 <h3 class="listing-title">
@@ -99,7 +99,7 @@ defmodule HomesiteWeb.TagLive.Show do
             {gettext("Community Posts")}
           </h2>
 
-          <div class="space-y-4">
+          <div class="space-y-[var(--space-sm)]">
             <%= for post <- @public_posts do %>
               <div class="listing-card">
                 <div class="gap-[var(--space-sm)] flex items-start justify-between">
@@ -109,10 +109,10 @@ defmodule HomesiteWeb.TagLive.Show do
                         {post.title}
                       </.link>
                     </h3>
-                    <.author_byline user={post.user} date={post.published_at} class="mt-2" />
+                    <.author_byline user={post.user} date={post.published_at} class="mt-[var(--space-xs)]" />
                   </div>
                 </div>
-                <p :if={post.body} class="line-clamp-2 text-[var(--text-sm)] mt-2">
+                <p :if={post.body} class="line-clamp-2 text-[var(--text-sm)] mt-[var(--space-xs)]">
                   {String.slice(post.body, 0, 150)}{if String.length(post.body) > 150, do: "..."}
                 </p>
                 <div class="card-actions justify-end">

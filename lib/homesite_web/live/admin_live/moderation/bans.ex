@@ -108,10 +108,10 @@ defmodule HomesiteWeb.AdminLive.Moderation.Bans do
 
       <div class="mt-[var(--space-md)]">
         <%= if @show_form do %>
-          <div class="card bg-base-200 mb-6">
+          <div class="card bg-base-200 mb-[var(--space-md)]">
             <div class="card-body">
               <h3 class="card-title text-error">{gettext("Ban User")}</h3>
-              <div class="alert alert-error mb-4">
+              <div class="alert alert-error mb-[var(--space-sm)]">
                 <.icon name="hero-exclamation-triangle" class="h-5 w-5" />
                 <span>
                   {gettext(
@@ -133,7 +133,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Bans do
                     required
                   />
                 </div>
-                <div class="form-control mt-4">
+                <div class="form-control mt-[var(--space-sm)]">
                   <label class="label">
                     <span class="label-text">{gettext("Reason")}</span>
                   </label>
@@ -147,7 +147,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Bans do
                     minlength="10"
                   >{@form[:reason].value}</textarea>
                 </div>
-                <div class="mt-4 flex gap-2">
+                <div class="mt-[var(--space-sm)] flex gap-[var(--space-xs)]">
                   <button
                     type="submit"
                     class="btn btn-error"
@@ -170,8 +170,8 @@ defmodule HomesiteWeb.AdminLive.Moderation.Bans do
         <%= if @bans == [] do %>
           <div class="py-[var(--space-xl)] text-center">
             <.icon name="hero-no-symbol" class="text-base-content/40 mx-auto h-12 w-12" />
-            <h3 class="mt-2 text-sm font-semibold">{gettext("No active bans")}</h3>
-            <p class="text-base-content/60 mt-1 text-sm">
+            <h3 class="mt-2 text-[var(--text-sm)] font-semibold">{gettext("No active bans")}</h3>
+            <p class="text-base-content/60 mt-[var(--space-inline)] text-[var(--text-sm)]">
               {gettext("There are no users currently banned.")}
             </p>
           </div>
@@ -197,14 +197,14 @@ defmodule HomesiteWeb.AdminLive.Moderation.Bans do
                       <div class="text-sm opacity-50">{ban.user.email}</div>
                     </td>
                     <td>
-                      <div class="max-w-xs truncate text-sm">
+                      <div class="max-w-xs truncate text-[var(--text-sm)]">
                         {ban.reason}
                       </div>
                     </td>
                     <td class="text-sm">
                       {ban.banned_by.display_name || ban.banned_by.email}
                     </td>
-                    <td class="text-base-content/60 text-sm">
+                    <td class="text-base-content/60 text-[var(--text-sm)]">
                       {Calendar.strftime(ban.inserted_at, "%Y-%m-%d %H:%M")}
                     </td>
                     <td>

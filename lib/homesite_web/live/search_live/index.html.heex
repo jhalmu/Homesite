@@ -129,7 +129,7 @@
                 <%= for tag <- @tags do %>
                   <.link
                     navigate={~p"/tags/#{tag.slug}"}
-                    class="badge badge-lg badge-secondary gap-2 transition-colors hover:badge-primary"
+                    class="badge badge-lg badge-secondary gap-[var(--space-xs)] transition-colors hover:badge-primary"
                   >
                     <.icon name="hero-tag" class="h-4 w-4" />
                     {tag.name}
@@ -172,7 +172,7 @@
         </div>
       <% else %>
         <%= if @query == "" do %>
-          <div class="py-12 text-center">
+          <div class="py-[var(--space-lg)] text-center">
             <.icon name="hero-magnifying-glass" class="text-base-content/40 mx-auto h-12 w-12" />
             <h2 class="text-base-content mt-[var(--space-xs)] text-[var(--text-sm)] font-semibold">
               {gettext("Start searching")}

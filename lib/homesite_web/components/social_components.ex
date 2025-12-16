@@ -55,7 +55,7 @@ defmodule HomesiteWeb.SocialComponents do
 
   def social_share_buttons(assigns) do
     ~H"""
-    <div class={"#{@class} space-y-4"}>
+    <div class={"#{@class} space-y-[var(--space-sm)]"}>
       <%!-- Native Web Share (primary option) --%>
       <.web_share_button title={@title} url={@url} class="mb-[var(--space-sm)]" />
 

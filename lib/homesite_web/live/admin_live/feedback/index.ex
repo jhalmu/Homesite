@@ -266,7 +266,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
 
                       <%!-- Feedback Text --%>
                       <%= if testimonial.open_feedback do %>
-                        <blockquote class="border-primary mb-[var(--space-md)] border-l-4 pl-4">
+                        <blockquote class="border-primary mb-[var(--space-md)] border-l-4 pl-[var(--space-sm)]">
                           "{testimonial.open_feedback}"
                         </blockquote>
                       <% end %>

@@ -30,7 +30,7 @@ defmodule HomesiteWeb.PostLive.Show do
 
           <div class="my-[var(--spacing-md)]">
             <.author_byline user={@post.user} date={@post.published_at} />
-            <div class="gap-[var(--space-xs)] text-[var(--text-sm)] mt-2 flex flex-wrap items-center opacity-70">
+            <div class="gap-[var(--space-xs)] text-[var(--text-sm)] mt-[var(--space-xs)] flex flex-wrap items-center opacity-70">
               <.icon name="hero-clock" class="h-4 w-4" />
               <span>{@post.read_time_minutes} min read</span>
 
@@ -39,7 +39,7 @@ defmodule HomesiteWeb.PostLive.Show do
                 <%= for tag <- @post.tags do %>
                   <.link
                     navigate={~p"/tags/#{tag.slug}"}
-                    class="badge badge-ghost badge-sm gap-1 opacity-60 hover:opacity-100"
+                    class="badge badge-ghost badge-sm gap-[var(--space-inline)] opacity-60 hover:opacity-100"
                   >
                     <.icon name="hero-tag" class="h-3 w-3" />
                     {tag.name}
@@ -70,7 +70,7 @@ defmodule HomesiteWeb.PostLive.Show do
           </div>
 
           <%= if @post.read_time_minutes >= 2 do %>
-            <div class="my-[var(--spacing-lg)] border-base-300 border-t pt-6">
+            <div class="my-[var(--spacing-lg)] border-base-300 border-t pt-[var(--space-md)]">
               <.platform_share_buttons url={@current_url} title={@post.title} />
             </div>
           <% end %>

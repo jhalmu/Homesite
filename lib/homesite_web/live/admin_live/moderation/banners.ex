@@ -146,7 +146,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Banners do
 
       <div class="mt-[var(--space-md)]">
         <%= if @show_form do %>
-          <div class="card bg-base-200 mb-6">
+          <div class="card bg-base-200 mb-[var(--space-md)]">
             <div class="card-body">
               <h3 class="card-title">{gettext("Send Warning Banner")}</h3>
               <.form for={@form} phx-change="validate" phx-submit="create_banner" id="banner-form">
@@ -181,7 +181,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Banners do
                     </select>
                   </div>
                 </div>
-                <div class="form-control mt-4">
+                <div class="form-control mt-[var(--space-sm)]">
                   <label class="label">
                     <span class="label-text">{gettext("Message")}</span>
                   </label>
@@ -194,7 +194,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Banners do
                     maxlength="1000"
                   >{@form[:message].value}</textarea>
                 </div>
-                <div class="form-control mt-4">
+                <div class="form-control mt-[var(--space-sm)]">
                   <label class="label">
                     <span class="label-text">{gettext("Auto-dismiss after (hours)")}</span>
                     <span class="label-text-alt">
@@ -210,7 +210,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Banners do
                     max="720"
                   />
                 </div>
-                <div class="mt-4 flex gap-2">
+                <div class="mt-[var(--space-sm)] flex gap-[var(--space-xs)]">
                   <button type="submit" class="btn btn-warning">
                     <.icon name="hero-megaphone" class="h-4 w-4" />
                     {gettext("Send Warning")}
@@ -227,8 +227,8 @@ defmodule HomesiteWeb.AdminLive.Moderation.Banners do
         <%= if @banners == [] do %>
           <div class="py-[var(--space-xl)] text-center">
             <.icon name="hero-megaphone" class="text-base-content/40 mx-auto h-12 w-12" />
-            <h3 class="mt-2 text-sm font-semibold">{gettext("No warning banners")}</h3>
-            <p class="text-base-content/60 mt-1 text-sm">
+            <h3 class="mt-2 text-[var(--text-sm)] font-semibold">{gettext("No warning banners")}</h3>
+            <p class="text-base-content/60 mt-[var(--space-inline)] text-[var(--text-sm)]">
               {gettext("No warning banners have been sent yet.")}
             </p>
           </div>
@@ -254,7 +254,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Banners do
                       </div>
                     </td>
                     <td>
-                      <div class="max-w-xs truncate text-sm">
+                      <div class="max-w-xs truncate text-[var(--text-sm)]">
                         {banner.message}
                       </div>
                     </td>
@@ -274,7 +274,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Banners do
                         <% end %>
                       <% end %>
                     </td>
-                    <td class="text-base-content/60 text-sm">
+                    <td class="text-base-content/60 text-[var(--text-sm)]">
                       {Calendar.strftime(banner.inserted_at, "%Y-%m-%d %H:%M")}
                     </td>
                     <td>

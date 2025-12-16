@@ -104,7 +104,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Violations do
       <div class="mt-[var(--space-md)]">
         <%!-- Alert notifications --%>
         <%= if length(@alerts) > 0 do %>
-          <div class="mb-6 space-y-2">
+          <div class="mb-6 space-y-[var(--space-xs)]">
             <%= for alert <- @alerts do %>
               <div class="alert alert-warning">
                 <.icon name="hero-exclamation-triangle" class="h-5 w-5" />
@@ -115,7 +115,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Violations do
                     reporters: alert.unique_reporters
                   )}
                 </span>
-                <div class="flex gap-2">
+                <div class="flex gap-[var(--space-xs)]">
                   <button
                     phx-click="view_alert_user"
                     phx-value-user-id={alert.user_id}
@@ -136,7 +136,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Violations do
           </div>
         <% end %>
 
-        <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div class="grid grid-cols-1 gap-[var(--space-md)] lg:grid-cols-3">
           <%!-- Flagged users list --%>
           <div class="lg:col-span-1">
             <div class="card bg-base-100 shadow">
@@ -156,7 +156,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Violations do
                         phx-value-id={user_data.user.id}
                       >
                         <div class="flex items-center justify-between">
-                          <div class="flex items-center gap-2">
+                          <div class="flex items-center gap-[var(--space-xs)]">
                             <div class="avatar placeholder">
                               <div class="bg-neutral text-neutral-content w-8 rounded-full">
                                 <span class="text-xs">
@@ -164,7 +164,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Violations do
                                 </span>
                               </div>
                             </div>
-                            <span class="truncate text-sm">
+                            <span class="truncate text-[var(--text-sm)]">
                               {user_data.user.display_name || user_data.user.email}
                             </span>
                           </div>
@@ -183,7 +183,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Violations do
             <%= if @selected_user do %>
               <div class="card bg-base-100 shadow">
                 <div class="card-body">
-                  <div class="flex items-center gap-4">
+                  <div class="flex items-center gap-[var(--space-sm)]">
                     <div class="avatar placeholder">
                       <div class="bg-neutral text-neutral-content w-12 rounded-full">
                         <span>{String.first(@selected_user.email) |> String.upcase()}</span>
@@ -201,7 +201,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Violations do
 
                   <%!-- Stats --%>
                   <%= if @user_stats do %>
-                    <div class="stats stats-horizontal mt-4 mb-[var(--space-sm)] shadow">
+                    <div class="stats stats-horizontal mt-[var(--space-sm)] mb-[var(--space-sm)] shadow">
                       <div class="stat">
                         <div class="stat-title">{gettext("Total Violations")}</div>
                         <div class="stat-value">{@user_stats.total_count}</div>
@@ -215,7 +215,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Violations do
                     </div>
 
                     <%!-- By type breakdown --%>
-                    <div class="mb-4 flex flex-wrap gap-2">
+                    <div class="mb-4 flex flex-wrap gap-[var(--space-xs)]">
                       <%= for {type, count} <- @user_stats.by_type do %>
                         <span class="badge badge-outline">{type}: {count}</span>
                       <% end %>
@@ -223,7 +223,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Violations do
                   <% end %>
 
                   <%!-- Violation history --%>
-                  <h3 class="mb-2 font-semibold">{gettext("Violation History")}</h3>
+                  <h3 class="mb-[var(--space-xs)] font-semibold">{gettext("Violation History")}</h3>
                   <div class="overflow-x-auto">
                     <table class="table-sm table">
                       <thead>
@@ -268,7 +268,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Violations do
                   </div>
 
                   <%!-- Quick actions --%>
-                  <div class="card-actions mt-4 justify-end">
+                  <div class="card-actions mt-[var(--space-sm)] justify-end">
                     <.link
                       navigate={~p"/admin/moderation/suspensions?user_id=#{@selected_user.id}"}
                       class="btn btn-warning btn-sm"

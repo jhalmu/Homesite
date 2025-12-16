@@ -133,7 +133,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Suspensions do
 
       <div class="mt-[var(--space-md)]">
         <%= if @show_form do %>
-          <div class="card bg-base-200 mb-6">
+          <div class="card bg-base-200 mb-[var(--space-md)]">
             <div class="card-body">
               <h3 class="card-title">{gettext("Suspend User")}</h3>
               <.form for={@form} phx-change="validate" phx-submit="suspend" id="suspend-form">
@@ -164,7 +164,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Suspensions do
                     />
                   </div>
                 </div>
-                <div class="form-control mt-4">
+                <div class="form-control mt-[var(--space-sm)]">
                   <label class="label">
                     <span class="label-text">{gettext("Reason")}</span>
                   </label>
@@ -176,7 +176,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Suspensions do
                     minlength="10"
                   >{@form[:reason].value}</textarea>
                 </div>
-                <div class="mt-4 flex gap-2">
+                <div class="mt-[var(--space-sm)] flex gap-[var(--space-xs)]">
                   <button type="submit" class="btn btn-warning">
                     <.icon name="hero-clock" class="h-4 w-4" />
                     {gettext("Suspend User")}
@@ -193,8 +193,8 @@ defmodule HomesiteWeb.AdminLive.Moderation.Suspensions do
         <%= if @suspensions == [] do %>
           <div class="py-[var(--space-xl)] text-center">
             <.icon name="hero-clock" class="text-base-content/40 mx-auto h-12 w-12" />
-            <h3 class="mt-2 text-sm font-semibold">{gettext("No active suspensions")}</h3>
-            <p class="text-base-content/60 mt-1 text-sm">
+            <h3 class="mt-2 text-[var(--text-sm)] font-semibold">{gettext("No active suspensions")}</h3>
+            <p class="text-base-content/60 mt-[var(--space-inline)] text-[var(--text-sm)]">
               {gettext("There are no users currently suspended.")}
             </p>
           </div>
@@ -220,7 +220,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Suspensions do
                       <div class="text-sm opacity-50">{suspension.user.email}</div>
                     </td>
                     <td>
-                      <div class="max-w-xs truncate text-sm">
+                      <div class="max-w-xs truncate text-[var(--text-sm)]">
                         {suspension.reason}
                       </div>
                     </td>
@@ -231,7 +231,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Suspensions do
                       <div class="text-sm">
                         {Calendar.strftime(suspension.expires_at, "%Y-%m-%d %H:%M")}
                       </div>
-                      <div class="text-base-content/60 text-xs">
+                      <div class="text-base-content/60 text-[var(--text-xs)]">
                         {time_remaining(suspension.expires_at)}
                       </div>
                     </td>

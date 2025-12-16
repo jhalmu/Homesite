@@ -63,7 +63,7 @@ defmodule HomesiteWeb.UserLive.Login do
                 id="login_form_magic"
                 action={~p"/users/log-in"}
                 phx-submit="submit_magic"
-                class="space-y-4"
+                class="space-y-[var(--space-sm)]"
               >
                 <.input
                   readonly={!!@current_scope}
@@ -106,7 +106,7 @@ defmodule HomesiteWeb.UserLive.Login do
                 action={~p"/users/log-in"}
                 phx-submit="submit_password"
                 phx-trigger-action={@trigger_submit}
-                class="space-y-4"
+                class="space-y-[var(--space-sm)]"
               >
                 <.input
                   readonly={!!@current_scope}
@@ -124,7 +124,7 @@ defmodule HomesiteWeb.UserLive.Login do
                   required
                 />
 
-                <div class="space-y-2">
+                <div class="space-y-[var(--space-xs)]">
                   <.button
                     class="btn btn-primary gap-[var(--space-xs)] w-full"
                     name={@form[:remember_me].name}

@@ -262,7 +262,7 @@ defmodule HomesiteWeb.ContentComponents do
 
       <.divider />
       <.divider text={gettext("or")} />
-      <.divider text="Section Break" class="my-8" />
+      <.divider text="Section Break" class="my-[var(--space-lg)]" />
 
   """
   attr :text, :string, default: nil, doc: "optional text to display in divider"
