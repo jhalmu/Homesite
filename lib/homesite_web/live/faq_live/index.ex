@@ -3,8 +3,8 @@ defmodule HomesiteWeb.FaqLive.Index do
 
   alias Homesite.Accounts.Scope
   alias Homesite.Faqs
-  alias HomesiteWeb.SEO.JsonLD
   alias HomesiteWeb.Components.TableOfContents
+  alias HomesiteWeb.SEO.JsonLD
 
   @impl true
   def render(assigns) do

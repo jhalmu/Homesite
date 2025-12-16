@@ -3,8 +3,8 @@ defmodule HomesiteWeb.PostLive.Show do
 
   alias Homesite.Content
   alias Homesite.Social
-  alias HomesiteWeb.SEO.JsonLD
   alias HomesiteWeb.Components.TableOfContents
+  alias HomesiteWeb.SEO.JsonLD
   import HomesiteWeb.SocialComponents
 
   @impl true

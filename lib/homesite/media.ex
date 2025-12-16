@@ -865,8 +865,8 @@ defmodule Homesite.Media do
 
   ## Project-Post Linking
 
-  alias Homesite.Media.ProjectPost
   alias Homesite.Content
+  alias Homesite.Media.ProjectPost
 
   @doc """
   Links a blog post to a project.

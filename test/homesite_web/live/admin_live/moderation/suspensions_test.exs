@@ -33,7 +33,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.SuspensionsTest do
       admin_scope = Scope.for_user(admin)
       user = user_fixture(%{email: "suspended@example.com"})
 
-      expires_at = DateTime.utc_now() |> DateTime.add(86400, :second)
+      expires_at = DateTime.utc_now() |> DateTime.add(86_400, :second)
 
       {:ok, _suspension} =
         Moderation.suspend_user(admin_scope, user.id, "Violation of terms", expires_at)
@@ -79,7 +79,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.SuspensionsTest do
       # Submit suspension
       expires_at =
         DateTime.utc_now()
-        |> DateTime.add(86400, :second)
+        |> DateTime.add(86_400, :second)
         |> DateTime.to_iso8601()
 
       html =
@@ -100,7 +100,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.SuspensionsTest do
       admin_scope = Scope.for_user(admin)
       user = user_fixture(%{email: "tounsuspend@example.com"})
 
-      expires_at = DateTime.utc_now() |> DateTime.add(86400, :second)
+      expires_at = DateTime.utc_now() |> DateTime.add(86_400, :second)
 
       {:ok, _suspension} =
         Moderation.suspend_user(admin_scope, user.id, "Will be lifted", expires_at)

@@ -34,7 +34,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.LogsTest do
       user = user_fixture(%{email: "logged@example.com"})
 
       # Create a suspension to generate a log
-      expires_at = DateTime.utc_now() |> DateTime.add(86400, :second)
+      expires_at = DateTime.utc_now() |> DateTime.add(86_400, :second)
 
       {:ok, _suspension} =
         Moderation.suspend_user(admin_scope, user.id, "Log test reason", expires_at)
@@ -54,7 +54,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.LogsTest do
       user2 = user_fixture(%{email: "banned-user@example.com"})
 
       # Create different actions
-      expires_at = DateTime.utc_now() |> DateTime.add(86400, :second)
+      expires_at = DateTime.utc_now() |> DateTime.add(86_400, :second)
       {:ok, _} = Moderation.suspend_user(admin_scope, user1.id, "Suspension reason", expires_at)
       {:ok, _} = Moderation.ban_user(admin_scope, user2.id, "Ban reason test here")
 

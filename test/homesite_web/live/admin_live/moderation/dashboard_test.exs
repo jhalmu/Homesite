@@ -62,7 +62,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.DashboardTest do
       user = user_fixture()
 
       # Create a suspension to generate a log entry
-      expires_at = DateTime.utc_now() |> DateTime.add(86400, :second)
+      expires_at = DateTime.utc_now() |> DateTime.add(86_400, :second)
 
       {:ok, _suspension} =
         Moderation.suspend_user(admin_scope, user.id, "Test suspension reason", expires_at)

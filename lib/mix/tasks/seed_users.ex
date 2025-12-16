@@ -32,8 +32,8 @@ defmodule Mix.Tasks.SeedUsers do
   use Mix.Task
   import Ecto.Query
   alias Homesite.{Accounts, Content, Repo}
-  alias Homesite.Accounts.{User, Scope}
-  alias Homesite.Content.{Post, Tag, PostTag}
+  alias Homesite.Accounts.{Scope, User}
+  alias Homesite.Content.{Post, PostTag, Tag}
 
   @shortdoc "Seeds users with articles and tags for testing"
 
