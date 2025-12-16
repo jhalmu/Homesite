@@ -13,21 +13,78 @@
 import Ecto.Query
 
 alias Homesite.Repo
+alias Homesite.Accounts
 alias Homesite.Accounts.User
 alias Homesite.ExternalFeeds.FeedSource
 
 # Only seed in development
 if Mix.env() == :dev do
-  IO.puts("🌱 Seeding database...")
+  IO.puts("")
+  IO.puts("╔════════════════════════════════════════════════════════════╗")
+  IO.puts("║  🌱 HOMESITE DEVELOPMENT SEEDING                           ║")
+  IO.puts("║                                                            ║")
+  IO.puts("║  ⚠️  Admin credentials will be shown below - save them!    ║")
+  IO.puts("╚════════════════════════════════════════════════════════════╝")
+  IO.puts("")
 
-  # Get or create a test user for feeds
+  # ==========================================================================
+  # Create or find DEV ADMIN with secure random password
+  # ==========================================================================
+  IO.puts("🔐 Setting up dev admin...")
+
+  dev_admin =
+    case Repo.get_by(User, email: "admin@localhost") do
+      nil ->
+        # Generate secure random password
+        dev_admin_password =
+          :crypto.strong_rand_bytes(16) |> Base.url_encode64() |> binary_part(0, 20)
+
+        IO.puts("   Creating dev admin with random password...")
+
+        {:ok, user} =
+          Accounts.register_admin(%{
+            email: "admin@localhost",
+            password: dev_admin_password,
+            password_confirmation: dev_admin_password
+          })
+
+        # Set 5 flowers and confirm
+        user =
+          Repo.update!(
+            Ecto.Changeset.change(user, admin_flowers: 5, confirmed_at: DateTime.utc_now(:second))
+          )
+
+        IO.puts("")
+        IO.puts("╔════════════════════════════════════════════════════════════╗")
+        IO.puts("║  🔐 DEV ADMIN CREATED - SAVE THESE CREDENTIALS!            ║")
+        IO.puts("╠════════════════════════════════════════════════════════════╣")
+        IO.puts("║  Email:    admin@localhost                                 ║")
+        IO.puts("║  Password: #{String.pad_trailing(dev_admin_password, 43)}║")
+        IO.puts("║                                                            ║")
+        IO.puts("║  ⚠️  This password is shown ONLY ONCE!                     ║")
+        IO.puts("║  💡 You can reset via: mix run -e 'Homesite.Accounts...'   ║")
+        IO.puts("╚════════════════════════════════════════════════════════════╝")
+        IO.puts("")
+
+        user
+
+      existing_user ->
+        IO.puts("   ✅ Dev admin already exists (admin@localhost)")
+        existing_user
+    end
+
+  # ==========================================================================
+  # Create test user for feeds/projects demo
+  # ==========================================================================
+  IO.puts("👤 Setting up test user...")
+
   test_user =
     case Repo.get_by(User, email: "test@example.com") do
       nil ->
-        IO.puts("Creating test user...")
+        IO.puts("   Creating test user...")
 
         {:ok, user} =
-          Homesite.Accounts.register_admin(%{
+          Accounts.register_admin(%{
             email: "test@example.com",
             password: "TestPassword123!",
             password_confirmation: "TestPassword123!"
@@ -37,7 +94,7 @@ if Mix.env() == :dev do
         Repo.update!(Ecto.Changeset.change(user, confirmed_at: DateTime.utc_now(:second)))
 
       existing_user ->
-        IO.puts("Test user already exists")
+        IO.puts("   ✅ Test user already exists")
         existing_user
     end
 
@@ -268,14 +325,40 @@ if Mix.env() == :dev do
     end
   end)
 
-  IO.puts("\n🎉 Seeding complete!")
-  IO.puts("\n📋 Test User Credentials:")
-  IO.puts("  Email: test@example.com")
-  IO.puts("  Password: TestPassword123!")
-  IO.puts("\n🔗 Access at:")
-  IO.puts("  Feeds: http://localhost:4000/feeds")
-  IO.puts("  Portfolio: http://localhost:4000/portfolio")
-  IO.puts("  Projects: http://localhost:4000/projects")
+  # ==========================================================================
+  # Seed FAQs (bilingual user and admin FAQs)
+  # ==========================================================================
+  IO.puts("\n📚 Seeding FAQs...")
+
+  # Run FAQ seed files - they handle idempotency via slug uniqueness
+  faq_seed_files = [
+    "priv/repo/seeds/comprehensive_faqs.exs",
+    "priv/repo/seeds/user_guide_faqs.exs"
+  ]
+
+  Enum.each(faq_seed_files, fn file ->
+    if File.exists?(file) do
+      IO.puts("   Running #{Path.basename(file)}...")
+      Code.eval_file(file)
+    else
+      IO.puts("   ⚠️  Skipping #{Path.basename(file)} (file not found)")
+    end
+  end)
+
+  IO.puts("")
+  IO.puts("╔════════════════════════════════════════════════════════════╗")
+  IO.puts("║  🎉 SEEDING COMPLETE!                                      ║")
+  IO.puts("╠════════════════════════════════════════════════════════════╣")
+  IO.puts("║  📋 Test User: test@example.com / TestPassword123!         ║")
+  IO.puts("║  🔐 Dev Admin: admin@localhost (password shown above)      ║")
+  IO.puts("╠════════════════════════════════════════════════════════════╣")
+  IO.puts("║  🔗 Access at:                                             ║")
+  IO.puts("║     http://localhost:4000/feeds                            ║")
+  IO.puts("║     http://localhost:4000/portfolio                        ║")
+  IO.puts("║     http://localhost:4000/faqs                             ║")
+  IO.puts("║     http://localhost:4000/admin (admin only)               ║")
+  IO.puts("╚════════════════════════════════════════════════════════════╝")
+  IO.puts("")
 else
   IO.puts("⏭️  Skipping seeds (not in development environment)")
 end

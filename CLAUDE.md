@@ -9,6 +9,9 @@
 ## Essential Commands
 
 ```bash
+# Starting (run first)
+git pull               # Sync with GitHub
+
 # Development
 mix setup              # Initial setup
 mix phx.server         # Start server (localhost:4000)

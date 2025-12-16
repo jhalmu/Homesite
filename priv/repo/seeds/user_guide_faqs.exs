@@ -1,30 +1,19 @@
 # User Guide FAQs - Social Media Feeds and Username Routing
 # Run with: mix run priv/repo/seeds/user_guide_faqs.exs
+#
+# These FAQs cover technical features like feed adapters and username routing.
+# Display order 1100-1200 (after comprehensive FAQs which use 100-1050)
+
+import Ecto.Query
 
 alias Homesite.Repo
 alias Homesite.Accounts
 alias Homesite.Faqs
-alias Homesite.Faqs.Faq
 
-# Get or create admin user for FAQ creation
+# Get existing admin user (created by seeds.exs or comprehensive_faqs.exs)
 admin_user =
-  case Repo.get_by(Accounts.User, email: "admin5@example.com") do
-    nil ->
-      IO.puts("Creating admin user for FAQs...")
-
-      {:ok, user} =
-        Accounts.register_admin(%{
-          email: "faq-admin@example.com",
-          password: "adminpassword123",
-          flowers: 5,
-          confirmed_at: DateTime.utc_now(:second)
-        })
-
-      user
-
-    user ->
-      user
-  end
+  Repo.one(from u in Accounts.User, where: u.role == "admin", limit: 1) ||
+    raise "No admin user found. Run seeds.exs first."
 
 # Create admin scope using Scope.for_user/1
 admin_scope = Accounts.Scope.for_user(admin_user)
@@ -51,7 +40,7 @@ social_feed_faqs = [
     alustalla on erilaiset konfiguraatiovaatimukset - RSS tarvitsee syötteen URL:n,
     kun taas Mastodon ja Bluesky tarvitsevat käyttäjätunnuksen.
     """,
-    display_order: 10,
+    display_order: 1100,
     slug: "supported-social-media-platforms"
   },
   %{
@@ -70,7 +59,7 @@ social_feed_faqs = [
     määritä päivitysväli (oletus 30 minuuttia). Klikkaa \"Save\" aktivoidaksesi
     syötteen. Järjestelmä hakee sisältöä automaattisesti määrittämäsi päivitysvälin mukaan.
     """,
-    display_order: 20,
+    display_order: 1110,
     slug: "add-rss-feed"
   },
   %{
@@ -94,7 +83,7 @@ social_feed_faqs = [
     Voit yrittää manuaalisesti uudelleen \"Refresh Now\" -painikkeella. Jatkuvien
     virheiden kohdalla varmista, että lähde on edelleen aktiivinen ja saatavilla.
     """,
-    display_order: 30,
+    display_order: 1120,
     slug: "feed-error-troubleshooting"
   },
   %{
@@ -117,7 +106,7 @@ social_feed_faqs = [
     alustojen nopeudenrajoituksia ja vähentääksesi turhaa kuormaa. Voit aina käyttää
     \"Refresh Now\" -toimintoa välittömiin päivityksiin tarvittaessa.
     """,
-    display_order: 40,
+    display_order: 1130,
     slug: "recommended-refresh-intervals"
   },
   %{
@@ -139,7 +128,7 @@ social_feed_faqs = [
     julkinen (ei yksityinen/suojattu). Järjestelmä hakee uusimmat julkaisut määrittämäsi
     päivitysvälin mukaan.
     """,
-    display_order: 50,
+    display_order: 1140,
     slug: "add-mastodon-bluesky-feed"
   }
 ]
@@ -166,7 +155,7 @@ username_routing_faqs = [
     numeerisen ID-URL:n lisäksi (/users/123). Käyttäjätunnuksen on oltava ainutlaatuinen
     eikä se voi olla varattu järjestelmäsana.
     """,
-    display_order: 60,
+    display_order: 1150,
     slug: "setup-custom-username"
   },
   %{
@@ -189,7 +178,7 @@ username_routing_faqs = [
     Esimerkkejä virheellisistä: JohnDoe (isot kirjaimet), 123user (alkaa numerolla),
     jo (liian lyhyt), john-doe (väliviiva ei sallittu), admin (varattu sana).
     """,
-    display_order: 70,
+    display_order: 1160,
     slug: "username-format-requirements"
   },
   %{
@@ -214,7 +203,7 @@ username_routing_faqs = [
     aikaleimalla, IP-osoitteella ja käyttäjäagentilla turvallisuussyistä. Valitse
     käyttäjätunnukset huolellisesti, sillä toistuvat muutokset hämmentävät seuraajia.
     """,
-    display_order: 80,
+    display_order: 1170,
     slug: "changing-username-effects"
   },
   %{
@@ -238,7 +227,7 @@ username_routing_faqs = [
     Feedly, Inoreader, NetNewsWire tai sähköpostilistan palveluiden kanssa. Syötteesi
     sisältävät vain julkaistut artikkelit, järjestettynä julkaisupäivän mukaan.
     """,
-    display_order: 90,
+    display_order: 1180,
     slug: "username-in-feed-urls"
   },
   %{
@@ -262,38 +251,42 @@ username_routing_faqs = [
     sovelluksen ydintoiminnot pysyvät saavutettavina ja estävät sekaannukset
     käyttäjäprofiilien ja järjestelmäsivujen välillä.
     """,
-    display_order: 100,
+    display_order: 1190,
     slug: "reserved-usernames-explanation"
   }
 ]
 
-IO.puts("Creating Social Media Feeds FAQs...")
-
-Enum.each(social_feed_faqs, fn faq_attrs ->
-  case Faqs.create_faq(admin_scope, faq_attrs) do
+# Helper function to create FAQ with idempotency
+create_faq_if_not_exists = fn faq_attrs, scope ->
+  case Faqs.create_faq(scope, faq_attrs) do
     {:ok, faq} ->
-      IO.puts("  ✅ Created: #{faq.question_en |> String.slice(0, 60)}...")
+      IO.puts("  ✅ Created: #{String.slice(faq.question_en, 0, 55)}...")
+      :created
 
     {:error, changeset} ->
-      IO.puts("  ❌ Failed: #{faq_attrs.question_en |> String.slice(0, 60)}...")
-      IO.inspect(changeset.errors)
+      if Keyword.has_key?(changeset.errors, :slug) do
+        IO.puts("  ⏭️  Exists: #{String.slice(faq_attrs.question_en, 0, 55)}...")
+        :skipped
+      else
+        IO.puts("  ❌ Failed: #{String.slice(faq_attrs.question_en, 0, 55)}...")
+        IO.inspect(changeset.errors, label: "    Errors")
+        :failed
+      end
   end
-end)
+end
+
+IO.puts("Creating Social Media Feeds FAQs...")
+feed_results = Enum.map(social_feed_faqs, &create_faq_if_not_exists.(&1, admin_scope))
 
 IO.puts("\nCreating Username Routing FAQs...")
+username_results = Enum.map(username_routing_faqs, &create_faq_if_not_exists.(&1, admin_scope))
 
-Enum.each(username_routing_faqs, fn faq_attrs ->
-  case Faqs.create_faq(admin_scope, faq_attrs) do
-    {:ok, faq} ->
-      IO.puts("  ✅ Created: #{faq.question_en |> String.slice(0, 60)}...")
+all_results = feed_results ++ username_results
+created = Enum.count(all_results, &(&1 == :created))
+skipped = Enum.count(all_results, &(&1 == :skipped))
+failed = Enum.count(all_results, &(&1 == :failed))
 
-    {:error, changeset} ->
-      IO.puts("  ❌ Failed: #{faq_attrs.question_en |> String.slice(0, 60)}...")
-      IO.inspect(changeset.errors)
-  end
-end)
-
-IO.puts("\n=== FAQ Creation Complete ===")
-IO.puts("Total FAQs created: #{length(social_feed_faqs) + length(username_routing_faqs)}")
-IO.puts("\nView FAQs at: /faqs (when implemented)")
-IO.puts("Or query with: Faqs.list_user_faqs(\"en\") or Faqs.list_user_faqs(\"fi\")")
+IO.puts("\n=== User Guide FAQ Summary ===")
+IO.puts("  Created: #{created}")
+IO.puts("  Skipped: #{skipped} (already exist)")
+IO.puts("  Failed:  #{failed}")
