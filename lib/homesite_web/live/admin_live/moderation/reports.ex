@@ -110,8 +110,8 @@ defmodule HomesiteWeb.AdminLive.Moderation.Reports do
       </:actions>
     </.header>
 
-    <div class="mt-6">
-      <div class="mb-4 flex gap-2">
+    <div class="mt-[var(--space-md)]">
+      <div class="mb-[var(--space-sm)] flex gap-[var(--space-xs)]">
         <button
           phx-click="filter"
           phx-value-status="pending"
@@ -143,10 +143,10 @@ defmodule HomesiteWeb.AdminLive.Moderation.Reports do
       </div>
 
       <%= if @reports == [] do %>
-        <div class="py-12 text-center">
+        <div class="py-[var(--space-xl)] text-center">
           <.icon name="hero-flag" class="text-base-content/40 mx-auto h-12 w-12" />
-          <h3 class="mt-2 text-sm font-semibold">{gettext("No reports")}</h3>
-          <p class="text-base-content/60 mt-1 text-sm">
+          <h3 class="mt-[var(--space-xs)] text-[var(--text-sm)] font-semibold">{gettext("No reports")}</h3>
+          <p class="text-base-content/60 mt-[var(--space-inline)] text-[var(--text-sm)]">
             {gettext("No reports match the current filter.")}
           </p>
         </div>
@@ -172,12 +172,12 @@ defmodule HomesiteWeb.AdminLive.Moderation.Reports do
                     </div>
                   </td>
                   <td>
-                    <div class="text-sm">
+                    <div class="text-[var(--text-sm)]">
                       {report.reporter.display_name || report.reporter.email}
                     </div>
                   </td>
                   <td>
-                    <div class="text-base-content/70 max-w-xs truncate text-sm">
+                    <div class="text-base-content/70 max-w-xs truncate text-[var(--text-sm)]">
                       {report.reason}
                     </div>
                   </td>
@@ -222,12 +222,12 @@ defmodule HomesiteWeb.AdminLive.Moderation.Reports do
       </:actions>
     </.header>
 
-    <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <div class="space-y-4">
+    <div class="mt-[var(--space-md)] grid grid-cols-1 gap-[var(--space-md)] lg:grid-cols-2">
+      <div class="space-y-[var(--space-sm)]">
         <div class="card bg-base-200">
           <div class="card-body">
-            <h3 class="card-title text-sm">{gettext("Reported User")}</h3>
-            <div class="flex items-center gap-3">
+            <h3 class="card-title text-[var(--text-sm)]">{gettext("Reported User")}</h3>
+            <div class="flex items-center gap-[var(--space-xs)]">
               <div class="avatar placeholder">
                 <div class="bg-error text-error-content w-12 rounded-full">
                   <span>{String.first(@report.reported_user.email) |> String.upcase()}</span>
@@ -237,10 +237,10 @@ defmodule HomesiteWeb.AdminLive.Moderation.Reports do
                 <div class="font-bold">
                   {@report.reported_user.display_name || @report.reported_user.email}
                 </div>
-                <div class="text-sm opacity-50">{@report.reported_user.email}</div>
+                <div class="text-[var(--text-sm)] opacity-50">{@report.reported_user.email}</div>
               </div>
             </div>
-            <div class="mt-4 flex gap-2">
+            <div class="mt-[var(--space-sm)] flex gap-[var(--space-xs)]">
               <.link
                 navigate={~p"/admin/moderation/suspensions?user_id=#{@report.reported_user_id}"}
                 class="btn btn-warning btn-sm"
@@ -268,8 +268,8 @@ defmodule HomesiteWeb.AdminLive.Moderation.Reports do
 
         <div class="card bg-base-200">
           <div class="card-body">
-            <h3 class="card-title text-sm">{gettext("Reporter")}</h3>
-            <div class="flex items-center gap-3">
+            <h3 class="card-title text-[var(--text-sm)]">{gettext("Reporter")}</h3>
+            <div class="flex items-center gap-[var(--space-xs)]">
               <div class="avatar placeholder">
                 <div class="bg-neutral text-neutral-content w-12 rounded-full">
                   <span>{String.first(@report.reporter.email) |> String.upcase()}</span>
@@ -279,18 +279,18 @@ defmodule HomesiteWeb.AdminLive.Moderation.Reports do
                 <div class="font-bold">
                   {@report.reporter.display_name || @report.reporter.email}
                 </div>
-                <div class="text-sm opacity-50">{@report.reporter.email}</div>
+                <div class="text-[var(--text-sm)] opacity-50">{@report.reporter.email}</div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="space-y-4">
+      <div class="space-y-[var(--space-sm)]">
         <div class="card bg-base-200">
           <div class="card-body">
-            <h3 class="card-title text-sm">{gettext("Report Details")}</h3>
-            <div class="mb-2">
+            <h3 class="card-title text-[var(--text-sm)]">{gettext("Report Details")}</h3>
+            <div class="mb-[var(--space-xs)]">
               <span class={["badge", status_badge_class(@report.status)]}>
                 {@report.status}
               </span>
@@ -302,7 +302,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Reports do
         <%= if @report.status == "pending" do %>
           <div class="card bg-base-200">
             <div class="card-body">
-              <h3 class="card-title text-sm">{gettext("Resolution")}</h3>
+              <h3 class="card-title text-[var(--text-sm)]">{gettext("Resolution")}</h3>
               <.form for={@resolution_form} phx-submit="resolve" id="resolve-form">
                 <div class="form-control">
                   <label class="label">
@@ -314,7 +314,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Reports do
                     placeholder={gettext("Describe what action was taken...")}
                   >{@resolution_form[:notes].value}</textarea>
                 </div>
-                <div class="mt-4 flex gap-2">
+                <div class="mt-[var(--space-sm)] flex gap-[var(--space-xs)]">
                   <button type="submit" class="btn btn-success btn-sm">
                     <.icon name="hero-check" class="h-4 w-4" />
                     {gettext("Resolve")}
@@ -336,7 +336,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Reports do
           <%= if @report.resolution_notes do %>
             <div class="card bg-base-200">
               <div class="card-body">
-                <h3 class="card-title text-sm">{gettext("Resolution")}</h3>
+                <h3 class="card-title text-[var(--text-sm)]">{gettext("Resolution")}</h3>
                 <p class="text-base-content/60 text-sm">
                   {gettext("Resolved by %{user} on %{date}",
                     user:
