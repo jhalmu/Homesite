@@ -2,9 +2,9 @@ defmodule Homesite.Workers.FeedbackPromptWorkerTest do
   use Homesite.DataCase, async: true
   use Oban.Testing, repo: Homesite.Repo
 
-  alias Homesite.Workers.FeedbackPromptWorker
   alias Homesite.Feedback
   alias Homesite.Repo
+  alias Homesite.Workers.FeedbackPromptWorker
 
   import Homesite.AccountsFixtures
 

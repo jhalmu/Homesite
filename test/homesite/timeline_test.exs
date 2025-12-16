@@ -3,9 +3,9 @@ defmodule Homesite.TimelineTest do
 
   import Homesite.AccountsFixtures
 
-  alias Homesite.Timeline
   alias Homesite.Content
   alias Homesite.ExternalFeeds
+  alias Homesite.Timeline
 
   setup do
     user = user_fixture()

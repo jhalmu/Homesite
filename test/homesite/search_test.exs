@@ -1,7 +1,7 @@
 defmodule Homesite.SearchTest do
   use Homesite.DataCase
 
-  alias Homesite.{Search, Content, Faqs}
+  alias Homesite.{Content, Faqs, Search}
 
   describe "search_all/2" do
     setup do

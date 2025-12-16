@@ -1,8 +1,8 @@
 defmodule Homesite.NotificationsTest do
   use Homesite.DataCase, async: true
 
-  alias Homesite.Notifications
   alias Homesite.Accounts.Scope
+  alias Homesite.Notifications
 
   import Homesite.AccountsFixtures
 

@@ -1,7 +1,7 @@
 defmodule Homesite.FeedbackTest do
   use Homesite.DataCase, async: false
 
-  alias Homesite.{Feedback, Accounts, Repo}
+  alias Homesite.{Accounts, Feedback, Repo}
   alias Homesite.Accounts.Scope
   alias Homesite.Feedback.{FeedbackResponse, RankHistory}
 

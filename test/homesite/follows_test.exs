@@ -1,8 +1,8 @@
 defmodule Homesite.FollowsTest do
   use Homesite.DataCase, async: true
 
-  alias Homesite.Follows
   alias Homesite.Accounts.Scope
+  alias Homesite.Follows
 
   import Homesite.AccountsFixtures
 

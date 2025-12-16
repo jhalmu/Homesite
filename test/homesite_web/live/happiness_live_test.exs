@@ -4,8 +4,8 @@ defmodule HomesiteWeb.HappinessLiveTest do
   import Phoenix.LiveViewTest
   import Homesite.AccountsFixtures
 
-  alias Homesite.{Feedback, Repo}
   alias Homesite.Accounts.Scope
+  alias Homesite.{Feedback, Repo}
 
   describe "HappinessLive.Index (Public Happiness Meter)" do
     setup do

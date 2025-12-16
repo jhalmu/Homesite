@@ -1,8 +1,8 @@
 defmodule Homesite.ExternalFeedsTest do
   use Homesite.DataCase
 
-  alias Homesite.ExternalFeeds
   alias Homesite.Accounts
+  alias Homesite.ExternalFeeds
 
   describe "feed_sources" do
     alias Homesite.ExternalFeeds.FeedSource

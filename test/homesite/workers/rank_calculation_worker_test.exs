@@ -2,8 +2,8 @@ defmodule Homesite.Workers.RankCalculationWorkerTest do
   use Homesite.DataCase, async: true
   use Oban.Testing, repo: Homesite.Repo
 
+  alias Homesite.{Accounts, Repo}
   alias Homesite.Workers.RankCalculationWorker
-  alias Homesite.{Repo, Accounts}
 
   import Homesite.AccountsFixtures
 

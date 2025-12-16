@@ -2,8 +2,8 @@ defmodule Homesite.Workers.FeedRefreshWorkerTest do
   use Homesite.DataCase, async: true
   use Oban.Testing, repo: Homesite.Repo
 
-  alias Homesite.ExternalFeeds
   alias Homesite.Accounts
+  alias Homesite.ExternalFeeds
   alias Homesite.Workers.FeedRefreshWorker
 
   import Homesite.AccountsFixtures

@@ -4,9 +4,9 @@ defmodule Homesite.Workers.FeedCleanupWorkerTest do
 
   import Homesite.AccountsFixtures
 
-  alias Homesite.Workers.FeedCleanupWorker
   alias Homesite.ExternalFeeds
   alias Homesite.Repo
+  alias Homesite.Workers.FeedCleanupWorker
 
   describe "perform/1" do
     setup do

@@ -2,7 +2,7 @@ defmodule Homesite.AnalyticsTest do
   use Homesite.DataCase, async: true
 
   alias Homesite.Analytics
-  alias Homesite.Analytics.{SearchQuery, ActivityLog}
+  alias Homesite.Analytics.{ActivityLog, SearchQuery}
 
   import Homesite.AccountsFixtures
 

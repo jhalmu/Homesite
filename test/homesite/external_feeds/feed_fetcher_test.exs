@@ -1,9 +1,9 @@
 defmodule Homesite.ExternalFeeds.FeedFetcherTest do
   use Homesite.DataCase
 
+  alias Homesite.Accounts
   alias Homesite.ExternalFeeds
   alias Homesite.ExternalFeeds.FeedFetcher
-  alias Homesite.Accounts
 
   import Homesite.AccountsFixtures
 

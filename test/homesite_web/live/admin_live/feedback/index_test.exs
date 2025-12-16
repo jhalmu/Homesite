@@ -4,8 +4,8 @@ defmodule HomesiteWeb.AdminLive.Feedback.IndexTest do
   import Phoenix.LiveViewTest
   import Homesite.AccountsFixtures
 
-  alias Homesite.{Feedback, Repo}
   alias Homesite.Accounts.Scope
+  alias Homesite.{Feedback, Repo}
 
   describe "AdminLive.Feedback.Index (Admin Authorization)" do
     setup do

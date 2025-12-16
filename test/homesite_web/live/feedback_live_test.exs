@@ -5,8 +5,8 @@ defmodule HomesiteWeb.FeedbackLiveTest do
   import Homesite.AccountsFixtures
   import Ecto.Query
 
-  alias Homesite.{Feedback, Repo}
   alias Homesite.Accounts.Scope
+  alias Homesite.{Feedback, Repo}
 
   describe "FeedbackLive.Index (Passive Feedback Form)" do
     setup do
