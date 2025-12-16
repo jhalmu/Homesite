@@ -7,6 +7,47 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-16 - Design System Migration & Playwright Verification
+
+### Session: CSS design token migration and E2E test verification
+
+**Design System Migration (98% complete)**
+
+Migrated ~219 of ~223 hardcoded Tailwind spacing and typography values to CSS custom properties:
+
+- `gap-N` → `gap-[var(--space-*)]`
+- `mt-N`, `mb-N`, `px-N`, `py-N` → spacing tokens
+- `text-sm`, `text-lg`, `text-xl` → `text-[var(--text-*)]`
+
+**Token Mappings:**
+- `--space-inline` (gap-1, mt-1)
+- `--space-xs` (gap-2/3, mt-2, mb-2)
+- `--space-sm` (gap-4, mt-4, px-4)
+- `--space-md` (gap-6, mt-6, mb-6)
+- `--space-lg` (gap-8, py-8)
+- `--space-xl` (larger responsive values)
+
+**Intentional Exceptions (4):**
+- `focus:px-4`, `focus:py-2` - Accessibility skip-link (precise pixels)
+- `lg:mx-0` - Responsive margin reset
+- `scroll-mt-24` - Scroll anchor navigation offset
+
+**Files Updated:** 33 files across components, live views, templates
+
+**Playwright E2E Sandbox - Verified Working**
+
+- SQL sandbox properly configured in `config/test.exs` and `endpoint.ex`
+- 15 E2E tests passing (3 tag workflow + 12 accessibility)
+- Run with: `mix test --include playwright`
+
+**Commits:**
+- `1ae1c32` - style: Design system migration - batch 3 spacing updates
+- `facdf15` - style: Design system migration - complete spacing/typography
+
+**Tests:** 1555 tests, 0 failures
+
+---
+
 ## 2025-12-15 - New Machine Setup (Fedora Bluefin)
 
 ### Session: Project setup on new development machine
@@ -567,6 +608,6 @@ Corrected mistranslations caused by gettext fuzzy matching:
 
 #### Deferred (Non-blocking)
 - 125 Finnish strings need translation (works with English fallbacks) ✅ DONE
-- Playwright E2E needs sandbox configuration (infrastructure task)
+- Playwright E2E sandbox configuration ✅ DONE (15 E2E tests passing)
 
 ---
