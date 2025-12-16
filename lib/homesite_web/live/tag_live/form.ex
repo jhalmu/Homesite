@@ -32,7 +32,10 @@ defmodule HomesiteWeb.TagLive.Form do
               <p class="font-semibold">{gettext("Similar tags already exist:")}</p>
               <div class="mt-[var(--space-xs)] gap-[var(--space-xs)] flex flex-wrap">
                 <%= for tag <- @similar_tags do %>
-                  <.link navigate={~p"/tags/#{tag}"} class="badge badge-lg badge-outline gap-[var(--space-inline)]">
+                  <.link
+                    navigate={~p"/tags/#{tag}"}
+                    class="badge badge-lg badge-outline gap-[var(--space-inline)]"
+                  >
                     <.icon name="hero-tag" class="h-3 w-3" />
                     {tag.name}
                   </.link>

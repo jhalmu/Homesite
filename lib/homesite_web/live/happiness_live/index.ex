@@ -86,7 +86,7 @@ defmodule HomesiteWeb.HappinessLive.Index do
         <%!-- Public Testimonials --%>
         <%= if length(@testimonials) > 0 do %>
           <div class="mb-[var(--space-2xl)]">
-            <h2 class="mb-[var(--space-lg)] text-center text-[var(--text-3xl)] font-bold">
+            <h2 class="mb-[var(--space-lg)] text-[var(--text-3xl)] text-center font-bold">
               {gettext("What Users Are Saying")}
             </h2>
 

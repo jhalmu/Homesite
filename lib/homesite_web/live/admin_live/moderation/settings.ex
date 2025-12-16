@@ -175,14 +175,14 @@ defmodule HomesiteWeb.AdminLive.Moderation.Settings do
                       <td class="font-mono text-[var(--text-sm)]">{setting.key}</td>
                       <td>
                         <%= if @editing_setting && @editing_setting.key == setting.key do %>
-                          <form phx-submit="save_setting" class="flex gap-[var(--space-xs)]">
+                          <form phx-submit="save_setting" class="gap-[var(--space-xs)] flex">
                             <input type="hidden" name="key" value={setting.key} />
                             <textarea
                               name="value"
                               class="textarea textarea-bordered textarea-sm w-48"
                               rows="3"
                             >{Jason.encode!(setting.value, pretty: true)}</textarea>
-                            <div class="flex flex-col gap-[var(--space-inline)]">
+                            <div class="gap-[var(--space-inline)] flex flex-col">
                               <button type="submit" class="btn btn-primary btn-xs">
                                 {gettext("Save")}
                               </button>
@@ -199,7 +199,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Settings do
                           <pre class="text-xs">{Jason.encode!(setting.value, pretty: true)}</pre>
                         <% end %>
                       </td>
-                      <td class="max-w-xs text-[var(--text-sm)]">{setting.description}</td>
+                      <td class="text-[var(--text-sm)] max-w-xs">{setting.description}</td>
                       <td>
                         <%= if is_nil(@editing_setting) do %>
                           <button
@@ -272,7 +272,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Settings do
                 <div class="card-body">
                   <h3 class="font-semibold">{gettext("New Preset")}</h3>
                   <form phx-submit="create_preset" class="space-y-[var(--space-sm)]">
-                    <div class="grid grid-cols-2 gap-[var(--space-sm)]">
+                    <div class="gap-[var(--space-sm)] grid grid-cols-2">
                       <div class="form-control">
                         <label class="label">
                           <span class="label-text">{gettext("Label (English)")}</span>
@@ -296,7 +296,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Settings do
                         />
                       </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-[var(--space-sm)]">
+                    <div class="gap-[var(--space-sm)] grid grid-cols-2">
                       <div class="form-control">
                         <label class="label">
                           <span class="label-text">{gettext("Text (English)")}</span>
@@ -320,7 +320,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Settings do
                         ></textarea>
                       </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-[var(--space-sm)]">
+                    <div class="gap-[var(--space-sm)] grid grid-cols-2">
                       <div class="form-control">
                         <label class="label">
                           <span class="label-text">{gettext("Display Order")}</span>
@@ -345,7 +345,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Settings do
                         </label>
                       </div>
                     </div>
-                    <div class="flex gap-[var(--space-xs)]">
+                    <div class="gap-[var(--space-xs)] flex">
                       <button type="submit" class="btn btn-primary btn-sm">
                         {gettext("Create")}
                       </button>

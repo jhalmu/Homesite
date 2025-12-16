@@ -33,7 +33,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Dashboard do
       </.header>
 
       <div class="mt-[var(--space-md)]">
-        <div class="mb-[var(--space-lg)] grid grid-cols-1 gap-[var(--space-sm)] md:grid-cols-2 lg:grid-cols-4">
+        <div class="mb-[var(--space-lg)] gap-[var(--space-sm)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
           <.moderation_stat_card
             title={gettext("Pending Reports")}
             value={@stats.pending_reports}
@@ -64,14 +64,14 @@ defmodule HomesiteWeb.AdminLive.Moderation.Dashboard do
           />
         </div>
 
-        <div class="grid grid-cols-1 gap-[var(--space-md)] lg:grid-cols-2">
+        <div class="gap-[var(--space-md)] grid grid-cols-1 lg:grid-cols-2">
           <div class="card bg-base-200">
             <div class="card-body">
               <h2 class="card-title">
                 <.icon name="hero-bolt" class="h-5 w-5" />
                 {gettext("Quick Actions")}
               </h2>
-              <div class="grid grid-cols-2 gap-[var(--space-xs)]">
+              <div class="gap-[var(--space-xs)] grid grid-cols-2">
                 <.link navigate={~p"/admin/moderation/reports"} class="btn btn-outline btn-sm">
                   <.icon name="hero-flag" class="h-4 w-4" />
                   {gettext("Review Reports")}

@@ -31,7 +31,7 @@ defmodule HomesiteWeb.ProjectLive.Show do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="mx-auto w-full max-w-5xl px-[var(--space-sm)] py-[var(--space-lg)]">
+      <div class="px-[var(--space-sm)] py-[var(--space-lg)] mx-auto w-full max-w-5xl">
         <%!-- Page Header --%>
         <div class="mb-[var(--space-lg)] flex items-start justify-between">
           <div>
@@ -64,7 +64,7 @@ defmodule HomesiteWeb.ProjectLive.Show do
 
         <%!-- Description --%>
         <%= if @project.description do %>
-          <div class="prose mb-[var(--space-lg)] max-w-none">
+          <div class="mb-[var(--space-lg)] prose max-w-none">
             <p>{@project.description}</p>
           </div>
         <% end %>
@@ -90,7 +90,9 @@ defmodule HomesiteWeb.ProjectLive.Show do
 
         <%= if @project.tags && length(@project.tags) > 0 do %>
           <div class="mb-[var(--space-lg)]">
-            <h3 class="text-[var(--text-lg)] mb-[var(--space-xs)] font-semibold">{gettext("Tags")}</h3>
+            <h3 class="text-[var(--text-lg)] mb-[var(--space-xs)] font-semibold">
+              {gettext("Tags")}
+            </h3>
             <div class="gap-[var(--space-xs)] flex flex-wrap">
               <%= for tag <- @project.tags do %>
                 <span class="badge badge-ghost">{tag}</span>
@@ -102,7 +104,9 @@ defmodule HomesiteWeb.ProjectLive.Show do
         <%!-- Collaborators --%>
         <%= if length(@project.collaborators) > 0 do %>
           <div class="mb-[var(--space-lg)]">
-            <h3 class="text-[var(--text-lg)] mb-[var(--space-xs)] font-semibold">{gettext("Collaborators")}</h3>
+            <h3 class="text-[var(--text-lg)] mb-[var(--space-xs)] font-semibold">
+              {gettext("Collaborators")}
+            </h3>
             <div class="space-y-[var(--space-xs)]">
               <%= for collab <- @project.collaborators do %>
                 <div class="gap-[var(--space-xs)] flex items-center">
@@ -134,7 +138,9 @@ defmodule HomesiteWeb.ProjectLive.Show do
         <%!-- Affiliation Links --%>
         <%= if length(@project.affiliation_links) > 0 do %>
           <div class="mb-[var(--space-lg)]">
-            <h3 class="text-[var(--text-lg)] mb-[var(--space-xs)] font-semibold">{gettext("Related Links")}</h3>
+            <h3 class="text-[var(--text-lg)] mb-[var(--space-xs)] font-semibold">
+              {gettext("Related Links")}
+            </h3>
             <div class="space-y-[var(--space-xs)]">
               <%= for link <- @project.affiliation_links do %>
                 <a
@@ -153,7 +159,9 @@ defmodule HomesiteWeb.ProjectLive.Show do
         <%!-- Media Items --%>
         <%= if length(@project.media_items) > 0 do %>
           <div class="mb-[var(--space-lg)]">
-            <h3 class="text-[var(--text-lg)] mb-[var(--space-sm)] font-semibold">{gettext("Media")}</h3>
+            <h3 class="text-[var(--text-lg)] mb-[var(--space-sm)] font-semibold">
+              {gettext("Media")}
+            </h3>
             <div class="gap-[var(--space-sm)] grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               <%= for media <- @project.media_items do %>
                 <div class="aspect-square bg-base-200 overflow-hidden rounded-lg">
@@ -167,8 +175,11 @@ defmodule HomesiteWeb.ProjectLive.Show do
             </div>
           </div>
         <% else %>
-          <div class="bg-base-200 rounded-lg py-[var(--space-xl)] text-center">
-            <.icon name="hero-photo" class="text-base-content/30 mx-auto mb-[var(--space-xs)] h-12 w-12" />
+          <div class="bg-base-200 py-[var(--space-xl)] rounded-lg text-center">
+            <.icon
+              name="hero-photo"
+              class="text-base-content/30 mb-[var(--space-xs)] mx-auto h-12 w-12"
+            />
             <p class="text-base-content/60">{gettext("No media items added to this project yet.")}</p>
           </div>
         <% end %>

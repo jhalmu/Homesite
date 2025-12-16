@@ -457,7 +457,7 @@
                   <% end %>
                 </td>
                 <td>
-                  <div class="flex items-center gap-[var(--space-xs)]">
+                  <div class="gap-[var(--space-xs)] flex items-center">
                     <progress
                       class="progress progress-primary w-16"
                       value={project.completion_percentage}
@@ -595,7 +595,10 @@
 
       <div :if={@tag_count > 0} class="gap-[var(--space-xs)] flex flex-wrap">
         <%= for tag <- Enum.take(@tags, 10) do %>
-          <.link navigate={~p"/tags/#{tag}"} class="badge badge-lg badge-primary px-[var(--space-sm)] py-[var(--space-xs)]">
+          <.link
+            navigate={~p"/tags/#{tag}"}
+            class="badge badge-lg badge-primary px-[var(--space-sm)] py-[var(--space-xs)]"
+          >
             {tag.name}
           </.link>
         <% end %>

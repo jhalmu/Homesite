@@ -111,7 +111,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Reports do
     </.header>
 
     <div class="mt-[var(--space-md)]">
-      <div class="mb-[var(--space-sm)] flex gap-[var(--space-xs)]">
+      <div class="mb-[var(--space-sm)] gap-[var(--space-xs)] flex">
         <button
           phx-click="filter"
           phx-value-status="pending"
@@ -145,7 +145,9 @@ defmodule HomesiteWeb.AdminLive.Moderation.Reports do
       <%= if @reports == [] do %>
         <div class="py-[var(--space-xl)] text-center">
           <.icon name="hero-flag" class="text-base-content/40 mx-auto h-12 w-12" />
-          <h3 class="mt-[var(--space-xs)] text-[var(--text-sm)] font-semibold">{gettext("No reports")}</h3>
+          <h3 class="mt-[var(--space-xs)] text-[var(--text-sm)] font-semibold">
+            {gettext("No reports")}
+          </h3>
           <p class="text-base-content/60 mt-[var(--space-inline)] text-[var(--text-sm)]">
             {gettext("No reports match the current filter.")}
           </p>
@@ -177,7 +179,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Reports do
                     </div>
                   </td>
                   <td>
-                    <div class="text-base-content/70 max-w-xs truncate text-[var(--text-sm)]">
+                    <div class="text-base-content/70 text-[var(--text-sm)] max-w-xs truncate">
                       {report.reason}
                     </div>
                   </td>
@@ -222,12 +224,12 @@ defmodule HomesiteWeb.AdminLive.Moderation.Reports do
       </:actions>
     </.header>
 
-    <div class="mt-[var(--space-md)] grid grid-cols-1 gap-[var(--space-md)] lg:grid-cols-2">
+    <div class="mt-[var(--space-md)] gap-[var(--space-md)] grid grid-cols-1 lg:grid-cols-2">
       <div class="space-y-[var(--space-sm)]">
         <div class="card bg-base-200">
           <div class="card-body">
             <h3 class="card-title text-[var(--text-sm)]">{gettext("Reported User")}</h3>
-            <div class="flex items-center gap-[var(--space-xs)]">
+            <div class="gap-[var(--space-xs)] flex items-center">
               <div class="avatar placeholder">
                 <div class="bg-error text-error-content w-12 rounded-full">
                   <span>{String.first(@report.reported_user.email) |> String.upcase()}</span>
@@ -240,7 +242,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Reports do
                 <div class="text-[var(--text-sm)] opacity-50">{@report.reported_user.email}</div>
               </div>
             </div>
-            <div class="mt-[var(--space-sm)] flex gap-[var(--space-xs)]">
+            <div class="mt-[var(--space-sm)] gap-[var(--space-xs)] flex">
               <.link
                 navigate={~p"/admin/moderation/suspensions?user_id=#{@report.reported_user_id}"}
                 class="btn btn-warning btn-sm"
@@ -269,7 +271,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Reports do
         <div class="card bg-base-200">
           <div class="card-body">
             <h3 class="card-title text-[var(--text-sm)]">{gettext("Reporter")}</h3>
-            <div class="flex items-center gap-[var(--space-xs)]">
+            <div class="gap-[var(--space-xs)] flex items-center">
               <div class="avatar placeholder">
                 <div class="bg-neutral text-neutral-content w-12 rounded-full">
                   <span>{String.first(@report.reporter.email) |> String.upcase()}</span>
@@ -314,7 +316,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Reports do
                     placeholder={gettext("Describe what action was taken...")}
                   >{@resolution_form[:notes].value}</textarea>
                 </div>
-                <div class="mt-[var(--space-sm)] flex gap-[var(--space-xs)]">
+                <div class="mt-[var(--space-sm)] gap-[var(--space-xs)] flex">
                   <button type="submit" class="btn btn-success btn-sm">
                     <.icon name="hero-check" class="h-4 w-4" />
                     {gettext("Resolve")}

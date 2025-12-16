@@ -115,7 +115,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Violations do
                     reporters: alert.unique_reporters
                   )}
                 </span>
-                <div class="flex gap-[var(--space-xs)]">
+                <div class="gap-[var(--space-xs)] flex">
                   <button
                     phx-click="view_alert_user"
                     phx-value-user-id={alert.user_id}
@@ -136,7 +136,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Violations do
           </div>
         <% end %>
 
-        <div class="grid grid-cols-1 gap-[var(--space-md)] lg:grid-cols-3">
+        <div class="gap-[var(--space-md)] grid grid-cols-1 lg:grid-cols-3">
           <%!-- Flagged users list --%>
           <div class="lg:col-span-1">
             <div class="card bg-base-100 shadow">
@@ -156,7 +156,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Violations do
                         phx-value-id={user_data.user.id}
                       >
                         <div class="flex items-center justify-between">
-                          <div class="flex items-center gap-[var(--space-xs)]">
+                          <div class="gap-[var(--space-xs)] flex items-center">
                             <div class="avatar placeholder">
                               <div class="bg-neutral text-neutral-content w-8 rounded-full">
                                 <span class="text-xs">
@@ -164,7 +164,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Violations do
                                 </span>
                               </div>
                             </div>
-                            <span class="truncate text-[var(--text-sm)]">
+                            <span class="text-[var(--text-sm)] truncate">
                               {user_data.user.display_name || user_data.user.email}
                             </span>
                           </div>
@@ -183,7 +183,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Violations do
             <%= if @selected_user do %>
               <div class="card bg-base-100 shadow">
                 <div class="card-body">
-                  <div class="flex items-center gap-[var(--space-sm)]">
+                  <div class="gap-[var(--space-sm)] flex items-center">
                     <div class="avatar placeholder">
                       <div class="bg-neutral text-neutral-content w-12 rounded-full">
                         <span>{String.first(@selected_user.email) |> String.upcase()}</span>
@@ -215,7 +215,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Violations do
                     </div>
 
                     <%!-- By type breakdown --%>
-                    <div class="mb-[var(--space-sm)] flex flex-wrap gap-[var(--space-xs)]">
+                    <div class="mb-[var(--space-sm)] gap-[var(--space-xs)] flex flex-wrap">
                       <%= for {type, count} <- @user_stats.by_type do %>
                         <span class="badge badge-outline">{type}: {count}</span>
                       <% end %>

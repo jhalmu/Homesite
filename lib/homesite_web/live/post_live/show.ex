@@ -70,7 +70,7 @@ defmodule HomesiteWeb.PostLive.Show do
           </div>
 
           <%= if @post.read_time_minutes >= 2 do %>
-            <div class="my-[var(--spacing-lg)] border-base-300 border-t pt-[var(--space-md)]">
+            <div class="my-[var(--spacing-lg)] border-base-300 pt-[var(--space-md)] border-t">
               <.platform_share_buttons url={@current_url} title={@post.title} />
             </div>
           <% end %>

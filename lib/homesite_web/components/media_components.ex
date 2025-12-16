@@ -84,7 +84,7 @@ defmodule HomesiteWeb.MediaComponents do
       </button>
 
       <%!-- Image counter --%>
-      <div class="text-white/80 absolute top-4 left-4 text-[var(--text-sm)] font-medium">
+      <div class="text-white/80 text-[var(--text-sm)] absolute top-4 left-4 font-medium">
         {@current_index + 1} / {@total_images}
       </div>
 
@@ -145,7 +145,9 @@ defmodule HomesiteWeb.MediaComponents do
               <h3 class="text-[var(--text-lg)] font-semibold">{@current_image.title}</h3>
             <% end %>
             <%= if @current_image.caption do %>
-              <p class="text-white/70 mt-[var(--space-inline)] max-w-2xl text-[var(--text-sm)]">{@current_image.caption}</p>
+              <p class="text-white/70 mt-[var(--space-inline)] text-[var(--text-sm)] max-w-2xl">
+                {@current_image.caption}
+              </p>
             <% end %>
             <p class="text-white/50 mt-[var(--space-xs)] text-[var(--text-xs)]">
               {@current_image.width}&times;{@current_image.height}

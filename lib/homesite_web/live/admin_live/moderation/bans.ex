@@ -147,7 +147,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Bans do
                     minlength="10"
                   >{@form[:reason].value}</textarea>
                 </div>
-                <div class="mt-[var(--space-sm)] flex gap-[var(--space-xs)]">
+                <div class="mt-[var(--space-sm)] gap-[var(--space-xs)] flex">
                   <button
                     type="submit"
                     class="btn btn-error"
@@ -170,7 +170,9 @@ defmodule HomesiteWeb.AdminLive.Moderation.Bans do
         <%= if @bans == [] do %>
           <div class="py-[var(--space-xl)] text-center">
             <.icon name="hero-no-symbol" class="text-base-content/40 mx-auto h-12 w-12" />
-            <h3 class="mt-[var(--space-xs)] text-[var(--text-sm)] font-semibold">{gettext("No active bans")}</h3>
+            <h3 class="mt-[var(--space-xs)] text-[var(--text-sm)] font-semibold">
+              {gettext("No active bans")}
+            </h3>
             <p class="text-base-content/60 mt-[var(--space-inline)] text-[var(--text-sm)]">
               {gettext("There are no users currently banned.")}
             </p>
@@ -197,7 +199,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Bans do
                       <div class="text-sm opacity-50">{ban.user.email}</div>
                     </td>
                     <td>
-                      <div class="max-w-xs truncate text-[var(--text-sm)]">
+                      <div class="text-[var(--text-sm)] max-w-xs truncate">
                         {ban.reason}
                       </div>
                     </td>

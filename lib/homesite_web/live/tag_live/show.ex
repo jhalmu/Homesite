@@ -109,7 +109,11 @@ defmodule HomesiteWeb.TagLive.Show do
                         {post.title}
                       </.link>
                     </h3>
-                    <.author_byline user={post.user} date={post.published_at} class="mt-[var(--space-xs)]" />
+                    <.author_byline
+                      user={post.user}
+                      date={post.published_at}
+                      class="mt-[var(--space-xs)]"
+                    />
                   </div>
                 </div>
                 <p :if={post.body} class="line-clamp-2 text-[var(--text-sm)] mt-[var(--space-xs)]">

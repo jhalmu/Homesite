@@ -219,7 +219,7 @@ defmodule HomesiteWeb.ModerationLive.Report do
         <div class="card bg-base-200 mb-[var(--space-md)]">
           <div class="card-body">
             <h3 class="card-title text-[var(--text-sm)]">{gettext("User being reported")}</h3>
-            <div class="flex items-center gap-[var(--space-xs)]">
+            <div class="gap-[var(--space-xs)] flex items-center">
               <div class="avatar placeholder">
                 <div class="bg-neutral text-neutral-content w-12 rounded-full">
                   <span>
@@ -289,7 +289,7 @@ defmodule HomesiteWeb.ModerationLive.Report do
             </label>
           </div>
 
-          <div class="mt-[var(--space-md)] flex gap-[var(--space-sm)]">
+          <div class="mt-[var(--space-md)] gap-[var(--space-sm)] flex">
             <button type="submit" class="btn btn-primary">
               <.icon name="hero-flag" class="h-4 w-4" />
               {gettext("Submit Report")}

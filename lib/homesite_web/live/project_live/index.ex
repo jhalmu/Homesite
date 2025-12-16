@@ -106,7 +106,7 @@ defmodule HomesiteWeb.ProjectLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="mx-auto w-full max-w-6xl px-[var(--space-sm)] py-[var(--space-lg)]">
+      <div class="px-[var(--space-sm)] py-[var(--space-lg)] mx-auto w-full max-w-6xl">
         <%!-- Page Header --%>
         <div class="mb-[var(--space-lg)] flex items-center justify-between">
           <h1 class="text-3xl font-bold">{@page_title}</h1>
@@ -143,7 +143,10 @@ defmodule HomesiteWeb.ProjectLive.Index do
         <%= if Enum.empty?(@projects) do %>
           <div class="py-[var(--space-xl)] text-center">
             <%= if @show_archived do %>
-              <.icon name="hero-archive-box" class="text-base-content/30 mx-auto mb-[var(--space-sm)] h-16 w-16" />
+              <.icon
+                name="hero-archive-box"
+                class="text-base-content/30 mb-[var(--space-sm)] mx-auto h-16 w-16"
+              />
               <h2 class="text-[var(--text-2xl)] mb-[var(--space-xs)] font-semibold">
                 {gettext("No archived projects")}
               </h2>
@@ -151,8 +154,13 @@ defmodule HomesiteWeb.ProjectLive.Index do
                 {gettext("Projects you archive will appear here.")}
               </p>
             <% else %>
-              <.icon name="hero-folder" class="text-base-content/30 mx-auto mb-[var(--space-sm)] h-16 w-16" />
-              <h2 class="text-[var(--text-2xl)] mb-[var(--space-xs)] font-semibold">{gettext("No projects yet")}</h2>
+              <.icon
+                name="hero-folder"
+                class="text-base-content/30 mb-[var(--space-sm)] mx-auto h-16 w-16"
+              />
+              <h2 class="text-[var(--text-2xl)] mb-[var(--space-xs)] font-semibold">
+                {gettext("No projects yet")}
+              </h2>
               <p class="text-base-content/70 mb-[var(--space-md)]">
                 {gettext("Create your first project to organize your media and showcase your work.")}
               </p>

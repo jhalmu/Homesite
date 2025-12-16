@@ -150,7 +150,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Banners do
             <div class="card-body">
               <h3 class="card-title">{gettext("Send Warning Banner")}</h3>
               <.form for={@form} phx-change="validate" phx-submit="create_banner" id="banner-form">
-                <div class="grid grid-cols-1 gap-[var(--space-sm)] md:grid-cols-2">
+                <div class="gap-[var(--space-sm)] grid grid-cols-1 md:grid-cols-2">
                   <div class="form-control">
                     <label class="label">
                       <span class="label-text">{gettext("User ID")}</span>
@@ -210,7 +210,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Banners do
                     max="720"
                   />
                 </div>
-                <div class="mt-[var(--space-sm)] flex gap-[var(--space-xs)]">
+                <div class="mt-[var(--space-sm)] gap-[var(--space-xs)] flex">
                   <button type="submit" class="btn btn-warning">
                     <.icon name="hero-megaphone" class="h-4 w-4" />
                     {gettext("Send Warning")}
@@ -227,7 +227,9 @@ defmodule HomesiteWeb.AdminLive.Moderation.Banners do
         <%= if @banners == [] do %>
           <div class="py-[var(--space-xl)] text-center">
             <.icon name="hero-megaphone" class="text-base-content/40 mx-auto h-12 w-12" />
-            <h3 class="mt-[var(--space-xs)] text-[var(--text-sm)] font-semibold">{gettext("No warning banners")}</h3>
+            <h3 class="mt-[var(--space-xs)] text-[var(--text-sm)] font-semibold">
+              {gettext("No warning banners")}
+            </h3>
             <p class="text-base-content/60 mt-[var(--space-inline)] text-[var(--text-sm)]">
               {gettext("No warning banners have been sent yet.")}
             </p>
@@ -254,7 +256,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Banners do
                       </div>
                     </td>
                     <td>
-                      <div class="max-w-xs truncate text-[var(--text-sm)]">
+                      <div class="text-[var(--text-sm)] max-w-xs truncate">
                         {banner.message}
                       </div>
                     </td>

@@ -175,7 +175,11 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
               <:subtitle>Update role and flower permissions</:subtitle>
             </.header>
 
-            <.form for={@form} phx-submit="save_user" class="mt-[var(--space-sm)] space-y-[var(--space-sm)]">
+            <.form
+              for={@form}
+              phx-submit="save_user"
+              class="mt-[var(--space-sm)] space-y-[var(--space-sm)]"
+            >
               <.input
                 field={@form[:role]}
                 type="select"

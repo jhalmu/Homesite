@@ -33,7 +33,7 @@ defmodule HomesiteWeb.UserLive.Projects do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={assigns[:current_scope]}>
-      <div class="mx-auto max-w-6xl px-[var(--space-sm)] py-[var(--space-lg)]">
+      <div class="px-[var(--space-sm)] py-[var(--space-lg)] mx-auto max-w-6xl">
         <header class="mb-[var(--space-lg)]">
           <%= if @user.username do %>
             <.link navigate={~p"/users/@#{@user.username}"} class="link text-[var(--text-sm)]">
@@ -51,7 +51,10 @@ defmodule HomesiteWeb.UserLive.Projects do
 
         <%= if Enum.empty?(@projects) do %>
           <div class="py-[var(--space-xl)] text-center">
-            <.icon name="hero-folder" class="text-base-content/30 mx-auto mb-[var(--space-sm)] h-16 w-16" />
+            <.icon
+              name="hero-folder"
+              class="text-base-content/30 mb-[var(--space-sm)] mx-auto h-16 w-16"
+            />
             <p class="text-base-content/60">{gettext("No public projects yet.")}</p>
           </div>
         <% else %>
