@@ -33,8 +33,8 @@ defmodule Mix.Tasks.Seed.Export do
   use Mix.Task
   import Ecto.Query
 
-  alias Homesite.Repo
   alias Homesite.Faqs.Faq
+  alias Homesite.Repo
 
   @shortdoc "Exports FAQs from database to seed file"
 

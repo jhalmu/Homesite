@@ -24,7 +24,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Suspensions do
 
   defp build_form(user_id) do
     # Default to 24 hours from now
-    default_expires = DateTime.utc_now() |> DateTime.add(86400, :second) |> DateTime.to_iso8601()
+    default_expires = DateTime.utc_now() |> DateTime.add(86_400, :second) |> DateTime.to_iso8601()
 
     to_form(%{
       "user_id" => user_id || "",

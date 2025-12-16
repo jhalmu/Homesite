@@ -381,7 +381,7 @@ defmodule Homesite.ModerationTest do
     test "suspend_user/4 creates a suspension" do
       admin_scope = admin_scope_fixture()
       target_user = user_fixture()
-      expires_at = DateTime.add(DateTime.utc_now(), 86400, :second)
+      expires_at = DateTime.add(DateTime.utc_now(), 86_400, :second)
 
       assert {:ok, %UserSuspension{} = suspension} =
                Moderation.suspend_user(
@@ -399,7 +399,7 @@ defmodule Homesite.ModerationTest do
     test "suspend_user/4 requires admin scope" do
       user_scope = user_scope_fixture()
       target_user = user_fixture()
-      expires_at = DateTime.add(DateTime.utc_now(), 86400, :second)
+      expires_at = DateTime.add(DateTime.utc_now(), 86_400, :second)
 
       assert_raise MatchError, fn ->
         Moderation.suspend_user(user_scope, target_user.id, "Violation of rules", expires_at)
@@ -408,7 +408,7 @@ defmodule Homesite.ModerationTest do
 
     test "suspend_user/4 cannot suspend yourself" do
       admin_scope = admin_scope_fixture()
-      expires_at = DateTime.add(DateTime.utc_now(), 86400, :second)
+      expires_at = DateTime.add(DateTime.utc_now(), 86_400, :second)
 
       assert {:error, %Ecto.Changeset{} = changeset} =
                Moderation.suspend_user(
@@ -440,7 +440,7 @@ defmodule Homesite.ModerationTest do
     test "suspend_user/4 replaces existing suspension" do
       admin_scope = admin_scope_fixture()
       target_user = user_fixture()
-      expires_at1 = DateTime.add(DateTime.utc_now(), 86400, :second)
+      expires_at1 = DateTime.add(DateTime.utc_now(), 86_400, :second)
       expires_at2 = DateTime.add(DateTime.utc_now(), 172_800, :second)
 
       {:ok, _suspension1} =
@@ -458,7 +458,7 @@ defmodule Homesite.ModerationTest do
     test "suspended?/1 returns true when user is suspended" do
       admin_scope = admin_scope_fixture()
       target_user = user_fixture()
-      expires_at = DateTime.add(DateTime.utc_now(), 86400, :second)
+      expires_at = DateTime.add(DateTime.utc_now(), 86_400, :second)
 
       {:ok, _suspension} =
         Moderation.suspend_user(admin_scope, target_user.id, "Violation of rules", expires_at)
@@ -485,7 +485,7 @@ defmodule Homesite.ModerationTest do
     test "unsuspend_user/2 lifts a suspension" do
       admin_scope = admin_scope_fixture()
       target_user = user_fixture()
-      expires_at = DateTime.add(DateTime.utc_now(), 86400, :second)
+      expires_at = DateTime.add(DateTime.utc_now(), 86_400, :second)
 
       {:ok, _suspension} =
         Moderation.suspend_user(admin_scope, target_user.id, "Violation of rules", expires_at)
@@ -507,7 +507,7 @@ defmodule Homesite.ModerationTest do
     test "list_active_suspensions/0 returns active suspensions only" do
       admin_scope = admin_scope_fixture()
       target_user = user_fixture()
-      expires_at = DateTime.add(DateTime.utc_now(), 86400, :second)
+      expires_at = DateTime.add(DateTime.utc_now(), 86_400, :second)
 
       {:ok, _suspension} =
         Moderation.suspend_user(admin_scope, target_user.id, "Violation of rules", expires_at)
@@ -552,7 +552,7 @@ defmodule Homesite.ModerationTest do
     test "ban_user/3 removes existing suspension" do
       admin_scope = admin_scope_fixture()
       target_user = user_fixture()
-      expires_at = DateTime.add(DateTime.utc_now(), 86400, :second)
+      expires_at = DateTime.add(DateTime.utc_now(), 86_400, :second)
 
       {:ok, _suspension} =
         Moderation.suspend_user(admin_scope, target_user.id, "Suspension", expires_at)
@@ -630,7 +630,7 @@ defmodule Homesite.ModerationTest do
     test "returns {:error, :suspended, expires_at} when user is suspended" do
       admin_scope = admin_scope_fixture()
       target_user = user_fixture()
-      expires_at = DateTime.add(DateTime.utc_now(), 86400, :second)
+      expires_at = DateTime.add(DateTime.utc_now(), 86_400, :second)
 
       {:ok, _suspension} =
         Moderation.suspend_user(
@@ -737,7 +737,7 @@ defmodule Homesite.ModerationTest do
     test "returns moderation statistics" do
       admin_scope = admin_scope_fixture()
       target_user = user_fixture()
-      expires_at = DateTime.add(DateTime.utc_now(), 86400, :second)
+      expires_at = DateTime.add(DateTime.utc_now(), 86_400, :second)
 
       # Create some moderation data
       {:ok, _report} =
