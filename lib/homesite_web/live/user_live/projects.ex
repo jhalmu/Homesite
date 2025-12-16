@@ -33,7 +33,7 @@ defmodule HomesiteWeb.UserLive.Projects do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={assigns[:current_scope]}>
-      <div class="mx-auto max-w-6xl px-4 py-[var(--space-lg)]">
+      <div class="mx-auto max-w-6xl px-[var(--space-sm)] py-[var(--space-lg)]">
         <header class="mb-[var(--space-lg)]">
           <%= if @user.username do %>
             <.link navigate={~p"/users/@#{@user.username}"} class="link text-[var(--text-sm)]">
@@ -44,7 +44,7 @@ defmodule HomesiteWeb.UserLive.Projects do
               ← {gettext("Back to profile")}
             </.link>
           <% end %>
-          <h1 class="mt-2 text-[var(--text-3xl)] font-bold">
+          <h1 class="mt-[var(--space-xs)] text-[var(--text-3xl)] font-bold">
             {gettext("Projects by %{name}", name: @user.display_name || @user.email)}
           </h1>
         </header>

@@ -96,7 +96,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Logs do
         <%= if @logs == [] do %>
           <div class="py-[var(--space-xl)] text-center">
             <.icon name="hero-clipboard-document-list" class="text-base-content/40 mx-auto h-12 w-12" />
-            <h3 class="mt-2 text-[var(--text-sm)] font-semibold">{gettext("No logs found")}</h3>
+            <h3 class="mt-[var(--space-xs)] text-[var(--text-sm)] font-semibold">{gettext("No logs found")}</h3>
             <p class="text-base-content/60 mt-[var(--space-inline)] text-[var(--text-sm)]">
               {gettext("No moderation actions match the current filter.")}
             </p>

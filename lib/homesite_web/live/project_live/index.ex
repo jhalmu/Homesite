@@ -106,7 +106,7 @@ defmodule HomesiteWeb.ProjectLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="mx-auto w-full max-w-6xl px-4 py-[var(--space-lg)]">
+      <div class="mx-auto w-full max-w-6xl px-[var(--space-sm)] py-[var(--space-lg)]">
         <%!-- Page Header --%>
         <div class="mb-[var(--space-lg)] flex items-center justify-between">
           <h1 class="text-3xl font-bold">{@page_title}</h1>

@@ -227,7 +227,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Banners do
         <%= if @banners == [] do %>
           <div class="py-[var(--space-xl)] text-center">
             <.icon name="hero-megaphone" class="text-base-content/40 mx-auto h-12 w-12" />
-            <h3 class="mt-2 text-[var(--text-sm)] font-semibold">{gettext("No warning banners")}</h3>
+            <h3 class="mt-[var(--space-xs)] text-[var(--text-sm)] font-semibold">{gettext("No warning banners")}</h3>
             <p class="text-base-content/60 mt-[var(--space-inline)] text-[var(--text-sm)]">
               {gettext("No warning banners have been sent yet.")}
             </p>

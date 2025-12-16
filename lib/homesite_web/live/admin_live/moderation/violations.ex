@@ -104,7 +104,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Violations do
       <div class="mt-[var(--space-md)]">
         <%!-- Alert notifications --%>
         <%= if length(@alerts) > 0 do %>
-          <div class="mb-6 space-y-[var(--space-xs)]">
+          <div class="mb-[var(--space-md)] space-y-[var(--space-xs)]">
             <%= for alert <- @alerts do %>
               <div class="alert alert-warning">
                 <.icon name="hero-exclamation-triangle" class="h-5 w-5" />
@@ -215,7 +215,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Violations do
                     </div>
 
                     <%!-- By type breakdown --%>
-                    <div class="mb-4 flex flex-wrap gap-[var(--space-xs)]">
+                    <div class="mb-[var(--space-sm)] flex flex-wrap gap-[var(--space-xs)]">
                       <%= for {type, count} <- @user_stats.by_type do %>
                         <span class="badge badge-outline">{type}: {count}</span>
                       <% end %>

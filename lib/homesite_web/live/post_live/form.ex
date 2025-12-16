@@ -129,7 +129,7 @@ defmodule HomesiteWeb.PostLive.Form do
                     type="button"
                     phx-click="add-tag"
                     phx-value-tag-id={tag.id}
-                    class="flex w-full items-center justify-between px-4 py-2 text-left hover:bg-base-200"
+                    class="flex w-full items-center justify-between px-[var(--space-sm)] py-[var(--space-xs)] text-left hover:bg-base-200"
                   >
                     <span>{tag.name}</span>
                     <span class="text-base-content/60 text-[var(--text-sm)]">{post_count} posts</span>
@@ -144,7 +144,7 @@ defmodule HomesiteWeb.PostLive.Form do
                       type="button"
                       phx-click="add-tag"
                       phx-value-tag-id={exact_tag.id}
-                      class="border-base-300 text-primary gap-[var(--space-xs)] flex w-full items-center border-t px-4 py-2 text-left font-semibold hover:bg-base-200"
+                      class="border-base-300 text-primary gap-[var(--space-xs)] flex w-full items-center border-t px-[var(--space-sm)] py-[var(--space-xs)] text-left font-semibold hover:bg-base-200"
                     >
                       <.icon name="hero-check" class="h-4 w-4" />
                       {gettext("Add")} "{exact_tag.name}"
@@ -155,7 +155,7 @@ defmodule HomesiteWeb.PostLive.Form do
                       type="button"
                       phx-click="create-and-add-tag"
                       phx-value-name={@tag_search_query}
-                      class="border-base-300 gap-[var(--space-xs)] flex w-full items-center border-t px-4 py-2 text-left font-semibold hover:bg-base-200"
+                      class="border-base-300 gap-[var(--space-xs)] flex w-full items-center border-t px-[var(--space-sm)] py-[var(--space-xs)] text-left font-semibold hover:bg-base-200"
                     >
                       <.icon name="hero-plus" class="h-4 w-4" />
                       {gettext("Create")} "{@tag_search_query}"

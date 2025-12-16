@@ -130,7 +130,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
 
         <%!-- Pagination --%>
         <%= if @total_pages > 1 do %>
-          <div class="gap-[var(--space-xs)] mt-6 flex justify-center">
+          <div class="gap-[var(--space-xs)] mt-[var(--space-md)] flex justify-center">
             <button
               class="btn btn-sm"
               phx-click="prev_page"
@@ -168,7 +168,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
 
       <%!-- Edit User Form --%>
       <%= if @selected_user do %>
-        <div class="card bg-base-200 mt-6 shadow-xl">
+        <div class="card bg-base-200 mt-[var(--space-md)] shadow-xl">
           <div class="card-body">
             <.header>
               Edit User: {@selected_user.email}
