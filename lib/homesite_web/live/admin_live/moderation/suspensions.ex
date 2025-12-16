@@ -131,13 +131,13 @@ defmodule HomesiteWeb.AdminLive.Moderation.Suspensions do
         </:actions>
       </.header>
 
-      <div class="mt-6">
+      <div class="mt-[var(--space-md)]">
         <%= if @show_form do %>
           <div class="card bg-base-200 mb-6">
             <div class="card-body">
               <h3 class="card-title">{gettext("Suspend User")}</h3>
               <.form for={@form} phx-change="validate" phx-submit="suspend" id="suspend-form">
-                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div class="grid grid-cols-1 gap-[var(--space-sm)] md:grid-cols-2">
                   <div class="form-control">
                     <label class="label">
                       <span class="label-text">{gettext("User ID")}</span>
@@ -191,7 +191,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Suspensions do
         <% end %>
 
         <%= if @suspensions == [] do %>
-          <div class="py-12 text-center">
+          <div class="py-[var(--space-xl)] text-center">
             <.icon name="hero-clock" class="text-base-content/40 mx-auto h-12 w-12" />
             <h3 class="mt-2 text-sm font-semibold">{gettext("No active suspensions")}</h3>
             <p class="text-base-content/60 mt-1 text-sm">

@@ -106,7 +106,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Bans do
         </:actions>
       </.header>
 
-      <div class="mt-6">
+      <div class="mt-[var(--space-md)]">
         <%= if @show_form do %>
           <div class="card bg-base-200 mb-6">
             <div class="card-body">
@@ -168,7 +168,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Bans do
         <% end %>
 
         <%= if @bans == [] do %>
-          <div class="py-12 text-center">
+          <div class="py-[var(--space-xl)] text-center">
             <.icon name="hero-no-symbol" class="text-base-content/40 mx-auto h-12 w-12" />
             <h3 class="mt-2 text-sm font-semibold">{gettext("No active bans")}</h3>
             <p class="text-base-content/60 mt-1 text-sm">

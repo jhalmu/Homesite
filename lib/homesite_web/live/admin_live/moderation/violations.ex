@@ -101,7 +101,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Violations do
         </:subtitle>
       </.header>
 
-      <div class="mt-6">
+      <div class="mt-[var(--space-md)]">
         <%!-- Alert notifications --%>
         <%= if length(@alerts) > 0 do %>
           <div class="mb-6 space-y-2">
@@ -201,7 +201,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Violations do
 
                   <%!-- Stats --%>
                   <%= if @user_stats do %>
-                    <div class="stats stats-horizontal mt-4 mb-4 shadow">
+                    <div class="stats stats-horizontal mt-4 mb-[var(--space-sm)] shadow">
                       <div class="stat">
                         <div class="stat-title">{gettext("Total Violations")}</div>
                         <div class="stat-value">{@user_stats.total_count}</div>

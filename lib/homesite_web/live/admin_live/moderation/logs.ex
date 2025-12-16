@@ -74,7 +74,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Logs do
         </:actions>
       </.header>
 
-      <div class="mt-6">
+      <div class="mt-[var(--space-md)]">
         <form phx-change="filter" class="mb-4">
           <div class="form-control w-full max-w-xs">
             <label class="label">
@@ -94,7 +94,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Logs do
         </form>
 
         <%= if @logs == [] do %>
-          <div class="py-12 text-center">
+          <div class="py-[var(--space-xl)] text-center">
             <.icon name="hero-clipboard-document-list" class="text-base-content/40 mx-auto h-12 w-12" />
             <h3 class="mt-2 text-sm font-semibold">{gettext("No logs found")}</h3>
             <p class="text-base-content/60 mt-1 text-sm">

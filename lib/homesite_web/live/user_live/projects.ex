@@ -51,7 +51,7 @@ defmodule HomesiteWeb.UserLive.Projects do
 
         <%= if Enum.empty?(@projects) do %>
           <div class="py-16 text-center">
-            <.icon name="hero-folder" class="text-base-content/30 mx-auto mb-4 h-16 w-16" />
+            <.icon name="hero-folder" class="text-base-content/30 mx-auto mb-[var(--space-sm)] h-16 w-16" />
             <p class="text-base-content/60">{gettext("No public projects yet.")}</p>
           </div>
         <% else %>

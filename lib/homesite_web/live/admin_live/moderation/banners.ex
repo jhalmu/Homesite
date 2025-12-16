@@ -144,13 +144,13 @@ defmodule HomesiteWeb.AdminLive.Moderation.Banners do
         </:actions>
       </.header>
 
-      <div class="mt-6">
+      <div class="mt-[var(--space-md)]">
         <%= if @show_form do %>
           <div class="card bg-base-200 mb-6">
             <div class="card-body">
               <h3 class="card-title">{gettext("Send Warning Banner")}</h3>
               <.form for={@form} phx-change="validate" phx-submit="create_banner" id="banner-form">
-                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div class="grid grid-cols-1 gap-[var(--space-sm)] md:grid-cols-2">
                   <div class="form-control">
                     <label class="label">
                       <span class="label-text">{gettext("User ID")}</span>
@@ -225,7 +225,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Banners do
         <% end %>
 
         <%= if @banners == [] do %>
-          <div class="py-12 text-center">
+          <div class="py-[var(--space-xl)] text-center">
             <.icon name="hero-megaphone" class="text-base-content/40 mx-auto h-12 w-12" />
             <h3 class="mt-2 text-sm font-semibold">{gettext("No warning banners")}</h3>
             <p class="text-base-content/60 mt-1 text-sm">

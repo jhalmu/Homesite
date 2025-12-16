@@ -143,16 +143,16 @@ defmodule HomesiteWeb.ProjectLive.Index do
         <%= if Enum.empty?(@projects) do %>
           <div class="py-16 text-center">
             <%= if @show_archived do %>
-              <.icon name="hero-archive-box" class="text-base-content/30 mx-auto mb-4 h-16 w-16" />
-              <h2 class="text-[var(--text-2xl)] mb-2 font-semibold">
+              <.icon name="hero-archive-box" class="text-base-content/30 mx-auto mb-[var(--space-sm)] h-16 w-16" />
+              <h2 class="text-[var(--text-2xl)] mb-[var(--space-xs)] font-semibold">
                 {gettext("No archived projects")}
               </h2>
               <p class="text-base-content/70 mb-6">
                 {gettext("Projects you archive will appear here.")}
               </p>
             <% else %>
-              <.icon name="hero-folder" class="text-base-content/30 mx-auto mb-4 h-16 w-16" />
-              <h2 class="text-[var(--text-2xl)] mb-2 font-semibold">{gettext("No projects yet")}</h2>
+              <.icon name="hero-folder" class="text-base-content/30 mx-auto mb-[var(--space-sm)] h-16 w-16" />
+              <h2 class="text-[var(--text-2xl)] mb-[var(--space-xs)] font-semibold">{gettext("No projects yet")}</h2>
               <p class="text-base-content/70 mb-6">
                 {gettext("Create your first project to organize your media and showcase your work.")}
               </p>
@@ -202,7 +202,7 @@ defmodule HomesiteWeb.ProjectLive.Index do
                     </p>
                   <% end %>
 
-                  <div class="text-base-content/60 gap-[var(--space-xs)] text-[var(--text-sm)] mt-2 flex items-center">
+                  <div class="text-base-content/60 gap-[var(--space-xs)] text-[var(--text-sm)] mt-[var(--space-xs)] flex items-center">
                     <.icon name="hero-check-circle" class="h-4 w-4" />
                     <span>{project.completion_percentage}% {gettext("complete")}</span>
                   </div>

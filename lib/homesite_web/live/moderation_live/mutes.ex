@@ -47,9 +47,9 @@ defmodule HomesiteWeb.ModerationLive.Mutes do
         </:subtitle>
       </.header>
 
-      <div class="mt-6">
+      <div class="mt-[var(--space-md)]">
         <%= if @muted_users == [] do %>
-          <div class="py-12 text-center">
+          <div class="py-[var(--space-xl)] text-center">
             <.icon name="hero-speaker-x-mark" class="text-base-content/40 mx-auto h-12 w-12" />
             <h3 class="mt-2 text-sm font-semibold">{gettext("No muted users")}</h3>
             <p class="text-base-content/60 mt-1 text-sm">

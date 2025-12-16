@@ -20,9 +20,9 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
         <:subtitle>Manage users, roles, and flower permissions</:subtitle>
       </.header>
 
-      <div class="mt-6">
+      <div class="mt-[var(--space-md)]">
         <%!-- Search Form --%>
-        <.form for={%{}} phx-change="search" phx-submit="search" class="mb-6">
+        <.form for={%{}} phx-change="search" phx-submit="search" class="mb-[var(--space-md)]">
           <div class="gap-[var(--space-md)] flex">
             <div class="flex-1">
               <input

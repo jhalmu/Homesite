@@ -32,8 +32,8 @@ defmodule HomesiteWeb.AdminLive.Moderation.Dashboard do
         </:subtitle>
       </.header>
 
-      <div class="mt-6">
-        <div class="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div class="mt-[var(--space-md)]">
+        <div class="mb-8 grid grid-cols-1 gap-[var(--space-sm)] md:grid-cols-2 lg:grid-cols-4">
           <.moderation_stat_card
             title={gettext("Pending Reports")}
             value={@stats.pending_reports}
