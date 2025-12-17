@@ -24,7 +24,8 @@ defmodule HomesiteWeb.MediaLive.Index do
      |> allow_upload(:images,
        accept: ~w(.jpg .jpeg .png .gif .webp),
        max_entries: 10,
-       max_file_size: 5_000_000,
+       # 20MB - large images will be auto-resized by ImageProcessor
+       max_file_size: 20_000_000,
        auto_upload: true
      )
      |> stream(:media_items, media_items)}
@@ -272,49 +273,67 @@ defmodule HomesiteWeb.MediaLive.Index do
                 </p>
               </div>
               <p class="mt-[var(--space-xs)] text-[var(--text-xs)] text-base-content/70">
-                {gettext("JPG, PNG, GIF, WebP up to 5MB (max 10 files)")}
+                {gettext(
+                  "JPG, PNG, WebP up to 20MB (max 10 files). Large images are automatically resized."
+                )}
               </p>
             </div>
 
             <%!-- Upload Previews --%>
             <%= if Enum.any?(@uploads.images.entries) do %>
-              <div class="mt-[var(--space-md)] space-y-[var(--space-xs)]">
-                <%= for entry <- @uploads.images.entries do %>
-                  <div class="gap-[var(--space-sm)] bg-base-200 p-[var(--space-sm)] flex items-center rounded-lg">
-                    <.live_img_preview entry={entry} class="h-12 w-12 rounded object-cover" />
-                    <div class="min-w-0 flex-1">
-                      <p class="text-[var(--text-sm)] truncate">{entry.client_name}</p>
-                      <div class="bg-base-300 mt-[var(--space-inline)] h-2 w-full rounded-full">
-                        <div
-                          class="bg-primary h-2 rounded-full transition-all duration-300"
-                          style={"width: #{entry.progress}%"}
-                        >
+              <div class="mt-[var(--space-md)]">
+                <div class="gap-[var(--space-sm)] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
+                  <%= for entry <- @uploads.images.entries do %>
+                    <div class="bg-base-200 relative overflow-hidden rounded-lg">
+                      <.live_img_preview
+                        entry={entry}
+                        class="aspect-square h-full w-full object-cover"
+                      />
+                      <%!-- Progress overlay --%>
+                      <%= if entry.progress < 100 do %>
+                        <div class="bg-black/50 absolute inset-0 flex items-center justify-center">
+                          <div class="text-center text-white">
+                            <div
+                              class="radial-progress text-primary"
+                              style={"--value:#{entry.progress}; --size:3rem;"}
+                            >
+                              {entry.progress}%
+                            </div>
+                          </div>
                         </div>
+                      <% end %>
+                      <%!-- Cancel button --%>
+                      <button
+                        type="button"
+                        phx-click="cancel-upload"
+                        phx-value-ref={entry.ref}
+                        class="btn btn-circle btn-error btn-xs absolute top-1 right-1"
+                        aria-label={gettext("Cancel")}
+                      >
+                        <.icon name="hero-x-mark" class="h-3 w-3" />
+                      </button>
+                      <%!-- Filename --%>
+                      <div class="bg-base-200/90 absolute right-0 bottom-0 left-0 p-1">
+                        <p class="text-[var(--text-xs)] truncate">{entry.client_name}</p>
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      phx-click="cancel-upload"
-                      phx-value-ref={entry.ref}
-                      class="btn btn-ghost btn-xs text-error"
-                      aria-label={gettext("Cancel")}
-                    >
-                      <.icon name="hero-x-mark" class="h-4 w-4" />
-                    </button>
-                  </div>
+                  <% end %>
+                </div>
 
-                  <%!-- Upload Errors --%>
+                <%!-- Upload Errors --%>
+                <%= for entry <- @uploads.images.entries do %>
                   <%= for err <- upload_errors(@uploads.images, entry) do %>
-                    <p class="text-error text-[var(--text-xs)] mt-[var(--space-inline)]">
-                      {error_to_string(err)}
+                    <p class="alert alert-error mt-[var(--space-xs)] text-[var(--text-sm)]">
+                      <.icon name="hero-exclamation-triangle" class="h-4 w-4" />
+                      {entry.client_name}: {error_to_string(err)}
                     </p>
                   <% end %>
                 <% end %>
 
                 <div class="mt-[var(--space-sm)]">
-                  <button type="submit" class="btn btn-primary btn-sm">
-                    <.icon name="hero-cloud-arrow-up" class="h-4 w-4" />
-                    {gettext("Upload %{count} file(s)", count: length(@uploads.images.entries))}
+                  <button type="submit" class="btn btn-primary">
+                    <.icon name="hero-cloud-arrow-up" class="h-5 w-5" />
+                    {gettext("Save %{count} image(s)", count: length(@uploads.images.entries))}
                   </button>
                 </div>
               </div>

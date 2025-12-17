@@ -10,7 +10,8 @@ defmodule Homesite.DevFaqs do
     build: Article,
     from: Application.app_dir(:homesite, "priv/dev_faqs/**/*.md"),
     as: :articles,
-    parser: Homesite.DevFaqs.Parser
+    parser: Homesite.DevFaqs.Parser,
+    html_converter: Homesite.DevFaqs.HtmlPassthrough
 
   # The @articles variable is first defined by NimblePublisher.
   # Let's further modify it by sorting by order.

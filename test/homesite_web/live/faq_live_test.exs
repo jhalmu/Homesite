@@ -63,11 +63,12 @@ defmodule HomesiteWeb.FaqLiveTest do
           answer_en: "Test Answer"
         })
 
-      {:ok, _index_live, html} = live(conn, ~p"/faqs")
+      {:ok, index_live, _html} = live(conn, ~p"/faqs")
 
-      refute html =~ "Edit"
-      refute html =~ "Delete"
-      refute html =~ "New FAQ"
+      # Check for absence of admin action buttons (not just text, as FAQ content may contain "Edit")
+      refute has_element?(index_live, "a", "Edit")
+      refute has_element?(index_live, "button", "Delete")
+      refute has_element?(index_live, "a", "New FAQ")
     end
   end
 
@@ -113,11 +114,12 @@ defmodule HomesiteWeb.FaqLiveTest do
           answer_en: "Test Answer"
         })
 
-      {:ok, _index_live, html} = live(conn, ~p"/faqs")
+      {:ok, index_live, _html} = live(conn, ~p"/faqs")
 
-      refute html =~ "Edit"
-      refute html =~ "Delete"
-      refute html =~ "New FAQ"
+      # Check for absence of admin action buttons (not just text, as FAQ content may contain "Edit")
+      refute has_element?(index_live, "a", "Edit")
+      refute has_element?(index_live, "button", "Delete")
+      refute has_element?(index_live, "a", "New FAQ")
     end
   end
 

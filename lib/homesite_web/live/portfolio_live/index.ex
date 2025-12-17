@@ -46,7 +46,7 @@ defmodule HomesiteWeb.PortfolioLive.Index do
           </:subtitle>
         </.header>
 
-        <div class="mt-[var(--spacing-lg)] space-y-[var(--spacing-md)]" id="projects">
+        <div class="mt-[var(--spacing-lg)]" id="projects">
           <%= if Enum.empty?(@projects) do %>
             <div class="alert alert-info">
               <.icon name="hero-information-circle" class="h-6 w-6" />
@@ -60,78 +60,64 @@ defmodule HomesiteWeb.PortfolioLive.Index do
               </div>
             </div>
           <% else %>
-            <%= for project <- @projects do %>
-              <article class="listing-card card bg-base-200 duration-[var(--duration-normal)] shadow-lg transition-shadow hover:shadow-xl">
-                <div class="card-body">
-                  <div class="gap-[var(--spacing-md)] flex flex-col sm:flex-row sm:items-start sm:justify-between">
-                    <%!-- Cover image thumbnail --%>
-                    <%= if project.cover_media_item do %>
-                      <div class="sm:order-2 sm:flex-shrink-0">
-                        <.link navigate={~p"/portfolio/#{project.slug}"}>
-                          <figure class="aspect-video bg-base-300 h-24 w-40 overflow-hidden rounded-lg sm:h-20 sm:w-32">
-                            <img
-                              src={"data:#{project.cover_media_item.content_type};base64,#{Base.encode64(project.cover_media_item.thumb_data)}"}
-                              alt={project.cover_media_item.alt_text}
-                              class="duration-[var(--duration-normal)] h-full w-full object-cover transition-transform hover:scale-105"
-                              loading="lazy"
-                            />
-                          </figure>
-                        </.link>
-                      </div>
-                    <% end %>
+            <%!-- Gallery grid with large cover images --%>
+            <div class="gap-[var(--spacing-md)] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+              <%= for project <- @projects do %>
+                <.link navigate={~p"/portfolio/#{project.slug}"} class="group">
+                  <article class="card bg-base-200 duration-[var(--duration-normal)] h-full overflow-hidden shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl">
+                    <%!-- Cover image --%>
+                    <figure class="aspect-[4/3] bg-base-300 relative overflow-hidden">
+                      <%= if project.cover_media_item do %>
+                        <img
+                          src={"data:#{project.cover_media_item.content_type};base64,#{Base.encode64(project.cover_media_item.medium_data || project.cover_media_item.thumb_data)}"}
+                          alt={project.cover_media_item.alt_text || project.name}
+                          class="duration-[var(--duration-normal)] h-full w-full object-cover transition-transform group-hover:scale-105"
+                          loading="lazy"
+                        />
+                      <% else %>
+                        <div class="flex h-full w-full items-center justify-center">
+                          <.icon name="hero-photo" class="h-16 w-16 opacity-30" />
+                        </div>
+                      <% end %>
+                      <%!-- Category overlay --%>
+                      <%= if project.category do %>
+                        <div class="absolute top-3 left-3">
+                          <span class="badge badge-neutral badge-sm">{project.category}</span>
+                        </div>
+                      <% end %>
+                    </figure>
 
                     <%!-- Content --%>
-                    <div class="min-w-0 flex-1 sm:order-1">
-                      <.link navigate={~p"/portfolio/#{project.slug}"} class="group">
-                        <h2 class="card-title mb-[var(--spacing-sm)] text-[var(--font-size-fluid-xl)] duration-[var(--duration-normal)] transition-colors group-hover:text-primary">
-                          {project.name}
-                        </h2>
-                      </.link>
+                    <div class="card-body p-[var(--spacing-sm)]">
+                      <h2
+                        class="card-title line-clamp-2 text-[var(--text-lg)] duration-[var(--duration-normal)] transition-colors group-hover:text-primary"
+                        title={project.name}
+                      >
+                        {project.name}
+                      </h2>
 
                       <%= if project.description do %>
-                        <p class="line-clamp-2 mb-[var(--spacing-sm)] text-[var(--text-sm)] opacity-70">
+                        <p class="line-clamp-2 text-[var(--text-sm)] opacity-70">
                           {project.description}
                         </p>
                       <% end %>
 
-                      <div class="gap-[var(--spacing-sm)] text-[var(--text-sm)] flex flex-wrap">
-                        <div class="badge badge-primary gap-[var(--spacing-inline)]">
-                          <.icon name="hero-briefcase" class="h-3 w-3" />
-                          {gettext("Portfolio")}
-                        </div>
-
+                      <div class="gap-[var(--spacing-sm)] text-[var(--text-xs)] mt-auto flex items-center opacity-60">
                         <%= if project.user do %>
-                          <div class="opacity-70">
-                            <.icon name="hero-user-circle" class="inline h-4 w-4" />
-                            <span>{project.user.display_name || project.user.email}</span>
-                          </div>
+                          <span>{project.user.display_name || project.user.email}</span>
                         <% end %>
-
-                        <%= if project.inserted_at do %>
-                          <div class="opacity-70">
-                            <.icon name="hero-calendar" class="inline h-4 w-4" />
-                            <time datetime={project.inserted_at}>
-                              {Calendar.strftime(project.inserted_at, "%Y-%m-%d")}
-                            </time>
-                          </div>
+                        <%= if project.project_date do %>
+                          <span>&middot;</span>
+                          <time datetime={project.project_date}>
+                            {Calendar.strftime(project.project_date, "%Y")}
+                          </time>
                         <% end %>
                       </div>
                     </div>
-
-                    <%!-- Actions --%>
-                    <div class="mt-[var(--spacing-sm)] gap-[var(--spacing-inline)] flex sm:order-3 sm:mt-0 sm:flex-shrink-0">
-                      <.link
-                        navigate={~p"/portfolio/#{project.slug}"}
-                        class="btn btn-primary btn-sm"
-                      >
-                        {gettext("View")}
-                        <.icon name="hero-arrow-right" class="h-4 w-4" />
-                      </.link>
-                    </div>
-                  </div>
-                </div>
-              </article>
-            <% end %>
+                  </article>
+                </.link>
+              <% end %>
+            </div>
 
             <%!-- Load More Button --%>
             <%= if @has_more do %>

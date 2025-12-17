@@ -641,14 +641,16 @@ defmodule HomesiteWeb.PostLive.Form do
 
     # Add hero image if selected
     if socket.assigns.hero_image do
-      Homesite.Repo.insert!(%{
-        post_id: post.id,
-        media_item_id: socket.assigns.hero_image.id,
-        context: "hero",
-        display_order: 0,
-        inserted_at: DateTime.utc_now(:second),
-        updated_at: DateTime.utc_now(:second)
-      })
+      Homesite.Repo.insert_all("post_media_items", [
+        %{
+          post_id: post.id,
+          media_item_id: socket.assigns.hero_image.id,
+          context: "hero",
+          display_order: 0,
+          inserted_at: DateTime.utc_now(:second),
+          updated_at: DateTime.utc_now(:second)
+        }
+      ])
     end
   end
 

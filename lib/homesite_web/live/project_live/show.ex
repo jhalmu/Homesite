@@ -1,6 +1,7 @@
 defmodule HomesiteWeb.ProjectLive.Show do
   use HomesiteWeb, :live_view
 
+  import Ecto.Query
   import HomesiteWeb.Helpers.DateHelpers
 
   alias Homesite.Media
@@ -12,19 +13,76 @@ defmodule HomesiteWeb.ProjectLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _url, socket) do
-    project =
-      Media.get_project!(socket.assigns.current_scope, id)
-      |> Homesite.Repo.preload([
-        :collaborators,
-        :affiliation_links,
-        :media_items,
-        :cover_media_item
-      ])
+    project = load_project(socket.assigns.current_scope, id)
 
     {:noreply,
      socket
      |> assign(:page_title, project.name)
      |> assign(:project, project)}
+  end
+
+  @impl true
+  def handle_event("remove_media", %{"id" => media_id}, socket) do
+    case Media.remove_media_from_project(
+           socket.assigns.current_scope,
+           socket.assigns.project.id,
+           media_id
+         ) do
+      {:ok, _} ->
+        project = load_project(socket.assigns.current_scope, socket.assigns.project.id)
+
+        {:noreply,
+         socket
+         |> assign(:project, project)
+         |> put_flash(:info, gettext("Image removed from project"))}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, gettext("Could not remove image"))}
+    end
+  end
+
+  @impl true
+  def handle_event("move_media", %{"id" => media_id, "direction" => direction}, socket) do
+    direction = String.to_existing_atom(direction)
+
+    case Media.reorder_project_media(
+           socket.assigns.current_scope,
+           socket.assigns.project.id,
+           String.to_integer(media_id),
+           direction
+         ) do
+      {:ok, _} ->
+        project = load_project(socket.assigns.current_scope, socket.assigns.project.id)
+        {:noreply, assign(socket, :project, project)}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, gettext("Could not reorder image"))}
+    end
+  end
+
+  defp load_project(scope, id) do
+    project =
+      Media.get_project!(scope, id)
+      |> Homesite.Repo.preload([
+        :collaborators,
+        :affiliation_links,
+        :cover_media_item,
+        :tags
+      ])
+
+    # Load media items with proper ordering from join table
+    media_items =
+      Homesite.Repo.all(
+        from(m in Homesite.Media.MediaItem,
+          join: pmi in Homesite.Media.ProjectMediaItem,
+          on: pmi.media_item_id == m.id,
+          where: pmi.project_id == ^id,
+          order_by: [asc: pmi.display_order, asc: pmi.inserted_at],
+          select: m
+        )
+      )
+
+    %{project | media_items: media_items}
   end
 
   @impl true
@@ -88,14 +146,14 @@ defmodule HomesiteWeb.ProjectLive.Show do
           <% end %>
         </div>
 
-        <%= if @project.tags && length(@project.tags) > 0 do %>
+        <%= if Ecto.assoc_loaded?(@project.tags) && length(@project.tags) > 0 do %>
           <div class="mb-[var(--space-lg)]">
             <h3 class="text-[var(--text-lg)] mb-[var(--space-xs)] font-semibold">
               {gettext("Tags")}
             </h3>
             <div class="gap-[var(--space-xs)] flex flex-wrap">
               <%= for tag <- @project.tags do %>
-                <span class="badge badge-ghost">{tag}</span>
+                <span class="badge badge-ghost">{tag.name}</span>
               <% end %>
             </div>
           </div>
@@ -156,20 +214,64 @@ defmodule HomesiteWeb.ProjectLive.Show do
           </div>
         <% end %>
 
-        <%!-- Media Items --%>
+        <%!-- Media Items - Masonry layout matching portfolio --%>
         <%= if length(@project.media_items) > 0 do %>
           <div class="mb-[var(--space-lg)]">
             <h3 class="text-[var(--text-lg)] mb-[var(--space-sm)] font-semibold">
               {gettext("Media")}
+              <span class="text-base-content/60 text-[var(--text-sm)] ml-2 font-normal">
+                ({length(@project.media_items)})
+              </span>
             </h3>
-            <div class="gap-[var(--space-sm)] grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-              <%= for media <- @project.media_items do %>
-                <div class="aspect-square bg-base-200 overflow-hidden rounded-lg">
+            <div class="gap-[var(--space-xs)] columns-1 sm:columns-2 lg:columns-3">
+              <% media_count = length(@project.media_items) %>
+              <%= for {media, idx} <- Enum.with_index(@project.media_items) do %>
+                <div class="group mb-[var(--space-xs)] relative break-inside-avoid overflow-hidden rounded-lg">
                   <img
-                    src={"data:#{media.content_type};base64,#{Base.encode64(media.thumb_data)}"}
+                    src={"data:#{media.content_type};base64,#{Base.encode64(media.large_data || media.medium_data)}"}
                     alt={media.alt_text || media.title || "Project image"}
-                    class="h-full w-full object-cover"
+                    class="w-full"
                   />
+                  <%!-- Control buttons overlay --%>
+                  <div class="absolute top-2 right-2 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                    <%!-- Move up --%>
+                    <%= if idx > 0 do %>
+                      <button
+                        type="button"
+                        phx-click="move_media"
+                        phx-value-id={media.id}
+                        phx-value-direction="up"
+                        class="btn btn-circle btn-sm btn-neutral"
+                        aria-label={gettext("Move up")}
+                      >
+                        <.icon name="hero-arrow-up" class="h-4 w-4" />
+                      </button>
+                    <% end %>
+                    <%!-- Move down --%>
+                    <%= if idx < media_count - 1 do %>
+                      <button
+                        type="button"
+                        phx-click="move_media"
+                        phx-value-id={media.id}
+                        phx-value-direction="down"
+                        class="btn btn-circle btn-sm btn-neutral"
+                        aria-label={gettext("Move down")}
+                      >
+                        <.icon name="hero-arrow-down" class="h-4 w-4" />
+                      </button>
+                    <% end %>
+                    <%!-- Remove --%>
+                    <button
+                      type="button"
+                      phx-click="remove_media"
+                      phx-value-id={media.id}
+                      data-confirm={gettext("Remove this image from the project?")}
+                      class="btn btn-circle btn-sm btn-error"
+                      aria-label={gettext("Remove image")}
+                    >
+                      <.icon name="hero-x-mark" class="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
               <% end %>
             </div>

@@ -1,11 +1,12 @@
 defmodule HomesiteWeb.ProjectLive.SteppedForm do
   use HomesiteWeb, :live_view
 
+  alias Homesite.Content
   alias Homesite.Media
   alias Homesite.Media.Project
   alias Homesite.Media.ProjectTemplate
 
-  @steps [:basics, :metadata, :team, :settings]
+  @steps [:basics, :metadata, :team, :settings, :content]
 
   # Whitelist of allowed field names to prevent atom exhaustion attacks
   @allowed_collaborator_fields ~w(name contact contact_type)a
@@ -41,6 +42,16 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
      |> assign(:new_link, %{title: "", url: ""})
      |> assign(:selected_post_id, nil)
      |> assign(:input_reset_key, 0)
+     # Tag-related state
+     |> assign(:selected_tags, [])
+     |> assign(:tag_search_query, "")
+     |> assign(:tag_suggestions, [])
+     |> assign(:similar_tags_warning, nil)
+     # Media picker state
+     |> assign(:media_items, [])
+     |> assign(:gallery_items, [])
+     |> assign(:show_media_picker, false)
+     |> assign(:media_picker_mode, :cover)
      |> assign_form(project)}
   end
 
@@ -59,13 +70,18 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    project = Media.get_project!(socket.assigns.current_scope, id)
+    project =
+      Media.get_project!(socket.assigns.current_scope, id)
+      |> Homesite.Repo.preload([:tags, :media_items, :cover_media_item])
 
     # Load collaborators, affiliation links, and linked posts
     collaborators = Media.list_collaborators(socket.assigns.current_scope, id)
     affiliation_links = Media.list_affiliation_links(socket.assigns.current_scope, id)
     linked_posts = Media.list_project_posts(socket.assigns.current_scope, id)
     available_posts = Media.list_available_posts_for_project(socket.assigns.current_scope, id)
+
+    # Load user's media items for picker
+    media_items = Media.list_media_items(socket.assigns.current_scope)
 
     socket
     |> assign(:project, project)
@@ -75,12 +91,15 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
     |> assign(:linked_posts, linked_posts)
     |> assign(:available_posts, available_posts)
     |> assign(:completion_percentage, project.completion_percentage || 0)
+    |> assign(:selected_tags, project.tags || [])
+    |> assign(:media_items, media_items)
+    |> assign(:gallery_items, project.media_items || [])
   end
 
   @impl true
   def handle_event("validate", %{"project" => project_params}, socket) do
-    # Convert comma-separated tags string to list
-    project_params = convert_tags_param(project_params)
+    # Add tag_ids from selected_tags
+    project_params = add_tag_ids(project_params, socket.assigns.selected_tags)
 
     changeset =
       socket.assigns.project
@@ -136,9 +155,24 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
   end
 
   def handle_event("save", %{"project" => project_params}, socket) do
-    # Convert comma-separated tags string to list
-    project_params = convert_tags_param(project_params)
+    # Add tag_ids from selected_tags
+    project_params = add_tag_ids(project_params, socket.assigns.selected_tags)
     save_project(socket, socket.assigns.live_action, project_params)
+  end
+
+  def handle_event("save_and_add_content", %{"project" => project_params}, socket) do
+    project_params = add_tag_ids(project_params, socket.assigns.selected_tags)
+
+    case save_project_and_continue(socket, project_params) do
+      {:ok, socket} ->
+        {:noreply,
+         socket
+         |> assign(:step_index, 4)
+         |> assign(:current_step, :content)}
+
+      {:error, socket} ->
+        {:noreply, socket}
+    end
   end
 
   # Collaborator events - reads from socket assigns (not form params)
@@ -333,6 +367,177 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
     end
   end
 
+  # Tag search and selection events
+  def handle_event("search-tags", %{"value" => query}, socket) do
+    if String.length(query) >= 2 do
+      suggestions = Content.list_all_public_tags(query)
+      similar_warning = if query != "", do: Content.find_similar_tags(query, nil, 3), else: []
+
+      {:noreply,
+       socket
+       |> assign(:tag_search_query, query)
+       |> assign(:tag_suggestions, suggestions)
+       |> assign(:similar_tags_warning, similar_warning)}
+    else
+      {:noreply,
+       socket
+       |> assign(:tag_search_query, query)
+       |> assign(:tag_suggestions, [])
+       |> assign(:similar_tags_warning, nil)}
+    end
+  end
+
+  def handle_event("add-tag", %{"id" => tag_id}, socket) do
+    tag_id = String.to_integer(tag_id)
+    {tag, _count} = Enum.find(socket.assigns.tag_suggestions, fn {t, _} -> t.id == tag_id end)
+
+    if tag && not Enum.any?(socket.assigns.selected_tags, &(&1.id == tag_id)) do
+      {:noreply,
+       socket
+       |> assign(:selected_tags, socket.assigns.selected_tags ++ [tag])
+       |> assign(:tag_search_query, "")
+       |> assign(:tag_suggestions, [])
+       |> assign(:similar_tags_warning, nil)}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  def handle_event("remove-tag", %{"id" => tag_id}, socket) do
+    tag_id = String.to_integer(tag_id)
+    selected_tags = Enum.reject(socket.assigns.selected_tags, &(&1.id == tag_id))
+    {:noreply, assign(socket, :selected_tags, selected_tags)}
+  end
+
+  def handle_event("create-and-add-tag", %{"name" => name}, socket) do
+    case Content.get_or_create_tag(socket.assigns.current_scope, %{"name" => name}) do
+      {:ok, tag} ->
+        if not Enum.any?(socket.assigns.selected_tags, &(&1.id == tag.id)) do
+          {:noreply,
+           socket
+           |> assign(:selected_tags, socket.assigns.selected_tags ++ [tag])
+           |> assign(:tag_search_query, "")
+           |> assign(:tag_suggestions, [])
+           |> assign(:similar_tags_warning, nil)}
+        else
+          {:noreply,
+           socket
+           |> assign(:tag_search_query, "")
+           |> assign(:tag_suggestions, [])
+           |> put_flash(:info, gettext("Tag already selected"))}
+        end
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, gettext("Failed to create tag"))}
+    end
+  end
+
+  # Media picker events
+  def handle_event("open_media_picker", %{"mode" => mode}, socket) do
+    {:noreply,
+     socket
+     |> assign(:show_media_picker, true)
+     |> assign(:media_picker_mode, String.to_atom(mode))}
+  end
+
+  def handle_event("close_media_picker", _params, socket) do
+    {:noreply, assign(socket, :show_media_picker, false)}
+  end
+
+  def handle_event("select_cover", %{"id" => id}, socket) do
+    media_item_id = String.to_integer(id)
+
+    case Media.update_project(
+           socket.assigns.current_scope,
+           socket.assigns.project,
+           %{"cover_media_item_id" => media_item_id}
+         ) do
+      {:ok, project} ->
+        project = Homesite.Repo.preload(project, [:cover_media_item], force: true)
+
+        {:noreply,
+         socket
+         |> assign(:project, project)
+         |> assign(:show_media_picker, false)
+         |> put_flash(:info, gettext("Cover image updated"))}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, gettext("Failed to update cover image"))}
+    end
+  end
+
+  def handle_event("remove_cover", _params, socket) do
+    case Media.update_project(
+           socket.assigns.current_scope,
+           socket.assigns.project,
+           %{"cover_media_item_id" => nil}
+         ) do
+      {:ok, project} ->
+        {:noreply,
+         socket
+         |> assign(:project, %{project | cover_media_item: nil})
+         |> put_flash(:info, gettext("Cover image removed"))}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, gettext("Failed to remove cover image"))}
+    end
+  end
+
+  def handle_event("toggle_gallery_item", %{"id" => id}, socket) do
+    media_item_id = String.to_integer(id)
+    gallery_ids = Enum.map(socket.assigns.gallery_items, & &1.id)
+
+    if media_item_id in gallery_ids do
+      # Remove from gallery
+      Media.remove_media_from_project(
+        socket.assigns.current_scope,
+        socket.assigns.project.id,
+        media_item_id
+      )
+
+      gallery_items = Enum.reject(socket.assigns.gallery_items, &(&1.id == media_item_id))
+      {:noreply, assign(socket, :gallery_items, gallery_items)}
+    else
+      # Add to gallery
+      display_order = length(gallery_ids)
+
+      Media.add_media_to_project(
+        socket.assigns.current_scope,
+        socket.assigns.project.id,
+        media_item_id,
+        display_order
+      )
+
+      media_item = Enum.find(socket.assigns.media_items, &(&1.id == media_item_id))
+      gallery_items = socket.assigns.gallery_items ++ [media_item]
+
+      # Auto-set cover if none set
+      socket =
+        if is_nil(socket.assigns.project.cover_media_item_id) do
+          {:ok, project} =
+            Media.update_project(
+              socket.assigns.current_scope,
+              socket.assigns.project,
+              %{"cover_media_item_id" => media_item_id}
+            )
+
+          project = Homesite.Repo.preload(project, [:cover_media_item], force: true)
+          assign(socket, :project, project)
+        else
+          socket
+        end
+
+      {:noreply, assign(socket, :gallery_items, gallery_items)}
+    end
+  end
+
+  def handle_event("skip_to_content", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(:step_index, 4)
+     |> assign(:current_step, :content)}
+  end
+
   # Helper for linking posts to projects
   defp link_post_to_project(socket, post_id) do
     case Media.link_post_to_project(
@@ -375,24 +580,62 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
     ArgumentError -> :error
   end
 
-  # Convert comma-separated tags string to list for Ecto
-  defp convert_tags_param(%{"tags" => tags} = params) when is_binary(tags) do
-    Map.put(params, "tags", string_to_tags(tags))
+  # Add tag_ids to params from selected tags
+  defp add_tag_ids(params, selected_tags) do
+    tag_ids = Enum.map(selected_tags, & &1.id)
+    Map.put(params, "tag_ids", tag_ids)
   end
 
-  defp convert_tags_param(params), do: params
+  # Save project and return socket for continuing to content step
+  defp save_project_and_continue(socket, project_params) do
+    case socket.assigns.live_action do
+      :new ->
+        case Media.create_project(socket.assigns.current_scope, project_params) do
+          {:ok, project} ->
+            project =
+              project
+              |> Homesite.Repo.preload([:tags, :media_items, :cover_media_item])
 
-  defp string_to_tags(string) when is_binary(string) do
-    string
-    |> String.split(",")
-    |> Enum.map(&String.trim/1)
-    |> Enum.reject(&(&1 == ""))
+            media_items = Media.list_media_items(socket.assigns.current_scope)
+
+            {:ok,
+             socket
+             |> assign(:project, project)
+             |> assign(:live_action, :edit)
+             |> assign(:media_items, media_items)
+             |> assign(:gallery_items, [])
+             |> put_flash(:info, gettext("Project created. Now add content!"))}
+
+          {:error, %Ecto.Changeset{} = changeset} ->
+            {:error, assign_form(socket, changeset)}
+        end
+
+      :edit ->
+        case Media.update_project(
+               socket.assigns.current_scope,
+               socket.assigns.project,
+               project_params
+             ) do
+          {:ok, project} ->
+            {:ok, project} =
+              Media.update_project_completion(socket.assigns.current_scope, project.id)
+
+            project =
+              project
+              |> Homesite.Repo.preload([:tags, :media_items, :cover_media_item], force: true)
+
+            {:ok,
+             socket
+             |> assign(:project, project)
+             |> assign(:gallery_items, project.media_items)
+             |> assign(:completion_percentage, project.completion_percentage)
+             |> put_flash(:info, gettext("Project saved. Now add content!"))}
+
+          {:error, %Ecto.Changeset{} = changeset} ->
+            {:error, assign_form(socket, changeset)}
+        end
+    end
   end
-
-  defp string_to_tags(_), do: []
-
-  defp tags_to_string(tags) when is_list(tags), do: Enum.join(tags, ", ")
-  defp tags_to_string(_), do: ""
 
   defp save_project(socket, :new, project_params) do
     case Media.create_project(socket.assigns.current_scope, project_params) do
@@ -461,21 +704,15 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
           </li>
           <li class={"#{if @step_index >= 1, do: "step-primary"} step"}>
             {gettext("Metadata")}
-            <span class="text-base-content/60 text-[var(--text-xs)] ml-1">
-              ({gettext("optional")})
-            </span>
           </li>
           <li class={"#{if @step_index >= 2, do: "step-primary"} step"}>
             {gettext("Team")}
-            <span class="text-base-content/60 text-[var(--text-xs)] ml-1">
-              ({gettext("optional")})
-            </span>
           </li>
           <li class={"#{if @step_index >= 3, do: "step-primary"} step"}>
             {gettext("Settings")}
-            <span class="text-base-content/60 text-[var(--text-xs)] ml-1">
-              ({gettext("optional")})
-            </span>
+          </li>
+          <li class={"#{if @step_index >= 4, do: "step-primary"} step"}>
+            {gettext("Content")}
           </li>
         </ul>
 
@@ -510,11 +747,6 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
           <% end %>
           <%= if @current_step != :metadata do %>
             <input type="hidden" name={@form[:category].name} value={@form[:category].value} />
-            <input
-              type="hidden"
-              name={@form[:tags].name}
-              value={tags_to_string(@form[:tags].value)}
-            />
             <input type="hidden" name={@form[:project_date].name} value={@form[:project_date].value} />
           <% end %>
 
@@ -522,7 +754,13 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
             <% :basics -> %>
               <.render_basics_step form={@form} />
             <% :metadata -> %>
-              <.render_metadata_step form={@form} />
+              <.render_metadata_step
+                form={@form}
+                selected_tags={@selected_tags}
+                tag_search_query={@tag_search_query}
+                tag_suggestions={@tag_suggestions}
+                similar_tags_warning={@similar_tags_warning}
+              />
             <% :team -> %>
               <.render_team_step
                 project={@project}
@@ -536,12 +774,20 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
                 input_reset_key={@input_reset_key}
               />
             <% :settings -> %>
-              <.render_settings_step form={@form} />
+              <.render_settings_step form={@form} project={@project} />
+            <% :content -> %>
+              <.render_content_step
+                project={@project}
+                media_items={@media_items}
+                gallery_items={@gallery_items}
+                show_media_picker={@show_media_picker}
+                media_picker_mode={@media_picker_mode}
+              />
           <% end %>
 
           <%!-- Navigation Buttons --%>
           <div class="border-base-300 mt-[var(--space-lg)] pt-[var(--space-md)] flex justify-between border-t">
-            <%= if @step_index > 0 do %>
+            <%= if @step_index > 0 && @step_index < 4 do %>
               <button type="button" phx-click="prev_step" class="btn btn-ghost">
                 <.icon name="hero-arrow-left" class="h-4 w-4" /> {gettext("Back")}
               </button>
@@ -549,21 +795,36 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
               <div></div>
             <% end %>
 
-            <div class="gap-[var(--space-xs)] flex">
-              <%= if @step_index > 0 && @step_index < 3 do %>
-                <button type="button" phx-click="skip_to_save" class="btn btn-ghost">
-                  {gettext("Skip to Save")}
-                </button>
-              <% end %>
-
-              <%= if @step_index < 3 do %>
-                <button type="button" phx-click="next_step" class="btn btn-primary">
-                  {gettext("Next")} <.icon name="hero-arrow-right" class="h-4 w-4" />
-                </button>
-              <% else %>
-                <button type="submit" class="btn btn-success">
-                  <.icon name="hero-check" class="h-4 w-4" /> {gettext("Save Project")}
-                </button>
+            <div class="gap-[var(--space-xs)] flex flex-wrap justify-end">
+              <%= cond do %>
+                <% @step_index < 3 -> %>
+                  <%!-- Steps 1-3: Next button + Skip to Content for existing projects --%>
+                  <%= if @project.id do %>
+                    <button type="button" phx-click="skip_to_content" class="btn btn-ghost">
+                      {gettext("Skip to Content")}
+                    </button>
+                  <% end %>
+                  <button type="button" phx-click="next_step" class="btn btn-primary">
+                    {gettext("Next")} <.icon name="hero-arrow-right" class="h-4 w-4" />
+                  </button>
+                <% @step_index == 3 -> %>
+                  <%!-- Step 4 (Settings): Save options --%>
+                  <%= if @project.id do %>
+                    <button type="button" phx-click="skip_to_content" class="btn btn-ghost">
+                      {gettext("Skip to Content")}
+                    </button>
+                  <% end %>
+                  <button type="submit" class="btn btn-outline">
+                    <.icon name="hero-check" class="h-4 w-4" /> {gettext("Save Project")}
+                  </button>
+                  <button type="submit" phx-click="save_and_add_content" class="btn btn-primary">
+                    <.icon name="hero-photo" class="h-4 w-4" /> {gettext("Save & Add Content")}
+                  </button>
+                <% @step_index == 4 -> %>
+                  <%!-- Step 5 (Content): Done button --%>
+                  <.link navigate={~p"/projects/#{@project.id}"} class="btn btn-success">
+                    <.icon name="hero-check" class="h-4 w-4" /> {gettext("Done")}
+                  </.link>
               <% end %>
             </div>
           </div>
@@ -624,6 +885,9 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
         rows="4"
         phx-debounce="blur"
       />
+      <p class="text-[var(--text-xs)] text-base-content/60 -mt-2">
+        {gettext("Maximum 1000 characters")}
+      </p>
 
       <div class="alert alert-warning">
         <.icon name="hero-light-bulb" class="h-5 w-5" />
@@ -642,14 +906,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
     template_type = assigns.form[:template_type].value || "photography"
     template = ProjectTemplate.get(template_type) || ProjectTemplate.get("photography")
 
-    # Convert tags array to comma-separated string for display
-    tags_value = tags_to_string(assigns.form[:tags].value)
-
-    assigns =
-      assigns
-      |> assign(:tags_display, tags_value)
-      |> assign(:template, template)
-      |> assign(:suggested_tags, template.suggested_tags)
+    assigns = assign(assigns, :template, template)
 
     ~H"""
     <div class="space-y-[var(--space-md)]">
@@ -673,34 +930,84 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
         placeholder={@template.fields.category.placeholder}
       />
 
+      <%!-- Tag Picker --%>
       <div class="form-control">
         <label class="label">
-          <span class="label-text">{@template.fields.tags.label} {gettext("(comma-separated)")}</span>
+          <span class="label-text font-medium">{@template.fields.tags.label}</span>
         </label>
-        <input
-          type="text"
-          name={@form[:tags].name}
-          value={@tags_display}
-          placeholder={@template.fields.tags.placeholder}
-          class="input input-bordered w-full"
-        />
-        <%= if @form[:tags].errors != [] do %>
-          <p class="text-error text-[var(--text-sm)] mt-[var(--space-inline)]">
-            <%= for {msg, opts} <- @form[:tags].errors do %>
-              {translate_error({msg, opts})}
+
+        <%!-- Selected Tags Display --%>
+        <%= if length(@selected_tags) > 0 do %>
+          <div class="gap-[var(--space-xs)] mb-[var(--space-xs)] flex flex-wrap">
+            <%= for tag <- @selected_tags do %>
+              <span class="badge badge-primary gap-[var(--space-inline)]">
+                {tag.name}
+                <button
+                  type="button"
+                  phx-click="remove-tag"
+                  phx-value-id={tag.id}
+                  class="hover:text-error"
+                >
+                  <.icon name="hero-x-mark" class="h-3 w-3" />
+                </button>
+              </span>
             <% end %>
-          </p>
+          </div>
         <% end %>
 
-        <%!-- Suggested tags --%>
-        <%= if length(@suggested_tags) > 0 do %>
-          <div class="mt-[var(--space-xs)]">
-            <span class="text-base-content/60 text-[var(--text-sm)]">{gettext("Suggestions:")}</span>
-            <div class="gap-[var(--space-inline)] mt-[var(--space-inline)] flex flex-wrap">
-              <%= for tag <- @suggested_tags do %>
-                <span class="badge badge-outline badge-sm">{tag}</span>
+        <%!-- Tag Search Input --%>
+        <div class="relative">
+          <input
+            type="text"
+            value={@tag_search_query}
+            placeholder={gettext("Search or create tags...")}
+            class="input input-bordered w-full"
+            phx-keyup="search-tags"
+            phx-debounce="300"
+            autocomplete="off"
+          />
+
+          <%!-- Suggestions Dropdown --%>
+          <%= if length(@tag_suggestions) > 0 || (@tag_search_query != "" && String.length(@tag_search_query) >= 2) do %>
+            <div class="bg-base-100 border-base-300 absolute z-10 mt-1 w-full rounded-lg border shadow-lg">
+              <%= for {tag, count} <- @tag_suggestions do %>
+                <button
+                  type="button"
+                  phx-click="add-tag"
+                  phx-value-id={tag.id}
+                  class="w-full px-4 py-2 text-left first:rounded-t-lg last:rounded-b-lg hover:bg-base-200"
+                >
+                  <span class="font-medium">{tag.name}</span>
+                  <span class="text-base-content/60 text-[var(--text-sm)] ml-2">
+                    ({count} {ngettext("use", "uses", count)})
+                  </span>
+                </button>
+              <% end %>
+
+              <%!-- Create new tag option --%>
+              <%= if @tag_search_query != "" && String.length(@tag_search_query) >= 2 && !Enum.any?(@tag_suggestions, fn {t, _} -> String.downcase(t.name) == String.downcase(@tag_search_query) end) do %>
+                <button
+                  type="button"
+                  phx-click="create-and-add-tag"
+                  phx-value-name={@tag_search_query}
+                  class="text-primary w-full px-4 py-2 text-left hover:bg-primary/10"
+                >
+                  <.icon name="hero-plus" class="mr-1 inline h-4 w-4" />
+                  {gettext("Create")} "<strong>{@tag_search_query}</strong>"
+                </button>
               <% end %>
             </div>
+          <% end %>
+        </div>
+
+        <%!-- Similar tags warning --%>
+        <%= if @similar_tags_warning && length(@similar_tags_warning) > 0 do %>
+          <div class="mt-[var(--space-xs)] text-[var(--text-sm)] text-warning">
+            <.icon name="hero-exclamation-triangle" class="inline h-4 w-4" />
+            {gettext("Similar tags exist:")}
+            <%= for similar <- @similar_tags_warning do %>
+              <span class="badge badge-warning badge-sm ml-1">{similar.name}</span>
+            <% end %>
           </div>
         <% end %>
       </div>
@@ -1010,10 +1317,218 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
 
       <div class="alert alert-success">
         <.icon name="hero-check-circle" class="h-5 w-5" />
-        <span>
-          {gettext("You're ready to save! Click 'Save Project' to create your project.")}
-        </span>
+        <div>
+          <p class="font-medium">{gettext("Ready to save!")}</p>
+          <p class="text-[var(--text-sm)] opacity-80">
+            {gettext("Save your project, or save and continue to add images and content.")}
+          </p>
+        </div>
       </div>
+    </div>
+    """
+  end
+
+  defp render_content_step(assigns) do
+    template_type = assigns.project.template_type || "photography"
+    template = ProjectTemplate.get(template_type) || ProjectTemplate.get("photography")
+
+    tip =
+      case template_type do
+        "photography" -> gettext("Add your best shots. First image becomes cover.")
+        "coding" -> gettext("Screenshots, architecture diagrams, or demo GIFs work great.")
+        "writing" -> gettext("Add cover art or related imagery.")
+        "books" -> gettext("Book covers and interior shots.")
+        "gears" -> gettext("Product photos from multiple angles.")
+        "movies" -> gettext("Posters, stills, or behind-the-scenes.")
+        _ -> gettext("Add images to showcase your project.")
+      end
+
+    assigns =
+      assigns
+      |> assign(:template, template)
+      |> assign(:tip, tip)
+
+    ~H"""
+    <div class="space-y-[var(--space-md)]">
+      <h2 class="text-[var(--text-2xl)] font-semibold">{gettext("Step 5: Content")}</h2>
+      <p class="text-base-content/70">
+        {gettext("Add images to your project gallery.")}
+      </p>
+
+      <%!-- Template tip --%>
+      <div class="alert alert-info">
+        <.icon name={@template.icon} class="h-5 w-5" />
+        <span>{@tip}</span>
+      </div>
+
+      <%!-- Cover Image Section --%>
+      <div class="border-base-300 p-[var(--space-sm)] rounded-lg border">
+        <h3 class="text-[var(--text-lg)] mb-[var(--space-sm)] font-semibold">
+          <.icon name="hero-star" class="inline h-5 w-5" />
+          {gettext("Cover Image")}
+        </h3>
+
+        <%= if @project.cover_media_item do %>
+          <div class="flex items-start gap-4">
+            <img
+              src={"data:#{@project.cover_media_item.content_type};base64,#{Base.encode64(@project.cover_media_item.thumb_data)}"}
+              alt={@project.cover_media_item.alt_text}
+              class="h-32 w-32 rounded-lg object-cover"
+            />
+            <div class="flex flex-col gap-2">
+              <p class="text-base-content/70 text-[var(--text-sm)]">
+                {@project.cover_media_item.alt_text}
+              </p>
+              <div class="flex gap-2">
+                <button
+                  type="button"
+                  phx-click="open_media_picker"
+                  phx-value-mode="cover"
+                  class="btn btn-sm btn-ghost"
+                >
+                  <.icon name="hero-arrow-path" class="h-4 w-4" />
+                  {gettext("Change")}
+                </button>
+                <button type="button" phx-click="remove_cover" class="btn btn-sm btn-ghost text-error">
+                  <.icon name="hero-trash" class="h-4 w-4" />
+                  {gettext("Remove")}
+                </button>
+              </div>
+            </div>
+          </div>
+        <% else %>
+          <p class="text-base-content/60 text-[var(--text-sm)] mb-[var(--space-sm)]">
+            {gettext("No cover image selected. The first gallery image will be used as cover.")}
+          </p>
+          <button
+            type="button"
+            phx-click="open_media_picker"
+            phx-value-mode="cover"
+            class="btn btn-primary btn-sm"
+          >
+            <.icon name="hero-photo" class="h-4 w-4" />
+            {gettext("Select Cover Image")}
+          </button>
+        <% end %>
+      </div>
+
+      <%!-- Gallery Section --%>
+      <div class="border-base-300 p-[var(--space-sm)] rounded-lg border">
+        <h3 class="text-[var(--text-lg)] mb-[var(--space-sm)] font-semibold">
+          <.icon name="hero-squares-2x2" class="inline h-5 w-5" />
+          {gettext("Gallery Images")}
+          <span class="text-base-content/60 text-[var(--text-sm)] ml-2">
+            ({length(@gallery_items)} {ngettext("image", "images", length(@gallery_items))})
+          </span>
+        </h3>
+
+        <%= if length(@gallery_items) > 0 do %>
+          <div class="gap-[var(--space-sm)] mb-[var(--space-sm)] grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            <%= for item <- @gallery_items do %>
+              <div class="group aspect-square relative">
+                <img
+                  src={"data:#{item.content_type};base64,#{Base.encode64(item.thumb_data)}"}
+                  alt={item.alt_text}
+                  class="h-full w-full rounded-lg object-cover"
+                />
+                <button
+                  type="button"
+                  phx-click="toggle_gallery_item"
+                  phx-value-id={item.id}
+                  class="bg-error absolute top-1 right-1 rounded-full p-1 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                >
+                  <.icon name="hero-x-mark" class="h-4 w-4" />
+                </button>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-base-content/60 text-[var(--text-sm)] mb-[var(--space-sm)]">
+            {gettext("No images in gallery yet. Add images from your media library.")}
+          </p>
+        <% end %>
+
+        <button
+          type="button"
+          phx-click="open_media_picker"
+          phx-value-mode="gallery"
+          class="btn btn-primary btn-sm"
+        >
+          <.icon name="hero-plus" class="h-4 w-4" />
+          {gettext("Add Images")}
+        </button>
+      </div>
+
+      <%!-- Media Picker Modal --%>
+      <%= if @show_media_picker do %>
+        <div class="bg-black/50 fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div class="bg-base-100 max-h-[80vh] w-full max-w-4xl overflow-hidden rounded-xl shadow-2xl">
+            <div class="border-base-300 flex items-center justify-between border-b p-4">
+              <h3 class="text-[var(--text-lg)] font-semibold">
+                <%= if @media_picker_mode == :cover do %>
+                  {gettext("Select Cover Image")}
+                <% else %>
+                  {gettext("Add Gallery Images")}
+                <% end %>
+              </h3>
+              <button type="button" phx-click="close_media_picker" class="btn btn-ghost btn-sm">
+                <.icon name="hero-x-mark" class="h-5 w-5" />
+              </button>
+            </div>
+
+            <div class="max-h-[60vh] overflow-y-auto p-4">
+              <%= if length(@media_items) > 0 do %>
+                <div class="gap-[var(--space-sm)] grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                  <%= for item <- @media_items do %>
+                    <% in_gallery = Enum.any?(@gallery_items, &(&1.id == item.id)) %>
+                    <button
+                      type="button"
+                      phx-click={
+                        if @media_picker_mode == :cover,
+                          do: "select_cover",
+                          else: "toggle_gallery_item"
+                      }
+                      phx-value-id={item.id}
+                      class={[
+                        "group aspect-square relative overflow-hidden rounded-lg border-2 transition-all",
+                        in_gallery && "border-primary ring-primary ring-2",
+                        !in_gallery && "border-transparent hover:border-base-300"
+                      ]}
+                    >
+                      <img
+                        src={"data:#{item.content_type};base64,#{Base.encode64(item.thumb_data)}"}
+                        alt={item.alt_text}
+                        class="h-full w-full object-cover"
+                      />
+                      <%= if in_gallery do %>
+                        <div class="bg-primary absolute top-1 right-1 rounded-full p-1 text-white">
+                          <.icon name="hero-check" class="h-3 w-3" />
+                        </div>
+                      <% end %>
+                    </button>
+                  <% end %>
+                </div>
+              <% else %>
+                <div class="py-8 text-center">
+                  <.icon name="hero-photo" class="text-base-content/30 mx-auto mb-2 h-12 w-12" />
+                  <p class="text-base-content/60">
+                    {gettext("No media items yet.")}
+                    <.link navigate={~p"/media"} class="link link-primary">
+                      {gettext("Upload some images first.")}
+                    </.link>
+                  </p>
+                </div>
+              <% end %>
+            </div>
+
+            <div class="border-base-300 border-t p-4">
+              <button type="button" phx-click="close_media_picker" class="btn btn-primary">
+                {gettext("Done")}
+              </button>
+            </div>
+          </div>
+        </div>
+      <% end %>
     </div>
     """
   end

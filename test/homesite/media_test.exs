@@ -61,6 +61,7 @@ defmodule Homesite.MediaTest do
     test "update_project/3 with valid data updates the project" do
       scope = user_scope_fixture()
       project = project_fixture(scope)
+      original_slug = project.slug
 
       update_attrs = %{
         name: "Updated Project",
@@ -68,11 +69,12 @@ defmodule Homesite.MediaTest do
         is_public: false
       }
 
-      assert {:ok, %Project{} = project} = Media.update_project(scope, project, update_attrs)
-      assert project.name == "Updated Project"
-      assert project.description == "Updated description"
-      assert String.starts_with?(project.slug, "updated-project-")
-      assert project.is_public == false
+      assert {:ok, %Project{} = updated} = Media.update_project(scope, project, update_attrs)
+      assert updated.name == "Updated Project"
+      assert updated.description == "Updated description"
+      # Slug is preserved when name is updated (allows fixing typos without breaking URLs)
+      assert updated.slug == original_slug
+      assert updated.is_public == false
     end
 
     test "update_project/3 with invalid scope raises" do

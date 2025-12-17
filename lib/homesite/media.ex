@@ -114,13 +114,23 @@ defmodule Homesite.Media do
   end
 
   @doc """
-  Gets a project with its media items preloaded.
+  Gets a project with its media items preloaded, ordered by display_order.
   """
   def get_project_with_media!(%Scope{} = scope, id) do
-    media_items_query = from m in MediaItem, order_by: m.inserted_at
+    project = Repo.get_by!(Project, id: id, user_id: scope.user.id)
 
-    Repo.get_by!(Project, id: id, user_id: scope.user.id)
-    |> Repo.preload(media_items: media_items_query)
+    # Load media items ordered by display_order from join table
+    media_items =
+      from(m in MediaItem,
+        join: pmi in ProjectMediaItem,
+        on: pmi.media_item_id == m.id,
+        where: pmi.project_id == ^project.id,
+        order_by: [asc: pmi.display_order, asc: pmi.inserted_at],
+        select: m
+      )
+      |> Repo.all()
+
+    %{project | media_items: media_items}
   end
 
   @doc """
@@ -398,6 +408,58 @@ defmodule Homesite.Media do
     case Repo.get_by(ProjectMediaItem, project_id: project_id, media_item_id: media_item_id) do
       nil -> {:error, :not_found}
       association -> Repo.delete(association)
+    end
+  end
+
+  @doc """
+  Moves a media item up or down in the project's display order.
+  Direction should be :up or :down.
+  """
+  def reorder_project_media(%Scope{} = scope, project_id, media_item_id, direction)
+      when direction in [:up, :down] do
+    # Verify ownership
+    _project = get_project!(scope, project_id)
+
+    # Get all project media items ordered by display_order
+    items =
+      from(pmi in ProjectMediaItem,
+        where: pmi.project_id == ^project_id,
+        order_by: [asc: pmi.display_order, asc: pmi.inserted_at]
+      )
+      |> Repo.all()
+
+    current_index = Enum.find_index(items, &(&1.media_item_id == media_item_id))
+
+    if current_index do
+      new_index =
+        case direction do
+          :up -> max(0, current_index - 1)
+          :down -> min(length(items) - 1, current_index + 1)
+        end
+
+      if new_index != current_index do
+        # Swap the two items
+        items
+        |> Enum.with_index()
+        |> Enum.each(fn {item, idx} ->
+          new_order =
+            cond do
+              idx == current_index -> new_index
+              idx == new_index -> current_index
+              true -> idx
+            end
+
+          item
+          |> Ecto.Changeset.change(display_order: new_order)
+          |> Repo.update!()
+        end)
+
+        {:ok, :reordered}
+      else
+        {:ok, :no_change}
+      end
+    else
+      {:error, :not_found}
     end
   end
 

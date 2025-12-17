@@ -7,6 +7,123 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-17 - Shared Tags, Portfolio Fixes, Media Upload Improvements
+
+### Session Summary
+
+#### Features Implemented
+
+**1. Shared Tag System for Projects**
+- Created `project_tags` join table migration
+- Created `ProjectTag` schema (`lib/homesite/media/project_tag.ex`)
+- Updated `Tag` schema with `many_to_many :projects` association
+- Updated `Project` schema: replaced `field :tags, {:array, :string}` with proper association
+- Added `put_tags/3` helper in Project changeset
+- Step 5 (Content) with media picker implemented
+
+**2. Portfolio Name/Slug Fixes**
+- Fixed portfolio name update (was working, but slug was regenerating)
+- Implemented slug preservation: existing slug kept when name updated for typo fixes
+- Added `line-clamp-2` name truncation in portfolio index with `title` tooltip
+- Created comprehensive portfolio tests (`test/homesite_web/live/portfolio_live_test.exs` - 12 tests)
+
+**3. Media Upload Improvements**
+- Added "Maximum 1000 characters" hint to project description field
+- Increased upload limit from 5MB to 20MB
+- Added auto-resize for images > 6000px dimensions before processing
+- Redesigned upload preview UI with larger grid thumbnails and progress overlay
+- Added Finnish translations for all new strings
+
+**4. Compilation Warnings Fix**
+- Fixed "Failed to find closing `<pre>`" warnings during compilation
+- Root cause: NimblePublisher was running Earmark on body AFTER our custom MDEx parser
+- Solution: Created `Homesite.DevFaqs.HtmlPassthrough` no-op converter
+- Added `html_converter: Homesite.DevFaqs.HtmlPassthrough` to NimblePublisher config
+
+**5. Test Fixes**
+- Fixed FAQ test failures after portfolio FAQ migration (count mismatches)
+- Updated tests to use `has_element?` instead of string matching for "Edit" assertions
+- Added `Repo.delete_all(Faq)` in test setups to clear migration data
+
+#### Files Created
+- `priv/repo/migrations/20251217161052_create_project_tags.exs`
+- `priv/repo/migrations/20251217172440_add_portfolio_faqs.exs`
+- `lib/homesite/media/project_tag.ex`
+- `lib/homesite/dev_faqs/html_passthrough.ex`
+- `priv/dev_faqs/007-portfolio-projects.md`
+- `test/homesite_web/live/portfolio_live_test.exs`
+
+#### Files Modified
+- `lib/homesite/content/tag.ex` - Added projects association
+- `lib/homesite/media/project.ex` - Replaced tags field, slug preservation
+- `lib/homesite/media/image_processor.ex` - 20MB limit, auto-resize large images
+- `lib/homesite/dev_faqs.ex` - Added html_converter option
+- `lib/homesite_web/live/media_live/index.ex` - Upload UI improvements
+- `lib/homesite_web/live/portfolio_live/index.ex` - Name truncation
+- `lib/homesite_web/live/project_live/stepped_form.ex` - Description hint
+- `priv/gettext/fi/LC_MESSAGES/default.po` - Finnish translations
+
+#### Test Results
+- **1567 tests, 0 failures**
+
+---
+
+## 2025-12-17 (earlier) - Shared Tags for Projects & Debugging Notes
+
+### Session: Implement unified tag system for Projects (same as Posts)
+
+#### Features Implemented
+
+**Shared Tag System:**
+- Created `project_tags` join table migration
+- Created `ProjectTag` schema (`lib/homesite/media/project_tag.ex`)
+- Updated `Tag` schema with `many_to_many :projects` association
+- Updated `Project` schema: replaced `field :tags, {:array, :string}` with proper association
+- Added `put_tags/3` helper in Project changeset
+- Updated `calculate_completion/2` to handle Tag structs
+
+**SteppedForm Updates:**
+- Added tag picker UI to Metadata step (Step 2)
+- Tag search with suggestions
+- Create new tags inline
+- Step 5 (Content) with media picker already implemented
+
+**Display Fixes:**
+- `ProjectLive.Show`: Added `:tags` preload, display `tag.name`
+- `PortfolioLive.Show`: Added `:tags` preload, display `tag.name`
+
+#### Test Fixes
+- Updated 3 tests using removed "Skip to Save" button to use new navigation flow
+
+#### Debugging Note: Misleading FeedbackLive.PromptModal Error
+
+**Symptom:** Error message says "cannot convert component HomesiteWeb.FeedbackLive.PromptModal to HTML"
+
+**Actual Cause:** An earlier error in the LiveView (e.g., calling `length()` on unloaded association) triggers Phoenix error page rendering. The error layout includes a `live_component`, which can't render in error context.
+
+**Pattern to recognize:** When you see live_component rendering errors in layouts, the root cause is often an earlier error that triggered error page rendering. Check the stacktrace for the original error.
+
+**In this case:** `length(@project.tags)` was called on `#Ecto.Association.NotLoaded` because `:tags` wasn't in preloads.
+
+**Prevention:** Always preload associations before using them in templates. Consider using `Ecto.assoc_loaded?/1` for defensive checks.
+
+#### Files Created
+- `priv/repo/migrations/20251217161052_create_project_tags.exs`
+- `lib/homesite/media/project_tag.ex`
+
+#### Files Modified
+- `lib/homesite/content/tag.ex` - Added projects association
+- `lib/homesite/media/project.ex` - Replaced tags field with association
+- `lib/homesite_web/live/project_live/show.ex` - Added tags preload, fixed display
+- `lib/homesite_web/live/portfolio_live/show.ex` - Added tags preload, fixed display
+- `lib/homesite_web/live/project_live/stepped_form.ex` - Tag UI + Step 5
+- `test/homesite_web/live/project_live_test.exs` - Updated navigation tests
+
+#### Test Results
+- **1555 tests, 0 failures**
+
+---
+
 ## 2025-12-16 - Design System Migration & Playwright Verification
 
 ### Session: CSS design token migration and E2E test verification

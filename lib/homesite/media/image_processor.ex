@@ -6,10 +6,11 @@ defmodule Homesite.Media.ImageProcessor do
 
   import Mogrify
 
-  # 10MB
-  @max_file_size 10 * 1024 * 1024
+  # 20MB upload limit
+  @max_file_size 20 * 1024 * 1024
   @allowed_types ["image/jpeg", "image/png", "image/webp"]
-  @max_dimension 4000
+  # Images larger than this will be auto-resized before processing
+  @max_input_dimension 6000
   @sizes %{
     thumb: 300,
     medium: 600,
@@ -37,6 +38,7 @@ defmodule Homesite.Media.ImageProcessor do
   """
   def process_upload(upload_path, content_type) do
     with {:ok, _} <- validate_file(upload_path, content_type),
+         {:ok, upload_path} <- maybe_downsize_large_image(upload_path),
          {:ok, dimensions} <- get_dimensions(upload_path),
          {:ok, sizes} <- generate_sizes(upload_path, dimensions),
          {:ok, aspect_info} <- calculate_aspect_ratio(dimensions) do
@@ -88,19 +90,37 @@ defmodule Homesite.Media.ImageProcessor do
         {:error, "File not found"}
 
       File.stat!(upload_path).size > @max_file_size ->
-        {:error, "File too large. Maximum size is 10MB."}
+        {:error, "File too large. Maximum size is 20MB."}
 
       true ->
+        # Just validate we can read dimensions - large images will be auto-resized
         case get_dimensions(upload_path) do
-          {:ok, {w, h}} when w > @max_dimension or h > @max_dimension ->
-            {:error, "Image dimensions too large. Maximum dimension is #{@max_dimension}px."}
-
-          {:ok, _} ->
-            {:ok, :valid}
-
-          error ->
-            error
+          {:ok, _} -> {:ok, :valid}
+          error -> error
         end
+    end
+  end
+
+  # Auto-resize images that exceed max input dimensions
+  defp maybe_downsize_large_image(upload_path) do
+    case get_dimensions(upload_path) do
+      {:ok, {w, h}} when w > @max_input_dimension or h > @max_input_dimension ->
+        try do
+          open(upload_path)
+          |> resize_to_limit("#{@max_input_dimension}x#{@max_input_dimension}")
+          |> quality(92)
+          |> save(path: upload_path)
+
+          {:ok, upload_path}
+        rescue
+          e -> {:error, "Failed to resize large image: #{inspect(e)}"}
+        end
+
+      {:ok, _} ->
+        {:ok, upload_path}
+
+      error ->
+        error
     end
   end
 

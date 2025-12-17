@@ -12,6 +12,7 @@ defmodule Homesite.Media.Project do
   """
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
 
   @valid_template_types ~w(photography coding writing books gears movies custom)
 
@@ -29,7 +30,6 @@ defmodule Homesite.Media.Project do
     # Project-specific metadata
     field :project_date, :date
     field :category, :string
-    field :tags, {:array, :string}, default: []
 
     field :field_visibility, :map,
       default: %{
@@ -56,6 +56,10 @@ defmodule Homesite.Media.Project do
 
     many_to_many :posts, Homesite.Content.Post,
       join_through: "project_posts",
+      on_replace: :delete
+
+    many_to_many :tags, Homesite.Content.Tag,
+      join_through: Homesite.Media.ProjectTag,
       on_replace: :delete
 
     timestamps(type: :utc_datetime)
@@ -96,7 +100,6 @@ defmodule Homesite.Media.Project do
       :cover_media_item_id,
       :project_date,
       :category,
-      :tags,
       :field_visibility
     ])
     |> validate_required([:name])
@@ -104,38 +107,46 @@ defmodule Homesite.Media.Project do
     |> validate_length(:description, max: 1000)
     |> validate_length(:category, max: 100)
     |> validate_inclusion(:template_type, @valid_template_types)
-    |> validate_tags()
     |> maybe_generate_slug()
     |> validate_required([:slug])
     |> unique_constraint(:slug, name: :projects_user_id_slug_index)
     |> foreign_key_constraint(:user_id)
     |> foreign_key_constraint(:cover_media_item_id)
     |> put_change(:user_id, user_scope.user.id)
-    |> calculate_completion()
+    |> put_tags(attrs, user_scope)
+    |> calculate_completion(attrs)
   end
 
-  # Only generate a slug if one wasn't provided and there's a name change
+  # Generate a slug only for new projects or if explicitly changed.
+  # Preserves existing slug when name is updated (allows fixing typos without breaking URLs).
   defp maybe_generate_slug(changeset) do
-    # If a slug was already provided, don't overwrite it
-    if get_change(changeset, :slug) do
-      changeset
-    else
-      case get_change(changeset, :name) do
-        nil ->
-          changeset
+    cond do
+      # If a slug was explicitly provided in attrs, use it
+      get_change(changeset, :slug) ->
+        changeset
 
-        name ->
-          base_slug =
-            name
-            |> String.downcase()
-            |> transliterate()
-            # Keep only alphanumeric and hyphens
-            |> String.replace(~r/[^a-z0-9-]+/, "-")
-            |> String.trim("-")
+      # If the record already has a slug (update), preserve it
+      changeset.data.slug && changeset.data.slug != "" ->
+        changeset
 
-          slug = "#{base_slug}-#{:os.system_time(:millisecond)}"
-          put_change(changeset, :slug, slug)
-      end
+      # New project - generate slug from name
+      true ->
+        case get_change(changeset, :name) || changeset.data.name do
+          nil ->
+            changeset
+
+          name ->
+            base_slug =
+              name
+              |> String.downcase()
+              |> transliterate()
+              # Keep only alphanumeric and hyphens
+              |> String.replace(~r/[^a-z0-9-]+/, "-")
+              |> String.trim("-")
+
+            slug = "#{base_slug}-#{:os.system_time(:millisecond)}"
+            put_change(changeset, :slug, slug)
+        end
     end
   end
 
@@ -145,22 +156,23 @@ defmodule Homesite.Media.Project do
     |> String.replace(~r/[^A-z\s-]/u, "")
   end
 
-  defp validate_tags(changeset) do
-    case get_change(changeset, :tags) do
-      nil ->
-        changeset
+  defp put_tags(changeset, %{"tag_ids" => tag_ids}, user_scope) when is_list(tag_ids) do
+    tag_ids = Enum.reject(tag_ids, &(&1 == "" || is_nil(&1)))
 
-      tags when is_list(tags) and length(tags) <= 20 ->
-        if Enum.all?(tags, &is_binary/1) do
-          changeset
-        else
-          add_error(changeset, :tags, "must be a list of strings")
-        end
+    if tag_ids == [] do
+      put_assoc(changeset, :tags, [])
+    else
+      tags =
+        Homesite.Repo.all(
+          from t in Homesite.Content.Tag,
+            where: t.id in ^tag_ids and t.user_id == ^user_scope.user.id
+        )
 
-      _ ->
-        add_error(changeset, :tags, "maximum 20 tags allowed")
+      put_assoc(changeset, :tags, tags)
     end
   end
+
+  defp put_tags(changeset, _attrs, _user_scope), do: changeset
 
   # Calculate project completion percentage based on filled fields.
   #
@@ -175,15 +187,29 @@ defmodule Homesite.Media.Project do
   # - Affiliation links: +10% (calculated in context layer)
   #
   # Maximum: 100%
-  defp calculate_completion(changeset) do
+  defp calculate_completion(changeset, attrs \\ %{}) do
     data = apply_changes(changeset)
+
+    # Check if tags are present (from attrs or existing association)
+    has_tags =
+      case attrs do
+        %{"tag_ids" => tag_ids} when is_list(tag_ids) ->
+          tag_ids |> Enum.reject(&(&1 == "" || is_nil(&1))) |> length() > 0
+
+        _ ->
+          # Check existing tags from changeset
+          case get_change(changeset, :tags) do
+            nil -> Ecto.assoc_loaded?(data.tags) && length(data.tags) > 0
+            tags -> length(tags) > 0
+          end
+      end
 
     # Base (has name)
     percentage =
       20 +
         if(data.description && data.description != "", do: 15, else: 0) +
         if(data.category && data.category != "", do: 10, else: 0) +
-        if(data.tags && length(data.tags) > 0, do: 10, else: 0) +
+        if(has_tags, do: 10, else: 0) +
         if(data.project_date, do: 10, else: 0) +
         if(data.cover_media_item_id, do: 15, else: 0)
 

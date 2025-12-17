@@ -1,7 +1,11 @@
 defmodule HomesiteWeb.PostLive.Show do
   use HomesiteWeb, :live_view
 
+  import Ecto.Query
+
   alias Homesite.Content
+  alias Homesite.Media.MediaItem
+  alias Homesite.Repo
   alias Homesite.Social
   alias HomesiteWeb.Components.TableOfContents
   alias HomesiteWeb.SEO.JsonLD
@@ -48,6 +52,21 @@ defmodule HomesiteWeb.PostLive.Show do
               <% end %>
             </div>
           </div>
+
+          <%= if @hero_image do %>
+            <figure class="my-[var(--spacing-md)]">
+              <img
+                src={"data:#{@hero_image.content_type};base64,#{Base.encode64(@hero_image.large_data)}"}
+                alt={@hero_image.alt_text || @post.title}
+                class="max-h-96 w-full rounded-lg object-cover"
+              />
+              <%= if @hero_image.caption do %>
+                <figcaption class="text-[var(--text-sm)] mt-[var(--space-xs)] text-center opacity-60">
+                  {@hero_image.caption}
+                </figcaption>
+              <% end %>
+            </figure>
+          <% end %>
           
     <!-- Main Content with Sidebar -->
           <div class="my-[var(--spacing-lg)] gap-[var(--space-lg)] flex">
@@ -124,6 +143,9 @@ defmodule HomesiteWeb.PostLive.Show do
     rendered_html = render_markdown(post.body)
     headings = TableOfContents.extract_headings(rendered_html)
 
+    # Get hero image from media items
+    hero_image = get_hero_image(post.id)
+
     {:ok,
      socket
      |> assign(:page_title, post.title)
@@ -132,7 +154,8 @@ defmodule HomesiteWeb.PostLive.Show do
      |> assign(:current_url, "/posts/#{id}")
      |> assign(:json_ld, json_ld)
      |> assign(:rendered_html, rendered_html)
-     |> assign(:headings, headings)}
+     |> assign(:headings, headings)
+     |> assign(:hero_image, hero_image)}
   end
 
   @impl true
@@ -174,5 +197,15 @@ defmodule HomesiteWeb.PostLive.Show do
     })
 
     {:noreply, socket}
+  end
+
+  defp get_hero_image(post_id) do
+    from(m in MediaItem,
+      join: pm in "post_media_items",
+      on: pm.media_item_id == m.id,
+      where: pm.post_id == ^post_id and pm.context == "hero",
+      limit: 1
+    )
+    |> Repo.one()
   end
 end

@@ -9,6 +9,12 @@ defmodule Homesite.FaqsTest do
     import Homesite.AccountsFixtures, only: [user_scope_fixture: 0, admin_scope_fixture: 0]
     import Homesite.FaqsFixtures
 
+    setup do
+      # Delete any existing FAQs from migrations/seeds to get predictable counts
+      Homesite.Repo.delete_all(Faq)
+      :ok
+    end
+
     @invalid_attrs %{
       category: nil,
       question_en: nil,

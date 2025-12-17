@@ -566,7 +566,7 @@ defmodule Homesite.Content do
   def get_post!(%Scope{} = scope, id) do
     Post
     |> Repo.get_by!(id: id, user_id: scope.user.id)
-    |> Repo.preload([:user, :tags])
+    |> Repo.preload([:user, :tags, :media_items])
   end
 
   @doc """
@@ -591,7 +591,7 @@ defmodule Homesite.Content do
     |> where([p], p.id == ^id)
     |> where([p], p.is_public == true or p.user_id == ^user_id)
     |> Repo.one!()
-    |> Repo.preload([:user, :tags])
+    |> Repo.preload([:user, :tags, :media_items])
   end
 
   @doc """
@@ -613,7 +613,7 @@ defmodule Homesite.Content do
     Post
     |> where([p], p.id == ^id and p.is_public == true)
     |> Repo.one!()
-    |> Repo.preload([:user, :tags])
+    |> Repo.preload([:user, :tags, :media_items])
   end
 
   @doc """

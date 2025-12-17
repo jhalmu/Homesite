@@ -238,7 +238,7 @@ defmodule HomesiteWeb.ProjectLiveTest do
       assert html =~ "Step 1: Project Basics"
     end
 
-    test "can skip to save from step 2", %{conn: conn} do
+    test "can navigate to step 4 and save", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/projects/new")
 
       # Fill in basics and go to step 2
@@ -248,8 +248,9 @@ defmodule HomesiteWeb.ProjectLiveTest do
 
       view |> element("button", "Next") |> render_click()
 
-      # Click skip to save
-      html = view |> element("button", "Skip to Save") |> render_click()
+      # Navigate through remaining steps
+      view |> element("button", "Next") |> render_click()
+      html = view |> element("button", "Next") |> render_click()
 
       assert html =~ "Step 4: Visibility"
       assert html =~ "Save Project"
@@ -287,9 +288,10 @@ defmodule HomesiteWeb.ProjectLiveTest do
       )
       |> render_change()
 
-      # Skip to save step
+      # Navigate through steps to Settings (step 4)
       view |> element("button", "Next") |> render_click()
-      view |> element("button", "Skip to Save") |> render_click()
+      view |> element("button", "Next") |> render_click()
+      view |> element("button", "Next") |> render_click()
 
       # Submit the form - values are preserved from previous steps
       # Only submit with the fields available on step 4 (settings)
@@ -325,11 +327,10 @@ defmodule HomesiteWeb.ProjectLiveTest do
       |> form("#project-form", project: %{name: "Updated Name"})
       |> render_change()
 
-      # Go to step 2 first (skip to save only shows on steps 2+)
+      # Navigate to step 4 (settings/visibility)
       view |> element("button", "Next") |> render_click()
-
-      # Skip to save step and save
-      view |> element("button", "Skip to Save") |> render_click()
+      view |> element("button", "Next") |> render_click()
+      view |> element("button", "Next") |> render_click()
 
       html =
         view
@@ -956,8 +957,9 @@ defmodule HomesiteWeb.ProjectLiveTest do
       |> form("#project-form", project: %{category: "Test Category"})
       |> render_change()
 
-      # Skip to step 4
-      view |> element("button", "Skip to Save") |> render_click()
+      # Navigate to step 4 via remaining steps
+      view |> element("button", "Next") |> render_click()
+      view |> element("button", "Next") |> render_click()
 
       # Save with visibility options
       view

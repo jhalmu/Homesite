@@ -1,6 +1,6 @@
 defmodule Homesite.Content.Tag do
   @moduledoc """
-  Tag schema for categorizing blog posts with global tag namespace.
+  Tag schema for categorizing blog posts and projects with global tag namespace.
   Public tags are shared across all users. Private tags are user-scoped.
   Tag descriptions are always private (visible only to creator).
   """
@@ -19,6 +19,10 @@ defmodule Homesite.Content.Tag do
 
     many_to_many :posts, Homesite.Content.Post,
       join_through: Homesite.Content.PostTag,
+      on_replace: :delete
+
+    many_to_many :projects, Homesite.Media.Project,
+      join_through: Homesite.Media.ProjectTag,
       on_replace: :delete
 
     timestamps(type: :utc_datetime)

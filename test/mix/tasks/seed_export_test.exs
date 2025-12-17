@@ -13,6 +13,9 @@ defmodule Mix.Tasks.Seed.ExportTest do
     File.rm(@output_path)
     on_exit(fn -> File.rm(@output_path) end)
 
+    # Delete any existing FAQs from migrations/seeds to get predictable counts
+    Homesite.Repo.delete_all(Homesite.Faqs.Faq)
+
     # Create admin scope using the proper fixture
     scope = admin_scope_fixture()
 
