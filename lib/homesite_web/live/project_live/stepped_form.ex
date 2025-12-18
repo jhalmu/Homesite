@@ -599,13 +599,16 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
       case Media.create_content_section(socket.assigns.current_scope, attrs) do
         {:ok, section} ->
           sections = Media.list_content_sections(socket.assigns.current_scope, project_id)
-          section_form = build_section_form(section)
+          section_form = build_section_form(section, socket.assigns.current_scope)
 
           {:noreply,
            socket
            |> assign(:content_sections, sections)
            |> assign(:editing_section_id, section.id)
            |> assign(:section_form, section_form)
+           |> assign(:show_section_modal, true)
+           |> assign(:modal_section, section)
+           |> assign(:modal_section_form, section_form)
            |> put_flash(:info, gettext("Section added"))}
 
         {:error, _changeset} ->
@@ -621,7 +624,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
   def handle_event("edit_section", %{"id" => id}, socket) do
     id = String.to_integer(id)
     section = Media.get_content_section!(socket.assigns.current_scope, id)
-    section_form = build_section_form(section)
+    section_form = build_section_form(section, socket.assigns.current_scope)
 
     {:noreply,
      socket
@@ -753,11 +756,9 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
     end
   end
 
-  defp build_section_form(section) do
+  defp build_section_form(section, scope) do
     section
-    |> Homesite.Media.ContentSection.changeset(%{}, %{
-      user: section.user || %{id: section.user_id}
-    })
+    |> Homesite.Media.ContentSection.changeset(%{}, scope)
     |> to_form()
   end
 
