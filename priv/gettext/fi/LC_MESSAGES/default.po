@@ -5260,7 +5260,7 @@ msgstr "Poistetaanko tämä kuva projektista?"
 #: lib/homesite_web/components/content_section_components.ex:226
 #, elixir-autogen, elixir-format
 msgid "2nd Edition"
-msgstr ""
+msgstr "2. painos"
 
 #: lib/homesite_web/components/content_section_components.ex:717
 #, elixir-autogen, elixir-format
@@ -5283,12 +5283,12 @@ msgstr "Äänikirja"
 #: lib/homesite_web/live/admin_live/dashboard.ex:188
 #, elixir-autogen, elixir-format
 msgid "Author"
-msgstr ""
+msgstr "Kirjailija"
 
 #: lib/homesite_web/components/content_section_components.ex:178
 #, elixir-autogen, elixir-format
 msgid "Author name"
-msgstr ""
+msgstr "Kirjailijan nimi"
 
 #: lib/homesite_web/components/content_section_components.ex:761
 #, elixir-autogen, elixir-format
@@ -5333,9 +5333,9 @@ msgstr "Koodilohko"
 
 #: lib/homesite_web/components/content_section_components.ex:250
 #: lib/homesite_web/components/content_section_components.ex:775
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Completed"
-msgstr "valmis"
+msgstr "Luettu"
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:1686
 #, elixir-autogen, elixir-format
