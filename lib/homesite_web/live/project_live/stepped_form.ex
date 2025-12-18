@@ -67,7 +67,24 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
 
   @impl true
   def handle_params(params, _url, socket) do
+    # Restore step from URL params if present (survives reconnection)
+    step_index = parse_step_param(params["step"], socket.assigns.step_index)
+    step = Enum.at(@steps, step_index)
+
+    socket =
+      socket
+      |> assign(:step_index, step_index)
+      |> assign(:current_step, step)
+
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+  end
+
+  defp parse_step_param(nil, current), do: current
+  defp parse_step_param(step_str, _current) do
+    case Integer.parse(step_str) do
+      {n, ""} when n >= 0 and n < length(@steps) -> n
+      _ -> 0
+    end
   end
 
   defp apply_action(socket, :new, _params) do
@@ -133,12 +150,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
 
     if current_index < length(@steps) - 1 do
       new_index = current_index + 1
-      new_step = Enum.at(@steps, new_index)
-
-      {:noreply,
-       socket
-       |> assign(:step_index, new_index)
-       |> assign(:current_step, new_step)}
+      {:noreply, navigate_to_step(socket, new_index)}
     else
       {:noreply, socket}
     end
@@ -149,23 +161,39 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
 
     if current_index > 0 do
       new_index = current_index - 1
-      new_step = Enum.at(@steps, new_index)
-
-      {:noreply,
-       socket
-       |> assign(:step_index, new_index)
-       |> assign(:current_step, new_step)}
+      {:noreply, navigate_to_step(socket, new_index)}
     else
       {:noreply, socket}
     end
   end
 
   def handle_event("skip_to_save", _params, socket) do
-    # Jump to final step (settings)
-    {:noreply,
-     socket
-     |> assign(:step_index, 3)
-     |> assign(:current_step, :settings)}
+    # Jump to settings step (index 3)
+    {:noreply, navigate_to_step(socket, 3)}
+  end
+
+  def handle_event("skip_to_content", _params, socket) do
+    # Jump to content step (index 4)
+    {:noreply, navigate_to_step(socket, 4)}
+  end
+
+  # Navigate to a step and update URL to preserve state across reconnects
+  defp navigate_to_step(socket, step_index) do
+    new_step = Enum.at(@steps, step_index)
+
+    socket
+    |> assign(:step_index, step_index)
+    |> assign(:current_step, new_step)
+    |> push_patch_with_step(step_index)
+  end
+
+  defp push_patch_with_step(socket, step_index) do
+    case socket.assigns.live_action do
+      :edit ->
+        push_patch(socket, to: ~p"/projects/#{socket.assigns.project.id}/edit?step=#{step_index}")
+      :new ->
+        push_patch(socket, to: ~p"/projects/new?step=#{step_index}")
+    end
   end
 
   def handle_event(
@@ -178,10 +206,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
 
     case save_project_and_continue(socket, project_params) do
       {:ok, socket} ->
-        {:noreply,
-         socket
-         |> assign(:step_index, 4)
-         |> assign(:current_step, :content)}
+        {:noreply, navigate_to_step(socket, 4)}
 
       {:error, socket} ->
         {:noreply, socket}
@@ -549,13 +574,6 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
 
       {:noreply, assign(socket, :gallery_items, gallery_items)}
     end
-  end
-
-  def handle_event("skip_to_content", _params, socket) do
-    {:noreply,
-     socket
-     |> assign(:step_index, 4)
-     |> assign(:current_step, :content)}
   end
 
   # Content Section Events

@@ -712,10 +712,10 @@ defmodule HomesiteWeb.ContentSectionComponents do
   def add_section_dropdown(assigns) do
     ~H"""
     <div class="dropdown dropdown-end">
-      <label tabindex="0" class="btn btn-primary btn-sm">
+      <button type="button" tabindex="0" class="btn btn-primary btn-sm">
         <.icon name="hero-plus" class="h-4 w-4" />
         {gettext("Add Section")}
-      </label>
+      </button>
       <ul
         tabindex="0"
         class="menu dropdown-content bg-base-100 rounded-box z-50 mt-2 w-52 p-2 shadow-lg"
