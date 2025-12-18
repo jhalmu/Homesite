@@ -5159,17 +5159,17 @@ msgstr ""
 #: lib/homesite_web/live/project_live/stepped_form.ex:1540
 #, elixir-autogen, elixir-format
 msgid "Ready to save!"
-msgstr ""
+msgstr "Valmis tallennettavaksi!"
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:1035
 #, elixir-autogen, elixir-format
 msgid "Save & Add Content"
-msgstr ""
+msgstr "Tallenna & lisää sisältöä"
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:1542
 #, elixir-autogen, elixir-format
 msgid "Save your project, or save and continue to add images and content."
-msgstr ""
+msgstr "Tallenna projekti tai tallenna ja jatka lisäämään kuvia ja sisältöä."
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:1557
 #, elixir-autogen, elixir-format
