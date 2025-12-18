@@ -7,6 +7,69 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-18 - Project Content Sections & Template Enhancements
+
+### Session Summary
+
+#### Features Implemented
+
+**1. Content Sections for Projects**
+- Created `content_sections` table with JSONB metadata field
+- Schema supports multiple section types: rich_text, code_block, book_info, chapter, gear_spec, movie_info
+- Each section has: section_type, title, content, metadata, display_order
+- Full CRUD operations with scope isolation
+
+**2. Template-Specific Section Types**
+- Photography: rich_text only (image-focused)
+- Coding: code_block + rich_text (defaults: Overview, Key Code)
+- Writing: chapter + rich_text (default: Chapter 1)
+- Books: book_info + chapter + rich_text (defaults: Book Info, Summary, Review)
+- Gears: gear_spec + rich_text (default: Specifications)
+- Movies: movie_info + rich_text (default: Movie Info)
+- Custom: all section types available
+
+**3. Book Info Metadata**
+- ISBN, Publisher, Author, Pages, Language
+- Format (paperback, hardcover, ebook, audiobook)
+- Edition, Publication Year
+- Rating (1-5), Reading Status (want_to_read, reading, completed, dnf)
+- Automatic integer normalization for pages/year/rating
+
+**4. ContentSectionComponents Module**
+- `content_section_card/1` - Main card with edit/delete controls
+- Type-specific forms: book_info_form, code_block_form, rich_text_form, gear_spec_form, movie_info_form
+- Type-specific displays with markdown rendering (MDEx)
+- `add_section_dropdown/1` - Dropdown to add available section types
+
+**5. Drag-and-Drop Section Reordering**
+- New `SortableSections` JavaScript hook
+- Drag handle on each section card
+- Real-time reorder via `reorder_sections` event
+
+**6. Step 5 Bug Fix**
+- Fixed "Save & Add Content" button causing crash for non-photography templates
+- Root cause: Button had both `type="submit"` and `phx-click`, sending empty params
+- Solution: Use `name="action" value="save_and_add_content"` with pattern matching
+
+#### Files Created
+- `priv/repo/migrations/20251218063505_create_content_sections.exs`
+- `lib/homesite/media/content_section.ex`
+- `lib/homesite_web/components/content_section_components.ex`
+
+#### Files Modified
+- `lib/homesite/media.ex` - Added ContentSection CRUD functions
+- `lib/homesite/media/project.ex` - Added content_sections association
+- `lib/homesite/media/project_template.ex` - Added default_sections, available_section_types
+- `lib/homesite_web/live/project_live/stepped_form.ex` - Integrated content sections UI
+- `assets/js/hooks/sortable.js` - Added SortableSections hook
+- `assets/js/app.js` - Registered SortableSections hook
+- `test/homesite/media_test.exs` - Added 13 content section tests
+
+#### Test Results
+- **1584 tests, 0 failures**
+
+---
+
 ## 2025-12-17 - Shared Tags, Portfolio Fixes, Media Upload Improvements
 
 ### Session Summary

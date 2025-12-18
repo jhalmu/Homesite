@@ -995,6 +995,135 @@ defmodule HomesiteWeb.ProjectLiveTest do
     end
   end
 
+  describe "ProjectLive.SteppedForm - Step 5 (Content)" do
+    setup [:create_user_and_log_in]
+
+    test "navigates to step 5 with photography template", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/projects/new")
+
+      # Fill in basics with photography template (default)
+      view
+      |> form("#project-form",
+        project: %{name: "Photo Project", description: "Test"}
+      )
+      |> render_change()
+
+      # Navigate through steps to Settings (step 4)
+      view |> element("button", "Next") |> render_click()
+      view |> element("button", "Next") |> render_click()
+      view |> element("button", "Next") |> render_click()
+
+      # Submit form with "Save & Add Content" action (simulating button with name="action" value="save_and_add_content")
+      html =
+        render_submit(view, "save", %{
+          "action" => "save_and_add_content",
+          "project" => %{
+            "name" => "Photo Project",
+            "description" => "Test",
+            "template_type" => "photography"
+          }
+        })
+
+      # Should show step 5 content
+      assert html =~ "Step 5: Content"
+      assert html =~ "Cover Image"
+      assert html =~ "Gallery Images"
+    end
+
+    test "navigates to step 5 with coding template", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/projects/new")
+
+      # Select coding template and fill basics
+      view
+      |> form("#project-form",
+        project: %{name: "Coding Project", description: "Test", template_type: "coding"}
+      )
+      |> render_change()
+
+      # Navigate through steps to Settings (step 4)
+      view |> element("button", "Next") |> render_click()
+      view |> element("button", "Next") |> render_click()
+      view |> element("button", "Next") |> render_click()
+
+      # Submit form with "Save & Add Content" action
+      html =
+        render_submit(view, "save", %{
+          "action" => "save_and_add_content",
+          "project" => %{
+            "name" => "Coding Project",
+            "description" => "Test",
+            "template_type" => "coding"
+          }
+        })
+
+      # Should show step 5 content without error
+      assert html =~ "Step 5: Content"
+      assert html =~ "Cover Image"
+    end
+
+    test "navigates to step 5 with books template", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/projects/new")
+
+      # Select books template and fill basics
+      view
+      |> form("#project-form",
+        project: %{name: "Book Project", description: "Test", template_type: "books"}
+      )
+      |> render_change()
+
+      # Navigate through steps to Settings (step 4)
+      view |> element("button", "Next") |> render_click()
+      view |> element("button", "Next") |> render_click()
+      view |> element("button", "Next") |> render_click()
+
+      # Submit form with "Save & Add Content" action
+      html =
+        render_submit(view, "save", %{
+          "action" => "save_and_add_content",
+          "project" => %{
+            "name" => "Book Project",
+            "description" => "Test",
+            "template_type" => "books"
+          }
+        })
+
+      # Should show step 5 content without error
+      assert html =~ "Step 5: Content"
+      assert html =~ "Cover Image"
+    end
+
+    test "navigates to step 5 with writing template", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/projects/new")
+
+      # Select writing template and fill basics
+      view
+      |> form("#project-form",
+        project: %{name: "Writing Project", description: "Test", template_type: "writing"}
+      )
+      |> render_change()
+
+      # Navigate through steps to Settings (step 4)
+      view |> element("button", "Next") |> render_click()
+      view |> element("button", "Next") |> render_click()
+      view |> element("button", "Next") |> render_click()
+
+      # Submit form with "Save & Add Content" action
+      html =
+        render_submit(view, "save", %{
+          "action" => "save_and_add_content",
+          "project" => %{
+            "name" => "Writing Project",
+            "description" => "Test",
+            "template_type" => "writing"
+          }
+        })
+
+      # Should show step 5 content without error
+      assert html =~ "Step 5: Content"
+      assert html =~ "Cover Image"
+    end
+  end
+
   # Helper to create user and log in
   defp create_user_and_log_in(%{conn: conn}) do
     user = user_fixture()

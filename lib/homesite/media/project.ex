@@ -49,6 +49,7 @@ defmodule Homesite.Media.Project do
     has_many :collaborators, Homesite.Media.Collaborator, on_delete: :delete_all
     has_many :affiliation_links, Homesite.Media.AffiliationLink, on_delete: :delete_all
     has_many :collections, Homesite.Media.Collection, on_delete: :delete_all
+    has_many :content_sections, Homesite.Media.ContentSection, on_delete: :delete_all
 
     many_to_many :media_items, Homesite.Media.MediaItem,
       join_through: "project_media_items",

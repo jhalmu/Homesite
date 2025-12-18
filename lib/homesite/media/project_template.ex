@@ -52,7 +52,10 @@ defmodule Homesite.Media.ProjectTemplate do
         "studio",
         "outdoor",
         "editorial"
-      ]
+      ],
+      # Photography is image-focused, no default sections
+      default_sections: [],
+      available_section_types: ["rich_text"]
     },
     "coding" => %{
       id: "coding",
@@ -78,7 +81,12 @@ defmodule Homesite.Media.ProjectTemplate do
         "api",
         "cli",
         "web-app"
-      ]
+      ],
+      default_sections: [
+        %{section_type: "rich_text", title: "Overview"},
+        %{section_type: "code_block", title: "Key Code"}
+      ],
+      available_section_types: ["code_block", "rich_text"]
     },
     "writing" => %{
       id: "writing",
@@ -92,7 +100,11 @@ defmodule Homesite.Media.ProjectTemplate do
         collaborators: %{label: "Co-Authors", placeholder: "Add co-authors or editors"},
         affiliation_links: %{label: "Publication Links", placeholder: "Where it's published"}
       },
-      suggested_tags: ["tutorial", "guide", "opinion", "review", "technical", "essay", "how-to"]
+      suggested_tags: ["tutorial", "guide", "opinion", "review", "technical", "essay", "how-to"],
+      default_sections: [
+        %{section_type: "chapter", title: "Chapter 1"}
+      ],
+      available_section_types: ["chapter", "rich_text"]
     },
     "books" => %{
       id: "books",
@@ -121,7 +133,13 @@ defmodule Homesite.Media.ProjectTemplate do
         "self-help",
         "programming",
         "philosophy"
-      ]
+      ],
+      default_sections: [
+        %{section_type: "book_info", title: "Book Information"},
+        %{section_type: "rich_text", title: "Summary"},
+        %{section_type: "rich_text", title: "My Review"}
+      ],
+      available_section_types: ["book_info", "chapter", "rich_text"]
     },
     "gears" => %{
       id: "gears",
@@ -147,7 +165,11 @@ defmodule Homesite.Media.ProjectTemplate do
         "accessories",
         "desk-setup",
         "mobile"
-      ]
+      ],
+      default_sections: [
+        %{section_type: "gear_spec", title: "Specifications"}
+      ],
+      available_section_types: ["gear_spec", "rich_text"]
     },
     "movies" => %{
       id: "movies",
@@ -172,7 +194,11 @@ defmodule Homesite.Media.ProjectTemplate do
         "vlog",
         "tutorial",
         "commercial"
-      ]
+      ],
+      default_sections: [
+        %{section_type: "movie_info", title: "Movie Information"}
+      ],
+      available_section_types: ["movie_info", "rich_text"]
     },
     "custom" => %{
       id: "custom",
@@ -186,7 +212,17 @@ defmodule Homesite.Media.ProjectTemplate do
         collaborators: %{label: "Collaborators", placeholder: "Add collaborators"},
         affiliation_links: %{label: "Links", placeholder: "Add relevant links"}
       },
-      suggested_tags: []
+      suggested_tags: [],
+      # Custom projects get all section types available
+      default_sections: [],
+      available_section_types: [
+        "rich_text",
+        "code_block",
+        "book_info",
+        "chapter",
+        "gear_spec",
+        "movie_info"
+      ]
     }
   }
 

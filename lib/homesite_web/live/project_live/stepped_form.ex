@@ -6,6 +6,8 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
   alias Homesite.Media.Project
   alias Homesite.Media.ProjectTemplate
 
+  import HomesiteWeb.ContentSectionComponents
+
   @steps [:basics, :metadata, :team, :settings, :content]
 
   # Whitelist of allowed field names to prevent atom exhaustion attacks
@@ -52,6 +54,10 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
      |> assign(:gallery_items, [])
      |> assign(:show_media_picker, false)
      |> assign(:media_picker_mode, :cover)
+     # Content sections state
+     |> assign(:content_sections, [])
+     |> assign(:editing_section_id, nil)
+     |> assign(:section_form, nil)
      |> assign_form(project)}
   end
 
@@ -83,6 +89,9 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
     # Load user's media items for picker
     media_items = Media.list_media_items(socket.assigns.current_scope)
 
+    # Load content sections
+    content_sections = Media.list_content_sections(socket.assigns.current_scope, id)
+
     socket
     |> assign(:project, project)
     |> assign(:page_title, gettext("Edit Project"))
@@ -94,6 +103,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
     |> assign(:selected_tags, project.tags || [])
     |> assign(:media_items, media_items)
     |> assign(:gallery_items, project.media_items || [])
+    |> assign(:content_sections, content_sections)
   end
 
   @impl true
@@ -154,13 +164,12 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
      |> assign(:current_step, :settings)}
   end
 
-  def handle_event("save", %{"project" => project_params}, socket) do
-    # Add tag_ids from selected_tags
-    project_params = add_tag_ids(project_params, socket.assigns.selected_tags)
-    save_project(socket, socket.assigns.live_action, project_params)
-  end
-
-  def handle_event("save_and_add_content", %{"project" => project_params}, socket) do
+  def handle_event(
+        "save",
+        %{"action" => "save_and_add_content", "project" => project_params},
+        socket
+      ) do
+    # Handle "Save & Add Content" button click
     project_params = add_tag_ids(project_params, socket.assigns.selected_tags)
 
     case save_project_and_continue(socket, project_params) do
@@ -173,6 +182,13 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
       {:error, socket} ->
         {:noreply, socket}
     end
+  end
+
+  def handle_event("save", %{"project" => project_params}, socket) do
+    # Handle regular "Save Project" button click
+    # Note: action may be "save" or absent depending on which button was clicked
+    project_params = add_tag_ids(project_params, socket.assigns.selected_tags)
+    save_project(socket, socket.assigns.live_action, project_params)
   end
 
   # Collaborator events - reads from socket assigns (not form params)
@@ -538,6 +554,156 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
      |> assign(:current_step, :content)}
   end
 
+  # Content Section Events
+  def handle_event("add_section", %{"type" => section_type}, socket) do
+    project_id = socket.assigns.project.id
+
+    if project_id do
+      # Get next display_order
+      sections = socket.assigns.content_sections
+
+      next_order =
+        if Enum.empty?(sections),
+          do: 0,
+          else: Enum.max_by(sections, & &1.display_order).display_order + 1
+
+      attrs = %{
+        "section_type" => section_type,
+        "title" => default_section_title(section_type),
+        "project_id" => project_id,
+        "display_order" => next_order
+      }
+
+      case Media.create_content_section(socket.assigns.current_scope, attrs) do
+        {:ok, section} ->
+          sections = Media.list_content_sections(socket.assigns.current_scope, project_id)
+          section_form = build_section_form(section)
+
+          {:noreply,
+           socket
+           |> assign(:content_sections, sections)
+           |> assign(:editing_section_id, section.id)
+           |> assign(:section_form, section_form)
+           |> put_flash(:info, gettext("Section added"))}
+
+        {:error, _changeset} ->
+          {:noreply, put_flash(socket, :error, gettext("Failed to add section"))}
+      end
+    else
+      {:noreply,
+       put_flash(socket, :info, gettext("Save the project first, then you can add sections"))}
+    end
+  end
+
+  def handle_event("edit_section", %{"id" => id}, socket) do
+    id = String.to_integer(id)
+    section = Media.get_content_section!(socket.assigns.current_scope, id)
+    section_form = build_section_form(section)
+
+    {:noreply,
+     socket
+     |> assign(:editing_section_id, id)
+     |> assign(:section_form, section_form)}
+  end
+
+  def handle_event("cancel_section_edit", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(:editing_section_id, nil)
+     |> assign(:section_form, nil)}
+  end
+
+  def handle_event("validate_section", %{"section" => section_params}, socket) do
+    section =
+      Media.get_content_section!(socket.assigns.current_scope, socket.assigns.editing_section_id)
+
+    changeset =
+      section
+      |> Homesite.Media.ContentSection.changeset(section_params, socket.assigns.current_scope)
+      |> Map.put(:action, :validate)
+
+    {:noreply, assign(socket, :section_form, to_form(changeset))}
+  end
+
+  def handle_event("save_section", %{"section" => section_params}, socket) do
+    section =
+      Media.get_content_section!(socket.assigns.current_scope, socket.assigns.editing_section_id)
+
+    case Media.update_content_section(socket.assigns.current_scope, section, section_params) do
+      {:ok, _section} ->
+        sections =
+          Media.list_content_sections(socket.assigns.current_scope, socket.assigns.project.id)
+
+        {:noreply,
+         socket
+         |> assign(:content_sections, sections)
+         |> assign(:editing_section_id, nil)
+         |> assign(:section_form, nil)
+         |> put_flash(:info, gettext("Section updated"))}
+
+      {:error, changeset} ->
+        {:noreply, assign(socket, :section_form, to_form(changeset))}
+    end
+  end
+
+  def handle_event("delete_section", %{"id" => id}, socket) do
+    id = String.to_integer(id)
+    section = Media.get_content_section!(socket.assigns.current_scope, id)
+
+    case Media.delete_content_section(socket.assigns.current_scope, section) do
+      {:ok, _} ->
+        sections =
+          Media.list_content_sections(socket.assigns.current_scope, socket.assigns.project.id)
+
+        {:noreply,
+         socket
+         |> assign(:content_sections, sections)
+         |> assign(:editing_section_id, nil)
+         |> assign(:section_form, nil)
+         |> put_flash(:info, gettext("Section deleted"))}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, gettext("Failed to delete section"))}
+    end
+  end
+
+  def handle_event("reorder_sections", %{"order" => order}, socket) do
+    # order is a list of section IDs as strings
+    ordered_ids = Enum.map(order, &String.to_integer/1)
+
+    :ok =
+      Media.reorder_content_sections(
+        socket.assigns.current_scope,
+        socket.assigns.project.id,
+        ordered_ids
+      )
+
+    sections =
+      Media.list_content_sections(socket.assigns.current_scope, socket.assigns.project.id)
+
+    {:noreply, assign(socket, :content_sections, sections)}
+  end
+
+  defp default_section_title(section_type) do
+    case section_type do
+      "rich_text" -> gettext("Text Section")
+      "code_block" -> gettext("Code")
+      "book_info" -> gettext("Book Information")
+      "chapter" -> gettext("Chapter")
+      "gear_spec" -> gettext("Specifications")
+      "movie_info" -> gettext("Movie Information")
+      _ -> gettext("New Section")
+    end
+  end
+
+  defp build_section_form(section) do
+    section
+    |> Homesite.Media.ContentSection.changeset(%{}, %{
+      user: section.user || %{id: section.user_id}
+    })
+    |> to_form()
+  end
+
   # Helper for linking posts to projects
   defp link_post_to_project(socket, post_id) do
     case Media.link_post_to_project(
@@ -782,6 +948,9 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
                 gallery_items={@gallery_items}
                 show_media_picker={@show_media_picker}
                 media_picker_mode={@media_picker_mode}
+                content_sections={@content_sections}
+                editing_section_id={@editing_section_id}
+                section_form={@section_form}
               />
           <% end %>
 
@@ -814,10 +983,15 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
                       {gettext("Skip to Content")}
                     </button>
                   <% end %>
-                  <button type="submit" class="btn btn-outline">
+                  <button type="submit" name="action" value="save" class="btn btn-outline">
                     <.icon name="hero-check" class="h-4 w-4" /> {gettext("Save Project")}
                   </button>
-                  <button type="submit" phx-click="save_and_add_content" class="btn btn-primary">
+                  <button
+                    type="submit"
+                    name="action"
+                    value="save_and_add_content"
+                    class="btn btn-primary"
+                  >
                     <.icon name="hero-photo" class="h-4 w-4" /> {gettext("Save & Add Content")}
                   </button>
                 <% @step_index == 4 -> %>
@@ -1457,6 +1631,39 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
           <.icon name="hero-plus" class="h-4 w-4" />
           {gettext("Add Images")}
         </button>
+      </div>
+
+      <%!-- Content Sections --%>
+      <div class="border-base-300 p-[var(--space-sm)] rounded-lg border">
+        <div class="mb-[var(--space-sm)] flex items-center justify-between">
+          <h3 class="text-[var(--text-lg)] font-semibold">
+            <.icon name="hero-document-text" class="inline h-5 w-5" />
+            {gettext("Content Sections")}
+            <span class="text-base-content/60 text-[var(--text-sm)] ml-2">
+              ({length(@content_sections)}
+              {ngettext("section", "sections", length(@content_sections))})
+            </span>
+          </h3>
+          <.add_section_dropdown available_types={@template.available_section_types} />
+        </div>
+
+        <%= if length(@content_sections) > 0 do %>
+          <div id="sections-list" phx-hook="SortableSections" class="space-y-[var(--space-sm)]">
+            <%= for section <- @content_sections do %>
+              <.content_section_card
+                section={section}
+                editing={@editing_section_id == section.id}
+                form={if @editing_section_id == section.id, do: @section_form, else: nil}
+              />
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-base-content/60 text-[var(--text-sm)]">
+            {gettext(
+              "No content sections yet. Use the dropdown above to add text, code, or structured data."
+            )}
+          </p>
+        <% end %>
       </div>
 
       <%!-- Media Picker Modal --%>

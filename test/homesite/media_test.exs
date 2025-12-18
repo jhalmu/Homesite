@@ -854,4 +854,272 @@ defmodule Homesite.MediaTest do
       assert hd(results).id == media_a.id
     end
   end
+
+  describe "content_sections" do
+    alias Homesite.Media.ContentSection
+
+    import Homesite.AccountsFixtures, only: [user_scope_fixture: 0]
+    import Homesite.MediaFixtures
+
+    test "list_content_sections/2 returns all sections for a project ordered by display_order" do
+      scope = user_scope_fixture()
+      project = project_fixture(scope)
+
+      {:ok, section1} =
+        Media.create_content_section(scope, %{
+          section_type: "rich_text",
+          title: "Section 1",
+          project_id: project.id,
+          display_order: 1
+        })
+
+      {:ok, section2} =
+        Media.create_content_section(scope, %{
+          section_type: "rich_text",
+          title: "Section 2",
+          project_id: project.id,
+          display_order: 0
+        })
+
+      sections = Media.list_content_sections(scope, project.id)
+      assert length(sections) == 2
+      assert Enum.at(sections, 0).id == section2.id
+      assert Enum.at(sections, 1).id == section1.id
+    end
+
+    test "list_content_sections/2 respects scope isolation" do
+      scope = user_scope_fixture()
+      other_scope = user_scope_fixture()
+      project = project_fixture(scope)
+
+      {:ok, _section} =
+        Media.create_content_section(scope, %{
+          section_type: "rich_text",
+          title: "My Section",
+          project_id: project.id
+        })
+
+      # Other user cannot access sections (raises because project ownership check)
+      assert_raise Ecto.NoResultsError, fn ->
+        Media.list_content_sections(other_scope, project.id)
+      end
+    end
+
+    test "get_content_section!/2 returns the section" do
+      scope = user_scope_fixture()
+      project = project_fixture(scope)
+
+      {:ok, section} =
+        Media.create_content_section(scope, %{
+          section_type: "book_info",
+          title: "Book Info",
+          project_id: project.id
+        })
+
+      fetched = Media.get_content_section!(scope, section.id)
+      assert fetched.id == section.id
+      assert fetched.section_type == "book_info"
+    end
+
+    test "get_content_section!/2 raises for wrong scope" do
+      scope = user_scope_fixture()
+      other_scope = user_scope_fixture()
+      project = project_fixture(scope)
+
+      {:ok, section} =
+        Media.create_content_section(scope, %{
+          section_type: "rich_text",
+          project_id: project.id
+        })
+
+      # Raises MatchError because of scope check: true = section.user_id == scope.user.id
+      assert_raise MatchError, fn ->
+        Media.get_content_section!(other_scope, section.id)
+      end
+    end
+
+    test "create_content_section/2 with valid data creates a section" do
+      scope = user_scope_fixture()
+      project = project_fixture(scope)
+
+      attrs = %{
+        section_type: "book_info",
+        title: "Book Information",
+        content: "Some content",
+        metadata: %{"isbn" => "978-0-13-468599-1", "author" => "John Doe"},
+        project_id: project.id,
+        display_order: 0
+      }
+
+      assert {:ok, %ContentSection{} = section} = Media.create_content_section(scope, attrs)
+      assert section.section_type == "book_info"
+      assert section.title == "Book Information"
+      assert section.content == "Some content"
+      assert section.metadata["isbn"] == "978-0-13-468599-1"
+      assert section.user_id == scope.user.id
+    end
+
+    test "create_content_section/2 with invalid section_type returns error" do
+      scope = user_scope_fixture()
+      project = project_fixture(scope)
+
+      attrs = %{
+        section_type: "invalid_type",
+        project_id: project.id
+      }
+
+      assert {:error, changeset} = Media.create_content_section(scope, attrs)
+      assert "is invalid" in errors_on(changeset).section_type
+    end
+
+    test "create_content_section/2 validates book_info metadata" do
+      scope = user_scope_fixture()
+      project = project_fixture(scope)
+
+      attrs = %{
+        section_type: "book_info",
+        metadata: %{
+          "pages" => "400",
+          "rating" => "3",
+          "format" => "paperback",
+          "reading_status" => "completed"
+        },
+        project_id: project.id
+      }
+
+      assert {:ok, section} = Media.create_content_section(scope, attrs)
+      # String "400" is normalized to integer 400
+      assert section.metadata["pages"] == 400
+      assert section.metadata["rating"] == 3
+      assert section.metadata["format"] == "paperback"
+    end
+
+    test "update_content_section/3 with valid data updates the section" do
+      scope = user_scope_fixture()
+      project = project_fixture(scope)
+
+      {:ok, section} =
+        Media.create_content_section(scope, %{
+          section_type: "rich_text",
+          title: "Original Title",
+          project_id: project.id
+        })
+
+      assert {:ok, updated} =
+               Media.update_content_section(scope, section, %{
+                 title: "Updated Title",
+                 content: "New content"
+               })
+
+      assert updated.title == "Updated Title"
+      assert updated.content == "New content"
+    end
+
+    test "update_content_section/3 with wrong scope raises" do
+      scope = user_scope_fixture()
+      other_scope = user_scope_fixture()
+      project = project_fixture(scope)
+
+      {:ok, section} =
+        Media.create_content_section(scope, %{
+          section_type: "rich_text",
+          project_id: project.id
+        })
+
+      assert_raise MatchError, fn ->
+        Media.update_content_section(other_scope, section, %{title: "Hacked"})
+      end
+    end
+
+    test "delete_content_section/2 deletes the section" do
+      scope = user_scope_fixture()
+      project = project_fixture(scope)
+
+      {:ok, section} =
+        Media.create_content_section(scope, %{
+          section_type: "rich_text",
+          project_id: project.id
+        })
+
+      assert {:ok, _} = Media.delete_content_section(scope, section)
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Media.get_content_section!(scope, section.id)
+      end
+    end
+
+    test "delete_content_section/2 with wrong scope raises" do
+      scope = user_scope_fixture()
+      other_scope = user_scope_fixture()
+      project = project_fixture(scope)
+
+      {:ok, section} =
+        Media.create_content_section(scope, %{
+          section_type: "rich_text",
+          project_id: project.id
+        })
+
+      assert_raise MatchError, fn ->
+        Media.delete_content_section(other_scope, section)
+      end
+    end
+
+    test "reorder_content_sections/3 updates display_order" do
+      scope = user_scope_fixture()
+      project = project_fixture(scope)
+
+      {:ok, section1} =
+        Media.create_content_section(scope, %{
+          section_type: "rich_text",
+          title: "Section 1",
+          project_id: project.id,
+          display_order: 0
+        })
+
+      {:ok, section2} =
+        Media.create_content_section(scope, %{
+          section_type: "rich_text",
+          title: "Section 2",
+          project_id: project.id,
+          display_order: 1
+        })
+
+      {:ok, section3} =
+        Media.create_content_section(scope, %{
+          section_type: "rich_text",
+          title: "Section 3",
+          project_id: project.id,
+          display_order: 2
+        })
+
+      # Reorder: section3 first, then section1, then section2
+      :ok =
+        Media.reorder_content_sections(scope, project.id, [section3.id, section1.id, section2.id])
+
+      sections = Media.list_content_sections(scope, project.id)
+      assert Enum.at(sections, 0).id == section3.id
+      assert Enum.at(sections, 1).id == section1.id
+      assert Enum.at(sections, 2).id == section2.id
+    end
+
+    test "sections are deleted when project is deleted" do
+      scope = user_scope_fixture()
+      project = project_fixture(scope)
+
+      {:ok, section} =
+        Media.create_content_section(scope, %{
+          section_type: "rich_text",
+          project_id: project.id
+        })
+
+      # Archive the project first (required before deletion)
+      {:ok, archived_project} = Media.archive_project(scope, project)
+      {:ok, _} = Media.delete_project(scope, archived_project)
+
+      # Section should be deleted via cascade - raises because section no longer exists
+      assert_raise Ecto.NoResultsError, fn ->
+        Homesite.Repo.get!(Homesite.Media.ContentSection, section.id)
+      end
+    end
+  end
 end

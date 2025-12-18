@@ -1053,4 +1053,112 @@ defmodule Homesite.Media do
       total_collaborators: total_collaborators
     }
   end
+
+  ## Content Sections
+
+  alias Homesite.Media.ContentSection
+
+  @doc """
+  Returns the list of content sections for a project, ordered by display_order.
+  """
+  def list_content_sections(%Scope{} = scope, project_id) do
+    # Verify project ownership
+    _project = get_project!(scope, project_id)
+
+    from(cs in ContentSection,
+      where: cs.project_id == ^project_id and cs.user_id == ^scope.user.id,
+      order_by: [asc: cs.display_order, asc: cs.inserted_at]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Gets a single content section with scope check.
+
+  Raises `Ecto.NoResultsError` if the ContentSection does not exist.
+  """
+  def get_content_section!(%Scope{} = scope, id) do
+    section = Repo.get!(ContentSection, id)
+    true = section.user_id == scope.user.id
+    section
+  end
+
+  @doc """
+  Creates a content section for a project.
+  """
+  def create_content_section(%Scope{} = scope, attrs) do
+    # Verify project ownership if project_id is provided
+    if attrs["project_id"] || attrs[:project_id] do
+      project_id = attrs["project_id"] || attrs[:project_id]
+      _project = get_project!(scope, project_id)
+    end
+
+    %ContentSection{}
+    |> ContentSection.changeset(attrs, scope)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a content section with scope check.
+  """
+  def update_content_section(%Scope{} = scope, %ContentSection{} = section, attrs) do
+    true = section.user_id == scope.user.id
+
+    section
+    |> ContentSection.changeset(attrs, scope)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a content section with scope check.
+  """
+  def delete_content_section(%Scope{} = scope, %ContentSection{} = section) do
+    true = section.user_id == scope.user.id
+    Repo.delete(section)
+  end
+
+  @doc """
+  Reorders content sections within a project.
+  Updates display_order based on the order of IDs provided.
+  """
+  def reorder_content_sections(%Scope{} = scope, project_id, ordered_ids)
+      when is_list(ordered_ids) do
+    # Verify project ownership
+    _project = get_project!(scope, project_id)
+
+    Repo.transaction(fn ->
+      ordered_ids
+      |> Enum.with_index()
+      |> Enum.each(fn {id, index} ->
+        from(cs in ContentSection,
+          where: cs.id == ^id and cs.user_id == ^scope.user.id and cs.project_id == ^project_id
+        )
+        |> Repo.update_all(set: [display_order: index])
+      end)
+    end)
+
+    :ok
+  end
+
+  @doc """
+  Creates default content sections for a project based on its template type.
+  """
+  def create_default_sections_for_template(%Scope{} = scope, project, template_type) do
+    template = Homesite.Media.ProjectTemplate.get(template_type)
+
+    if template && Map.has_key?(template, :default_sections) do
+      template.default_sections
+      |> Enum.with_index()
+      |> Enum.each(fn {section_config, index} ->
+        create_content_section(scope, %{
+          "project_id" => project.id,
+          "section_type" => section_config.section_type,
+          "title" => section_config.title,
+          "display_order" => index
+        })
+      end)
+    end
+
+    :ok
+  end
 end
