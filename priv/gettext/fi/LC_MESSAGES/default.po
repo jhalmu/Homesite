@@ -6378,7 +6378,7 @@ msgstr ""
 #: lib/homesite/media/project_template.ex:164
 #, elixir-autogen, elixir-format
 msgid "Fiction, Non-fiction, Technical..."
-msgstr ""
+msgstr "Kaunokirjallisuus, tietokirjallisuus, tekniikka..."
 
 #: lib/homesite/media/project_template.ex:248
 #, elixir-autogen, elixir-format
@@ -6394,7 +6394,7 @@ msgstr "Laitteet/Varusteet"
 #: lib/homesite/media/project_template.ex:255
 #, elixir-autogen, elixir-format
 msgid "Genre"
-msgstr ""
+msgstr "Laji"
 
 #: lib/homesite/media/project_template.ex:80
 #, elixir-autogen, elixir-format
@@ -6484,7 +6484,7 @@ msgstr ""
 #: lib/homesite/media/project_template.ex:159
 #, elixir-autogen, elixir-format
 msgid "Read/Published Date"
-msgstr ""
+msgstr "Luettu/julkaistu"
 
 #: lib/homesite/media/project_template.ex:251
 #, elixir-autogen, elixir-format
@@ -6529,7 +6529,7 @@ msgstr ""
 #: lib/homesite/media/project_template.ex:167
 #, elixir-autogen, elixir-format
 msgid "Topics/Themes"
-msgstr ""
+msgstr "Aiheet/Teemat"
 
 #: lib/homesite/media/project_template.ex:292
 #, elixir-autogen, elixir-format
