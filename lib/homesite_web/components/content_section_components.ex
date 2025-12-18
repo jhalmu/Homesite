@@ -75,6 +75,26 @@ defmodule HomesiteWeb.ContentSectionComponents do
     """
   end
 
+  @doc """
+  Renders a content section for public display (no edit/delete buttons).
+  Used in portfolio and project show pages.
+  """
+  attr :section, :map, required: true
+
+  def content_section_display(assigns) do
+    ~H"""
+    <div class="border-base-300 mb-[var(--space-sm)] rounded-lg border bg-base-100 p-[var(--space-sm)]">
+      <h4 class="text-[var(--text-base)] mb-[var(--space-xs)] flex items-center gap-2 font-semibold">
+        <.icon name={section_icon(@section.section_type)} class="text-base-content/60 h-5 w-5" />
+        {@section.title || section_default_title(@section.section_type)}
+      </h4>
+      <div class="text-base-content/80">
+        {render_section_display(%{section: @section})}
+      </div>
+    </div>
+    """
+  end
+
   # Form renderers (for editing mode)
   defp render_section_form(%{section: %{section_type: "book_info"}} = assigns) do
     ~H"<.book_info_form section={@section} form={@form} />"

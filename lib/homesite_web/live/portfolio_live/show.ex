@@ -2,6 +2,7 @@ defmodule HomesiteWeb.PortfolioLive.Show do
   use HomesiteWeb, :live_view
 
   import HomesiteWeb.Helpers.DateHelpers
+  import HomesiteWeb.ContentSectionComponents, only: [content_section_display: 1]
 
   alias Homesite.Media
   alias HomesiteWeb.Export.ProjectHTML
@@ -23,7 +24,8 @@ defmodule HomesiteWeb.PortfolioLive.Show do
             :collaborators,
             :affiliation_links,
             :media_items,
-            :tags
+            :tags,
+            :content_sections
           ])
 
         {:noreply,
@@ -309,6 +311,15 @@ defmodule HomesiteWeb.PortfolioLive.Show do
                 </a>
               <% end %>
             </div>
+          </div>
+        <% end %>
+
+        <%!-- Content Sections --%>
+        <%= if Ecto.assoc_loaded?(@project.content_sections) && length(@project.content_sections) > 0 do %>
+          <div class="mt-[var(--spacing-lg)]">
+            <%= for section <- Enum.sort_by(@project.content_sections, & &1.display_order) do %>
+              <.content_section_display section={section} />
+            <% end %>
           </div>
         <% end %>
 

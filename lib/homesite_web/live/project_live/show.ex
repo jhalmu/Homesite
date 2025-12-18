@@ -3,6 +3,7 @@ defmodule HomesiteWeb.ProjectLive.Show do
 
   import Ecto.Query
   import HomesiteWeb.Helpers.DateHelpers
+  import HomesiteWeb.ContentSectionComponents, only: [content_section_display: 1]
 
   alias Homesite.Media
 
@@ -67,7 +68,8 @@ defmodule HomesiteWeb.ProjectLive.Show do
         :collaborators,
         :affiliation_links,
         :cover_media_item,
-        :tags
+        :tags,
+        :content_sections
       ])
 
     # Load media items with proper ordering from join table
@@ -211,6 +213,18 @@ defmodule HomesiteWeb.ProjectLive.Show do
                 </a>
               <% end %>
             </div>
+          </div>
+        <% end %>
+
+        <%!-- Content Sections --%>
+        <%= if Ecto.assoc_loaded?(@project.content_sections) && length(@project.content_sections) > 0 do %>
+          <div class="mb-[var(--space-lg)]">
+            <h3 class="text-[var(--text-lg)] mb-[var(--space-sm)] font-semibold">
+              {gettext("Content")}
+            </h3>
+            <%= for section <- Enum.sort_by(@project.content_sections, & &1.display_order) do %>
+              <.content_section_display section={section} />
+            <% end %>
           </div>
         <% end %>
 
