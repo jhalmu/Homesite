@@ -19,7 +19,7 @@ defmodule HomesiteWeb.AdminLive.Invitations.Index do
 
       socket =
         socket
-        |> assign(:page_title, "Manage Invitations")
+        |> assign(:page_title, gettext("Manage Invitations"))
         |> assign(:invitations, invitations)
         |> assign(:form, nil)
 
@@ -27,7 +27,7 @@ defmodule HomesiteWeb.AdminLive.Invitations.Index do
     else
       socket =
         socket
-        |> put_flash(:error, "You must be an admin to access this page.")
+        |> put_flash(:error, gettext("You must be an admin to access this page."))
         |> redirect(to: ~p"/dashboard")
 
       {:ok, socket}
@@ -63,7 +63,7 @@ defmodule HomesiteWeb.AdminLive.Invitations.Index do
 
         socket =
           socket
-          |> put_flash(:info, "Invitation created successfully")
+          |> put_flash(:info, gettext("Invitation created successfully"))
           |> assign(:form, nil)
           |> assign(:invitations, invitations)
 
@@ -90,13 +90,13 @@ defmodule HomesiteWeb.AdminLive.Invitations.Index do
 
         socket =
           socket
-          |> put_flash(:info, "Invitation deleted successfully")
+          |> put_flash(:info, gettext("Invitation deleted successfully"))
           |> assign(:invitations, invitations)
 
         {:noreply, socket}
 
       {:error, _changeset} ->
-        socket = put_flash(socket, :error, "Failed to delete invitation")
+        socket = put_flash(socket, :error, gettext("Failed to delete invitation"))
         {:noreply, socket}
     end
   end
@@ -105,7 +105,7 @@ defmodule HomesiteWeb.AdminLive.Invitations.Index do
   def handle_event("copy", %{"code" => _code}, socket) do
     # This is handled by JavaScript on the client side
     # Just return success flash
-    socket = put_flash(socket, :info, "Code copied to clipboard!")
+    socket = put_flash(socket, :info, gettext("Code copied to clipboard!"))
     {:noreply, socket}
   end
 
@@ -113,7 +113,7 @@ defmodule HomesiteWeb.AdminLive.Invitations.Index do
   def handle_event("copy_link", %{"code" => _code}, socket) do
     # This is handled by JavaScript on the client side
     # Just return success flash
-    socket = put_flash(socket, :info, "Registration link copied to clipboard!")
+    socket = put_flash(socket, :info, gettext("Registration link copied to clipboard!"))
     {:noreply, socket}
   end
 

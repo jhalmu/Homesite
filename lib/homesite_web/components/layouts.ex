@@ -351,7 +351,7 @@ defmodule HomesiteWeb.Layouts do
     </header>
 
     <%!-- Mobile navigation modal --%>
-    <dialog id="mobile_menu" class="modal">
+    <dialog id="mobile_menu" class="modal" aria-label={gettext("Mobile navigation")}>
       <div class="modal-box">
         <form method="dialog">
           <button
@@ -503,17 +503,21 @@ defmodule HomesiteWeb.Layouts do
       <div class="border-1 border-base-200 bg-base-100 [[data-locale=en]_&]:left-0 [[data-locale=fi]_&]:left-1/2 transition-[left] pointer-events-none absolute h-full w-1/2 rounded-full brightness-200" />
 
       <button
+        type="button"
         class="p-[var(--space-inline)] text-[var(--text-xs)] relative z-10 flex w-1/2 cursor-pointer items-center justify-center font-semibold opacity-75 hover:opacity-100"
         phx-click={JS.dispatch("phx:set-locale")}
         data-phx-locale="en"
+        aria-label={gettext("Switch to English")}
       >
         EN
       </button>
 
       <button
+        type="button"
         class="p-[var(--space-inline)] text-[var(--text-xs)] relative z-10 flex w-1/2 cursor-pointer items-center justify-center font-semibold opacity-75 hover:opacity-100"
         phx-click={JS.dispatch("phx:set-locale")}
         data-phx-locale="fi"
+        aria-label={gettext("Vaihda suomeksi")}
       >
         FI
       </button>
@@ -549,6 +553,7 @@ defmodule HomesiteWeb.Layouts do
       >
         <li role="none">
           <button
+            type="button"
             role="menuitem"
             class="gap-[var(--space-xs)] flex items-center"
             phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "light"})}
@@ -559,6 +564,7 @@ defmodule HomesiteWeb.Layouts do
         </li>
         <li role="none">
           <button
+            type="button"
             role="menuitem"
             class="gap-[var(--space-xs)] flex items-center"
             phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "dark"})}
@@ -569,6 +575,7 @@ defmodule HomesiteWeb.Layouts do
         </li>
         <li role="none">
           <button
+            type="button"
             role="menuitem"
             class="gap-[var(--space-xs)] flex items-center"
             phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "business"})}

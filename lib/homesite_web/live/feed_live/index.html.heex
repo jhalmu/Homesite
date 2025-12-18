@@ -16,18 +16,24 @@
 <!-- Filter controls -->
     <div class="my-[var(--space-md)] gap-[var(--space-sm)] flex flex-wrap items-center">
       <!-- Status filter tabs -->
-      <div class="tabs tabs-boxed">
+      <div class="tabs tabs-boxed" role="tablist">
         <button
+          type="button"
+          role="tab"
           phx-click="filter_change"
           phx-value-filter="all"
           class={["tab", @filter == "all" && "tab-active"]}
+          aria-selected={@filter == "all"}
         >
           {gettext("All")}
         </button>
         <button
+          type="button"
+          role="tab"
           phx-click="filter_change"
           phx-value-filter="unread"
           class={["tab", @filter == "unread" && "tab-active"]}
+          aria-selected={@filter == "unread"}
         >
           {gettext("Unread")}
           <%= if @unread_count > 0 do %>
@@ -35,9 +41,12 @@
           <% end %>
         </button>
         <button
+          type="button"
+          role="tab"
           phx-click="filter_change"
           phx-value-filter="bookmarks"
           class={["tab", @filter == "bookmarks" && "tab-active"]}
+          aria-selected={@filter == "bookmarks"}
         >
           {gettext("Bookmarks")}
         </button>
@@ -48,7 +57,13 @@
         <div class="gap-[var(--space-xs)] flex items-center">
           <span class="text-base-content/70 text-[var(--text-sm)]">{gettext("Filter by:")}</span>
           <div class="dropdown">
-            <div tabindex="0" role="button" class="btn btn-sm btn-ghost gap-[var(--space-inline)]">
+            <div
+              tabindex="0"
+              role="button"
+              class="btn btn-sm btn-ghost gap-[var(--space-inline)]"
+              aria-label={gettext("Filter by source")}
+              aria-haspopup="listbox"
+            >
               <%= if @source_id do %>
                 <.icon name="hero-funnel-solid" class="text-primary h-4 w-4" />
                 {@source_name}

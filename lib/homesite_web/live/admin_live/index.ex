@@ -15,7 +15,7 @@ defmodule HomesiteWeb.AdminLive.Index do
 
       socket =
         socket
-        |> assign(:page_title, "Admin Dashboard")
+        |> assign(:page_title, gettext("Admin Dashboard"))
         |> assign(:total_users, length(all_users))
         |> assign(:admin_count, length(admin_users))
         |> assign(:flowers, String.duplicate("🌸", scope.flower_count))
@@ -25,7 +25,7 @@ defmodule HomesiteWeb.AdminLive.Index do
     else
       socket =
         socket
-        |> put_flash(:error, "You must be an admin to access this page.")
+        |> put_flash(:error, gettext("You must be an admin to access this page."))
         |> redirect(to: ~p"/dashboard")
 
       {:ok, socket}

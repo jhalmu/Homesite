@@ -19,7 +19,7 @@ defmodule HomesiteWeb.FeedSourceLive.Form do
     changeset = ExternalFeeds.change_feed_source(feed_source)
 
     socket
-    |> assign(:page_title, "Edit Feed Source")
+    |> assign(:page_title, gettext("Edit Feed Source"))
     |> assign(:feed_source, feed_source)
     |> assign(:form, to_form(changeset))
   end
@@ -29,7 +29,7 @@ defmodule HomesiteWeb.FeedSourceLive.Form do
     changeset = ExternalFeeds.change_feed_source(feed_source)
 
     socket
-    |> assign(:page_title, "New Feed Source")
+    |> assign(:page_title, gettext("New Feed Source"))
     |> assign(:feed_source, feed_source)
     |> assign(:form, to_form(changeset))
   end
@@ -58,7 +58,7 @@ defmodule HomesiteWeb.FeedSourceLive.Form do
       {:ok, _feed_source} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Feed source updated successfully")
+         |> put_flash(:info, gettext("Feed source updated successfully"))
          |> push_navigate(to: ~p"/feeds")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -71,7 +71,7 @@ defmodule HomesiteWeb.FeedSourceLive.Form do
       {:ok, _feed_source} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Feed source created successfully")
+         |> put_flash(:info, gettext("Feed source created successfully"))
          |> push_navigate(to: ~p"/feeds")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -81,11 +81,11 @@ defmodule HomesiteWeb.FeedSourceLive.Form do
 
   defp feed_type_options do
     [
-      {"RSS", "rss"},
-      {"Atom", "atom"},
-      {"JSON Feed", "json"},
-      {"Bluesky (coming soon)", "bluesky"},
-      {"Mastodon (coming soon)", "mastodon"}
+      {gettext("RSS"), "rss"},
+      {gettext("Atom"), "atom"},
+      {gettext("JSON Feed"), "json"},
+      {gettext("Bluesky (coming soon)"), "bluesky"},
+      {gettext("Mastodon (coming soon)"), "mastodon"}
     ]
   end
 end

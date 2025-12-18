@@ -37,7 +37,9 @@ defmodule Homesite.DevFaqs.Parser do
             ]
           )
 
-        {Map.new(attrs, fn {k, v} -> {String.to_atom(k), v} end), html_body}
+        # Use to_existing_atom to prevent atom table exhaustion (DoS)
+        # Frontmatter keys must be pre-defined in the Article struct
+        {Map.new(attrs, fn {k, v} -> {String.to_existing_atom(k), v} end), html_body}
 
       {:error, reason} ->
         raise "Failed to parse YAML frontmatter: #{inspect(reason)}"

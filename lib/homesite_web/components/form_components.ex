@@ -116,6 +116,7 @@ defmodule HomesiteWeb.FormComponents do
             id="tag-suggestions-listbox"
             class="border-base-300 bg-base-100 mt-[var(--space-xs)] absolute z-10 max-h-60 w-full overflow-y-auto rounded-lg border shadow-lg"
             role="listbox"
+            aria-label={gettext("Tag suggestions")}
           >
             <%= for {tag, post_count} <- @tag_suggestions do %>
               <button

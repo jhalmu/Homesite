@@ -26,6 +26,7 @@ defmodule HomesiteWeb.Components.NotificationBell do
       <.link
         navigate={~p"/notifications"}
         class="btn btn-ghost btn-sm btn-circle"
+        aria-label={gettext("Notifications")}
         title={gettext("Notifications")}
       >
         <.icon name="hero-bell" class="h-5 w-5" />

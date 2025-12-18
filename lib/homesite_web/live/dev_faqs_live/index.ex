@@ -17,7 +17,7 @@ defmodule HomesiteWeb.DevFaqsLive.Index do
 
       {:ok,
        socket
-       |> assign(:page_title, "Developer FAQs")
+       |> assign(:page_title, gettext("Developer FAQs"))
        |> assign(:articles, articles)
        |> assign(:categories, DevFaqs.categories())
        |> assign(:selected_category, nil)
@@ -25,7 +25,7 @@ defmodule HomesiteWeb.DevFaqsLive.Index do
     else
       {:ok,
        socket
-       |> put_flash(:error, "DEV FAQs are only available in development environment")
+       |> put_flash(:error, gettext("DEV FAQs are only available in development environment"))
        |> redirect(to: ~p"/")}
     end
   end
@@ -67,10 +67,10 @@ defmodule HomesiteWeb.DevFaqsLive.Index do
     <div class="technical-main">
       <.header>
         <div class="gap-[var(--space-xs)] flex items-center">
-          <.icon name="hero-code-bracket" class="h-8 w-8" /> Developer FAQs
+          <.icon name="hero-code-bracket" class="h-8 w-8" /> {gettext("Developer FAQs")}
         </div>
         <:subtitle>
-          Development environment documentation and quick reference
+          {gettext("Development environment documentation and quick reference")}
         </:subtitle>
       </.header>
       
@@ -81,7 +81,7 @@ defmodule HomesiteWeb.DevFaqsLive.Index do
           phx-click="clear_filter"
           class="btn btn-ghost btn-sm"
         >
-          All Categories
+          {gettext("All Categories")}
         </button>
 
         <button
@@ -122,10 +122,10 @@ defmodule HomesiteWeb.DevFaqsLive.Index do
           >
             <.icon name="hero-document-text" class="mx-auto h-12 w-12 opacity-50" />
             <h3 class="mt-[var(--space-xs)] text-[var(--text-sm)] font-semibold">
-              No articles found
+              {gettext("No articles found")}
             </h3>
             <p class="mt-[var(--space-inline)] text-[var(--text-sm)] opacity-70">
-              Try selecting a different category or clearing the filter.
+              {gettext("Try selecting a different category or clearing the filter.")}
             </p>
           </div>
         </div>
@@ -134,7 +134,7 @@ defmodule HomesiteWeb.DevFaqsLive.Index do
         <aside class="hidden lg:block lg:w-64">
           <TableOfContents.table_of_contents
             headings={@headings}
-            title="On This Page"
+            title={gettext("On This Page")}
             sticky={true}
             show_mobile={false}
           />

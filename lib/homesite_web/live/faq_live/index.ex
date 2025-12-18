@@ -55,7 +55,11 @@ defmodule HomesiteWeb.FaqLive.Index do
                       {faq.question}
                     </h2>
                     <div class="prose prose-sm max-w-none">
-                      {raw(TableOfContents.add_heading_ids(faq.answer))}
+                      {raw(
+                        faq.answer
+                        |> TableOfContents.add_heading_ids()
+                        |> HtmlSanitizeEx.markdown_html()
+                      )}
                     </div>
                     <%= if @is_admin do %>
                       <div class="card-actions mt-[var(--space-sm)] justify-end">

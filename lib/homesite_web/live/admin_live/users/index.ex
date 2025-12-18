@@ -16,8 +16,8 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <.header>
-        User Management
-        <:subtitle>Manage users, roles, and flower permissions</:subtitle>
+        {gettext("User Management")}
+        <:subtitle>{gettext("Manage users, roles, and flower permissions")}</:subtitle>
       </.header>
 
       <div class="mt-[var(--space-md)]">
@@ -29,13 +29,13 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
                 type="text"
                 name="search"
                 value={@search}
-                placeholder="Search by email..."
+                placeholder={gettext("Search by email...")}
                 class="input w-full"
                 phx-debounce="300"
               />
             </div>
             <button type="button" phx-click="clear_search" class="btn btn-ghost">
-              <.icon name="hero-x-mark" class="h-5 w-5" /> Clear
+              <.icon name="hero-x-mark" class="h-5 w-5" /> {gettext("Clear")}
             </button>
           </div>
         </.form>
@@ -43,15 +43,15 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
         <%!-- User Stats --%>
         <div class="stats stats-horizontal mb-[var(--space-md)] w-full shadow">
           <div class="stat">
-            <div class="stat-title">Total Users</div>
+            <div class="stat-title">{gettext("Total Users")}</div>
             <div class="stat-value text-primary">{@total_count}</div>
           </div>
           <div class="stat">
-            <div class="stat-title">Admin Users</div>
+            <div class="stat-title">{gettext("Admin Users")}</div>
             <div class="stat-value text-secondary">{@admin_count}</div>
           </div>
           <div class="stat">
-            <div class="stat-title">Page</div>
+            <div class="stat-title">{gettext("Page")}</div>
             <div class="stat-value text-accent">{@page} / {@total_pages}</div>
           </div>
         </div>
@@ -61,21 +61,21 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
           <table class="table-zebra table w-full">
             <thead>
               <tr>
-                <th>Avatar</th>
-                <th>Email</th>
-                <th>Display Name</th>
-                <th>Role</th>
-                <th>Flowers</th>
-                <th>Joined</th>
-                <th>Posts</th>
-                <th>Actions</th>
+                <th>{gettext("Avatar")}</th>
+                <th>{gettext("Email")}</th>
+                <th>{gettext("Display Name")}</th>
+                <th>{gettext("Role")}</th>
+                <th>{gettext("Flowers")}</th>
+                <th>{gettext("Joined")}</th>
+                <th>{gettext("Posts")}</th>
+                <th>{gettext("Actions")}</th>
               </tr>
             </thead>
             <tbody>
               <%= if @users == [] do %>
                 <tr>
                   <td colspan="8" class="py-[var(--space-lg)] text-center">
-                    <p class="text-base-content/70">No users found</p>
+                    <p class="text-base-content/70">{gettext("No users found")}</p>
                   </td>
                 </tr>
               <% else %>
@@ -118,7 +118,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
                         phx-value-id={user.id}
                         class="btn btn-sm btn-ghost"
                       >
-                        <.icon name="hero-pencil" class="h-4 w-4" /> Edit
+                        <.icon name="hero-pencil" class="h-4 w-4" /> {gettext("Edit")}
                       </button>
                     </td>
                   </tr>
@@ -136,7 +136,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
               phx-click="prev_page"
               disabled={@page == 1}
             >
-              <.icon name="hero-chevron-left" class="h-4 w-4" /> Previous
+              <.icon name="hero-chevron-left" class="h-4 w-4" /> {gettext("Previous")}
             </button>
 
             <div class="gap-[var(--space-inline)] flex">
@@ -160,7 +160,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
               phx-click="next_page"
               disabled={@page == @total_pages}
             >
-              Next <.icon name="hero-chevron-right" class="h-4 w-4" />
+              {gettext("Next")} <.icon name="hero-chevron-right" class="h-4 w-4" />
             </button>
           </div>
         <% end %>
@@ -171,8 +171,8 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
         <div class="card bg-base-200 mt-[var(--space-md)] shadow-xl">
           <div class="card-body">
             <.header>
-              Edit User: {@selected_user.email}
-              <:subtitle>Update role and flower permissions</:subtitle>
+              {gettext("Edit User: %{email}", email: @selected_user.email)}
+              <:subtitle>{gettext("Update role and flower permissions")}</:subtitle>
             </.header>
 
             <.form
@@ -183,8 +183,8 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
               <.input
                 field={@form[:role]}
                 type="select"
-                label="Role"
-                options={[{"User", "user"}, {"Admin", "admin"}]}
+                label={gettext("Role")}
+                options={[{gettext("User"), "user"}, {gettext("Admin"), "admin"}]}
                 phx-change="role_changed"
               />
 
@@ -192,28 +192,28 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
                 <.input
                   field={@form[:admin_flowers]}
                   type="select"
-                  label="Flower Permission Level"
+                  label={gettext("Flower Permission Level")}
                   options={[
-                    {"🌸 Level 1 - Basic admin access", 1},
-                    {"🌸🌸 Level 2 - Content moderation", 2},
-                    {"🌸🌸🌸 Level 3 - User management", 3},
-                    {"🌸🌸🌸🌸 Level 4 - System configuration", 4},
-                    {"🌸🌸🌸🌸🌸 Level 5 - Full administrative access", 5}
+                    {gettext("🌸 Level 1 - Basic admin access"), 1},
+                    {gettext("🌸🌸 Level 2 - Content moderation"), 2},
+                    {gettext("🌸🌸🌸 Level 3 - User management"), 3},
+                    {gettext("🌸🌸🌸🌸 Level 4 - System configuration"), 4},
+                    {gettext("🌸🌸🌸🌸🌸 Level 5 - Full administrative access"), 5}
                   ]}
                 />
 
                 <div class="alert alert-info">
                   <.icon name="hero-information-circle" class="h-5 w-5" />
-                  <span>Flower permissions grant granular admin capabilities</span>
+                  <span>{gettext("Flower permissions grant granular admin capabilities")}</span>
                 </div>
               <% end %>
 
               <div class="gap-[var(--space-xs)] flex justify-end">
                 <button type="button" phx-click="cancel_edit" class="btn btn-ghost">
-                  Cancel
+                  {gettext("Cancel")}
                 </button>
-                <button type="submit" class="btn btn-primary" phx-disable-with="Saving...">
-                  Save Changes
+                <button type="submit" class="btn btn-primary" phx-disable-with={gettext("Saving...")}>
+                  {gettext("Save Changes")}
                 </button>
               </div>
             </.form>
@@ -232,7 +232,10 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
       if socket.assigns.current_scope.flower_count < 3 do
         {:ok,
          socket
-         |> put_flash(:error, "You need at least 🌸🌸🌸 (Level 3) flowers for user management")
+         |> put_flash(
+           :error,
+           gettext("You need at least 🌸🌸🌸 (Level 3) flowers for user management")
+         )
          |> redirect(to: ~p"/admin")}
       else
         {:ok,
@@ -247,7 +250,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
     else
       {:ok,
        socket
-       |> put_flash(:error, "You must be an admin to access this page")
+       |> put_flash(:error, gettext("You must be an admin to access this page"))
        |> redirect(to: ~p"/")}
     end
   end
@@ -347,7 +350,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
       {:ok, _updated_user} ->
         {:noreply,
          socket
-         |> put_flash(:info, "User updated successfully")
+         |> put_flash(:info, gettext("User updated successfully"))
          |> assign(:selected_user, nil)
          |> assign(:form, nil)
          |> load_users()}
@@ -355,7 +358,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
       {:error, _changeset} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Failed to update user")}
+         |> put_flash(:error, gettext("Failed to update user"))}
     end
   end
 

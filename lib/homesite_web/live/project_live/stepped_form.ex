@@ -58,6 +58,10 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
      |> assign(:content_sections, [])
      |> assign(:editing_section_id, nil)
      |> assign(:section_form, nil)
+     # Section modal state (for editing outside nested form)
+     |> assign(:show_section_modal, false)
+     |> assign(:modal_section, nil)
+     |> assign(:modal_section_form, nil)
      |> assign_form(project)}
   end
 
@@ -453,7 +457,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
     {:noreply,
      socket
      |> assign(:show_media_picker, true)
-     |> assign(:media_picker_mode, String.to_atom(mode))}
+     |> assign(:media_picker_mode, safe_to_atom(mode))}
   end
 
   def handle_event("close_media_picker", _params, socket) do
@@ -595,6 +599,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
     end
   end
 
+  # Section editing via modal (avoids nested form issue)
   def handle_event("edit_section", %{"id" => id}, socket) do
     id = String.to_integer(id)
     section = Media.get_content_section!(socket.assigns.current_scope, id)
@@ -602,6 +607,10 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
 
     {:noreply,
      socket
+     |> assign(:show_section_modal, true)
+     |> assign(:modal_section, section)
+     |> assign(:modal_section_form, section_form)
+     # Keep old assigns for compatibility
      |> assign(:editing_section_id, id)
      |> assign(:section_form, section_form)}
   end
@@ -609,25 +618,49 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
   def handle_event("cancel_section_edit", _params, socket) do
     {:noreply,
      socket
+     |> assign(:show_section_modal, false)
+     |> assign(:modal_section, nil)
+     |> assign(:modal_section_form, nil)
+     |> assign(:editing_section_id, nil)
+     |> assign(:section_form, nil)}
+  end
+
+  def handle_event("close_section_modal", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(:show_section_modal, false)
+     |> assign(:modal_section, nil)
+     |> assign(:modal_section_form, nil)
      |> assign(:editing_section_id, nil)
      |> assign(:section_form, nil)}
   end
 
   def handle_event("validate_section", %{"section" => section_params}, socket) do
     section =
-      Media.get_content_section!(socket.assigns.current_scope, socket.assigns.editing_section_id)
+      socket.assigns.modal_section ||
+        Media.get_content_section!(
+          socket.assigns.current_scope,
+          socket.assigns.editing_section_id
+        )
 
     changeset =
       section
       |> Homesite.Media.ContentSection.changeset(section_params, socket.assigns.current_scope)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign(socket, :section_form, to_form(changeset))}
+    {:noreply,
+     socket
+     |> assign(:modal_section_form, to_form(changeset))
+     |> assign(:section_form, to_form(changeset))}
   end
 
   def handle_event("save_section", %{"section" => section_params}, socket) do
     section =
-      Media.get_content_section!(socket.assigns.current_scope, socket.assigns.editing_section_id)
+      socket.assigns.modal_section ||
+        Media.get_content_section!(
+          socket.assigns.current_scope,
+          socket.assigns.editing_section_id
+        )
 
     case Media.update_content_section(socket.assigns.current_scope, section, section_params) do
       {:ok, _section} ->
@@ -637,12 +670,18 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
         {:noreply,
          socket
          |> assign(:content_sections, sections)
+         |> assign(:show_section_modal, false)
+         |> assign(:modal_section, nil)
+         |> assign(:modal_section_form, nil)
          |> assign(:editing_section_id, nil)
          |> assign(:section_form, nil)
          |> put_flash(:info, gettext("Section updated"))}
 
       {:error, changeset} ->
-        {:noreply, assign(socket, :section_form, to_form(changeset))}
+        {:noreply,
+         socket
+         |> assign(:modal_section_form, to_form(changeset))
+         |> assign(:section_form, to_form(changeset))}
     end
   end
 
@@ -731,6 +770,15 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
       {:error, _changeset} ->
         {:noreply, put_flash(socket, :error, gettext("Failed to link blog post"))}
     end
+  end
+
+  # Safely convert media picker mode to atom (whitelist approach)
+  @allowed_media_picker_modes ~w(cover gallery section)a
+  defp safe_to_atom(mode) when is_binary(mode) do
+    atom = String.to_existing_atom(mode)
+    if atom in @allowed_media_picker_modes, do: atom, else: :cover
+  rescue
+    ArgumentError -> :cover
   end
 
   # Safely convert string to atom only if it's in the allowed list
@@ -1003,6 +1051,11 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
             </div>
           </div>
         </.form>
+
+        <%!-- Section Edit Modal - rendered OUTSIDE the main form to avoid nested form issues --%>
+        <%= if @show_section_modal && @modal_section do %>
+          <.section_edit_modal section={@modal_section} form={@modal_section_form} />
+        <% end %>
       </div>
     </Layouts.app>
     """
@@ -1647,17 +1700,12 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
           <.add_section_dropdown available_types={@template.available_section_types} />
         </div>
 
-        <%= if length(@content_sections) > 0 do %>
-          <div id="sections-list" phx-hook="SortableSections" class="space-y-[var(--space-sm)]">
-            <%= for section <- @content_sections do %>
-              <.content_section_card
-                section={section}
-                editing={@editing_section_id == section.id}
-                form={if @editing_section_id == section.id, do: @section_form, else: nil}
-              />
-            <% end %>
-          </div>
-        <% else %>
+        <div id="sections-list" phx-hook="SortableSections" class="space-y-[var(--space-sm)]">
+          <%= for section <- @content_sections do %>
+            <.content_section_card section={section} />
+          <% end %>
+        </div>
+        <%= if Enum.empty?(@content_sections) do %>
           <p class="text-base-content/60 text-[var(--text-sm)]">
             {gettext(
               "No content sections yet. Use the dropdown above to add text, code, or structured data."

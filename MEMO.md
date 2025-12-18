@@ -7,6 +7,52 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-18 - Fix Section Editing Nested Forms Bug
+
+### Session Summary
+
+#### Problem Identified
+- Could not edit "Book Information" sections in Book projects
+- Users redirected to start when adding/editing sections on Step 5
+- Root cause: **Nested HTML forms** - browser spec forbids `<form>` inside `<form>`
+
+#### Solution: Modal-Based Section Editing
+Extracted section editing to a modal rendered OUTSIDE the main form.
+
+#### Changes Made
+
+**1. Modal State in stepped_form.ex**
+- Added assigns: `show_section_modal`, `modal_section`, `modal_section_form`
+- Updated `edit_section` to open modal instead of inline editing
+- Added `close_section_modal` event handler
+- Rendered modal AFTER main form closes (avoids nesting)
+
+**2. New section_edit_modal Component**
+- Created in `content_section_components.ex`
+- DaisyUI modal with form (NOT nested)
+- Supports all section types: book_info, code_block, rich_text, etc.
+
+**3. Simplified content_section_card**
+- Removed inline editing form
+- Now only displays section content with edit/delete buttons
+
+**4. Test Fixture Added**
+- `content_section_fixture/3` in `media_fixtures.ex`
+
+**5. Translation Added**
+- "Edit Section" → "Muokkaa osiota" (Finnish)
+
+#### Files Modified
+- `lib/homesite_web/live/project_live/stepped_form.ex`
+- `lib/homesite_web/components/content_section_components.ex`
+- `test/support/fixtures/media_fixtures.ex`
+- `priv/gettext/fi/LC_MESSAGES/default.po`
+
+#### Test Results
+- **1584 tests, 0 failures**
+
+---
+
 ## 2025-12-18 - Project Content Sections & Template Enhancements
 
 ### Session Summary

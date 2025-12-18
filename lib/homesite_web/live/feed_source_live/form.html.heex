@@ -2,11 +2,11 @@
   <div class="technical-main">
     <.header>
       {@page_title}
-      <:subtitle>Configure your feed source settings</:subtitle>
+      <:subtitle>{gettext("Configure your feed source settings")}</:subtitle>
       <:actions>
         <.link navigate={~p"/feeds"}>
           <.button>
-            <.icon name="hero-arrow-left" class="h-4 w-4" /> Back to Feeds
+            <.icon name="hero-arrow-left" class="h-4 w-4" /> {gettext("Back to Feeds")}
           </.button>
         </.link>
       </:actions>
@@ -22,17 +22,17 @@
       <.input
         field={@form[:feed_type]}
         type="select"
-        label="Feed Type"
+        label={gettext("Feed Type")}
         options={feed_type_options()}
       />
-      <.input field={@form[:name]} type="text" label="Name" />
+      <.input field={@form[:name]} type="text" label={gettext("Name")} />
 
       <div :if={@form[:feed_type].value in ["rss", "atom", "json"]}>
         <.input
           field={@form[:url]}
           type="text"
-          label="Feed URL"
-          placeholder="https://example.com/feed.xml"
+          label={gettext("Feed URL")}
+          placeholder={gettext("https://example.com/feed.xml")}
         />
       </div>
 
@@ -40,27 +40,32 @@
         <.input
           field={@form[:username]}
           type="text"
-          label="Username"
-          placeholder="user.bsky.social or @user@mastodon.social"
+          label={gettext("Username")}
+          placeholder={gettext("user.bsky.social or @user@mastodon.social")}
         />
       </div>
 
-      <.input field={@form[:icon]} type="text" label="Icon (emoji)" placeholder="📰" />
+      <.input field={@form[:icon]} type="text" label={gettext("Icon (emoji)")} placeholder="📰" />
       <.input
         field={@form[:refresh_interval]}
         type="number"
-        label="Refresh Interval (minutes)"
+        label={gettext("Refresh Interval (minutes)")}
         min="5"
         step="5"
       />
-      <.input field={@form[:display_order]} type="number" label="Display Order" min="0" />
-      <.input field={@form[:enabled]} type="checkbox" label="Enabled" />
+      <.input
+        field={@form[:display_order]}
+        type="number"
+        label={gettext("Display Order")}
+        min="0"
+      />
+      <.input field={@form[:enabled]} type="checkbox" label={gettext("Enabled")} />
 
       <div class="mt-[var(--space-lg)] gap-x-[var(--space-md)] flex items-center justify-end">
         <.link navigate={~p"/feeds"} class="text-[var(--text-sm)] font-semibold text-gray-900">
-          Cancel
+          {gettext("Cancel")}
         </.link>
-        <.button phx-disable-with="Saving...">Save Feed Source</.button>
+        <.button phx-disable-with={gettext("Saving...")}>{gettext("Save Feed Source")}</.button>
       </div>
     </.form>
   </div>

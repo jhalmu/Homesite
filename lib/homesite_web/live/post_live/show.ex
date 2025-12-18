@@ -115,6 +115,7 @@ defmodule HomesiteWeb.PostLive.Show do
         formatter: {:html_inline, theme: "catppuccin_mocha"}
       ]
     )
+    |> HtmlSanitizeEx.markdown_html()
   end
 
   @impl true

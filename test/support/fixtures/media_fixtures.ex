@@ -169,4 +169,21 @@ defmodule Homesite.MediaFixtures do
     {:ok, collection} = Homesite.Media.create_collection(scope, attrs)
     collection
   end
+
+  @doc """
+  Generate a content section for a project.
+  """
+  def content_section_fixture(scope, project_id, attrs \\ %{}) do
+    attrs =
+      Enum.into(attrs, %{
+        section_type: "rich_text",
+        title: "Test Section #{System.unique_integer([:positive])}",
+        content: "Test content",
+        display_order: 0,
+        project_id: project_id
+      })
+
+    {:ok, section} = Homesite.Media.create_content_section(scope, attrs)
+    section
+  end
 end

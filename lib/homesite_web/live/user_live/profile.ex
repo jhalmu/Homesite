@@ -103,7 +103,7 @@ defmodule HomesiteWeb.UserLive.Profile do
                   rel="noopener noreferrer"
                   class="btn btn-outline btn-xs gap-[var(--space-inline)]"
                 >
-                  <.icon name="hero-globe-alt" class="h-3 w-3" /> Website
+                  <.icon name="hero-globe-alt" class="h-3 w-3" /> {gettext("Website")}
                 </.link>
 
                 <.link
@@ -113,7 +113,7 @@ defmodule HomesiteWeb.UserLive.Profile do
                   rel="noopener noreferrer"
                   class="btn btn-outline btn-xs gap-[var(--space-inline)]"
                 >
-                  <.icon name="hero-cloud" class="h-3 w-3" /> Bluesky
+                  <.icon name="hero-cloud" class="h-3 w-3" /> {gettext("Bluesky")}
                 </.link>
 
                 <.link
@@ -123,7 +123,7 @@ defmodule HomesiteWeb.UserLive.Profile do
                   rel="noopener noreferrer"
                   class="btn btn-outline btn-xs gap-[var(--space-inline)]"
                 >
-                  <.icon name="hero-chat-bubble-left-right" class="h-3 w-3" /> Mastodon
+                  <.icon name="hero-chat-bubble-left-right" class="h-3 w-3" /> {gettext("Mastodon")}
                 </.link>
               </div>
             </div>
@@ -133,7 +133,7 @@ defmodule HomesiteWeb.UserLive.Profile do
     <!-- Recent Posts Highlight -->
         <div :if={@recent_posts != []} class="my-[var(--space-lg)]">
           <h2 class="text-[var(--font-size-fluid-lg)] mb-[var(--space-md)] gap-[var(--space-xs)] flex items-center font-bold">
-            <.icon name="hero-sparkles" class="h-5 w-5" /> Recent Posts
+            <.icon name="hero-sparkles" class="h-5 w-5" /> {gettext("Recent Posts")}
           </h2>
 
           <div class="gap-[var(--space-sm)] grid grid-cols-1 md:grid-cols-3">
@@ -155,7 +155,7 @@ defmodule HomesiteWeb.UserLive.Profile do
                     {format_date_short(post.published_at)}
                   </time>
                   <span>·</span>
-                  <span>{post.read_time_minutes} min</span>
+                  <span>{post.read_time_minutes} {gettext("min")}</span>
                 </div>
               </div>
             </.link>
@@ -166,7 +166,7 @@ defmodule HomesiteWeb.UserLive.Profile do
         <div :if={@projects != []} class="my-[var(--space-lg)]">
           <div class="mb-[var(--space-md)] flex items-center justify-between">
             <h2 class="text-[var(--font-size-fluid-lg)] gap-[var(--space-xs)] flex items-center font-bold">
-              <.icon name="hero-folder" class="h-5 w-5" /> Projects
+              <.icon name="hero-folder" class="h-5 w-5" /> {gettext("Projects")}
             </h2>
             <%= if @user.username do %>
               <.link
@@ -196,15 +196,15 @@ defmodule HomesiteWeb.UserLive.Profile do
           <div class="mb-[var(--space-sm)] gap-[var(--space-sm)] text-[var(--text-sm)] grid grid-cols-3 text-center">
             <div>
               <div class="text-primary text-[var(--text-xl)]font-bold">{@stats.posts_count}</div>
-              <div class="text-base-content/60 text-[var(--text-xs)]">posts</div>
+              <div class="text-base-content/60 text-[var(--text-xs)]">{gettext("posts")}</div>
             </div>
             <div>
               <div class="text-secondary text-[var(--text-xl)]font-bold">{@stats.avg_read_time}</div>
-              <div class="text-base-content/60 text-[var(--text-xs)]">min avg</div>
+              <div class="text-base-content/60 text-[var(--text-xs)]">{gettext("min avg")}</div>
             </div>
             <div>
               <div class="text-accent text-[var(--text-xl)]font-bold">{@stats.member_since}</div>
-              <div class="text-base-content/60 text-[var(--text-xs)]">since</div>
+              <div class="text-base-content/60 text-[var(--text-xs)]">{gettext("since")}</div>
             </div>
           </div>
 
@@ -215,14 +215,14 @@ defmodule HomesiteWeb.UserLive.Profile do
                 href={~p"/users/@#{@user.username}/rss.xml"}
                 class="btn btn-xs btn-ghost gap-[var(--space-inline)]"
               >
-                <.icon name="hero-rss" class="h-3 w-3" /> RSS
+                <.icon name="hero-rss" class="h-3 w-3" /> {gettext("RSS")}
               </a>
             <% else %>
               <a
                 href={~p"/users/#{@user.id}/rss.xml"}
                 class="btn btn-xs btn-ghost gap-[var(--space-inline)]"
               >
-                <.icon name="hero-rss" class="h-3 w-3" /> RSS
+                <.icon name="hero-rss" class="h-3 w-3" /> {gettext("RSS")}
               </a>
             <% end %>
             <button
@@ -230,14 +230,14 @@ defmodule HomesiteWeb.UserLive.Profile do
               phx-click="share_profile"
               class="btn btn-xs btn-ghost gap-[var(--space-inline)]"
             >
-              <.icon name="hero-share" class="h-3 w-3" /> Share
+              <.icon name="hero-share" class="h-3 w-3" /> {gettext("Share")}
             </button>
             <button
               type="button"
               phx-click="copy_profile_url"
               class="btn btn-xs btn-ghost gap-[var(--space-inline)]"
             >
-              <.icon name="hero-clipboard" class="h-3 w-3" /> Copy
+              <.icon name="hero-clipboard" class="h-3 w-3" /> {gettext("Copy")}
             </button>
           </div>
         </div>
@@ -245,7 +245,7 @@ defmodule HomesiteWeb.UserLive.Profile do
     <!-- What I'm Reading Section -->
         <div :if={@feed_sources != []} class="my-[var(--space-md)]">
           <h2 class="text-base-content/60 mb-[var(--space-xs)] gap-[var(--space-xs)] text-[var(--text-sm)] flex items-center font-medium">
-            <.icon name="hero-newspaper" class="h-4 w-4" /> What I'm Reading
+            <.icon name="hero-newspaper" class="h-4 w-4" /> {gettext("What I'm Reading")}
           </h2>
 
           <div class="gap-[var(--space-xs)] flex flex-wrap">
@@ -266,7 +266,7 @@ defmodule HomesiteWeb.UserLive.Profile do
 
         <div :if={@posts != []} class="my-[var(--space-lg)]">
           <h2 class="text-[var(--font-size-fluid-lg)] mb-[var(--space-sm)] font-bold">
-            Published Posts
+            {gettext("Published Posts")}
           </h2>
 
           <div class="divide-base-300 divide-y">
@@ -284,7 +284,7 @@ defmodule HomesiteWeb.UserLive.Profile do
                 <div class="text-base-content/60 mt-[var(--space-inline)] gap-[var(--space-xs)] text-[var(--text-xs)] flex items-center">
                   <time>{format_date(post.published_at)}</time>
                   <span>·</span>
-                  <span>{post.read_time_minutes} min</span>
+                  <span>{post.read_time_minutes} {gettext("min")}</span>
                 </div>
 
                 <p class="text-base-content/70 line-clamp-2 mt-[var(--space-inline)] text-[var(--text-sm)]">
@@ -294,7 +294,7 @@ defmodule HomesiteWeb.UserLive.Profile do
 
               <div class="shrink-0">
                 <.link navigate={~p"/posts/#{post}"} class="btn btn-primary btn-sm">
-                  Read more
+                  {gettext("Read more")}
                 </.link>
               </div>
             </article>
@@ -311,7 +311,7 @@ defmodule HomesiteWeb.UserLive.Profile do
         </div>
 
         <div :if={@posts == []} class="my-[var(--space-lg)] text-center text-gray-600">
-          <p class="text-[var(--font-size-fluid-base)]">No published posts yet.</p>
+          <p class="text-[var(--font-size-fluid-base)]">{gettext("No published posts yet.")}</p>
         </div>
       </div>
     </Layouts.app>
@@ -324,7 +324,7 @@ defmodule HomesiteWeb.UserLive.Profile do
       nil ->
         {:ok,
          socket
-         |> put_flash(:error, "User not found")
+         |> put_flash(:error, gettext("User not found"))
          |> redirect(to: ~p"/")}
 
       user ->
@@ -373,7 +373,7 @@ defmodule HomesiteWeb.UserLive.Profile do
 
         {:ok,
          socket
-         |> assign(:page_title, user.display_name || "User Profile")
+         |> assign(:page_title, user.display_name || gettext("User Profile"))
          |> assign(:user, user)
          |> assign(:posts, posts)
          |> assign(:recent_posts, recent_posts)
@@ -424,7 +424,7 @@ defmodule HomesiteWeb.UserLive.Profile do
 
     {:noreply,
      socket
-     |> put_flash(:info, "Profile URL copied!")
+     |> put_flash(:info, gettext("Profile URL copied!"))
      |> push_event("copy-to-clipboard", %{text: profile_url})}
   end
 
@@ -447,10 +447,15 @@ defmodule HomesiteWeb.UserLive.Profile do
          socket
          |> assign(:is_following, true)
          |> assign(:follow_counts, follow_counts)
-         |> put_flash(:info, "You are now following #{user.display_name || "this user"}")}
+         |> put_flash(
+           :info,
+           gettext("You are now following %{name}",
+             name: user.display_name || gettext("this user")
+           )
+         )}
 
       {:error, _changeset} ->
-        {:noreply, put_flash(socket, :error, "Could not follow user")}
+        {:noreply, put_flash(socket, :error, gettext("Could not follow user"))}
     end
   end
 
@@ -468,10 +473,13 @@ defmodule HomesiteWeb.UserLive.Profile do
          socket
          |> assign(:is_following, false)
          |> assign(:follow_counts, follow_counts)
-         |> put_flash(:info, "You unfollowed #{user.display_name || "this user"}")}
+         |> put_flash(
+           :info,
+           gettext("You unfollowed %{name}", name: user.display_name || gettext("this user"))
+         )}
 
       {:error, :not_found} ->
-        {:noreply, put_flash(socket, :error, "You are not following this user")}
+        {:noreply, put_flash(socket, :error, gettext("You are not following this user"))}
     end
   end
 

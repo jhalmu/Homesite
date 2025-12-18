@@ -26,6 +26,8 @@ defmodule HomesiteWeb.ContentSectionComponents do
   attr :on_delete, :any, default: nil
 
   def content_section_card(assigns) do
+    # Note: Editing is now done in a modal (section_edit_modal) to avoid nested form issues.
+    # This card only shows display mode with edit/delete buttons.
     ~H"""
     <div
       class="card bg-base-200 mb-[var(--space-sm)] shadow-sm"
@@ -36,65 +38,37 @@ defmodule HomesiteWeb.ContentSectionComponents do
         <div class="flex items-center justify-between">
           <h4 class="card-title text-[var(--text-base)] flex items-center gap-2">
             <%!-- Drag handle --%>
-            <%= if !@editing do %>
-              <span class="section-drag-handle text-base-content/40 -ml-1 cursor-grab hover:text-base-content/70 active:cursor-grabbing">
-                <.icon name="hero-bars-3" class="h-4 w-4" />
-              </span>
-            <% end %>
+            <span class="section-drag-handle text-base-content/40 -ml-1 cursor-grab hover:text-base-content/70 active:cursor-grabbing">
+              <.icon name="hero-bars-3" class="h-4 w-4" />
+            </span>
             <.icon name={section_icon(@section.section_type)} class="text-base-content/60 h-5 w-5" />
             <span>{@section.title || section_default_title(@section.section_type)}</span>
           </h4>
           <div class="flex items-center gap-1">
-            <%= if @editing do %>
-              <button
-                type="submit"
-                form={"section-form-#{@section.id}"}
-                class="btn btn-success btn-xs"
-              >
-                <.icon name="hero-check" class="h-3 w-3" />
-              </button>
-              <button
-                type="button"
-                phx-click="cancel_section_edit"
-                class="btn btn-ghost btn-xs"
-              >
-                <.icon name="hero-x-mark" class="h-3 w-3" />
-              </button>
-            <% else %>
-              <button
-                type="button"
-                phx-click="edit_section"
-                phx-value-id={@section.id}
-                class="btn btn-ghost btn-xs"
-              >
-                <.icon name="hero-pencil" class="h-3 w-3" />
-              </button>
-              <button
-                type="button"
-                phx-click="delete_section"
-                phx-value-id={@section.id}
-                class="btn btn-ghost btn-xs text-error"
-                data-confirm={gettext("Delete this section?")}
-              >
-                <.icon name="hero-trash" class="h-3 w-3" />
-              </button>
-            <% end %>
+            <button
+              type="button"
+              phx-click="edit_section"
+              phx-value-id={@section.id}
+              class="btn btn-ghost btn-xs"
+              aria-label={gettext("Edit section")}
+            >
+              <.icon name="hero-pencil" class="h-3 w-3" />
+            </button>
+            <button
+              type="button"
+              phx-click="delete_section"
+              phx-value-id={@section.id}
+              class="btn btn-ghost btn-xs text-error"
+              data-confirm={gettext("Delete this section?")}
+              aria-label={gettext("Delete section")}
+            >
+              <.icon name="hero-trash" class="h-3 w-3" />
+            </button>
           </div>
         </div>
 
         <div class="mt-[var(--space-xs)]">
-          <%= if @editing && @form do %>
-            <.form
-              for={@form}
-              id={"section-form-#{@section.id}"}
-              phx-change="validate_section"
-              phx-submit="save_section"
-            >
-              {render_section_form(assigns)}
-            </.form>
-          <% else %>
-            {render_section_display(assigns)}
-          <% end %>
+          {render_section_display(assigns)}
         </div>
       </div>
     </div>
@@ -818,11 +792,65 @@ defmodule HomesiteWeb.ContentSectionComponents do
         formatter: {:html_inline, theme: "catppuccin_mocha"}
       ]
     )
+    |> HtmlSanitizeEx.markdown_html()
   rescue
     # Fallback: escape HTML and wrap in <p> tags
     _ ->
       content
       |> Phoenix.HTML.html_escape()
       |> Phoenix.HTML.safe_to_string()
+  end
+
+  @doc """
+  Modal component for editing content sections.
+  Renders OUTSIDE the main project form to avoid nested form issues.
+  """
+  attr :section, :map, required: true
+  attr :form, :any, required: true
+
+  def section_edit_modal(assigns) do
+    ~H"""
+    <div class="modal modal-open">
+      <div class="modal-box max-w-2xl">
+        <div class="mb-[var(--space-md)] flex items-center justify-between">
+          <h3 class="text-[var(--text-lg)] flex items-center gap-2 font-bold">
+            <.icon name={section_icon(@section.section_type)} class="h-5 w-5" />
+            {gettext("Edit Section")}: {@section.title || section_default_title(@section.section_type)}
+          </h3>
+          <button
+            type="button"
+            phx-click="close_section_modal"
+            class="btn btn-ghost btn-sm btn-circle"
+            aria-label={gettext("Close")}
+          >
+            <.icon name="hero-x-mark" class="h-5 w-5" />
+          </button>
+        </div>
+
+        <.form
+          for={@form}
+          id={"modal-section-form-#{@section.id}"}
+          phx-change="validate_section"
+          phx-submit="save_section"
+          class="space-y-[var(--space-sm)]"
+        >
+          {render_section_form(%{section: @section, form: @form})}
+
+          <div class="modal-action">
+            <button type="button" phx-click="close_section_modal" class="btn btn-ghost">
+              {gettext("Cancel")}
+            </button>
+            <button type="submit" class="btn btn-primary">
+              <.icon name="hero-check" class="h-4 w-4" />
+              {gettext("Save")}
+            </button>
+          </div>
+        </.form>
+      </div>
+      <div class="modal-backdrop" phx-click="close_section_modal">
+        <button type="button" class="cursor-default" aria-label={gettext("Close")}></button>
+      </div>
+    </div>
+    """
   end
 end

@@ -12,8 +12,8 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <.header>
-        Admin Dashboard
-        <:subtitle>System overview and analytics</:subtitle>
+        {gettext("Admin Dashboard")}
+        <:subtitle>{gettext("System overview and analytics")}</:subtitle>
       </.header>
 
       <%!-- System Overview - Key metrics at a glance --%>
@@ -22,10 +22,10 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
           <div class="stat-figure text-primary">
             <.icon name="hero-users" class="h-8 w-8" />
           </div>
-          <div class="stat-title">Total Users</div>
+          <div class="stat-title">{gettext("Total Users")}</div>
           <div class="stat-value text-primary">{@user_stats.total_users}</div>
           <div class="stat-desc">
-            +{@user_stats.new_users_7d} this week
+            +{@user_stats.new_users_7d} {gettext("this week")}
           </div>
         </.dashboard_card>
 
@@ -33,10 +33,10 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
           <div class="stat-figure text-secondary">
             <.icon name="hero-document-text" class="h-8 w-8" />
           </div>
-          <div class="stat-title">Published Posts</div>
+          <div class="stat-title">{gettext("Published Posts")}</div>
           <div class="stat-value text-secondary">{@content_stats.total_posts}</div>
           <div class="stat-desc">
-            +{@content_stats.posts_7d} this week
+            +{@content_stats.posts_7d} {gettext("this week")}
           </div>
         </.dashboard_card>
 
@@ -44,10 +44,10 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
           <div class="stat-figure text-accent">
             <.icon name="hero-photo" class="h-8 w-8" />
           </div>
-          <div class="stat-title">Media Items</div>
+          <div class="stat-title">{gettext("Media Items")}</div>
           <div class="stat-value text-accent">{@media_stats.total_media}</div>
           <div class="stat-desc">
-            +{@media_stats.media_7d} this week
+            +{@media_stats.media_7d} {gettext("this week")}
           </div>
         </.dashboard_card>
 
@@ -55,10 +55,10 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
           <div class="stat-figure text-info">
             <.icon name="hero-folder" class="h-8 w-8" />
           </div>
-          <div class="stat-title">Projects</div>
+          <div class="stat-title">{gettext("Projects")}</div>
           <div class="stat-value text-info">{@media_stats.total_projects}</div>
           <div class="stat-desc">
-            {@media_stats.portfolio_count} portfolios
+            {@media_stats.portfolio_count} {gettext("portfolios")}
           </div>
         </.dashboard_card>
       </div>
@@ -66,22 +66,22 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
       <%!-- Quick Admin Actions --%>
       <div class="mt-[var(--space-lg)]">
         <.dashboard_card variant="content">
-          <h3 class="card-title mb-[var(--space-sm)]">Quick Actions</h3>
+          <h3 class="card-title mb-[var(--space-sm)]">{gettext("Quick Actions")}</h3>
           <div class="gap-[var(--space-sm)] flex flex-wrap">
             <.link navigate={~p"/admin/users"} class="btn btn-outline btn-sm">
-              <.icon name="hero-users" class="h-4 w-4" /> Manage Users
+              <.icon name="hero-users" class="h-4 w-4" /> {gettext("Manage Users")}
             </.link>
             <.link navigate={~p"/admin/invitations"} class="btn btn-outline btn-sm">
-              <.icon name="hero-envelope" class="h-4 w-4" /> Invitations
+              <.icon name="hero-envelope" class="h-4 w-4" /> {gettext("Invitations")}
             </.link>
             <.link navigate={~p"/admin/analytics"} class="btn btn-outline btn-sm">
-              <.icon name="hero-chart-bar" class="h-4 w-4" /> Analytics
+              <.icon name="hero-chart-bar" class="h-4 w-4" /> {gettext("Analytics")}
             </.link>
             <.link navigate={~p"/admin/feedback"} class="btn btn-outline btn-sm">
-              <.icon name="hero-chat-bubble-left-right" class="h-4 w-4" /> Feedback
+              <.icon name="hero-chat-bubble-left-right" class="h-4 w-4" /> {gettext("Feedback")}
             </.link>
             <.link navigate={~p"/admin/system"} class="btn btn-outline btn-sm">
-              <.icon name="hero-cog-6-tooth" class="h-4 w-4" /> System Info
+              <.icon name="hero-cog-6-tooth" class="h-4 w-4" /> {gettext("System Info")}
             </.link>
           </div>
         </.dashboard_card>
@@ -91,24 +91,24 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
       <div class="mt-[var(--space-lg)] gap-[var(--space-md)] grid grid-cols-1 lg:grid-cols-2">
         <%!-- User Statistics --%>
         <.dashboard_card variant="content">
-          <h3 class="card-title">User Statistics</h3>
+          <h3 class="card-title">{gettext("User Statistics")}</h3>
           <div class="overflow-x-auto">
             <table class="table-sm table">
               <tbody>
                 <tr>
-                  <td class="font-medium">Total Users</td>
+                  <td class="font-medium">{gettext("Total Users")}</td>
                   <td class="text-right">{@user_stats.total_users}</td>
                 </tr>
                 <tr>
-                  <td class="font-medium">Admins</td>
+                  <td class="font-medium">{gettext("Admins")}</td>
                   <td class="text-right">{@user_stats.admin_count}</td>
                 </tr>
                 <tr>
-                  <td class="font-medium">New Users (7 days)</td>
+                  <td class="font-medium">{gettext("New Users (7 days)")}</td>
                   <td class="text-success text-right">+{@user_stats.new_users_7d}</td>
                 </tr>
                 <tr>
-                  <td class="font-medium">New Users (30 days)</td>
+                  <td class="font-medium">{gettext("New Users (30 days)")}</td>
                   <td class="text-success text-right">+{@user_stats.new_users_30d}</td>
                 </tr>
               </tbody>
@@ -118,25 +118,25 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
 
         <%!-- Content Statistics --%>
         <.dashboard_card variant="content">
-          <h3 class="card-title">Content Statistics</h3>
+          <h3 class="card-title">{gettext("Content Statistics")}</h3>
           <div class="overflow-x-auto">
             <table class="table-sm table">
               <tbody>
                 <tr>
-                  <td class="font-medium">Published Posts</td>
+                  <td class="font-medium">{gettext("Published Posts")}</td>
                   <td class="text-right">{@content_stats.total_posts}</td>
                 </tr>
                 <tr>
-                  <td class="font-medium">Drafts</td>
+                  <td class="font-medium">{gettext("Drafts")}</td>
                   <td class="text-right">{@content_stats.total_drafts}</td>
                 </tr>
                 <tr>
-                  <td class="font-medium">Total Tags</td>
+                  <td class="font-medium">{gettext("Total Tags")}</td>
                   <td class="text-right">{@content_stats.total_tags}</td>
                 </tr>
                 <tr>
-                  <td class="font-medium">Avg Post Length</td>
-                  <td class="text-right">{@content_stats.avg_post_length} chars</td>
+                  <td class="font-medium">{gettext("Avg Post Length")}</td>
+                  <td class="text-right">{@content_stats.avg_post_length} {gettext("chars")}</td>
                 </tr>
               </tbody>
             </table>
@@ -145,32 +145,32 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
 
         <%!-- Media Statistics --%>
         <.dashboard_card variant="content">
-          <h3 class="card-title">Media Statistics</h3>
+          <h3 class="card-title">{gettext("Media Statistics")}</h3>
           <div class="overflow-x-auto">
             <table class="table-sm table">
               <tbody>
                 <tr>
-                  <td class="font-medium">Total Media Items</td>
+                  <td class="font-medium">{gettext("Total Media Items")}</td>
                   <td class="text-right">{@media_stats.total_media}</td>
                 </tr>
                 <tr>
-                  <td class="font-medium">Storage Used</td>
+                  <td class="font-medium">{gettext("Storage Used")}</td>
                   <td class="text-right">{@media_stats.total_size_formatted}</td>
                 </tr>
                 <tr>
-                  <td class="font-medium">Projects</td>
+                  <td class="font-medium">{gettext("Projects")}</td>
                   <td class="text-right">{@media_stats.total_projects}</td>
                 </tr>
                 <tr>
-                  <td class="font-medium">Public Projects</td>
+                  <td class="font-medium">{gettext("Public Projects")}</td>
                   <td class="text-right">{@media_stats.public_count}</td>
                 </tr>
                 <tr>
-                  <td class="font-medium">Collections</td>
+                  <td class="font-medium">{gettext("Collections")}</td>
                   <td class="text-right">{@media_stats.total_collections}</td>
                 </tr>
                 <tr>
-                  <td class="font-medium">Collaborators</td>
+                  <td class="font-medium">{gettext("Collaborators")}</td>
                   <td class="text-right">{@media_stats.total_collaborators}</td>
                 </tr>
               </tbody>
@@ -180,13 +180,13 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
 
         <%!-- Top Authors --%>
         <.dashboard_card variant="content">
-          <h3 class="card-title">Top Authors</h3>
+          <h3 class="card-title">{gettext("Top Authors")}</h3>
           <div class="overflow-x-auto">
             <table class="table-sm table">
               <thead>
                 <tr>
-                  <th>Author</th>
-                  <th class="text-right">Posts</th>
+                  <th>{gettext("Author")}</th>
+                  <th class="text-right">{gettext("Posts")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -198,7 +198,9 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
                 <% end %>
                 <%= if @content_stats.top_authors == [] do %>
                   <tr>
-                    <td colspan="2" class="text-base-content/60 text-center">No authors yet</td>
+                    <td colspan="2" class="text-base-content/60 text-center">
+                      {gettext("No authors yet")}
+                    </td>
                   </tr>
                 <% end %>
               </tbody>
@@ -210,7 +212,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
       <%!-- Popular Tags --%>
       <div class="mt-[var(--space-lg)]">
         <.dashboard_card variant="content">
-          <h3 class="card-title">Popular Tags</h3>
+          <h3 class="card-title">{gettext("Popular Tags")}</h3>
           <div class="gap-[var(--space-xs)] flex flex-wrap">
             <%= for tag <- @content_stats.popular_tags do %>
               <span class="badge badge-outline gap-[var(--space-inline)]">
@@ -219,7 +221,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
               </span>
             <% end %>
             <%= if @content_stats.popular_tags == [] do %>
-              <span class="text-base-content/60">No tags yet</span>
+              <span class="text-base-content/60">{gettext("No tags yet")}</span>
             <% end %>
           </div>
         </.dashboard_card>
@@ -228,15 +230,15 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
       <%!-- Recent Activity --%>
       <div class="mt-[var(--space-lg)]">
         <.dashboard_card variant="content">
-          <h3 class="card-title">Recent Activity</h3>
+          <h3 class="card-title">{gettext("Recent Activity")}</h3>
           <div class="overflow-x-auto">
             <table class="table-sm table">
               <thead>
                 <tr>
-                  <th>Time</th>
-                  <th>User</th>
-                  <th>Action</th>
-                  <th>Resource</th>
+                  <th>{gettext("Time")}</th>
+                  <th>{gettext("User")}</th>
+                  <th>{gettext("Action")}</th>
+                  <th>{gettext("Resource")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -245,7 +247,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
                     <td class="text-[var(--text-xs)]">
                       {format_datetime(log.inserted_at)}
                     </td>
-                    <td>{(log.user && log.user.email) || "Unknown"}</td>
+                    <td>{(log.user && log.user.email) || gettext("Unknown")}</td>
                     <td>
                       <span class="badge badge-sm">{log.action}</span>
                     </td>
@@ -258,7 +260,9 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
                 <% end %>
                 <%= if @activity_logs == [] do %>
                   <tr>
-                    <td colspan="4" class="text-base-content/60 text-center">No recent activity</td>
+                    <td colspan="4" class="text-base-content/60 text-center">
+                      {gettext("No recent activity")}
+                    </td>
                   </tr>
                 <% end %>
               </tbody>
@@ -270,8 +274,10 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
       <%!-- Search Statistics --%>
       <div class="mt-[var(--space-lg)]">
         <.dashboard_card variant="content">
-          <h3 class="card-title">Search Statistics</h3>
-          <p class="text-base-content/60 mb-[var(--space-md)] text-[var(--text-sm)]">Last 7 days</p>
+          <h3 class="card-title">{gettext("Search Statistics")}</h3>
+          <p class="text-base-content/60 mb-[var(--space-md)] text-[var(--text-sm)]">
+            {gettext("Last 7 days")}
+          </p>
 
           <%!-- Summary stats in compact grid --%>
           <div class="mb-[var(--space-md)] gap-[var(--space-md)] grid grid-cols-2 md:grid-cols-4">
@@ -279,7 +285,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
               <p class="text-primary text-[var(--text-2xl)] font-bold">
                 {@search_stats.total_searches || 0}
               </p>
-              <p class="text-base-content/60 text-[var(--text-xs)]">Total Searches</p>
+              <p class="text-base-content/60 text-[var(--text-xs)]">{gettext("Total Searches")}</p>
             </div>
             <div class="text-center">
               <p class="text-secondary text-[var(--text-2xl)] font-bold">
@@ -287,7 +293,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
                   do: "#{@search_stats.avg_duration_ms |> Decimal.to_float() |> Float.round(1)}ms",
                   else: "N/A"}
               </p>
-              <p class="text-base-content/60 text-[var(--text-xs)]">Avg Response</p>
+              <p class="text-base-content/60 text-[var(--text-xs)]">{gettext("Avg Response")}</p>
             </div>
             <div class="text-center">
               <p class="text-accent text-[var(--text-2xl)] font-bold">
@@ -295,7 +301,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
                   do: "#{@search_stats.zero_results_pct}%",
                   else: "0%"}
               </p>
-              <p class="text-base-content/60 text-[var(--text-xs)]">No Results</p>
+              <p class="text-base-content/60 text-[var(--text-xs)]">{gettext("No Results")}</p>
             </div>
             <div class="text-center">
               <p class="text-info text-[var(--text-2xl)] font-bold">
@@ -303,7 +309,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
                   do: @search_stats.avg_results |> Decimal.to_float() |> Float.round(1),
                   else: 0}
               </p>
-              <p class="text-base-content/60 text-[var(--text-xs)]">Avg Results</p>
+              <p class="text-base-content/60 text-[var(--text-xs)]">{gettext("Avg Results")}</p>
             </div>
           </div>
 
@@ -311,14 +317,14 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
           <div class="gap-[var(--space-md)] grid grid-cols-1 lg:grid-cols-2">
             <div>
               <h4 class="text-base-content/80 mb-[var(--space-xs)] font-semibold">
-                Popular Searches
+                {gettext("Popular Searches")}
               </h4>
               <div class="overflow-x-auto">
                 <table class="table-sm table">
                   <thead>
                     <tr>
-                      <th>Query</th>
-                      <th class="text-right">Count</th>
+                      <th>{gettext("Query")}</th>
+                      <th class="text-right">{gettext("Count")}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -330,7 +336,9 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
                     <% end %>
                     <%= if @popular_searches == [] do %>
                       <tr>
-                        <td colspan="2" class="text-base-content/60 text-center">No searches yet</td>
+                        <td colspan="2" class="text-base-content/60 text-center">
+                          {gettext("No searches yet")}
+                        </td>
                       </tr>
                     <% end %>
                   </tbody>
@@ -339,16 +347,18 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
             </div>
 
             <div>
-              <h4 class="text-base-content/80 mb-[var(--space-xs)] font-semibold">Content Gaps</h4>
+              <h4 class="text-base-content/80 mb-[var(--space-xs)] font-semibold">
+                {gettext("Content Gaps")}
+              </h4>
               <p class="text-base-content/70 mb-[var(--space-xs)] text-[var(--text-xs)]">
-                Searches with no results
+                {gettext("Searches with no results")}
               </p>
               <div class="overflow-x-auto">
                 <table class="table-sm table">
                   <thead>
                     <tr>
-                      <th>Query</th>
-                      <th class="text-right">Attempts</th>
+                      <th>{gettext("Query")}</th>
+                      <th class="text-right">{gettext("Attempts")}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -360,7 +370,9 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
                     <% end %>
                     <%= if @no_result_searches == [] do %>
                       <tr>
-                        <td colspan="2" class="text-base-content/60 text-center">No gaps found</td>
+                        <td colspan="2" class="text-base-content/60 text-center">
+                          {gettext("No gaps found")}
+                        </td>
                       </tr>
                     <% end %>
                   </tbody>
@@ -390,7 +402,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
 
     {:ok,
      socket
-     |> assign(:page_title, "Admin Dashboard")
+     |> assign(:page_title, gettext("Admin Dashboard"))
      |> assign(:current_url, "/admin/dashboard")
      |> assign(:user_stats, user_stats)
      |> assign(:content_stats, content_stats)

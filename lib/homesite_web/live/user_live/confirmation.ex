@@ -26,16 +26,16 @@ defmodule HomesiteWeb.UserLive.Confirmation do
             <.button
               name={@form[:remember_me].name}
               value="true"
-              phx-disable-with="Confirming..."
+              phx-disable-with={gettext("Confirming...")}
               class="btn btn-primary w-full"
             >
-              Confirm and stay logged in
+              {gettext("Confirm and stay logged in")}
             </.button>
             <.button
-              phx-disable-with="Confirming..."
+              phx-disable-with={gettext("Confirming...")}
               class="btn btn-primary btn-soft mt-[var(--space-xs)] w-full"
             >
-              Confirm and log in only this time
+              {gettext("Confirm and log in only this time")}
             </.button>
           </.form>
 
@@ -50,29 +50,29 @@ defmodule HomesiteWeb.UserLive.Confirmation do
           >
             <input type="hidden" name={@form[:token].name} value={@form[:token].value} />
             <%= if @current_scope do %>
-              <.button phx-disable-with="Logging in..." class="btn btn-primary w-full">
-                Log in
+              <.button phx-disable-with={gettext("Logging in...")} class="btn btn-primary w-full">
+                {gettext("Log in")}
               </.button>
             <% else %>
               <.button
                 name={@form[:remember_me].name}
                 value="true"
-                phx-disable-with="Logging in..."
+                phx-disable-with={gettext("Logging in...")}
                 class="btn btn-primary w-full"
               >
-                Keep me logged in on this device
+                {gettext("Keep me logged in on this device")}
               </.button>
               <.button
-                phx-disable-with="Logging in..."
+                phx-disable-with={gettext("Logging in...")}
                 class="btn btn-primary btn-soft mt-[var(--space-xs)] w-full"
               >
-                Log me in only this time
+                {gettext("Log me in only this time")}
               </.button>
             <% end %>
           </.form>
 
           <p :if={!@user.confirmed_at} class="alert alert-outline mt-[var(--space-lg)]">
-            Tip: If you prefer passwords, you can enable them in the user settings.
+            {gettext("Tip: If you prefer passwords, you can enable them in the user settings.")}
           </p>
         </div>
       </div>
@@ -90,7 +90,7 @@ defmodule HomesiteWeb.UserLive.Confirmation do
     else
       {:ok,
        socket
-       |> put_flash(:error, "Magic link is invalid or it has expired.")
+       |> put_flash(:error, gettext("Magic link is invalid or it has expired."))
        |> push_navigate(to: ~p"/users/log-in")}
     end
   end
