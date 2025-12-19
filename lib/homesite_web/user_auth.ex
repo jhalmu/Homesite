@@ -49,8 +49,9 @@ defmodule HomesiteWeb.UserAuth do
   Logs the user out.
 
   It clears all session data for safety. See renew_session.
+  Accepts an optional flash message to display after logout.
   """
-  def log_out_user(conn) do
+  def log_out_user(conn, flash_message \\ nil) do
     user_token = get_session(conn, :user_token)
     user_token && Accounts.delete_user_session_token(user_token)
 
@@ -61,8 +62,14 @@ defmodule HomesiteWeb.UserAuth do
     conn
     |> renew_session(nil)
     |> delete_resp_cookie(@remember_me_cookie)
+    |> maybe_put_logout_flash(flash_message)
     |> redirect(to: ~p"/")
   end
+
+  defp maybe_put_logout_flash(conn, nil), do: conn
+
+  defp maybe_put_logout_flash(conn, message),
+    do: Phoenix.Controller.put_flash(conn, :info, message)
 
   @doc """
   Authenticates the user by looking into the session and remember me token.

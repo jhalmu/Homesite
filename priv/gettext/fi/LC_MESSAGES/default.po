@@ -103,7 +103,7 @@ msgstr "Kirjoitukset"
 #: lib/homesite_web/components/layouts.ex:447
 #: lib/homesite_web/live/dashboard_live/index.html.heex:338
 #: lib/homesite_web/live/notification_live/index.ex:41
-#: lib/homesite_web/live/project_live/stepped_form.ex:918
+#: lib/homesite_web/live/project_live/stepped_form.ex:1128
 #, elixir-autogen, elixir-format
 msgid "Settings"
 msgstr "Asetukset"
@@ -121,9 +121,9 @@ msgstr "Jokin meni pieleen!"
 #: lib/homesite_web/components/layouts.ex:85
 #: lib/homesite_web/components/layouts.ex:279
 #: lib/homesite_web/components/layouts.ex:393
-#: lib/homesite_web/live/portfolio_live/show.ex:264
+#: lib/homesite_web/live/portfolio_live/show.ex:268
 #: lib/homesite_web/live/post_live/form.ex:86
-#: lib/homesite_web/live/project_live/show.ex:152
+#: lib/homesite_web/live/project_live/show.ex:156
 #: lib/homesite_web/live/search_live/index.html.heex:125
 #, elixir-autogen, elixir-format
 msgid "Tags"
@@ -158,7 +158,7 @@ msgstr "Oletko varma?"
 msgid "Body"
 msgstr "Sisältö"
 
-#: lib/homesite_web/components/content_section_components.ex:841
+#: lib/homesite_web/components/content_section_components.ex:1017
 #: lib/homesite_web/live/admin_live/invitations/index.html.heex:61
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:219
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:162
@@ -186,7 +186,7 @@ msgstr "Peruuta"
 #: lib/homesite_web/live/feed_source_live/index.html.heex:82
 #: lib/homesite_web/live/feed_source_live/show.html.heex:49
 #: lib/homesite_web/live/project_live/index.ex:259
-#: lib/homesite_web/live/project_live/show.ex:119
+#: lib/homesite_web/live/project_live/show.ex:121
 #: lib/homesite_web/live/tag_live/show.ex:88
 #, elixir-autogen, elixir-format
 msgid "Edit"
@@ -261,7 +261,7 @@ msgstr "Osoitetunniste"
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:368
 #: lib/homesite_web/live/post_live/form.ex:21
-#: lib/homesite_web/live/project_live/stepped_form.ex:1394
+#: lib/homesite_web/live/project_live/stepped_form.ex:1684
 #, elixir-autogen, elixir-format
 msgid "Title"
 msgstr "Otsikko"
@@ -413,8 +413,8 @@ msgstr "Muokkaa tagia"
 
 #: lib/homesite_web/live/admin_live/analytics/index.html.heex:95
 #: lib/homesite_web/live/admin_live/users/index.ex:65
-#: lib/homesite_web/live/project_live/show.ex:187
-#: lib/homesite_web/live/project_live/stepped_form.ex:1333
+#: lib/homesite_web/live/project_live/show.ex:191
+#: lib/homesite_web/live/project_live/stepped_form.ex:1623
 #: lib/homesite_web/live/user_live/login.ex:72
 #: lib/homesite_web/live/user_live/login.ex:115
 #: lib/homesite_web/live/user_live/registration.ex:43
@@ -514,7 +514,7 @@ msgstr "Mastodon-tunnus"
 #: lib/homesite_web/live/dashboard_live/index.html.heex:520
 #: lib/homesite_web/live/feed_source_live/form.html.heex:28
 #: lib/homesite_web/live/feed_source_live/index.html.heex:27
-#: lib/homesite_web/live/project_live/stepped_form.ex:1303
+#: lib/homesite_web/live/project_live/stepped_form.ex:1593
 #: lib/homesite_web/live/tag_live/form.ex:18
 #, elixir-autogen, elixir-format
 msgid "Name"
@@ -563,7 +563,7 @@ msgstr "Profiili päivitetty onnistuneesti."
 #: lib/homesite_web/live/dashboard_live/index.html.heex:454
 #: lib/homesite_web/live/post_live/index.ex:83
 #: lib/homesite_web/live/project_live/index.ex:199
-#: lib/homesite_web/live/project_live/show.ex:109
+#: lib/homesite_web/live/project_live/show.ex:111
 #: lib/homesite_web/live/tag_live/index.ex:82
 #: lib/homesite_web/live/tag_live/show.ex:30
 #, elixir-autogen, elixir-format
@@ -810,9 +810,9 @@ msgstr "postilaatikkosivulla"
 msgid "to your account now."
 msgstr "tilillesi nyt."
 
-#: lib/homesite_web/components/content_section_components.ex:192
-#: lib/homesite_web/components/content_section_components.ex:294
-#: lib/homesite_web/components/content_section_components.ex:351
+#: lib/homesite_web/components/content_section_components.ex:231
+#: lib/homesite_web/components/content_section_components.ex:342
+#: lib/homesite_web/components/content_section_components.ex:400
 #: lib/homesite_web/components/layouts.ex:473
 #, elixir-autogen, elixir-format
 msgid "Language"
@@ -915,7 +915,7 @@ msgid "No posts yet. Create your first post to get started!"
 msgstr "Ei vielä kirjoituksia. Luo ensimmäinen kirjoitus päästäksesi alkuun!"
 
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:168
-#: lib/homesite_web/live/project_live/stepped_form.ex:1103
+#: lib/homesite_web/live/project_live/stepped_form.ex:1326
 #: lib/homesite_web/live/tag_live/form.ex:54
 #, elixir-autogen, elixir-format
 msgid "Description"
@@ -964,7 +964,8 @@ msgstr "Tagin luominen epäonnistui"
 #: lib/homesite_web/components/form_components.ex:158
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:350
 #: lib/homesite_web/live/post_live/form.ex:161
-#: lib/homesite_web/live/project_live/stepped_form.ex:1215
+#: lib/homesite_web/live/project_live/stepped_form.ex:1434
+#: lib/homesite_web/live/project_live/stepped_form.ex:1505
 #, elixir-autogen, elixir-format
 msgid "Create"
 msgstr "Luo"
@@ -1010,7 +1011,7 @@ msgstr "Etsi tageja tai kirjoita luodaksesi uusia"
 
 #: lib/homesite_web/components/form_components.ex:104
 #: lib/homesite_web/live/post_live/form.ex:119
-#: lib/homesite_web/live/project_live/stepped_form.ex:1182
+#: lib/homesite_web/live/project_live/stepped_form.ex:1472
 #, elixir-autogen, elixir-format
 msgid "Search or create tags..."
 msgstr "Etsi tai luo tageja..."
@@ -1027,7 +1028,7 @@ msgstr "Samankaltaisia tageja on jo olemassa:"
 
 #: lib/homesite_web/components/form_components.ex:172
 #: lib/homesite_web/live/post_live/form.ex:175
-#: lib/homesite_web/live/project_live/stepped_form.ex:1226
+#: lib/homesite_web/live/project_live/stepped_form.ex:1516
 #, elixir-autogen, elixir-format
 msgid "Similar tags exist:"
 msgstr "Samankaltaisia tageja:"
@@ -1095,8 +1096,8 @@ msgstr "Haluatko varmasti poistaa tämän UKK:n?"
 #: lib/homesite/media/project_template.ex:47
 #: lib/homesite/media/project_template.ex:210
 #: lib/homesite/media/project_template.ex:299
+#: lib/homesite_web/components/content_section_components.ex:617
 #: lib/homesite_web/live/faq_live/form.ex:21
-#: lib/homesite_web/live/project_live/show.ex:135
 #, elixir-autogen, elixir-format
 msgid "Category"
 msgstr "Kategoria"
@@ -1245,6 +1246,7 @@ msgstr "Käyttäjä-UKK:t"
 msgid "User FAQs are visible to everyone. Admin FAQs are only visible to administrators."
 msgstr "Käyttäjä-UKK:t ovat kaikkien nähtävissä. Ylläpitäjä-UKK:t ovat vain ylläpitäjien nähtävissä."
 
+#: lib/homesite_web/components/content_section_components.ex:574
 #: lib/homesite_web/components/form_components.ex:146
 #: lib/homesite_web/live/post_live/form.ex:150
 #, elixir-autogen, elixir-format
@@ -1498,8 +1500,8 @@ msgstr "Varaa käyttäjänimesi"
 msgid "Claim your username to create your personal homepage!"
 msgstr "Varaa käyttäjänimesi luodaksesi oman kotisivun!"
 
-#: lib/homesite_web/components/content_section_components.ex:824
-#: lib/homesite_web/components/content_section_components.ex:851
+#: lib/homesite_web/components/content_section_components.ex:995
+#: lib/homesite_web/components/content_section_components.ex:1027
 #: lib/homesite_web/live/post_live/form.ex:328
 #: lib/homesite_web/live/user_live/settings.ex:281
 #, elixir-autogen, elixir-format
@@ -1533,7 +1535,7 @@ msgstr "Tumma"
 #: lib/homesite_web/live/admin_live/feedback/index.ex:176
 #: lib/homesite_web/live/admin_live/feedback/index.ex:315
 #: lib/homesite_web/live/admin_live/moderation/violations.ex:231
-#: lib/homesite_web/live/project_live/show.ex:143
+#: lib/homesite_web/live/project_live/show.ex:147
 #, elixir-autogen, elixir-format
 msgid "Date"
 msgstr "Päivämäärä"
@@ -1794,7 +1796,7 @@ msgstr "Poista kirjanmerkki"
 msgid "Remove tag %{name}"
 msgstr "Poista tunniste %{name}"
 
-#: lib/homesite_web/components/content_section_components.ex:845
+#: lib/homesite_web/components/content_section_components.ex:1021
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:187
 #: lib/homesite_web/live/feed_folder_live/index.html.heex:63
 #, elixir-autogen, elixir-format
@@ -1811,7 +1813,7 @@ msgstr "Etsi tunnisteita"
 msgid "Set to current time"
 msgstr "Aseta nykyiseen aikaan"
 
-#: lib/homesite_web/live/portfolio_live/show.ex:188
+#: lib/homesite_web/live/portfolio_live/show.ex:190
 #: lib/homesite_web/live/user_live/profile.ex:233
 #: lib/homesite_web/live/user_live/settings.ex:271
 #, elixir-autogen, elixir-format
@@ -1843,7 +1845,7 @@ msgstr "Samankaltaisia %{type} olemassa:"
 msgid "Sources"
 msgstr "Lähteet"
 
-#: lib/homesite_web/components/content_section_components.ex:318
+#: lib/homesite_web/components/content_section_components.ex:366
 #: lib/homesite_web/live/admin_live/invitations/index.html.heex:91
 #: lib/homesite_web/live/admin_live/moderation/banners.ex:245
 #: lib/homesite_web/live/admin_live/moderation/reports.ex:163
@@ -2007,7 +2009,7 @@ msgstr "Tutustu Homesitesiin"
 msgid "Confidence"
 msgstr "Luotettavuus"
 
-#: lib/homesite_web/live/portfolio_live/show.ex:221
+#: lib/homesite_web/live/portfolio_live/show.ex:223
 #: lib/homesite_web/live/testimonial_live/show.ex:180
 #, elixir-autogen, elixir-format
 msgid "Copy Link"
@@ -2405,7 +2407,7 @@ msgstr "Olet saavuttanut kriittisen palautteen rajan. Ole hyvä ja jaa myös pos
 msgid "Your feedback helps us improve. Share your thoughts and help shape the future of Homesite."
 msgstr "Palautteesi auttaa meitä kehittymään. Jaa ajatuksesi ja auta muokkaamaan Homesiten tulevaisuutta."
 
-#: lib/homesite_web/live/portfolio_live/show.ex:255
+#: lib/homesite_web/live/portfolio_live/show.ex:259
 #: lib/homesite_web/live/testimonial_live/show.ex:191
 #, elixir-autogen, elixir-format
 msgid "by"
@@ -2421,7 +2423,7 @@ msgstr "päivää"
 msgid "Please fix the following errors:"
 msgstr "Korjaa seuraavat virheet:"
 
-#: lib/homesite_web/live/portfolio_live/show.ex:330
+#: lib/homesite_web/live/portfolio_live/show.ex:333
 #, elixir-autogen, elixir-format
 msgid "%{count} image(s)"
 msgstr "%{count} kuva(a)"
@@ -2456,8 +2458,8 @@ msgstr "Saatavilla olevat koot"
 #: lib/homesite_web/live/admin_live/moderation/bans.ex:100
 #: lib/homesite_web/live/admin_live/moderation/logs.ex:72
 #: lib/homesite_web/live/admin_live/moderation/suspensions.ex:125
-#: lib/homesite_web/live/portfolio_live/show.ex:236
-#: lib/homesite_web/live/project_live/stepped_form.ex:1001
+#: lib/homesite_web/live/portfolio_live/show.ex:238
+#: lib/homesite_web/live/project_live/stepped_form.ex:1219
 #, elixir-autogen, elixir-format
 msgid "Back"
 msgstr "Takaisin"
@@ -2520,11 +2522,6 @@ msgstr "Media poistettu onnistuneesti"
 msgid "No media items found matching \"%{query}\""
 msgstr "Hakua \"%{query}\" vastaavia mediatiedostoja ei löytynyt"
 
-#: lib/homesite_web/live/portfolio_live/show.ex:321
-#, elixir-autogen, elixir-format
-msgid "No media yet"
-msgstr "Ei mediaa vielä"
-
 #: lib/homesite_web/live/media_live/show.ex:99
 #, elixir-autogen, elixir-format
 msgid "Original Filename"
@@ -2536,7 +2533,7 @@ msgstr "Alkuperäinen tiedostonimi"
 #: lib/homesite_web/live/portfolio_live/index.ex:14
 #: lib/homesite_web/live/portfolio_live/index.ex:43
 #: lib/homesite_web/live/project_live/index.ex:196
-#: lib/homesite_web/live/project_live/show.ex:106
+#: lib/homesite_web/live/project_live/show.ex:108
 #, elixir-autogen, elixir-format
 msgid "Portfolio"
 msgstr "Portfolio"
@@ -2555,11 +2552,6 @@ msgstr "Hae otsikon tai kuvatekstin perusteella..."
 #, elixir-autogen, elixir-format
 msgid "Square"
 msgstr "Neliö"
-
-#: lib/homesite_web/live/portfolio_live/show.ex:323
-#, elixir-autogen, elixir-format
-msgid "This gallery is currently empty."
-msgstr "Tämä galleria on tyhjä."
 
 #: lib/homesite_web/live/media_live/show.ex:154
 #, elixir-autogen, elixir-format
@@ -2596,8 +2588,9 @@ msgstr "Artikkelikuva"
 msgid "No media available. Upload images in the Media Library first."
 msgstr "Ei mediaa saatavilla. Lataa ensin kuvia mediakirjastoon."
 
+#: lib/homesite_web/components/content_section_components.ex:550
 #: lib/homesite_web/live/post_live/form.ex:227
-#: lib/homesite_web/live/project_live/stepped_form.ex:1613
+#: lib/homesite_web/live/project_live/stepped_form.ex:1903
 #, elixir-autogen, elixir-format
 msgid "Remove"
 msgstr "Poista"
@@ -2642,33 +2635,33 @@ msgstr "Hakusana"
 msgid "View tag"
 msgstr "Näytä tagi"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1343
+#: lib/homesite_web/live/project_live/stepped_form.ex:1633
 #, elixir-autogen, elixir-format
 msgid "Add Collaborator"
 msgstr "Lisää yhteistyökumppani"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1416
+#: lib/homesite_web/live/project_live/stepped_form.ex:1706
 #, elixir-autogen, elixir-format
 msgid "Add Link"
 msgstr "Lisää linkki"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1134
+#: lib/homesite_web/live/project_live/stepped_form.ex:1357
 #, elixir-autogen, elixir-format
 msgid "Add context to help viewers understand your project. All fields are optional."
 msgstr "Lisää kontekstia, jotta katsojat ymmärtävät projektisi. Kaikki kentät ovat valinnaisia."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:931
+#: lib/homesite_web/live/project_live/stepped_form.ex:1141
 #, elixir-autogen, elixir-format
 msgid "Add more details to make your project stand out!"
 msgstr "Lisää tietoja, jotta projektisi erottuu joukosta!"
 
-#: lib/homesite_web/live/project_live/show.ex:100
-#: lib/homesite_web/live/project_live/stepped_form.ex:902
+#: lib/homesite_web/live/project_live/show.ex:102
+#: lib/homesite_web/live/project_live/stepped_form.ex:1112
 #, elixir-autogen, elixir-format
 msgid "Back to projects"
 msgstr "Takaisin projekteihin"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:909
+#: lib/homesite_web/live/project_live/stepped_form.ex:1119
 #, elixir-autogen, elixir-format
 msgid "Basics"
 msgstr "Perustiedot"
@@ -2689,30 +2682,30 @@ msgstr "Tätä mediaa ei voi poistaa, koska se on käytössä. Poista se ensin k
 msgid "Choose Files"
 msgstr "Valitse tiedostot"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:224
+#: lib/homesite_web/live/project_live/stepped_form.ex:238
 #, elixir-autogen, elixir-format
 msgid "Collaborator added"
 msgstr "Yhteistyökumppani lisätty"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:253
+#: lib/homesite_web/live/project_live/stepped_form.ex:267
 #, elixir-autogen, elixir-format
 msgid "Collaborator removed"
 msgstr "Yhteistyökumppani poistettu"
 
 #: lib/homesite/media/project_template.ex:307
 #: lib/homesite_web/live/admin_live/dashboard.ex:173
-#: lib/homesite_web/live/project_live/show.ex:166
-#: lib/homesite_web/live/project_live/stepped_form.ex:1263
+#: lib/homesite_web/live/project_live/show.ex:170
+#: lib/homesite_web/live/project_live/stepped_form.ex:1553
 #, elixir-autogen, elixir-format
 msgid "Collaborators"
 msgstr "Yhteistyökumppanit"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1312
+#: lib/homesite_web/live/project_live/stepped_form.ex:1602
 #, elixir-autogen, elixir-format
 msgid "Contact (URL or email, optional)"
 msgstr "Yhteystieto (URL tai sähköposti, valinnainen)"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1526
+#: lib/homesite_web/live/project_live/stepped_form.ex:1816
 #, elixir-autogen, elixir-format
 msgid "Control how your project appears publicly. All settings are optional."
 msgstr "Hallitse projektin julkista näkyvyyttä. Kaikki asetukset ovat valinnaisia."
@@ -2727,13 +2720,13 @@ msgstr "Luo ensimmäinen projektisi"
 msgid "Create your first project to organize your media and showcase your work."
 msgstr "Luo ensimmäinen projektisi järjestääksesi mediasi ja esitelläksesi työsi."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1257
+#: lib/homesite_web/live/project_live/stepped_form.ex:1547
 #, elixir-autogen, elixir-format
 msgid "Credit collaborators and add related links. All fields are optional."
 msgstr "Lisää yhteistyökumppanit ja aiheeseen liittyvät linkit. Kaikki kentät ovat valinnaisia."
 
 #: lib/homesite_web/live/project_live/stepped_form.ex:24
-#: lib/homesite_web/live/project_live/stepped_form.ex:101
+#: lib/homesite_web/live/project_live/stepped_form.ex:126
 #, elixir-autogen, elixir-format
 msgid "Edit Project"
 msgstr "Muokkaa projektia"
@@ -2743,32 +2736,32 @@ msgstr "Muokkaa projektia"
 msgid "Explore our curated collection of projects"
 msgstr "Tutustu kuratoituun projektikokoelmaamme"
 
-#: lib/homesite_web/live/portfolio_live/show.ex:228
+#: lib/homesite_web/live/portfolio_live/show.ex:230
 #, elixir-autogen, elixir-format
 msgid "Export HTML"
 msgstr "Vie HTML:nä"
 
-#: lib/homesite_web/live/portfolio_live/show.ex:164
+#: lib/homesite_web/live/portfolio_live/show.ex:166
 #, elixir-autogen, elixir-format
 msgid "Exporting HTML..."
 msgstr "Viedään HTML:nä..."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:227
+#: lib/homesite_web/live/project_live/stepped_form.ex:241
 #, elixir-autogen, elixir-format
 msgid "Failed to add collaborator"
 msgstr "Yhteistyökumppanin lisääminen epäonnistui"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:291
+#: lib/homesite_web/live/project_live/stepped_form.ex:305
 #, elixir-autogen, elixir-format
 msgid "Failed to add link"
 msgstr "Linkin lisääminen epäonnistui"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:256
+#: lib/homesite_web/live/project_live/stepped_form.ex:270
 #, elixir-autogen, elixir-format
 msgid "Failed to remove collaborator"
 msgstr "Yhteistyökumppanin poistaminen epäonnistui"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:316
+#: lib/homesite_web/live/project_live/stepped_form.ex:330
 #, elixir-autogen, elixir-format
 msgid "Failed to remove link"
 msgstr "Linkin poistaminen epäonnistui"
@@ -2788,17 +2781,17 @@ msgstr "Tiedosto on liian suuri (max 5MB)"
 msgid "File type not accepted (use JPG, PNG, GIF, or WebP)"
 msgstr "Tiedostotyyppiä ei hyväksytä (käytä JPG, PNG, GIF tai WebP)"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:288
+#: lib/homesite_web/live/project_live/stepped_form.ex:302
 #, elixir-autogen, elixir-format
 msgid "Link added"
 msgstr "Linkki lisätty"
 
-#: lib/homesite_web/live/portfolio_live/show.ex:152
+#: lib/homesite_web/live/portfolio_live/show.ex:154
 #, elixir-autogen, elixir-format
 msgid "Link copied to clipboard"
 msgstr "Linkki kopioitu leikepöydälle"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:313
+#: lib/homesite_web/live/project_live/stepped_form.ex:327
 #, elixir-autogen, elixir-format
 msgid "Link removed"
 msgstr "Linkki poistettu"
@@ -2808,27 +2801,27 @@ msgstr "Linkki poistettu"
 msgid "Load More Media"
 msgstr "Lataa lisää mediaa"
 
-#: lib/homesite_web/live/portfolio_live/index.ex:126
+#: lib/homesite_web/live/portfolio_live/index.ex:128
 #, elixir-autogen, elixir-format
 msgid "Load More Projects"
 msgstr "Lataa lisää projekteja"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1529
+#: lib/homesite_web/live/project_live/stepped_form.ex:1819
 #, elixir-autogen, elixir-format
 msgid "Make this project public"
 msgstr "Tee projektista julkinen"
 
-#: lib/homesite_web/live/project_live/show.ex:221
+#: lib/homesite_web/live/project_live/show.ex:237
 #, elixir-autogen, elixir-format
 msgid "Media"
 msgstr "Media"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:912
+#: lib/homesite_web/live/project_live/stepped_form.ex:1122
 #, elixir-autogen, elixir-format
 msgid "Metadata"
 msgstr "Metatiedot"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1243
+#: lib/homesite_web/live/project_live/stepped_form.ex:1533
 #, elixir-autogen, elixir-format
 msgid "Metadata helps viewers discover and understand your work. Add as much or as little as you want."
 msgstr "Metatiedot auttavat katsojia löytämään ja ymmärtämään työtäsi. Lisää niin paljon tai vähän kuin haluat."
@@ -2836,28 +2829,28 @@ msgstr "Metatiedot auttavat katsojia löytämään ja ymmärtämään työtäsi.
 #: lib/homesite_web/live/dashboard_live/index.html.heex:323
 #: lib/homesite_web/live/project_live/index.ex:125
 #: lib/homesite_web/live/project_live/stepped_form.ex:27
-#: lib/homesite_web/live/project_live/stepped_form.ex:79
+#: lib/homesite_web/live/project_live/stepped_form.ex:104
 #, elixir-autogen, elixir-format
 msgid "New Project"
 msgstr "Uusi projekti"
 
 #: lib/homesite_web/live/admin_live/users/index.ex:163
-#: lib/homesite_web/live/project_live/stepped_form.ex:1017
+#: lib/homesite_web/live/project_live/stepped_form.ex:1235
 #, elixir-autogen, elixir-format
 msgid "Next"
 msgstr "Seuraava"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1268
+#: lib/homesite_web/live/project_live/stepped_form.ex:1558
 #, elixir-autogen, elixir-format
 msgid "No collaborators added yet. Add team members who worked on this project."
 msgstr "Ei yhteistyökumppaneita vielä. Lisää tiimin jäsenet, jotka työskentelivät tässä projektissa."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1357
+#: lib/homesite_web/live/project_live/stepped_form.ex:1647
 #, elixir-autogen, elixir-format
 msgid "No links added yet. Add client websites, press coverage, or related projects."
 msgstr "Ei linkkejä vielä. Lisää asiakkaiden verkkosivustot, lehdistöartikkelit tai aiheeseen liittyvät projektit."
 
-#: lib/homesite_web/live/project_live/show.ex:285
+#: lib/homesite_web/live/project_live/show.ex:301
 #, elixir-autogen, elixir-format
 msgid "No media items added to this project yet."
 msgstr "Projektiin ei ole vielä lisätty mediaa."
@@ -2872,27 +2865,27 @@ msgstr "Ei mediaa vielä. Lataa kuvia projekteihin aloittaaksesi!"
 msgid "No projects yet"
 msgstr "Ei projekteja vielä"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1098
+#: lib/homesite_web/live/project_live/stepped_form.ex:1321
 #, elixir-autogen, elixir-format
 msgid "Project Name"
 msgstr "Projektin nimi"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:929
+#: lib/homesite_web/live/project_live/stepped_form.ex:1139
 #, elixir-autogen, elixir-format
 msgid "Project completion"
 msgstr "Projektin valmius"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:851
+#: lib/homesite_web/live/project_live/stepped_form.ex:1061
 #, elixir-autogen, elixir-format
 msgid "Project created successfully"
 msgstr "Projekti luotu onnistuneesti"
 
-#: lib/homesite_web/live/portfolio_live/show.ex:38
+#: lib/homesite_web/live/portfolio_live/show.ex:40
 #, elixir-autogen, elixir-format
 msgid "Project not found"
 msgstr "Projektia ei löytynyt"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:872
+#: lib/homesite_web/live/project_live/stepped_form.ex:1082
 #, elixir-autogen, elixir-format
 msgid "Project updated successfully"
 msgstr "Projekti päivitetty onnistuneesti"
@@ -2907,74 +2900,74 @@ msgstr "Projekti päivitetty onnistuneesti"
 msgid "Projects"
 msgstr "Projektit"
 
-#: lib/homesite_web/live/portfolio_live/show.ex:297
-#: lib/homesite_web/live/project_live/show.ex:200
-#: lib/homesite_web/live/project_live/stepped_form.ex:1352
+#: lib/homesite_web/live/portfolio_live/show.ex:301
+#: lib/homesite_web/live/project_live/show.ex:204
+#: lib/homesite_web/live/project_live/stepped_form.ex:1642
 #, elixir-autogen, elixir-format
 msgid "Related Links"
 msgstr "Aiheeseen liittyvät linkit"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1287
+#: lib/homesite_web/live/project_live/stepped_form.ex:1577
 #, elixir-autogen, elixir-format
 msgid "Remove this collaborator?"
 msgstr "Poista tämä yhteistyökumppani?"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1378
+#: lib/homesite_web/live/project_live/stepped_form.ex:1668
 #, elixir-autogen, elixir-format
 msgid "Remove this link?"
 msgstr "Poista tämä linkki?"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1027
+#: lib/homesite_web/live/project_live/stepped_form.ex:1245
 #, elixir-autogen, elixir-format
 msgid "Save Project"
 msgstr "Tallenna projekti"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:235
+#: lib/homesite_web/live/project_live/stepped_form.ex:249
 #, elixir-autogen, elixir-format
 msgid "Save the project first, then you can add collaborators"
 msgstr "Tallenna projekti ensin, sitten voit lisätä yhteistyökumppaneita"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:296
+#: lib/homesite_web/live/project_live/stepped_form.ex:310
 #, elixir-autogen, elixir-format
 msgid "Save the project first, then you can add links"
 msgstr "Tallenna projekti ensin, sitten voit lisätä linkkejä"
 
-#: lib/homesite_web/live/portfolio_live/show.ex:209
+#: lib/homesite_web/live/portfolio_live/show.ex:211
 #, elixir-autogen, elixir-format
 msgid "Share on LinkedIn"
 msgstr "Jaa LinkedInissä"
 
-#: lib/homesite_web/live/portfolio_live/show.ex:215
+#: lib/homesite_web/live/portfolio_live/show.ex:217
 #, elixir-autogen, elixir-format
 msgid "Share via Email"
 msgstr "Jaa sähköpostilla"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1534
+#: lib/homesite_web/live/project_live/stepped_form.ex:1824
 #, elixir-autogen, elixir-format
 msgid "Show in portfolio gallery"
 msgstr "Näytä portfoliogalleriassa"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1066
+#: lib/homesite_web/live/project_live/stepped_form.ex:1289
 #, elixir-autogen, elixir-format
 msgid "Start with the essential information about your project."
 msgstr "Aloita projektin perustiedoista."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1064
+#: lib/homesite_web/live/project_live/stepped_form.ex:1287
 #, elixir-autogen, elixir-format
 msgid "Step 1: Project Basics"
 msgstr "Vaihe 1: Perustiedot"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1132
+#: lib/homesite_web/live/project_live/stepped_form.ex:1355
 #, elixir-autogen, elixir-format
 msgid "Step 2: Project Metadata"
 msgstr "Vaihe 2: Metatiedot"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1255
+#: lib/homesite_web/live/project_live/stepped_form.ex:1545
 #, elixir-autogen, elixir-format
 msgid "Step 3: Team & Links"
 msgstr "Vaihe 3: Tiimi ja linkit"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1524
+#: lib/homesite_web/live/project_live/stepped_form.ex:1814
 #, elixir-autogen, elixir-format
 msgid "Step 4: Visibility & Settings"
 msgstr "Vaihe 4: Näkyvyys ja asetukset"
@@ -2984,7 +2977,7 @@ msgstr "Vaihe 4: Näkyvyys ja asetukset"
 msgid "Successfully uploaded %{count} file(s)"
 msgstr "%{count} tiedosto(a) ladattu onnistuneesti"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:915
+#: lib/homesite_web/live/project_live/stepped_form.ex:1125
 #, elixir-autogen, elixir-format
 msgid "Team"
 msgstr "Tiimi"
@@ -2994,7 +2987,7 @@ msgstr "Tiimi"
 msgid "This media item is not used in any projects."
 msgstr "Tätä mediaa ei käytetä missään projektissa."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1114
+#: lib/homesite_web/live/project_live/stepped_form.ex:1337
 #, elixir-autogen, elixir-format
 msgid "Tip: Give your project a clear, descriptive name. You can add more details in the next steps."
 msgstr "Vinkki: Anna projektillesi selkeä ja kuvaava nimi. Voit lisätä yksityiskohtia seuraavissa vaiheissa."
@@ -3004,7 +2997,7 @@ msgstr "Vinkki: Anna projektillesi selkeä ja kuvaava nimi. Voit lisätä yksity
 msgid "Too many files (max 10)"
 msgstr "Liian monta tiedostoa (max 10)"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1403
+#: lib/homesite_web/live/project_live/stepped_form.ex:1693
 #, elixir-autogen, elixir-format
 msgid "URL (https://...)"
 msgstr "URL (https://...)"
@@ -3019,7 +3012,7 @@ msgstr "Lataus epäonnistui"
 msgid "Used in %{count} project(s):"
 msgstr "Käytössä %{count} projektissa:"
 
-#: lib/homesite_web/live/project_live/show.ex:179
+#: lib/homesite_web/live/project_live/show.ex:183
 #: lib/homesite_web/live/user_live/profile.ex:106
 #, elixir-autogen, elixir-format
 msgid "Website"
@@ -3027,7 +3020,7 @@ msgstr "Verkkosivusto"
 
 #: lib/homesite_web/live/page_live/home.html.heex:119
 #: lib/homesite_web/live/project_live/index.ex:215
-#: lib/homesite_web/live/project_live/show.ex:113
+#: lib/homesite_web/live/project_live/show.ex:115
 #, elixir-autogen, elixir-format
 msgid "complete"
 msgstr "valmis"
@@ -3238,7 +3231,7 @@ msgstr "Aikavyöhyke"
 msgid "Upload Media"
 msgstr "Lataa media"
 
-#: lib/homesite_web/live/portfolio_live/show.ex:343
+#: lib/homesite_web/live/portfolio_live/show.ex:346
 #, elixir-autogen, elixir-format
 msgid "View %{title} in fullscreen"
 msgstr "Näytä %{title} koko näytöllä"
@@ -3268,7 +3261,7 @@ msgstr "Et ole vielä luonut yhtään projektia."
 msgid "Your timezone affects how dates and times are displayed. The 'Now' button when creating posts will use this timezone."
 msgstr "Aikavyöhykkeesi vaikuttaa päivämäärien ja aikojen näyttämiseen. 'Nyt'-painike kirjoituksia luodessa käyttää tätä aikavyöhykettä."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1499
+#: lib/homesite_web/live/project_live/stepped_form.ex:1789
 #, elixir-autogen, elixir-format
 msgid "All your blog posts are already linked to this project."
 msgstr "Kaikki blogikirjoituksesi on jo linkitetty tähän projektiin."
@@ -3337,12 +3330,12 @@ msgstr "Estetäänkö tämä käyttäjä? Et näe hänen viestejään."
 msgid "Block user"
 msgstr "Estä käyttäjä"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:760
+#: lib/homesite_web/live/project_live/stepped_form.ex:970
 #, elixir-autogen, elixir-format
 msgid "Blog post linked"
 msgstr "Blogikirjoitus linkitetty"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:365
+#: lib/homesite_web/live/project_live/stepped_form.ex:379
 #, elixir-autogen, elixir-format
 msgid "Blog post unlinked"
 msgstr "Blogikirjoituksen linkitys poistettu"
@@ -3355,7 +3348,7 @@ msgstr "Blogikirjoituksen linkitys poistettu"
 msgid "Chat"
 msgstr "Chat"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1094
+#: lib/homesite_web/live/project_live/stepped_form.ex:1317
 #, elixir-autogen, elixir-format
 msgid "Choose a project type to get customized labels and suggestions."
 msgstr "Valitse projektityyppi saadaksesi mukautettuja otsikoita ja ehdotuksia."
@@ -3365,7 +3358,7 @@ msgstr "Valitse projektityyppi saadaksesi mukautettuja otsikoita ja ehdotuksia."
 msgid "Choose avatar image file"
 msgstr "Valitse avatar-kuvatiedosto"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:203
+#: lib/homesite_web/live/project_live/stepped_form.ex:217
 #, elixir-autogen, elixir-format
 msgid "Collaborator name is required"
 msgstr "Yhteistyökumppanin nimi on pakollinen"
@@ -3411,7 +3404,7 @@ msgstr "Projektin arkistointi epäonnistui"
 msgid "Failed to delete project"
 msgstr "Projektin poistaminen epäonnistui"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:763
+#: lib/homesite_web/live/project_live/stepped_form.ex:973
 #, elixir-autogen, elixir-format
 msgid "Failed to link blog post"
 msgstr "Blogikirjoituksen linkittäminen epäonnistui"
@@ -3432,12 +3425,12 @@ msgid "IRC-style channels for real-time discussion"
 msgstr "IRC-tyyliset kanavat reaaliaikaiseen keskusteluun"
 
 #: lib/homesite_web/live/admin_live/invitations/index.html.heex:123
-#: lib/homesite_web/live/project_live/stepped_form.ex:1489
+#: lib/homesite_web/live/project_live/stepped_form.ex:1779
 #, elixir-autogen, elixir-format
 msgid "Link"
 msgstr "Linkki"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:265
+#: lib/homesite_web/live/project_live/stepped_form.ex:279
 #, elixir-autogen, elixir-format
 msgid "Link title and URL are required"
 msgstr "Linkin otsikko ja URL ovat pakollisia"
@@ -3467,12 +3460,12 @@ msgstr "Mykistetäänkö käyttäjä 10 minuutiksi?"
 msgid "No archived projects"
 msgstr "Ei arkistoituja projekteja"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1495
+#: lib/homesite_web/live/project_live/stepped_form.ex:1785
 #, elixir-autogen, elixir-format
 msgid "No blog posts available to link. Create some blog posts first."
 msgstr "Ei linkitettäviä blogikirjoituksia. Luo ensin blogikirjoituksia."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1435
+#: lib/homesite_web/live/project_live/stepped_form.ex:1725
 #, elixir-autogen, elixir-format
 msgid "No blog posts linked. Connect your project to related articles."
 msgstr "Ei linkitettyjä blogikirjoituksia. Yhdistä projektisi liittyviin artikkeleihin."
@@ -3482,7 +3475,7 @@ msgstr "Ei linkitettyjä blogikirjoituksia. Yhdistä projektisi liittyviin artik
 msgid "No channels available yet."
 msgstr "Ei vielä kanavia saatavilla."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1327
+#: lib/homesite_web/live/project_live/stepped_form.ex:1617
 #, elixir-autogen, elixir-format
 msgid "No contact type"
 msgstr "Ei yhteystietotyyppiä"
@@ -3508,17 +3501,17 @@ msgstr "Ei valtuuksia"
 msgid "Only portfolios with images are shown here. Add media items to your projects to display them."
 msgstr "Vain portfoliot joissa on kuvia näytetään täällä. Lisää mediaa projekteihisi näyttääksesi ne."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:336
+#: lib/homesite_web/live/project_live/stepped_form.ex:350
 #, elixir-autogen, elixir-format
 msgid "Please select a blog post"
 msgstr "Valitse blogikirjoitus"
 
-#: lib/homesite_web/components/media_components.ex:261
+#: lib/homesite_web/components/media_components.ex:263
 #, elixir-autogen, elixir-format
 msgid "Project"
 msgstr "Projekti"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1072
+#: lib/homesite_web/live/project_live/stepped_form.ex:1295
 #, elixir-autogen, elixir-format
 msgid "Project Type"
 msgstr "Projektityyppi"
@@ -3538,7 +3531,7 @@ msgstr "Projekti poistettu pysyvästi"
 msgid "Project restored"
 msgstr "Projekti palautettu"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1141
+#: lib/homesite_web/live/project_live/stepped_form.ex:1364
 #, elixir-autogen, elixir-format
 msgid "Project type:"
 msgstr "Projektityyppi:"
@@ -3553,12 +3546,12 @@ msgstr "Projektit: %{name}"
 msgid "Projects you archive will appear here."
 msgstr "Arkistoimasi projektit näkyvät täällä."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1425
+#: lib/homesite_web/live/project_live/stepped_form.ex:1715
 #, elixir-autogen, elixir-format
 msgid "Related Blog Posts"
 msgstr "Liittyvät blogikirjoitukset"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1456
+#: lib/homesite_web/live/project_live/stepped_form.ex:1746
 #, elixir-autogen, elixir-format
 msgid "Remove this blog post from the project?"
 msgstr "Poistetaanko tämä blogikirjoitus projektista?"
@@ -3568,27 +3561,27 @@ msgstr "Poistetaanko tämä blogikirjoitus projektista?"
 msgid "Restore"
 msgstr "Palauta"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1430
+#: lib/homesite_web/live/project_live/stepped_form.ex:1720
 #, elixir-autogen, elixir-format
 msgid "Save the project first to link blog posts."
 msgstr "Tallenna projekti ensin linkittääksesi blogikirjoituksia."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1511
+#: lib/homesite_web/live/project_live/stepped_form.ex:1801
 #, elixir-autogen, elixir-format
 msgid "Save your project first to add collaborators, links, and blog posts. You can come back to this step after creating the project."
 msgstr "Tallenna projekti ensin lisätäksesi yhteistyökumppaneita, linkkejä ja blogikirjoituksia. Voit palata tähän vaiheeseen projektin luomisen jälkeen."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1475
+#: lib/homesite_web/live/project_live/stepped_form.ex:1765
 #, elixir-autogen, elixir-format
 msgid "Select a blog post to link..."
 msgstr "Valitse linkitettävä blogikirjoitus..."
 
-#: lib/homesite_web/live/portfolio_live/show.ex:197
+#: lib/homesite_web/live/portfolio_live/show.ex:199
 #, elixir-autogen, elixir-format
 msgid "Share on Bluesky"
 msgstr "Jaa Blueskyssa"
 
-#: lib/homesite_web/live/portfolio_live/show.ex:203
+#: lib/homesite_web/live/portfolio_live/show.ex:205
 #, elixir-autogen, elixir-format
 msgid "Share on Mastodon"
 msgstr "Jaa Mastodonissa"
@@ -3603,7 +3596,7 @@ msgstr "Näytetään arkistoidut projektit. Nämä on piilotettu päälistaltasi
 msgid "Type a message..."
 msgstr "Kirjoita viesti..."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1330
+#: lib/homesite_web/live/project_live/stepped_form.ex:1620
 #, elixir-autogen, elixir-format
 msgid "URL"
 msgstr "URL"
@@ -5033,311 +5026,312 @@ msgstr "Versio"
 msgid "Version, build info, and changelog"
 msgstr "Versio, käännöstiedot ja muutosloki"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1718
+#: lib/homesite_web/live/project_live/stepped_form.ex:2008
 #, elixir-autogen, elixir-format
 msgid "Add Gallery Images"
 msgstr "Lisää galleriakauvat"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1677
+#: lib/homesite_web/live/project_live/stepped_form.ex:1967
 #, elixir-autogen, elixir-format
 msgid "Add Images"
 msgstr "Lisää kuvia"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1558
+#: lib/homesite_web/live/project_live/stepped_form.ex:1848
 #, elixir-autogen, elixir-format
 msgid "Add cover art or related imagery."
 msgstr "Lisää kansitaide tai aiheeseen liittyvää kuvitusta."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1562
+#: lib/homesite_web/live/project_live/stepped_form.ex:1852
 #, elixir-autogen, elixir-format
 msgid "Add images to showcase your project."
 msgstr "Lisää kuvia projektin esittelemiseksi."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1574
+#: lib/homesite_web/live/project_live/stepped_form.ex:1864
 #, elixir-autogen, elixir-format
 msgid "Add images to your project gallery."
 msgstr "Lisää kuvia projektin galleriaan."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1556
+#: lib/homesite_web/live/project_live/stepped_form.ex:1846
 #, elixir-autogen, elixir-format
 msgid "Add your best shots. First image becomes cover."
 msgstr "Lisää parhaat kuvasi. Ensimmäisestä kuvasta tulee kansikuva."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1559
+#: lib/homesite_web/live/project_live/stepped_form.ex:1849
 #, elixir-autogen, elixir-format
 msgid "Book covers and interior shots."
 msgstr "Kirjan kansia ja sisäsivuja."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1609
+#: lib/homesite_web/live/project_live/stepped_form.ex:1899
 #, elixir-autogen, elixir-format
 msgid "Change"
 msgstr "Vaihda"
 
-#: lib/homesite_web/components/content_section_components.ex:438
-#: lib/homesite_web/components/content_section_components.ex:751
-#: lib/homesite_web/live/project_live/stepped_form.ex:921
+#: lib/homesite_web/components/content_section_components.ex:487
+#: lib/homesite_web/components/content_section_components.ex:920
+#: lib/homesite_web/live/project_live/show.ex:225
+#: lib/homesite_web/live/project_live/stepped_form.ex:1131
 #, elixir-autogen, elixir-format
 msgid "Content"
 msgstr "Sisältö"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1587
+#: lib/homesite_web/live/project_live/stepped_form.ex:1877
 #, elixir-autogen, elixir-format
 msgid "Cover Image"
 msgstr "Kansikuva"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:499
+#: lib/homesite_web/live/project_live/stepped_form.ex:578
 #, elixir-autogen, elixir-format
 msgid "Cover image removed"
 msgstr "Kansikuva poistettu"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:482
+#: lib/homesite_web/live/project_live/stepped_form.ex:561
 #, elixir-autogen, elixir-format
 msgid "Cover image updated"
 msgstr "Kansikuva päivitetty"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1040
-#: lib/homesite_web/live/project_live/stepped_form.ex:1773
+#: lib/homesite_web/live/project_live/stepped_form.ex:1258
+#: lib/homesite_web/live/project_live/stepped_form.ex:2063
 #, elixir-autogen, elixir-format
 msgid "Done"
 msgstr "Valmis"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:451
-#, elixir-autogen, elixir-format, fuzzy
+#: lib/homesite_web/live/project_live/stepped_form.ex:465
+#, elixir-autogen, elixir-format
 msgid "Failed to create tag"
-msgstr "Mallin luominen epäonnistui"
+msgstr "Tagin luominen epäonnistui"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:502
-#, elixir-autogen, elixir-format, fuzzy
+#: lib/homesite_web/live/project_live/stepped_form.ex:581
+#, elixir-autogen, elixir-format
 msgid "Failed to remove cover image"
-msgstr "Linkin poistaminen epäonnistui"
+msgstr "Kansikuvan poistaminen epäonnistui"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:485
-#, elixir-autogen, elixir-format, fuzzy
+#: lib/homesite_web/live/project_live/stepped_form.ex:564
+#, elixir-autogen, elixir-format
 msgid "Failed to update cover image"
-msgstr "Asetuksen päivittäminen epäonnistui"
+msgstr "Kansikuvan päivittäminen epäonnistui"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1638
+#: lib/homesite_web/live/project_live/stepped_form.ex:1928
 #, elixir-autogen, elixir-format
 msgid "Gallery Images"
 msgstr "Galleriakuvat"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1620
+#: lib/homesite_web/live/project_live/stepped_form.ex:1910
 #, elixir-autogen, elixir-format
 msgid "No cover image selected. The first gallery image will be used as cover."
 msgstr "Ei kansikuvaa valittu. Ensimmäistä galleriakuvaa käytetään kansikuvana."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1666
+#: lib/homesite_web/live/project_live/stepped_form.ex:1956
 #, elixir-autogen, elixir-format
 msgid "No images in gallery yet. Add images from your media library."
 msgstr "Galleriassa ei vielä kuvia. Lisää kuvia mediakirjastostasi."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1762
-#, elixir-autogen, elixir-format, fuzzy
+#: lib/homesite_web/live/project_live/stepped_form.ex:2052
+#, elixir-autogen, elixir-format
 msgid "No media items yet."
-msgstr "Ei vielä kirjanmerkkejä."
+msgstr "Ei vielä mediasisältöä."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1561
+#: lib/homesite_web/live/project_live/stepped_form.ex:1851
 #, elixir-autogen, elixir-format
 msgid "Posters, stills, or behind-the-scenes."
 msgstr ""
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1560
+#: lib/homesite_web/live/project_live/stepped_form.ex:1850
 #, elixir-autogen, elixir-format
 msgid "Product photos from multiple angles."
 msgstr ""
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:813
+#: lib/homesite_web/live/project_live/stepped_form.ex:1023
 #, elixir-autogen, elixir-format
 msgid "Project created. Now add content!"
 msgstr ""
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:838
+#: lib/homesite_web/live/project_live/stepped_form.ex:1048
 #, elixir-autogen, elixir-format
 msgid "Project saved. Now add content!"
 msgstr ""
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1540
+#: lib/homesite_web/live/project_live/stepped_form.ex:1830
 #, elixir-autogen, elixir-format
 msgid "Ready to save!"
 msgstr "Valmis tallennettavaksi!"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1035
+#: lib/homesite_web/live/project_live/stepped_form.ex:1253
 #, elixir-autogen, elixir-format
 msgid "Save & Add Content"
 msgstr "Tallenna & lisää sisältöä"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1542
+#: lib/homesite_web/live/project_live/stepped_form.ex:1832
 #, elixir-autogen, elixir-format
 msgid "Save your project, or save and continue to add images and content."
 msgstr "Tallenna projekti tai tallenna ja jatka lisäämään kuvia ja sisältöä."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1557
+#: lib/homesite_web/live/project_live/stepped_form.ex:1847
 #, elixir-autogen, elixir-format
 msgid "Screenshots, architecture diagrams, or demo GIFs work great."
 msgstr ""
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1629
-#: lib/homesite_web/live/project_live/stepped_form.ex:1716
-#, elixir-autogen, elixir-format, fuzzy
+#: lib/homesite_web/live/project_live/stepped_form.ex:1919
+#: lib/homesite_web/live/project_live/stepped_form.ex:2006
+#, elixir-autogen, elixir-format
 msgid "Select Cover Image"
-msgstr "Valitse kuva"
+msgstr "Valitse kansikuva"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1013
-#: lib/homesite_web/live/project_live/stepped_form.ex:1023
+#: lib/homesite_web/live/project_live/stepped_form.ex:1231
+#: lib/homesite_web/live/project_live/stepped_form.ex:1241
 #, elixir-autogen, elixir-format
 msgid "Skip to Content"
 msgstr "Siirry sisältöön"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1572
+#: lib/homesite_web/live/project_live/stepped_form.ex:1862
 #, elixir-autogen, elixir-format
 msgid "Step 5: Content"
 msgstr "Vaihe 5: Sisältö"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:447
+#: lib/homesite_web/live/project_live/stepped_form.ex:461
 #, elixir-autogen, elixir-format
 msgid "Tag already selected"
 msgstr "Tagi on jo valittu"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1764
+#: lib/homesite_web/live/project_live/stepped_form.ex:2054
 #, elixir-autogen, elixir-format
 msgid "Upload some images first."
 msgstr "Lataa ensin kuvia."
 
-#: lib/homesite_web/live/portfolio_live/show.ex:277
+#: lib/homesite_web/live/portfolio_live/show.ex:281
 #, elixir-autogen, elixir-format
 msgid "With"
 msgstr "Yhteistyössä:"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1640
+#: lib/homesite_web/live/project_live/stepped_form.ex:1930
 #, elixir-autogen, elixir-format
 msgid "image"
 msgid_plural "images"
 msgstr[0] "kuva"
 msgstr[1] "kuvaa"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1201
-#, elixir-autogen, elixir-format, fuzzy
+#: lib/homesite_web/live/project_live/stepped_form.ex:1491
+#, elixir-autogen, elixir-format
 msgid "use"
 msgid_plural "uses"
-msgstr[0] "Estä"
-msgstr[1] "Estä"
+msgstr[0] "käyttökerta"
+msgstr[1] "käyttökertaa"
 
-#: lib/homesite_web/live/project_live/show.ex:40
-#, elixir-autogen, elixir-format, fuzzy
+#: lib/homesite_web/live/project_live/show.ex:41
+#, elixir-autogen, elixir-format
 msgid "Could not remove image"
 msgstr "Kuvan poistaminen epäonnistui"
 
-#: lib/homesite_web/live/project_live/show.ex:59
+#: lib/homesite_web/live/project_live/show.ex:60
 #, elixir-autogen, elixir-format
 msgid "Could not reorder image"
 msgstr "Kuvan järjestäminen epäonnistui"
 
-#: lib/homesite_web/live/project_live/show.ex:37
+#: lib/homesite_web/live/project_live/show.ex:38
 #, elixir-autogen, elixir-format
 msgid "Image removed from project"
 msgstr "Kuva poistettu projektista"
 
-#: lib/homesite_web/live/project_live/show.ex:258
+#: lib/homesite_web/live/project_live/show.ex:274
 #, elixir-autogen, elixir-format
 msgid "Move down"
 msgstr "Siirrä alas"
 
-#: lib/homesite_web/live/project_live/show.ex:245
+#: lib/homesite_web/live/project_live/show.ex:261
 #, elixir-autogen, elixir-format
 msgid "Move up"
 msgstr "Siirrä ylös"
 
-#: lib/homesite_web/live/project_live/show.ex:270
+#: lib/homesite_web/live/project_live/show.ex:286
 #, elixir-autogen, elixir-format
 msgid "Remove image"
 msgstr "Poista kuva"
 
-#: lib/homesite_web/live/project_live/show.ex:268
+#: lib/homesite_web/live/project_live/show.ex:284
 #, elixir-autogen, elixir-format
 msgid "Remove this image from the project?"
 msgstr "Poistetaanko tämä kuva projektista?"
 
-#: lib/homesite_web/components/content_section_components.ex:226
+#: lib/homesite_web/components/content_section_components.ex:265
 #, elixir-autogen, elixir-format
 msgid "2nd Edition"
 msgstr "2. painos"
 
-#: lib/homesite_web/components/content_section_components.ex:717
+#: lib/homesite_web/components/content_section_components.ex:886
 #, elixir-autogen, elixir-format
 msgid "Add Section"
 msgstr "Lisää osio"
 
-#: lib/homesite_web/components/content_section_components.ex:538
+#: lib/homesite_web/components/content_section_components.ex:672
 #, elixir-autogen, elixir-format
 msgid "Additional notes about this gear..."
 msgstr ""
 
-#: lib/homesite_web/components/content_section_components.ex:215
-#: lib/homesite_web/components/content_section_components.ex:770
+#: lib/homesite_web/components/content_section_components.ex:254
+#: lib/homesite_web/components/content_section_components.ex:939
 #, elixir-autogen, elixir-format
 msgid "Audiobook"
 msgstr "Äänikirja"
 
-#: lib/homesite_web/components/content_section_components.ex:172
-#: lib/homesite_web/components/content_section_components.ex:282
+#: lib/homesite_web/components/content_section_components.ex:211
+#: lib/homesite_web/components/content_section_components.ex:330
 #: lib/homesite_web/live/admin_live/dashboard.ex:188
 #, elixir-autogen, elixir-format
 msgid "Author"
 msgstr "Kirjailija"
 
-#: lib/homesite_web/components/content_section_components.ex:178
+#: lib/homesite_web/components/content_section_components.ex:217
 #, elixir-autogen, elixir-format
 msgid "Author name"
 msgstr "Kirjailijan nimi"
 
-#: lib/homesite_web/components/content_section_components.ex:761
+#: lib/homesite_web/components/content_section_components.ex:930
 #, elixir-autogen, elixir-format
 msgid "Book Info"
 msgstr ""
 
 #: lib/homesite/media/project_template.ex:192
-#: lib/homesite_web/components/content_section_components.ex:146
-#: lib/homesite_web/components/content_section_components.ex:753
-#: lib/homesite_web/live/project_live/stepped_form.ex:722
+#: lib/homesite_web/components/content_section_components.ex:173
+#: lib/homesite_web/components/content_section_components.ex:922
+#: lib/homesite_web/live/project_live/stepped_form.ex:934
 #, elixir-autogen, elixir-format
 msgid "Book Information"
 msgstr "Kirjan tiedot"
 
-#: lib/homesite_web/components/content_section_components.ex:493
-#: lib/homesite_web/components/content_section_components.ex:554
-#, elixir-autogen, elixir-format, fuzzy
+#: lib/homesite_web/components/content_section_components.ex:627
+#: lib/homesite_web/components/content_section_components.ex:696
+#, elixir-autogen, elixir-format
 msgid "Brand"
-msgstr "Porttikielto"
+msgstr "Merkki"
 
-#: lib/homesite_web/components/content_section_components.ex:754
-#: lib/homesite_web/components/content_section_components.ex:762
-#: lib/homesite_web/live/project_live/stepped_form.ex:723
+#: lib/homesite_web/components/content_section_components.ex:923
+#: lib/homesite_web/components/content_section_components.ex:931
+#: lib/homesite_web/live/project_live/stepped_form.ex:935
 #, elixir-autogen, elixir-format
 msgid "Chapter"
 msgstr "Luku"
 
-#: lib/homesite_web/components/content_section_components.ex:346
-#: lib/homesite_web/components/content_section_components.ex:384
-#: lib/homesite_web/components/content_section_components.ex:752
+#: lib/homesite_web/components/content_section_components.ex:395
+#: lib/homesite_web/components/content_section_components.ex:433
+#: lib/homesite_web/components/content_section_components.ex:921
 #: lib/homesite_web/live/admin_live/invitations/index.html.heex:86
 #: lib/homesite_web/live/admin_live/invitations/index.html.heex:112
-#: lib/homesite_web/live/project_live/stepped_form.ex:721
+#: lib/homesite_web/live/project_live/stepped_form.ex:933
 #, elixir-autogen, elixir-format
 msgid "Code"
 msgstr "Koodi"
 
-#: lib/homesite_web/components/content_section_components.ex:760
+#: lib/homesite_web/components/content_section_components.ex:929
 #, elixir-autogen, elixir-format
 msgid "Code Block"
 msgstr "Koodilohko"
 
-#: lib/homesite_web/components/content_section_components.ex:250
-#: lib/homesite_web/components/content_section_components.ex:775
+#: lib/homesite_web/components/content_section_components.ex:289
+#: lib/homesite_web/components/content_section_components.ex:944
 #, elixir-autogen, elixir-format
 msgid "Completed"
 msgstr "Luettu"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1686
+#: lib/homesite_web/live/project_live/stepped_form.ex:1976
 #, elixir-autogen, elixir-format
 msgid "Content Sections"
 msgstr "Sisältöosiot"
@@ -5347,74 +5341,74 @@ msgstr "Sisältöosiot"
 msgid "Delete this section?"
 msgstr "Poistetaanko tämä osio?"
 
-#: lib/homesite_web/components/content_section_components.ex:253
-#: lib/homesite_web/components/content_section_components.ex:776
+#: lib/homesite_web/components/content_section_components.ex:292
+#: lib/homesite_web/components/content_section_components.ex:945
 #, elixir-autogen, elixir-format
 msgid "Did not finish"
 msgstr "Keskeytetty"
 
-#: lib/homesite_web/components/content_section_components.ex:609
-#: lib/homesite_web/components/content_section_components.ex:670
+#: lib/homesite_web/components/content_section_components.ex:770
+#: lib/homesite_web/components/content_section_components.ex:839
 #, elixir-autogen, elixir-format
 msgid "Director"
 msgstr "Ohjaaja"
 
-#: lib/homesite_web/components/content_section_components.ex:212
-#: lib/homesite_web/components/content_section_components.ex:769
+#: lib/homesite_web/components/content_section_components.ex:251
+#: lib/homesite_web/components/content_section_components.ex:938
 #, elixir-autogen, elixir-format
 msgid "E-book"
 msgstr "E-kirja"
 
-#: lib/homesite_web/components/content_section_components.ex:220
-#: lib/homesite_web/components/content_section_components.ex:306
+#: lib/homesite_web/components/content_section_components.ex:259
+#: lib/homesite_web/components/content_section_components.ex:354
 #, elixir-autogen, elixir-format
 msgid "Edition"
 msgstr "Painos"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:594
-#, elixir-autogen, elixir-format, fuzzy
+#: lib/homesite_web/live/project_live/stepped_form.ex:669
+#, elixir-autogen, elixir-format
 msgid "Failed to add section"
-msgstr "Linkin lisääminen epäonnistui"
+msgstr "Osion lisääminen epäonnistui"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:697
-#, elixir-autogen, elixir-format, fuzzy
+#: lib/homesite_web/live/project_live/stepped_form.ex:851
+#, elixir-autogen, elixir-format
 msgid "Failed to delete section"
-msgstr "Projektin poistaminen epäonnistui"
+msgstr "Osion poistaminen epäonnistui"
 
-#: lib/homesite_web/components/content_section_components.ex:373
+#: lib/homesite_web/components/content_section_components.ex:422
 #, elixir-autogen, elixir-format
 msgid "Filename"
 msgstr "Tiedostonimi"
 
-#: lib/homesite_web/components/content_section_components.ex:202
-#: lib/homesite_web/components/content_section_components.ex:300
+#: lib/homesite_web/components/content_section_components.ex:241
+#: lib/homesite_web/components/content_section_components.ex:348
 #, elixir-autogen, elixir-format
 msgid "Format"
 msgstr "Muoto"
 
-#: lib/homesite_web/components/content_section_components.ex:763
+#: lib/homesite_web/components/content_section_components.ex:932
 #, elixir-autogen, elixir-format
 msgid "Gear Specs"
 msgstr "Laitteen tiedot"
 
-#: lib/homesite_web/components/content_section_components.ex:209
-#: lib/homesite_web/components/content_section_components.ex:768
+#: lib/homesite_web/components/content_section_components.ex:248
+#: lib/homesite_web/components/content_section_components.ex:937
 #, elixir-autogen, elixir-format
 msgid "Hardcover"
 msgstr "Kovakantinen"
 
-#: lib/homesite_web/components/content_section_components.ex:689
+#: lib/homesite_web/components/content_section_components.ex:858
 #, elixir-autogen, elixir-format
 msgid "IMDB"
 msgstr ""
 
-#: lib/homesite_web/components/content_section_components.ex:639
+#: lib/homesite_web/components/content_section_components.ex:800
 #, elixir-autogen, elixir-format
 msgid "IMDB URL"
 msgstr ""
 
-#: lib/homesite_web/components/content_section_components.ex:152
-#: lib/homesite_web/components/content_section_components.ex:270
+#: lib/homesite_web/components/content_section_components.ex:191
+#: lib/homesite_web/components/content_section_components.ex:318
 #, elixir-autogen, elixir-format
 msgid "ISBN"
 msgstr ""
@@ -5424,127 +5418,127 @@ msgstr ""
 msgid "JPG, PNG, WebP up to 20MB (max 10 files). Large images are automatically resized."
 msgstr "JPG, PNG, WebP max 20MB (enintään 10 tiedostoa). Suuret kuvat pienennetään automaattisesti."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1108
+#: lib/homesite_web/live/project_live/stepped_form.ex:1331
 #, elixir-autogen, elixir-format
 msgid "Maximum 1000 characters"
 msgstr "Enintään 1000 merkkiä"
 
-#: lib/homesite_web/components/content_section_components.ex:503
-#: lib/homesite_web/components/content_section_components.ex:560
+#: lib/homesite_web/components/content_section_components.ex:637
+#: lib/homesite_web/components/content_section_components.ex:702
 #, elixir-autogen, elixir-format
 msgid "Model"
 msgstr "Malli"
 
-#: lib/homesite_web/components/content_section_components.ex:764
+#: lib/homesite_web/components/content_section_components.ex:933
 #, elixir-autogen, elixir-format
 msgid "Movie Info"
 msgstr "Elokuvan tiedot"
 
 #: lib/homesite/media/project_template.ex:283
-#: lib/homesite_web/components/content_section_components.ex:604
-#: lib/homesite_web/components/content_section_components.ex:756
-#: lib/homesite_web/live/project_live/stepped_form.ex:725
+#: lib/homesite_web/components/content_section_components.ex:754
+#: lib/homesite_web/components/content_section_components.ex:925
+#: lib/homesite_web/live/project_live/stepped_form.ex:937
 #, elixir-autogen, elixir-format
 msgid "Movie Information"
 msgstr "Elokuvan tiedot"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:726
+#: lib/homesite_web/live/project_live/stepped_form.ex:938
 #, elixir-autogen, elixir-format
 msgid "New Section"
 msgstr "Uusi osio"
 
-#: lib/homesite_web/components/content_section_components.ex:324
+#: lib/homesite_web/components/content_section_components.ex:372
 #, elixir-autogen, elixir-format
 msgid "No book information yet. Click edit to add details."
 msgstr "Kirjan tietoja ei vielä ole. Klikkaa muokkaa lisätäksesi tiedot."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1702
+#: lib/homesite_web/live/project_live/stepped_form.ex:1992
 #, elixir-autogen, elixir-format
 msgid "No content sections yet. Use the dropdown above to add text, code, or structured data."
 msgstr "Ei vielä sisältöosioita. Käytä yläpuolella olevaa valikkoa lisätäksesi tekstiä, koodia tai jäsenneltyä dataa."
 
-#: lib/homesite_web/components/content_section_components.ex:467
+#: lib/homesite_web/components/content_section_components.ex:516
 #, elixir-autogen, elixir-format
 msgid "No content yet. Click edit to add text."
 msgstr "Ei vielä sisältöä. Klikkaa muokkaa lisätäksesi tekstiä."
 
-#: lib/homesite_web/components/content_section_components.ex:534
+#: lib/homesite_web/components/content_section_components.ex:668
 #, elixir-autogen, elixir-format
 msgid "Notes"
 msgstr "Muistiinpanot"
 
-#: lib/homesite_web/components/content_section_components.ex:650
+#: lib/homesite_web/components/content_section_components.ex:811
 #, elixir-autogen, elixir-format
 msgid "Notes/Review"
 msgstr "Muistiinpanot/Arvostelu"
 
-#: lib/homesite_web/components/content_section_components.ex:182
-#: lib/homesite_web/components/content_section_components.ex:288
+#: lib/homesite_web/components/content_section_components.ex:221
+#: lib/homesite_web/components/content_section_components.ex:336
 #, elixir-autogen, elixir-format
 msgid "Pages"
 msgstr "Sivuja"
 
-#: lib/homesite_web/components/content_section_components.ex:206
-#: lib/homesite_web/components/content_section_components.ex:767
+#: lib/homesite_web/components/content_section_components.ex:245
+#: lib/homesite_web/components/content_section_components.ex:936
 #, elixir-autogen, elixir-format
 msgid "Paperback"
 msgstr "Pehmeäkantinen"
 
-#: lib/homesite_web/components/content_section_components.ex:388
+#: lib/homesite_web/components/content_section_components.ex:437
 #, elixir-autogen, elixir-format
 msgid "Paste your code here..."
 msgstr "Liitä koodi tähän..."
 
-#: lib/homesite_web/components/content_section_components.ex:353
+#: lib/homesite_web/components/content_section_components.ex:402
 #, elixir-autogen, elixir-format
 msgid "Plain text"
 msgstr "Pelkkä teksti"
 
-#: lib/homesite_web/components/content_section_components.ex:513
-#: lib/homesite_web/components/content_section_components.ex:566
+#: lib/homesite_web/components/content_section_components.ex:647
+#: lib/homesite_web/components/content_section_components.ex:708
 #, elixir-autogen, elixir-format
 msgid "Price"
 msgstr "Hinta"
 
-#: lib/homesite_web/components/content_section_components.ex:230
+#: lib/homesite_web/components/content_section_components.ex:269
 #, elixir-autogen, elixir-format
 msgid "Publication Year"
 msgstr "Julkaisuvuosi"
 
-#: lib/homesite_web/components/content_section_components.ex:162
-#: lib/homesite_web/components/content_section_components.ex:276
+#: lib/homesite_web/components/content_section_components.ex:201
+#: lib/homesite_web/components/content_section_components.ex:324
 #, elixir-autogen, elixir-format
 msgid "Publisher"
 msgstr "Kustantaja"
 
-#: lib/homesite_web/components/content_section_components.ex:573
+#: lib/homesite_web/components/content_section_components.ex:715
 #, elixir-autogen, elixir-format
 msgid "Purchase Link"
 msgstr "Ostolinkki"
 
-#: lib/homesite_web/components/content_section_components.ex:523
+#: lib/homesite_web/components/content_section_components.ex:657
 #, elixir-autogen, elixir-format
 msgid "Purchase URL"
 msgstr "Osto-URL"
 
-#: lib/homesite_web/components/content_section_components.ex:247
-#: lib/homesite_web/components/content_section_components.ex:774
+#: lib/homesite_web/components/content_section_components.ex:286
+#: lib/homesite_web/components/content_section_components.ex:943
 #, elixir-autogen, elixir-format
 msgid "Reading"
 msgstr "Luetaan"
 
-#: lib/homesite_web/components/content_section_components.ex:240
+#: lib/homesite_web/components/content_section_components.ex:279
 #, elixir-autogen, elixir-format
 msgid "Reading Status"
 msgstr "Lukutilanne"
 
-#: lib/homesite_web/components/content_section_components.ex:759
+#: lib/homesite_web/components/content_section_components.ex:928
 #, elixir-autogen, elixir-format
 msgid "Rich Text"
 msgstr "Muotoiltu teksti"
 
-#: lib/homesite_web/components/content_section_components.ex:629
-#: lib/homesite_web/components/content_section_components.ex:682
+#: lib/homesite_web/components/content_section_components.ex:790
+#: lib/homesite_web/components/content_section_components.ex:851
 #, elixir-autogen, elixir-format
 msgid "Runtime"
 msgstr "Kesto"
@@ -5554,93 +5548,93 @@ msgstr "Kesto"
 msgid "Save %{count} image(s)"
 msgstr "Tallenna %{count} kuva(a)"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:598
+#: lib/homesite_web/live/project_live/stepped_form.ex:673
 #, elixir-autogen, elixir-format
 msgid "Save the project first, then you can add sections"
 msgstr "Tallenna projekti ensin, sitten voit lisätä osioita"
 
-#: lib/homesite_web/components/content_section_components.ex:757
+#: lib/homesite_web/components/content_section_components.ex:926
 #, elixir-autogen, elixir-format
 msgid "Section"
 msgstr "Osio"
 
-#: lib/homesite_web/components/content_section_components.ex:140
-#: lib/homesite_web/components/content_section_components.ex:340
-#: lib/homesite_web/components/content_section_components.ex:428
-#: lib/homesite_web/components/content_section_components.ex:482
-#: lib/homesite_web/components/content_section_components.ex:598
+#: lib/homesite_web/components/content_section_components.ex:167
+#: lib/homesite_web/components/content_section_components.ex:389
+#: lib/homesite_web/components/content_section_components.ex:477
+#: lib/homesite_web/components/content_section_components.ex:605
+#: lib/homesite_web/components/content_section_components.ex:748
 #, elixir-autogen, elixir-format
 msgid "Section Title"
 msgstr "Osion otsikko"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:591
+#: lib/homesite_web/live/project_live/stepped_form.ex:666
 #, elixir-autogen, elixir-format
 msgid "Section added"
 msgstr "Osio lisätty"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:694
+#: lib/homesite_web/live/project_live/stepped_form.ex:848
 #, elixir-autogen, elixir-format
 msgid "Section deleted"
 msgstr "Osio poistettu"
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:670
+#: lib/homesite_web/live/project_live/stepped_form.ex:772
 #, elixir-autogen, elixir-format
 msgid "Section updated"
 msgstr "Osio päivitetty"
 
-#: lib/homesite_web/components/content_section_components.ex:204
+#: lib/homesite_web/components/content_section_components.ex:243
 #, elixir-autogen, elixir-format
 msgid "Select format"
 msgstr "Valitse muoto"
 
-#: lib/homesite_web/components/content_section_components.ex:242
+#: lib/homesite_web/components/content_section_components.ex:281
 #, elixir-autogen, elixir-format
 msgid "Select status"
 msgstr "Valitse tila"
 
 #: lib/homesite/media/project_template.ex:239
-#: lib/homesite_web/components/content_section_components.ex:488
-#: lib/homesite_web/components/content_section_components.ex:755
-#: lib/homesite_web/live/project_live/stepped_form.ex:724
+#: lib/homesite_web/components/content_section_components.ex:611
+#: lib/homesite_web/components/content_section_components.ex:924
+#: lib/homesite_web/live/project_live/stepped_form.ex:936
 #, elixir-autogen, elixir-format
 msgid "Specifications"
 msgstr "Tekniset tiedot"
 
-#: lib/homesite_web/components/content_section_components.ex:447
+#: lib/homesite_web/components/content_section_components.ex:496
 #, elixir-autogen, elixir-format
 msgid "Supports Markdown: **bold**, *italic*, `code`, [links](url)"
 msgstr "Tukee Markdownia: **lihavoitu**, *kursiivi*, `koodi`, [linkit](url)"
 
-#: lib/homesite_web/components/content_section_components.ex:434
-#: lib/homesite_web/live/project_live/stepped_form.ex:720
+#: lib/homesite_web/components/content_section_components.ex:483
+#: lib/homesite_web/live/project_live/stepped_form.ex:932
 #, elixir-autogen, elixir-format
 msgid "Text Section"
 msgstr "Tekstiosio"
 
-#: lib/homesite_web/components/content_section_components.ex:244
-#: lib/homesite_web/components/content_section_components.ex:773
+#: lib/homesite_web/components/content_section_components.ex:283
+#: lib/homesite_web/components/content_section_components.ex:942
 #, elixir-autogen, elixir-format
 msgid "Want to read"
 msgstr "Haluan lukea"
 
-#: lib/homesite_web/components/content_section_components.ex:442
+#: lib/homesite_web/components/content_section_components.ex:491
 #, elixir-autogen, elixir-format
 msgid "Write your content here... (Markdown supported)"
 msgstr "Kirjoita sisältösi tähän... (Markdown tuettu)"
 
-#: lib/homesite_web/components/content_section_components.ex:312
-#: lib/homesite_web/components/content_section_components.ex:619
-#: lib/homesite_web/components/content_section_components.ex:676
+#: lib/homesite_web/components/content_section_components.ex:360
+#: lib/homesite_web/components/content_section_components.ex:780
+#: lib/homesite_web/components/content_section_components.ex:845
 #, elixir-autogen, elixir-format
 msgid "Year"
 msgstr "Vuosi"
 
-#: lib/homesite_web/components/content_section_components.ex:654
+#: lib/homesite_web/components/content_section_components.ex:815
 #, elixir-autogen, elixir-format
 msgid "Your thoughts about this movie..."
 msgstr "Ajatuksesi tästä elokuvasta..."
 
-#: lib/homesite_web/live/project_live/stepped_form.ex:1689
+#: lib/homesite_web/live/project_live/stepped_form.ex:1979
 #, elixir-autogen, elixir-format
 msgid "section"
 msgid_plural "sections"
@@ -5658,14 +5652,14 @@ msgid "Active Invitations"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/invitations/index.html.heex:163
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Are you sure you want to delete this invitation?"
-msgstr "Haluatko varmasti poistaa tämän bannerin?"
+msgstr "Haluatko varmasti poistaa tämän kutsun?"
 
 #: lib/homesite_web/live/feed_source_live/form.ex:85
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Atom"
-msgstr "Atom-syöte"
+msgstr "Atom"
 
 #: lib/homesite_web/live/feed_source_live/form.ex:87
 #, elixir-autogen, elixir-format
@@ -5683,9 +5677,9 @@ msgid "Configure your feed source settings"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/invitations/index.html.heex:110
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Copy code"
-msgstr "Kopioi"
+msgstr "Kopioi koodi"
 
 #: lib/homesite_web/live/admin_live/invitations/index.html.heex:109
 #, elixir-autogen, elixir-format
@@ -5705,9 +5699,9 @@ msgid "Create Invitation"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/invitations/index.html.heex:87
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Created By"
-msgstr "Luotu"
+msgstr "Luonut"
 
 #: lib/homesite_web/live/admin_live/invitations/index.html.heex:54
 #, elixir-autogen, elixir-format
@@ -5715,19 +5709,19 @@ msgid "Default Role"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/invitations/index.html.heex:165
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Delete invitation"
-msgstr "Poista tunniste"
+msgstr "Poista kutsu"
 
 #: lib/homesite_web/components/content_section_components.ex:63
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Delete section"
-msgstr "Poista kirjoitus"
+msgstr "Poista osio"
 
 #: lib/homesite_web/live/feed_source_live/form.ex:22
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Edit Feed Source"
-msgstr "Uusi syötelähde"
+msgstr "Muokkaa syötelähdettä"
 
 #: lib/homesite_web/components/content_section_components.ex:53
 #, elixir-autogen, elixir-format
@@ -5740,19 +5734,19 @@ msgid "Exhausted"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/invitations/index.ex:99
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Failed to delete invitation"
-msgstr "Bannerin poistaminen epäonnistui"
+msgstr "Kutsun poistaminen epäonnistui"
 
 #: lib/homesite_web/live/feed_source_live/form.html.heex:25
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Feed Type"
-msgstr "Syöte"
+msgstr "Syötetyyppi"
 
 #: lib/homesite_web/live/feed_source_live/form.html.heex:34
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Feed URL"
-msgstr "Syöte"
+msgstr "Syötteen URL"
 
 #: lib/homesite_web/live/feed_source_live/form.ex:74
 #, elixir-autogen, elixir-format
@@ -5765,9 +5759,9 @@ msgid "Feed source updated successfully"
 msgstr ""
 
 #: lib/homesite_web/live/feed_live/index.html.heex:64
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Filter by source"
-msgstr "Suodata:"
+msgstr "Suodata lähteen mukaan"
 
 #: lib/homesite_web/controllers/user_session_controller.ex:78
 #, elixir-autogen, elixir-format
@@ -5775,9 +5769,9 @@ msgid "Invalid email or password"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/invitations/index.ex:66
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Invitation created successfully"
-msgstr "Kirjoitus luotu onnistuneesti"
+msgstr "Kutsu luotu onnistuneesti"
 
 #: lib/homesite_web/live/admin_live/invitations/index.ex:93
 #, elixir-autogen, elixir-format
@@ -5785,9 +5779,9 @@ msgid "Invitation deleted successfully"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/invitations/index.html.heex:38
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Leave empty for unlimited"
-msgstr "Jätä tyhjäksi vain manuaalista hylkäämistä varten"
+msgstr "Jätä tyhjäksi rajattomalle määrälle"
 
 #: lib/homesite_web/live/admin_live/invitations/index.html.heex:30
 #, elixir-autogen, elixir-format
@@ -5795,15 +5789,15 @@ msgid "Leave empty to auto-generate"
 msgstr ""
 
 #: lib/homesite_web/controllers/user_session_controller.ex:103
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Logged out successfully."
-msgstr "Tagi päivitetty onnistuneesti"
+msgstr "Uloskirjautuminen onnistui."
 
 #: lib/homesite_web/live/admin_live/invitations/index.ex:22
 #: lib/homesite_web/live/admin_live/invitations/index.html.heex:3
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Manage Invitations"
-msgstr "Päävalikko"
+msgstr "Hallinnoi kutsuja"
 
 #: lib/homesite_web/live/feed_source_live/form.ex:88
 #, elixir-autogen, elixir-format
@@ -5831,9 +5825,9 @@ msgid "No invitations yet. Create one to get started."
 msgstr ""
 
 #: lib/homesite_web/controllers/user_session_controller.ex:98
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Password updated successfully!"
-msgstr "Kansio päivitetty onnistuneesti"
+msgstr "Salasana päivitetty onnistuneesti!"
 
 #: lib/homesite_web/live/user_live/profile.ex:427
 #, elixir-autogen, elixir-format
@@ -5848,9 +5842,9 @@ msgid "RSS"
 msgstr ""
 
 #: lib/homesite_web/live/feed_source_live/form.html.heex:52
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Refresh Interval (minutes)"
-msgstr "Päivitysväli:"
+msgstr "Päivitysväli (minuuteissa)"
 
 #: lib/homesite_web/live/admin_live/invitations/index.ex:116
 #, elixir-autogen, elixir-format
@@ -5865,9 +5859,9 @@ msgid "Role"
 msgstr ""
 
 #: lib/homesite_web/live/feed_source_live/form.html.heex:68
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Save Feed Source"
-msgstr "Uusi syötelähde"
+msgstr "Tallenna syötelähde"
 
 #: lib/homesite_web/components/layouts.ex:510
 #, elixir-autogen, elixir-format
@@ -5890,14 +5884,14 @@ msgid "User Profile"
 msgstr ""
 
 #: lib/homesite_web/controllers/user_session_controller.ex:8
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "User confirmed successfully."
-msgstr "Käyttäjän mykistys poistettu onnistuneesti"
+msgstr "Käyttäjä vahvistettu onnistuneesti."
 
 #: lib/homesite_web/live/admin_live/invitations/index.html.heex:88
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Uses"
-msgstr "Käyttäjä"
+msgstr "Käyttökerrat"
 
 #: lib/homesite_web/components/layouts.ex:520
 #, elixir-autogen, elixir-format
@@ -5905,9 +5899,9 @@ msgid "Vaihda suomeksi"
 msgstr ""
 
 #: lib/homesite_web/controllers/user_session_controller.ex:12
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Welcome back!"
-msgstr "Tervetuloa takaisin"
+msgstr "Tervetuloa takaisin!"
 
 #: lib/homesite_web/live/user_live/profile.ex:452
 #, elixir-autogen, elixir-format
@@ -5936,9 +5930,9 @@ msgid "user.bsky.social or @user@mastodon.social"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/users/index.ex:50
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Admin Users"
-msgstr "Ylläpitäjät"
+msgstr "Ylläpitokäyttäjät"
 
 #: lib/homesite_web/live/dev_faqs_live/index.ex:84
 #, elixir-autogen, elixir-format
@@ -5946,9 +5940,9 @@ msgid "All Categories"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/analytics/index.html.heex:3
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Analytics Dashboard"
-msgstr "Analytiikka"
+msgstr "Analytiikka-kojelauta"
 
 #: lib/homesite_web/live/admin_live/users/index.ex:64
 #, elixir-autogen, elixir-format
@@ -5962,9 +5956,9 @@ msgid "Avg Post Length"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/users/index.ex:38
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Clear"
-msgstr "Tyhjennä haku"
+msgstr "Tyhjennä"
 
 #: lib/homesite_web/live/user_live/confirmation.ex:38
 #, elixir-autogen, elixir-format
@@ -5983,9 +5977,9 @@ msgid "Confirming..."
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/analytics/index.html.heex:44
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Content Metrics"
-msgstr "Tiedostotyyppi"
+msgstr "Sisältötilastot"
 
 #: lib/homesite_web/live/dev_faqs_live/index.ex:28
 #, elixir-autogen, elixir-format
@@ -6005,9 +5999,9 @@ msgstr ""
 
 #: lib/homesite_web/live/admin_live/analytics/index.html.heex:54
 #: lib/homesite_web/live/admin_live/dashboard.ex:130
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Drafts"
-msgstr "Luonnos"
+msgstr "Luonnokset"
 
 #: lib/homesite_web/live/admin_live/users/index.ex:174
 #, elixir-autogen, elixir-format
@@ -6015,14 +6009,14 @@ msgid "Edit User: %{email}"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/users/index.ex:361
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Failed to update user"
-msgstr "Mallin päivittäminen epäonnistui"
+msgstr "Käyttäjän päivittäminen epäonnistui"
 
 #: lib/homesite_web/live/admin_live/users/index.ex:195
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Flower Permission Level"
-msgstr "Kukka-oikeusjärjestelmä"
+msgstr "Kukkaoikeustaso"
 
 #: lib/homesite_web/live/admin_live/users/index.ex:207
 #, elixir-autogen, elixir-format
@@ -6030,9 +6024,9 @@ msgid "Flower permissions grant granular admin capabilities"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/users/index.ex:68
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Flowers"
-msgstr "Seuraajat"
+msgstr "Kukat"
 
 #: lib/homesite_web/live/admin_live/users/index.ex:69
 #, elixir-autogen, elixir-format
@@ -6045,7 +6039,7 @@ msgid "Keep me logged in on this device"
 msgstr ""
 
 #: lib/homesite_web/live/user_live/confirmation.ex:69
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Log me in only this time"
 msgstr "Kirjaudu vain tällä kertaa"
 
@@ -6077,19 +6071,19 @@ msgid "New (7 days)"
 msgstr ""
 
 #: lib/homesite_web/live/dev_faqs_live/index.ex:125
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "No articles found"
-msgstr "Lokeja ei löytynyt"
+msgstr "Artikkeleita ei löytynyt"
 
 #: lib/homesite_web/live/admin_live/users/index.ex:78
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "No users found"
-msgstr "Ei tuloksia haulle"
+msgstr "Käyttäjiä ei löytynyt"
 
 #: lib/homesite_web/live/admin_live/users/index.ex:54
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Page"
-msgstr ""
+msgstr "Sivu"
 
 #: lib/homesite_web/live/admin_live/analytics/index.html.heex:4
 #, elixir-autogen, elixir-format
@@ -6104,9 +6098,9 @@ msgstr ""
 
 #: lib/homesite_web/live/admin_live/analytics/index.html.heex:136
 #: lib/homesite_web/live/admin_live/analytics/index.html.heex:164
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Post"
-msgstr "Kirjoitukset"
+msgstr "Kirjoitus"
 
 #: lib/homesite_web/live/admin_live/analytics/index.html.heex:96
 #, elixir-autogen, elixir-format
@@ -6124,34 +6118,34 @@ msgid "Posts (7 days)"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/users/index.ex:139
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Previous"
-msgstr "Edellinen kuva"
+msgstr "Edellinen"
 
 #: lib/homesite_web/live/admin_live/analytics/index.html.heex:157
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Recent Shares"
-msgstr "Viimeaikaiset muutokset"
+msgstr "Viimeaikaiset jaot"
 
 #: lib/homesite_web/live/admin_live/users/index.ex:216
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Save Changes"
-msgstr "Tallenna tagi"
+msgstr "Tallenna muutokset"
 
 #: lib/homesite_web/live/admin_live/users/index.ex:32
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Search by email..."
-msgstr "Hae mediaa..."
+msgstr "Hae sähköpostilla..."
 
 #: lib/homesite_web/live/admin_live/analytics/index.html.heex:137
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Share Count"
-msgstr "Jaettu"
+msgstr "Jakomäärä"
 
 #: lib/homesite_web/live/admin_live/analytics/index.html.heex:130
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Share Statistics"
-msgstr "Käyttötilastot"
+msgstr "Jakotilastot"
 
 #: lib/homesite_web/live/user_live/confirmation.ex:75
 #, elixir-autogen, elixir-format
@@ -6175,7 +6169,7 @@ msgid "Update role and flower permissions"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/users/index.ex:19
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "User Management"
 msgstr "Käyttäjien hallinta"
 
@@ -6185,12 +6179,12 @@ msgid "User Metrics"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/users/index.ex:353
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "User updated successfully"
-msgstr "Profiili päivitetty onnistuneesti."
+msgstr "Käyttäjä päivitetty onnistuneesti."
 
 #: lib/homesite_web/live/admin_live/users/index.ex:253
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "You must be an admin to access this page"
 msgstr "Sinun täytyy olla ylläpitäjä päästäksesi tälle sivulle."
 
@@ -6251,9 +6245,9 @@ msgid "Add co-authors or editors"
 msgstr ""
 
 #: lib/homesite/media/project_template.ex:308
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Add collaborators"
-msgstr "Lisää yhteistyökumppani"
+msgstr "Lisää yhteistyökumppaneita"
 
 #: lib/homesite/media/project_template.ex:96
 #, elixir-autogen, elixir-format
@@ -6331,9 +6325,9 @@ msgid "Client/Press Links"
 msgstr ""
 
 #: lib/homesite/media/project_template.ex:138
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Co-Authors"
-msgstr ""
+msgstr "Kanssakirjoittajat"
 
 #: lib/homesite/media/project_template.ex:78
 #, elixir-autogen, elixir-format
@@ -6392,6 +6386,8 @@ msgstr "Laitteet/Varusteet"
 
 #: lib/homesite/media/project_template.ex:163
 #: lib/homesite/media/project_template.ex:255
+#: lib/homesite_web/components/content_section_components.ex:180
+#: lib/homesite_web/components/content_section_components.ex:760
 #, elixir-autogen, elixir-format
 msgid "Genre"
 msgstr "Laji"
@@ -6417,14 +6413,14 @@ msgid "Key Code"
 msgstr ""
 
 #: lib/homesite/media/project_template.ex:87
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Language/Framework"
-msgstr "Kieli"
+msgstr "Kieli/Ohjelmistokehys"
 
 #: lib/homesite/media/project_template.ex:311
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Links"
-msgstr "Linkki"
+msgstr "Linkit"
 
 #: lib/homesite/media/project_template.ex:218
 #, elixir-autogen, elixir-format
@@ -6462,24 +6458,24 @@ msgid "Product/Review Links"
 msgstr ""
 
 #: lib/homesite/media/project_template.ex:296
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Project date"
-msgstr "Projektin nimi"
+msgstr "Projektin päivämäärä"
 
 #: lib/homesite/media/project_template.ex:126
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Publication Date"
-msgstr "Julkaisupäivä ja -aika"
+msgstr "Julkaisupäivä"
 
 #: lib/homesite/media/project_template.ex:142
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Publication Links"
-msgstr "Julkaisupäivä ja -aika"
+msgstr "Julkaisulinkit"
 
 #: lib/homesite/media/project_template.ex:175
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Purchase/Review Links"
-msgstr ""
+msgstr "Osto-/arvostelulinkit"
 
 #: lib/homesite/media/project_template.ex:159
 #, elixir-autogen, elixir-format
@@ -6627,9 +6623,9 @@ msgid "Attempts"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/dashboard.ex:296
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Avg Response"
-msgstr "Vastauksia"
+msgstr "Keskim. vastaus"
 
 #: lib/homesite_web/live/admin_live/dashboard.ex:312
 #, elixir-autogen, elixir-format
@@ -6637,19 +6633,19 @@ msgid "Avg Results"
 msgstr ""
 
 #: lib/homesite_web/live/user_live/profile.ex:116
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Bluesky"
-msgstr "Bluesky-tunnus"
+msgstr "Bluesky"
 
 #: lib/homesite_web/live/admin_live/dashboard.ex:169
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Collections"
-msgstr "Valmistuminen"
+msgstr "Kokoelmat"
 
 #: lib/homesite_web/live/admin_live/dashboard.ex:351
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Content Gaps"
-msgstr "Tiedostotyyppi"
+msgstr "Sisältöpuutteet"
 
 #: lib/homesite_web/live/admin_live/dashboard.ex:121
 #, elixir-autogen, elixir-format
@@ -6662,24 +6658,24 @@ msgid "Count"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/dashboard.ex:75
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Invitations"
-msgstr ""
+msgstr "Kutsut"
 
 #: lib/homesite_web/live/admin_live/dashboard.ex:279
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Last 7 days"
-msgstr "Viimeiset 90 päivää"
+msgstr "Viimeiset 7 päivää"
 
 #: lib/homesite_web/live/user_live/profile.ex:126
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Mastodon"
-msgstr "Mastodon-tunnus"
+msgstr "Mastodon"
 
 #: lib/homesite_web/live/admin_live/dashboard.ex:47
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Media Items"
-msgstr "Media"
+msgstr "Mediakohteet"
 
 #: lib/homesite_web/live/admin_live/dashboard.ex:148
 #, elixir-autogen, elixir-format
@@ -6707,19 +6703,19 @@ msgid "No authors yet"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/dashboard.ex:374
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "No gaps found"
-msgstr "Tageja ei löytynyt."
+msgstr "Puutteita ei löytynyt"
 
 #: lib/homesite_web/live/user_live/profile.ex:314
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "No published posts yet."
-msgstr "Ei vielä julkisia projekteja."
+msgstr "Ei vielä julkaistuja kirjoituksia."
 
 #: lib/homesite_web/live/admin_live/dashboard.ex:264
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "No recent activity"
-msgstr "Ei viimeaikaista moderointitoimintaa"
+msgstr "Ei viimeaikaista toimintaa"
 
 #: lib/homesite_web/live/admin_live/dashboard.ex:340
 #, elixir-autogen, elixir-format
@@ -6732,9 +6728,9 @@ msgid "No tags yet"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/dashboard.ex:320
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Popular Searches"
-msgstr ""
+msgstr "Suositut haut"
 
 #: lib/homesite_web/live/admin_live/dashboard.ex:165
 #, elixir-autogen, elixir-format
@@ -6748,14 +6744,14 @@ msgid "Query"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/dashboard.ex:241
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Resource"
-msgstr "Palauta"
+msgstr "Resurssi"
 
 #: lib/homesite_web/live/admin_live/dashboard.ex:277
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Search Statistics"
-msgstr "Käyttötilastot"
+msgstr "Hakutilastot"
 
 #: lib/homesite_web/live/admin_live/dashboard.ex:354
 #, elixir-autogen, elixir-format
@@ -6768,14 +6764,14 @@ msgid "Storage Used"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/dashboard.ex:16
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "System overview and analytics"
-msgstr "Järjestelmän yleiskatsaus"
+msgstr "Järjestelmän yleiskatsaus ja analytiikka"
 
 #: lib/homesite_web/live/admin_live/dashboard.ex:153
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Total Media Items"
-msgstr "Kohteita yhteensä"
+msgstr "Mediakohteita yhteensä"
 
 #: lib/homesite_web/live/admin_live/dashboard.ex:288
 #, elixir-autogen, elixir-format
@@ -6783,9 +6779,9 @@ msgid "Total Searches"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/dashboard.ex:94
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "User Statistics"
-msgstr "Käyttötilastot"
+msgstr "Käyttäjätilastot"
 
 #: lib/homesite_web/live/user_live/profile.ex:248
 #, elixir-autogen, elixir-format
@@ -6794,9 +6790,9 @@ msgstr ""
 
 #: lib/homesite_web/live/user_live/profile.ex:158
 #: lib/homesite_web/live/user_live/profile.ex:287
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "min"
-msgstr "Ylläpitäjät"
+msgstr "min"
 
 #: lib/homesite_web/live/user_live/profile.ex:203
 #, elixir-autogen, elixir-format
@@ -6804,21 +6800,49 @@ msgid "min avg"
 msgstr ""
 
 #: lib/homesite_web/live/admin_live/dashboard.ex:61
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "portfolios"
-msgstr "Portfolio"
+msgstr "portfoliota"
 
 #: lib/homesite_web/live/user_live/profile.ex:199
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "posts"
-msgstr "kirjoitus"
+msgstr "kirjoitusta"
 
 #: lib/homesite_web/live/user_live/profile.ex:207
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "since"
-msgstr "Alkaen"
+msgstr "alkaen"
 
-#: lib/homesite_web/components/content_section_components.ex:818
+#: lib/homesite_web/components/content_section_components.ex:989
 #, elixir-autogen, elixir-format
 msgid "Edit Section"
 msgstr "Muokkaa osiota"
+
+#: lib/homesite_web/components/content_section_components.ex:581
+#, elixir-autogen, elixir-format
+msgid "Press Enter or click + to add"
+msgstr "Paina Enter tai klikkaa + lisätäksesi"
+
+#: lib/homesite_web/components/content_section_components.ex:618
+#, elixir-autogen, elixir-format
+msgid "Type category and press Enter..."
+msgstr "Kirjoita kategoria ja paina Enter..."
+
+#: lib/homesite_web/components/content_section_components.ex:181
+#: lib/homesite_web/components/content_section_components.ex:761
+#, elixir-autogen, elixir-format
+msgid "Type genre and press Enter..."
+msgstr "Kirjoita laji ja paina Enter..."
+
+#: lib/homesite_web/live/project_live/show.ex:137
+#, elixir-autogen, elixir-format
+msgid "Categories"
+msgstr "Kategoriat"
+
+#: lib/homesite_web/live/project_live/stepped_form.ex:1420
+#, elixir-autogen, elixir-format
+msgid "project"
+msgid_plural "projects"
+msgstr[0] "projekti"
+msgstr[1] "projektia"
