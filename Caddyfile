@@ -4,7 +4,8 @@
 # The domain is configured via the PHX_HOST environment variable
 # Set it in your .env file (e.g., PHX_HOST=juhahalmu.fi)
 
-{$PHX_HOST} {
+# Primary domain and orangedinos.de
+{$PHX_HOST}, orangedinos.de {
 	# Enable compression
 	encode gzip zstd
 
@@ -48,6 +49,6 @@
 }
 
 # Redirect www to non-www
-www.{$PHX_HOST} {
+www.{$PHX_HOST}, www.orangedinos.de {
 	redir https://{$PHX_HOST}{uri} permanent
 }
