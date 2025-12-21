@@ -9,7 +9,8 @@ defmodule Homesite.Accounts.UserNotifier do
 
   # Delivers the email using the application mailer.
   defp deliver(recipient, subject, body) do
-    from_email = System.get_env("SMTP_FROM") || System.get_env("SMTP_USERNAME") || "noreply@orangedinos.de"
+    from_email =
+      System.get_env("SMTP_FROM") || System.get_env("SMTP_USERNAME") || "noreply@orangedinos.de"
 
     email =
       new()
