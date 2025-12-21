@@ -240,8 +240,10 @@ defmodule HomesiteWeb.MediaComponents do
         <%= if @show_template_badge do %>
           <span class="badge badge-ghost badge-sm">{template_name(@project.template_type)}</span>
         <% end %>
-        <%= if @project.category do %>
-          <p class="text-base-content/60 text-[var(--text-sm)]">{@project.category}</p>
+        <%= if @project.categories && length(@project.categories) > 0 do %>
+          <p class="text-base-content/60 text-[var(--text-sm)]">
+            {Enum.join(@project.categories, ", ")}
+          </p>
         <% end %>
       </div>
     </.link>

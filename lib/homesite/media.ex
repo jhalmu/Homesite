@@ -509,11 +509,18 @@ defmodule Homesite.Media do
         select: count(pmi.id)
       )
 
+    # Subquery to count content sections per project
+    section_count_query =
+      from(cs in "content_sections",
+        where: cs.project_id == parent_as(:project).id,
+        select: count(cs.id)
+      )
+
     from(p in Project,
       as: :project,
       where: p.is_public == true and p.is_portfolio == true,
-      # Only show portfolios with at least one media item
-      where: subquery(media_count_query) > 0,
+      # Show portfolios with at least one media item OR at least one content section
+      where: subquery(media_count_query) > 0 or subquery(section_count_query) > 0,
       order_by: [asc: p.display_order, desc: p.inserted_at],
       limit: ^limit,
       offset: ^offset,
@@ -590,6 +597,29 @@ defmodule Homesite.Media do
       projects: projects,
       project_count: length(projects)
     }
+  end
+
+  @doc """
+  Searches for categories used in the user's projects.
+  Returns a list of {category_name, usage_count} tuples matching the query.
+  """
+  def search_project_categories(%Scope{} = scope, query) do
+    query_lower = String.downcase(query)
+
+    # Get all categories from user's projects, unnest the arrays
+    from(p in Project,
+      where: p.user_id == ^scope.user.id,
+      select: p.categories
+    )
+    |> Repo.all()
+    |> List.flatten()
+    |> Enum.reject(&is_nil/1)
+    |> Enum.frequencies()
+    |> Enum.filter(fn {cat, _count} ->
+      String.contains?(String.downcase(cat), query_lower)
+    end)
+    |> Enum.sort_by(fn {_cat, count} -> -count end)
+    |> Enum.take(10)
   end
 
   ## Collections

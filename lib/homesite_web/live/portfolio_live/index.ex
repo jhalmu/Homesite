@@ -79,10 +79,12 @@ defmodule HomesiteWeb.PortfolioLive.Index do
                           <.icon name="hero-photo" class="h-16 w-16 opacity-30" />
                         </div>
                       <% end %>
-                      <%!-- Category overlay --%>
-                      <%= if project.category do %>
-                        <div class="absolute top-3 left-3">
-                          <span class="badge badge-neutral badge-sm">{project.category}</span>
+                      <%!-- Categories overlay --%>
+                      <%= if project.categories && length(project.categories) > 0 do %>
+                        <div class="absolute top-3 left-3 flex flex-wrap gap-1">
+                          <%= for category <- project.categories do %>
+                            <span class="badge badge-neutral badge-sm">{category}</span>
+                          <% end %>
                         </div>
                       <% end %>
                     </figure>

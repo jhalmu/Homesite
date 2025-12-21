@@ -125,7 +125,7 @@ defmodule HomesiteWeb.PortfolioLiveTest do
         project_fixture(scope, %{
           name: "Showcase Project",
           description: "A detailed description",
-          category: "Photography",
+          categories: ["Photography"],
           is_public: true,
           is_portfolio: true
         })

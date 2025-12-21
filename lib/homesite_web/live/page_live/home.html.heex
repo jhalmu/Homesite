@@ -96,9 +96,9 @@
                 <article class="post-card">
                   <div class="post-meta mb-[var(--spacing-sm)]">
                     <span class="badge badge-sm badge-ghost">{project.template_type}</span>
-                    <%= if project.category do %>
+                    <%= if project.categories && length(project.categories) > 0 do %>
                       <span>•</span>
-                      <span>{project.category}</span>
+                      <span>{Enum.join(project.categories, ", ")}</span>
                     <% end %>
                   </div>
 

@@ -49,6 +49,10 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
      |> assign(:tag_search_query, "")
      |> assign(:tag_suggestions, [])
      |> assign(:similar_tags_warning, nil)
+     # Category-related state (like tags but simpler - just strings)
+     |> assign(:selected_categories, project.categories || [])
+     |> assign(:category_search_query, "")
+     |> assign(:category_suggestions, [])
      # Media picker state
      |> assign(:media_items, [])
      |> assign(:gallery_items, [])
@@ -62,6 +66,9 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
      |> assign(:show_section_modal, false)
      |> assign(:modal_section, nil)
      |> assign(:modal_section_form, nil)
+     # Tag-like input values (tracked like tag_search_query)
+     |> assign(:category_input, "")
+     |> assign(:genre_input, "")
      |> assign_form(project)}
   end
 
@@ -80,6 +87,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
   end
 
   defp parse_step_param(nil, current), do: current
+
   defp parse_step_param(step_str, _current) do
     case Integer.parse(step_str) do
       {n, ""} when n >= 0 and n < length(@steps) -> n
@@ -175,25 +183,6 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
   def handle_event("skip_to_content", _params, socket) do
     # Jump to content step (index 4)
     {:noreply, navigate_to_step(socket, 4)}
-  end
-
-  # Navigate to a step and update URL to preserve state across reconnects
-  defp navigate_to_step(socket, step_index) do
-    new_step = Enum.at(@steps, step_index)
-
-    socket
-    |> assign(:step_index, step_index)
-    |> assign(:current_step, new_step)
-    |> push_patch_with_step(step_index)
-  end
-
-  defp push_patch_with_step(socket, step_index) do
-    case socket.assigns.live_action do
-      :edit ->
-        push_patch(socket, to: ~p"/projects/#{socket.assigns.project.id}/edit?step=#{step_index}")
-      :new ->
-        push_patch(socket, to: ~p"/projects/new?step=#{step_index}")
-    end
   end
 
   def handle_event(
@@ -477,6 +466,71 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
     end
   end
 
+  # Category search and selection events (like tags but simpler - just strings)
+  def handle_event("search-categories", %{"key" => "Enter"}, socket) do
+    # On Enter, add the category directly
+    query = socket.assigns.category_search_query
+
+    if String.length(query) >= 2 do
+      handle_event("create-category", %{"name" => query}, socket)
+    else
+      {:noreply, socket}
+    end
+  end
+
+  def handle_event("search-categories", %{"value" => query}, socket) do
+    if String.length(query) >= 2 do
+      # Get category suggestions from existing projects
+      suggestions = Media.search_project_categories(socket.assigns.current_scope, query)
+
+      {:noreply,
+       socket
+       |> assign(:category_search_query, query)
+       |> assign(:category_suggestions, suggestions)}
+    else
+      {:noreply,
+       socket
+       |> assign(:category_search_query, query)
+       |> assign(:category_suggestions, [])}
+    end
+  end
+
+  def handle_event("add-category", %{"name" => name}, socket) do
+    name = String.trim(name)
+
+    if name != "" && not Enum.member?(socket.assigns.selected_categories, name) do
+      {:noreply,
+       socket
+       |> assign(:selected_categories, socket.assigns.selected_categories ++ [name])
+       |> assign(:category_search_query, "")
+       |> assign(:category_suggestions, [])}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  def handle_event("remove-category", %{"name" => name}, socket) do
+    selected_categories = Enum.reject(socket.assigns.selected_categories, &(&1 == name))
+    {:noreply, assign(socket, :selected_categories, selected_categories)}
+  end
+
+  def handle_event("create-category", %{"name" => name}, socket) do
+    name = String.trim(name)
+
+    if name != "" && not Enum.member?(socket.assigns.selected_categories, name) do
+      {:noreply,
+       socket
+       |> assign(:selected_categories, socket.assigns.selected_categories ++ [name])
+       |> assign(:category_search_query, "")
+       |> assign(:category_suggestions, [])}
+    else
+      {:noreply,
+       socket
+       |> assign(:category_search_query, "")
+       |> assign(:category_suggestions, [])}
+    end
+  end
+
   # Media picker events
   def handle_event("open_media_picker", %{"mode" => mode}, socket) do
     {:noreply,
@@ -643,7 +697,9 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
      |> assign(:modal_section, nil)
      |> assign(:modal_section_form, nil)
      |> assign(:editing_section_id, nil)
-     |> assign(:section_form, nil)}
+     |> assign(:section_form, nil)
+     |> assign(:category_input, "")
+     |> assign(:genre_input, "")}
   end
 
   def handle_event("close_section_modal", _params, socket) do
@@ -653,7 +709,9 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
      |> assign(:modal_section, nil)
      |> assign(:modal_section_form, nil)
      |> assign(:editing_section_id, nil)
-     |> assign(:section_form, nil)}
+     |> assign(:section_form, nil)
+     |> assign(:category_input, "")
+     |> assign(:genre_input, "")}
   end
 
   def handle_event("validate_section", %{"section" => section_params}, socket) do
@@ -669,22 +727,35 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
       |> Homesite.Media.ContentSection.changeset(section_params, socket.assigns.current_scope)
       |> Map.put(:action, :validate)
 
+    # Update modal_section with the current form values so the form fields
+    # reflect the user's input (not the original DB values)
+    updated_section = %{
+      section
+      | title: section_params["title"] || section.title,
+        content: section_params["content"] || section.content,
+        metadata: Map.merge(section.metadata || %{}, section_params["metadata"] || %{})
+    }
+
     {:noreply,
      socket
+     |> assign(:modal_section, updated_section)
      |> assign(:modal_section_form, to_form(changeset))
      |> assign(:section_form, to_form(changeset))}
   end
 
   def handle_event("save_section", %{"section" => section_params}, socket) do
-    section =
-      socket.assigns.modal_section ||
-        Media.get_content_section!(
-          socket.assigns.current_scope,
-          socket.assigns.editing_section_id
-        )
+    # Always get fresh section from database to ensure changeset detects changes correctly
+    # (modal_section may already have updated values from validate_section)
+    section_id =
+      case socket.assigns.modal_section do
+        %{id: id} when is_integer(id) -> id
+        _ -> socket.assigns.editing_section_id
+      end
+
+    section = Media.get_content_section!(socket.assigns.current_scope, section_id)
 
     case Media.update_content_section(socket.assigns.current_scope, section, section_params) do
-      {:ok, _section} ->
+      {:ok, _updated_section} ->
         sections =
           Media.list_content_sections(socket.assigns.current_scope, socket.assigns.project.id)
 
@@ -696,6 +767,8 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
          |> assign(:modal_section_form, nil)
          |> assign(:editing_section_id, nil)
          |> assign(:section_form, nil)
+         |> assign(:category_input, "")
+         |> assign(:genre_input, "")
          |> put_flash(:info, gettext("Section updated"))}
 
       {:error, changeset} ->
@@ -704,6 +777,58 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
          |> assign(:modal_section_form, to_form(changeset))
          |> assign(:section_form, to_form(changeset))}
     end
+  end
+
+  # Category handlers (like Tags: track input, add on Enter or click)
+  def handle_event("category_input_change", %{"key" => "Enter"}, socket) do
+    # Enter pressed - add the category using tracked value
+    {:noreply,
+     socket
+     |> add_metadata_item("categories", socket.assigns.category_input)
+     |> assign(:category_input, "")}
+  end
+
+  def handle_event("category_input_change", %{"value" => value}, socket) do
+    # Track the input value (like tag_search_query)
+    {:noreply, assign(socket, :category_input, value)}
+  end
+
+  def handle_event("category_add", _params, socket) do
+    # Add button clicked - use tracked value
+    {:noreply,
+     socket
+     |> add_metadata_item("categories", socket.assigns.category_input)
+     |> assign(:category_input, "")}
+  end
+
+  def handle_event("category_remove", %{"index" => index}, socket) do
+    {:noreply, remove_metadata_item(socket, "categories", String.to_integer(index))}
+  end
+
+  # Genre handlers (shared by book_info and movie_info)
+  def handle_event("genre_input_change", %{"key" => "Enter"}, socket) do
+    # Enter pressed - add the genre using tracked value
+    {:noreply,
+     socket
+     |> add_metadata_item("genres", socket.assigns.genre_input)
+     |> assign(:genre_input, "")}
+  end
+
+  def handle_event("genre_input_change", %{"value" => value}, socket) do
+    # Track the input value (like tag_search_query)
+    {:noreply, assign(socket, :genre_input, value)}
+  end
+
+  def handle_event("genre_add", _params, socket) do
+    # Add button clicked - use tracked value
+    {:noreply,
+     socket
+     |> add_metadata_item("genres", socket.assigns.genre_input)
+     |> assign(:genre_input, "")}
+  end
+
+  def handle_event("genre_remove", %{"index" => index}, socket) do
+    {:noreply, remove_metadata_item(socket, "genres", String.to_integer(index))}
   end
 
   def handle_event("delete_section", %{"id" => id}, socket) do
@@ -742,6 +867,64 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
       Media.list_content_sections(socket.assigns.current_scope, socket.assigns.project.id)
 
     {:noreply, assign(socket, :content_sections, sections)}
+  end
+
+  # Helper to add an item to a metadata array (categories, genres, etc.)
+  defp add_metadata_item(socket, key, value) do
+    value = String.trim(value)
+
+    if value == "" do
+      socket
+    else
+      section = socket.assigns.modal_section
+      metadata = section.metadata || %{}
+      current_items = metadata[key] || []
+
+      # Don't add duplicates (case-insensitive)
+      if Enum.any?(current_items, &(String.downcase(&1) == String.downcase(value))) do
+        socket
+      else
+        updated_metadata = Map.put(metadata, key, current_items ++ [value])
+        updated_section = %{section | metadata: updated_metadata}
+
+        socket
+        |> assign(:modal_section, updated_section)
+      end
+    end
+  end
+
+  # Helper to remove an item from a metadata array by index
+  defp remove_metadata_item(socket, key, index) do
+    section = socket.assigns.modal_section
+    metadata = section.metadata || %{}
+    current_items = metadata[key] || []
+
+    updated_items = List.delete_at(current_items, index)
+    updated_metadata = Map.put(metadata, key, updated_items)
+    updated_section = %{section | metadata: updated_metadata}
+
+    socket
+    |> assign(:modal_section, updated_section)
+  end
+
+  # Navigate to a step and update URL to preserve state across reconnects
+  defp navigate_to_step(socket, step_index) do
+    new_step = Enum.at(@steps, step_index)
+
+    socket
+    |> assign(:step_index, step_index)
+    |> assign(:current_step, new_step)
+    |> push_patch_with_step(step_index)
+  end
+
+  defp push_patch_with_step(socket, step_index) do
+    case socket.assigns.live_action do
+      :edit ->
+        push_patch(socket, to: ~p"/projects/#{socket.assigns.project.id}/edit?step=#{step_index}")
+
+      :new ->
+        push_patch(socket, to: ~p"/projects/new?step=#{step_index}")
+    end
   end
 
   defp default_section_title(section_type) do
@@ -979,7 +1162,12 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
             />
           <% end %>
           <%= if @current_step != :metadata do %>
-            <input type="hidden" name={@form[:category].name} value={@form[:category].value} />
+            <%= for category <- @selected_categories do %>
+              <input type="hidden" name="project[categories][]" value={category} />
+            <% end %>
+            <%= if @selected_categories == [] do %>
+              <input type="hidden" name="project[categories][]" value="" />
+            <% end %>
             <input type="hidden" name={@form[:project_date].name} value={@form[:project_date].value} />
           <% end %>
 
@@ -993,6 +1181,9 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
                 tag_search_query={@tag_search_query}
                 tag_suggestions={@tag_suggestions}
                 similar_tags_warning={@similar_tags_warning}
+                selected_categories={@selected_categories}
+                category_search_query={@category_search_query}
+                category_suggestions={@category_suggestions}
               />
             <% :team -> %>
               <.render_team_step
@@ -1073,7 +1264,12 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
 
         <%!-- Section Edit Modal - rendered OUTSIDE the main form to avoid nested form issues --%>
         <%= if @show_section_modal && @modal_section do %>
-          <.section_edit_modal section={@modal_section} form={@modal_section_form} />
+          <.section_edit_modal
+            section={@modal_section}
+            form={@modal_section_form}
+            category_input={@category_input}
+            genre_input={@genre_input}
+          />
         <% end %>
       </div>
     </Layouts.app>
@@ -1169,12 +1365,79 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
         </span>
       </div>
 
-      <.input
-        field={@form[:category]}
-        type="text"
-        label={@template.fields.category.label}
-        placeholder={@template.fields.category.placeholder}
-      />
+      <%!-- Category Picker (like Tags) --%>
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text font-medium">{@template.fields.category.label}</span>
+        </label>
+
+        <%!-- Selected Categories Display --%>
+        <%= if length(@selected_categories) > 0 do %>
+          <div class="gap-[var(--space-xs)] mb-[var(--space-xs)] flex flex-wrap">
+            <%= for category <- @selected_categories do %>
+              <span class="badge badge-secondary gap-[var(--space-inline)]">
+                {category}
+                <button
+                  type="button"
+                  phx-click="remove-category"
+                  phx-value-name={category}
+                  class="hover:text-error"
+                >
+                  <.icon name="hero-x-mark" class="h-3 w-3" />
+                </button>
+              </span>
+              <input type="hidden" name="project[categories][]" value={category} />
+            <% end %>
+          </div>
+        <% else %>
+          <input type="hidden" name="project[categories][]" value="" />
+        <% end %>
+
+        <%!-- Category Search Input --%>
+        <div class="relative">
+          <input
+            type="text"
+            value={@category_search_query}
+            placeholder={@template.fields.category.placeholder}
+            class="input input-bordered w-full"
+            phx-keyup="search-categories"
+            phx-debounce="300"
+            autocomplete="off"
+          />
+
+          <%!-- Suggestions Dropdown --%>
+          <%= if length(@category_suggestions) > 0 || (@category_search_query != "" && String.length(@category_search_query) >= 2) do %>
+            <div class="bg-base-100 border-base-300 absolute z-10 mt-1 w-full rounded-lg border shadow-lg">
+              <%= for {cat_name, count} <- @category_suggestions do %>
+                <button
+                  type="button"
+                  phx-click="add-category"
+                  phx-value-name={cat_name}
+                  class="w-full px-4 py-2 text-left first:rounded-t-lg last:rounded-b-lg hover:bg-base-200"
+                >
+                  <span class="font-medium">{cat_name}</span>
+                  <span class="text-base-content/60 text-[var(--text-sm)] ml-2">
+                    ({count} {ngettext("project", "projects", count)})
+                  </span>
+                </button>
+              <% end %>
+
+              <%!-- Create new category option --%>
+              <%= if @category_search_query != "" && String.length(@category_search_query) >= 2 && !Enum.any?(@category_suggestions, fn {name, _} -> String.downcase(name) == String.downcase(@category_search_query) end) do %>
+                <button
+                  type="button"
+                  phx-click="create-category"
+                  phx-value-name={@category_search_query}
+                  class="text-primary w-full px-4 py-2 text-left hover:bg-primary/10"
+                >
+                  <.icon name="hero-plus" class="mr-1 inline h-4 w-4" />
+                  {gettext("Create")} "<strong>{@category_search_query}</strong>"
+                </button>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
 
       <%!-- Tag Picker --%>
       <div class="form-control">

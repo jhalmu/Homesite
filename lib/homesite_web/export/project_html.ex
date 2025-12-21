@@ -251,7 +251,7 @@ defmodule HomesiteWeb.Export.ProjectHTML do
       #{if show_field?(project, "description") && project.description, do: "<p class=\"project-description\">#{escape_html(project.description)}</p>", else: ""}
 
       <div class="project-meta">
-        #{if show_field?(project, "category") && project.category, do: "<span class=\"badge badge-primary\">#{escape_html(project.category)}</span>", else: ""}
+        #{if show_field?(project, "category") && project.categories && length(project.categories) > 0, do: render_categories(project.categories), else: ""}
         #{if show_field?(project, "project_date") && project.project_date, do: "<span class=\"badge badge-secondary\">#{format_date(project.project_date)}</span>", else: ""}
       </div>
 
@@ -264,6 +264,14 @@ defmodule HomesiteWeb.Export.ProjectHTML do
 
     #{if length(project.media_items) > 0, do: render_media_items(project.media_items), else: ""}
     """
+  end
+
+  defp render_categories(categories) do
+    Enum.map_join(
+      categories,
+      "\n",
+      &"<span class=\"badge badge-primary\">#{escape_html(&1)}</span>"
+    )
   end
 
   defp render_tags(tags) do

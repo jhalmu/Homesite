@@ -225,6 +225,138 @@ defmodule Homesite.MediaTest do
         Media.get_public_project_by_slug!(project.slug)
       end
     end
+
+    test "list_public_projects/1 includes projects with content sections but no media" do
+      scope = user_scope_fixture()
+
+      # Create a book project with content sections but no media items
+      book_project =
+        project_fixture(scope, %{
+          name: "Book with Sections",
+          is_public: true,
+          is_portfolio: true,
+          template_type: "books"
+        })
+
+      # Add a content section (book_info)
+      {:ok, _section} =
+        Media.create_content_section(scope, %{
+          project_id: book_project.id,
+          section_type: "book_info",
+          title: "Book Details",
+          metadata: %{"isbn" => "978-1234567890"}
+        })
+
+      # Project with content sections should appear in public projects
+      public_projects = Media.list_public_projects()
+      assert Enum.any?(public_projects, &(&1.id == book_project.id))
+    end
+
+    test "list_public_projects/1 excludes empty projects" do
+      scope = user_scope_fixture()
+
+      # Create a project with no media items and no content sections
+      empty_project =
+        project_fixture(scope, %{
+          name: "Empty Project",
+          is_public: true,
+          is_portfolio: true
+        })
+
+      # Empty project should NOT appear in public projects
+      public_projects = Media.list_public_projects()
+      refute Enum.any?(public_projects, &(&1.id == empty_project.id))
+    end
+
+    test "create_project/2 with categories creates project with array of categories" do
+      scope = user_scope_fixture()
+      attrs = %{name: "Categorized Project", categories: ["Nature", "Wildlife"]}
+
+      assert {:ok, %Project{} = project} = Media.create_project(scope, attrs)
+      assert project.categories == ["Nature", "Wildlife"]
+    end
+
+    test "update_project/3 can update categories" do
+      scope = user_scope_fixture()
+      project = project_fixture(scope, %{categories: ["Original"]})
+
+      assert {:ok, updated} =
+               Media.update_project(scope, project, %{categories: ["New", "Updated"]})
+
+      assert updated.categories == ["New", "Updated"]
+    end
+
+    test "categories validation limits to 10 categories" do
+      scope = user_scope_fixture()
+      too_many = Enum.map(1..11, &"Category #{&1}")
+      attrs = %{name: "Too Many Categories", categories: too_many}
+
+      assert {:error, changeset} = Media.create_project(scope, attrs)
+      assert "cannot have more than 10 categories" in errors_on(changeset).categories
+    end
+
+    test "categories validation limits each category to 50 characters" do
+      scope = user_scope_fixture()
+      long_category = String.duplicate("a", 51)
+      attrs = %{name: "Long Category", categories: [long_category]}
+
+      assert {:error, changeset} = Media.create_project(scope, attrs)
+      assert "each category must be 50 characters or less" in errors_on(changeset).categories
+    end
+
+    test "categories are cleaned: trimmed and deduplicated" do
+      scope = user_scope_fixture()
+      attrs = %{name: "Dirty Categories", categories: ["  Nature  ", "Nature", "", "Wildlife"]}
+
+      assert {:ok, %Project{} = project} = Media.create_project(scope, attrs)
+      assert project.categories == ["Nature", "Wildlife"]
+    end
+
+    test "search_project_categories/2 returns matching categories from user's projects" do
+      scope = user_scope_fixture()
+      _project1 = project_fixture(scope, %{categories: ["Photography", "Nature"]})
+      _project2 = project_fixture(scope, %{categories: ["Photography", "Wildlife"]})
+      _project3 = project_fixture(scope, %{categories: ["Coding", "Web"]})
+
+      # Search for "photo" should return "Photography" with count 2
+      results = Media.search_project_categories(scope, "photo")
+      assert length(results) == 1
+      assert {"Photography", 2} in results
+    end
+
+    test "search_project_categories/2 is case insensitive" do
+      scope = user_scope_fixture()
+      _project = project_fixture(scope, %{categories: ["Nature Photography"]})
+
+      results = Media.search_project_categories(scope, "NATURE")
+      assert length(results) == 1
+      assert {"Nature Photography", 1} in results
+    end
+
+    test "search_project_categories/2 only returns categories from user's own projects" do
+      scope = user_scope_fixture()
+      other_scope = user_scope_fixture()
+
+      _my_project = project_fixture(scope, %{categories: ["MyCategory"]})
+      _other_project = project_fixture(other_scope, %{categories: ["OtherCategory"]})
+
+      results = Media.search_project_categories(scope, "category")
+      categories = Enum.map(results, fn {cat, _count} -> cat end)
+
+      assert "MyCategory" in categories
+      refute "OtherCategory" in categories
+    end
+
+    test "search_project_categories/2 orders by frequency" do
+      scope = user_scope_fixture()
+      _project1 = project_fixture(scope, %{categories: ["Rare", "Common"]})
+      _project2 = project_fixture(scope, %{categories: ["Common"]})
+      _project3 = project_fixture(scope, %{categories: ["Common"]})
+
+      results = Media.search_project_categories(scope, "")
+      # Common should appear first (count 3), Rare second (count 1)
+      assert [{"Common", 3}, {"Rare", 1}] = results
+    end
   end
 
   describe "media_items" do

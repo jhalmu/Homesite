@@ -131,11 +131,13 @@ defmodule HomesiteWeb.ProjectLive.Show do
 
         <%!-- Project Metadata --%>
         <div class="gap-[var(--space-sm)] mb-[var(--space-lg)] grid grid-cols-1 md:grid-cols-2">
-          <%= if @project.category do %>
-            <div class="gap-[var(--space-xs)] flex items-center">
+          <%= if @project.categories && length(@project.categories) > 0 do %>
+            <div class="gap-[var(--space-xs)] flex flex-wrap items-center">
               <.icon name="hero-tag" class="text-base-content/60 h-5 w-5" />
-              <span class="font-semibold">{gettext("Category")}:</span>
-              <span class="badge badge-primary">{@project.category}</span>
+              <span class="font-semibold">{gettext("Categories")}:</span>
+              <%= for category <- @project.categories do %>
+                <span class="badge badge-primary">{category}</span>
+              <% end %>
             </div>
           <% end %>
 

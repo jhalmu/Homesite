@@ -1,0 +1,19 @@
+[
+  verbose: false,
+  private: false,
+  skip: false,
+  router: "lib/homesite_web/router.ex",
+  exit: "low",
+  format: "txt",
+  ignore: [
+    # CSP is implemented via HomesiteWeb.Plugs.ContentSecurityPolicy plug
+    "Config.CSP",
+    # HTTPS is enabled in production via config/runtime.exs force_ssl option
+    "Config.HTTPS",
+    # File operations use server-controlled paths (false positives)
+    "Traversal.FileModule",
+    # JSON-LD properly escaped, raw HTML for theme/locale scripts (false positives)
+    "XSS.Raw"
+  ],
+  ignore_files: []
+]

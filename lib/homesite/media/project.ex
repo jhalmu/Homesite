@@ -29,7 +29,7 @@ defmodule Homesite.Media.Project do
 
     # Project-specific metadata
     field :project_date, :date
-    field :category, :string
+    field :categories, {:array, :string}, default: []
 
     field :field_visibility, :map,
       default: %{
@@ -100,13 +100,13 @@ defmodule Homesite.Media.Project do
       :display_order,
       :cover_media_item_id,
       :project_date,
-      :category,
+      :categories,
       :field_visibility
     ])
     |> validate_required([:name])
     |> validate_length(:name, min: 1, max: 200)
     |> validate_length(:description, max: 1000)
-    |> validate_length(:category, max: 100)
+    |> validate_categories()
     |> validate_inclusion(:template_type, @valid_template_types)
     |> maybe_generate_slug()
     |> validate_required([:slug])
@@ -209,7 +209,7 @@ defmodule Homesite.Media.Project do
     percentage =
       20 +
         if(data.description && data.description != "", do: 15, else: 0) +
-        if(data.category && data.category != "", do: 10, else: 0) +
+        if(data.categories && length(data.categories) > 0, do: 10, else: 0) +
         if(has_tags, do: 10, else: 0) +
         if(data.project_date, do: 10, else: 0) +
         if(data.cover_media_item_id, do: 15, else: 0)
@@ -218,5 +218,35 @@ defmodule Homesite.Media.Project do
     # when those associations are preloaded, since they're not directly accessible here
 
     put_change(changeset, :completion_percentage, min(percentage, 100))
+  end
+
+  # Validates categories: max 10 categories, each max 50 chars
+  defp validate_categories(changeset) do
+    case get_field(changeset, :categories) do
+      nil ->
+        changeset
+
+      categories when is_list(categories) ->
+        cond do
+          length(categories) > 10 ->
+            add_error(changeset, :categories, "cannot have more than 10 categories")
+
+          Enum.any?(categories, &(String.length(&1) > 50)) ->
+            add_error(changeset, :categories, "each category must be 50 characters or less")
+
+          true ->
+            # Clean up: trim whitespace and remove empty strings
+            cleaned =
+              categories
+              |> Enum.map(&String.trim/1)
+              |> Enum.reject(&(&1 == ""))
+              |> Enum.uniq()
+
+            put_change(changeset, :categories, cleaned)
+        end
+
+      _ ->
+        changeset
+    end
   end
 end

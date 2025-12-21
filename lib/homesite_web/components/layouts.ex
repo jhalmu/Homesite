@@ -70,7 +70,7 @@ defmodule HomesiteWeb.Layouts do
           <div class="gap-[var(--space-sm)] flex flex-col">
             <.pegasus class="h-20 w-20" />
             <p class="font-semibold">
-              Portal of JH <br />
+              {gettext("Portal of JH")} <br />
               <span class="text-[var(--text-sm)] font-normal opacity-70">
                 {gettext("Your personal space on the web")}
               </span>
@@ -87,9 +87,9 @@ defmodule HomesiteWeb.Layouts do
           </div>
           <div class="gap-[var(--space-xs)] flex flex-col">
             <span class="footer-title">{gettext("Built with")}</span>
-            <p class="text-[var(--text-sm)] opacity-70">Phoenix Framework</p>
-            <p class="text-[var(--text-sm)] opacity-70">Elixir</p>
-            <p class="text-[var(--text-sm)] opacity-70">Tailwind CSS & DaisyUI</p>
+            <p class="text-[var(--text-sm)] opacity-70">{gettext("Phoenix Framework")}</p>
+            <p class="text-[var(--text-sm)] opacity-70">{gettext("Elixir")}</p>
+            <p class="text-[var(--text-sm)] opacity-70">{gettext("Tailwind CSS & DaisyUI")}</p>
           </div>
           <div class="gap-[var(--space-xs)] flex flex-col">
             <span class="footer-title">{gettext("Subscribe")}</span>
@@ -147,7 +147,9 @@ defmodule HomesiteWeb.Layouts do
         <% end %>
       </div>
       <div class="border-base-300 bg-base-200/50 px-[var(--spacing-card)] py-[var(--spacing-md)] text-[var(--text-sm)] border-t text-center opacity-70">
-        <p>© {Date.utc_today().year} Portal of JH. {gettext("Built with ❤️ and Elixir.")}</p>
+        <p>
+          © {Date.utc_today().year} {gettext("Portal of JH")}. {gettext("Built with ❤️ and Elixir.")}
+        </p>
       </div>
     </footer>
 
@@ -229,7 +231,7 @@ defmodule HomesiteWeb.Layouts do
             class="btn btn-ghost text-[var(--font-size-fluid-lg)] gap-[var(--spacing-sm)] items-center"
           >
             <.pegasus class="h-20 w-20" />
-            <span class="font-display">Portal of JH</span>
+            <span class="font-display">{gettext("Portal of JH")}</span>
           </.link>
         </div>
 

@@ -83,7 +83,7 @@ defmodule HomesiteWeb.ContentSectionComponents do
 
   def content_section_display(assigns) do
     ~H"""
-    <div class="border-base-300 mb-[var(--space-sm)] rounded-lg border bg-base-100 p-[var(--space-sm)]">
+    <div class="border-base-300 mb-[var(--space-sm)] bg-base-100 p-[var(--space-sm)] rounded-lg border">
       <h4 class="text-[var(--text-base)] mb-[var(--space-xs)] flex items-center gap-2 font-semibold">
         <.icon name={section_icon(@section.section_type)} class="text-base-content/60 h-5 w-5" />
         {@section.title || section_default_title(@section.section_type)}
@@ -151,7 +151,14 @@ defmodule HomesiteWeb.ContentSectionComponents do
 
   defp book_info_form(assigns) do
     metadata = assigns.section.metadata || %{}
-    assigns = assign(assigns, :metadata, metadata)
+    genres = metadata["genres"] || []
+    genre_input = assigns[:genre_input] || ""
+
+    assigns =
+      assigns
+      |> assign(:metadata, metadata)
+      |> assign(:genres, genres)
+      |> assign(:genre_input, genre_input)
 
     ~H"""
     <div class="space-y-[var(--space-xs)]">
@@ -166,6 +173,18 @@ defmodule HomesiteWeb.ContentSectionComponents do
           placeholder={gettext("Book Information")}
         />
       </div>
+
+      <.tag_like_input
+        items={@genres}
+        field_name="section[metadata][genres]"
+        label={gettext("Genre")}
+        placeholder={gettext("Type genre and press Enter...")}
+        input_value={@genre_input}
+        on_change="genre_input_change"
+        on_add="genre_add"
+        on_remove="genre_remove"
+        badge_class="badge-primary"
+      />
 
       <div class="gap-[var(--space-xs)] grid grid-cols-2">
         <div class="form-control">
@@ -281,69 +300,79 @@ defmodule HomesiteWeb.ContentSectionComponents do
 
   defp book_info_display(assigns) do
     metadata = assigns.metadata || %{}
-    assigns = assign(assigns, :metadata, metadata)
+    genres = metadata["genres"] || []
+    assigns = assigns |> assign(:metadata, metadata) |> assign(:genres, genres)
 
     ~H"""
-    <div class="gap-[var(--space-xs)] text-[var(--text-sm)] grid grid-cols-2">
-      <%= if @metadata["isbn"] do %>
-        <div>
-          <span class="text-base-content/60">{gettext("ISBN")}:</span>
-          <span class="ml-1">{@metadata["isbn"]}</span>
+    <div class="space-y-[var(--space-xs)] text-[var(--text-sm)]">
+      <%= if @genres != [] do %>
+        <div class="flex flex-wrap gap-1">
+          <%= for genre <- @genres do %>
+            <span class="badge badge-primary badge-sm">{genre}</span>
+          <% end %>
         </div>
       <% end %>
-      <%= if @metadata["publisher"] do %>
-        <div>
-          <span class="text-base-content/60">{gettext("Publisher")}:</span>
-          <span class="ml-1">{@metadata["publisher"]}</span>
-        </div>
-      <% end %>
-      <%= if @metadata["author"] do %>
-        <div class="col-span-2">
-          <span class="text-base-content/60">{gettext("Author")}:</span>
-          <span class="ml-1">{@metadata["author"]}</span>
-        </div>
-      <% end %>
-      <%= if @metadata["pages"] do %>
-        <div>
-          <span class="text-base-content/60">{gettext("Pages")}:</span>
-          <span class="ml-1">{@metadata["pages"]}</span>
-        </div>
-      <% end %>
-      <%= if @metadata["language"] do %>
-        <div>
-          <span class="text-base-content/60">{gettext("Language")}:</span>
-          <span class="ml-1">{@metadata["language"]}</span>
-        </div>
-      <% end %>
-      <%= if @metadata["format"] do %>
-        <div>
-          <span class="text-base-content/60">{gettext("Format")}:</span>
-          <span class="ml-1">{format_label(@metadata["format"])}</span>
-        </div>
-      <% end %>
-      <%= if @metadata["edition"] do %>
-        <div>
-          <span class="text-base-content/60">{gettext("Edition")}:</span>
-          <span class="ml-1">{@metadata["edition"]}</span>
-        </div>
-      <% end %>
-      <%= if @metadata["publication_year"] do %>
-        <div>
-          <span class="text-base-content/60">{gettext("Year")}:</span>
-          <span class="ml-1">{@metadata["publication_year"]}</span>
-        </div>
-      <% end %>
-      <%= if @metadata["reading_status"] do %>
-        <div>
-          <span class="text-base-content/60">{gettext("Status")}:</span>
-          <span class="ml-1">{reading_status_label(@metadata["reading_status"])}</span>
-        </div>
-      <% end %>
-      <%= if map_size(@metadata) == 0 do %>
-        <p class="text-base-content/50 col-span-2 italic">
-          {gettext("No book information yet. Click edit to add details.")}
-        </p>
-      <% end %>
+      <div class="gap-[var(--space-xs)] grid grid-cols-2">
+        <%= if @metadata["isbn"] do %>
+          <div>
+            <span class="text-base-content/60">{gettext("ISBN")}:</span>
+            <span class="ml-1">{@metadata["isbn"]}</span>
+          </div>
+        <% end %>
+        <%= if @metadata["publisher"] do %>
+          <div>
+            <span class="text-base-content/60">{gettext("Publisher")}:</span>
+            <span class="ml-1">{@metadata["publisher"]}</span>
+          </div>
+        <% end %>
+        <%= if @metadata["author"] do %>
+          <div class="col-span-2">
+            <span class="text-base-content/60">{gettext("Author")}:</span>
+            <span class="ml-1">{@metadata["author"]}</span>
+          </div>
+        <% end %>
+        <%= if @metadata["pages"] do %>
+          <div>
+            <span class="text-base-content/60">{gettext("Pages")}:</span>
+            <span class="ml-1">{@metadata["pages"]}</span>
+          </div>
+        <% end %>
+        <%= if @metadata["language"] do %>
+          <div>
+            <span class="text-base-content/60">{gettext("Language")}:</span>
+            <span class="ml-1">{@metadata["language"]}</span>
+          </div>
+        <% end %>
+        <%= if @metadata["format"] do %>
+          <div>
+            <span class="text-base-content/60">{gettext("Format")}:</span>
+            <span class="ml-1">{format_label(@metadata["format"])}</span>
+          </div>
+        <% end %>
+        <%= if @metadata["edition"] do %>
+          <div>
+            <span class="text-base-content/60">{gettext("Edition")}:</span>
+            <span class="ml-1">{@metadata["edition"]}</span>
+          </div>
+        <% end %>
+        <%= if @metadata["publication_year"] do %>
+          <div>
+            <span class="text-base-content/60">{gettext("Year")}:</span>
+            <span class="ml-1">{@metadata["publication_year"]}</span>
+          </div>
+        <% end %>
+        <%= if @metadata["reading_status"] do %>
+          <div>
+            <span class="text-base-content/60">{gettext("Status")}:</span>
+            <span class="ml-1">{reading_status_label(@metadata["reading_status"])}</span>
+          </div>
+        <% end %>
+        <%= if map_size(@metadata) == 0 && @genres == [] do %>
+          <p class="text-base-content/50 col-span-2 italic">
+            {gettext("No book information yet. Click edit to add details.")}
+          </p>
+        <% end %>
+      </div>
     </div>
     """
   end
@@ -490,11 +519,85 @@ defmodule HomesiteWeb.ContentSectionComponents do
     """
   end
 
+  # Tag-like input component for categories/genres
+  # Works like the Tags system: tracks input value in parent assigns
+  attr :items, :list, required: true, doc: "list of current items (strings)"
+  attr :field_name, :string, required: true, doc: "name for hidden fields"
+  attr :label, :string, required: true, doc: "label for the input"
+  attr :placeholder, :string, default: "", doc: "placeholder text"
+  attr :input_value, :string, required: true, doc: "current input value (tracked in parent)"
+  attr :on_change, :string, required: true, doc: "event for input changes (like tag search)"
+  attr :on_add, :string, required: true, doc: "event for adding item"
+  attr :on_remove, :string, required: true, doc: "event for removing item"
+  attr :badge_class, :string, default: "badge-primary", doc: "badge color class"
+
+  defp tag_like_input(assigns) do
+    ~H"""
+    <div class="form-control">
+      <label class="label label-text text-[var(--text-xs)]">{@label}</label>
+      
+    <!-- Selected items as badges -->
+      <%= if @items != [] do %>
+        <div class="mb-[var(--space-xs)] gap-[var(--space-xs)] flex flex-wrap">
+          <%= for {item, idx} <- Enum.with_index(@items) do %>
+            <div class={"#{@badge_class} badge badge-md gap-1"}>
+              {item}
+              <button
+                type="button"
+                phx-click={@on_remove}
+                phx-value-index={idx}
+                class="hover:text-base-content/80"
+                aria-label={gettext("Remove")}
+              >
+                <.icon name="hero-x-mark" class="h-3 w-3" />
+              </button>
+            </div>
+            <input type="hidden" name={"#{@field_name}[]"} value={item} />
+          <% end %>
+        </div>
+      <% end %>
+      
+    <!-- Input for adding (like tag_input: value from assigns, phx-keyup to track) -->
+      <div class="join w-full">
+        <input
+          type="text"
+          value={@input_value}
+          phx-keyup={@on_change}
+          phx-debounce="100"
+          class="input input-bordered input-sm join-item flex-1"
+          placeholder={@placeholder}
+        />
+        <button
+          type="button"
+          phx-click={@on_add}
+          class="btn btn-sm btn-primary join-item"
+          aria-label={gettext("Add")}
+        >
+          <.icon name="hero-plus" class="h-4 w-4" />
+        </button>
+      </div>
+      <label class="label">
+        <span class="text-base-content/60 label-text-alt text-[var(--text-xs)]">
+          {gettext("Press Enter or click + to add")}
+        </span>
+      </label>
+    </div>
+    """
+  end
+
   # Gear Spec Components
 
   defp gear_spec_form(assigns) do
     metadata = assigns.section.metadata || %{}
-    assigns = assign(assigns, :metadata, metadata)
+    categories = metadata["categories"] || []
+    # Get input value from parent assigns (tracked in stepped_form)
+    category_input = assigns[:category_input] || ""
+
+    assigns =
+      assigns
+      |> assign(:metadata, metadata)
+      |> assign(:categories, categories)
+      |> assign(:category_input, category_input)
 
     ~H"""
     <div class="space-y-[var(--space-xs)]">
@@ -508,6 +611,17 @@ defmodule HomesiteWeb.ContentSectionComponents do
           placeholder={gettext("Specifications")}
         />
       </div>
+      <.tag_like_input
+        items={@categories}
+        field_name="section[metadata][categories]"
+        label={gettext("Category")}
+        placeholder={gettext("Type category and press Enter...")}
+        input_value={@category_input}
+        on_change="category_input_change"
+        on_add="category_add"
+        on_remove="category_remove"
+        badge_class="badge-secondary"
+      />
       <div class="gap-[var(--space-xs)] grid grid-cols-2">
         <div class="form-control">
           <label class="label label-text text-[var(--text-xs)]">{gettext("Brand")}</label>
@@ -564,10 +678,18 @@ defmodule HomesiteWeb.ContentSectionComponents do
 
   defp gear_spec_display(assigns) do
     metadata = assigns.metadata || %{}
-    assigns = assign(assigns, :metadata, metadata)
+    categories = metadata["categories"] || []
+    assigns = assigns |> assign(:metadata, metadata) |> assign(:categories, categories)
 
     ~H"""
     <div class="space-y-[var(--space-xs)] text-[var(--text-sm)]">
+      <%= if @categories != [] do %>
+        <div class="flex flex-wrap gap-1">
+          <%= for category <- @categories do %>
+            <span class="badge badge-secondary badge-sm">{category}</span>
+          <% end %>
+        </div>
+      <% end %>
       <div class="gap-[var(--space-xs)] grid grid-cols-2">
         <%= if @metadata["brand"] do %>
           <div>
@@ -610,7 +732,15 @@ defmodule HomesiteWeb.ContentSectionComponents do
 
   defp movie_info_form(assigns) do
     metadata = assigns.section.metadata || %{}
-    assigns = assign(assigns, :metadata, metadata)
+    genres = metadata["genres"] || []
+    # Movies use same genre_input as books since only one modal open at a time
+    genre_input = assigns[:genre_input] || ""
+
+    assigns =
+      assigns
+      |> assign(:metadata, metadata)
+      |> assign(:genres, genres)
+      |> assign(:genre_input, genre_input)
 
     ~H"""
     <div class="space-y-[var(--space-xs)]">
@@ -624,6 +754,17 @@ defmodule HomesiteWeb.ContentSectionComponents do
           placeholder={gettext("Movie Information")}
         />
       </div>
+      <.tag_like_input
+        items={@genres}
+        field_name="section[metadata][genres]"
+        label={gettext("Genre")}
+        placeholder={gettext("Type genre and press Enter...")}
+        input_value={@genre_input}
+        on_change="genre_input_change"
+        on_add="genre_add"
+        on_remove="genre_remove"
+        badge_class="badge-accent"
+      />
       <div class="gap-[var(--space-xs)] grid grid-cols-2">
         <div class="form-control">
           <label class="label label-text text-[var(--text-xs)]">{gettext("Director")}</label>
@@ -680,10 +821,18 @@ defmodule HomesiteWeb.ContentSectionComponents do
 
   defp movie_info_display(assigns) do
     metadata = assigns.metadata || %{}
-    assigns = assign(assigns, :metadata, metadata)
+    genres = metadata["genres"] || []
+    assigns = assigns |> assign(:metadata, metadata) |> assign(:genres, genres)
 
     ~H"""
     <div class="space-y-[var(--space-xs)] text-[var(--text-sm)]">
+      <%= if @genres != [] do %>
+        <div class="flex flex-wrap gap-1">
+          <%= for genre <- @genres do %>
+            <span class="badge badge-accent badge-sm">{genre}</span>
+          <% end %>
+        </div>
+      <% end %>
       <div class="gap-[var(--space-xs)] grid grid-cols-2">
         <%= if @metadata["director"] do %>
           <div>
@@ -827,6 +976,8 @@ defmodule HomesiteWeb.ContentSectionComponents do
   """
   attr :section, :map, required: true
   attr :form, :any, required: true
+  attr :category_input, :string, default: ""
+  attr :genre_input, :string, default: ""
 
   def section_edit_modal(assigns) do
     ~H"""
@@ -854,7 +1005,12 @@ defmodule HomesiteWeb.ContentSectionComponents do
           phx-submit="save_section"
           class="space-y-[var(--space-sm)]"
         >
-          {render_section_form(%{section: @section, form: @form})}
+          {render_section_form(%{
+            section: @section,
+            form: @form,
+            category_input: @category_input,
+            genre_input: @genre_input
+          })}
 
           <div class="modal-action">
             <button type="button" phx-click="close_section_modal" class="btn btn-ghost">

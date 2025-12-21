@@ -341,6 +341,133 @@ defmodule HomesiteWeb.ProjectLiveTest do
     end
   end
 
+  describe "ProjectLive.SteppedForm - Step 2 (Metadata) - Category Picker" do
+    setup [:create_user_and_log_in]
+
+    test "can add category via create-category event", %{conn: conn, scope: scope} do
+      {:ok, view, _html} = live(conn, ~p"/projects/new")
+
+      # Fill step 1
+      view
+      |> form("#project-form", project: %{name: "Category Test"})
+      |> render_change()
+
+      # Go to step 2
+      view |> element("button", "Next") |> render_click()
+
+      # Add a category
+      html = view |> render_hook("create-category", %{"name" => "Photography"})
+
+      assert html =~ "Photography"
+    end
+
+    test "can remove category via remove-category event", %{conn: conn, scope: scope} do
+      {:ok, view, _html} = live(conn, ~p"/projects/new")
+
+      # Fill step 1
+      view
+      |> form("#project-form", project: %{name: "Remove Category Test"})
+      |> render_change()
+
+      # Go to step 2
+      view |> element("button", "Next") |> render_click()
+
+      # Add then remove a category
+      view |> render_hook("create-category", %{"name" => "ToRemove"})
+      html = view |> render_hook("remove-category", %{"name" => "ToRemove"})
+
+      refute html =~ "ToRemove"
+    end
+
+    test "category suggestions appear when searching", %{conn: conn, scope: scope} do
+      # Create a project with categories first
+      _existing = project_fixture(scope, %{categories: ["Landscape", "Portrait"]})
+
+      {:ok, view, _html} = live(conn, ~p"/projects/new")
+
+      # Fill step 1
+      view
+      |> form("#project-form", project: %{name: "Suggestions Test"})
+      |> render_change()
+
+      # Go to step 2
+      view |> element("button", "Next") |> render_click()
+
+      # Search for categories
+      html = view |> render_hook("search-categories", %{"value" => "land"})
+
+      assert html =~ "Landscape"
+    end
+
+    test "can add category from suggestions", %{conn: conn, scope: scope} do
+      _existing = project_fixture(scope, %{categories: ["Nature"]})
+
+      {:ok, view, _html} = live(conn, ~p"/projects/new")
+
+      view
+      |> form("#project-form", project: %{name: "Add from Suggestions"})
+      |> render_change()
+
+      view |> element("button", "Next") |> render_click()
+
+      # Add existing category
+      html = view |> render_hook("add-category", %{"name" => "Nature"})
+
+      assert html =~ "Nature"
+    end
+
+    test "categories are saved with project", %{conn: conn, scope: scope} do
+      {:ok, view, _html} = live(conn, ~p"/projects/new")
+
+      view
+      |> form("#project-form", project: %{name: "Save Categories Test"})
+      |> render_change()
+
+      view |> element("button", "Next") |> render_click()
+
+      # Add categories
+      view |> render_hook("create-category", %{"name" => "Cat1"})
+      view |> render_hook("create-category", %{"name" => "Cat2"})
+
+      # Navigate through remaining steps and save
+      view |> element("button", "Next") |> render_click()
+      view |> element("button", "Next") |> render_click()
+      view |> form("#project-form", project: %{is_public: false}) |> render_submit()
+
+      # Verify categories were saved
+      projects = Homesite.Media.list_projects(scope)
+      project = Enum.find(projects, &(&1.name == "Save Categories Test"))
+
+      assert "Cat1" in project.categories
+      assert "Cat2" in project.categories
+    end
+
+    test "duplicate categories are not added", %{conn: conn, scope: scope} do
+      {:ok, view, _html} = live(conn, ~p"/projects/new")
+
+      view
+      |> form("#project-form", project: %{name: "Duplicate Test"})
+      |> render_change()
+
+      view |> element("button", "Next") |> render_click()
+
+      # Try to add same category twice
+      view |> render_hook("create-category", %{"name" => "Duplicate"})
+      view |> render_hook("create-category", %{"name" => "Duplicate"})
+
+      # Navigate and save
+      view |> element("button", "Next") |> render_click()
+      view |> element("button", "Next") |> render_click()
+      view |> form("#project-form", project: %{is_public: false}) |> render_submit()
+
+      projects = Homesite.Media.list_projects(scope)
+      project = Enum.find(projects, &(&1.name == "Duplicate Test"))
+
+      # Should only have one instance
+      assert project.categories == ["Duplicate"]
+    end
+  end
+
   describe "ProjectLive.Show" do
     setup [:create_user_and_log_in]
 
@@ -950,12 +1077,12 @@ defmodule HomesiteWeb.ProjectLiveTest do
       )
       |> render_change()
 
-      # Step 2: Add metadata
+      # Step 2: Add metadata (categories now use event-based picker like tags)
       view |> element("button", "Next") |> render_click()
 
+      # Add a category via the create event
       view
-      |> form("#project-form", project: %{category: "Test Category"})
-      |> render_change()
+      |> render_hook("create-category", %{"name" => "Test Category"})
 
       # Navigate to step 4 via remaining steps
       view |> element("button", "Next") |> render_click()
@@ -972,7 +1099,7 @@ defmodule HomesiteWeb.ProjectLiveTest do
 
       assert project != nil
       assert project.description == "My description"
-      assert project.category == "Test Category"
+      assert "Test Category" in project.categories
       assert project.is_public == true
       assert project.is_portfolio == true
     end
@@ -1121,6 +1248,315 @@ defmodule HomesiteWeb.ProjectLiveTest do
       # Should show step 5 content without error
       assert html =~ "Step 5: Content"
       assert html =~ "Cover Image"
+    end
+  end
+
+  describe "Content Section Editing" do
+    setup [:create_user_and_log_in]
+
+    test "can add and edit book_info section with multiple fields", %{conn: conn, scope: scope} do
+      project = project_fixture(scope, %{name: "Book Project", template_type: "books"})
+
+      # Step 4 in URL = step index 4 = Content step (5th step, 0-indexed)
+      {:ok, view, _html} = live(conn, ~p"/projects/#{project.id}/edit?step=4")
+
+      # Add a book_info section
+      view
+      |> element("button[phx-click='add_section'][phx-value-type='book_info']")
+      |> render_click()
+
+      # Modal should be open - fill in ISBN
+      view
+      |> form("#modal-section-form-" <> get_section_id(view), %{
+        "section" => %{
+          "title" => "My Book",
+          "metadata" => %{"isbn" => "978-1234567890"}
+        }
+      })
+      |> render_change()
+
+      # Now add publisher - ISBN should NOT be cleared
+      html =
+        view
+        |> form("#modal-section-form-" <> get_section_id(view), %{
+          "section" => %{
+            "title" => "My Book",
+            "metadata" => %{"isbn" => "978-1234567890", "publisher" => "Test Publisher"}
+          }
+        })
+        |> render_change()
+
+      # Both values should be present in the form
+      assert html =~ "978-1234567890"
+      assert html =~ "Test Publisher"
+    end
+
+    test "saving book_info section persists all metadata fields", %{conn: conn, scope: scope} do
+      project = project_fixture(scope, %{name: "Book Save Test", template_type: "books"})
+
+      section =
+        content_section_fixture(scope, project.id, %{
+          section_type: "book_info",
+          title: "Test Book"
+        })
+
+      {:ok, view, _html} = live(conn, ~p"/projects/#{project.id}/edit?step=4")
+
+      # Click edit on the section
+      view
+      |> element("button[phx-click='edit_section'][phx-value-id='#{section.id}']")
+      |> render_click()
+
+      # Fill in multiple metadata fields and save
+      view
+      |> form("#modal-section-form-#{section.id}", %{
+        "section" => %{
+          "title" => "Updated Book Title",
+          "metadata" => %{
+            "isbn" => "978-0000000000",
+            "publisher" => "Acme Publishing",
+            "author" => "Jane Doe",
+            "pages" => "350"
+          }
+        }
+      })
+      |> render_submit()
+
+      # Verify the data was saved
+      updated_section = Homesite.Media.get_content_section!(scope, section.id)
+      assert updated_section.title == "Updated Book Title"
+      assert updated_section.metadata["isbn"] == "978-0000000000"
+      assert updated_section.metadata["publisher"] == "Acme Publishing"
+      assert updated_section.metadata["author"] == "Jane Doe"
+      assert updated_section.metadata["pages"] == 350
+    end
+
+    test "form validation preserves all entered values", %{conn: conn, scope: scope} do
+      project = project_fixture(scope, %{name: "Validation Test", template_type: "books"})
+      section = content_section_fixture(scope, project.id, %{section_type: "book_info"})
+
+      {:ok, view, _html} = live(conn, ~p"/projects/#{project.id}/edit?step=4")
+
+      # Click edit
+      view
+      |> element("button[phx-click='edit_section'][phx-value-id='#{section.id}']")
+      |> render_click()
+
+      # Enter ISBN
+      view
+      |> form("#modal-section-form-#{section.id}", %{
+        "section" => %{"metadata" => %{"isbn" => "111"}}
+      })
+      |> render_change()
+
+      # Enter publisher (should not clear ISBN)
+      html =
+        view
+        |> form("#modal-section-form-#{section.id}", %{
+          "section" => %{"metadata" => %{"isbn" => "111", "publisher" => "Pub1"}}
+        })
+        |> render_change()
+
+      assert html =~ ~s(value="111")
+      assert html =~ ~s(value="Pub1")
+
+      # Enter author (should not clear ISBN or publisher)
+      html =
+        view
+        |> form("#modal-section-form-#{section.id}", %{
+          "section" => %{
+            "metadata" => %{"isbn" => "111", "publisher" => "Pub1", "author" => "Auth1"}
+          }
+        })
+        |> render_change()
+
+      assert html =~ ~s(value="111")
+      assert html =~ ~s(value="Pub1")
+      assert html =~ ~s(value="Auth1")
+    end
+
+    test "code_block section saves content correctly", %{conn: conn, scope: scope} do
+      project = project_fixture(scope, %{name: "Code Block Test"})
+
+      section =
+        content_section_fixture(scope, project.id, %{
+          section_type: "code_block",
+          title: "Test Code"
+        })
+
+      {:ok, view, _html} = live(conn, ~p"/projects/#{project.id}/edit?step=4")
+
+      # Click edit on the section
+      view
+      |> element("button[phx-click='edit_section'][phx-value-id='#{section.id}']")
+      |> render_click()
+
+      # Add code content and save
+      view
+      |> form("#modal-section-form-#{section.id}", %{
+        "section" => %{
+          "title" => "My Code",
+          "content" => "defmodule Test do\n  def hello, do: :world\nend",
+          "metadata" => %{"language" => "elixir", "filename" => "test.ex"}
+        }
+      })
+      |> render_submit()
+
+      # Verify content was saved to database
+      updated_section = Homesite.Media.get_content_section!(scope, section.id)
+      assert updated_section.title == "My Code"
+      assert updated_section.content == "defmodule Test do\n  def hello, do: :world\nend"
+      assert updated_section.metadata["language"] == "elixir"
+      assert updated_section.metadata["filename"] == "test.ex"
+
+      # Verify content is displayed in the preview card
+      html = render(view)
+      assert html =~ "defmodule Test do"
+      assert html =~ "test.ex"
+    end
+
+    test "code_block section preserves content during validation", %{conn: conn, scope: scope} do
+      project = project_fixture(scope, %{name: "Code Block Validation Test"})
+
+      section =
+        content_section_fixture(scope, project.id, %{
+          section_type: "code_block",
+          title: "Test Code"
+        })
+
+      {:ok, view, _html} = live(conn, ~p"/projects/#{project.id}/edit?step=4")
+
+      # Click edit on the section
+      view
+      |> element("button[phx-click='edit_section'][phx-value-id='#{section.id}']")
+      |> render_click()
+
+      # Enter code
+      view
+      |> form("#modal-section-form-#{section.id}", %{
+        "section" => %{"content" => "def foo, do: :bar"}
+      })
+      |> render_change()
+
+      # Change language (should preserve code content)
+      html =
+        view
+        |> form("#modal-section-form-#{section.id}", %{
+          "section" => %{
+            "content" => "def foo, do: :bar",
+            "metadata" => %{"language" => "elixir"}
+          }
+        })
+        |> render_change()
+
+      # Code content should still be present in the form
+      assert html =~ "def foo, do: :bar"
+    end
+
+    test "code_block: setting filename then code preserves both", %{conn: conn, scope: scope} do
+      project = project_fixture(scope, %{name: "Code Flow Test"})
+
+      section =
+        content_section_fixture(scope, project.id, %{
+          section_type: "code_block",
+          title: "Test Code"
+        })
+
+      {:ok, view, _html} = live(conn, ~p"/projects/#{project.id}/edit?step=4")
+
+      # Click edit
+      view
+      |> element("button[phx-click='edit_section'][phx-value-id='#{section.id}']")
+      |> render_click()
+
+      # Step 1: Set filename first (mimics typing in filename field)
+      view
+      |> form("#modal-section-form-#{section.id}", %{
+        "section" => %{"metadata" => %{"filename" => "test.ex"}}
+      })
+      |> render_change()
+
+      # Step 2: Set language
+      view
+      |> form("#modal-section-form-#{section.id}", %{
+        "section" => %{"metadata" => %{"filename" => "test.ex", "language" => "elixir"}}
+      })
+      |> render_change()
+
+      # Step 3: Add code content
+      view
+      |> form("#modal-section-form-#{section.id}", %{
+        "section" => %{
+          "content" => "defmodule Foo do\nend",
+          "metadata" => %{"filename" => "test.ex", "language" => "elixir"}
+        }
+      })
+      |> render_change()
+
+      # Step 4: Save
+      view
+      |> form("#modal-section-form-#{section.id}", %{
+        "section" => %{
+          "title" => "My Code",
+          "content" => "defmodule Foo do\nend",
+          "metadata" => %{"filename" => "test.ex", "language" => "elixir"}
+        }
+      })
+      |> render_submit()
+
+      # Verify ALL fields were saved
+      updated = Homesite.Media.get_content_section!(scope, section.id)
+      assert updated.content == "defmodule Foo do\nend"
+      assert updated.metadata["filename"] == "test.ex"
+      assert updated.metadata["language"] == "elixir"
+    end
+
+    test "rich_text section preserves title and content during validation", %{
+      conn: conn,
+      scope: scope
+    } do
+      project = project_fixture(scope, %{name: "Rich Text Test"})
+
+      section =
+        content_section_fixture(scope, project.id, %{
+          section_type: "rich_text",
+          title: "Original Title",
+          content: "Original content"
+        })
+
+      {:ok, view, _html} = live(conn, ~p"/projects/#{project.id}/edit?step=4")
+
+      # Click edit on the section
+      view
+      |> element("button[phx-click='edit_section'][phx-value-id='#{section.id}']")
+      |> render_click()
+
+      # Change title
+      view
+      |> form("#modal-section-form-#{section.id}", %{
+        "section" => %{"title" => "Updated Title", "content" => "Original content"}
+      })
+      |> render_change()
+
+      # Change content (title should still be preserved)
+      html =
+        view
+        |> form("#modal-section-form-#{section.id}", %{
+          "section" => %{"title" => "Updated Title", "content" => "Updated content"}
+        })
+        |> render_change()
+
+      assert html =~ ~s(value="Updated Title")
+      assert html =~ "Updated content"
+    end
+
+    defp get_section_id(view) do
+      html = render(view)
+      # Extract section ID from the modal form ID
+      case Regex.run(~r/modal-section-form-(\d+)/, html) do
+        [_, id] -> id
+        _ -> raise "Could not find section ID in modal"
+      end
     end
   end
 

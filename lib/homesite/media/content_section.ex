@@ -71,10 +71,12 @@ defmodule Homesite.Media.ContentSection do
   defp validate_book_metadata(changeset, metadata) do
     # Validate book-specific fields
     valid_keys =
-      ~w(isbn publisher author pages language format edition publication_year rating reading_status)
+      ~w(isbn publisher author pages language format edition publication_year rating reading_status genres)
 
     filtered =
-      Map.take(metadata, valid_keys)
+      metadata
+      |> process_genres_input()
+      |> Map.take(valid_keys)
       |> normalize_book_fields()
 
     put_change(changeset, :metadata, filtered)
@@ -96,15 +98,85 @@ defmodule Homesite.Media.ContentSection do
   end
 
   defp validate_gear_metadata(changeset, metadata) do
-    valid_keys = ~w(brand model price purchase_url)
-    filtered = Map.take(metadata, valid_keys)
+    valid_keys = ~w(brand model price purchase_url categories)
+
+    filtered =
+      metadata
+      |> process_categories_input()
+      |> Map.take(valid_keys)
+
     put_change(changeset, :metadata, filtered)
   end
 
   defp validate_movie_metadata(changeset, metadata) do
-    valid_keys = ~w(director year runtime imdb_url)
-    filtered = Map.take(metadata, valid_keys)
+    valid_keys = ~w(director year runtime imdb_url genres)
+
+    filtered =
+      metadata
+      |> process_genres_input()
+      |> Map.take(valid_keys)
+
     put_change(changeset, :metadata, filtered)
+  end
+
+  # Process categories - handles both comma-separated string and array input
+  defp process_categories_input(metadata) do
+    cond do
+      # Already have a list of categories
+      is_list(metadata["categories"]) ->
+        # Filter out empty strings and trim
+        categories =
+          metadata["categories"]
+          |> Enum.map(&String.trim/1)
+          |> Enum.reject(&(&1 == ""))
+
+        Map.put(metadata, "categories", categories)
+
+      # Have comma-separated input
+      is_binary(metadata["categories_input"]) ->
+        categories =
+          metadata["categories_input"]
+          |> String.split(",")
+          |> Enum.map(&String.trim/1)
+          |> Enum.reject(&(&1 == ""))
+
+        metadata
+        |> Map.put("categories", categories)
+        |> Map.delete("categories_input")
+
+      true ->
+        metadata
+    end
+  end
+
+  # Process genres - handles both comma-separated string and array input
+  defp process_genres_input(metadata) do
+    cond do
+      # Already have a list of genres
+      is_list(metadata["genres"]) ->
+        # Filter out empty strings and trim
+        genres =
+          metadata["genres"]
+          |> Enum.map(&String.trim/1)
+          |> Enum.reject(&(&1 == ""))
+
+        Map.put(metadata, "genres", genres)
+
+      # Have comma-separated input
+      is_binary(metadata["genres_input"]) ->
+        genres =
+          metadata["genres_input"]
+          |> String.split(",")
+          |> Enum.map(&String.trim/1)
+          |> Enum.reject(&(&1 == ""))
+
+        metadata
+        |> Map.put("genres", genres)
+        |> Map.delete("genres_input")
+
+      true ->
+        metadata
+    end
   end
 
   defp normalize_integer(metadata, key) do

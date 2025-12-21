@@ -242,8 +242,10 @@ defmodule HomesiteWeb.PortfolioLive.Show do
 
         <%!-- Project metadata --%>
         <div class="mt-[var(--spacing-sm)] gap-[var(--spacing-sm)] text-[var(--text-sm)] flex flex-wrap items-center">
-          <%= if show_field?(@project, "category") && @project.category do %>
-            <span class="badge badge-secondary">{@project.category}</span>
+          <%= if show_field?(@project, "category") && @project.categories && length(@project.categories) > 0 do %>
+            <%= for category <- @project.categories do %>
+              <span class="badge badge-secondary">{category}</span>
+            <% end %>
           <% end %>
 
           <%= if show_field?(@project, "project_date") && @project.project_date do %>
@@ -323,19 +325,9 @@ defmodule HomesiteWeb.PortfolioLive.Show do
           </div>
         <% end %>
 
-        <%!-- Media items grid --%>
-        <div class="mt-[var(--spacing-lg)]">
-          <%= if Enum.empty?(@project.media_items) do %>
-            <div class="alert alert-info">
-              <.icon name="hero-information-circle" class="h-6 w-6" />
-              <div>
-                <h3 class="font-bold">{gettext("No media yet")}</h3>
-                <div class="text-[var(--text-sm)]">
-                  {gettext("This gallery is currently empty.")}
-                </div>
-              </div>
-            </div>
-          <% else %>
+        <%!-- Media items grid (only shown when there are images) --%>
+        <%= if length(@project.media_items) > 0 do %>
+          <div class="mt-[var(--spacing-lg)]">
             <%!-- Statistics --%>
             <div class="mb-[var(--spacing-md)] text-[var(--text-sm)] opacity-70">
               {gettext("%{count} image(s)", count: length(@project.media_items))}
@@ -364,8 +356,8 @@ defmodule HomesiteWeb.PortfolioLive.Show do
                 </article>
               <% end %>
             </div>
-          <% end %>
-        </div>
+          </div>
+        <% end %>
 
         <%!-- Lightbox overlay --%>
         <%= if @lightbox_open && length(@project.media_items) > 0 do %>
