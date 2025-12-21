@@ -67,7 +67,7 @@ defmodule Homesite.Content.Tag do
           |> String.downcase()
           |> String.normalize(:nfd)
           |> String.replace(~r/\p{Mn}+/u, "")
-          |> String.replace(~r/[^\w\p{Emoji}-]+/u, "-")
+          |> String.replace(~r/[^\w-]+/u, "-")
           |> String.trim("-")
 
         put_change(changeset, :slug, slug)
