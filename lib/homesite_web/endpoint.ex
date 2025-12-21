@@ -28,6 +28,13 @@ defmodule HomesiteWeb.Endpoint do
     gzip: not code_reloading?,
     only: HomesiteWeb.static_paths()
 
+  # Serve uploaded files in development from priv/static/uploads
+  # In production, Caddy serves these directly from the uploads volume
+  plug Plug.Static,
+    at: "/uploads",
+    from: "priv/static/uploads",
+    gzip: false
+
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
 

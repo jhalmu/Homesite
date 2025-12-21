@@ -429,7 +429,12 @@ defmodule HomesiteWeb.UserLive.Settings do
         # Generate unique filename
         ext = Path.extname(entry.client_name)
         filename = "#{user.id}_#{System.system_time(:millisecond)}#{ext}"
-        dest = Path.join(["priv", "static", "uploads", "avatars", filename])
+
+        # Use UPLOADS_PATH env var in production, fallback to priv/static for dev
+        uploads_base = System.get_env("UPLOADS_PATH") || Path.join(["priv", "static", "uploads"])
+        dest_dir = Path.join([uploads_base, "avatars"])
+        File.mkdir_p!(dest_dir)
+        dest = Path.join([dest_dir, filename])
 
         # Copy file to destination
         File.cp!(path, dest)

@@ -8,10 +8,18 @@
 	# Enable compression
 	encode gzip zstd
 
+	# Serve uploaded files directly from volume
+	handle /uploads/* {
+		root * /uploads
+		file_server
+	}
+
 	# Reverse proxy to Phoenix app
-	reverse_proxy app:4000 {
-		# Tell Phoenix we're using HTTPS
-		header_up X-Forwarded-Proto https
+	handle {
+		reverse_proxy app:4000 {
+			# Tell Phoenix we're using HTTPS
+			header_up X-Forwarded-Proto https
+		}
 	}
 
 	# Security headers (supplementing Phoenix CSP)

@@ -18,6 +18,9 @@ services:
       SMTP_PORT: "${SMTP_PORT}"
       SMTP_USERNAME: "${SMTP_USERNAME}"
       SMTP_PASSWORD: "${SMTP_PASSWORD}"
+      UPLOADS_PATH: "/app/uploads"
+    volumes:
+      - uploads_data:/app/uploads
     networks:
       - internal
       - caddy
@@ -52,6 +55,7 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
+      - uploads_data:/uploads:ro
     depends_on:
       - app
     networks:
@@ -61,6 +65,7 @@ volumes:
   postgres_data:
   caddy_data:
   caddy_config:
+  uploads_data:
 
 networks:
   internal:
