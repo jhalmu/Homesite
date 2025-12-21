@@ -8,8 +8,8 @@
 
 FROM elixir:1.19.4-slim AS builder
 
-# install build dependencies
-RUN apt-get update -y && apt-get install -y build-essential git curl \
+# install build dependencies (including Node.js for npm packages)
+RUN apt-get update -y && apt-get install -y build-essential git curl nodejs npm \
     && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 # prepare build dir
@@ -39,11 +39,14 @@ COPY lib lib
 
 COPY assets assets
 
+# install npm dependencies
+RUN cd assets && npm install --include=dev && cd ..
+
+# Compile first to generate phoenix-colocated hooks
+RUN mix compile
+
 # compile assets
 RUN mix assets.deploy
-
-# Compile the release
-RUN mix compile
 
 # Changes to config/runtime.exs don't require recompiling the code
 COPY config/runtime.exs config/
