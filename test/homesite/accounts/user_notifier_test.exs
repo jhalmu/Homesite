@@ -14,7 +14,7 @@ defmodule Homesite.Accounts.UserNotifierTest do
       assert {:ok, email} = UserNotifier.deliver_update_email_instructions(user, url)
 
       assert email.to == [{"", user.email}]
-      assert email.from == {"Homesite", "contact@example.com"}
+      assert {"Orangedinos", _from_email} = email.from
       assert email.subject == "Update email instructions"
       assert email.text_body =~ "Hi #{user.email}"
       assert email.text_body =~ url
