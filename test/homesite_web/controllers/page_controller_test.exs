@@ -5,6 +5,6 @@ defmodule HomesiteWeb.PageControllerTest do
 
   test "GET /", %{conn: conn} do
     {:ok, _view, html} = live(conn, ~p"/")
-    assert html =~ "Portal of JH"
+    assert html =~ "Orangedinos"
   end
 end

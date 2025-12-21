@@ -25,7 +25,7 @@ defmodule HomesiteWeb.LayoutsTest do
           inner_block: [%{__slot__: :inner_block, inner_block: fn _, _ -> "" end}]
         })
 
-      assert html =~ "Portal of JH"
+      assert html =~ "Orangedinos"
       assert html =~ "Phoenix Framework"
       assert html =~ "Elixir"
       assert html =~ "Tailwind CSS"
@@ -119,7 +119,7 @@ defmodule HomesiteWeb.LayoutsTest do
   describe "navbar/1" do
     test "renders site branding" do
       html = render_component(&Layouts.navbar/1, %{current_scope: nil})
-      assert html =~ "Portal of JH"
+      assert html =~ "Orangedinos"
     end
 
     test "renders search link" do

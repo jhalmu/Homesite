@@ -24,8 +24,8 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:289
-#: lib/homesite_web/components/layouts.ex:409
+#: lib/homesite_web/components/layouts.ex:291
+#: lib/homesite_web/components/layouts.ex:411
 #: lib/homesite_web/live/admin_live/invitations/index.html.heex:55
 #: lib/homesite_web/live/admin_live/users/index.ex:187
 #: lib/homesite_web/live/chat_live/show.ex:301
@@ -33,8 +33,8 @@ msgstr ""
 msgid "Admin"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:191
-#: lib/homesite_web/components/layouts.ex:203
+#: lib/homesite_web/components/layouts.ex:193
+#: lib/homesite_web/components/layouts.ex:205
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr ""
@@ -45,14 +45,14 @@ msgstr ""
 msgid "Built with"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:150
+#: lib/homesite_web/components/layouts.ex:151
 #, elixir-autogen, elixir-format
 msgid "Built with ❤️ and Elixir."
 msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:83
-#: lib/homesite_web/components/layouts.ex:270
-#: lib/homesite_web/components/layouts.ex:378
+#: lib/homesite_web/components/layouts.ex:272
+#: lib/homesite_web/components/layouts.ex:380
 #, elixir-autogen, elixir-format
 msgid "Dashboard"
 msgstr ""
@@ -62,8 +62,8 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:336
-#: lib/homesite_web/components/layouts.ex:463
+#: lib/homesite_web/components/layouts.ex:338
+#: lib/homesite_web/components/layouts.ex:465
 #: lib/homesite_web/live/user_live/confirmation.ex:54
 #: lib/homesite_web/live/user_live/login.ex:15
 #: lib/homesite_web/live/user_live/registration.ex:19
@@ -71,13 +71,13 @@ msgstr ""
 msgid "Log in"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:318
-#: lib/homesite_web/components/layouts.ex:452
+#: lib/homesite_web/components/layouts.ex:320
+#: lib/homesite_web/components/layouts.ex:454
 #, elixir-autogen, elixir-format
 msgid "Log out"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:366
+#: lib/homesite_web/components/layouts.ex:368
 #, elixir-autogen, elixir-format
 msgid "Menu"
 msgstr ""
@@ -89,8 +89,8 @@ msgid "Platform"
 msgstr ""
 
 #: lib/homesite_web/components/layouts.ex:84
-#: lib/homesite_web/components/layouts.ex:276
-#: lib/homesite_web/components/layouts.ex:388
+#: lib/homesite_web/components/layouts.ex:278
+#: lib/homesite_web/components/layouts.ex:390
 #: lib/homesite_web/live/admin_live/dashboard.ex:189
 #: lib/homesite_web/live/admin_live/users/index.ex:70
 #: lib/homesite_web/live/search_live/index.html.heex:67
@@ -98,8 +98,8 @@ msgstr ""
 msgid "Posts"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:313
-#: lib/homesite_web/components/layouts.ex:447
+#: lib/homesite_web/components/layouts.ex:315
+#: lib/homesite_web/components/layouts.ex:449
 #: lib/homesite_web/live/dashboard_live/index.html.heex:338
 #: lib/homesite_web/live/notification_live/index.ex:41
 #: lib/homesite_web/live/project_live/stepped_form.ex:1128
@@ -107,7 +107,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:198
+#: lib/homesite_web/components/layouts.ex:200
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr ""
@@ -118,8 +118,8 @@ msgstr ""
 #: lib/homesite/media/project_template.ex:303
 #: lib/homesite_web/components/form_components.ex:62
 #: lib/homesite_web/components/layouts.ex:85
-#: lib/homesite_web/components/layouts.ex:279
-#: lib/homesite_web/components/layouts.ex:393
+#: lib/homesite_web/components/layouts.ex:281
+#: lib/homesite_web/components/layouts.ex:395
 #: lib/homesite_web/live/portfolio_live/show.ex:268
 #: lib/homesite_web/live/post_live/form.ex:86
 #: lib/homesite_web/live/project_live/show.ex:156
@@ -128,12 +128,12 @@ msgstr ""
 msgid "Tags"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:480
+#: lib/homesite_web/components/layouts.ex:482
 #, elixir-autogen, elixir-format
 msgid "Theme"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:186
+#: lib/homesite_web/components/layouts.ex:188
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr ""
@@ -812,7 +812,7 @@ msgstr ""
 #: lib/homesite_web/components/content_section_components.ex:231
 #: lib/homesite_web/components/content_section_components.ex:342
 #: lib/homesite_web/components/content_section_components.ex:400
-#: lib/homesite_web/components/layouts.ex:473
+#: lib/homesite_web/components/layouts.ex:475
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr ""
@@ -1143,10 +1143,10 @@ msgstr ""
 msgid "FAQ updated successfully."
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:285
-#: lib/homesite_web/components/layouts.ex:328
-#: lib/homesite_web/components/layouts.ex:403
-#: lib/homesite_web/components/layouts.ex:458
+#: lib/homesite_web/components/layouts.ex:287
+#: lib/homesite_web/components/layouts.ex:330
+#: lib/homesite_web/components/layouts.ex:405
+#: lib/homesite_web/components/layouts.ex:460
 #: lib/homesite_web/live/faq_live/index.ex:176
 #: lib/homesite_web/live/search_live/index.html.heex:146
 #, elixir-autogen, elixir-format
@@ -1281,7 +1281,7 @@ msgstr ""
 msgid "No results found for"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:259
+#: lib/homesite_web/components/layouts.ex:261
 #: lib/homesite_web/live/search_live/index.html.heex:6
 #: lib/homesite_web/live/search_live/index.html.heex:25
 #, elixir-autogen, elixir-format
@@ -1325,7 +1325,7 @@ msgstr ""
 msgid "read time"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:359
+#: lib/homesite_web/components/layouts.ex:361
 #, elixir-autogen, elixir-format
 msgid "Close menu"
 msgstr ""
@@ -1347,12 +1347,12 @@ msgstr ""
 msgid "Edit post"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:253
+#: lib/homesite_web/components/layouts.ex:255
 #, elixir-autogen, elixir-format
 msgid "Main navigation"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:241
+#: lib/homesite_web/components/layouts.ex:243
 #, elixir-autogen, elixir-format
 msgid "Open menu"
 msgstr ""
@@ -1360,11 +1360,6 @@ msgstr ""
 #: lib/homesite_web/live/user_live/login.ex:95
 #, elixir-autogen, elixir-format
 msgid "Password Login"
-msgstr ""
-
-#: lib/homesite_web/live/page_live/home.html.heex:3
-#, elixir-autogen, elixir-format
-msgid "Portal of JH - Blog Homepage"
 msgstr ""
 
 #: lib/homesite_web/live/page_live/home.html.heex:193
@@ -1484,7 +1479,7 @@ msgstr ""
 msgid "Bookmarks"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:540
+#: lib/homesite_web/components/layouts.ex:542
 #, elixir-autogen, elixir-format
 msgid "Change theme"
 msgstr ""
@@ -1524,7 +1519,7 @@ msgstr ""
 msgid "Copy"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:573
+#: lib/homesite_web/components/layouts.ex:575
 #, elixir-autogen, elixir-format
 msgid "Dark"
 msgstr ""
@@ -1607,8 +1602,8 @@ msgstr ""
 msgid "Failed to toggle bookmark"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:273
-#: lib/homesite_web/components/layouts.ex:383
+#: lib/homesite_web/components/layouts.ex:275
+#: lib/homesite_web/components/layouts.ex:385
 #: lib/homesite_web/live/feed_live/index.ex:34
 #: lib/homesite_web/live/feed_live/index.html.heex:4
 #, elixir-autogen, elixir-format
@@ -1673,7 +1668,7 @@ msgstr ""
 msgid "Last Updated"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:562
+#: lib/homesite_web/components/layouts.ex:564
 #, elixir-autogen, elixir-format
 msgid "Light"
 msgstr ""
@@ -1699,8 +1694,8 @@ msgstr ""
 msgid "Mark as unread"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:308
-#: lib/homesite_web/components/layouts.ex:437
+#: lib/homesite_web/components/layouts.ex:310
+#: lib/homesite_web/components/layouts.ex:439
 #, elixir-autogen, elixir-format
 msgid "My Profile"
 msgstr ""
@@ -2526,8 +2521,8 @@ msgstr ""
 msgid "Original Filename"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:265
-#: lib/homesite_web/components/layouts.ex:372
+#: lib/homesite_web/components/layouts.ex:267
+#: lib/homesite_web/components/layouts.ex:374
 #: lib/homesite_web/live/dashboard_live/index.html.heex:447
 #: lib/homesite_web/live/portfolio_live/index.ex:14
 #: lib/homesite_web/live/portfolio_live/index.ex:43
@@ -3165,7 +3160,7 @@ msgstr ""
 msgid "just now"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:584
+#: lib/homesite_web/components/layouts.ex:586
 #, elixir-autogen, elixir-format
 msgid "Brownie"
 msgstr ""
@@ -3339,8 +3334,8 @@ msgstr ""
 msgid "Blog post unlinked"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:282
-#: lib/homesite_web/components/layouts.ex:398
+#: lib/homesite_web/components/layouts.ex:284
+#: lib/homesite_web/components/layouts.ex:400
 #: lib/homesite_web/live/chat_live/index.ex:17
 #: lib/homesite_web/live/chat_live/index.ex:27
 #, elixir-autogen, elixir-format
@@ -4256,7 +4251,7 @@ msgstr ""
 msgid "Notification Types"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:442
+#: lib/homesite_web/components/layouts.ex:444
 #: lib/homesite_web/components/notification_bell.ex:29
 #: lib/homesite_web/components/notification_bell.ex:30
 #: lib/homesite_web/live/notification_live/index.ex:21
@@ -5808,7 +5803,7 @@ msgstr ""
 msgid "Max Uses"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:354
+#: lib/homesite_web/components/layouts.ex:356
 #, elixir-autogen, elixir-format
 msgid "Mobile navigation"
 msgstr ""
@@ -5862,7 +5857,7 @@ msgstr ""
 msgid "Save Feed Source"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:510
+#: lib/homesite_web/components/layouts.ex:512
 #, elixir-autogen, elixir-format
 msgid "Switch to English"
 msgstr ""
@@ -5892,7 +5887,7 @@ msgstr ""
 msgid "Uses"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:520
+#: lib/homesite_web/components/layouts.ex:522
 #, elixir-autogen, elixir-format
 msgid "Vaihda suomeksi"
 msgstr ""
@@ -6856,13 +6851,6 @@ msgstr ""
 msgid "Phoenix Framework"
 msgstr ""
 
-#: lib/homesite_web/components/layouts.ex:73
-#: lib/homesite_web/components/layouts.ex:150
-#: lib/homesite_web/components/layouts.ex:232
-#, elixir-autogen, elixir-format
-msgid "Portal of JH"
-msgstr ""
-
 #: lib/homesite_web/components/layouts.ex:92
 #, elixir-autogen, elixir-format
 msgid "Tailwind CSS & DaisyUI"
@@ -6871,4 +6859,9 @@ msgstr ""
 #: lib/homesite_web/components/layouts/root.html.heex:141
 #, elixir-autogen, elixir-format
 msgid "Skip to main content"
+msgstr ""
+
+#: lib/homesite_web/live/page_live/home.html.heex:3
+#, elixir-autogen, elixir-format
+msgid "Blog Homepage"
 msgstr ""

@@ -70,7 +70,7 @@ defmodule HomesiteWeb.Layouts do
           <div class="gap-[var(--space-sm)] flex flex-col">
             <.pegasus class="h-20 w-20" />
             <p class="font-semibold">
-              {gettext("Portal of JH")} <br />
+              Orangedinos <br />
               <span class="text-[var(--text-sm)] font-normal opacity-70">
                 {gettext("Your personal space on the web")}
               </span>
@@ -148,7 +148,7 @@ defmodule HomesiteWeb.Layouts do
       </div>
       <div class="border-base-300 bg-base-200/50 px-[var(--spacing-card)] py-[var(--spacing-md)] text-[var(--text-sm)] border-t text-center opacity-70">
         <p>
-          © {Date.utc_today().year} {gettext("Portal of JH")}. {gettext("Built with ❤️ and Elixir.")}
+          © {Date.utc_today().year} Orangedinos. {gettext("Built with ❤️ and Elixir.")}
         </p>
       </div>
     </footer>
@@ -231,7 +231,7 @@ defmodule HomesiteWeb.Layouts do
             class="btn btn-ghost text-[var(--font-size-fluid-lg)] gap-[var(--spacing-sm)] items-center"
           >
             <.pegasus class="h-20 w-20" />
-            <span class="font-display">{gettext("Portal of JH")}</span>
+            <span class="font-display">Orangedinos</span>
           </.link>
         </div>
 

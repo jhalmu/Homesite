@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title default="Portal of JH" suffix=" · Phoenix Framework">
+    <.live_title default="Orangedinos">
       {assigns[:page_title]}
     </.live_title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -18,19 +18,19 @@
     <link
       rel="alternate"
       type="application/rss+xml"
-      title="Portal of JH - RSS Feed"
+      title="Orangedinos - RSS Feed"
       href={url(~p"/rss.xml")}
     />
     <link
       rel="alternate"
       type="application/atom+xml"
-      title="Portal of JH - Atom Feed"
+      title="Orangedinos - Atom Feed"
       href={url(~p"/feed.xml")}
     />
     <link
       rel="alternate"
       type="application/feed+json"
-      title="Portal of JH - JSON Feed"
+      title="Orangedinos - JSON Feed"
       href={url(~p"/feed.json")}
     />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
