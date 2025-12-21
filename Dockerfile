@@ -56,7 +56,8 @@ RUN mix release
 
 # start a new build stage so that the final image will only contain
 # the compiled release and other runtime necessities
-FROM debian:bookworm-slim
+# Use trixie to match GLIBC version from elixir:1.19.4-slim
+FROM debian:trixie-slim
 
 RUN apt-get update -y && \
   apt-get install -y libstdc++6 openssl libncurses5 locales ca-certificates imagemagick \
