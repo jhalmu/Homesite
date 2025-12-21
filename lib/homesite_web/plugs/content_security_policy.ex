@@ -33,14 +33,14 @@ defmodule HomesiteWeb.Plugs.ContentSecurityPolicy do
     [
       # Scripts: Allow self and inline (required for LiveView)
       "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-      # Styles: Allow self and inline (required for Tailwind/DaisyUI dynamic classes)
-      "style-src 'self' 'unsafe-inline'",
+      # Styles: Allow self, inline, and Google Fonts
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       # Default: Only allow from same origin
       "default-src 'self'",
       # Images: Allow self and data URIs (for inline images)
       "img-src 'self' data: https:",
-      # Fonts: Allow self
-      "font-src 'self' data:",
+      # Fonts: Allow self and Google Fonts
+      "font-src 'self' data: https://fonts.gstatic.com",
       # Connect: Allow self and websockets (required for LiveView)
       "connect-src 'self' ws: wss:",
       # Frame ancestors: Prevent clickjacking
