@@ -1,20 +1,12 @@
-# Find eligible builder and runner images on Docker Hub. We use Debian Bookworm
-# because it's the most common base image and has good compatibility.
+# Find eligible builder and runner images on Docker Hub.
+# Using official Elixir image for reliability.
 #
-# https://hub.docker.com/r/hexpm/elixir/tags?page=1&name=debian-bookworm
-# https://hub.docker.com/_/debian?tab=tags&name=bookworm
+# https://hub.docker.com/_/elixir
+# https://hub.docker.com/_/debian
 #
 # This file was created based on Phoenix 1.8.3 best practices.
-# Versions: Elixir 1.19.4, OTP 27.3, Debian Bookworm
 
-ARG ELIXIR_VERSION=1.19.4
-ARG OTP_VERSION=27.3
-ARG DEBIAN_VERSION=bookworm-20241202-slim
-
-ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}"
-ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
-
-FROM ${BUILDER_IMAGE} AS builder
+FROM elixir:1.19.4-slim AS builder
 
 # install build dependencies
 RUN apt-get update -y && apt-get install -y build-essential git curl \
@@ -61,7 +53,7 @@ RUN mix release
 
 # start a new build stage so that the final image will only contain
 # the compiled release and other runtime necessities
-FROM ${RUNNER_IMAGE}
+FROM debian:bookworm-slim
 
 RUN apt-get update -y && \
   apt-get install -y libstdc++6 openssl libncurses5 locales ca-certificates imagemagick \
