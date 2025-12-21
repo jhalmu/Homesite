@@ -64,6 +64,7 @@ defmodule Homesite.MixProject do
        compile: false,
        depth: 1},
       {:swoosh, "~> 1.16"},
+      {:gen_smtp, "~> 1.2"},
       {:req, "~> 0.5"},
       {:gettext, "~> 0.26"},
       {:jason, "~> 1.2"},
