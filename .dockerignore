@@ -1,0 +1,56 @@
+# This file tells Docker which files to ignore when building the image.
+# It helps make builds faster and smaller.
+
+# Git
+.git
+.gitignore
+
+# Elixir/Phoenix build artifacts
+_build/
+deps/
+*.ez
+
+# Generate on crash by the VM
+erl_crash.dump
+
+# Static artifacts
+/assets/node_modules/
+
+# Files with secrets
+*.env
+.env.*
+!.env.example
+
+# Database
+*.db
+*.db-*
+
+# Local development
+.elixir_ls/
+.iex.exs
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Test
+/cover/
+/doc/
+test/
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Misc
+*.md
+!README.md
+LICENSE*
+Makefile
