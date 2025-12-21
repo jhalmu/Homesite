@@ -11,6 +11,7 @@
 
 	# Serve uploaded files directly from volume
 	handle /uploads/* {
+		uri strip_prefix /uploads
 		root * /uploads
 		file_server
 	}
