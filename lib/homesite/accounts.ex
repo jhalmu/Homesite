@@ -503,10 +503,15 @@ defmodule Homesite.Accounts do
 
   """
   def delete_avatar_file(avatar_path) when is_binary(avatar_path) do
-    full_path = Path.join(["priv", "static", avatar_path])
+    # Strip "/uploads" prefix from path to get relative path
+    relative_path = String.replace_prefix(avatar_path, "/uploads/", "")
+
+    # Use UPLOADS_PATH in production, priv/static/uploads in dev
+    uploads_base = System.get_env("UPLOADS_PATH") || Path.join(["priv", "static", "uploads"])
+    full_path = Path.join(uploads_base, relative_path)
 
     if File.exists?(full_path) do
-      File.rm!(full_path)
+      File.rm(full_path)
     end
 
     :ok
