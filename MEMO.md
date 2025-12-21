@@ -7,6 +7,55 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2025-12-21 - Production SMTP & Avatar Upload Fixes
+
+### Session Summary
+
+Resolved multiple production deployment issues on Hetzner server (juhahalmu.fi).
+
+#### Issues Fixed
+
+**1. Magic Link Emails Not Sending**
+- **Symptom**: Form submitted (flash appeared) but no email sent, TLS handshake error
+- **Error**: `{:error, {:retries_exceeded, {:temporary_failure, ~c"78.46.5.205", :tls_failed}}}`
+- **Fix**: Relaxed TLS settings in `config/runtime.exs`:
+  - `tls: :always` → `tls: :if_available`
+  - Added `tls_options: [verify: :verify_none]`
+
+**2. Avatar Upload 404 Errors**
+- **Symptom**: Avatars saved but Caddy returned 404
+- **Root cause**: Caddyfile path mapping was wrong - looking for `/uploads/uploads/avatars/file.jpg`
+- **Fix**: Added `uri strip_prefix /uploads` in Caddyfile before `file_server`
+
+**3. Avatar Upload Permission Denied**
+- **Symptom**: `touch: cannot touch '/app/uploads/test.txt': Permission denied`
+- **Fix**: `docker compose exec -u root app chown -R nobody:nogroup /app/uploads`
+
+**4. Old Avatar Files Not Cleaned Up in Production**
+- **Symptom**: Avatar files accumulating, old ones never deleted
+- **Root cause**: `delete_avatar_file/1` was using `priv/static` path, not `UPLOADS_PATH`
+- **Fix**: Updated function to use `System.get_env("UPLOADS_PATH")` with fallback
+
+**5. Server Repo Missing**
+- `/opt/homesite` had no git repo - had to clone fresh from GitHub
+- Restored `.env` from `/tmp/.env.backup`
+
+#### Files Modified
+- `config/runtime.exs` - Relaxed SMTP TLS settings
+- `Caddyfile` - Added `uri strip_prefix /uploads` for correct path mapping
+- `lib/homesite/accounts.ex` - Fixed `delete_avatar_file/1` for production paths
+
+#### Commits
+- `959db71` - fix: Relax SMTP TLS settings for Hetzner mail server
+- `bd0a819` - chore: Add release files for Docker build
+- `a6702e9` - fix: Correct Caddy path for serving uploaded files
+- `c007825` - fix: Delete old avatar files correctly in production
+
+#### Test Results
+- **230 tests, 0 failures**
+
+---
+
 ## 2025-12-18 - Fix Section Editing Nested Forms Bug
 
 ### Session Summary
