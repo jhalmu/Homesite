@@ -10,11 +10,8 @@
 
 	# Reverse proxy to Phoenix app
 	reverse_proxy app:4000 {
-		# Health checks
-		health_uri /
-		health_interval 30s
-		health_timeout 5s
-		health_status 200
+		# Tell Phoenix we're using HTTPS
+		header_up X-Forwarded-Proto https
 	}
 
 	# Security headers (supplementing Phoenix CSP)
