@@ -12,6 +12,7 @@ services:
       DATABASE_URL: "ecto://homesite:${DB_PASSWORD}@db/homesite_prod"
       SECRET_KEY_BASE: "${SECRET_KEY_BASE}"
       PHX_HOST: "${PHX_HOST}"
+      PHX_CHECK_ORIGIN_HOSTS: "${PHX_CHECK_ORIGIN_HOSTS}"
       PHX_SERVER: "true"
       PORT: "4000"
       SMTP_HOST: "${SMTP_HOST}"
@@ -51,6 +52,7 @@ services:
       - "443:443/udp"
     environment:
       PHX_HOST: "${PHX_HOST}"
+      PHX_ALTERNATE_HOST: "${PHX_ALTERNATE_HOST}"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
