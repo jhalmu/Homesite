@@ -85,10 +85,12 @@ defmodule HomesiteWeb.AdminLive.System.Index do
         <.dashboard_card variant="content">
           <div class="mb-[var(--space-md)] flex items-center justify-between">
             <h3 class="card-title">{gettext("Known Issues & Fixes")}</h3>
-            <button phx-click="sync_from_github" class="btn btn-outline btn-sm">
-              <.icon name="hero-arrow-path" class="h-4 w-4" />
-              {gettext("Sync from GitHub")}
-            </button>
+            <%= if @show_sync_button do %>
+              <button phx-click="sync_from_github" class="btn btn-outline btn-sm">
+                <.icon name="hero-arrow-path" class="h-4 w-4" />
+                {gettext("Sync from GitHub")}
+              </button>
+            <% end %>
           </div>
           <%= if @known_issues != [] do %>
             <div class="space-y-[var(--space-sm)]">
@@ -176,6 +178,9 @@ defmodule HomesiteWeb.AdminLive.System.Index do
 
   @impl true
   def mount(_params, _session, socket) do
+    # Only show sync button in dev (where gh CLI is available)
+    show_sync = Application.get_env(:homesite, :environment) == :dev
+
     {:ok,
      socket
      |> assign(:page_title, gettext("System Info"))
@@ -185,6 +190,7 @@ defmodule HomesiteWeb.AdminLive.System.Index do
      |> assign(:build_time, format_build_time(System.build_time()))
      |> assign(:changelog, System.changelog())
      |> assign(:known_issues, System.known_issues())
+     |> assign(:show_sync_button, show_sync)
      |> assign(:runtime_info, System.runtime_info())}
   end
 
