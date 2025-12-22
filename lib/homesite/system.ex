@@ -144,11 +144,16 @@ defmodule Homesite.System do
   defp fetch_github_issues do
     # Fetch open and closed issues with known-issue label
     args = [
-      "issue", "list",
-      "--label", "known-issue",
-      "--state", "all",
-      "--limit", "100",
-      "--json", "number,title,state,body,createdAt,closedAt,labels"
+      "issue",
+      "list",
+      "--label",
+      "known-issue",
+      "--state",
+      "all",
+      "--limit",
+      "100",
+      "--json",
+      "number,title,state,body,createdAt,closedAt,labels"
     ]
 
     case System.cmd("gh", args, stderr_to_stdout: true) do
@@ -180,6 +185,7 @@ defmodule Homesite.System do
   end
 
   defp parse_github_date(nil), do: Date.utc_today() |> Date.to_string()
+
   defp parse_github_date(iso_string) do
     case DateTime.from_iso8601(iso_string) do
       {:ok, dt, _} -> Date.to_string(DateTime.to_date(dt))
