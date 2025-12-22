@@ -49,9 +49,52 @@ When user says "EOD":
 ### Environment Variables for Production
 
 ```bash
-PHX_HOST=juhahalmu.fi
-PHX_CHECK_ORIGIN_HOSTS=orangedinos.de,juhahalmu.net
+PHX_HOST=orangedinos.de
+PHX_ALTERNATE_HOST=juhahalmu.fi
+PHX_CHECK_ORIGIN_HOSTS=juhahalmu.fi
 ```
+
+---
+
+## 2025-12-22 (evening) - Dual Domain Configuration & Auto GitHub Sync
+
+### Session Summary
+
+Fixed domain configuration for serving both orangedinos.de and juhahalmu.fi.
+
+#### Issues Fixed
+
+**1. www.orangedinos.de Redirecting to juhahalmu.fi**
+- **Root cause**: Caddyfile had `www.{$PHX_HOST}, www.orangedinos.de` redirecting to `{$PHX_HOST}`
+- **Fix**: Split into separate redirect blocks, each going to its own non-www
+
+**2. WebSocket Origin Check Failing on Secondary Domain**
+- **Root cause**: `PHX_CHECK_ORIGIN_HOSTS` missing from docker-compose.yml
+- **Fix**: Added to app service environment
+
+**3. Caddy Not Reading PHX_ALTERNATE_HOST**
+- **Root cause**: Variable not passed to caddy service
+- **Fix**: Added `PHX_ALTERNATE_HOST` to caddy environment
+
+#### New Feature: Pre-Push GitHub Issue Sync
+
+Created git pre-push hook that automatically syncs known issues before every push:
+- Runs `Homesite.System.sync_known_issues_from_github()`
+- If issues changed, creates auto-commit
+- Tracked copy in `scripts/pre-push` for reinstalling
+
+#### Files Modified
+- `Caddyfile` - Use `PHX_ALTERNATE_HOST` env var, separate www redirects
+- `docker-compose.yml` - Add `PHX_CHECK_ORIGIN_HOSTS` and `PHX_ALTERNATE_HOST`
+- `.git/hooks/pre-push` - Auto-sync GitHub issues (local only)
+- `scripts/pre-push` - Tracked copy of hook
+
+#### Commits
+- `398b72b` - fix: Support dual domains via environment variables
+- `7e2052c` - fix: Add missing env vars to docker-compose.yml
+
+#### Test Results
+- **1608 tests, 0 failures**
 
 ---
 

@@ -1,0 +1,29 @@
+#!/bin/bash
+# Pre-push hook: Sync GitHub issues before pushing
+#
+# Install: cp scripts/pre-push .git/hooks/pre-push && chmod +x .git/hooks/pre-push
+
+echo "Syncing GitHub known issues..."
+
+# Run the sync function via mix
+mix run -e "
+case Homesite.System.sync_known_issues_from_github() do
+  {:ok, count} -> IO.puts(\"Synced \#{count} issues from GitHub\")
+  {:error, reason} -> IO.puts(\"Warning: Could not sync issues: \#{reason}\")
+end
+" 2>/dev/null
+
+# Check if known_issues.json was modified
+if git diff --quiet priv/known_issues.json 2>/dev/null; then
+  echo "No issue changes to commit"
+else
+  echo "Issues updated, adding to a new commit..."
+  git add priv/known_issues.json
+  git commit -m "chore: Sync known issues from GitHub
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+fi
+
+exit 0
