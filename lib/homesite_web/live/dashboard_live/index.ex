@@ -73,17 +73,6 @@ defmodule HomesiteWeb.DashboardLive.Index do
   end
 
   @impl true
-  def handle_event("copy_profile_url", _params, socket) do
-    username = socket.assigns.current_scope.user.username
-    profile_url = url(~p"/users/@#{username}")
-
-    {:noreply,
-     socket
-     |> put_flash(:info, "Profile URL copied to clipboard!")
-     |> push_event("copy-to-clipboard", %{text: profile_url})}
-  end
-
-  @impl true
   def handle_event("dismiss_banner", %{"id" => id}, socket) do
     banner_id = String.to_integer(id)
     user_id = socket.assigns.current_scope.user.id

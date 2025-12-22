@@ -53,10 +53,18 @@ if config_env() == :prod do
   host = System.get_env("PHX_HOST") || "example.com"
   port = String.to_integer(System.get_env("PORT") || "4000")
 
+  # Additional allowed origins for WebSocket connections (comma-separated)
+  extra_origins = System.get_env("PHX_CHECK_ORIGIN_HOSTS", "")
+
+  all_origins =
+    [host | String.split(extra_origins, ",", trim: true)]
+    |> Enum.map(&"//#{&1}")
+
   config :homesite, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
   config :homesite, HomesiteWeb.Endpoint,
     url: [host: host, port: 443, scheme: "https"],
+    check_origin: all_origins,
     http: [
       # Enable IPv6 and bind on all interfaces.
       # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.

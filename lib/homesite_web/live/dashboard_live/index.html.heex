@@ -63,7 +63,9 @@
                   </code>
                   <button
                     type="button"
-                    phx-click="copy_profile_url"
+                    id="copy-profile-url"
+                    phx-hook="CopyButton"
+                    data-clipboard-text={url(~p"/users/@#{@current_scope.user.username}")}
                     class="btn btn-sm btn-primary"
                   >
                     <.icon name="hero-clipboard" class="h-4 w-4" />

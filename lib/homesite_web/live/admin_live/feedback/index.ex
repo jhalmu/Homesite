@@ -316,6 +316,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
                       <th>{gettext("User")}</th>
                       <th>{gettext("Rating")}</th>
                       <th>{gettext("Type")}</th>
+                      <th>{gettext("Feedback")}</th>
                       <th>{gettext("Shared")}</th>
                       <th>{gettext("Actions")}</th>
                     </tr>
@@ -342,6 +343,18 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
                           <span class="badge badge-sm">
                             {feedback.prompt_type}
                           </span>
+                        </td>
+                        <td class="max-w-xs">
+                          <%= if feedback.open_feedback && feedback.open_feedback != "" do %>
+                            <span
+                              class="text-[var(--text-sm)] line-clamp-2"
+                              title={feedback.open_feedback}
+                            >
+                              {feedback.open_feedback}
+                            </span>
+                          <% else %>
+                            <span class="text-base-content/40">-</span>
+                          <% end %>
                         </td>
                         <td>
                           <%= if feedback.shared_publicly do %>

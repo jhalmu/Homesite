@@ -98,6 +98,136 @@ defmodule Homesite.System do
   def changelog, do: @changelog
 
   @doc """
+  Returns known issues and fixes from the JSON config file.
+  Returns a list of maps with id, title, status, date, symptom, fix, and commit keys.
+  """
+  def known_issues do
+    path = known_issues_path()
+
+    case File.read(path) do
+      {:ok, content} ->
+        case Jason.decode(content) do
+          {:ok, issues} -> issues
+          {:error, _} -> []
+        end
+
+      {:error, _} ->
+        []
+    end
+  end
+
+  @doc """
+  Syncs known issues from GitHub issues with the "known-issue" label.
+  Returns {:ok, count} on success or {:error, reason} on failure.
+
+  Note: Requires `gh` CLI to be installed and authenticated.
+  Best used in development - sync locally, commit JSON, deploy.
+  """
+  def sync_known_issues_from_github do
+    # Check if gh CLI is available
+    case System.find_executable("gh") do
+      nil ->
+        {:error, "GitHub CLI (gh) not installed. Sync locally and commit the JSON file."}
+
+      _path ->
+        case fetch_github_issues() do
+          {:ok, issues} ->
+            transformed = Enum.map(issues, &transform_github_issue/1)
+            save_known_issues(transformed)
+
+          {:error, reason} ->
+            {:error, reason}
+        end
+    end
+  end
+
+  defp fetch_github_issues do
+    # Fetch open and closed issues with known-issue label
+    args = [
+      "issue", "list",
+      "--label", "known-issue",
+      "--state", "all",
+      "--limit", "100",
+      "--json", "number,title,state,body,createdAt,closedAt,labels"
+    ]
+
+    case System.cmd("gh", args, stderr_to_stdout: true) do
+      {output, 0} ->
+        case Jason.decode(output) do
+          {:ok, issues} -> {:ok, issues}
+          {:error, _} -> {:error, "Failed to parse GitHub response"}
+        end
+
+      {error, _} ->
+        {:error, "GitHub CLI error: #{String.slice(error, 0, 200)}"}
+    end
+  end
+
+  defp transform_github_issue(issue) do
+    # Parse body for symptom/fix if formatted with headers
+    body = issue["body"] || ""
+
+    %{
+      "id" => "gh-#{issue["number"]}",
+      "title" => issue["title"],
+      "status" => if(issue["state"] == "OPEN", do: "open", else: "fixed"),
+      "date" => parse_github_date(issue["closedAt"] || issue["createdAt"]),
+      "symptom" => extract_section(body, "Symptom") || extract_first_line(body),
+      "fix" => extract_section(body, "Fix") || extract_section(body, "Solution") || "",
+      "commit" => extract_section(body, "Commit") || "",
+      "github_url" => "https://github.com/jhalmu/homesite/issues/#{issue["number"]}"
+    }
+  end
+
+  defp parse_github_date(nil), do: Date.utc_today() |> Date.to_string()
+  defp parse_github_date(iso_string) do
+    case DateTime.from_iso8601(iso_string) do
+      {:ok, dt, _} -> Date.to_string(DateTime.to_date(dt))
+      _ -> Date.utc_today() |> Date.to_string()
+    end
+  end
+
+  defp extract_section(body, header) do
+    # Look for "## Header" or "**Header:**" patterns
+    patterns = [
+      ~r/##\s*#{header}\s*\n+(.+?)(?=\n##|\n\*\*|\z)/is,
+      ~r/\*\*#{header}:\*\*\s*(.+?)(?=\n\*\*|\n##|\z)/is,
+      ~r/#{header}:\s*(.+?)(?=\n[A-Z]|\z)/is
+    ]
+
+    Enum.find_value(patterns, fn pattern ->
+      case Regex.run(pattern, body) do
+        [_, content] -> String.trim(content)
+        _ -> nil
+      end
+    end)
+  end
+
+  defp extract_first_line(body) do
+    body
+    |> String.split("\n", trim: true)
+    |> List.first()
+    |> case do
+      nil -> ""
+      line -> String.trim(line) |> String.slice(0, 200)
+    end
+  end
+
+  defp save_known_issues(issues) do
+    path = known_issues_path()
+    content = Jason.encode!(issues, pretty: true)
+
+    case File.write(path, content) do
+      :ok -> {:ok, length(issues)}
+      {:error, reason} -> {:error, "Failed to write file: #{reason}"}
+    end
+  end
+
+  defp known_issues_path do
+    Application.app_dir(:homesite, "priv/known_issues.json")
+  end
+
+  @doc """
   Returns runtime information about the system environment.
   """
   def runtime_info do

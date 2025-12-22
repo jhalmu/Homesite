@@ -80,6 +80,66 @@ defmodule HomesiteWeb.AdminLive.System.Index do
         </.dashboard_card>
       </div>
 
+      <%!-- Known Issues & Fixes --%>
+      <div class="mt-[var(--space-lg)]">
+        <.dashboard_card variant="content">
+          <div class="mb-[var(--space-md)] flex items-center justify-between">
+            <h3 class="card-title">{gettext("Known Issues & Fixes")}</h3>
+            <button phx-click="sync_from_github" class="btn btn-outline btn-sm">
+              <.icon name="hero-arrow-path" class="h-4 w-4" />
+              {gettext("Sync from GitHub")}
+            </button>
+          </div>
+          <%= if @known_issues != [] do %>
+            <div class="space-y-[var(--space-sm)]">
+              <%= for issue <- @known_issues do %>
+                <div class="bg-base-200 p-[var(--space-sm)] rounded-lg">
+                  <div class="gap-[var(--space-xs)] mb-[var(--space-xs)] flex items-center">
+                    <%= if issue["status"] == "fixed" do %>
+                      <span class="badge badge-success badge-sm">{gettext("Fixed")}</span>
+                    <% else %>
+                      <span class="badge badge-warning badge-sm">{gettext("Open")}</span>
+                    <% end %>
+                    <span class="font-semibold">{issue["title"]}</span>
+                    <span class="text-base-content/60 text-[var(--text-sm)]">{issue["date"]}</span>
+                  </div>
+                  <div class="text-[var(--text-sm)] space-y-[var(--space-2xs)]">
+                    <p>
+                      <span class="font-medium">{gettext("Symptom")}:</span>
+                      <span class="text-base-content/80">{issue["symptom"]}</span>
+                    </p>
+                    <p>
+                      <span class="font-medium">{gettext("Fix")}:</span>
+                      <span class="text-base-content/80">{issue["fix"]}</span>
+                    </p>
+                    <%= if issue["commit"] && issue["commit"] != "pending" && issue["commit"] != "" do %>
+                      <p>
+                        <span class="font-medium">{gettext("Commit")}:</span>
+                        <code class="text-primary/70">{issue["commit"]}</code>
+                      </p>
+                    <% end %>
+                    <%= if issue["github_url"] do %>
+                      <p>
+                        <.link
+                          href={issue["github_url"]}
+                          target="_blank"
+                          class="link link-primary text-[var(--text-sm)]"
+                        >
+                          <.icon name="hero-arrow-top-right-on-square" class="inline h-3 w-3" />
+                          {gettext("View on GitHub")}
+                        </.link>
+                      </p>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="text-base-content/60">{gettext("No known issues documented")}</p>
+          <% end %>
+        </.dashboard_card>
+      </div>
+
       <%!-- Changelog --%>
       <div class="mt-[var(--space-lg)]">
         <.dashboard_card variant="content">
@@ -124,7 +184,22 @@ defmodule HomesiteWeb.AdminLive.System.Index do
      |> assign(:git_sha, System.git_sha())
      |> assign(:build_time, format_build_time(System.build_time()))
      |> assign(:changelog, System.changelog())
+     |> assign(:known_issues, System.known_issues())
      |> assign(:runtime_info, System.runtime_info())}
+  end
+
+  @impl true
+  def handle_event("sync_from_github", _params, socket) do
+    case System.sync_known_issues_from_github() do
+      {:ok, count} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, gettext("Synced %{count} issues from GitHub", count: count))
+         |> assign(:known_issues, System.known_issues())}
+
+      {:error, reason} ->
+        {:noreply, put_flash(socket, :error, gettext("Sync failed: %{reason}", reason: reason))}
+    end
   end
 
   defp format_build_time(iso_string) do

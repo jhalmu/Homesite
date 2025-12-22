@@ -7,6 +7,54 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## EOD Workflow & Known Issues Guide
+
+### Known Issues System
+
+Production bugs are tracked in `/admin/system` "Known Issues & Fixes" section.
+
+**Two sources:**
+1. **Manual JSON** (`priv/known_issues.json`) - for quick edits
+2. **GitHub Issues** with `known-issue` label - syncs with "Sync from GitHub" button
+
+### Creating a Known Issue on GitHub
+
+When you encounter a **production bug**, create a GitHub issue:
+
+1. Add label: `known-issue`
+2. Format body:
+```markdown
+## Symptom
+What users see when this happens
+
+## Fix
+How it was fixed (or "investigating" if ongoing)
+
+## Commit
+abc1234 (optional)
+```
+
+3. Close the issue when fixed (status shows as "Fixed")
+
+### EOD Checklist
+
+When user says "EOD":
+1. `mix test.all` - ensure tests pass
+2. `gh issue list` - check open issues
+3. Close completed issues: `gh issue close #XX --comment "Done in this session"`
+4. Create `known-issue` labeled issues for any production bugs found
+5. Update this MEMO.md with session summary
+6. Commit & push
+
+### Environment Variables for Production
+
+```bash
+PHX_HOST=juhahalmu.fi
+PHX_CHECK_ORIGIN_HOSTS=orangedinos.de,juhahalmu.net
+```
+
+---
+
 ## 2025-12-21 - Production SMTP & Avatar Upload Fixes
 
 ### Session Summary
