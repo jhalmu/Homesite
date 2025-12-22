@@ -83,7 +83,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
             <.link navigate={~p"/admin/system"} class="btn btn-outline btn-sm">
               <.icon name="hero-cog-6-tooth" class="h-4 w-4" /> {gettext("System Info")}
             </.link>
-            <.link navigate={~p"/dev/faqs"} class="btn btn-outline btn-sm">
+            <.link navigate={~p"/faqs"} class="btn btn-outline btn-sm">
               <.icon name="hero-book-open" class="h-4 w-4" /> {gettext("Dev FAQs")}
             </.link>
           </div>
