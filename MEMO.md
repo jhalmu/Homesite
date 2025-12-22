@@ -55,6 +55,67 @@ PHX_CHECK_ORIGIN_HOSTS=orangedinos.de,juhahalmu.net
 
 ---
 
+## 2025-12-22 - GitHub Issues #67-71, Known Issues System, WebSocket Fix
+
+### Session Summary
+
+Fixed multiple GitHub issues and added a Known Issues tracking system with GitHub sync.
+
+#### Issues Closed
+
+- **#70** - Fix copy button in dashboard (switched to CopyButton hook)
+- **#67** - Add feedback notes column to admin feedback page
+- **#69** - Add known issues section to /admin/system with GitHub sync
+- **#71** - Create custom domain setup guide (DevFaq)
+
+#### Features Implemented
+
+**1. WebSocket Origin Check for Multiple Domains**
+- Added `PHX_CHECK_ORIGIN_HOSTS` env var support in `runtime.exs`
+- Allows LiveView connections from multiple domains (juhahalmu.fi, orangedinos.de)
+
+**2. Known Issues System**
+- JSON config file: `priv/known_issues.json`
+- GitHub sync: Fetches issues with `known-issue` label
+- Admin UI: `/admin/system` shows issues with status badges
+- Sync button only visible in dev environment
+
+**3. Admin Dashboard Updates**
+- Added Dev FAQs link to Quick Actions
+- Fixed copy button using CopyButton hook pattern
+
+**4. Documentation**
+- Created `priv/dev_faqs/008-custom-domain-setup.md`
+- Added EOD workflow instructions to MEMO.md
+- Created `known-issue` GitHub label
+
+#### Files Created
+- `priv/known_issues.json` - Known issues data
+- `priv/dev_faqs/008-custom-domain-setup.md` - Custom domain guide
+
+#### Files Modified
+- `config/runtime.exs` - WebSocket origin check
+- `lib/homesite/system.ex` - GitHub sync functions
+- `lib/homesite_web/live/admin_live/system/index.ex` - Known issues UI
+- `lib/homesite_web/live/admin_live/dashboard.ex` - Dev FAQs link
+- `lib/homesite_web/live/admin_live/feedback/index.ex` - Feedback notes column
+- `lib/homesite_web/live/dashboard_live/index.ex` - Remove unused handler
+- `lib/homesite_web/live/dashboard_live/index.html.heex` - CopyButton hook
+
+#### Commits
+- `f858164` - feat: Add known issues system with GitHub sync (#69, #70, #67, #71)
+- `9900dd9` - style: Fix formatting in system.ex
+- `969241f` - fix: Correct Dev FAQs route from /dev/faqs to /faqs
+- `ea97ef1` - fix: Hide GitHub sync button in production
+
+#### Test Results
+- **1608 tests, 0 failures**
+
+#### Remaining Issues
+- **#68** - Verify active feedback system (manual testing needed)
+
+---
+
 ## 2025-12-21 - Production SMTP & Avatar Upload Fixes
 
 ### Session Summary
