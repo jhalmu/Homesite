@@ -51,4 +51,82 @@ defmodule HomesiteWeb.AdminLive.Analytics.Index do
     |> Enum.map(&(&1 - ?A + 0x1F1E6))
     |> List.to_string()
   end
+
+  @doc """
+  Generates Chart.js configuration for content breakdown doughnut chart.
+  """
+  def content_chart_data(content_stats) do
+    published = content_stats.total_posts - content_stats.total_drafts
+    drafts = content_stats.total_drafts
+
+    %{
+      type: "doughnut",
+      showLegend: true,
+      data: %{
+        labels: [gettext("Published"), gettext("Drafts")],
+        datasets: [
+          %{
+            data: [published, drafts],
+            backgroundColor: ["#22c55e", "#94a3b8"],
+            borderWidth: 0
+          }
+        ]
+      }
+    }
+    |> Jason.encode!()
+  end
+
+  @doc """
+  Generates Chart.js configuration for popular tags bar chart.
+  """
+  def tags_chart_data(tags) do
+    tags = Enum.take(tags, 8)
+
+    %{
+      type: "bar",
+      showLegend: false,
+      data: %{
+        labels: Enum.map(tags, & &1.name),
+        datasets: [
+          %{
+            label: gettext("Usage"),
+            data: Enum.map(tags, & &1.usage_count),
+            backgroundColor: "#6366f1",
+            borderRadius: 4
+          }
+        ]
+      },
+      options: %{
+        indexAxis: "y"
+      }
+    }
+    |> Jason.encode!()
+  end
+
+  @doc """
+  Generates Chart.js configuration for countries bar chart.
+  """
+  def countries_chart_data(visitors_by_country) do
+    countries = Enum.take(visitors_by_country, 8)
+
+    %{
+      type: "bar",
+      showLegend: false,
+      data: %{
+        labels: Enum.map(countries, fn c -> "#{country_flag(c.country)} #{c.country}" end),
+        datasets: [
+          %{
+            label: gettext("Actions"),
+            data: Enum.map(countries, & &1.count),
+            backgroundColor: "#14b8a6",
+            borderRadius: 4
+          }
+        ]
+      },
+      options: %{
+        indexAxis: "y"
+      }
+    }
+    |> Jason.encode!()
+  end
 end

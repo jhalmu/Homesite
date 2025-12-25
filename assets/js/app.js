@@ -26,6 +26,7 @@ import {hooks as colocatedHooks} from "phoenix-colocated/homesite"
 import topbar from "../vendor/topbar"
 import WebShareApi from "./hooks/webShareApi"
 import { SortableProjects, SortableSections } from "./hooks/sortable"
+import Chart from "chart.js/auto"
 
 // Custom hooks for date formatting
 const Hooks = {
@@ -379,6 +380,67 @@ const Hooks = {
     resize() {
       this.el.style.height = "auto"
       this.el.style.height = this.el.scrollHeight + "px"
+    }
+  },
+  // Chart.js hook for analytics visualizations
+  ChartJS: {
+    mounted() {
+      this.chart = null
+      this.renderChart()
+    },
+    updated() {
+      this.renderChart()
+    },
+    destroyed() {
+      if (this.chart) {
+        this.chart.destroy()
+      }
+    },
+    renderChart() {
+      const config = JSON.parse(this.el.dataset.chart)
+
+      if (this.chart) {
+        this.chart.destroy()
+      }
+
+      // Default styling for dark/light mode compatibility
+      const isDark = document.documentElement.getAttribute('data-theme')?.includes('dark') ||
+                     window.matchMedia('(prefers-color-scheme: dark)').matches
+
+      const textColor = isDark ? '#a6adbb' : '#1f2937'
+      const gridColor = isDark ? 'rgba(166, 173, 187, 0.1)' : 'rgba(31, 41, 55, 0.1)'
+
+      // Apply default options
+      Chart.defaults.color = textColor
+      Chart.defaults.borderColor = gridColor
+
+      this.chart = new Chart(this.el, {
+        type: config.type,
+        data: config.data,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: config.showLegend !== false,
+              position: config.legendPosition || 'bottom',
+              labels: { color: textColor }
+            }
+          },
+          scales: config.type === 'doughnut' || config.type === 'pie' ? {} : {
+            x: {
+              grid: { color: gridColor },
+              ticks: { color: textColor }
+            },
+            y: {
+              grid: { color: gridColor },
+              ticks: { color: textColor },
+              beginAtZero: true
+            }
+          },
+          ...config.options
+        }
+      })
     }
   }
 }

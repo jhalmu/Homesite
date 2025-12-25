@@ -81,6 +81,49 @@
           color="bg-orange-100 text-orange-800"
         />
       </div>
+
+      <%!-- Content Charts --%>
+      <div class="mt-[var(--space-md)] gap-[var(--space-md)] grid grid-cols-1 lg:grid-cols-2">
+        <%!-- Content Breakdown Chart --%>
+        <div class="card bg-base-100 shadow-sm">
+          <div class="card-body">
+            <h3 class="card-title text-[var(--text-lg)]">
+              <.icon name="hero-chart-pie" class="h-5 w-5" />
+              {gettext("Content Breakdown")}
+            </h3>
+            <div class="h-64">
+              <canvas
+                id="content-breakdown-chart"
+                phx-hook="ChartJS"
+                phx-update="ignore"
+                data-chart={content_chart_data(@content_stats)}
+              >
+              </canvas>
+            </div>
+          </div>
+        </div>
+
+        <%!-- Popular Tags Chart --%>
+        <%= if length(@content_stats.popular_tags) > 0 do %>
+          <div class="card bg-base-100 shadow-sm">
+            <div class="card-body">
+              <h3 class="card-title text-[var(--text-lg)]">
+                <.icon name="hero-tag" class="h-5 w-5" />
+                {gettext("Popular Tags")}
+              </h3>
+              <div class="h-64">
+                <canvas
+                  id="tags-chart"
+                  phx-hook="ChartJS"
+                  phx-update="ignore"
+                  data-chart={tags_chart_data(@content_stats.popular_tags)}
+                >
+                </canvas>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
     </section>
 
     <%!-- Geographic Analytics --%>
@@ -117,39 +160,22 @@
       </div>
 
       <div class="mt-[var(--space-md)] gap-[var(--space-md)] grid grid-cols-1 lg:grid-cols-2">
-        <%!-- Visitors by Country --%>
+        <%!-- Visitors by Country Chart --%>
         <%= if length(@visitors_by_country) > 0 do %>
           <div class="card bg-base-100 shadow-sm">
             <div class="card-body">
               <h3 class="card-title text-[var(--text-lg)]">
+                <.icon name="hero-chart-bar" class="h-5 w-5" />
                 {gettext("Top Countries")}
               </h3>
-              <div class="overflow-x-auto">
-                <table class="table-zebra table-sm table w-full">
-                  <thead>
-                    <tr>
-                      <th>{gettext("Country")}</th>
-                      <th class="text-right">{gettext("Actions")}</th>
-                      <th class="text-right">{gettext("Users")}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <%= for stat <- @visitors_by_country do %>
-                      <tr>
-                        <td>
-                          <span class="mr-[var(--space-xs)]">{country_flag(stat.country)}</span>
-                          {stat.country}
-                        </td>
-                        <td class="text-right">
-                          <span class="badge badge-primary badge-sm">{stat.count}</span>
-                        </td>
-                        <td class="text-right">
-                          <span class="badge badge-ghost badge-sm">{stat.unique_users}</span>
-                        </td>
-                      </tr>
-                    <% end %>
-                  </tbody>
-                </table>
+              <div class="h-64">
+                <canvas
+                  id="countries-chart"
+                  phx-hook="ChartJS"
+                  phx-update="ignore"
+                  data-chart={countries_chart_data(@visitors_by_country)}
+                >
+                </canvas>
               </div>
             </div>
           </div>
