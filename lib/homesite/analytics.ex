@@ -4,7 +4,7 @@ defmodule Homesite.Analytics do
   """
 
   import Ecto.Query, warn: false
-  alias Homesite.Analytics.{ActivityLog, SearchQuery}
+  alias Homesite.Analytics.{ActivityLog, Geo, SearchQuery}
   alias Homesite.Repo
 
   ## Search Analytics
@@ -13,6 +13,9 @@ defmodule Homesite.Analytics do
   Records a search query with results and performance metrics.
   """
   def record_search(query, results, duration_ms, opts \\ []) do
+    ip = Keyword.get(opts, :ip_address)
+    geo = Geo.lookup(ip)
+
     attrs = %{
       query: query,
       result_count: results.total_count,
@@ -21,8 +24,10 @@ defmodule Homesite.Analytics do
       faqs_count: length(results.faqs),
       duration_ms: duration_ms,
       user_id: Keyword.get(opts, :user_id),
-      ip_address: Keyword.get(opts, :ip_address),
-      user_agent: Keyword.get(opts, :user_agent)
+      ip_address: ip,
+      user_agent: Keyword.get(opts, :user_agent),
+      country: geo.country,
+      city: geo.city
     }
 
     %SearchQuery{}
@@ -102,14 +107,19 @@ defmodule Homesite.Analytics do
   Logs an activity/action performed by a user.
   """
   def log_activity(action, resource_type, opts \\ []) do
+    ip = Keyword.get(opts, :ip_address)
+    geo = Geo.lookup(ip)
+
     attrs = %{
       user_id: Keyword.fetch!(opts, :user_id),
       action: to_string(action),
       resource_type: to_string(resource_type),
       resource_id: Keyword.get(opts, :resource_id),
       changes: Keyword.get(opts, :changes, %{}),
-      ip_address: Keyword.get(opts, :ip_address),
+      ip_address: ip,
       user_agent: Keyword.get(opts, :user_agent),
+      country: geo.country,
+      city: geo.city,
       metadata: Keyword.get(opts, :metadata, %{})
     }
 
@@ -193,5 +203,104 @@ defmodule Homesite.Analytics do
       order_by: [desc: count(a.id)]
     )
     |> Repo.all()
+  end
+
+  ## Geo Analytics
+
+  @doc """
+  Returns visitor statistics by country.
+  """
+  def visitors_by_country(days \\ 7, limit \\ 10) do
+    cutoff = DateTime.add(DateTime.utc_now(), -days, :day)
+
+    from(a in ActivityLog,
+      where: a.inserted_at >= ^cutoff and not is_nil(a.country),
+      group_by: a.country,
+      select: %{
+        country: a.country,
+        count: count(a.id),
+        unique_users: count(a.user_id, :distinct)
+      },
+      order_by: [desc: count(a.id)],
+      limit: ^limit
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns visitor statistics by city.
+  """
+  def visitors_by_city(days \\ 7, limit \\ 10) do
+    cutoff = DateTime.add(DateTime.utc_now(), -days, :day)
+
+    from(a in ActivityLog,
+      where: a.inserted_at >= ^cutoff and not is_nil(a.city),
+      group_by: [a.country, a.city],
+      select: %{
+        country: a.country,
+        city: a.city,
+        count: count(a.id),
+        unique_users: count(a.user_id, :distinct)
+      },
+      order_by: [desc: count(a.id)],
+      limit: ^limit
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns search statistics by country.
+  """
+  def searches_by_country(days \\ 7, limit \\ 10) do
+    cutoff = DateTime.add(DateTime.utc_now(), -days, :day)
+
+    from(s in SearchQuery,
+      where: s.inserted_at >= ^cutoff and not is_nil(s.country),
+      group_by: s.country,
+      select: %{
+        country: s.country,
+        count: count(s.id),
+        avg_results: avg(s.result_count)
+      },
+      order_by: [desc: count(s.id)],
+      limit: ^limit
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns geo statistics summary.
+  """
+  def geo_stats(days \\ 7) do
+    cutoff = DateTime.add(DateTime.utc_now(), -days, :day)
+
+    activity_geo =
+      from(a in ActivityLog,
+        where: a.inserted_at >= ^cutoff,
+        select: %{
+          total: count(a.id),
+          with_country: count(a.country),
+          with_city: count(a.city),
+          unique_countries: count(a.country, :distinct),
+          unique_cities: count(a.city, :distinct)
+        }
+      )
+      |> Repo.one()
+
+    search_geo =
+      from(s in SearchQuery,
+        where: s.inserted_at >= ^cutoff,
+        select: %{
+          total: count(s.id),
+          with_country: count(s.country),
+          with_city: count(s.city)
+        }
+      )
+      |> Repo.one()
+
+    %{
+      activity_logs: activity_geo,
+      search_queries: search_geo
+    }
   end
 end

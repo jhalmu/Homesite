@@ -3,6 +3,7 @@ defmodule HomesiteWeb.SocialComponents do
   Social sharing components for posts and other content.
   """
   use Phoenix.Component
+  use Gettext, backend: HomesiteWeb.Gettext
 
   @doc """
   Native Web Share API button with clipboard fallback.
@@ -31,11 +32,12 @@ defmodule HomesiteWeb.SocialComponents do
     >
       <button
         data-share-btn
+        data-copied-text={gettext("Link copied!")}
         type="button"
         class="btn btn-ghost btn-sm gap-[var(--space-xs)]"
       >
         {share_icon(%{class: "h-5 w-5"})}
-        <span>Share this post</span>
+        <span>{gettext("Share this post")}</span>
       </button>
     </div>
     """

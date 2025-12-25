@@ -80,7 +80,7 @@ defmodule HomesiteWeb.PostLive.Show do
               <aside class="hidden lg:block lg:w-64">
                 <TableOfContents.table_of_contents
                   headings={@headings}
-                  title="On This Page"
+                  title={gettext("On This Page")}
                   sticky={true}
                   show_mobile={false}
                 />
@@ -116,6 +116,8 @@ defmodule HomesiteWeb.PostLive.Show do
       ]
     )
     |> HtmlSanitizeEx.markdown_html()
+    # Re-add heading IDs after sanitization (sanitizer may strip them)
+    |> TableOfContents.add_heading_ids()
   end
 
   @impl true
@@ -152,7 +154,7 @@ defmodule HomesiteWeb.PostLive.Show do
      |> assign(:page_title, post.title)
      |> assign(:post, post)
      |> assign(:can_edit, can_edit)
-     |> assign(:current_url, "/posts/#{id}")
+     |> assign(:current_url, url(~p"/posts/#{id}"))
      |> assign(:json_ld, json_ld)
      |> assign(:rendered_html, rendered_html)
      |> assign(:headings, headings)

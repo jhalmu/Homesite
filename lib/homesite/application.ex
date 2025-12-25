@@ -16,6 +16,10 @@ defmodule Homesite.Application do
       {Oban, Application.fetch_env!(:homesite, Oban)},
       # Start FeedCache for RSS/Atom/JSON feed caching
       Homesite.FeedCache,
+      # Chat presence tracking
+      Homesite.Chat.Presence,
+      # Task supervisor for async operations (search analytics, etc.)
+      {Task.Supervisor, name: Homesite.TaskSupervisor},
       # Start a worker by calling: Homesite.Worker.start_link(arg)
       # {Homesite.Worker, arg},
       # Start to serve requests, typically the last entry
@@ -25,7 +29,13 @@ defmodule Homesite.Application do
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Homesite.Supervisor]
-    Supervisor.start_link(children, opts)
+    result = Supervisor.start_link(children, opts)
+
+    # Initialize geo lookup service (ETS cache + optional MaxMind loader)
+    Homesite.Analytics.Geo.init_cache()
+    Homesite.Analytics.Geo.start_loader()
+
+    result
   end
 
   # Tell Phoenix to update the endpoint configuration

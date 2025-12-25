@@ -9,6 +9,8 @@ defmodule Homesite.ExternalFeeds.FeedSource do
   alias Homesite.Accounts.User
   alias Homesite.ExternalFeeds.{FeedFolder, FeedItem}
 
+  @type t :: %__MODULE__{}
+
   @feed_types ~w(rss atom json bluesky mastodon youtube instagram twitter reddit tiktok)
   @default_icons %{
     "rss" => "📰",

@@ -228,6 +228,8 @@ defmodule HomesiteWeb.UserLive.Profile do
             <button
               type="button"
               phx-click="share_profile"
+              phx-hook="Share"
+              id="share-profile-btn"
               class="btn btn-xs btn-ghost gap-[var(--space-inline)]"
             >
               <.icon name="hero-share" class="h-3 w-3" /> {gettext("Share")}
@@ -426,6 +428,19 @@ defmodule HomesiteWeb.UserLive.Profile do
      socket
      |> put_flash(:info, gettext("Profile URL copied!"))
      |> push_event("copy-to-clipboard", %{text: profile_url})}
+  end
+
+  @impl true
+  def handle_event("share_completed", %{"success" => true, "method" => "clipboard"}, socket) do
+    {:noreply, put_flash(socket, :info, gettext("Link copied to clipboard!"))}
+  end
+
+  def handle_event("share_completed", %{"success" => true, "method" => "native"}, socket) do
+    {:noreply, put_flash(socket, :info, gettext("Shared successfully!"))}
+  end
+
+  def handle_event("share_completed", %{"success" => false}, socket) do
+    {:noreply, put_flash(socket, :error, gettext("Could not share link"))}
   end
 
   @impl true

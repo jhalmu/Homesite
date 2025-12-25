@@ -12,7 +12,21 @@ defmodule Homesite.MixProject do
       aliases: aliases(),
       deps: deps(),
       compilers: [:phoenix_live_view] ++ Mix.compilers(),
-      listeners: [Phoenix.CodeReloader]
+      listeners: [Phoenix.CodeReloader],
+      dialyzer: dialyzer()
+    ]
+  end
+
+  defp dialyzer do
+    [
+      plt_file: {:no_warn, "priv/plts/dialyzer.plt"},
+      plt_add_apps: [:mix, :ex_unit],
+      flags: [
+        :error_handling,
+        :underspecs,
+        :unknown
+      ],
+      ignore_warnings: ".dialyzer_ignore.exs"
     ]
   end
 
@@ -36,7 +50,7 @@ defmodule Homesite.MixProject do
 
   def cli do
     [
-      preferred_envs: [precommit: :test, "test.all": :test]
+      preferred_envs: [precommit: :test, "test.all": :test, dialyzer: :dev]
     ]
   end
 
@@ -89,6 +103,9 @@ defmodule Homesite.MixProject do
       {:hammer, "~> 6.2"},
       {:hammer_plug, "~> 3.1"},
 
+      # IP Geolocation (MaxMind GeoLite2)
+      {:locus, "~> 2.3"},
+
       # Background Jobs & Feed Processing
       {:oban, "~> 2.18"},
       {:html_sanitize_ex, "~> 1.4"},
@@ -107,6 +124,7 @@ defmodule Homesite.MixProject do
       {:phoenix_live_reload, "1.6.1", only: :dev},
       {:tailwind_formatter, "0.4.2", only: [:dev, :test], runtime: false},
       {:credo, "1.7.13", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:sobelow, "~> 0.14", only: [:dev, :test], runtime: false},
       {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
       {:lazy_html, "0.1.8", only: :test},
@@ -137,7 +155,7 @@ defmodule Homesite.MixProject do
         "phx.digest"
       ],
       precommit: ["compile --warning-as-errors", "deps.unlock --unused", "format", "test"],
-      "test.all": ["precommit", "credo --strict"]
+      "test.all": ["precommit", "credo --strict", "dialyzer"]
     ]
   end
 end

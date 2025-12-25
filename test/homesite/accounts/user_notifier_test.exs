@@ -39,7 +39,8 @@ defmodule Homesite.Accounts.UserNotifierTest do
       assert {:ok, email} = UserNotifier.deliver_login_instructions(user, url)
 
       assert email.to == [{"", user.email}]
-      assert email.subject == "Confirmation instructions"
+      # Bilingual subject for registration confirmation
+      assert email.subject == "Confirm your account / Vahvista tilisi"
       assert email.text_body =~ "confirm your account"
       assert email.text_body =~ url
     end

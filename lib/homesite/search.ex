@@ -89,7 +89,7 @@ defmodule Homesite.Search do
     # Record analytics (async, don't block response)
     # Skip in test environment to avoid database connection issues
     if String.trim(query) != "" and Mix.env() != :test do
-      Task.start(fn ->
+      Task.Supervisor.start_child(Homesite.TaskSupervisor, fn ->
         Analytics.record_search(query, results, duration_ms,
           user_id: Keyword.get(opts, :user_id),
           ip_address: Keyword.get(opts, :ip_address),

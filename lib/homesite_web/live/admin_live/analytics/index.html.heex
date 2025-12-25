@@ -83,6 +83,116 @@
       </div>
     </section>
 
+    <%!-- Geographic Analytics --%>
+    <section>
+      <h2 class="mb-[var(--space-sm)] text-[var(--text-xl)] font-semibold">
+        <.icon name="hero-globe-alt" class="mr-[var(--space-xs)] inline h-6 w-6" />
+        {gettext("Geographic Analytics")}
+      </h2>
+      <div class="gap-[var(--space-sm)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+        <.stat_card
+          title={gettext("Countries")}
+          value={@geo_stats.activity_logs.unique_countries || 0}
+          icon="hero-flag"
+          color="bg-emerald-100 text-emerald-800"
+        />
+        <.stat_card
+          title={gettext("Cities")}
+          value={@geo_stats.activity_logs.unique_cities || 0}
+          icon="hero-building-office-2"
+          color="bg-cyan-100 text-cyan-800"
+        />
+        <.stat_card
+          title={gettext("Geo Coverage")}
+          value={"#{if @geo_stats.activity_logs.total > 0, do: round(@geo_stats.activity_logs.with_country / @geo_stats.activity_logs.total * 100), else: 0}%"}
+          icon="hero-chart-pie"
+          color="bg-violet-100 text-violet-800"
+        />
+        <.stat_card
+          title={gettext("Search Locations")}
+          value={@geo_stats.search_queries.with_country || 0}
+          icon="hero-magnifying-glass"
+          color="bg-amber-100 text-amber-800"
+        />
+      </div>
+
+      <div class="mt-[var(--space-md)] gap-[var(--space-md)] grid grid-cols-1 lg:grid-cols-2">
+        <%!-- Visitors by Country --%>
+        <%= if length(@visitors_by_country) > 0 do %>
+          <div class="card bg-base-100 shadow-sm">
+            <div class="card-body">
+              <h3 class="card-title text-[var(--text-lg)]">
+                {gettext("Top Countries")}
+              </h3>
+              <div class="overflow-x-auto">
+                <table class="table-zebra table-sm table w-full">
+                  <thead>
+                    <tr>
+                      <th>{gettext("Country")}</th>
+                      <th class="text-right">{gettext("Actions")}</th>
+                      <th class="text-right">{gettext("Users")}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <%= for stat <- @visitors_by_country do %>
+                      <tr>
+                        <td>
+                          <span class="mr-[var(--space-xs)]">{country_flag(stat.country)}</span>
+                          {stat.country}
+                        </td>
+                        <td class="text-right">
+                          <span class="badge badge-primary badge-sm">{stat.count}</span>
+                        </td>
+                        <td class="text-right">
+                          <span class="badge badge-ghost badge-sm">{stat.unique_users}</span>
+                        </td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <%!-- Visitors by City --%>
+        <%= if length(@visitors_by_city) > 0 do %>
+          <div class="card bg-base-100 shadow-sm">
+            <div class="card-body">
+              <h3 class="card-title text-[var(--text-lg)]">
+                {gettext("Top Cities")}
+              </h3>
+              <div class="overflow-x-auto">
+                <table class="table-zebra table-sm table w-full">
+                  <thead>
+                    <tr>
+                      <th>{gettext("City")}</th>
+                      <th>{gettext("Country")}</th>
+                      <th class="text-right">{gettext("Actions")}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <%= for stat <- @visitors_by_city do %>
+                      <tr>
+                        <td>{stat.city}</td>
+                        <td>
+                          <span class="mr-[var(--space-xs)]">{country_flag(stat.country)}</span>
+                          {stat.country}
+                        </td>
+                        <td class="text-right">
+                          <span class="badge badge-primary badge-sm">{stat.count}</span>
+                        </td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </section>
+
     <%!-- Top Authors --%>
     <section>
       <h2 class="mb-[var(--space-sm)] text-[var(--text-xl)] font-semibold">

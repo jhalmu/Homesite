@@ -44,6 +44,16 @@ defmodule HomesiteWeb.TagLive.Form do
               <p class="mt-[var(--space-xs)] text-[var(--text-sm)]">
                 {gettext("Consider using one of these existing tags instead of creating a new one.")}
               </p>
+              <label class="label gap-[var(--space-xs)] mt-[var(--space-sm)] cursor-pointer justify-start">
+                <input
+                  type="checkbox"
+                  name="confirm_similar"
+                  checked={@confirmed_similar}
+                  phx-click="toggle_confirm"
+                  class="checkbox checkbox-sm"
+                />
+                <span class="label-text">{gettext("I understand, create a new tag anyway")}</span>
+              </label>
             </div>
           </div>
         <% end %>
@@ -76,7 +86,11 @@ defmodule HomesiteWeb.TagLive.Form do
         <div class="divider"></div>
 
         <footer class="gap-[var(--space-xs)] flex">
-          <.button phx-disable-with={gettext("Saving...")} variant="primary">
+          <.button
+            phx-disable-with={gettext("Saving...")}
+            variant="primary"
+            disabled={@similar_tags != [] and not @confirmed_similar}
+          >
             {gettext("Save Tag")}
           </.button>
           <.button navigate={return_path(@current_scope, @return_to, @tag)}>
@@ -111,6 +125,7 @@ defmodule HomesiteWeb.TagLive.Form do
     |> assign(:tag, tag)
     |> assign(:is_public, tag.is_public)
     |> assign(:similar_tags, [])
+    |> assign(:confirmed_similar, false)
     |> assign(:form, to_form(Content.change_tag(scope, tag)))
   end
 
@@ -122,6 +137,7 @@ defmodule HomesiteWeb.TagLive.Form do
     |> assign(:tag, tag)
     |> assign(:is_public, true)
     |> assign(:similar_tags, [])
+    |> assign(:confirmed_similar, false)
     |> assign(:form, to_form(Content.change_tag(socket.assigns.current_scope, tag)))
   end
 
@@ -154,11 +170,24 @@ defmodule HomesiteWeb.TagLive.Form do
           []
       end
 
+    # Reset confirmation when similar tags change
+    confirmed_similar =
+      if similar_tags != socket.assigns.similar_tags do
+        false
+      else
+        socket.assigns.confirmed_similar
+      end
+
     {:noreply,
      socket
      |> assign(:is_public, is_public)
      |> assign(:similar_tags, similar_tags)
+     |> assign(:confirmed_similar, confirmed_similar)
      |> assign(:form, to_form(changeset, action: :validate))}
+  end
+
+  def handle_event("toggle_confirm", _params, socket) do
+    {:noreply, assign(socket, :confirmed_similar, !socket.assigns.confirmed_similar)}
   end
 
   def handle_event("save", %{"tag" => tag_params}, socket) do

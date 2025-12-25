@@ -95,6 +95,8 @@ defmodule HomesiteWeb.Layouts do
             <span class="footer-title">{gettext("Subscribe")}</span>
             <.link
               href={~p"/rss.xml"}
+              target="_blank"
+              rel="noopener noreferrer"
               class="link-hover link gap-[var(--spacing-inline)] flex items-center"
             >
               <.icon name="hero-rss" class="h-4 w-4" />
@@ -102,6 +104,8 @@ defmodule HomesiteWeb.Layouts do
             </.link>
             <.link
               href={~p"/feed.json"}
+              target="_blank"
+              rel="noopener noreferrer"
               class="link-hover link gap-[var(--spacing-inline)] flex items-center"
             >
               <.icon name="hero-code-bracket" class="h-4 w-4" />
@@ -109,6 +113,8 @@ defmodule HomesiteWeb.Layouts do
             </.link>
             <.link
               href={~p"/feed.xml"}
+              target="_blank"
+              rel="noopener noreferrer"
               class="link-hover link gap-[var(--spacing-inline)] flex items-center"
             >
               <.icon name="hero-rss" class="h-4 w-4" />
@@ -281,7 +287,10 @@ defmodule HomesiteWeb.Layouts do
                 <.link navigate={~p"/tags"}>{gettext("Tags")}</.link>
               </li>
               <li class="nav-item">
-                <.link navigate={~p"/chat"}>{gettext("Chat")}</.link>
+                <.link navigate={~p"/chat"} class="relative">
+                  {gettext("Chat")}
+                  <.chat_online_indicator />
+                </.link>
               </li>
               <li class="nav-item">
                 <.link navigate={~p"/faqs"}>{gettext("FAQs")}</.link>
@@ -588,6 +597,29 @@ defmodule HomesiteWeb.Layouts do
         </li>
       </ul>
     </div>
+    """
+  end
+
+  @doc """
+  Renders an online indicator dot for chat.
+
+  Shows a green dot when there are users online in chat.
+  """
+  def chat_online_indicator(assigns) do
+    online_count = Homesite.Chat.Presence.online_count()
+    assigns = assign(assigns, :online_count, online_count)
+
+    ~H"""
+    <%= if @online_count > 0 do %>
+      <span
+        class="absolute -top-1 -right-1 flex h-2 w-2"
+        title={ngettext("1 user online", "%{count} users online", @online_count)}
+      >
+        <span class="bg-success absolute inline-flex h-full w-full animate-ping rounded-full opacity-75">
+        </span>
+        <span class="bg-success relative inline-flex h-2 w-2 rounded-full"></span>
+      </span>
+    <% end %>
     """
   end
 end

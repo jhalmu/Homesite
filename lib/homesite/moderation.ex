@@ -1374,9 +1374,11 @@ defmodule Homesite.Moderation do
   ## Private helpers
 
   defp log_action(scope, target_user_id, action, reason, expires_at, metadata) do
+    moderator_id = if scope.user, do: scope.user.id, else: nil
+
     %ModerationActionLog{}
     |> ModerationActionLog.changeset(%{
-      "moderator_id" => scope && scope.user && scope.user.id,
+      "moderator_id" => moderator_id,
       "target_user_id" => target_user_id,
       "action" => action,
       "reason" => reason,

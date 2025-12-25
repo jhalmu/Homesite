@@ -53,7 +53,11 @@ defmodule HomesiteWeb.TagLive.Index do
           </div>
         <% end %>
 
-        <div class="mt-[var(--spacing-lg)] space-y-[var(--spacing-md)]" id="tags" phx-update="stream">
+        <div
+          class="mt-[var(--spacing-lg)] gap-[var(--space-sm)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+          id="tags"
+          phx-update="stream"
+        >
           <%= for {id, tag} <- @streams.tags do %>
             <article
               id={id}

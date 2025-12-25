@@ -180,10 +180,9 @@ defmodule Homesite.ExternalFeeds.Adapters.RssAdapter do
 
   # Sanitize HTML content
   defp sanitize_content(content) when is_binary(content) and content != "" do
-    case HtmlSanitizeEx.basic_html(content) do
-      sanitized when is_binary(sanitized) -> String.trim(sanitized)
-      _ -> String.trim(content)
-    end
+    content
+    |> HtmlSanitizeEx.basic_html()
+    |> String.trim()
   end
 
   defp sanitize_content(_), do: ""

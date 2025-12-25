@@ -1170,13 +1170,20 @@ dialog button:focus-visible {
 /* Navbar menu links - improve contrast in dark mode */
 /* Using very specific selector to override DaisyUI's menu styles */
 /* Background #1d232a requires ~#9ca3af or lighter for 4.5:1 ratio */
+/* Need to override DaisyUI menu link colors in dark theme for WCAG AA compliance */
 html[data-theme="dark"] .nav-item > a,
-[data-theme="dark"] .nav-item > a {
+[data-theme="dark"] .nav-item > a,
+html[data-theme="dark"] .menu li.nav-item > a,
+[data-theme="dark"] .menu li.nav-item > a,
+html[data-theme="dark"] .menu.menu-horizontal li a,
+[data-theme="dark"] .menu.menu-horizontal li a {
     color: #ffffff !important; /* White: Maximum contrast on dark */
     opacity: 1 !important; /* Ensure no opacity reduction */
 }
 
 html[data-theme="dark"] .nav-item > a:hover,
-[data-theme="dark"] .nav-item > a:hover {
+[data-theme="dark"] .nav-item > a:hover,
+html[data-theme="dark"] .menu.menu-horizontal li a:hover,
+[data-theme="dark"] .menu.menu-horizontal li a:hover {
     color: #ffffff !important;
 }

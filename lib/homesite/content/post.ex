@@ -57,7 +57,19 @@ defmodule Homesite.Content.Post do
     |> put_tags(attrs, user_scope)
   end
 
+  # Handle string keys (from form params)
   defp put_tags(changeset, %{"tag_ids" => tag_ids}, user_scope) when is_list(tag_ids) do
+    do_put_tags(changeset, tag_ids, user_scope)
+  end
+
+  # Handle atom keys (from tests/programmatic use)
+  defp put_tags(changeset, %{tag_ids: tag_ids}, user_scope) when is_list(tag_ids) do
+    do_put_tags(changeset, tag_ids, user_scope)
+  end
+
+  defp put_tags(changeset, _attrs, _user_scope), do: changeset
+
+  defp do_put_tags(changeset, tag_ids, user_scope) do
     # Filter out empty strings and get valid tag IDs
     tag_ids = Enum.reject(tag_ids, &(&1 == "" || is_nil(&1)))
 
@@ -74,8 +86,6 @@ defmodule Homesite.Content.Post do
       put_assoc(changeset, :tags, tags)
     end
   end
-
-  defp put_tags(changeset, _attrs, _user_scope), do: changeset
 
   defp generate_slug(changeset) do
     case get_change(changeset, :title) do

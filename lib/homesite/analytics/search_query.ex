@@ -17,6 +17,8 @@ defmodule Homesite.Analytics.SearchQuery do
     field :duration_ms, :integer
     field :ip_address, :string
     field :user_agent, :string
+    field :country, :string
+    field :city, :string
 
     belongs_to :user, Homesite.Accounts.User
 
@@ -35,7 +37,9 @@ defmodule Homesite.Analytics.SearchQuery do
       :duration_ms,
       :user_id,
       :ip_address,
-      :user_agent
+      :user_agent,
+      :country,
+      :city
     ])
     |> validate_required([:query, :result_count])
     |> validate_length(:query, min: 1, max: 255)

@@ -64,6 +64,26 @@ defmodule HomesiteWeb.SEO.JsonLD do
   end
 
   @doc """
+  Generates JSON-LD for WebSite schema (homepage).
+
+  Includes search action for site search.
+  """
+  def website(url) do
+    %{
+      "@context" => "https://schema.org",
+      "@type" => "WebSite",
+      "name" => "Juha Halmun kotisivu ja blogi",
+      "alternateName" => "Orangedinos",
+      "url" => url,
+      "potentialAction" => %{
+        "@type" => "SearchAction",
+        "target" => "#{url}/search?q={search_term_string}",
+        "query-input" => "required name=search_term_string"
+      }
+    }
+  end
+
+  @doc """
   Generates JSON-LD for breadcrumb navigation.
   """
   def breadcrumbs(items, base_url) do

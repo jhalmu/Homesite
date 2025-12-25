@@ -56,6 +56,56 @@ PHX_CHECK_ORIGIN_HOSTS=juhahalmu.fi
 
 ---
 
+## 2025-12-25 - Geo Analytics, Share Dropdown, Search Compact, Translations
+
+### Session Summary
+
+Christmas session with multiple fixes and features.
+
+#### Features Implemented
+
+**1. Geo Analytics (Country/City Tracking)**
+- Added MaxMind GeoLite2-City database integration
+- New `Homesite.Analytics.Geo` module for IP geolocation
+- Added `country` and `city` fields to `activity_logs` and `search_queries`
+- Admin dashboard shows Geographic Analytics section with top countries/cities
+- Country flag emojis generated from ISO codes
+
+**2. Posts Index Share Button (Fixed)**
+- Replaced broken Share button with dropdown menu (same as portfolio page)
+- Options: Bluesky, Mastodon, LinkedIn, Email
+- Uses `OpenWindow` hook pattern for cross-browser compatibility
+- Translated to Finnish
+
+**3. Search Results Compact Layout**
+- Moved Tags section first (above Posts)
+- Added card backgrounds with `card bg-base-100 shadow-sm`
+- Reduced spacing and font sizes for compact list
+
+**4. Translations Fixed**
+- Removed 3 fuzzy translation flags
+- Added missing translations: Commit, Fix, Fixed, Known Issues & Fixes, etc.
+- Fixed incorrect translations (Open: "Avaa valikko" → "Avoin")
+
+#### Files Created
+- `lib/homesite/analytics/geo.ex` - Geo lookup module
+- `priv/repo/migrations/20251224230323_add_country_to_analytics.exs`
+- `priv/repo/migrations/20251224234532_add_city_to_analytics.exs`
+
+#### Files Modified
+- `lib/homesite/analytics.ex` - Geo integration, new analytics functions
+- `lib/homesite_web/live/admin_live/analytics/index.ex` - Geo stats display
+- `lib/homesite_web/live/post_live/index.ex` - Share dropdown
+- `lib/homesite_web/live/search_live/index.html.heex` - Compact layout
+- `lib/homesite_web/components/social_components.ex` - Added gettext
+- `assets/js/app.js` - Simplified Share hook
+- `priv/gettext/fi/LC_MESSAGES/default.po` - Fixed fuzzy + added translations
+
+#### Test Results
+- **1648 tests, 0 failures**
+
+---
+
 ## 2025-12-22 (evening) - Dual Domain Configuration & Auto GitHub Sync
 
 ### Session Summary

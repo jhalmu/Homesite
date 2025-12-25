@@ -26,7 +26,14 @@ defmodule HomesiteWeb.PostLive.Form do
             </p>
           <% end %>
         </div>
-        <.input field={@form[:body]} type="textarea" label={gettext("Body")} rows="12" />
+        <.input
+          field={@form[:body]}
+          type="textarea"
+          label={gettext("Body")}
+          rows="12"
+          phx-hook="AutoGrow"
+          id="post-body-textarea"
+        />
 
         <div class="form-control mb-[var(--space-sm)]">
           <label class="label">

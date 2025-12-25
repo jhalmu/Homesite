@@ -266,7 +266,13 @@ defmodule HomesiteWeb.UserLive.Settings do
               <p class="mb-[var(--space-md)]">{gettext("Share your new homepage with the world!")}</p>
 
               <div class="mb-[var(--space-sm)] gap-[var(--space-sm)] flex">
-                <button type="button" phx-click="share_username" class="btn btn-primary flex-1">
+                <button
+                  type="button"
+                  phx-click="share_username"
+                  phx-hook="Share"
+                  id="share-username-btn"
+                  class="btn btn-primary flex-1"
+                >
                   <.icon name="hero-share" class="h-5 w-5" />
                   {gettext("Share")}
                 </button>

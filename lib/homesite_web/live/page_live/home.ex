@@ -5,6 +5,7 @@ defmodule HomesiteWeb.PageLive.Home do
   alias Homesite.ExternalFeeds
   alias Homesite.Media
   alias Homesite.Social
+  alias HomesiteWeb.SEO.JsonLD
 
   import HomesiteWeb.SocialComponents
   import HomesiteWeb.Helpers.DateHelpers
@@ -26,6 +27,10 @@ defmodule HomesiteWeb.PageLive.Home do
     # Fetch public projects for showcase
     public_projects = Media.list_public_projects(limit: 6)
 
+    # Generate WebSite JSON-LD for SEO
+    base_url = url(~p"/")
+    json_ld = JsonLD.website(base_url) |> Jason.encode!()
+
     socket =
       socket
       |> assign(:page_title, "Welcome")
@@ -33,6 +38,7 @@ defmodule HomesiteWeb.PageLive.Home do
       |> assign(:feed_items, feed_items)
       |> assign(:public_projects, public_projects)
       |> assign(:has_more_posts, length(posts) == @posts_per_page)
+      |> assign(:json_ld, json_ld)
 
     {:ok, socket}
   end

@@ -1,6 +1,9 @@
 defmodule Homesite.Accounts.UserNotifier do
   @moduledoc """
   Email notifications for user authentication and account management.
+
+  Supports multilingual emails based on user's preferred_language setting.
+  Registration emails are sent in both English and Finnish for clarity.
   """
   import Swoosh.Email
 
@@ -24,24 +27,36 @@ defmodule Homesite.Accounts.UserNotifier do
     end
   end
 
+  # Translation helper
+  defp t(msgid), do: Gettext.gettext(HomesiteWeb.Gettext, msgid)
+  defp t(msgid, bindings), do: Gettext.gettext(HomesiteWeb.Gettext, msgid, bindings)
+
+  # Runs a function with the user's preferred locale
+  defp with_locale(user, fun) do
+    locale = user.preferred_language || "en"
+    Gettext.with_locale(HomesiteWeb.Gettext, locale, fun)
+  end
+
   @doc """
   Deliver instructions to update a user email.
   """
   def deliver_update_email_instructions(user, url) do
-    deliver(user.email, "Update email instructions", """
+    with_locale(user, fn ->
+      deliver(user.email, t("Update email instructions"), """
 
-    ==============================
+      ==============================
 
-    Hi #{user.email},
+      #{t("Hi %{email},", email: user.email)}
 
-    You can change your email by visiting the URL below:
+      #{t("You can change your email by visiting the URL below:")}
 
-    #{url}
+      #{url}
 
-    If you didn't request this change, please ignore this.
+      #{t("If you didn't request this change, please ignore this.")}
 
-    ==============================
-    """)
+      ==============================
+      """)
+    end)
   end
 
   @doc """
@@ -55,34 +70,51 @@ defmodule Homesite.Accounts.UserNotifier do
   end
 
   defp deliver_magic_link_instructions(user, url) do
-    deliver(user.email, "Log in instructions", """
+    with_locale(user, fn ->
+      deliver(user.email, t("Log in instructions"), """
 
-    ==============================
+      ==============================
 
-    Hi #{user.email},
+      #{t("Hi %{email},", email: user.email)}
 
-    You can log into your account by visiting the URL below:
+      #{t("You can log into your account by visiting the URL below:")}
 
-    #{url}
+      #{url}
 
-    If you didn't request this email, please ignore this.
+      #{t("If you didn't request this email, please ignore this.")}
 
-    ==============================
-    """)
+      ==============================
+      """)
+    end)
   end
 
+  # Registration confirmation is sent in both languages for new users
   defp deliver_confirmation_instructions(user, url) do
-    deliver(user.email, "Confirmation instructions", """
+    deliver(user.email, "Confirm your account / Vahvista tilisi", """
 
+    ==============================
+    ENGLISH / ENGLANNIKSI
     ==============================
 
     Hi #{user.email},
 
-    You can confirm your account by visiting the URL below:
+    Welcome to Orangedinos! You can confirm your account by visiting the URL below:
 
     #{url}
 
     If you didn't create an account with us, please ignore this.
+
+    ==============================
+    SUOMEKSI / IN FINNISH
+    ==============================
+
+    Hei #{user.email},
+
+    Tervetuloa Orangedinos-palveluun! Voit vahvistaa tilisi alla olevasta linkistä:
+
+    #{url}
+
+    Jos et luonut tiliä, voit jättää tämän viestin huomiotta.
 
     ==============================
     """)

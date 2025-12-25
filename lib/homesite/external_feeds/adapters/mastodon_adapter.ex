@@ -268,8 +268,6 @@ defmodule Homesite.ExternalFeeds.Adapters.MastodonAdapter do
     end
   end
 
-  defp truncate_text(_, _), do: "Untitled"
-
   # Generate random ID as fallback
   defp generate_random_id do
     :crypto.hash(:sha256, :rand.bytes(16)) |> Base.encode16(case: :lower)

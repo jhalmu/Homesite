@@ -15,6 +15,8 @@ defmodule Homesite.Analytics.ActivityLog do
     field :changes, :map, default: %{}
     field :ip_address, :string
     field :user_agent, :string
+    field :country, :string
+    field :city, :string
     field :metadata, :map, default: %{}
 
     belongs_to :user, Homesite.Accounts.User
@@ -33,6 +35,8 @@ defmodule Homesite.Analytics.ActivityLog do
       :changes,
       :ip_address,
       :user_agent,
+      :country,
+      :city,
       :metadata
     ])
     |> validate_required([:user_id, :action, :resource_type])

@@ -9,7 +9,7 @@ defmodule HomesiteWeb.PostLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="technical-main">
+      <div class="technical-main" id="posts-page" phx-hook="OpenWindow">
         <.header>
           {gettext("Listing Posts")}
           <:actions>
@@ -60,14 +60,42 @@ defmodule HomesiteWeb.PostLive.Index do
                           <span>{post.user.display_name || post.user.email}</span>
                         </div>
                         <%= if post.is_public do %>
-                          <div class="opacity-70">
-                            <.link
-                              navigate={~p"/posts/#{post.id}"}
-                              class="gap-[var(--spacing-inline)] duration-[var(--duration-fast)] inline-flex items-center transition-colors hover:underline"
+                          <div class="dropdown dropdown-end">
+                            <button
+                              tabindex="0"
+                              class="gap-[var(--spacing-inline)] inline-flex items-center opacity-70 hover:underline"
                             >
-                              <.icon name="hero-share" class="h-4 w-4" /> Share this post
-                            </.link>
-                            <span>.</span>
+                              <.icon name="hero-share" class="h-4 w-4" /> {gettext("Share")}
+                            </button>
+                            <ul
+                              tabindex="0"
+                              class="dropdown-content menu bg-base-200 rounded-box z-10 w-52 p-2 shadow-lg"
+                            >
+                              <li>
+                                <a phx-click="share_bluesky" phx-value-id={post.id}>
+                                  <.icon name="hero-chat-bubble-left-ellipsis" class="h-4 w-4" />
+                                  {gettext("Share on Bluesky")}
+                                </a>
+                              </li>
+                              <li>
+                                <a phx-click="share_mastodon" phx-value-id={post.id}>
+                                  <.icon name="hero-globe-alt" class="h-4 w-4" />
+                                  {gettext("Share on Mastodon")}
+                                </a>
+                              </li>
+                              <li>
+                                <a phx-click="share_linkedin" phx-value-id={post.id}>
+                                  <.icon name="hero-briefcase" class="h-4 w-4" />
+                                  {gettext("Share on LinkedIn")}
+                                </a>
+                              </li>
+                              <li>
+                                <a phx-click="share_email" phx-value-id={post.id}>
+                                  <.icon name="hero-envelope" class="h-4 w-4" />
+                                  {gettext("Share via Email")}
+                                </a>
+                              </li>
+                            </ul>
                           </div>
                         <% end %>
                       <% else %>
@@ -171,6 +199,46 @@ defmodule HomesiteWeb.PostLive.Index do
     {:ok, _} = Content.delete_post(socket.assigns.current_scope, post)
 
     {:noreply, stream_delete(socket, :posts, post)}
+  end
+
+  @impl true
+  def handle_event("share_bluesky", %{"id" => id}, socket) do
+    post = Content.get_public_post!(id)
+    post_url = url(~p"/posts/#{post.id}")
+    text = "#{post.title} #{post_url}"
+    bluesky_url = "https://bsky.app/intent/compose?text=#{URI.encode_www_form(text)}"
+
+    {:noreply, push_event(socket, "open_window", %{url: bluesky_url})}
+  end
+
+  @impl true
+  def handle_event("share_mastodon", %{"id" => id}, socket) do
+    post = Content.get_public_post!(id)
+    post_url = url(~p"/posts/#{post.id}")
+    text = "#{post.title} #{post_url}"
+    mastodon_url = "https://mastodonshare.com/?text=#{URI.encode_www_form(text)}"
+
+    {:noreply, push_event(socket, "open_window", %{url: mastodon_url})}
+  end
+
+  @impl true
+  def handle_event("share_linkedin", %{"id" => id}, socket) do
+    post = Content.get_public_post!(id)
+    post_url = url(~p"/posts/#{post.id}")
+    linkedin_url = "https://www.linkedin.com/sharing/share-offsite/?url=#{URI.encode(post_url)}"
+
+    {:noreply, push_event(socket, "open_window", %{url: linkedin_url})}
+  end
+
+  @impl true
+  def handle_event("share_email", %{"id" => id}, socket) do
+    post = Content.get_public_post!(id)
+    post_url = url(~p"/posts/#{post.id}")
+    subject = post.title
+    body = "#{post.title}: #{post_url}"
+    mailto = "mailto:?subject=#{URI.encode(subject)}&body=#{URI.encode(body)}"
+
+    {:noreply, push_event(socket, "open_window", %{url: mailto})}
   end
 
   @impl true

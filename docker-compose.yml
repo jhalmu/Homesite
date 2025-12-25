@@ -30,7 +30,8 @@ services:
     image: postgres:18-alpine
     restart: unless-stopped
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      # PostgreSQL 18+ uses /var/lib/postgresql as VOLUME (PGDATA is version-specific)
+      - postgres_data:/var/lib/postgresql
     environment:
       POSTGRES_USER: homesite
       POSTGRES_PASSWORD: "${DB_PASSWORD}"

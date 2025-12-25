@@ -217,7 +217,6 @@ defmodule Homesite.Accounts do
   defp invitation_error_message(:not_found), do: "is invalid"
   defp invitation_error_message(:expired), do: "has expired"
   defp invitation_error_message(:exhausted), do: "has been used too many times"
-  defp invitation_error_message(_), do: "is invalid"
 
   ## Settings
 

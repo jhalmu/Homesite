@@ -16,6 +16,7 @@ defmodule HomesiteWeb.ChatLive.Show do
   alias Homesite.Accounts
   alias Homesite.Chat
   alias Homesite.Chat.Message
+  alias Homesite.Chat.Presence
 
   @impl true
   def mount(%{"slug" => slug}, _session, socket) do
@@ -26,6 +27,8 @@ defmodule HomesiteWeb.ChatLive.Show do
       {:ok, channel} ->
         if connected?(socket) do
           Chat.subscribe_channel(channel.id)
+          # Track user presence in chat
+          Presence.track_user(scope)
         end
 
         # Use filtered messages that respect blocks
@@ -424,6 +427,7 @@ defmodule HomesiteWeb.ChatLive.Show do
                   <.input
                     field={@form[:body]}
                     type="textarea"
+                    label={gettext("Message")}
                     placeholder={gettext("Type a message...")}
                     rows="2"
                     class="textarea textarea-bordered w-full resize-none"
@@ -442,6 +446,7 @@ defmodule HomesiteWeb.ChatLive.Show do
                   type="submit"
                   class="btn-primary"
                   disabled={@char_count == 0 || @char_count > 280}
+                  aria-label={gettext("Send message")}
                 >
                   <.icon name="hero-paper-airplane" class="h-5 w-5" />
                 </.button>

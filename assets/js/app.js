@@ -137,21 +137,9 @@ const Hooks = {
         if (navigator.share) {
           try {
             await navigator.share({title, text, url})
-            console.log("Shared successfully:", url)
           } catch (err) {
-            // User cancelled or error - fallback to copy
-            if (err.name !== 'AbortError') {
-              console.log("Share failed, copying to clipboard:", err)
-              navigator.clipboard.writeText(url)
-            }
+            console.log("Share cancelled or failed:", err)
           }
-        } else {
-          // Fallback: copy to clipboard
-          navigator.clipboard.writeText(url).then(() => {
-            console.log("Link copied to clipboard:", url)
-          }).catch((err) => {
-            console.error("Failed to copy:", err)
-          })
         }
       })
     }
@@ -377,6 +365,20 @@ const Hooks = {
           })
         }
       })
+    }
+  },
+  AutoGrow: {
+    mounted() {
+      this.el.style.overflow = "hidden"
+      this.resize()
+      this.el.addEventListener("input", () => this.resize())
+    },
+    updated() {
+      this.resize()
+    },
+    resize() {
+      this.el.style.height = "auto"
+      this.el.style.height = this.el.scrollHeight + "px"
     }
   }
 }
