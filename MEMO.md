@@ -56,6 +56,73 @@ PHX_CHECK_ORIGIN_HOSTS=juhahalmu.fi
 
 ---
 
+## 2025-12-25 (afternoon) - ApexCharts, Activity Logging, Admin Dashboard Charts
+
+### Session Summary
+
+Major analytics upgrade with beautiful charts and automatic activity logging.
+
+#### Features Implemented
+
+**1. ApexCharts Integration**
+- Replaced Chart.js with ApexCharts for modern visualizations
+- Created ApexChart hook with full dark mode support
+- Added sparkline mode for mini charts
+- Theme detection and auto-update on theme change
+
+**2. Activity Logging in Production**
+- Integrated `Analytics.log_activity` in Content context:
+  - Create/update/delete/publish post
+  - Create tag
+- Added user registration logging in Accounts context
+- Async logging via Task.Supervisor (non-blocking)
+
+**3. Admin Dashboard Charts (/admin)**
+- Added "Quick Insights" section with 3 mini charts:
+  - Activity Sparkline (7-day trend)
+  - User Breakdown (donut: users vs admins)
+  - Content Status (donut: published vs drafts)
+
+**4. Analytics Dashboard Enhanced (/admin/analytics)**
+- Activity Trend (30-day area chart)
+- Activity by Type (donut chart)
+- Search Trend (30-day area chart)
+- Top Countries (horizontal bar)
+- All charts now use ApexCharts
+
+**5. Dev Seed Data**
+- Created `priv/repo/seeds/analytics_seed.exs`
+- 300 activity logs over 30 days
+- 150 search queries with geo data
+- 9 countries with realistic cities
+
+**6. connect_info Fixed**
+- Added `:peer_data` and `:user_agent` to endpoint.ex
+- Enables IP address and user agent tracking in LiveViews
+
+#### Files Created
+- `priv/repo/seeds/analytics_seed.exs` - Analytics mock data
+
+#### Files Modified
+- `assets/js/app.js` - ApexChart hook with dark mode
+- `assets/package.json` - Added apexcharts dependency
+- `lib/homesite/accounts.ex` - Registration logging
+- `lib/homesite/analytics.ex` - Trend query functions
+- `lib/homesite/content.ex` - Activity logging integration
+- `lib/homesite_web/endpoint.ex` - connect_info fix
+- `lib/homesite_web/live/admin_live/dashboard.ex` - Quick Insights charts
+- `lib/homesite_web/live/admin_live/analytics/index.ex` - ApexCharts config
+- `test/homesite/analytics_test.exs` - 7 new tests, resilience fixes
+
+#### Test Results
+- **1655 tests, 0 failures**
+
+#### Deployment
+- CI/CD triggered automatically on push to main
+- Docker image built and deployed to Hetzner
+
+---
+
 ## 2025-12-25 - Geo Analytics, Share Dropdown, Search Compact, Translations
 
 ### Session Summary
