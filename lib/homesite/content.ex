@@ -7,6 +7,7 @@ defmodule Homesite.Content do
 
   alias Homesite.Accounts.Scope
   alias Homesite.Activities
+  alias Homesite.Analytics
   alias Homesite.Content.{Post, Tag}
   alias Homesite.Moderation
   alias Homesite.Repo
@@ -102,12 +103,13 @@ defmodule Homesite.Content do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_tag(%Scope{} = scope, attrs) do
+  def create_tag(%Scope{} = scope, attrs, opts \\ []) do
     with {:ok, tag = %Tag{}} <-
            %Tag{}
            |> Tag.changeset(attrs, scope)
            |> Repo.insert() do
       broadcast_tag(scope, {:created, tag})
+      log_activity_async("create", "tag", scope.user.id, tag.id, opts)
       {:ok, tag}
     end
   end
@@ -628,12 +630,15 @@ defmodule Homesite.Content do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_post(%Scope{} = scope, attrs) do
+  def create_post(%Scope{} = scope, attrs, opts \\ []) do
     with {:ok, post = %Post{}} <-
            %Post{}
            |> Post.changeset(attrs, scope)
            |> Repo.insert() do
       broadcast_post(scope, {:created, post})
+
+      # Log activity asynchronously
+      log_activity_async("create", "post", scope.user.id, post.id, opts)
 
       # Invalidate feed caches if post is published
       if post.published_at do
@@ -656,7 +661,7 @@ defmodule Homesite.Content do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_post(%Scope{} = scope, %Post{} = post, attrs) do
+  def update_post(%Scope{} = scope, %Post{} = post, attrs, opts \\ []) do
     true = post.user_id == scope.user.id
     was_published = not is_nil(post.published_at)
 
@@ -674,6 +679,12 @@ defmodule Homesite.Content do
           updated_post,
           "Published blog post: #{updated_post.title}"
         )
+
+        # Log publish activity
+        log_activity_async("publish", "post", scope.user.id, updated_post.id, opts)
+      else
+        # Log update activity
+        log_activity_async("update", "post", scope.user.id, updated_post.id, opts)
       end
 
       # Invalidate feed caches if post was or is published
@@ -697,7 +708,7 @@ defmodule Homesite.Content do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_post(%Scope{} = scope, %Post{} = post) do
+  def delete_post(%Scope{} = scope, %Post{} = post, opts \\ []) do
     true = post.user_id == scope.user.id
 
     # Load tags before deletion for cache invalidation
@@ -706,6 +717,9 @@ defmodule Homesite.Content do
     with {:ok, deleted_post = %Post{}} <-
            Repo.delete(post) do
       broadcast_post(scope, {:deleted, deleted_post})
+
+      # Log activity asynchronously
+      log_activity_async("delete", "post", scope.user.id, deleted_post.id, opts)
 
       # Invalidate feed caches if post was published
       if deleted_post.published_at do
@@ -1162,5 +1176,17 @@ defmodule Homesite.Content do
       _ ->
         :ok
     end
+  end
+
+  # Log activity asynchronously to avoid blocking the main flow
+  defp log_activity_async(action, resource_type, user_id, resource_id, opts) do
+    Task.Supervisor.start_child(Homesite.TaskSupervisor, fn ->
+      Analytics.log_activity(action, resource_type,
+        user_id: user_id,
+        resource_id: resource_id,
+        ip_address: Keyword.get(opts, :ip_address),
+        user_agent: Keyword.get(opts, :user_agent)
+      )
+    end)
   end
 end

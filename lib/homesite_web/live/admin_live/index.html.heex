@@ -73,6 +73,74 @@
       </div>
     </div>
     
+<!-- Mini Charts Section -->
+    <div class="mb-[var(--spacing-section)]">
+      <h2 class="text-[var(--font-size-fluid-xl)] mb-[var(--spacing-md)] font-semibold">
+        {gettext("Quick Insights")}
+      </h2>
+
+      <div class="gap-[var(--spacing-md)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        <!-- Activity Sparkline -->
+        <%= if length(@activity_trend) > 0 do %>
+          <div class="card bg-base-200 shadow">
+            <div class="card-body p-[var(--space-md)]">
+              <h3 class="card-title text-[var(--text-base)]">
+                <.icon name="hero-arrow-trending-up" class="h-5 w-5" />
+                {gettext("Activity (7 days)")}
+              </h3>
+              <div class="h-20">
+                <div
+                  id="admin-activity-sparkline"
+                  phx-hook="ApexChart"
+                  phx-update="ignore"
+                  data-chart={activity_sparkline_data(@activity_trend)}
+                >
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+        
+<!-- Users Breakdown -->
+        <div class="card bg-base-200 shadow">
+          <div class="card-body p-[var(--space-md)]">
+            <h3 class="card-title text-[var(--text-base)]">
+              <.icon name="hero-users" class="h-5 w-5" />
+              {gettext("User Breakdown")}
+            </h3>
+            <div class="h-36">
+              <div
+                id="admin-users-donut"
+                phx-hook="ApexChart"
+                phx-update="ignore"
+                data-chart={users_donut_data(@total_users, @admin_count)}
+              >
+              </div>
+            </div>
+          </div>
+        </div>
+        
+<!-- Content Breakdown -->
+        <div class="card bg-base-200 shadow">
+          <div class="card-body p-[var(--space-md)]">
+            <h3 class="card-title text-[var(--text-base)]">
+              <.icon name="hero-document-text" class="h-5 w-5" />
+              {gettext("Content Status")}
+            </h3>
+            <div class="h-36">
+              <div
+                id="admin-content-donut"
+                phx-hook="ApexChart"
+                phx-update="ignore"
+                data-chart={content_donut_data(@content_stats)}
+              >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
 <!-- Quick Actions -->
     <div class="mb-[var(--spacing-section)]">
       <h2 class="text-[var(--font-size-fluid-xl)] mb-[var(--spacing-md)] font-semibold">

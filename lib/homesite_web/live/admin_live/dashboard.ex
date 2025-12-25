@@ -90,6 +90,65 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
         </.dashboard_card>
       </div>
 
+      <%!-- Quick Insights Charts --%>
+      <div class="mt-[var(--space-lg)]">
+        <h3 class="card-title mb-[var(--space-md)]">{gettext("Quick Insights")}</h3>
+        <div class="gap-[var(--space-md)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          <%!-- Activity Sparkline --%>
+          <%= if length(@activity_trend) > 0 do %>
+            <.dashboard_card variant="content">
+              <h4 class="text-base-content/80 mb-[var(--space-xs)] font-semibold">
+                <.icon name="hero-arrow-trending-up" class="mr-1 inline h-4 w-4" />
+                {gettext("Activity (7 days)")}
+              </h4>
+              <div class="h-20">
+                <div
+                  id="admin-activity-sparkline"
+                  phx-hook="ApexChart"
+                  phx-update="ignore"
+                  data-chart={activity_sparkline_data(@activity_trend)}
+                >
+                </div>
+              </div>
+            </.dashboard_card>
+          <% end %>
+
+          <%!-- Users Breakdown --%>
+          <.dashboard_card variant="content">
+            <h4 class="text-base-content/80 mb-[var(--space-xs)] font-semibold">
+              <.icon name="hero-users" class="mr-1 inline h-4 w-4" />
+              {gettext("User Breakdown")}
+            </h4>
+            <div class="h-36">
+              <div
+                id="admin-users-donut"
+                phx-hook="ApexChart"
+                phx-update="ignore"
+                data-chart={users_donut_data(@user_stats)}
+              >
+              </div>
+            </div>
+          </.dashboard_card>
+
+          <%!-- Content Breakdown --%>
+          <.dashboard_card variant="content">
+            <h4 class="text-base-content/80 mb-[var(--space-xs)] font-semibold">
+              <.icon name="hero-document-text" class="mr-1 inline h-4 w-4" />
+              {gettext("Content Status")}
+            </h4>
+            <div class="h-36">
+              <div
+                id="admin-content-donut"
+                phx-hook="ApexChart"
+                phx-update="ignore"
+                data-chart={content_donut_data(@content_stats)}
+              >
+              </div>
+            </div>
+          </.dashboard_card>
+        </div>
+      </div>
+
       <%!-- Detailed Stats Grid --%>
       <div class="mt-[var(--space-lg)] gap-[var(--space-md)] grid grid-cols-1 lg:grid-cols-2">
         <%!-- User Statistics --%>
@@ -402,6 +461,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
     popular_searches = Analytics.popular_searches(limit: 10, days: 7)
     no_result_searches = Analytics.no_result_searches(limit: 10, days: 7)
     activity_logs = Analytics.list_activity_logs(limit: 20)
+    activity_trend = Analytics.activity_trend(7)
 
     {:ok,
      socket
@@ -413,6 +473,67 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
      |> assign(:search_stats, search_stats || %{})
      |> assign(:popular_searches, popular_searches)
      |> assign(:no_result_searches, no_result_searches)
-     |> assign(:activity_logs, activity_logs)}
+     |> assign(:activity_logs, activity_logs)
+     |> assign(:activity_trend, activity_trend)}
+  end
+
+  # Chart data helper functions for ApexCharts
+
+  defp activity_sparkline_data(activity_trend) do
+    %{
+      type: "area",
+      height: 80,
+      sparkline: true,
+      showLegend: false,
+      series: [
+        %{
+          name: gettext("Activity"),
+          data: Enum.map(activity_trend, & &1.count)
+        }
+      ],
+      categories: Enum.map(activity_trend, fn t -> format_sparkline_date(t.date) end),
+      colors: ["#6366f1"],
+      options: %{
+        stroke: %{width: 2}
+      }
+    }
+    |> Jason.encode!()
+  end
+
+  defp users_donut_data(user_stats) do
+    regular_users = user_stats.total_users - user_stats.admin_count
+
+    %{
+      type: "donut",
+      height: 150,
+      series: [regular_users, user_stats.admin_count],
+      colors: ["#22c55e", "#6366f1"],
+      showLegend: true,
+      options: %{
+        labels: [gettext("Users"), gettext("Admins")]
+      }
+    }
+    |> Jason.encode!()
+  end
+
+  defp content_donut_data(content_stats) do
+    published = content_stats.total_posts
+    drafts = content_stats.total_drafts
+
+    %{
+      type: "donut",
+      height: 150,
+      series: [published, drafts],
+      colors: ["#22c55e", "#94a3b8"],
+      showLegend: true,
+      options: %{
+        labels: [gettext("Published"), gettext("Drafts")]
+      }
+    }
+    |> Jason.encode!()
+  end
+
+  defp format_sparkline_date(date) do
+    Calendar.strftime(date, "%b %d")
   end
 end

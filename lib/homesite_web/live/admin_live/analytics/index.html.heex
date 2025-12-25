@@ -92,13 +92,13 @@
               {gettext("Content Breakdown")}
             </h3>
             <div class="h-64">
-              <canvas
+              <div
                 id="content-breakdown-chart"
-                phx-hook="ChartJS"
+                phx-hook="ApexChart"
                 phx-update="ignore"
                 data-chart={content_chart_data(@content_stats)}
               >
-              </canvas>
+              </div>
             </div>
           </div>
         </div>
@@ -112,18 +112,90 @@
                 {gettext("Popular Tags")}
               </h3>
               <div class="h-64">
-                <canvas
+                <div
                   id="tags-chart"
-                  phx-hook="ChartJS"
+                  phx-hook="ApexChart"
                   phx-update="ignore"
                   data-chart={tags_chart_data(@content_stats.popular_tags)}
                 >
-                </canvas>
+                </div>
               </div>
             </div>
           </div>
         <% end %>
       </div>
+    </section>
+
+    <%!-- Activity Trends --%>
+    <section>
+      <h2 class="mb-[var(--space-sm)] text-[var(--text-xl)] font-semibold">
+        <.icon name="hero-chart-bar" class="mr-[var(--space-xs)] inline h-6 w-6" />
+        {gettext("Activity Trends")}
+      </h2>
+      <div class="gap-[var(--space-md)] grid grid-cols-1 lg:grid-cols-2">
+        <%!-- Activity Trend Chart --%>
+        <%= if length(@activity_trend) > 0 do %>
+          <div class="card bg-base-100 shadow-sm">
+            <div class="card-body">
+              <h3 class="card-title text-[var(--text-lg)]">
+                <.icon name="hero-arrow-trending-up" class="h-5 w-5" />
+                {gettext("Activity (30 days)")}
+              </h3>
+              <div class="h-64">
+                <div
+                  id="activity-trend-chart"
+                  phx-hook="ApexChart"
+                  phx-update="ignore"
+                  data-chart={activity_trend_chart_data(@activity_trend)}
+                >
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <%!-- Activity by Action Chart --%>
+        <%= if length(@activity_by_action) > 0 do %>
+          <div class="card bg-base-100 shadow-sm">
+            <div class="card-body">
+              <h3 class="card-title text-[var(--text-lg)]">
+                <.icon name="hero-queue-list" class="h-5 w-5" />
+                {gettext("Activity by Type")}
+              </h3>
+              <div class="h-64">
+                <div
+                  id="activity-by-action-chart"
+                  phx-hook="ApexChart"
+                  phx-update="ignore"
+                  data-chart={activity_by_action_chart_data(@activity_by_action)}
+                >
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <%!-- Search Trend Chart --%>
+      <%= if length(@search_trend) > 0 do %>
+        <div class="mt-[var(--space-md)] card bg-base-100 shadow-sm">
+          <div class="card-body">
+            <h3 class="card-title text-[var(--text-lg)]">
+              <.icon name="hero-magnifying-glass" class="h-5 w-5" />
+              {gettext("Search Activity (30 days)")}
+            </h3>
+            <div class="h-64">
+              <div
+                id="search-trend-chart"
+                phx-hook="ApexChart"
+                phx-update="ignore"
+                data-chart={search_trend_chart_data(@search_trend)}
+              >
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
     </section>
 
     <%!-- Geographic Analytics --%>
@@ -169,13 +241,13 @@
                 {gettext("Top Countries")}
               </h3>
               <div class="h-64">
-                <canvas
+                <div
                   id="countries-chart"
-                  phx-hook="ChartJS"
+                  phx-hook="ApexChart"
                   phx-update="ignore"
                   data-chart={countries_chart_data(@visitors_by_country)}
                 >
-                </canvas>
+                </div>
               </div>
             </div>
           </div>

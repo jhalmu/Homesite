@@ -3,6 +3,7 @@
     "playwright": "^1.57.0"
   },
   "dependencies": {
+    "apexcharts": "^5.3.6",
     "chart.js": "^4.5.1",
     "sortablejs": "^1.15.6"
   }

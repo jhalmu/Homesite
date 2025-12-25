@@ -27,6 +27,11 @@ defmodule HomesiteWeb.AdminLive.Analytics.Index do
     visitors_by_country = Analytics.visitors_by_country()
     visitors_by_city = Analytics.visitors_by_city()
 
+    # Fetch trend analytics
+    activity_trend = Analytics.activity_trend(30)
+    activity_by_action = Analytics.activity_by_action(30)
+    search_trend = Analytics.search_trend(30)
+
     {:ok,
      socket
      |> assign(:page_title, "Analytics Dashboard")
@@ -36,7 +41,10 @@ defmodule HomesiteWeb.AdminLive.Analytics.Index do
      |> assign(:recent_shares, recent_shares)
      |> assign(:geo_stats, geo_stats)
      |> assign(:visitors_by_country, visitors_by_country)
-     |> assign(:visitors_by_city, visitors_by_city)}
+     |> assign(:visitors_by_city, visitors_by_city)
+     |> assign(:activity_trend, activity_trend)
+     |> assign(:activity_by_action, activity_by_action)
+     |> assign(:search_trend, search_trend)}
   end
 
   @doc """
@@ -52,81 +60,127 @@ defmodule HomesiteWeb.AdminLive.Analytics.Index do
     |> List.to_string()
   end
 
+  # ApexCharts Configuration Functions
+
   @doc """
-  Generates Chart.js configuration for content breakdown doughnut chart.
+  Generates ApexCharts configuration for content breakdown donut chart.
   """
   def content_chart_data(content_stats) do
     published = content_stats.total_posts - content_stats.total_drafts
     drafts = content_stats.total_drafts
 
     %{
-      type: "doughnut",
+      type: "donut",
+      series: [published, drafts],
+      categories: [gettext("Published"), gettext("Drafts")],
+      colors: ["#22c55e", "#94a3b8"],
       showLegend: true,
-      data: %{
-        labels: [gettext("Published"), gettext("Drafts")],
-        datasets: [
-          %{
-            data: [published, drafts],
-            backgroundColor: ["#22c55e", "#94a3b8"],
-            borderWidth: 0
-          }
-        ]
+      options: %{
+        labels: [gettext("Published"), gettext("Drafts")]
       }
     }
     |> Jason.encode!()
   end
 
   @doc """
-  Generates Chart.js configuration for popular tags bar chart.
+  Generates ApexCharts configuration for popular tags horizontal bar chart.
   """
   def tags_chart_data(tags) do
     tags = Enum.take(tags, 8)
 
     %{
       type: "bar",
+      horizontal: true,
       showLegend: false,
-      data: %{
-        labels: Enum.map(tags, & &1.name),
-        datasets: [
-          %{
-            label: gettext("Usage"),
-            data: Enum.map(tags, & &1.usage_count),
-            backgroundColor: "#6366f1",
-            borderRadius: 4
-          }
-        ]
-      },
-      options: %{
-        indexAxis: "y"
-      }
+      series: [
+        %{
+          name: gettext("Usage"),
+          data: Enum.map(tags, & &1.usage_count)
+        }
+      ],
+      categories: Enum.map(tags, & &1.name),
+      colors: ["#6366f1"]
     }
     |> Jason.encode!()
   end
 
   @doc """
-  Generates Chart.js configuration for countries bar chart.
+  Generates ApexCharts configuration for countries horizontal bar chart.
   """
   def countries_chart_data(visitors_by_country) do
     countries = Enum.take(visitors_by_country, 8)
 
     %{
       type: "bar",
+      horizontal: true,
       showLegend: false,
-      data: %{
-        labels: Enum.map(countries, fn c -> "#{country_flag(c.country)} #{c.country}" end),
-        datasets: [
-          %{
-            label: gettext("Actions"),
-            data: Enum.map(countries, & &1.count),
-            backgroundColor: "#14b8a6",
-            borderRadius: 4
-          }
-        ]
-      },
+      series: [
+        %{
+          name: gettext("Actions"),
+          data: Enum.map(countries, & &1.count)
+        }
+      ],
+      categories: Enum.map(countries, fn c -> "#{country_flag(c.country)} #{c.country}" end),
+      colors: ["#14b8a6"]
+    }
+    |> Jason.encode!()
+  end
+
+  @doc """
+  Generates ApexCharts configuration for activity trend line chart.
+  """
+  def activity_trend_chart_data(activity_trend) do
+    %{
+      type: "area",
+      showLegend: false,
+      series: [
+        %{
+          name: gettext("Activity"),
+          data: Enum.map(activity_trend, & &1.count)
+        }
+      ],
+      categories: Enum.map(activity_trend, fn t -> format_chart_date(t.date) end),
+      colors: ["#6366f1"]
+    }
+    |> Jason.encode!()
+  end
+
+  @doc """
+  Generates ApexCharts configuration for activity by action donut chart.
+  """
+  def activity_by_action_chart_data(activity_by_action) do
+    %{
+      type: "donut",
+      series: Enum.map(activity_by_action, & &1.count),
+      categories: Enum.map(activity_by_action, & &1.action),
+      showLegend: true,
       options: %{
-        indexAxis: "y"
+        labels: Enum.map(activity_by_action, &String.capitalize(&1.action))
       }
     }
     |> Jason.encode!()
+  end
+
+  @doc """
+  Generates ApexCharts configuration for search trend line chart.
+  """
+  def search_trend_chart_data(search_trend) do
+    %{
+      type: "area",
+      showLegend: false,
+      series: [
+        %{
+          name: gettext("Searches"),
+          data: Enum.map(search_trend, & &1.count)
+        }
+      ],
+      categories: Enum.map(search_trend, fn t -> format_chart_date(t.date) end),
+      colors: ["#f59e0b"]
+    }
+    |> Jason.encode!()
+  end
+
+  defp format_chart_date(date) do
+    Calendar.strftime(date, "%b %d")
   end
 end

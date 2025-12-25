@@ -27,6 +27,7 @@ import topbar from "../vendor/topbar"
 import WebShareApi from "./hooks/webShareApi"
 import { SortableProjects, SortableSections } from "./hooks/sortable"
 import Chart from "chart.js/auto"
+import ApexCharts from "apexcharts"
 
 // Custom hooks for date formatting
 const Hooks = {
@@ -382,7 +383,7 @@ const Hooks = {
       this.el.style.height = this.el.scrollHeight + "px"
     }
   },
-  // Chart.js hook for analytics visualizations
+  // Chart.js hook for analytics visualizations (legacy)
   ChartJS: {
     mounted() {
       this.chart = null
@@ -441,6 +442,168 @@ const Hooks = {
           ...config.options
         }
       })
+    }
+  },
+  // ApexCharts hook for modern analytics visualizations
+  ApexChart: {
+    mounted() {
+      this.chart = null
+      this.renderChart()
+      // Listen for theme changes
+      this.themeObserver = new MutationObserver(() => this.renderChart())
+      this.themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-theme']
+      })
+    },
+    updated() {
+      this.renderChart()
+    },
+    destroyed() {
+      if (this.chart) {
+        this.chart.destroy()
+      }
+      if (this.themeObserver) {
+        this.themeObserver.disconnect()
+      }
+    },
+    renderChart() {
+      const config = JSON.parse(this.el.dataset.chart)
+
+      if (this.chart) {
+        this.chart.destroy()
+      }
+
+      // Detect dark/light mode
+      const isDark = document.documentElement.getAttribute('data-theme')?.includes('dark') ||
+                     window.matchMedia('(prefers-color-scheme: dark)').matches
+
+      // Modern color palette
+      const colors = config.colors || [
+        '#6366f1', // indigo
+        '#22c55e', // green
+        '#f59e0b', // amber
+        '#ef4444', // red
+        '#8b5cf6', // violet
+        '#06b6d4', // cyan
+        '#ec4899', // pink
+        '#14b8a6'  // teal
+      ]
+
+      // Base theme configuration
+      const theme = {
+        mode: isDark ? 'dark' : 'light',
+        palette: 'palette1'
+      }
+
+      // Check if sparkline mode
+      const isSparkline = config.sparkline || (config.options?.chart?.sparkline?.enabled)
+
+      // Common chart options
+      const baseOptions = {
+        chart: {
+          type: config.type || 'bar',
+          height: config.height || '100%',
+          background: 'transparent',
+          fontFamily: 'inherit',
+          toolbar: { show: false },
+          sparkline: isSparkline ? { enabled: true } : { enabled: false },
+          animations: {
+            enabled: true,
+            easing: 'easeinout',
+            speed: 400
+          },
+          dropShadow: {
+            enabled: config.type === 'donut' || config.type === 'pie',
+            blur: 3,
+            opacity: 0.2
+          }
+        },
+        theme: theme,
+        colors: colors,
+        stroke: {
+          curve: 'smooth',
+          width: config.options?.stroke?.width ?? (config.type === 'line' || config.type === 'area' ? 3 : 0)
+        },
+        fill: {
+          type: config.type === 'area' ? 'gradient' : 'solid',
+          gradient: {
+            shadeIntensity: 1,
+            opacityFrom: 0.4,
+            opacityTo: 0.1,
+            stops: [0, 90, 100]
+          }
+        },
+        grid: {
+          borderColor: isDark ? 'rgba(166, 173, 187, 0.1)' : 'rgba(31, 41, 55, 0.1)',
+          strokeDashArray: 4
+        },
+        dataLabels: {
+          enabled: config.dataLabels !== false && (config.type === 'donut' || config.type === 'pie')
+        },
+        legend: {
+          show: config.showLegend !== false,
+          position: config.legendPosition || 'bottom',
+          horizontalAlign: 'center',
+          labels: {
+            colors: isDark ? '#a6adbb' : '#1f2937'
+          }
+        },
+        tooltip: {
+          theme: isDark ? 'dark' : 'light',
+          style: {
+            fontSize: '12px'
+          }
+        },
+        plotOptions: {
+          bar: {
+            horizontal: config.horizontal || false,
+            borderRadius: 4,
+            columnWidth: '60%',
+            distributed: config.distributed || false
+          },
+          pie: {
+            donut: {
+              size: '65%',
+              labels: {
+                show: true,
+                total: {
+                  show: true,
+                  label: 'Total',
+                  color: isDark ? '#a6adbb' : '#1f2937'
+                }
+              }
+            }
+          }
+        },
+        xaxis: {
+          categories: config.categories || [],
+          labels: {
+            style: {
+              colors: isDark ? '#a6adbb' : '#1f2937',
+              fontSize: '12px'
+            }
+          },
+          axisBorder: { show: false },
+          axisTicks: { show: false }
+        },
+        yaxis: {
+          labels: {
+            style: {
+              colors: isDark ? '#a6adbb' : '#1f2937',
+              fontSize: '12px'
+            }
+          }
+        },
+        // Merge any custom options
+        ...config.options
+      }
+
+      // Set series data
+      baseOptions.series = config.series || []
+
+      this.chart = new ApexCharts(this.el, baseOptions)
+      this.chart.render()
     }
   }
 }

@@ -108,7 +108,17 @@ defmodule Homesite.Analytics do
   """
   def log_activity(action, resource_type, opts \\ []) do
     ip = Keyword.get(opts, :ip_address)
-    geo = Geo.lookup(ip)
+
+    # Allow manual country/city override (for tests), otherwise use geo lookup
+    {country, city} =
+      case {Keyword.get(opts, :country), Keyword.get(opts, :city)} do
+        {nil, nil} ->
+          geo = Geo.lookup(ip)
+          {geo.country, geo.city}
+
+        {country, city} ->
+          {country, city}
+      end
 
     attrs = %{
       user_id: Keyword.fetch!(opts, :user_id),
@@ -118,8 +128,8 @@ defmodule Homesite.Analytics do
       changes: Keyword.get(opts, :changes, %{}),
       ip_address: ip,
       user_agent: Keyword.get(opts, :user_agent),
-      country: geo.country,
-      city: geo.city,
+      country: country,
+      city: city,
       metadata: Keyword.get(opts, :metadata, %{})
     }
 
@@ -201,6 +211,64 @@ defmodule Homesite.Analytics do
         count: count(a.id)
       },
       order_by: [desc: count(a.id)]
+    )
+    |> Repo.all()
+  end
+
+  ## Trend Analytics
+
+  @doc """
+  Returns daily activity counts for the specified number of days.
+  Returns a list of {date, count} tuples for charting.
+  """
+  def activity_trend(days \\ 30) do
+    cutoff = DateTime.add(DateTime.utc_now(), -days, :day)
+
+    from(a in ActivityLog,
+      where: a.inserted_at >= ^cutoff,
+      group_by: fragment("DATE(?)", a.inserted_at),
+      select: %{
+        date: fragment("DATE(?)", a.inserted_at),
+        count: count(a.id)
+      },
+      order_by: [asc: fragment("DATE(?)", a.inserted_at)]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns activity counts grouped by action type.
+  """
+  def activity_by_action(days \\ 30) do
+    cutoff = DateTime.add(DateTime.utc_now(), -days, :day)
+
+    from(a in ActivityLog,
+      where: a.inserted_at >= ^cutoff,
+      group_by: a.action,
+      select: %{
+        action: a.action,
+        count: count(a.id)
+      },
+      order_by: [desc: count(a.id)]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns daily search counts for the specified number of days.
+  """
+  def search_trend(days \\ 30) do
+    cutoff = DateTime.add(DateTime.utc_now(), -days, :day)
+
+    from(s in SearchQuery,
+      where: s.inserted_at >= ^cutoff,
+      group_by: fragment("DATE(?)", s.inserted_at),
+      select: %{
+        date: fragment("DATE(?)", s.inserted_at),
+        count: count(s.id),
+        avg_duration: avg(s.duration_ms)
+      },
+      order_by: [asc: fragment("DATE(?)", s.inserted_at)]
     )
     |> Repo.all()
   end

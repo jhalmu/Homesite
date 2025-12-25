@@ -345,6 +345,15 @@ if Mix.env() == :dev do
     end
   end)
 
+  # ==========================================================================
+  # Seed Analytics Data (activity logs and search queries with geo data)
+  # ==========================================================================
+  analytics_seed_file = "priv/repo/seeds/analytics_seed.exs"
+
+  if File.exists?(analytics_seed_file) do
+    Code.eval_file(analytics_seed_file)
+  end
+
   IO.puts("")
   IO.puts("╔════════════════════════════════════════════════════════════╗")
   IO.puts("║  🎉 SEEDING COMPLETE!                                      ║")

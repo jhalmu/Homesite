@@ -4,6 +4,7 @@ defmodule Homesite.Accounts do
   """
 
   import Ecto.Query, warn: false
+  alias Homesite.Analytics
   alias Homesite.Repo
 
   alias Homesite.Accounts.{AuthLog, Invitation, User, UserNotifier, UserToken}
@@ -148,6 +149,8 @@ defmodule Homesite.Accounts do
         end)
         |> case do
           {:ok, user} ->
+            # Log registration activity asynchronously
+            log_registration_async(user.id)
             {:ok, user}
 
           {:error, %Ecto.Changeset{} = changeset} ->
@@ -1404,5 +1407,13 @@ defmodule Homesite.Accounts do
   def notification_enabled?(%User{} = user, type) when is_binary(type) do
     prefs = user.notification_preferences || %{}
     Map.get(prefs, type, true)
+  end
+
+  # Activity logging helpers
+
+  defp log_registration_async(user_id) do
+    Task.Supervisor.start_child(Homesite.TaskSupervisor, fn ->
+      Analytics.log_activity(:register, :user, user_id: user_id, resource_id: user_id)
+    end)
   end
 end
