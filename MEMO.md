@@ -143,6 +143,7 @@ Fixed production issues and housekeeping.
 1. **Mix.env() in releases**: Use `@env Mix.env()` at compile-time, not runtime
 2. **Gettext dynamic strings**: Strings passed to `Gettext.gettext/2` dynamically aren't auto-extracted
 3. **FAQ export**: Use UPSERT (`ON CONFLICT ... DO UPDATE`) for safe re-imports
+4. **MaxMind with locus**: Library auto-updates every 6 hours, handles R2 redirects, only needs `MAXMIND_LICENSE_KEY`
 
 ---
 
