@@ -4,7 +4,10 @@ defmodule HomesiteWeb.AdminLive.System.Index do
   """
   use HomesiteWeb, :live_view
 
+  alias Homesite.Analytics
   alias Homesite.System
+
+  import HomesiteWeb.Helpers.DateHelpers
 
   @impl true
   def render(assigns) do
@@ -77,6 +80,59 @@ defmodule HomesiteWeb.AdminLive.System.Index do
               </tbody>
             </table>
           </div>
+        </.dashboard_card>
+      </div>
+
+      <%!-- Recent Activity --%>
+      <div class="mt-[var(--space-lg)]">
+        <.dashboard_card variant="content">
+          <h3 class="card-title mb-[var(--space-md)]">{gettext("Recent Activity")}</h3>
+          <%= if @activity_logs != [] do %>
+            <div class="overflow-x-auto">
+              <table class="table-sm table-zebra table">
+                <thead>
+                  <tr>
+                    <th>{gettext("Time")}</th>
+                    <th>{gettext("User")}</th>
+                    <th>{gettext("Action")}</th>
+                    <th>{gettext("Resource")}</th>
+                    <th>{gettext("Location")}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <%= for log <- @activity_logs do %>
+                    <tr>
+                      <td class="text-[var(--text-sm)] text-base-content/70">
+                        {format_datetime(log.inserted_at)}
+                      </td>
+                      <td>
+                        <%= if log.user do %>
+                          {log.user.email}
+                        <% else %>
+                          <span class="text-base-content/50">{gettext("Unknown")}</span>
+                        <% end %>
+                      </td>
+                      <td>
+                        <span class={["badge badge-sm", action_badge_class(log.action)]}>
+                          {log.action}
+                        </span>
+                      </td>
+                      <td>{log.resource_type}</td>
+                      <td class="text-[var(--text-sm)] text-base-content/70">
+                        <%= if log.country do %>
+                          {log.city || ""} {log.country}
+                        <% else %>
+                          <span class="text-base-content/40">-</span>
+                        <% end %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          <% else %>
+            <p class="text-base-content/60">{gettext("No recent activity")}</p>
+          <% end %>
         </.dashboard_card>
       </div>
 
@@ -181,6 +237,9 @@ defmodule HomesiteWeb.AdminLive.System.Index do
     # Only show sync button in dev (where gh CLI is available)
     show_sync = Application.get_env(:homesite, :environment) == :dev
 
+    # Fetch recent activity logs
+    activity_logs = Analytics.list_activity_logs(limit: 20)
+
     {:ok,
      socket
      |> assign(:page_title, gettext("System Info"))
@@ -191,7 +250,8 @@ defmodule HomesiteWeb.AdminLive.System.Index do
      |> assign(:changelog, System.changelog())
      |> assign(:known_issues, System.known_issues())
      |> assign(:show_sync_button, show_sync)
-     |> assign(:runtime_info, System.runtime_info())}
+     |> assign(:runtime_info, System.runtime_info())
+     |> assign(:activity_logs, activity_logs)}
   end
 
   @impl true
@@ -242,5 +302,18 @@ defmodule HomesiteWeb.AdminLive.System.Index do
     ~H"""
     <span class={"#{@color} badge badge-xs"}></span>
     """
+  end
+
+  defp action_badge_class(action) do
+    case action do
+      "create" -> "badge-success"
+      "update" -> "badge-info"
+      "delete" -> "badge-error"
+      "publish" -> "badge-primary"
+      "register" -> "badge-accent"
+      "view" -> "badge-ghost"
+      "search" -> "badge-secondary"
+      _ -> "badge-ghost"
+    end
   end
 end
