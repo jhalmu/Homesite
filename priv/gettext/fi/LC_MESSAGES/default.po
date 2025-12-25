@@ -6920,32 +6920,32 @@ msgstr "Avoin"
 #: lib/homesite_web/live/chat_live/show.ex:449
 #, elixir-autogen, elixir-format
 msgid "Send message"
-msgstr ""
+msgstr "Lähetä viesti"
 
 #: lib/homesite_web/live/admin_live/system/index.ex:110
 #, elixir-autogen, elixir-format
 msgid "Symptom"
-msgstr ""
+msgstr "Oire"
 
 #: lib/homesite_web/live/admin_live/system/index.ex:207
 #, elixir-autogen, elixir-format
 msgid "Sync failed: %{reason}"
-msgstr ""
+msgstr "Synkronointi epäonnistui: %{reason}"
 
 #: lib/homesite_web/live/admin_live/system/index.ex:91
 #, elixir-autogen, elixir-format
 msgid "Sync from GitHub"
-msgstr ""
+msgstr "Synkronoi GitHubista"
 
 #: lib/homesite_web/live/admin_live/system/index.ex:203
 #, elixir-autogen, elixir-format
 msgid "Synced %{count} issues from GitHub"
-msgstr ""
+msgstr "Synkronoitu %{count} ongelmaa GitHubista"
 
 #: lib/homesite_web/live/admin_live/system/index.ex:131
 #, elixir-autogen, elixir-format
 msgid "View on GitHub"
-msgstr ""
+msgstr "Näytä GitHubissa"
 
 #: lib/homesite_web/components/layouts.ex:616
 #, elixir-autogen, elixir-format
@@ -7024,3 +7024,26 @@ msgstr "Jaettu onnistuneesti!"
 #, elixir-autogen, elixir-format
 msgid "Link copied!"
 msgstr "Linkki kopioitu!"
+
+## Email translations (dynamic strings from user_notifier.ex)
+
+msgid "Update email instructions"
+msgstr "Sähköpostin päivitysohjeet"
+
+msgid "Hi %{email},"
+msgstr "Hei %{email},"
+
+msgid "You can change your email by visiting the URL below:"
+msgstr "Voit vaihtaa sähköpostiosoitteesi alla olevasta linkistä:"
+
+msgid "If you didn't request this change, please ignore this."
+msgstr "Jos et pyytänyt tätä muutosta, voit jättää tämän viestin huomiotta."
+
+msgid "Log in instructions"
+msgstr "Kirjautumisohjeet"
+
+msgid "You can log into your account by visiting the URL below:"
+msgstr "Voit kirjautua tilillesi alla olevasta linkistä:"
+
+msgid "If you didn't request this email, please ignore this."
+msgstr "Jos et pyytänyt tätä sähköpostia, voit jättää tämän viestin huomiotta."
