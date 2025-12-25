@@ -20,6 +20,7 @@ services:
       SMTP_USERNAME: "${SMTP_USERNAME}"
       SMTP_PASSWORD: "${SMTP_PASSWORD}"
       UPLOADS_PATH: "/app/uploads"
+      MAXMIND_LICENSE_KEY: "${MAXMIND_LICENSE_KEY}"
     volumes:
       - uploads_data:/app/uploads
     networks:

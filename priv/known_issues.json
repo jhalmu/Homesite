@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "commit": "6acedaf",
+    "date": "2025-12-25",
+    "fix": "Changed `Mix.env()` to compile-time module attribute `@env Mix.env()`.\nMix module is not loaded in production releases.",
+    "github_url": "https://github.com/jhalmu/homesite/issues/72",
+    "id": "gh-72",
+    "status": "fixed",
+    "symptom": "Search page crashes in production with error at `lib/homesite/search.ex:91`",
+    "title": "Search broken in production - Mix.env() not available"
+  }
+]
