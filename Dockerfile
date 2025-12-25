@@ -35,6 +35,9 @@ RUN mix deps.compile
 
 COPY priv priv
 
+# Copy .git for compile-time changelog generation
+COPY .git .git
+
 COPY lib lib
 
 COPY assets assets

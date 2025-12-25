@@ -2,7 +2,7 @@
 # It helps make builds faster and smaller.
 
 # Git
-.git
+# .git needed for compile-time changelog
 .gitignore
 
 # Elixir/Phoenix build artifacts
