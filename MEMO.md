@@ -104,6 +104,46 @@ Christmas session with multiple fixes and features.
 #### Test Results
 - **1648 tests, 0 failures**
 
+### Session Continued (late evening)
+
+Fixed production issues and housekeeping.
+
+#### Fixes
+
+**1. Search Broken in Production**
+- **Symptom**: Search failed in production but worked in dev
+- **Root cause**: `Mix.env()` not available in production releases (Mix not loaded)
+- **Fix**: Use compile-time module attribute `@env Mix.env()` instead
+- **File**: `lib/homesite/search.ex:91`
+
+**2. Email Translations**
+- Already implemented: `with_locale/2` uses user's `preferred_language`
+- Registration emails are bilingual (EN + FI for new users)
+- Added missing Finnish translations for email strings
+
+**3. FAQ Export to Production**
+- Ran `mix faq.export_sql` to export 44 FAQs
+- Imported to production: `docker exec -i homesite-db-1 psql -U homesite homesite_prod < priv/repo/faq_export.sql`
+- Categories: 6 admin, 38 user FAQs
+
+#### Housekeeping
+
+**1. Archived Outdated Docs**
+- Moved to `archived_docs/`: HOMESITE_DEPLOYMENT_PLAN.md, REGISTRATION_STRATEGY.md, DEPLOYMENT.md
+- Deleted: test_results.txt, test_results_final.txt (Nov 28)
+- Kept: DESIGN_SYSTEM_GUIDE.md (has practical usage patterns not elsewhere)
+
+**2. README Cleanup**
+- Reduced from 479 to 83 lines
+- Removed outdated roadmap items
+- Focused on essentials: features, quick start, commands
+
+#### Key Learnings
+
+1. **Mix.env() in releases**: Use `@env Mix.env()` at compile-time, not runtime
+2. **Gettext dynamic strings**: Strings passed to `Gettext.gettext/2` dynamically aren't auto-extracted
+3. **FAQ export**: Use UPSERT (`ON CONFLICT ... DO UPDATE`) for safe re-imports
+
 ---
 
 ## 2025-12-22 (evening) - Dual Domain Configuration & Auto GitHub Sync
