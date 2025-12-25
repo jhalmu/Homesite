@@ -12,6 +12,9 @@ defmodule Homesite.Search do
   alias Homesite.Content
   alias Homesite.Faqs
 
+  # Compile-time environment check (Mix not available in releases)
+  @env Mix.env()
+
   @doc """
   Search across all content types (Posts, Tags, FAQs).
 
@@ -88,7 +91,7 @@ defmodule Homesite.Search do
 
     # Record analytics (async, don't block response)
     # Skip in test environment to avoid database connection issues
-    if String.trim(query) != "" and Mix.env() != :test do
+    if String.trim(query) != "" and @env != :test do
       Task.Supervisor.start_child(Homesite.TaskSupervisor, fn ->
         Analytics.record_search(query, results, duration_ms,
           user_id: Keyword.get(opts, :user_id),
