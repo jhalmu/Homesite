@@ -267,24 +267,41 @@ defmodule Homesite.ExternalFeedsTest do
         })
 
       old_date = DateTime.add(DateTime.utc_now(), -40 * 24 * 60 * 60, :second)
+      recent_date = DateTime.utc_now()
 
-      {:ok, _old_item} =
+      {:ok, old_item} =
         ExternalFeeds.upsert_feed_item(feed_source.id, %{
-          @valid_item_attrs
-          | published_at: old_date
+          external_id: "old-post-123",
+          title: "Old Post",
+          content: "Old content",
+          url: "https://example.com/old-post",
+          published_at: old_date
         })
 
-      {:ok, _new_item} =
+      {:ok, new_item} =
         ExternalFeeds.upsert_feed_item(feed_source.id, %{
-          @valid_item_attrs
-          | external_id: "post-456"
+          external_id: "new-post-456",
+          title: "New Post",
+          content: "New content",
+          url: "https://example.com/new-post",
+          published_at: recent_date
         })
+
+      # Count items before deletion
+      items_before = ExternalFeeds.list_feed_items(scope)
+      assert length(items_before) == 2
 
       {deleted_count, _} = ExternalFeeds.delete_old_feed_items(30)
-      assert deleted_count == 1
+      # At least 1 item should be deleted (may be more from other tests due to global operation)
+      assert deleted_count >= 1
 
-      items = ExternalFeeds.list_feed_items(scope)
-      assert length(items) == 1
+      # Our old item should be deleted, new item should remain
+      items_after = ExternalFeeds.list_feed_items(scope)
+      assert length(items_after) == 1
+
+      item_ids = Enum.map(items_after, & &1.id)
+      refute old_item.id in item_ids
+      assert new_item.id in item_ids
     end
   end
 
@@ -907,7 +924,7 @@ defmodule Homesite.ExternalFeedsTest do
       assert MapSet.disjoint?(page1_ids, page2_ids)
     end
 
-    test "returns empty list when no enabled sources", %{scope: scope} do
+    test "returns empty list when no enabled sources", %{scope: _scope} do
       # Create a user with no feed sources
       other_user = user_fixture()
       other_scope = Accounts.Scope.for_user(other_user)
@@ -956,7 +973,7 @@ defmodule Homesite.ExternalFeedsTest do
 
     test "orders results by published_at descending", %{scope: scope, feed_source1: feed_source1} do
       # Create items with different dates
-      {:ok, old} =
+      {:ok, _old} =
         ExternalFeeds.upsert_feed_item(feed_source1.id, %{
           @valid_item_attrs
           | external_id: "old",

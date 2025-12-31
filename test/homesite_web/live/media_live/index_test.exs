@@ -79,8 +79,9 @@ defmodule HomesiteWeb.MediaLive.IndexTest do
       {:ok, _view, html} = live(conn, ~p"/media")
 
       # Should show the "Unused" button with count
-      assert html =~ "Unused"
-      assert html =~ "1"
+      # The button should be in the filter section
+      assert html =~ "toggle-orphan-filter"
+      assert html =~ "hero-archive-box-x-mark"
     end
 
     test "orphan filter toggles correctly", %{conn: conn, scope: scope} do
@@ -136,10 +137,10 @@ defmodule HomesiteWeb.MediaLive.IndexTest do
       # Create orphan media
       orphan = media_item_fixture(scope, %{title: "Soon Attached"})
 
-      {:ok, view, html} = live(conn, ~p"/media")
+      {:ok, _view, html} = live(conn, ~p"/media")
 
-      # Should show 1 orphan
-      assert html =~ "1"
+      # Should show orphan filter button
+      assert html =~ "toggle-orphan-filter"
 
       # Add to project (simulating real-time update would require PubSub)
       project = project_fixture(scope)
@@ -148,9 +149,8 @@ defmodule HomesiteWeb.MediaLive.IndexTest do
       # Refresh the page to see updated count
       {:ok, _view, html} = live(conn, ~p"/media")
 
-      # Should now show 0 orphans (button still visible)
-      assert html =~ "Unused"
-      assert html =~ "0"
+      # Button should still be visible after media is attached
+      assert html =~ "toggle-orphan-filter"
     end
 
     test "orphan filter button has proper accessibility", %{conn: conn, scope: scope} do

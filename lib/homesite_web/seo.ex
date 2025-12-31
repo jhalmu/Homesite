@@ -72,13 +72,27 @@ defmodule HomesiteWeb.SEO do
     end
   end
 
-  # Helper to get image URL (placeholder for now, can be enhanced later)
+  # Helper to get image URL for OpenGraph
+  # Priority: explicit seo_image > post hero image > author avatar > default
   defp get_image_url(conn) do
-    if Map.has_key?(conn.assigns, :seo_image) do
-      conn.assigns.seo_image
-    else
-      # Default OG image (you can create one later)
-      url(~p"/images/og-default.jpg")
+    cond do
+      # Explicit SEO image set
+      Map.has_key?(conn.assigns, :seo_image) and conn.assigns.seo_image ->
+        conn.assigns.seo_image
+
+      # Post with hero image
+      Map.has_key?(conn.assigns, :post) and conn.assigns.post and
+        Map.has_key?(conn.assigns, :hero_image) and conn.assigns.hero_image ->
+        url(~p"/images/posts/#{conn.assigns.post.id}/hero")
+
+      # Post with author (use author avatar)
+      Map.has_key?(conn.assigns, :post) and conn.assigns.post and
+        Map.has_key?(conn.assigns.post, :user) and conn.assigns.post.user ->
+        url(~p"/images/users/#{conn.assigns.post.user.id}/avatar")
+
+      # Default OG image
+      true ->
+        url(~p"/images/og-default.jpg")
     end
   end
 end

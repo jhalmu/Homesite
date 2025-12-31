@@ -783,11 +783,11 @@ defmodule Homesite.MediaTest do
       assert length(page2) == 3
 
       # Pages should have different items (no overlap)
-      page1_ids = Enum.map(page1, & &1.id)
-      page2_ids = Enum.map(page2, & &1.id)
+      page1_ids = MapSet.new(Enum.map(page1, & &1.id))
+      page2_ids = MapSet.new(Enum.map(page2, & &1.id))
 
-      # Check that no item appears in both pages
-      assert Enum.all?(page1_ids, fn id -> id not in page2_ids end)
+      # Check that there's no overlap between pages
+      assert MapSet.disjoint?(page1_ids, page2_ids)
     end
 
     test "list_orphaned_media_items/1 filters by aspect_category" do

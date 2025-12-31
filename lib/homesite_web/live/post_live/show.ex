@@ -38,6 +38,17 @@ defmodule HomesiteWeb.PostLive.Show do
               <.icon name="hero-clock" class="h-4 w-4" />
               <span>{@post.read_time_minutes} min read</span>
 
+              <%= if was_edited?(@post) do %>
+                <span>•</span>
+                <span
+                  class="gap-[var(--space-inline)] flex items-center"
+                  title={format_datetime(@post.updated_at)}
+                >
+                  <.icon name="hero-pencil" class="h-3 w-3" />
+                  {gettext("Edited %{date}", date: format_relative_date(@post.updated_at))}
+                </span>
+              <% end %>
+
               <%= if @post.tags && length(@post.tags) > 0 do %>
                 <span>•</span>
                 <%= for tag <- @post.tags do %>
@@ -210,5 +221,48 @@ defmodule HomesiteWeb.PostLive.Show do
       limit: 1
     )
     |> Repo.one()
+  end
+
+  # Check if post was edited (updated > 5 minutes after published_at or inserted_at)
+  defp was_edited?(post) do
+    reference_time = post.published_at || post.inserted_at
+
+    if reference_time && post.updated_at do
+      # Consider edited if updated more than 5 minutes after reference time
+      diff_seconds = DateTime.diff(post.updated_at, reference_time, :second)
+      diff_seconds > 300
+    else
+      false
+    end
+  end
+
+  defp format_relative_date(datetime) do
+    now = DateTime.utc_now()
+    diff_days = DateTime.diff(now, datetime, :day)
+
+    cond do
+      diff_days == 0 ->
+        gettext("today")
+
+      diff_days == 1 ->
+        gettext("yesterday")
+
+      diff_days < 7 ->
+        gettext("%{days} days ago", days: diff_days)
+
+      diff_days < 30 ->
+        weeks = div(diff_days, 7)
+
+        if weeks == 1,
+          do: gettext("1 week ago"),
+          else: gettext("%{weeks} weeks ago", weeks: weeks)
+
+      true ->
+        Calendar.strftime(datetime, "%b %d, %Y")
+    end
+  end
+
+  defp format_datetime(datetime) do
+    Calendar.strftime(datetime, "%Y-%m-%d %H:%M")
   end
 end

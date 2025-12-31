@@ -278,7 +278,7 @@ defmodule Homesite.Media do
         left_join: pmi in ProjectMediaItem,
         on: m.id == pmi.media_item_id,
         where: m.user_id == ^scope.user.id and is_nil(pmi.id),
-        order_by: [desc: m.inserted_at]
+        order_by: [desc: m.inserted_at, desc: m.id]
       )
 
     query = maybe_filter_by_aspect(query, opts[:aspect_category])

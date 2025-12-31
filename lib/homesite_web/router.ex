@@ -59,6 +59,10 @@ defmodule HomesiteWeb.Router do
     # SEO routes
     get "/sitemap.xml", SitemapController, :index
 
+    # Image serving for OpenGraph and social sharing
+    get "/images/posts/:post_id/hero", ImageController, :post_hero
+    get "/images/users/:user_id/avatar", ImageController, :user_avatar
+
     live_session :public,
       on_mount: [
         {HomesiteWeb.UserAuth, :mount_current_scope},
