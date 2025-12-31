@@ -56,6 +56,45 @@ PHX_CHECK_ORIGIN_HOSTS=juhahalmu.fi
 
 ---
 
+## 2025-12-31 - Bug Tracking Session: GitHub Issues #73-80
+
+### Session Summary
+
+Created comprehensive bug tracking and enhancement planning documentation.
+
+#### GitHub Issues Created
+
+**HIGH Priority Bugs:**
+- **#73** - Blog post publicity toggle not working (posts show on frontpage but 404 when clicked)
+- **#76** - Page refresh/scroll issues when writing long text
+
+**MEDIUM Priority:**
+- **#74** - Time field shows 12:00 default in edit mode
+- **#78** - User following feature not accessible in UI (backend complete, UI missing)
+- **#79** - RSS feed limit per source (show 3 per source for variety)
+- **#80** - Media library folders and orphan image filter
+
+**LOW Priority Enhancements:**
+- **#75** - Show edited time on modified posts
+- **#77** - Author avatar in share template when no featured image
+
+#### Root Causes Identified
+
+1. **Publicity Bug (CONFIRMED)**: `list_public_posts()` at `content.ex:386` only checks `published_at IS NOT NULL` but misses `is_public = true` check
+2. **Time Default (CONFIRMED)**: `format_time(nil)` at `form.ex:673` returns hardcoded `"12:00"`
+3. **Following (CONFIRMED WORKING)**: Routes exist at `router.ex:287-288`, just needs UI links
+
+#### Files Created
+
+- `BUGFIXES_PLAN.md` - Detailed solutions, questions, and ideas for each issue
+
+#### Quality Checks
+
+- Tests: `mix test.all`
+- Code quality: `mix credo --strict`
+
+---
+
 ## 2025-12-25 (afternoon) - ApexCharts, Activity Logging, Admin Dashboard Charts
 
 ### Session Summary
