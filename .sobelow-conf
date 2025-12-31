@@ -13,7 +13,12 @@
     # File operations use server-controlled paths (false positives)
     "Traversal.FileModule",
     # JSON-LD properly escaped, raw HTML for theme/locale scripts (false positives)
-    "XSS.Raw"
+    "XSS.Raw",
+    # ImageController serves trusted data from database (not user input)
+    "XSS.SendResp",
+    "XSS.ContentType",
+    # Raw SQL for window functions uses hardcoded query (no user input)
+    "SQL.Query"
   ],
   ignore_files: []
 ]
