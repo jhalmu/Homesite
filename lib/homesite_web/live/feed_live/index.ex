@@ -129,8 +129,17 @@ defmodule HomesiteWeb.FeedLive.Index do
       |> build_query_opts(socket.assigns.filter)
       |> maybe_add_source_filter(socket.assigns.source_id)
 
+    # Use limited per source when showing all sources
     new_items =
-      ExternalFeeds.list_feed_items_unified(socket.assigns.current_scope, opts)
+      if socket.assigns.source_id do
+        ExternalFeeds.list_feed_items_unified(socket.assigns.current_scope, opts)
+      else
+        ExternalFeeds.list_feed_items_limited_per_source(socket.assigns.current_scope,
+          limit_per_source: 3,
+          total_limit: 10,
+          offset: current_count
+        )
+      end
 
     all_items = socket.assigns.items ++ new_items
     has_more = length(new_items) == 10
@@ -174,7 +183,17 @@ defmodule HomesiteWeb.FeedLive.Index do
       |> build_query_opts(filter)
       |> maybe_add_source_filter(source_id)
 
-    items = ExternalFeeds.list_feed_items_unified(socket.assigns.current_scope, opts)
+    # Use limited per source when showing all sources, regular when filtering by specific source
+    items =
+      if source_id do
+        ExternalFeeds.list_feed_items_unified(socket.assigns.current_scope, opts)
+      else
+        ExternalFeeds.list_feed_items_limited_per_source(socket.assigns.current_scope,
+          limit_per_source: 3,
+          total_limit: 10
+        )
+      end
+
     unread_count = ExternalFeeds.get_unread_count(socket.assigns.current_scope)
     has_more = length(items) == 10
 

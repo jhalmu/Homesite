@@ -341,6 +341,132 @@ defmodule Homesite.ExternalFeeds do
   end
 
   @doc """
+  Lists feed items with a limit per source to ensure variety.
+  Uses SQL window functions to limit items per feed source.
+
+  Bookmarked items are always included (exempt from per-source limit).
+  Unread items have higher priority within each source.
+
+  ## Options
+    * `:limit_per_source` - Max items per feed source (default: 3)
+    * `:total_limit` - Total items to return after limiting per source (default: 50)
+    * `:offset` - Number of results to skip (default: 0)
+    * `:folder_id` - Filter to specific folder (default: all)
+
+  ## Examples
+
+      iex> list_feed_items_limited_per_source(scope)
+      [%{feed_item: %FeedItem{}, interaction: %FeedItemInteraction{}}, ...]
+
+      iex> list_feed_items_limited_per_source(scope, limit_per_source: 5)
+      [%{feed_item: %FeedItem{}, interaction: %FeedItemInteraction{}}, ...]
+
+  """
+  def list_feed_items_limited_per_source(%Scope{} = scope, opts \\ []) do
+    limit_per_source = Keyword.get(opts, :limit_per_source, 3)
+    total_limit = Keyword.get(opts, :total_limit, 50)
+    offset = Keyword.get(opts, :offset, 0)
+    folder_id = Keyword.get(opts, :folder_id)
+
+    # Get user's enabled feed sources
+    feed_source_ids =
+      FeedSource
+      |> where(user_id: ^scope.user.id)
+      |> where(enabled: true)
+      |> maybe_filter_by_folder(folder_id)
+      |> select([f], f.id)
+      |> Repo.all()
+
+    if feed_source_ids == [] do
+      []
+    else
+      # Use raw SQL for window function query
+      # This query:
+      # 1. Gets all feed items with interactions
+      # 2. Assigns row_number per source (unread first, then by date)
+      # 3. Keeps items where row_number <= limit OR item is bookmarked
+      # 4. Orders by published_at desc
+      sql = """
+      WITH ranked_items AS (
+        SELECT
+          fi.id, fi.feed_source_id, fi.external_id, fi.title, fi.url, fi.content,
+          fi.author_name, fi.author_handle, fi.author_avatar_url, fi.published_at,
+          fi.metadata, fi.inserted_at, fi.updated_at,
+          fii.id as interaction_id,
+          fii.read_at,
+          fii.bookmarked_at,
+          fii.user_id as interaction_user_id,
+          ROW_NUMBER() OVER (
+            PARTITION BY fi.feed_source_id
+            ORDER BY
+              CASE WHEN fii.read_at IS NULL THEN 0 ELSE 1 END,
+              fi.published_at DESC
+          ) as row_num
+        FROM feed_items fi
+        LEFT JOIN feed_item_interactions fii
+          ON fii.feed_item_id = fi.id AND fii.user_id = $1
+        WHERE fi.feed_source_id = ANY($2)
+      )
+      SELECT
+        id, feed_source_id, external_id, title, url, content,
+        author_name, author_handle, author_avatar_url, published_at,
+        metadata, inserted_at, updated_at,
+        interaction_id, read_at, bookmarked_at, interaction_user_id, row_num
+      FROM ranked_items
+      WHERE row_num <= $3 OR bookmarked_at IS NOT NULL
+      ORDER BY published_at DESC
+      LIMIT $4 OFFSET $5
+      """
+
+      result = Repo.query!(sql, [scope.user.id, feed_source_ids, limit_per_source, total_limit, offset])
+
+      # Map results to structs
+      Enum.map(result.rows, fn row ->
+        [
+          id, feed_source_id, external_id, title, url, content,
+          author_name, author_handle, author_avatar_url, published_at,
+          metadata, inserted_at, updated_at,
+          interaction_id, read_at, bookmarked_at, interaction_user_id, _row_num
+        ] = row
+
+        feed_item = %FeedItem{
+          id: id,
+          feed_source_id: feed_source_id,
+          external_id: external_id,
+          title: title,
+          url: url,
+          content: content,
+          author_name: author_name,
+          author_handle: author_handle,
+          author_avatar_url: author_avatar_url,
+          published_at: published_at,
+          metadata: metadata,
+          inserted_at: inserted_at,
+          updated_at: updated_at
+        }
+
+        interaction =
+          if interaction_id do
+            %FeedItemInteraction{
+              id: interaction_id,
+              feed_item_id: id,
+              user_id: interaction_user_id,
+              read_at: read_at,
+              bookmarked_at: bookmarked_at
+            }
+          else
+            nil
+          end
+
+        # Preload feed_source
+        feed_item_with_source = Repo.preload(feed_item, :feed_source)
+
+        %{feed_item: feed_item_with_source, interaction: interaction}
+      end)
+    end
+  end
+
+  @doc """
   Searches feed items using PostgreSQL full-text search.
   Returns results ordered by relevance (ts_rank) and published_at.
 
