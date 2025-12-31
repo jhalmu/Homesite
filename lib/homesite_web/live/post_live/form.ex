@@ -32,6 +32,7 @@ defmodule HomesiteWeb.PostLive.Form do
           label={gettext("Body")}
           rows="12"
           phx-hook="AutoGrow"
+          phx-debounce="500"
           id="post-body-textarea"
         />
 

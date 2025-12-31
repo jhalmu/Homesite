@@ -372,15 +372,29 @@ const Hooks = {
   AutoGrow: {
     mounted() {
       this.el.style.overflow = "hidden"
+      this.el.style.minHeight = "200px"
       this.resize()
       this.el.addEventListener("input", () => this.resize())
     },
     updated() {
+      // Preserve scroll position during LiveView updates
+      const scrollY = window.scrollY
+      const scrollX = window.scrollX
       this.resize()
+      window.scrollTo(scrollX, scrollY)
     },
     resize() {
+      // Store current height to check if resize is needed
+      const currentHeight = this.el.style.height
       this.el.style.height = "auto"
-      this.el.style.height = this.el.scrollHeight + "px"
+      const newHeight = this.el.scrollHeight + "px"
+
+      // Only update if height actually changed
+      if (currentHeight !== newHeight) {
+        this.el.style.height = newHeight
+      } else {
+        this.el.style.height = currentHeight
+      }
     }
   },
   // Chart.js hook for analytics visualizations (legacy)
