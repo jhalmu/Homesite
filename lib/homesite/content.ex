@@ -383,7 +383,7 @@ defmodule Homesite.Content do
 
   def list_public_posts(nil) do
     from(p in Post,
-      where: not is_nil(p.published_at),
+      where: not is_nil(p.published_at) and p.is_public == true,
       order_by: [desc: p.published_at],
       preload: [:user, :tags]
     )
@@ -395,7 +395,7 @@ defmodule Homesite.Content do
 
     query =
       from(p in Post,
-        where: not is_nil(p.published_at),
+        where: not is_nil(p.published_at) and p.is_public == true,
         order_by: [desc: p.published_at],
         preload: [:user, :tags]
       )
@@ -427,7 +427,7 @@ defmodule Homesite.Content do
 
     query =
       from(p in Post,
-        where: p.user_id == ^user_id and not is_nil(p.published_at),
+        where: p.user_id == ^user_id and not is_nil(p.published_at) and p.is_public == true,
         order_by: [desc: p.published_at],
         offset: ^offset
       )
@@ -484,7 +484,7 @@ defmodule Homesite.Content do
       from(p in Post,
         join: pt in "post_tags",
         on: pt.post_id == p.id,
-        where: pt.tag_id == ^tag_id and not is_nil(p.published_at),
+        where: pt.tag_id == ^tag_id and not is_nil(p.published_at) and p.is_public == true,
         order_by: [desc: p.published_at],
         preload: [:user]
       )
@@ -506,7 +506,7 @@ defmodule Homesite.Content do
       from(p in Post,
         join: pt in "post_tags",
         on: pt.post_id == p.id,
-        where: pt.tag_id == ^tag_id and not is_nil(p.published_at),
+        where: pt.tag_id == ^tag_id and not is_nil(p.published_at) and p.is_public == true,
         order_by: [desc: p.published_at],
         preload: [:user]
       )
@@ -542,7 +542,7 @@ defmodule Homesite.Content do
     offset = Keyword.get(opts, :offset, 0)
 
     from(p in Post,
-      where: not is_nil(p.published_at),
+      where: not is_nil(p.published_at) and p.is_public == true,
       order_by: [desc: p.published_at],
       preload: [:user, :tags],
       limit: ^limit,
@@ -763,7 +763,7 @@ defmodule Homesite.Content do
   """
   def list_public_posts_for_feed(limit \\ 20, offset \\ 0) do
     from(p in Post,
-      where: not is_nil(p.published_at),
+      where: not is_nil(p.published_at) and p.is_public == true,
       order_by: [desc: p.published_at],
       limit: ^limit,
       offset: ^offset,
