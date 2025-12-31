@@ -716,15 +716,28 @@ defmodule HomesiteWeb.CoreComponents do
       get_in(assigns, [:current_scope, :user, :preferred_language]) ||
         Gettext.get_locale(HomesiteWeb.Gettext)
 
-    assigns = assign(assigns, :locale, locale)
+    # Generate profile URL
+    profile_path =
+      if assigns.user.username do
+        "/users/@#{assigns.user.username}"
+      else
+        "/users/#{assigns.user.id}"
+      end
+
+    assigns =
+      assigns
+      |> assign(:locale, locale)
+      |> assign(:profile_path, profile_path)
 
     ~H"""
     <div class={["gap-[var(--spacing-sm)] flex items-center", @class]} {@rest}>
-      <.avatar user={@user} class="h-10 w-10" />
+      <.link navigate={@profile_path} class="shrink-0">
+        <.avatar user={@user} class="h-10 w-10 hover:ring-2 hover:ring-primary transition-all" />
+      </.link>
       <div class="flex flex-col">
-        <span class="text-[var(--font-size-fluid-sm)] font-medium">
+        <.link navigate={@profile_path} class="text-[var(--font-size-fluid-sm)] font-medium hover:text-primary transition-colors">
           {@user.display_name || String.split(@user.email, "@") |> List.first()}
-        </span>
+        </.link>
         <time
           :if={@date}
           class="text-[var(--text-sm)] text-gray-600 dark:text-gray-400"

@@ -41,7 +41,9 @@
           <div class="post-footer">
             <span>{latest_post.read_time_minutes} min {gettext("read time")}</span>
             <span>•</span>
-            <span>{latest_post.user.display_name || latest_post.user.email}</span>
+            <.link navigate={if latest_post.user.username, do: "/users/@#{latest_post.user.username}", else: "/users/#{latest_post.user.id}"} class="hover:text-primary transition-colors">
+              {latest_post.user.display_name || latest_post.user.email}
+            </.link>
           </div>
         </article>
         
@@ -161,7 +163,9 @@
                 <div class="post-footer">
                   <span>{post.read_time_minutes} min {gettext("read time")}</span>
                   <span>•</span>
-                  <span>{post.user.display_name || post.user.email}</span>
+                  <.link navigate={if post.user.username, do: "/users/@#{post.user.username}", else: "/users/#{post.user.id}"} class="hover:text-primary transition-colors">
+                    {post.user.display_name || post.user.email}
+                  </.link>
                 </div>
 
                 <%!-- Share buttons --%>
