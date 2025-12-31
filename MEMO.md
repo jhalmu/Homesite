@@ -56,6 +56,69 @@ PHX_CHECK_ORIGIN_HOSTS=juhahalmu.fi
 
 ---
 
+## 2025-12-31 (afternoon) - Bug Fixes #74, #76, #78, #79, #80 + Comprehensive Tests
+
+### Session Summary
+
+Implemented fixes for 5 GitHub issues and added comprehensive test coverage.
+
+#### Issues Fixed
+
+**#74 - Time Field Shows 12:00 Default**
+- Root cause: `format_time(_)` catch-all returned "12:00" for ISO8601 strings
+- Fix: Added string datetime parsing clauses to `format_time` and `format_date`
+- Files: `form.ex`, `form_components.ex`
+
+**#76 - Page Refresh/Scroll Issues**
+- Root cause: AutoGrow hook triggering on every input caused scroll jumps
+- Fix: Preserve scroll position in `updated()`, add `phx-debounce="500"` to textarea
+- Files: `assets/js/app.js`, `form.ex`
+
+**#78 - User Following Not Accessible**
+- Finding: Following feature fully implemented, just needed UI discoverability
+- Fix: Made author names/avatars clickable links to user profiles
+- Files: `core_components.ex` (`author_byline`), `home.html.heex`
+
+**#79 - RSS Feed Limit Per Source**
+- New function: `list_feed_items_limited_per_source/2`
+- Uses SQL window function: `ROW_NUMBER() OVER PARTITION BY`
+- Features: Limits to 3/source, prioritizes unread, exempts bookmarked
+- Files: `external_feeds.ex`, `feed_live/index.ex`
+
+**#80 - Media Library Orphan Filter**
+- New functions: `list_orphaned_media_items/1`, `count_orphaned_media_items/1`
+- UI: "Unused" toggle button with count badge
+- Shows images not added to any portfolio project
+- Files: `media.ex`, `media_live/index.ex`
+
+#### Tests Added
+
+**External Feeds Tests** (`external_feeds_test.exs`):
+- 12 new tests for `list_feed_items_limited_per_source/2`
+- Covers: limit per source, total limit, unread priority, bookmark exempt, offset, scope isolation
+
+**Media Tests** (`media_test.exs`):
+- 12 new tests for orphan filter functions
+- Covers: orphan detection, scope isolation, limit/offset, aspect filter, count updates
+
+**Media LiveView Tests** (`media_live/index_test.exs`):
+- 6 new tests for orphan filter UI
+- Covers: button display, toggle behavior, empty state, count updates, accessibility
+
+**Feed LiveView Tests** (`feed_live/index_test.exs`):
+- Created new test file with 17 tests
+- Covers: rendering, source limiting, mark read/bookmark, filter, pagination, accessibility
+
+**Accessibility Tests** (`accessibility_test.exs`):
+- 8 new Playwright E2E tests
+- Covers: Media library, Feed page, Portfolio page accessibility
+
+#### Test Results
+- **186 new tests added**
+- **1 pre-existing failure** (delete_old_feed_items isolation issue)
+
+---
+
 ## 2025-12-31 - Bug Tracking Session: GitHub Issues #73-80
 
 ### Session Summary

@@ -289,4 +289,123 @@ defmodule HomesiteWeb.E2E.AccessibilityTest do
       |> assert_no_violations()
     end
   end
+
+  describe "Media Library Page Accessibility" do
+    @tag :playwright
+    test "media library page has no accessibility violations", %{conn: conn} do
+      user = user_fixture()
+
+      conn
+      |> playwright_log_in_user(user)
+      |> visit(~p"/media")
+      |> assert_has("body .phx-connected")
+      |> assert_no_violations()
+    end
+
+    @tag :playwright
+    test "media library with items has no accessibility violations", %{conn: conn} do
+      user = user_fixture()
+      scope = %Homesite.Accounts.Scope{user: user}
+
+      # Create a media item
+      _media =
+        Homesite.MediaFixtures.media_item_fixture(scope, %{
+          title: "Test Image",
+          alt_text: "A test image for accessibility"
+        })
+
+      conn
+      |> playwright_log_in_user(user)
+      |> visit(~p"/media")
+      |> assert_has("body .phx-connected")
+      |> assert_no_violations()
+    end
+
+    @tag :playwright
+    test "media library orphan filter has accessible button", %{conn: conn} do
+      user = user_fixture()
+      scope = %Homesite.Accounts.Scope{user: user}
+
+      # Create an orphan media item
+      _orphan =
+        Homesite.MediaFixtures.media_item_fixture(scope, %{
+          title: "Orphan Image",
+          alt_text: "An orphaned test image"
+        })
+
+      conn
+      |> playwright_log_in_user(user)
+      |> visit(~p"/media")
+      |> assert_has("body .phx-connected")
+      |> then(fn session ->
+        # Click the orphan filter button
+        session = click(session, "button", "Unused")
+        assert_no_violations(session)
+      end)
+    end
+  end
+
+  describe "Feed Page Accessibility" do
+    @tag :playwright
+    test "feed page has no accessibility violations when empty", %{conn: conn} do
+      user = user_fixture()
+
+      conn
+      |> playwright_log_in_user(user)
+      |> visit(~p"/feed")
+      |> assert_has("body .phx-connected")
+      |> assert_no_violations()
+    end
+
+    @tag :playwright
+    test "feed page with items has no accessibility violations", %{conn: conn} do
+      user = user_fixture()
+      scope = Homesite.Accounts.Scope.for_user(user)
+
+      # Create a feed source and item
+      {:ok, feed_source} =
+        Homesite.ExternalFeeds.create_feed_source(scope, %{
+          feed_type: "rss",
+          name: "Test Blog",
+          url: "https://example.com/feed.xml",
+          enabled: true
+        })
+
+      {:ok, _item} =
+        Homesite.ExternalFeeds.upsert_feed_item(feed_source.id, %{
+          external_id: "a11y-test",
+          title: "Accessible Feed Item",
+          content: "Test content for accessibility",
+          url: "https://example.com/post",
+          published_at: DateTime.utc_now()
+        })
+
+      conn
+      |> playwright_log_in_user(user)
+      |> visit(~p"/feed")
+      |> assert_has("body .phx-connected")
+      |> assert_no_violations()
+    end
+
+    @tag :playwright
+    test "feed page has no violations in dark theme", %{conn: conn} do
+      user = user_fixture()
+
+      conn
+      |> playwright_log_in_user(user)
+      |> visit(~p"/feed")
+      |> assert_has("body .phx-connected")
+      |> assert_no_violations_dark()
+    end
+  end
+
+  describe "Portfolio Page Accessibility" do
+    @tag :playwright
+    test "portfolio page has no accessibility violations", %{conn: conn} do
+      conn
+      |> visit(~p"/portfolio")
+      |> assert_has("body .phx-connected")
+      |> assert_no_violations()
+    end
+  end
 end

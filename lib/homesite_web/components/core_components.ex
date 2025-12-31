@@ -732,10 +732,13 @@ defmodule HomesiteWeb.CoreComponents do
     ~H"""
     <div class={["gap-[var(--spacing-sm)] flex items-center", @class]} {@rest}>
       <.link navigate={@profile_path} class="shrink-0">
-        <.avatar user={@user} class="h-10 w-10 hover:ring-2 hover:ring-primary transition-all" />
+        <.avatar user={@user} class="h-10 w-10 transition-all hover:ring-primary hover:ring-2" />
       </.link>
       <div class="flex flex-col">
-        <.link navigate={@profile_path} class="text-[var(--font-size-fluid-sm)] font-medium hover:text-primary transition-colors">
+        <.link
+          navigate={@profile_path}
+          class="text-[var(--font-size-fluid-sm)] font-medium transition-colors hover:text-primary"
+        >
           {@user.display_name || String.split(@user.email, "@") |> List.first()}
         </.link>
         <time

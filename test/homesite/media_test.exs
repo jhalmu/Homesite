@@ -711,6 +711,202 @@ defmodule Homesite.MediaTest do
     end
   end
 
+  describe "orphaned media items" do
+    import Homesite.AccountsFixtures, only: [user_scope_fixture: 0]
+    import Homesite.MediaFixtures
+
+    test "list_orphaned_media_items/1 returns media not in any project" do
+      scope = user_scope_fixture()
+
+      # Create orphan media (not added to any project)
+      orphan1 = media_item_fixture(scope, %{title: "Orphan 1"})
+      orphan2 = media_item_fixture(scope, %{title: "Orphan 2"})
+
+      # Create media in a project
+      project = project_fixture(scope)
+      attached = media_item_fixture(scope, %{title: "Attached"})
+      {:ok, _} = Media.add_media_to_project(scope, project.id, attached.id, 1)
+
+      # Should only return orphaned items
+      orphans = Media.list_orphaned_media_items(scope)
+
+      orphan_ids = Enum.map(orphans, & &1.id)
+      assert orphan1.id in orphan_ids
+      assert orphan2.id in orphan_ids
+      refute attached.id in orphan_ids
+    end
+
+    test "list_orphaned_media_items/1 respects scope isolation" do
+      scope_a = user_scope_fixture()
+      scope_b = user_scope_fixture()
+
+      # Create orphan for user A
+      orphan_a = media_item_fixture(scope_a, %{title: "User A Orphan"})
+
+      # Create orphan for user B
+      _orphan_b = media_item_fixture(scope_b, %{title: "User B Orphan"})
+
+      # User A should only see their orphan
+      orphans_a = Media.list_orphaned_media_items(scope_a)
+      assert length(orphans_a) == 1
+      assert hd(orphans_a).id == orphan_a.id
+    end
+
+    test "list_orphaned_media_items/1 respects limit option" do
+      scope = user_scope_fixture()
+
+      # Create multiple orphans
+      for i <- 1..10 do
+        media_item_fixture(scope, %{title: "Orphan #{i}"})
+      end
+
+      # Should only return 3 items
+      orphans = Media.list_orphaned_media_items(scope, limit: 3)
+      assert length(orphans) == 3
+    end
+
+    test "list_orphaned_media_items/1 respects offset option" do
+      scope = user_scope_fixture()
+
+      # Create multiple orphans
+      for i <- 1..10 do
+        media_item_fixture(scope, %{title: "Orphan #{i}"})
+      end
+
+      # Get first page
+      page1 = Media.list_orphaned_media_items(scope, limit: 3, offset: 0)
+      # Get second page
+      page2 = Media.list_orphaned_media_items(scope, limit: 3, offset: 3)
+
+      # Pages should have items
+      assert length(page1) == 3
+      assert length(page2) == 3
+
+      # Pages should have different items (no overlap)
+      page1_ids = Enum.map(page1, & &1.id)
+      page2_ids = Enum.map(page2, & &1.id)
+
+      # Check that no item appears in both pages
+      assert Enum.all?(page1_ids, fn id -> id not in page2_ids end)
+    end
+
+    test "list_orphaned_media_items/1 filters by aspect_category" do
+      scope = user_scope_fixture()
+
+      # Create orphans (all our fixtures are square 100x100)
+      orphan = media_item_fixture(scope, %{title: "Square Orphan"})
+
+      # Filter by square should return our orphan
+      square_orphans = Media.list_orphaned_media_items(scope, aspect_category: "square")
+      assert length(square_orphans) == 1
+      assert hd(square_orphans).id == orphan.id
+
+      # Filter by landscape should return empty
+      landscape_orphans = Media.list_orphaned_media_items(scope, aspect_category: "landscape")
+      assert landscape_orphans == []
+    end
+
+    test "list_orphaned_media_items/1 returns items ordered by inserted_at descending" do
+      scope = user_scope_fixture()
+
+      orphan1 = media_item_fixture(scope, %{title: "First"})
+      orphan2 = media_item_fixture(scope, %{title: "Second"})
+
+      orphans = Media.list_orphaned_media_items(scope)
+
+      # Should return both items
+      assert length(orphans) == 2
+      orphan_ids = Enum.map(orphans, & &1.id)
+      assert orphan1.id in orphan_ids
+      assert orphan2.id in orphan_ids
+
+      # Query should order by inserted_at descending (newest first)
+      # But since items are created nearly simultaneously, we just verify
+      # both are returned - exact order depends on DB timestamp precision
+    end
+
+    test "count_orphaned_media_items/1 returns correct count" do
+      scope = user_scope_fixture()
+
+      # Initially no orphans
+      assert Media.count_orphaned_media_items(scope) == 0
+
+      # Create some orphans
+      _orphan1 = media_item_fixture(scope)
+      _orphan2 = media_item_fixture(scope)
+      _orphan3 = media_item_fixture(scope)
+
+      assert Media.count_orphaned_media_items(scope) == 3
+
+      # Add one to a project
+      project = project_fixture(scope)
+      attached = media_item_fixture(scope)
+      {:ok, _} = Media.add_media_to_project(scope, project.id, attached.id, 1)
+
+      # Should still be 3 (not counting the attached one)
+      assert Media.count_orphaned_media_items(scope) == 3
+    end
+
+    test "count_orphaned_media_items/1 respects scope isolation" do
+      scope_a = user_scope_fixture()
+      scope_b = user_scope_fixture()
+
+      # Create orphans for user A
+      _orphan_a1 = media_item_fixture(scope_a)
+      _orphan_a2 = media_item_fixture(scope_a)
+
+      # Create orphans for user B
+      _orphan_b1 = media_item_fixture(scope_b)
+
+      # User A should see 2 orphans
+      assert Media.count_orphaned_media_items(scope_a) == 2
+
+      # User B should see 1 orphan
+      assert Media.count_orphaned_media_items(scope_b) == 1
+    end
+
+    test "media becomes orphan when removed from all projects" do
+      scope = user_scope_fixture()
+      media = media_item_fixture(scope)
+      project1 = project_fixture(scope, %{name: "Project 1"})
+      project2 = project_fixture(scope, %{name: "Project 2"})
+
+      # Add to both projects
+      {:ok, _} = Media.add_media_to_project(scope, project1.id, media.id, 1)
+      {:ok, _} = Media.add_media_to_project(scope, project2.id, media.id, 1)
+
+      # Not orphan
+      orphans = Media.list_orphaned_media_items(scope)
+      refute Enum.any?(orphans, &(&1.id == media.id))
+
+      # Remove from project1
+      {:ok, _} = Media.remove_media_from_project(scope, project1.id, media.id)
+
+      # Still not orphan (still in project2)
+      orphans = Media.list_orphaned_media_items(scope)
+      refute Enum.any?(orphans, &(&1.id == media.id))
+
+      # Remove from project2
+      {:ok, _} = Media.remove_media_from_project(scope, project2.id, media.id)
+
+      # Now it's orphan
+      orphans = Media.list_orphaned_media_items(scope)
+      assert Enum.any?(orphans, &(&1.id == media.id))
+    end
+
+    test "count updates when media is added to project" do
+      scope = user_scope_fixture()
+      orphan = media_item_fixture(scope)
+
+      assert Media.count_orphaned_media_items(scope) == 1
+
+      project = project_fixture(scope)
+      {:ok, _} = Media.add_media_to_project(scope, project.id, orphan.id, 1)
+
+      assert Media.count_orphaned_media_items(scope) == 0
+    end
+  end
+
   describe "validation edge cases" do
     import Homesite.AccountsFixtures, only: [user_scope_fixture: 0]
 

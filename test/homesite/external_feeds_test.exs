@@ -699,6 +699,285 @@ defmodule Homesite.ExternalFeedsTest do
     end
   end
 
+  describe "list_feed_items_limited_per_source/2" do
+    import Homesite.AccountsFixtures
+
+    @valid_item_attrs %{
+      external_id: "test-item",
+      title: "Test Post",
+      content: "Test content",
+      url: "https://example.com/test",
+      published_at: ~U[2025-12-30 10:00:00Z]
+    }
+
+    setup do
+      user = user_fixture()
+      scope = Accounts.Scope.for_user(user)
+
+      # Create two feed sources
+      {:ok, feed_source1} =
+        ExternalFeeds.create_feed_source(scope, %{
+          feed_type: "rss",
+          name: "Tech News",
+          url: "https://tech.com/feed.xml",
+          enabled: true
+        })
+
+      {:ok, feed_source2} =
+        ExternalFeeds.create_feed_source(scope, %{
+          feed_type: "rss",
+          name: "Elixir Blog",
+          url: "https://elixir.com/feed.xml",
+          enabled: true
+        })
+
+      %{scope: scope, feed_source1: feed_source1, feed_source2: feed_source2}
+    end
+
+    test "limits items per source to specified amount", %{
+      scope: scope,
+      feed_source1: feed_source1,
+      feed_source2: feed_source2
+    } do
+      # Create 5 items for source 1
+      for i <- 1..5 do
+        ExternalFeeds.upsert_feed_item(feed_source1.id, %{
+          @valid_item_attrs
+          | external_id: "source1-item-#{i}",
+            title: "Source 1 Post #{i}",
+            published_at: DateTime.add(~U[2025-12-30 10:00:00Z], -i, :hour)
+        })
+      end
+
+      # Create 5 items for source 2
+      for i <- 1..5 do
+        ExternalFeeds.upsert_feed_item(feed_source2.id, %{
+          @valid_item_attrs
+          | external_id: "source2-item-#{i}",
+            title: "Source 2 Post #{i}",
+            published_at: DateTime.add(~U[2025-12-30 10:00:00Z], -i, :hour)
+        })
+      end
+
+      # With limit_per_source: 3, should get max 3 from each source
+      items = ExternalFeeds.list_feed_items_limited_per_source(scope, limit_per_source: 3)
+
+      # Count items per source
+      source1_items = Enum.filter(items, &(&1.feed_item.feed_source_id == feed_source1.id))
+      source2_items = Enum.filter(items, &(&1.feed_item.feed_source_id == feed_source2.id))
+
+      assert length(source1_items) <= 3
+      assert length(source2_items) <= 3
+    end
+
+    test "respects total_limit option", %{
+      scope: scope,
+      feed_source1: feed_source1,
+      feed_source2: feed_source2
+    } do
+      # Create items for both sources
+      for i <- 1..5 do
+        ExternalFeeds.upsert_feed_item(feed_source1.id, %{
+          @valid_item_attrs
+          | external_id: "s1-#{i}",
+            published_at: DateTime.add(~U[2025-12-30 10:00:00Z], -i, :hour)
+        })
+
+        ExternalFeeds.upsert_feed_item(feed_source2.id, %{
+          @valid_item_attrs
+          | external_id: "s2-#{i}",
+            published_at: DateTime.add(~U[2025-12-30 10:00:00Z], -i * 2, :hour)
+        })
+      end
+
+      # With total_limit: 4, should get max 4 items total
+      items =
+        ExternalFeeds.list_feed_items_limited_per_source(scope,
+          limit_per_source: 3,
+          total_limit: 4
+        )
+
+      assert length(items) <= 4
+    end
+
+    test "prioritizes unread items within each source", %{
+      scope: scope,
+      feed_source1: feed_source1
+    } do
+      # Create 5 items
+      items =
+        for i <- 1..5 do
+          {:ok, item} =
+            ExternalFeeds.upsert_feed_item(feed_source1.id, %{
+              @valid_item_attrs
+              | external_id: "unread-test-#{i}",
+                title: "Item #{i}",
+                published_at: DateTime.add(~U[2025-12-30 10:00:00Z], -i, :hour)
+            })
+
+          item
+        end
+
+      # Mark items 1 and 2 as read (newest ones)
+      ExternalFeeds.mark_item_as_read(scope, Enum.at(items, 0).id)
+      ExternalFeeds.mark_item_as_read(scope, Enum.at(items, 1).id)
+
+      # Get limited items - unread should be prioritized
+      result = ExternalFeeds.list_feed_items_limited_per_source(scope, limit_per_source: 3)
+
+      # Should have items, unread ones should appear in the limit
+      assert length(result) > 0
+
+      # Count unread items in result
+      unread_count =
+        Enum.count(result, fn item ->
+          is_nil(item.interaction) or is_nil(item.interaction.read_at)
+        end)
+
+      # Most items in the limit should be unread (since there are 3 unread items)
+      assert unread_count >= 2
+    end
+
+    test "exempts bookmarked items from limit", %{scope: scope, feed_source1: feed_source1} do
+      # Create 5 items
+      items =
+        for i <- 1..5 do
+          {:ok, item} =
+            ExternalFeeds.upsert_feed_item(feed_source1.id, %{
+              @valid_item_attrs
+              | external_id: "bookmark-test-#{i}",
+                title: "Item #{i}",
+                published_at: DateTime.add(~U[2025-12-30 10:00:00Z], -i, :hour)
+            })
+
+          item
+        end
+
+      # Bookmark the oldest item (would normally be excluded by limit)
+      oldest_item = List.last(items)
+      ExternalFeeds.bookmark_item(scope, oldest_item.id)
+
+      # Get limited items with limit_per_source: 2
+      result =
+        ExternalFeeds.list_feed_items_limited_per_source(scope,
+          limit_per_source: 2,
+          total_limit: 10
+        )
+
+      # Bookmarked item should be included even though limit is 2
+      bookmarked_in_result =
+        Enum.any?(result, fn item ->
+          item.feed_item.id == oldest_item.id
+        end)
+
+      assert bookmarked_in_result
+    end
+
+    test "respects offset for pagination", %{scope: scope, feed_source1: feed_source1} do
+      # Create items
+      for i <- 1..6 do
+        ExternalFeeds.upsert_feed_item(feed_source1.id, %{
+          @valid_item_attrs
+          | external_id: "offset-test-#{i}",
+            published_at: DateTime.add(~U[2025-12-30 10:00:00Z], -i, :hour)
+        })
+      end
+
+      # Get first page
+      page1 =
+        ExternalFeeds.list_feed_items_limited_per_source(scope,
+          limit_per_source: 3,
+          total_limit: 3,
+          offset: 0
+        )
+
+      # Get second page
+      page2 =
+        ExternalFeeds.list_feed_items_limited_per_source(scope,
+          limit_per_source: 3,
+          total_limit: 3,
+          offset: 3
+        )
+
+      # Pages should have different items (unless all items on page1 are bookmarked)
+      page1_ids = Enum.map(page1, & &1.feed_item.id) |> MapSet.new()
+      page2_ids = Enum.map(page2, & &1.feed_item.id) |> MapSet.new()
+
+      # Should have no overlap
+      assert MapSet.disjoint?(page1_ids, page2_ids)
+    end
+
+    test "returns empty list when no enabled sources", %{scope: scope} do
+      # Create a user with no feed sources
+      other_user = user_fixture()
+      other_scope = Accounts.Scope.for_user(other_user)
+
+      items = ExternalFeeds.list_feed_items_limited_per_source(other_scope)
+      assert items == []
+    end
+
+    test "respects scope isolation", %{
+      scope: scope,
+      feed_source1: feed_source1
+    } do
+      # Create item for user 1
+      {:ok, _} =
+        ExternalFeeds.upsert_feed_item(feed_source1.id, %{
+          @valid_item_attrs
+          | external_id: "scope-test"
+        })
+
+      # Create separate user
+      other_user = user_fixture()
+      other_scope = Accounts.Scope.for_user(other_user)
+
+      # User 2 should see no items (no feed sources)
+      other_items = ExternalFeeds.list_feed_items_limited_per_source(other_scope)
+      assert other_items == []
+
+      # User 1 should see their items
+      user_items = ExternalFeeds.list_feed_items_limited_per_source(scope)
+      assert length(user_items) == 1
+    end
+
+    test "includes feed_source data in results", %{scope: scope, feed_source1: feed_source1} do
+      {:ok, _} =
+        ExternalFeeds.upsert_feed_item(feed_source1.id, %{
+          @valid_item_attrs
+          | external_id: "preload-test"
+        })
+
+      [item | _] = ExternalFeeds.list_feed_items_limited_per_source(scope)
+
+      # Should have feed_item with proper structure
+      assert item.feed_item.feed_source_id == feed_source1.id
+      assert is_struct(item.feed_item)
+    end
+
+    test "orders results by published_at descending", %{scope: scope, feed_source1: feed_source1} do
+      # Create items with different dates
+      {:ok, old} =
+        ExternalFeeds.upsert_feed_item(feed_source1.id, %{
+          @valid_item_attrs
+          | external_id: "old",
+            published_at: ~U[2025-12-01 10:00:00Z]
+        })
+
+      {:ok, new} =
+        ExternalFeeds.upsert_feed_item(feed_source1.id, %{
+          @valid_item_attrs
+          | external_id: "new",
+            published_at: ~U[2025-12-30 10:00:00Z]
+        })
+
+      items = ExternalFeeds.list_feed_items_limited_per_source(scope)
+
+      # Newer item should come first
+      first_item = hd(items)
+      assert first_item.feed_item.id == new.id
+    end
+  end
+
   describe "search_feed_items/3" do
     import Homesite.AccountsFixtures
 

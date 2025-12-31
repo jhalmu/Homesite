@@ -71,5 +71,96 @@ defmodule HomesiteWeb.MediaLive.IndexTest do
 
       assert html =~ "No media items found"
     end
+
+    test "shows orphan filter button with count", %{conn: conn, scope: scope} do
+      # Create orphan media (not in any project)
+      _orphan = media_item_fixture(scope, %{title: "Orphan Image"})
+
+      {:ok, _view, html} = live(conn, ~p"/media")
+
+      # Should show the "Unused" button with count
+      assert html =~ "Unused"
+      assert html =~ "1"
+    end
+
+    test "orphan filter toggles correctly", %{conn: conn, scope: scope} do
+      # Create orphan media with unique alt text
+      orphan =
+        media_item_fixture(scope, %{title: "Orphan Media", alt_text: "Unique orphan alt text"})
+
+      # Create attached media with unique alt text
+      project = project_fixture(scope)
+
+      attached =
+        media_item_fixture(scope, %{title: "Attached Media", alt_text: "Unique attached alt text"})
+
+      {:ok, _} = Homesite.Media.add_media_to_project(scope, project.id, attached.id, 1)
+
+      {:ok, view, html} = live(conn, ~p"/media")
+
+      # Initially shows both
+      assert html =~ "Orphan Media"
+      assert html =~ "Attached Media"
+
+      # Toggle orphan filter on
+      html = render_click(view, "toggle-orphan-filter")
+
+      # Should only show orphan (check by unique alt text)
+      assert html =~ "Unique orphan alt text"
+      refute html =~ "Unique attached alt text"
+
+      # Toggle orphan filter off
+      html = render_click(view, "toggle-orphan-filter")
+
+      # Should show both again
+      assert html =~ "Unique orphan alt text"
+      assert html =~ "Unique attached alt text"
+    end
+
+    test "orphan filter shows empty message when all used", %{conn: conn, scope: scope} do
+      # Create only attached media
+      project = project_fixture(scope)
+      attached = media_item_fixture(scope, %{title: "All Used"})
+      {:ok, _} = Homesite.Media.add_media_to_project(scope, project.id, attached.id, 1)
+
+      {:ok, view, _html} = live(conn, ~p"/media")
+
+      # Toggle orphan filter on
+      html = render_click(view, "toggle-orphan-filter")
+
+      # Should show appropriate message
+      assert html =~ "All images are in use"
+    end
+
+    test "orphan count updates when media added to project", %{conn: conn, scope: scope} do
+      # Create orphan media
+      orphan = media_item_fixture(scope, %{title: "Soon Attached"})
+
+      {:ok, view, html} = live(conn, ~p"/media")
+
+      # Should show 1 orphan
+      assert html =~ "1"
+
+      # Add to project (simulating real-time update would require PubSub)
+      project = project_fixture(scope)
+      {:ok, _} = Homesite.Media.add_media_to_project(scope, project.id, orphan.id, 1)
+
+      # Refresh the page to see updated count
+      {:ok, _view, html} = live(conn, ~p"/media")
+
+      # Should now show 0 orphans (button still visible)
+      assert html =~ "Unused"
+      assert html =~ "0"
+    end
+
+    test "orphan filter button has proper accessibility", %{conn: conn, scope: scope} do
+      _orphan = media_item_fixture(scope)
+
+      {:ok, _view, html} = live(conn, ~p"/media")
+
+      # Button should be present and have icon
+      assert html =~ "toggle-orphan-filter"
+      assert html =~ "hero-archive-box-x-mark"
+    end
   end
 end

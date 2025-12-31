@@ -56,9 +56,9 @@ Also update `list_public_posts(%Scope{})` variant.
 - `lib/homesite/content.ex` - Add `is_public` check to all public listing functions
 
 **Claude's Questions:**
-- Should `published_at` imply public visibility, or are they independent controls?
-- What's the intended workflow: draft → scheduled → published → can toggle visibility?
-- Should we rename for clarity (`is_visible` or `visibility_status` enum)?
+- Should `published_at` imply public visibility, or are they independent controls? Publiced at if put in future, article is public then
+- What's the intended workflow: draft → scheduled → published → can toggle visibility? Was there draft too? But in anytime article is visibilility_no it is not public
+- Should we rename for clarity (`is_visible` or `visibility_status` enum)? If you see it is good, do it.
 
 ---
 
@@ -133,7 +133,7 @@ AutoGrow: {
 **Claude's Questions:**
 - At what text length does this start happening?
 - Is it related to specific characters (newlines)?
-- Does the issue occur without AutoGrow?
+- Does the issue occur without AutoGrow? Yes because it is not working?
 
 **Claude's Ideas:**
 - Split editor into separate LiveComponent to isolate re-renders
@@ -161,13 +161,14 @@ AutoGrow: {
 **Claude's Questions:**
 - What size should avatar be for social sharing? (Twitter recommends 1200x630)
 - Generate a card with avatar + title + site branding?
-- Or just use avatar directly?
+- Or just use avatar directly? Avatar should be just little avatar, but if there is image, then use best size 
 
 **Claude's Ideas:**
 - Create a share card generator endpoint that composites avatar + title
-- Cache generated images
+- Cache generated images Yes.
 - Use image service like Cloudinary for dynamic transformations
 
+Do something stylish but simple. Avatar should be just little avatar, but if there is image, then use best size. 
 ---
 
 ### Issue #78: User Following Not Accessible
@@ -191,9 +192,9 @@ live "/users/:user_identifier/following", UserLive.Followers, :following
 - Navigation (optional - show follower count)
 
 **Claude's Questions:**
-- Where should the follow button appear? Profile page? User cards? Both?
-- Should there be notifications for new followers?
-- Show follower count in navigation?
+- Where should the follow button appear? Profile page? User cards? Both? Profile page and user cards.
+- Should there be notifications for new followers? In notifications page Yes.
+- Show follower count in navigation? No. In Profile page yes
 
 ---
 
@@ -224,14 +225,17 @@ end
 - `lib/homesite_web/live/feed_live/index.ex` - Use new function
 
 **Claude's Questions:**
-- Should limit be configurable per source?
-- Exempt bookmarked items from limit?
-- Should unread items have higher priority?
+- Should limit be configurable per source? Yes.
+- Exempt bookmarked items from limit? Yes.
+- Should unread items have higher priority? Yes.
 
 **Claude's Ideas:**
-- Add "Show all from this source" expansion
-- Configurable limit in feed source settings
-- "Trending" algorithm based on engagement
+- Add "Show all from this source" expansion Yes.
+- Configurable limit in feed source settings Yes.
+- "Trending" algorithm based on engagement Yes.
+- Add "Show all from this source" expansion Yes.
+- Configurable limit in feed source settings Yes.
+- "Trending" algorithm based on engagement Yes.
 
 ---
 
@@ -261,10 +265,10 @@ end
 - `lib/homesite_web/live/media_live/index.ex` - Add filter button
 
 **Claude's Questions:**
-- How many images are expected? 100s? 1000s? 10000s?
-- Is the current project/collection system insufficient?
-- Would tags/categories be enough instead of folders?
-- Should folders be flat or nested?
+- How many images are expected? 100s? 1000s? 10000s? In future... 100000s?
+- Is the current project/collection system insufficient? Don't know yet.
+- Would tags/categories be enough instead of folders? Yes.
+- Should folders be flat or nested? Flat.
 
 ---
 

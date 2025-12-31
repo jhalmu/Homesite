@@ -418,15 +418,30 @@ defmodule Homesite.ExternalFeeds do
       LIMIT $4 OFFSET $5
       """
 
-      result = Repo.query!(sql, [scope.user.id, feed_source_ids, limit_per_source, total_limit, offset])
+      result =
+        Repo.query!(sql, [scope.user.id, feed_source_ids, limit_per_source, total_limit, offset])
 
       # Map results to structs
       Enum.map(result.rows, fn row ->
         [
-          id, feed_source_id, external_id, title, url, content,
-          author_name, author_handle, author_avatar_url, published_at,
-          metadata, inserted_at, updated_at,
-          interaction_id, read_at, bookmarked_at, interaction_user_id, _row_num
+          id,
+          feed_source_id,
+          external_id,
+          title,
+          url,
+          content,
+          author_name,
+          author_handle,
+          author_avatar_url,
+          published_at,
+          metadata,
+          inserted_at,
+          updated_at,
+          interaction_id,
+          read_at,
+          bookmarked_at,
+          interaction_user_id,
+          _row_num
         ] = row
 
         feed_item = %FeedItem{
