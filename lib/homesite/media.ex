@@ -261,6 +261,46 @@ defmodule Homesite.Media do
   ## Media Items
 
   @doc """
+  Returns media items that are not in any project.
+  These are "orphan" images that have been uploaded but not added to portfolios.
+
+  ## Options
+    * `:limit` - Maximum number of items to return (default: 20)
+    * `:offset` - Number of items to skip (default: 0)
+    * `:aspect_category` - Filter by aspect category ("landscape", "portrait", "square")
+  """
+  def list_orphaned_media_items(%Scope{} = scope, opts \\ []) do
+    limit = opts[:limit] || 20
+    offset = opts[:offset] || 0
+
+    query =
+      from(m in MediaItem,
+        left_join: pmi in ProjectMediaItem,
+        on: m.id == pmi.media_item_id,
+        where: m.user_id == ^scope.user.id and is_nil(pmi.id),
+        order_by: [desc: m.inserted_at]
+      )
+
+    query = maybe_filter_by_aspect(query, opts[:aspect_category])
+    query = from(m in query, limit: ^limit, offset: ^offset)
+
+    Repo.all(query)
+  end
+
+  @doc """
+  Counts orphaned media items for a user.
+  """
+  def count_orphaned_media_items(%Scope{} = scope) do
+    from(m in MediaItem,
+      left_join: pmi in ProjectMediaItem,
+      on: m.id == pmi.media_item_id,
+      where: m.user_id == ^scope.user.id and is_nil(pmi.id),
+      select: count(m.id)
+    )
+    |> Repo.one() || 0
+  end
+
+  @doc """
   Returns the list of media items for the current user.
 
   ## Options

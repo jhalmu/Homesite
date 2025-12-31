@@ -10,6 +10,7 @@ defmodule HomesiteWeb.MediaLive.Index do
     if connected?(socket), do: Media.subscribe_media_items(socket.assigns.current_scope)
 
     media_items = list_media_items(socket.assigns.current_scope, %{}, limit: @media_per_page)
+    orphan_count = Media.count_orphaned_media_items(socket.assigns.current_scope)
 
     {:ok,
      socket
@@ -17,6 +18,8 @@ defmodule HomesiteWeb.MediaLive.Index do
      |> assign(:search_query, "")
      |> assign(:aspect_filter, nil)
      |> assign(:gallery_filter, nil)
+     |> assign(:orphan_filter, false)
+     |> assign(:orphan_count, orphan_count)
      |> assign(:page, 1)
      |> assign(:has_more, length(media_items) == @media_per_page)
      |> assign(:media_empty, media_items == [])
@@ -33,9 +36,12 @@ defmodule HomesiteWeb.MediaLive.Index do
 
   @impl true
   def handle_info({:created, media_item}, socket) do
+    orphan_count = Media.count_orphaned_media_items(socket.assigns.current_scope)
+
     {:noreply,
      socket
      |> assign(:media_empty, false)
+     |> assign(:orphan_count, orphan_count)
      |> stream_insert(:media_items, media_item, at: 0)}
   end
 
@@ -44,7 +50,12 @@ defmodule HomesiteWeb.MediaLive.Index do
   end
 
   def handle_info({:deleted, media_item}, socket) do
-    {:noreply, stream_delete(socket, :media_items, media_item)}
+    orphan_count = Media.count_orphaned_media_items(socket.assigns.current_scope)
+
+    {:noreply,
+     socket
+     |> assign(:orphan_count, orphan_count)
+     |> stream_delete(:media_items, media_item)}
   end
 
   @impl true
@@ -57,7 +68,8 @@ defmodule HomesiteWeb.MediaLive.Index do
           socket.assigns.current_scope,
           %{
             aspect_category: socket.assigns.aspect_filter,
-            gallery_id: socket.assigns.gallery_filter
+            gallery_id: socket.assigns.gallery_filter,
+            orphans_only: socket.assigns.orphan_filter
           },
           limit: @media_per_page
         )
@@ -82,7 +94,8 @@ defmodule HomesiteWeb.MediaLive.Index do
         socket.assigns.current_scope,
         %{
           aspect_category: aspect_filter,
-          gallery_id: socket.assigns.gallery_filter
+          gallery_id: socket.assigns.gallery_filter,
+          orphans_only: socket.assigns.orphan_filter
         },
         limit: @media_per_page
       )
@@ -109,7 +122,8 @@ defmodule HomesiteWeb.MediaLive.Index do
         socket.assigns.current_scope,
         %{
           aspect_category: socket.assigns.aspect_filter,
-          gallery_id: gallery_filter
+          gallery_id: gallery_filter,
+          orphans_only: socket.assigns.orphan_filter
         },
         limit: @media_per_page
       )
@@ -117,6 +131,30 @@ defmodule HomesiteWeb.MediaLive.Index do
     {:noreply,
      socket
      |> assign(:gallery_filter, gallery_filter)
+     |> assign(:search_query, "")
+     |> assign(:page, 1)
+     |> assign(:has_more, length(media_items) == @media_per_page)
+     |> assign(:media_empty, media_items == [])
+     |> stream(:media_items, media_items, reset: true)}
+  end
+
+  def handle_event("toggle-orphan-filter", _params, socket) do
+    new_orphan_filter = not socket.assigns.orphan_filter
+
+    media_items =
+      list_media_items(
+        socket.assigns.current_scope,
+        %{
+          aspect_category: socket.assigns.aspect_filter,
+          gallery_id: socket.assigns.gallery_filter,
+          orphans_only: new_orphan_filter
+        },
+        limit: @media_per_page
+      )
+
+    {:noreply,
+     socket
+     |> assign(:orphan_filter, new_orphan_filter)
      |> assign(:search_query, "")
      |> assign(:page, 1)
      |> assign(:has_more, length(media_items) == @media_per_page)
@@ -133,7 +171,8 @@ defmodule HomesiteWeb.MediaLive.Index do
         socket.assigns.current_scope,
         %{
           aspect_category: socket.assigns.aspect_filter,
-          gallery_id: socket.assigns.gallery_filter
+          gallery_id: socket.assigns.gallery_filter,
+          orphans_only: socket.assigns.orphan_filter
         },
         limit: @media_per_page,
         offset: offset
@@ -381,6 +420,20 @@ defmodule HomesiteWeb.MediaLive.Index do
               </option>
             </select>
           </div>
+          
+    <!-- Orphan Filter -->
+          <button
+            phx-click="toggle-orphan-filter"
+            class={[
+              "btn gap-[var(--spacing-inline)]",
+              @orphan_filter && "btn-primary",
+              !@orphan_filter && "btn-outline"
+            ]}
+          >
+            <.icon name="hero-archive-box-x-mark" class="h-4 w-4" />
+            {gettext("Unused")}
+            <span class="badge badge-sm">{@orphan_count}</span>
+          </button>
         </div>
         
     <!-- Media Grid -->
@@ -389,10 +442,13 @@ defmodule HomesiteWeb.MediaLive.Index do
             <div class="alert">
               <.icon name="hero-information-circle" class="h-6 w-6" />
               <span>
-                <%= if @search_query != "" do %>
-                  {gettext("No media items found matching \"%{query}\"", query: @search_query)}
-                <% else %>
-                  {gettext("No media items yet. Upload images to projects to get started!")}
+                <%= cond do %>
+                  <% @search_query != "" -> %>
+                    {gettext("No media items found matching \"%{query}\"", query: @search_query)}
+                  <% @orphan_filter -> %>
+                    {gettext("All images are in use - none are orphaned.")}
+                  <% true -> %>
+                    {gettext("No media items yet. Upload images to projects to get started!")}
                 <% end %>
               </span>
             </div>
@@ -469,13 +525,22 @@ defmodule HomesiteWeb.MediaLive.Index do
   end
 
   defp list_media_items(scope, filters, opts) do
-    Media.list_media_items(
-      scope,
-      gallery_id: filters[:gallery_id],
-      aspect_category: filters[:aspect_category],
-      limit: opts[:limit],
-      offset: opts[:offset]
-    )
+    if filters[:orphans_only] do
+      Media.list_orphaned_media_items(
+        scope,
+        aspect_category: filters[:aspect_category],
+        limit: opts[:limit],
+        offset: opts[:offset]
+      )
+    else
+      Media.list_media_items(
+        scope,
+        gallery_id: filters[:gallery_id],
+        aspect_category: filters[:aspect_category],
+        limit: opts[:limit],
+        offset: opts[:offset]
+      )
+    end
   end
 
   defp error_to_string(:too_large), do: gettext("File is too large (max 5MB)")
