@@ -56,6 +56,42 @@ PHX_CHECK_ORIGIN_HOSTS=juhahalmu.fi
 
 ---
 
+## 2025-12-31 (evening) - Issues #75, #77 + Deployment
+
+### Session Summary
+
+Implemented remaining enhancement issues and deployed to production.
+
+#### Issues Implemented
+
+**#75 - Show Edited Time on Modified Posts**
+- Added `was_edited?/1` helper (detects if updated > 5 min after publish)
+- Added `format_relative_date/1` for friendly dates (today, yesterday, X days ago)
+- Added edited indicator with pencil icon to post show template
+- Added Finnish translations for all new strings
+- Files: `post_live/show.ex`, `default.po` (en/fi)
+
+**#77 - Author Avatar in Social Share**
+- Created `ImageController` with HTTP endpoints for images:
+  - `GET /images/posts/:post_id/hero` - serves hero images
+  - `GET /images/users/:user_id/avatar` - serves user avatars
+- Updated `SEO` module with image priority: hero_image > author_avatar > default
+- Added routes to router
+- Updated Sobelow config for false positives (trusted database content)
+- Files: `image_controller.ex`, `seo.ex`, `router.ex`, `.sobelow-conf`
+
+#### Bug Fixes
+- Fixed `delete_old_feed_items` test (isolation-safe assertions)
+- Fixed media live tests (check for event name instead of localized text)
+- Added secondary sort key to `list_orphaned_media_items` for deterministic pagination
+
+#### Deployment
+- All 1691 tests passing
+- CI/CD pipeline: Test → Build → Deploy to Hetzner
+- Production live at orangedinos.de
+
+---
+
 ## 2025-12-31 (afternoon) - Bug Fixes #74, #76, #78, #79, #80 + Comprehensive Tests
 
 ### Session Summary
