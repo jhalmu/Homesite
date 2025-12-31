@@ -667,6 +667,14 @@ defmodule HomesiteWeb.PostLive.Form do
   # Helper to format DateTime for date input (YYYY-MM-DD)
   defp format_date(nil), do: Date.utc_today() |> Date.to_string()
   defp format_date(%DateTime{} = dt), do: DateTime.to_date(dt) |> Date.to_string()
+
+  defp format_date(datetime_string) when is_binary(datetime_string) do
+    case DateTime.from_iso8601(datetime_string) do
+      {:ok, dt, _} -> DateTime.to_date(dt) |> Date.to_string()
+      _ -> Date.utc_today() |> Date.to_string()
+    end
+  end
+
   defp format_date(_), do: Date.utc_today() |> Date.to_string()
 
   # Helper to format DateTime for time input (HH:MM)
@@ -674,6 +682,13 @@ defmodule HomesiteWeb.PostLive.Form do
 
   defp format_time(%DateTime{} = dt),
     do: DateTime.to_time(dt) |> Time.to_string() |> String.slice(0, 5)
+
+  defp format_time(datetime_string) when is_binary(datetime_string) do
+    case DateTime.from_iso8601(datetime_string) do
+      {:ok, dt, _} -> DateTime.to_time(dt) |> Time.to_string() |> String.slice(0, 5)
+      _ -> "12:00"
+    end
+  end
 
   defp format_time(_), do: "12:00"
 
