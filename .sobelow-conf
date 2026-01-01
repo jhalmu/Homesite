@@ -12,6 +12,8 @@
     "Config.HTTPS",
     # File operations use server-controlled paths (false positives)
     "Traversal.FileModule",
+    # SendFile uses Application.app_dir which is server-controlled (not user input)
+    "Traversal.SendFile",
     # JSON-LD properly escaped, raw HTML for theme/locale scripts (false positives)
     "XSS.Raw",
     # ImageController serves trusted data from database (not user input)
