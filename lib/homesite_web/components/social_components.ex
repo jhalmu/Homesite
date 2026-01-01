@@ -89,12 +89,57 @@ defmodule HomesiteWeb.SocialComponents do
     ~H"""
     <div class="gap-[var(--space-xs)] flex flex-wrap">
       <div class="mb-[var(--space-xs)] text-[var(--text-xs)] w-full opacity-40">Share:</div>
+      <.copy_link_button url={@url} />
       <.share_button platform="bluesky" url={@url} title={@title} />
       <.share_button platform="mastodon" url={@url} title={@title} />
       <.share_button platform="facebook" url={@url} title={@title} />
       <.share_button platform="linkedin" url={@url} title={@title} />
       <.share_button platform="email" url={@url} title={@title} />
     </div>
+    """
+  end
+
+  @doc """
+  Copy link button that copies URL to clipboard.
+  """
+  attr :url, :string, required: true
+
+  def copy_link_button(assigns) do
+    unique_id = "copy-link-#{:erlang.phash2(assigns.url)}"
+    assigns = assign(assigns, :unique_id, unique_id)
+
+    ~H"""
+    <button
+      id={@unique_id}
+      phx-hook="CopyToClipboard"
+      data-url={@url}
+      data-copied-text={gettext("Copied!")}
+      type="button"
+      class="btn btn-sm btn-ghost gap-[var(--space-xs)]"
+      title={gettext("Copy link")}
+    >
+      <.clipboard_icon class="h-4 w-4" />
+      <span class="hidden sm:inline" data-label>{gettext("Copy link")}</span>
+    </button>
+    """
+  end
+
+  def clipboard_icon(assigns) do
+    ~H"""
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      class={@class}
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244"
+      />
+    </svg>
     """
   end
 

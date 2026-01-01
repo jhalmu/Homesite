@@ -1751,7 +1751,7 @@ msgstr ""
 
 #: lib/homesite_web/live/dev_faqs_live/index.ex:137
 #: lib/homesite_web/live/faq_live/index.ex:92
-#: lib/homesite_web/live/post_live/show.ex:91
+#: lib/homesite_web/live/post_live/show.ex:94
 #, elixir-autogen, elixir-format
 msgid "On This Page"
 msgstr ""
@@ -6884,7 +6884,7 @@ msgstr ""
 msgid "Tailwind CSS & DaisyUI"
 msgstr ""
 
-#: lib/homesite_web/components/layouts/root.html.heex:141
+#: lib/homesite_web/components/layouts/root.html.heex:143
 #, elixir-autogen, elixir-format
 msgid "Skip to main content"
 msgstr ""
@@ -7042,17 +7042,17 @@ msgstr ""
 msgid "Link copied!"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/show.ex:248
+#: lib/homesite_web/live/post_live/show.ex:251
 #, elixir-autogen, elixir-format
 msgid "%{days} days ago"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/show.ex:255
+#: lib/homesite_web/live/post_live/show.ex:258
 #, elixir-autogen, elixir-format
 msgid "%{weeks} weeks ago"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/show.ex:254
+#: lib/homesite_web/live/post_live/show.ex:257
 #, elixir-autogen, elixir-format
 msgid "1 week ago"
 msgstr ""
@@ -7101,7 +7101,7 @@ msgstr ""
 msgid "Content Status"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/show.ex:45
+#: lib/homesite_web/live/post_live/show.ex:48
 #, elixir-autogen, elixir-format
 msgid "Edited %{date}"
 msgstr ""
@@ -7143,12 +7143,23 @@ msgstr ""
 msgid "User Breakdown"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/show.ex:242
+#: lib/homesite_web/live/post_live/show.ex:245
 #, elixir-autogen, elixir-format
 msgid "today"
 msgstr ""
 
-#: lib/homesite_web/live/post_live/show.ex:245
+#: lib/homesite_web/live/post_live/show.ex:248
 #, elixir-autogen, elixir-format
 msgid "yesterday"
+msgstr ""
+
+#: lib/homesite_web/components/social_components.ex:116
+#, elixir-autogen, elixir-format
+msgid "Copied!"
+msgstr ""
+
+#: lib/homesite_web/components/social_components.ex:119
+#: lib/homesite_web/components/social_components.ex:122
+#, elixir-autogen, elixir-format
+msgid "Copy link"
 msgstr ""

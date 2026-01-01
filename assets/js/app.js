@@ -25,6 +25,7 @@ import {LiveSocket} from "phoenix_live_view"
 import {hooks as colocatedHooks} from "phoenix-colocated/homesite"
 import topbar from "../vendor/topbar"
 import WebShareApi from "./hooks/webShareApi"
+import CopyToClipboard from "./hooks/copyToClipboard"
 import { SortableProjects, SortableSections } from "./hooks/sortable"
 import Chart from "chart.js/auto"
 import ApexCharts from "apexcharts"
@@ -147,6 +148,7 @@ const Hooks = {
     }
   },
   WebShareApi,
+  CopyToClipboard,
   SortableProjects,
   SortableSections,
   CopyButton: {
