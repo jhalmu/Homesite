@@ -74,7 +74,7 @@ defmodule HomesiteWeb.SEO do
   end
 
   # Helper to get image URL for OpenGraph
-  # Priority: explicit seo_image > post hero image > author avatar > default
+  # Priority: explicit seo_image > post hero image > author avatar (PNG) > default
   defp get_image_url(conn) do
     cond do
       # Explicit SEO image set
@@ -85,13 +85,13 @@ defmodule HomesiteWeb.SEO do
       conn.assigns[:post] && conn.assigns[:hero_image] ->
         url(~p"/images/posts/#{conn.assigns.post.id}/hero")
 
-      # Post with author (use author avatar)
+      # Post with author (use author avatar as PNG for social media compatibility)
       conn.assigns[:post] && post_has_user?(conn.assigns.post) ->
-        url(~p"/images/users/#{conn.assigns.post.user.id}/avatar")
+        url(~p"/images/users/#{conn.assigns.post.user.id}/avatar.png")
 
       # Default OG image
       true ->
-        url(~p"/images/og-default.jpg")
+        url(~p"/images/og-default.png")
     end
   end
 
