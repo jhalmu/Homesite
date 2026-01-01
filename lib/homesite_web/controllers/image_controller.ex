@@ -57,18 +57,22 @@ defmodule HomesiteWeb.ImageController do
 
     case user.avatar do
       avatar when is_binary(avatar) and avatar != "" ->
-        # Custom avatar - check if it's a data URI or URL
+        # Custom avatar - check format
         cond do
           String.starts_with?(avatar, "data:image/") ->
             # Parse data URI and serve the binary
             serve_data_uri(conn, avatar)
+
+          String.starts_with?(avatar, "/uploads/") ->
+            # File path - redirect to static file
+            redirect(conn, to: avatar)
 
           String.starts_with?(avatar, "http") ->
             # External URL - redirect
             redirect(conn, external: avatar)
 
           true ->
-            # Assume it's base64 encoded image
+            # Unknown format - generate SVG avatar
             serve_generated_avatar(conn, user)
         end
 
@@ -168,16 +172,24 @@ defmodule HomesiteWeb.ImageController do
             extract_data_uri(avatar)
 
           String.starts_with?(avatar, "data:image/") ->
-            # Other format - try to convert
+            # Other format data URI - try to convert
             convert_data_uri_to_png(avatar)
 
+          String.starts_with?(avatar, "/uploads/") ->
+            # File path - read and convert to PNG
+            convert_file_avatar_to_png(avatar)
+
+          String.starts_with?(avatar, "http") ->
+            # External URL - fetch and convert
+            fetch_and_convert_url_to_png(avatar)
+
           true ->
-            # Generate and convert SVG
+            # Unknown format - generate SVG avatar
             convert_svg_avatar_to_png(user)
         end
 
       _ ->
-        # Generate and convert SVG
+        # No avatar - generate SVG
         convert_svg_avatar_to_png(user)
     end
   end
@@ -193,6 +205,46 @@ defmodule HomesiteWeb.ImageController do
     with {:ok, binary_data} <- extract_data_uri(data_uri),
          {:ok, png_data} <- convert_binary_to_png(binary_data) do
       {:ok, png_data}
+    end
+  end
+
+  defp convert_file_avatar_to_png(path) do
+    # Resolve the file path - check both priv/static and UPLOADS_PATH
+    full_path =
+      cond do
+        # Check UPLOADS_PATH first (production)
+        uploads_path = System.get_env("UPLOADS_PATH") ->
+          # path is like "/uploads/avatars/file.jpg" - strip /uploads prefix
+          relative_path = String.replace_prefix(path, "/uploads/", "")
+          Path.join(uploads_path, relative_path)
+
+        # Fall back to priv/static (development)
+        true ->
+          Application.app_dir(:homesite, "priv/static#{path}")
+      end
+
+    if File.exists?(full_path) do
+      binary_data = File.read!(full_path)
+
+      # Check if already PNG
+      if String.ends_with?(path, ".png") do
+        {:ok, binary_data}
+      else
+        convert_binary_to_png(binary_data)
+      end
+    else
+      {:error, :file_not_found}
+    end
+  end
+
+  defp fetch_and_convert_url_to_png(url) do
+    # Fetch image from URL and convert to PNG
+    case :httpc.request(:get, {String.to_charlist(url), []}, [], body_format: :binary) do
+      {:ok, {{_, 200, _}, _headers, body}} ->
+        convert_binary_to_png(body)
+
+      _ ->
+        {:error, :fetch_failed}
     end
   end
 
