@@ -19,10 +19,10 @@ defmodule HomesiteWeb.SEO do
     type = if conn.assigns[:post], do: "article", else: "website"
 
     SEO.OpenGraph.build(
-      title: conn.assigns.page_title,
+      title: conn.assigns[:page_title] || "Orangedinos",
       description: description,
       locale: "fi_FI",
-      url: conn.assigns.current_url,
+      url: conn.assigns[:current_url],
       type: type,
       image: image_url
     )
@@ -37,7 +37,7 @@ defmodule HomesiteWeb.SEO do
 
     SEO.Twitter.build(
       card: "summary_large_image",
-      title: conn.assigns.page_title,
+      title: conn.assigns[:page_title] || "Orangedinos",
       description: description,
       image: image_url
     )
@@ -50,8 +50,9 @@ defmodule HomesiteWeb.SEO do
     description = get_description(conn)
 
     SEO.Site.build(
-      canonical_url: conn.assigns.current_url,
-      description: description
+      canonical_url: conn.assigns[:current_url],
+      description: description,
+      default_title: "Orangedinos"
     )
   end
 
@@ -77,17 +78,15 @@ defmodule HomesiteWeb.SEO do
   defp get_image_url(conn) do
     cond do
       # Explicit SEO image set
-      Map.has_key?(conn.assigns, :seo_image) and conn.assigns.seo_image ->
+      conn.assigns[:seo_image] ->
         conn.assigns.seo_image
 
       # Post with hero image
-      Map.has_key?(conn.assigns, :post) and conn.assigns.post and
-        Map.has_key?(conn.assigns, :hero_image) and conn.assigns.hero_image ->
+      conn.assigns[:post] && conn.assigns[:hero_image] ->
         url(~p"/images/posts/#{conn.assigns.post.id}/hero")
 
       # Post with author (use author avatar)
-      Map.has_key?(conn.assigns, :post) and conn.assigns.post and
-        Map.has_key?(conn.assigns.post, :user) and conn.assigns.post.user ->
+      conn.assigns[:post] && post_has_user?(conn.assigns.post) ->
         url(~p"/images/users/#{conn.assigns.post.user.id}/avatar")
 
       # Default OG image
@@ -95,4 +94,8 @@ defmodule HomesiteWeb.SEO do
         url(~p"/images/og-default.jpg")
     end
   end
+
+  # Check if post has a loaded user association
+  defp post_has_user?(%{user: %Homesite.Accounts.User{} = _user}), do: true
+  defp post_has_user?(_), do: false
 end

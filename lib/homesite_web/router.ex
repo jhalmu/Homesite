@@ -13,6 +13,7 @@ defmodule HomesiteWeb.Router do
     plug HomesiteWeb.Plugs.ContentSecurityPolicy
     plug :fetch_current_scope_for_user
     plug HomesiteWeb.Plugs.SetLocale
+    plug HomesiteWeb.Plugs.SEOPlug
   end
 
   pipeline :api do
