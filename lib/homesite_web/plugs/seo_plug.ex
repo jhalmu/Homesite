@@ -33,11 +33,20 @@ defmodule HomesiteWeb.Plugs.SEOPlug do
       post ->
         hero_image = get_hero_image(post_id)
 
+        # Build article detail for OpenGraph (type derived from detail.published_time)
+        article_detail = %{
+          published_time: post.published_at,
+          modified_time: post.updated_at,
+          author: post.user && post.user.display_name
+        }
+
         conn
         |> assign(:post, post)
         |> assign(:hero_image, hero_image)
         |> assign(:page_title, post.title)
         |> assign(:current_url, url(~p"/posts/#{post_id}"))
+        # Set SEO item with article detail for OpenGraph type detection
+        |> SEO.assign(%{detail: article_detail})
     end
   end
 

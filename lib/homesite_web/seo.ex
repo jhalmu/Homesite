@@ -12,6 +12,8 @@ defmodule HomesiteWeb.SEO do
   @doc """
   Configures the Open Graph.
   """
+  @site_name "Juha Halmun blogi"
+
   def open_graph_config(conn) do
     # Get post-specific data if available
     description = get_description(conn)
@@ -24,7 +26,8 @@ defmodule HomesiteWeb.SEO do
       locale: "fi_FI",
       url: conn.assigns[:current_url],
       type: type,
-      image: image_url
+      image: image_url,
+      site_name: @site_name
     )
   end
 
