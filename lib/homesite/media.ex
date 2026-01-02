@@ -7,12 +7,15 @@ defmodule Homesite.Media do
 
   alias Homesite.Accounts.Scope
 
+  alias Homesite.Content.Tag
+
   alias Homesite.Media.{
     AffiliationLink,
     Collection,
     Collaborator,
     ImageProcessor,
     MediaItem,
+    MediaItemTag,
     Project,
     ProjectMediaItem
   }
@@ -278,10 +281,12 @@ defmodule Homesite.Media do
         left_join: pmi in ProjectMediaItem,
         on: m.id == pmi.media_item_id,
         where: m.user_id == ^scope.user.id and is_nil(pmi.id),
-        order_by: [desc: m.inserted_at, desc: m.id]
+        order_by: [desc: m.inserted_at, desc: m.id],
+        preload: [:tags]
       )
 
     query = maybe_filter_by_aspect(query, opts[:aspect_category])
+    query = maybe_filter_by_tag(query, opts[:tag_id])
     query = from(m in query, limit: ^limit, offset: ^offset)
 
     Repo.all(query)
@@ -306,6 +311,7 @@ defmodule Homesite.Media do
   ## Options
     * `:project_id` - Filter by project
     * `:aspect_category` - Filter by aspect category ("landscape", "portrait", "square")
+    * `:tag_id` - Filter by tag
     * `:limit` - Maximum number of items to return (default: 20)
     * `:offset` - Number of items to skip (default: 0)
   """
@@ -316,10 +322,12 @@ defmodule Homesite.Media do
     query =
       from m in MediaItem,
         where: m.user_id == ^scope.user.id,
-        order_by: [desc: m.inserted_at]
+        order_by: [desc: m.inserted_at],
+        preload: [:tags]
 
     query = maybe_filter_by_project(query, opts[:project_id])
     query = maybe_filter_by_aspect(query, opts[:aspect_category])
+    query = maybe_filter_by_tag(query, opts[:tag_id])
     query = from m in query, limit: ^limit, offset: ^offset
 
     Repo.all(query)
@@ -342,11 +350,22 @@ defmodule Homesite.Media do
     from m in query, where: m.aspect_category == ^category
   end
 
+  defp maybe_filter_by_tag(query, nil), do: query
+
+  defp maybe_filter_by_tag(query, tag_id) do
+    from m in query,
+      join: mit in MediaItemTag,
+      on: mit.media_item_id == m.id,
+      where: mit.tag_id == ^tag_id
+  end
+
   @doc """
   Gets a single media item with scope check.
   """
   def get_media_item!(%Scope{} = scope, id) do
-    Repo.get_by!(MediaItem, id: id, user_id: scope.user.id)
+    MediaItem
+    |> Repo.get_by!(id: id, user_id: scope.user.id)
+    |> Repo.preload(:tags)
   end
 
   @doc """
@@ -416,6 +435,73 @@ defmodule Homesite.Media do
       broadcast_media_item(scope, {:deleted, item})
       {:ok, item}
     end
+  end
+
+  ## Media Item Tags
+
+  @doc """
+  Updates the tags for a media item.
+
+  Takes a list of tag_ids and sets them on the media item.
+  """
+  def update_media_item_tags(%Scope{} = scope, %MediaItem{} = item, tag_ids)
+      when is_list(tag_ids) do
+    # Security check
+    true = item.user_id == scope.user.id
+
+    # Filter out empty strings and nil
+    tag_ids = Enum.reject(tag_ids, &(&1 == "" || is_nil(&1)))
+
+    tags =
+      if tag_ids == [] do
+        []
+      else
+        # Get tags by IDs (user's own tags)
+        Repo.all(from t in Tag, where: t.id in ^tag_ids and t.user_id == ^scope.user.id)
+      end
+
+    item
+    |> Repo.preload(:tags)
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:tags, tags)
+    |> Repo.update()
+  end
+
+  @doc """
+  Lists all tags that are used on media items for the current user.
+
+  Used for the tag filter dropdown.
+  """
+  def list_media_tags(%Scope{} = scope) do
+    from(t in Tag,
+      join: mit in MediaItemTag,
+      on: mit.tag_id == t.id,
+      join: m in MediaItem,
+      on: m.id == mit.media_item_id,
+      where: m.user_id == ^scope.user.id,
+      distinct: true,
+      order_by: [asc: t.name]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Counts media items for each tag for the current user.
+
+  Returns a list of {tag, count} tuples.
+  """
+  def count_media_items_by_tag(%Scope{} = scope) do
+    from(t in Tag,
+      join: mit in MediaItemTag,
+      on: mit.tag_id == t.id,
+      join: m in MediaItem,
+      on: m.id == mit.media_item_id,
+      where: m.user_id == ^scope.user.id,
+      group_by: t.id,
+      select: {t, count(m.id)},
+      order_by: [asc: t.name]
+    )
+    |> Repo.all()
   end
 
   ## Project-Media Associations
@@ -523,7 +609,8 @@ defmodule Homesite.Media do
           desc:
             fragment("similarity(?, ?) + similarity(?, ?)", m.title, ^query, m.caption, ^query)
         ],
-        limit: 50
+        limit: 50,
+        preload: [:tags]
       )
       |> Repo.all()
     end

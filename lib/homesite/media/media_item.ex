@@ -42,6 +42,10 @@ defmodule Homesite.Media.MediaItem do
       join_through: "post_media_items",
       on_replace: :delete
 
+    many_to_many :tags, Homesite.Content.Tag,
+      join_through: Homesite.Media.MediaItemTag,
+      on_replace: :delete
+
     timestamps(type: :utc_datetime)
   end
 

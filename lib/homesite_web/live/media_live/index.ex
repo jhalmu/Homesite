@@ -1,6 +1,7 @@
 defmodule HomesiteWeb.MediaLive.Index do
   use HomesiteWeb, :live_view
 
+  alias Homesite.Content
   alias Homesite.Media
 
   @media_per_page 20
@@ -9,8 +10,10 @@ defmodule HomesiteWeb.MediaLive.Index do
   def mount(_params, _session, socket) do
     if connected?(socket), do: Media.subscribe_media_items(socket.assigns.current_scope)
 
-    media_items = list_media_items(socket.assigns.current_scope, %{}, limit: @media_per_page)
-    orphan_count = Media.count_orphaned_media_items(socket.assigns.current_scope)
+    scope = socket.assigns.current_scope
+    media_items = list_media_items(scope, %{}, limit: @media_per_page)
+    orphan_count = Media.count_orphaned_media_items(scope)
+    available_tags = Content.list_tags(scope)
 
     {:ok,
      socket
@@ -18,6 +21,11 @@ defmodule HomesiteWeb.MediaLive.Index do
      |> assign(:search_query, "")
      |> assign(:aspect_filter, nil)
      |> assign(:gallery_filter, nil)
+     |> assign(:tag_filter, nil)
+     |> assign(:available_tags, available_tags)
+     |> assign(:upload_tag_ids, [])
+     |> assign(:editing_tags_for, nil)
+     |> assign(:editing_tag_ids, [])
      |> assign(:orphan_filter, false)
      |> assign(:orphan_count, orphan_count)
      |> assign(:page, 1)
@@ -69,6 +77,7 @@ defmodule HomesiteWeb.MediaLive.Index do
           %{
             aspect_category: socket.assigns.aspect_filter,
             gallery_id: socket.assigns.gallery_filter,
+            tag_id: socket.assigns.tag_filter,
             orphans_only: socket.assigns.orphan_filter
           },
           limit: @media_per_page
@@ -95,6 +104,7 @@ defmodule HomesiteWeb.MediaLive.Index do
         %{
           aspect_category: aspect_filter,
           gallery_id: socket.assigns.gallery_filter,
+          tag_id: socket.assigns.tag_filter,
           orphans_only: socket.assigns.orphan_filter
         },
         limit: @media_per_page
@@ -123,6 +133,7 @@ defmodule HomesiteWeb.MediaLive.Index do
         %{
           aspect_category: socket.assigns.aspect_filter,
           gallery_id: gallery_filter,
+          tag_id: socket.assigns.tag_filter,
           orphans_only: socket.assigns.orphan_filter
         },
         limit: @media_per_page
@@ -131,6 +142,35 @@ defmodule HomesiteWeb.MediaLive.Index do
     {:noreply,
      socket
      |> assign(:gallery_filter, gallery_filter)
+     |> assign(:search_query, "")
+     |> assign(:page, 1)
+     |> assign(:has_more, length(media_items) == @media_per_page)
+     |> assign(:media_empty, media_items == [])
+     |> stream(:media_items, media_items, reset: true)}
+  end
+
+  def handle_event("filter-tag", %{"tag" => tag_id_str}, socket) do
+    tag_filter =
+      case tag_id_str do
+        "" -> nil
+        id -> String.to_integer(id)
+      end
+
+    media_items =
+      list_media_items(
+        socket.assigns.current_scope,
+        %{
+          aspect_category: socket.assigns.aspect_filter,
+          gallery_id: socket.assigns.gallery_filter,
+          tag_id: tag_filter,
+          orphans_only: socket.assigns.orphan_filter
+        },
+        limit: @media_per_page
+      )
+
+    {:noreply,
+     socket
+     |> assign(:tag_filter, tag_filter)
      |> assign(:search_query, "")
      |> assign(:page, 1)
      |> assign(:has_more, length(media_items) == @media_per_page)
@@ -147,6 +187,7 @@ defmodule HomesiteWeb.MediaLive.Index do
         %{
           aspect_category: socket.assigns.aspect_filter,
           gallery_id: socket.assigns.gallery_filter,
+          tag_id: socket.assigns.tag_filter,
           orphans_only: new_orphan_filter
         },
         limit: @media_per_page
@@ -172,6 +213,7 @@ defmodule HomesiteWeb.MediaLive.Index do
         %{
           aspect_category: socket.assigns.aspect_filter,
           gallery_id: socket.assigns.gallery_filter,
+          tag_id: socket.assigns.tag_filter,
           orphans_only: socket.assigns.orphan_filter
         },
         limit: @media_per_page,
@@ -225,11 +267,76 @@ defmodule HomesiteWeb.MediaLive.Index do
      |> assign(:media_usage, nil)}
   end
 
+  def handle_event("edit-tags", %{"id" => id}, socket) do
+    media_item = Media.get_media_item!(socket.assigns.current_scope, id)
+    current_tag_ids = Enum.map(media_item.tags, & &1.id)
+
+    {:noreply,
+     socket
+     |> assign(:editing_tags_for, media_item)
+     |> assign(:editing_tag_ids, current_tag_ids)}
+  end
+
+  def handle_event("close-tag-editor", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(:editing_tags_for, nil)
+     |> assign(:editing_tag_ids, [])}
+  end
+
+  def handle_event("toggle-media-tag", %{"tag-id" => tag_id_str}, socket) do
+    tag_id = String.to_integer(tag_id_str)
+    current_tags = socket.assigns.editing_tag_ids
+
+    new_tags =
+      if tag_id in current_tags do
+        List.delete(current_tags, tag_id)
+      else
+        [tag_id | current_tags]
+      end
+
+    {:noreply, assign(socket, :editing_tag_ids, new_tags)}
+  end
+
+  def handle_event("save-media-tags", _params, socket) do
+    media_item = socket.assigns.editing_tags_for
+    tag_ids = socket.assigns.editing_tag_ids
+
+    case Media.update_media_item_tags(socket.assigns.current_scope, media_item, tag_ids) do
+      {:ok, updated_item} ->
+        {:noreply,
+         socket
+         |> assign(:editing_tags_for, nil)
+         |> assign(:editing_tag_ids, [])
+         |> stream_insert(:media_items, updated_item)
+         |> put_flash(:info, gettext("Tags updated successfully"))}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, gettext("Failed to update tags"))}
+    end
+  end
+
   def handle_event("validate", _params, socket) do
     {:noreply, socket}
   end
 
+  def handle_event("toggle-upload-tag", %{"tag-id" => tag_id_str}, socket) do
+    tag_id = String.to_integer(tag_id_str)
+    current_tags = socket.assigns.upload_tag_ids
+
+    new_tags =
+      if tag_id in current_tags do
+        List.delete(current_tags, tag_id)
+      else
+        [tag_id | current_tags]
+      end
+
+    {:noreply, assign(socket, :upload_tag_ids, new_tags)}
+  end
+
   def handle_event("save-uploads", _params, socket) do
+    tag_ids = socket.assigns.upload_tag_ids
+
     uploaded_files =
       consume_uploaded_entries(socket, :images, fn %{path: path}, entry ->
         # Get file metadata
@@ -243,6 +350,11 @@ defmodule HomesiteWeb.MediaLive.Index do
         # Upload and process the image
         case Media.upload_media(socket.assigns.current_scope, path, entry.client_type, attrs) do
           {:ok, media_item} ->
+            # Apply tags if any selected
+            if tag_ids != [] do
+              Media.update_media_item_tags(socket.assigns.current_scope, media_item, tag_ids)
+            end
+
             {:ok, media_item}
 
           {:error, _changeset} ->
@@ -275,7 +387,8 @@ defmodule HomesiteWeb.MediaLive.Index do
         socket
       end
 
-    {:noreply, socket}
+    # Clear upload tag selection after upload
+    {:noreply, assign(socket, :upload_tag_ids, [])}
   end
 
   def handle_event("cancel-upload", %{"ref" => ref}, socket) do
@@ -369,6 +482,32 @@ defmodule HomesiteWeb.MediaLive.Index do
                   <% end %>
                 <% end %>
 
+                <%!-- Tag Selection for Upload --%>
+                <%= if @available_tags != [] do %>
+                  <div class="mt-[var(--space-sm)]">
+                    <p class="text-[var(--text-sm)] mb-[var(--space-xs)] font-medium">
+                      {gettext("Apply tags to uploaded images:")}
+                    </p>
+                    <div class="gap-[var(--space-xs)] flex flex-wrap">
+                      <%= for tag <- @available_tags do %>
+                        <button
+                          type="button"
+                          phx-click="toggle-upload-tag"
+                          phx-value-tag-id={tag.id}
+                          class={[
+                            "badge gap-[var(--space-inline)] cursor-pointer transition-colors",
+                            tag.id in @upload_tag_ids && "badge-primary",
+                            tag.id not in @upload_tag_ids && "badge-outline"
+                          ]}
+                        >
+                          <.icon name="hero-tag" class="h-3 w-3" />
+                          {tag.name}
+                        </button>
+                      <% end %>
+                    </div>
+                  </div>
+                <% end %>
+
                 <div class="mt-[var(--space-sm)]">
                   <button type="submit" class="btn btn-primary">
                     <.icon name="hero-cloud-arrow-up" class="h-5 w-5" />
@@ -420,6 +559,24 @@ defmodule HomesiteWeb.MediaLive.Index do
               </option>
             </select>
           </div>
+          
+    <!-- Tag Filter -->
+          <%= if @available_tags != [] do %>
+            <div class="w-full md:w-48">
+              <select
+                phx-change="filter-tag"
+                name="tag"
+                class="select select-bordered w-full"
+              >
+                <option value="">{gettext("All Tags")}</option>
+                <%= for tag <- @available_tags do %>
+                  <option value={tag.id} selected={@tag_filter == tag.id}>
+                    {tag.name}
+                  </option>
+                <% end %>
+              </select>
+            </div>
+          <% end %>
           
     <!-- Orphan Filter -->
           <button
@@ -485,7 +642,26 @@ defmodule HomesiteWeb.MediaLive.Index do
                       <span>{media.width}×{media.height}</span>
                     </div>
 
+                    <%= if media.tags && length(media.tags) > 0 do %>
+                      <div class="gap-[var(--space-inline)] mt-[var(--space-xs)] flex flex-wrap">
+                        <%= for tag <- media.tags do %>
+                          <span class="badge badge-xs badge-primary gap-[var(--space-inline)]">
+                            <.icon name="hero-tag" class="h-2 w-2" />
+                            {tag.name}
+                          </span>
+                        <% end %>
+                      </div>
+                    <% end %>
+
                     <div class="card-actions mt-[var(--space-sm)] gap-[var(--space-inline)] justify-end">
+                      <button
+                        phx-click="edit-tags"
+                        phx-value-id={media.id}
+                        class="btn btn-ghost btn-xs"
+                        aria-label={gettext("Edit tags")}
+                      >
+                        <.icon name="hero-tag" class="h-4 w-4" />
+                      </button>
                       <button
                         phx-click="show-usage"
                         phx-value-id={media.id}
@@ -519,6 +695,54 @@ defmodule HomesiteWeb.MediaLive.Index do
             <% end %>
           <% end %>
         </div>
+
+        <%!-- Tag Editor Modal --%>
+        <%= if @editing_tags_for do %>
+          <div class="modal modal-open">
+            <div class="modal-box">
+              <h3 class="text-lg font-bold">{gettext("Edit Tags")}</h3>
+              <p class="py-2 text-sm opacity-70">
+                {gettext("Select tags for:")} {@editing_tags_for.title ||
+                  @editing_tags_for.original_filename}
+              </p>
+
+              <%= if @available_tags == [] do %>
+                <div class="alert alert-info">
+                  <.icon name="hero-information-circle" class="h-5 w-5" />
+                  <span>{gettext("No tags available. Create tags first in the Tags section.")}</span>
+                </div>
+              <% else %>
+                <div class="gap-[var(--space-sm)] flex flex-wrap py-4">
+                  <%= for tag <- @available_tags do %>
+                    <button
+                      type="button"
+                      phx-click="toggle-media-tag"
+                      phx-value-tag-id={tag.id}
+                      class={[
+                        "badge gap-[var(--space-inline)] cursor-pointer transition-colors",
+                        tag.id in @editing_tag_ids && "badge-primary",
+                        tag.id not in @editing_tag_ids && "badge-outline"
+                      ]}
+                    >
+                      <.icon name="hero-tag" class="h-3 w-3" />
+                      {tag.name}
+                    </button>
+                  <% end %>
+                </div>
+              <% end %>
+
+              <div class="modal-action">
+                <button type="button" phx-click="close-tag-editor" class="btn btn-ghost">
+                  {gettext("Cancel")}
+                </button>
+                <button type="button" phx-click="save-media-tags" class="btn btn-primary">
+                  {gettext("Save")}
+                </button>
+              </div>
+            </div>
+            <div class="modal-backdrop" phx-click="close-tag-editor"></div>
+          </div>
+        <% end %>
       </div>
     </Layouts.app>
     """
@@ -529,6 +753,7 @@ defmodule HomesiteWeb.MediaLive.Index do
       Media.list_orphaned_media_items(
         scope,
         aspect_category: filters[:aspect_category],
+        tag_id: filters[:tag_id],
         limit: opts[:limit],
         offset: opts[:offset]
       )
@@ -537,6 +762,7 @@ defmodule HomesiteWeb.MediaLive.Index do
         scope,
         gallery_id: filters[:gallery_id],
         aspect_category: filters[:aspect_category],
+        tag_id: filters[:tag_id],
         limit: opts[:limit],
         offset: opts[:offset]
       )
