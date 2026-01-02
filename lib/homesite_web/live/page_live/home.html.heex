@@ -224,9 +224,11 @@
             <h2 class="text-[var(--font-size-fluid-xl)] font-bold">
               {gettext("Recent from Feeds")}
             </h2>
-            <.link navigate={~p"/feeds"} class="btn btn-sm btn-ghost">
-              {gettext("View all feeds")} →
-            </.link>
+            <%= if @current_scope do %>
+              <.link navigate={~p"/feeds"} class="btn btn-sm btn-ghost">
+                {gettext("View all feeds")} →
+              </.link>
+            <% end %>
           </div>
 
           <div class="gap-[var(--spacing-md)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
