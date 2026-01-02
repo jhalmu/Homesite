@@ -272,24 +272,26 @@ defmodule Homesite.ExternalFeeds do
   Returns feed items from all enabled feed sources (no auth required).
   Used for public display on the homepage.
 
-  ## Options
-    * `:limit` - Maximum number of items to return (default: 3)
+  Returns max 3 items per feed source, sorted by published_at.
   """
-  def list_public_feed_items(opts \\ []) do
-    limit = Keyword.get(opts, :limit, 3)
-
-    feed_source_ids =
+  def list_public_feed_items(_opts \\ []) do
+    # Get all enabled feed sources
+    feed_sources =
       FeedSource
       |> where(enabled: true)
-      |> select([f], f.id)
       |> Repo.all()
 
-    FeedItem
-    |> where([i], i.feed_source_id in ^feed_source_ids)
-    |> order_by([i], desc: i.published_at)
-    |> limit(^limit)
-    |> preload(:feed_source)
-    |> Repo.all()
+    # For each feed source, get up to 3 newest items
+    feed_sources
+    |> Enum.flat_map(fn source ->
+      FeedItem
+      |> where([i], i.feed_source_id == ^source.id)
+      |> order_by([i], desc: i.published_at)
+      |> limit(3)
+      |> preload(:feed_source)
+      |> Repo.all()
+    end)
+    |> Enum.sort_by(& &1.published_at, {:desc, DateTime})
   end
 
   @doc """
