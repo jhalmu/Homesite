@@ -22,6 +22,9 @@ defmodule HomesiteWeb.MediaLive.Index do
      |> assign(:aspect_filter, nil)
      |> assign(:gallery_filter, nil)
      |> assign(:tag_filter, nil)
+     |> assign(:tag_filter_search, "")
+     |> assign(:tag_filter_suggestions, [])
+     |> assign(:tag_filter_selected, nil)
      |> assign(:available_tags, available_tags)
      # Upload tag selection (post-style)
      |> assign(:selected_upload_tags, [])
@@ -155,11 +158,30 @@ defmodule HomesiteWeb.MediaLive.Index do
      |> stream(:media_items, media_items, reset: true)}
   end
 
-  def handle_event("filter-tag", %{"tag" => tag_id_str}, socket) do
-    tag_filter =
-      case tag_id_str do
-        "" -> nil
-        id -> String.to_integer(id)
+  # Tag filter - search
+  def handle_event("search-filter-tags", %{"value" => query}, socket) do
+    suggestions =
+      if String.length(query) >= 1 do
+        Content.list_all_public_tags(query)
+      else
+        []
+      end
+
+    {:noreply,
+     assign(socket,
+       tag_filter_search: query,
+       tag_filter_suggestions: suggestions
+     )}
+  end
+
+  # Tag filter - select tag
+  def handle_event("select-filter-tag", %{"tag-id" => tag_id_str}, socket) do
+    tag_id = String.to_integer(tag_id_str)
+
+    tag =
+      case Enum.find(socket.assigns.tag_filter_suggestions, fn {t, _} -> t.id == tag_id end) do
+        {tag, _count} -> tag
+        nil -> Homesite.Repo.get!(Content.Tag, tag_id)
       end
 
     media_items =
@@ -168,7 +190,7 @@ defmodule HomesiteWeb.MediaLive.Index do
         %{
           aspect_category: socket.assigns.aspect_filter,
           gallery_id: socket.assigns.gallery_filter,
-          tag_id: tag_filter,
+          tag_id: tag_id,
           orphans_only: socket.assigns.orphan_filter
         },
         limit: @media_per_page
@@ -176,7 +198,37 @@ defmodule HomesiteWeb.MediaLive.Index do
 
     {:noreply,
      socket
-     |> assign(:tag_filter, tag_filter)
+     |> assign(:tag_filter, tag_id)
+     |> assign(:tag_filter_selected, tag)
+     |> assign(:tag_filter_search, "")
+     |> assign(:tag_filter_suggestions, [])
+     |> assign(:search_query, "")
+     |> assign(:page, 1)
+     |> assign(:has_more, length(media_items) == @media_per_page)
+     |> assign(:media_empty, media_items == [])
+     |> stream(:media_items, media_items, reset: true)}
+  end
+
+  # Tag filter - clear
+  def handle_event("clear-filter-tag", _params, socket) do
+    media_items =
+      list_media_items(
+        socket.assigns.current_scope,
+        %{
+          aspect_category: socket.assigns.aspect_filter,
+          gallery_id: socket.assigns.gallery_filter,
+          tag_id: nil,
+          orphans_only: socket.assigns.orphan_filter
+        },
+        limit: @media_per_page
+      )
+
+    {:noreply,
+     socket
+     |> assign(:tag_filter, nil)
+     |> assign(:tag_filter_selected, nil)
+     |> assign(:tag_filter_search, "")
+     |> assign(:tag_filter_suggestions, [])
      |> assign(:search_query, "")
      |> assign(:page, 1)
      |> assign(:has_more, length(media_items) == @media_per_page)
@@ -737,24 +789,62 @@ defmodule HomesiteWeb.MediaLive.Index do
             </select>
           </div>
           
-    <!-- Tag Filter -->
-          <%= if @available_tags != [] do %>
-            <div class="w-full md:w-48">
-              <select
-                phx-change="filter-tag"
-                name="tag"
-                aria-label={gettext("Filter by tag")}
-                class="select select-bordered w-full"
-              >
-                <option value="">{gettext("All Tags")}</option>
-                <%= for tag <- @available_tags do %>
-                  <option value={tag.id} selected={@tag_filter == tag.id}>
-                    {tag.name}
-                  </option>
-                <% end %>
-              </select>
-            </div>
-          <% end %>
+    <!-- Tag Filter (Search-based) -->
+          <div class="relative w-full md:w-56">
+            <%= if @tag_filter_selected do %>
+              <%!-- Show selected tag with clear button --%>
+              <div class="input input-bordered gap-[var(--space-xs)] flex items-center pr-2">
+                <.icon name="hero-tag" class="h-4 w-4 shrink-0 opacity-50" />
+                <span class="flex-1 truncate">{@tag_filter_selected.name}</span>
+                <button
+                  type="button"
+                  phx-click="clear-filter-tag"
+                  class="btn btn-ghost btn-xs btn-circle"
+                  aria-label={gettext("Clear tag filter")}
+                >
+                  <.icon name="hero-x-mark" class="h-4 w-4" />
+                </button>
+              </div>
+            <% else %>
+              <%!-- Show search input --%>
+              <div class="relative">
+                <input
+                  type="text"
+                  name="tag_filter_search"
+                  value={@tag_filter_search}
+                  placeholder={gettext("Filter by tag...")}
+                  phx-keyup="search-filter-tags"
+                  phx-debounce="150"
+                  autocomplete="off"
+                  aria-label={gettext("Filter by tag")}
+                  class="input input-bordered w-full pl-9"
+                />
+                <.icon
+                  name="hero-tag"
+                  class="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 opacity-50"
+                />
+              </div>
+
+              <%!-- Suggestions dropdown --%>
+              <%= if @tag_filter_suggestions != [] do %>
+                <ul class="menu bg-base-200 rounded-box absolute top-full z-50 mt-1 max-h-60 w-full overflow-y-auto shadow-lg">
+                  <%= for {tag, count} <- @tag_filter_suggestions do %>
+                    <li>
+                      <button
+                        type="button"
+                        phx-click="select-filter-tag"
+                        phx-value-tag-id={tag.id}
+                        class="flex justify-between"
+                      >
+                        <span>{tag.name}</span>
+                        <span class="badge badge-ghost badge-sm">{count}</span>
+                      </button>
+                    </li>
+                  <% end %>
+                </ul>
+              <% end %>
+            <% end %>
+          </div>
           
     <!-- Orphan Filter -->
           <button

@@ -170,8 +170,8 @@ msgstr ""
 #: lib/homesite_web/live/faq_live/form.ex:98
 #: lib/homesite_web/live/feed_folder_live/index.html.heex:60
 #: lib/homesite_web/live/feed_source_live/form.html.heex:66
-#: lib/homesite_web/live/media_live/index.ex:463
-#: lib/homesite_web/live/media_live/index.ex:738
+#: lib/homesite_web/live/media_live/index.ex:632
+#: lib/homesite_web/live/media_live/index.ex:1057
 #: lib/homesite_web/live/moderation_live/report.ex:298
 #: lib/homesite_web/live/post_live/form.ex:350
 #: lib/homesite_web/live/tag_live/form.ex:97
@@ -953,7 +953,6 @@ msgstr ""
 msgid "%{published} published, %{draft} drafts"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:573
 #: lib/homesite_web/live/tag_live/index.ex:38
 #, elixir-autogen, elixir-format
 msgid "All Tags"
@@ -971,6 +970,8 @@ msgstr ""
 
 #: lib/homesite_web/components/form_components.ex:158
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:350
+#: lib/homesite_web/live/media_live/index.ex:729
+#: lib/homesite_web/live/media_live/index.ex:1046
 #: lib/homesite_web/live/post_live/form.ex:169
 #: lib/homesite_web/live/project_live/stepped_form.ex:1434
 #: lib/homesite_web/live/project_live/stepped_form.ex:1505
@@ -1019,6 +1020,8 @@ msgid "Search for tags or type to create new ones"
 msgstr ""
 
 #: lib/homesite_web/components/form_components.ex:104
+#: lib/homesite_web/live/media_live/index.ex:688
+#: lib/homesite_web/live/media_live/index.ex:1005
 #: lib/homesite_web/live/post_live/form.ex:127
 #: lib/homesite_web/live/project_live/stepped_form.ex:1472
 #, elixir-autogen, elixir-format
@@ -1118,7 +1121,7 @@ msgstr ""
 
 #: lib/homesite_web/live/faq_live/index.ex:77
 #: lib/homesite_web/live/feed_source_live/index.html.heex:90
-#: lib/homesite_web/live/media_live/index.ex:680
+#: lib/homesite_web/live/media_live/index.ex:946
 #: lib/homesite_web/live/media_live/show.ex:71
 #: lib/homesite_web/live/project_live/index.ex:248
 #, elixir-autogen, elixir-format
@@ -1257,6 +1260,8 @@ msgstr ""
 
 #: lib/homesite_web/components/content_section_components.ex:574
 #: lib/homesite_web/components/form_components.ex:146
+#: lib/homesite_web/live/media_live/index.ex:718
+#: lib/homesite_web/live/media_live/index.ex:1035
 #: lib/homesite_web/live/post_live/form.ex:158
 #, elixir-autogen, elixir-format
 msgid "Add"
@@ -1806,7 +1811,7 @@ msgstr ""
 #: lib/homesite_web/components/content_section_components.ex:1021
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:187
 #: lib/homesite_web/live/feed_folder_live/index.html.heex:63
-#: lib/homesite_web/live/media_live/index.ex:741
+#: lib/homesite_web/live/media_live/index.ex:1060
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr ""
@@ -2442,7 +2447,7 @@ msgstr ""
 msgid "%{count} image(s)"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:551
+#: lib/homesite_web/live/media_live/index.ex:779
 #, elixir-autogen, elixir-format
 msgid "All Aspect Ratios"
 msgstr ""
@@ -2452,7 +2457,7 @@ msgstr ""
 msgid "Alt Text"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:678
+#: lib/homesite_web/live/media_live/index.ex:944
 #: lib/homesite_web/live/media_live/show.ex:67
 #, elixir-autogen, elixir-format
 msgid "Are you sure you want to delete this media item?"
@@ -2483,7 +2488,7 @@ msgstr ""
 msgid "Back to Media Library"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:406
+#: lib/homesite_web/live/media_live/index.ex:575
 #, elixir-autogen, elixir-format
 msgid "Browse and manage your media items"
 msgstr ""
@@ -2503,7 +2508,7 @@ msgstr ""
 msgid "File Size"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:553
+#: lib/homesite_web/live/media_live/index.ex:781
 #, elixir-autogen, elixir-format
 msgid "Landscape"
 msgstr ""
@@ -2520,18 +2525,18 @@ msgstr ""
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:212
 #: lib/homesite_web/live/media_live/index.ex:20
-#: lib/homesite_web/live/media_live/index.ex:404
+#: lib/homesite_web/live/media_live/index.ex:573
 #, elixir-autogen, elixir-format
 msgid "Media Library"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:250
+#: lib/homesite_web/live/media_live/index.ex:308
 #: lib/homesite_web/live/media_live/show.ex:43
 #, elixir-autogen, elixir-format
 msgid "Media item deleted successfully"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:606
+#: lib/homesite_web/live/media_live/index.ex:872
 #, elixir-autogen, elixir-format
 msgid "No media items found matching \"%{query}\""
 msgstr ""
@@ -2552,17 +2557,17 @@ msgstr ""
 msgid "Portfolio"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:556
+#: lib/homesite_web/live/media_live/index.ex:784
 #, elixir-autogen, elixir-format
 msgid "Portrait"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:539
+#: lib/homesite_web/live/media_live/index.ex:767
 #, elixir-autogen, elixir-format
 msgid "Search by title or caption..."
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:559
+#: lib/homesite_web/live/media_live/index.ex:787
 #, elixir-autogen, elixir-format
 msgid "Square"
 msgstr ""
@@ -2582,7 +2587,7 @@ msgstr ""
 msgid "Usage Statistics"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:671
+#: lib/homesite_web/live/media_live/index.ex:937
 #, elixir-autogen, elixir-format
 msgid "View usage"
 msgstr ""
@@ -2680,7 +2685,7 @@ msgstr ""
 msgid "Basics"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:241
+#: lib/homesite_web/live/media_live/index.ex:299
 #: lib/homesite_web/live/media_live/show.ex:34
 #, elixir-autogen, elixir-format
 msgid "Cannot delete media item - it is used in %{count} project(s)"
@@ -2691,7 +2696,7 @@ msgstr ""
 msgid "Cannot delete this media item while it is in use. Remove it from all projects first."
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:420
+#: lib/homesite_web/live/media_live/index.ex:589
 #, elixir-autogen, elixir-format
 msgid "Choose Files"
 msgstr ""
@@ -2780,17 +2785,17 @@ msgstr ""
 msgid "Failed to remove link"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:373
+#: lib/homesite_web/live/media_live/index.ex:538
 #, elixir-autogen, elixir-format
 msgid "Failed to upload %{count} file(s)"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:774
+#: lib/homesite_web/live/media_live/index.ex:1093
 #, elixir-autogen, elixir-format
 msgid "File is too large (max 5MB)"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:778
+#: lib/homesite_web/live/media_live/index.ex:1097
 #, elixir-autogen, elixir-format
 msgid "File type not accepted (use JPG, PNG, GIF, or WebP)"
 msgstr ""
@@ -2810,7 +2815,7 @@ msgstr ""
 msgid "Link removed"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:694
+#: lib/homesite_web/live/media_live/index.ex:960
 #, elixir-autogen, elixir-format
 msgid "Load More Media"
 msgstr ""
@@ -2869,7 +2874,7 @@ msgstr ""
 msgid "No media items added to this project yet."
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:610
+#: lib/homesite_web/live/media_live/index.ex:876
 #, elixir-autogen, elixir-format
 msgid "No media items yet. Upload images to projects to get started!"
 msgstr ""
@@ -2988,7 +2993,7 @@ msgstr ""
 msgid "Step 4: Visibility & Settings"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:384
+#: lib/homesite_web/live/media_live/index.ex:549
 #, elixir-autogen, elixir-format
 msgid "Successfully uploaded %{count} file(s)"
 msgstr ""
@@ -3008,7 +3013,7 @@ msgstr ""
 msgid "Tip: Give your project a clear, descriptive name. You can add more details in the next steps."
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:775
+#: lib/homesite_web/live/media_live/index.ex:1094
 #, elixir-autogen, elixir-format
 msgid "Too many files (max 10)"
 msgstr ""
@@ -3018,7 +3023,7 @@ msgstr ""
 msgid "URL (https://...)"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:780
+#: lib/homesite_web/live/media_live/index.ex:1099
 #, elixir-autogen, elixir-format
 msgid "Upload failed"
 msgstr ""
@@ -3041,7 +3046,7 @@ msgstr ""
 msgid "complete"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:424
+#: lib/homesite_web/live/media_live/index.ex:593
 #, elixir-autogen, elixir-format
 msgid "or drag and drop images here"
 msgstr ""
@@ -5120,6 +5125,8 @@ msgstr ""
 msgid "Done"
 msgstr ""
 
+#: lib/homesite_web/live/media_live/index.ex:409
+#: lib/homesite_web/live/media_live/index.ex:498
 #: lib/homesite_web/live/project_live/stepped_form.ex:465
 #, elixir-autogen, elixir-format
 msgid "Failed to create tag"
@@ -5438,7 +5445,7 @@ msgstr ""
 msgid "ISBN"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:428
+#: lib/homesite_web/live/media_live/index.ex:597
 #, elixir-autogen, elixir-format
 msgid "JPG, PNG, WebP up to 20MB (max 10 files). Large images are automatically resized."
 msgstr ""
@@ -5568,7 +5575,7 @@ msgstr ""
 msgid "Runtime"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:514
+#: lib/homesite_web/live/media_live/index.ex:742
 #, elixir-autogen, elixir-format
 msgid "Save %{count} image(s)"
 msgstr ""
@@ -7095,7 +7102,7 @@ msgstr ""
 msgid "Activity by Type"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:608
+#: lib/homesite_web/live/media_live/index.ex:874
 #, elixir-autogen, elixir-format
 msgid "All images are in use - none are orphaned."
 msgstr ""
@@ -7137,7 +7144,7 @@ msgstr ""
 msgid "Searches"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:593
+#: lib/homesite_web/live/media_live/index.ex:859
 #, elixir-autogen, elixir-format
 msgid "Unused"
 msgstr ""
@@ -7174,22 +7181,22 @@ msgstr ""
 msgid "Copy link"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:489
+#: lib/homesite_web/live/media_live/index.ex:657
 #, elixir-autogen, elixir-format
 msgid "Apply tags to uploaded images:"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:705
+#: lib/homesite_web/live/media_live/index.ex:971
 #, elixir-autogen, elixir-format
 msgid "Edit Tags"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:663
+#: lib/homesite_web/live/media_live/index.ex:929
 #, elixir-autogen, elixir-format
 msgid "Edit tags"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:315
+#: lib/homesite_web/live/media_live/index.ex:429
 #, elixir-autogen, elixir-format
 msgid "Failed to update tags"
 msgstr ""
@@ -7204,11 +7211,6 @@ msgstr ""
 msgid "No posts from users you follow yet."
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:714
-#, elixir-autogen, elixir-format
-msgid "No tags available. Create tags first in the Tags section."
-msgstr ""
-
 #: lib/homesite_web/live/following_live/index.ex:22
 #, elixir-autogen, elixir-format
 msgid "Posts from %{count} user you follow"
@@ -7216,12 +7218,12 @@ msgid_plural "Posts from %{count} users you follow"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/homesite_web/live/media_live/index.ex:707
+#: lib/homesite_web/live/media_live/index.ex:973
 #, elixir-autogen, elixir-format
 msgid "Select tags for:"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:312
+#: lib/homesite_web/live/media_live/index.ex:426
 #, elixir-autogen, elixir-format
 msgid "Tags updated successfully"
 msgstr ""
@@ -7231,12 +7233,28 @@ msgstr ""
 msgid "You're not following anyone yet"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:548
+#: lib/homesite_web/live/media_live/index.ex:776
 #, elixir-autogen, elixir-format
 msgid "Filter by aspect ratio"
 msgstr ""
 
-#: lib/homesite_web/live/media_live/index.ex:570
+#: lib/homesite_web/live/media_live/index.ex:819
 #, elixir-autogen, elixir-format
 msgid "Filter by tag"
+msgstr ""
+
+#: lib/homesite_web/live/media_live/index.ex:803
+#, elixir-autogen, elixir-format
+msgid "Clear tag filter"
+msgstr ""
+
+#: lib/homesite_web/live/media_live/index.ex:815
+#, elixir-autogen, elixir-format
+msgid "Filter by tag..."
+msgstr ""
+
+#: lib/homesite_web/live/media_live/index.ex:671
+#: lib/homesite_web/live/media_live/index.ex:988
+#, elixir-autogen, elixir-format
+msgid "Remove tag"
 msgstr ""
