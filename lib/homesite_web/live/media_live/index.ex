@@ -545,6 +545,7 @@ defmodule HomesiteWeb.MediaLive.Index do
             <select
               phx-change="filter-aspect"
               name="aspect"
+              aria-label={gettext("Filter by aspect ratio")}
               class="select select-bordered w-full"
             >
               <option value="">{gettext("All Aspect Ratios")}</option>
@@ -566,6 +567,7 @@ defmodule HomesiteWeb.MediaLive.Index do
               <select
                 phx-change="filter-tag"
                 name="tag"
+                aria-label={gettext("Filter by tag")}
                 class="select select-bordered w-full"
               >
                 <option value="">{gettext("All Tags")}</option>

@@ -27,8 +27,8 @@ msgstr ""
 msgid "Actions"
 msgstr "Toiminnot"
 
-#: lib/homesite_web/components/layouts.ex:300
-#: lib/homesite_web/components/layouts.ex:420
+#: lib/homesite_web/components/layouts.ex:303
+#: lib/homesite_web/components/layouts.ex:428
 #: lib/homesite_web/live/admin_live/invitations/index.html.heex:55
 #: lib/homesite_web/live/admin_live/users/index.ex:187
 #: lib/homesite_web/live/chat_live/show.ex:304
@@ -55,7 +55,7 @@ msgstr "Rakennettu ❤️:llä ja Elixirillä."
 
 #: lib/homesite_web/components/layouts.ex:83
 #: lib/homesite_web/components/layouts.ex:278
-#: lib/homesite_web/components/layouts.ex:389
+#: lib/homesite_web/components/layouts.ex:392
 #, elixir-autogen, elixir-format
 msgid "Dashboard"
 msgstr "Kojelauta"
@@ -65,8 +65,8 @@ msgstr "Kojelauta"
 msgid "Home"
 msgstr "Etusivu"
 
-#: lib/homesite_web/components/layouts.ex:347
-#: lib/homesite_web/components/layouts.ex:474
+#: lib/homesite_web/components/layouts.ex:350
+#: lib/homesite_web/components/layouts.ex:482
 #: lib/homesite_web/live/user_live/confirmation.ex:54
 #: lib/homesite_web/live/user_live/login.ex:15
 #: lib/homesite_web/live/user_live/registration.ex:19
@@ -74,13 +74,13 @@ msgstr "Etusivu"
 msgid "Log in"
 msgstr "Kirjaudu sisään"
 
-#: lib/homesite_web/components/layouts.ex:329
-#: lib/homesite_web/components/layouts.ex:463
+#: lib/homesite_web/components/layouts.ex:332
+#: lib/homesite_web/components/layouts.ex:471
 #, elixir-autogen, elixir-format
 msgid "Log out"
 msgstr "Kirjaudu ulos"
 
-#: lib/homesite_web/components/layouts.ex:377
+#: lib/homesite_web/components/layouts.ex:380
 #, elixir-autogen, elixir-format
 msgid "Menu"
 msgstr "Valikko"
@@ -92,8 +92,8 @@ msgid "Platform"
 msgstr "Alusta"
 
 #: lib/homesite_web/components/layouts.ex:84
-#: lib/homesite_web/components/layouts.ex:284
-#: lib/homesite_web/components/layouts.ex:399
+#: lib/homesite_web/components/layouts.ex:287
+#: lib/homesite_web/components/layouts.ex:407
 #: lib/homesite_web/live/admin_live/dashboard.ex:251
 #: lib/homesite_web/live/admin_live/users/index.ex:70
 #: lib/homesite_web/live/search_live/index.html.heex:90
@@ -101,8 +101,8 @@ msgstr "Alusta"
 msgid "Posts"
 msgstr "Kirjoitukset"
 
-#: lib/homesite_web/components/layouts.ex:324
-#: lib/homesite_web/components/layouts.ex:458
+#: lib/homesite_web/components/layouts.ex:327
+#: lib/homesite_web/components/layouts.ex:466
 #: lib/homesite_web/live/dashboard_live/index.html.heex:340
 #: lib/homesite_web/live/notification_live/index.ex:41
 #: lib/homesite_web/live/project_live/stepped_form.ex:1128
@@ -121,8 +121,8 @@ msgstr "Jokin meni pieleen!"
 #: lib/homesite/media/project_template.ex:303
 #: lib/homesite_web/components/form_components.ex:62
 #: lib/homesite_web/components/layouts.ex:85
-#: lib/homesite_web/components/layouts.ex:287
-#: lib/homesite_web/components/layouts.ex:404
+#: lib/homesite_web/components/layouts.ex:290
+#: lib/homesite_web/components/layouts.ex:412
 #: lib/homesite_web/live/portfolio_live/show.ex:268
 #: lib/homesite_web/live/post_live/form.ex:94
 #: lib/homesite_web/live/project_live/show.ex:156
@@ -131,7 +131,7 @@ msgstr "Jokin meni pieleen!"
 msgid "Tags"
 msgstr "Tagit"
 
-#: lib/homesite_web/components/layouts.ex:491
+#: lib/homesite_web/components/layouts.ex:499
 #, elixir-autogen, elixir-format
 msgid "Theme"
 msgstr "Teema"
@@ -171,7 +171,8 @@ msgstr "Sisältö"
 #: lib/homesite_web/live/faq_live/form.ex:98
 #: lib/homesite_web/live/feed_folder_live/index.html.heex:60
 #: lib/homesite_web/live/feed_source_live/form.html.heex:66
-#: lib/homesite_web/live/media_live/index.ex:350
+#: lib/homesite_web/live/media_live/index.ex:463
+#: lib/homesite_web/live/media_live/index.ex:738
 #: lib/homesite_web/live/moderation_live/report.ex:298
 #: lib/homesite_web/live/post_live/form.ex:350
 #: lib/homesite_web/live/tag_live/form.ex:97
@@ -821,7 +822,7 @@ msgstr "tilillesi nyt."
 #: lib/homesite_web/components/content_section_components.ex:231
 #: lib/homesite_web/components/content_section_components.ex:342
 #: lib/homesite_web/components/content_section_components.ex:400
-#: lib/homesite_web/components/layouts.ex:484
+#: lib/homesite_web/components/layouts.ex:492
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr "Kieli"
@@ -953,6 +954,7 @@ msgstr "Julkiset tagit näkyvät kaikille. Poista valinta tehdäksesi tagista yk
 msgid "%{published} published, %{draft} drafts"
 msgstr "%{published} julkaistu, %{draft} luonnosta"
 
+#: lib/homesite_web/live/media_live/index.ex:573
 #: lib/homesite_web/live/tag_live/index.ex:38
 #, elixir-autogen, elixir-format
 msgid "All Tags"
@@ -1117,7 +1119,7 @@ msgstr "Klikkaa 'Uusi UKK' luodaksesi ensimmäisen UKK-merkinnän."
 
 #: lib/homesite_web/live/faq_live/index.ex:77
 #: lib/homesite_web/live/feed_source_live/index.html.heex:90
-#: lib/homesite_web/live/media_live/index.ex:502
+#: lib/homesite_web/live/media_live/index.ex:680
 #: lib/homesite_web/live/media_live/show.ex:71
 #: lib/homesite_web/live/project_live/index.ex:248
 #, elixir-autogen, elixir-format
@@ -1152,10 +1154,10 @@ msgstr "UKK poistettu onnistuneesti."
 msgid "FAQ updated successfully."
 msgstr "UKK päivitetty onnistuneesti."
 
-#: lib/homesite_web/components/layouts.ex:296
-#: lib/homesite_web/components/layouts.ex:339
-#: lib/homesite_web/components/layouts.ex:414
-#: lib/homesite_web/components/layouts.ex:469
+#: lib/homesite_web/components/layouts.ex:299
+#: lib/homesite_web/components/layouts.ex:342
+#: lib/homesite_web/components/layouts.ex:422
+#: lib/homesite_web/components/layouts.ex:477
 #: lib/homesite_web/live/faq_live/index.ex:176
 #: lib/homesite_web/live/search_live/index.html.heex:146
 #, elixir-autogen, elixir-format
@@ -1323,6 +1325,7 @@ msgid "Your personal space on the web"
 msgstr "Henkilökohtainen tilasi verkossa"
 
 #: lib/homesite_web/components/content_components.ex:89
+#: lib/homesite_web/live/following_live/index.ex:89
 #: lib/homesite_web/live/post_live/index.ex:57
 #, elixir-autogen, elixir-format
 msgid "min read"
@@ -1334,7 +1337,7 @@ msgstr "min"
 msgid "read time"
 msgstr "lukuaika"
 
-#: lib/homesite_web/components/layouts.ex:370
+#: lib/homesite_web/components/layouts.ex:373
 #, elixir-autogen, elixir-format
 msgid "Close menu"
 msgstr "Sulje valikko"
@@ -1488,7 +1491,7 @@ msgstr "Kirjanmerkki"
 msgid "Bookmarks"
 msgstr "Kirjanmerkit"
 
-#: lib/homesite_web/components/layouts.ex:551
+#: lib/homesite_web/components/layouts.ex:559
 #, elixir-autogen, elixir-format
 msgid "Change theme"
 msgstr "Vaihda teema"
@@ -1528,7 +1531,7 @@ msgstr "Onneksi olkoon! Käyttäjänimesi on nyt käytössä!"
 msgid "Copy"
 msgstr "Kopioi"
 
-#: lib/homesite_web/components/layouts.ex:584
+#: lib/homesite_web/components/layouts.ex:592
 #, elixir-autogen, elixir-format
 msgid "Dark"
 msgstr "Tumma"
@@ -1612,7 +1615,7 @@ msgid "Failed to toggle bookmark"
 msgstr "Kirjanmerkin vaihtaminen epäonnistui"
 
 #: lib/homesite_web/components/layouts.ex:281
-#: lib/homesite_web/components/layouts.ex:394
+#: lib/homesite_web/components/layouts.ex:397
 #: lib/homesite_web/live/feed_live/index.ex:34
 #: lib/homesite_web/live/feed_live/index.html.heex:4
 #, elixir-autogen, elixir-format
@@ -1677,12 +1680,13 @@ msgstr "Kuvake (emoji)"
 msgid "Last Updated"
 msgstr "Viimeksi päivitetty"
 
-#: lib/homesite_web/components/layouts.ex:573
+#: lib/homesite_web/components/layouts.ex:581
 #, elixir-autogen, elixir-format
 msgid "Light"
 msgstr "Vaalea"
 
 #: lib/homesite_web/live/feed_live/index.html.heex:233
+#: lib/homesite_web/live/following_live/index.ex:115
 #, elixir-autogen, elixir-format
 msgid "Load More"
 msgstr "Lataa lisää"
@@ -1703,8 +1707,8 @@ msgstr "Merkitse luetuksi"
 msgid "Mark as unread"
 msgstr "Merkitse lukemattomaksi"
 
-#: lib/homesite_web/components/layouts.ex:319
-#: lib/homesite_web/components/layouts.ex:448
+#: lib/homesite_web/components/layouts.ex:322
+#: lib/homesite_web/components/layouts.ex:456
 #, elixir-autogen, elixir-format
 msgid "My Profile"
 msgstr "Oma profiili"
@@ -1803,6 +1807,7 @@ msgstr "Poista tunniste %{name}"
 #: lib/homesite_web/components/content_section_components.ex:1021
 #: lib/homesite_web/live/admin_live/moderation/settings.ex:187
 #: lib/homesite_web/live/feed_folder_live/index.html.heex:63
+#: lib/homesite_web/live/media_live/index.ex:741
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr "Tallenna"
@@ -2438,7 +2443,7 @@ msgstr "Korjaa seuraavat virheet:"
 msgid "%{count} image(s)"
 msgstr "%{count} kuva(a)"
 
-#: lib/homesite_web/live/media_live/index.ex:411
+#: lib/homesite_web/live/media_live/index.ex:551
 #, elixir-autogen, elixir-format
 msgid "All Aspect Ratios"
 msgstr "Kaikki kuvasuhteet"
@@ -2448,7 +2453,7 @@ msgstr "Kaikki kuvasuhteet"
 msgid "Alt Text"
 msgstr "Alt-teksti"
 
-#: lib/homesite_web/live/media_live/index.ex:500
+#: lib/homesite_web/live/media_live/index.ex:678
 #: lib/homesite_web/live/media_live/show.ex:67
 #, elixir-autogen, elixir-format
 msgid "Are you sure you want to delete this media item?"
@@ -2479,7 +2484,7 @@ msgstr "Takaisin"
 msgid "Back to Media Library"
 msgstr "Takaisin mediakirjastoon"
 
-#: lib/homesite_web/live/media_live/index.ex:293
+#: lib/homesite_web/live/media_live/index.ex:406
 #, elixir-autogen, elixir-format
 msgid "Browse and manage your media items"
 msgstr "Selaa ja hallinnoi mediatiedostoja"
@@ -2499,7 +2504,7 @@ msgstr "Mitat"
 msgid "File Size"
 msgstr "Tiedostokoko"
 
-#: lib/homesite_web/live/media_live/index.ex:413
+#: lib/homesite_web/live/media_live/index.ex:553
 #, elixir-autogen, elixir-format
 msgid "Landscape"
 msgstr "Vaaka"
@@ -2515,19 +2520,19 @@ msgid "Media Details"
 msgstr "Median tiedot"
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:212
-#: lib/homesite_web/live/media_live/index.ex:17
-#: lib/homesite_web/live/media_live/index.ex:291
+#: lib/homesite_web/live/media_live/index.ex:20
+#: lib/homesite_web/live/media_live/index.ex:404
 #, elixir-autogen, elixir-format
 msgid "Media Library"
 msgstr "Mediakirjasto"
 
-#: lib/homesite_web/live/media_live/index.ex:208
+#: lib/homesite_web/live/media_live/index.ex:250
 #: lib/homesite_web/live/media_live/show.ex:43
 #, elixir-autogen, elixir-format
 msgid "Media item deleted successfully"
 msgstr "Media poistettu onnistuneesti"
 
-#: lib/homesite_web/live/media_live/index.ex:447
+#: lib/homesite_web/live/media_live/index.ex:606
 #, elixir-autogen, elixir-format
 msgid "No media items found matching \"%{query}\""
 msgstr "Hakua \"%{query}\" vastaavia mediatiedostoja ei löytynyt"
@@ -2538,7 +2543,7 @@ msgid "Original Filename"
 msgstr "Alkuperäinen tiedostonimi"
 
 #: lib/homesite_web/components/layouts.ex:273
-#: lib/homesite_web/components/layouts.ex:383
+#: lib/homesite_web/components/layouts.ex:386
 #: lib/homesite_web/live/dashboard_live/index.html.heex:449
 #: lib/homesite_web/live/portfolio_live/index.ex:14
 #: lib/homesite_web/live/portfolio_live/index.ex:43
@@ -2548,17 +2553,17 @@ msgstr "Alkuperäinen tiedostonimi"
 msgid "Portfolio"
 msgstr "Portfolio"
 
-#: lib/homesite_web/live/media_live/index.ex:416
+#: lib/homesite_web/live/media_live/index.ex:556
 #, elixir-autogen, elixir-format
 msgid "Portrait"
 msgstr "Pysty"
 
-#: lib/homesite_web/live/media_live/index.ex:400
+#: lib/homesite_web/live/media_live/index.ex:539
 #, elixir-autogen, elixir-format
 msgid "Search by title or caption..."
 msgstr "Hae otsikon tai kuvatekstin perusteella..."
 
-#: lib/homesite_web/live/media_live/index.ex:419
+#: lib/homesite_web/live/media_live/index.ex:559
 #, elixir-autogen, elixir-format
 msgid "Square"
 msgstr "Neliö"
@@ -2578,7 +2583,7 @@ msgstr "Ladattu"
 msgid "Usage Statistics"
 msgstr "Käyttötilastot"
 
-#: lib/homesite_web/live/media_live/index.ex:493
+#: lib/homesite_web/live/media_live/index.ex:671
 #, elixir-autogen, elixir-format
 msgid "View usage"
 msgstr "Näytä käyttö"
@@ -2676,7 +2681,7 @@ msgstr "Takaisin projekteihin"
 msgid "Basics"
 msgstr "Perustiedot"
 
-#: lib/homesite_web/live/media_live/index.ex:199
+#: lib/homesite_web/live/media_live/index.ex:241
 #: lib/homesite_web/live/media_live/show.ex:34
 #, elixir-autogen, elixir-format
 msgid "Cannot delete media item - it is used in %{count} project(s)"
@@ -2687,7 +2692,7 @@ msgstr "Mediaa ei voi poistaa - se on käytössä %{count} projektissa"
 msgid "Cannot delete this media item while it is in use. Remove it from all projects first."
 msgstr "Tätä mediaa ei voi poistaa, koska se on käytössä. Poista se ensin kaikista projekteista."
 
-#: lib/homesite_web/live/media_live/index.ex:307
+#: lib/homesite_web/live/media_live/index.ex:420
 #, elixir-autogen, elixir-format
 msgid "Choose Files"
 msgstr "Valitse tiedostot"
@@ -2776,17 +2781,17 @@ msgstr "Yhteistyökumppanin poistaminen epäonnistui"
 msgid "Failed to remove link"
 msgstr "Linkin poistaminen epäonnistui"
 
-#: lib/homesite_web/live/media_live/index.ex:261
+#: lib/homesite_web/live/media_live/index.ex:373
 #, elixir-autogen, elixir-format
 msgid "Failed to upload %{count} file(s)"
 msgstr "%{count} tiedoston lataus epäonnistui"
 
-#: lib/homesite_web/live/media_live/index.ex:546
+#: lib/homesite_web/live/media_live/index.ex:774
 #, elixir-autogen, elixir-format
 msgid "File is too large (max 5MB)"
 msgstr "Tiedosto on liian suuri (max 5MB)"
 
-#: lib/homesite_web/live/media_live/index.ex:550
+#: lib/homesite_web/live/media_live/index.ex:778
 #, elixir-autogen, elixir-format
 msgid "File type not accepted (use JPG, PNG, GIF, or WebP)"
 msgstr "Tiedostotyyppiä ei hyväksytä (käytä JPG, PNG, GIF tai WebP)"
@@ -2806,7 +2811,7 @@ msgstr "Linkki kopioitu leikepöydälle"
 msgid "Link removed"
 msgstr "Linkki poistettu"
 
-#: lib/homesite_web/live/media_live/index.ex:516
+#: lib/homesite_web/live/media_live/index.ex:694
 #, elixir-autogen, elixir-format
 msgid "Load More Media"
 msgstr "Lataa lisää mediaa"
@@ -2865,7 +2870,7 @@ msgstr "Ei linkkejä vielä. Lisää asiakkaiden verkkosivustot, lehdistöartikk
 msgid "No media items added to this project yet."
 msgstr "Projektiin ei ole vielä lisätty mediaa."
 
-#: lib/homesite_web/live/media_live/index.ex:451
+#: lib/homesite_web/live/media_live/index.ex:610
 #, elixir-autogen, elixir-format
 msgid "No media items yet. Upload images to projects to get started!"
 msgstr "Ei mediaa vielä. Lataa kuvia projekteihin aloittaaksesi!"
@@ -2984,7 +2989,7 @@ msgstr "Vaihe 3: Tiimi ja linkit"
 msgid "Step 4: Visibility & Settings"
 msgstr "Vaihe 4: Näkyvyys ja asetukset"
 
-#: lib/homesite_web/live/media_live/index.ex:272
+#: lib/homesite_web/live/media_live/index.ex:384
 #, elixir-autogen, elixir-format
 msgid "Successfully uploaded %{count} file(s)"
 msgstr "%{count} tiedosto(a) ladattu onnistuneesti"
@@ -3004,7 +3009,7 @@ msgstr "Tätä mediaa ei käytetä missään projektissa."
 msgid "Tip: Give your project a clear, descriptive name. You can add more details in the next steps."
 msgstr "Vinkki: Anna projektillesi selkeä ja kuvaava nimi. Voit lisätä yksityiskohtia seuraavissa vaiheissa."
 
-#: lib/homesite_web/live/media_live/index.ex:547
+#: lib/homesite_web/live/media_live/index.ex:775
 #, elixir-autogen, elixir-format
 msgid "Too many files (max 10)"
 msgstr "Liian monta tiedostoa (max 10)"
@@ -3014,7 +3019,7 @@ msgstr "Liian monta tiedostoa (max 10)"
 msgid "URL (https://...)"
 msgstr "URL (https://...)"
 
-#: lib/homesite_web/live/media_live/index.ex:552
+#: lib/homesite_web/live/media_live/index.ex:780
 #, elixir-autogen, elixir-format
 msgid "Upload failed"
 msgstr "Lataus epäonnistui"
@@ -3037,7 +3042,7 @@ msgstr "Verkkosivusto"
 msgid "complete"
 msgstr "valmis"
 
-#: lib/homesite_web/live/media_live/index.ex:311
+#: lib/homesite_web/live/media_live/index.ex:424
 #, elixir-autogen, elixir-format
 msgid "or drag and drop images here"
 msgstr "tai vedä ja pudota kuvia tähän"
@@ -3178,7 +3183,7 @@ msgstr "kirjoittanut %{author}"
 msgid "just now"
 msgstr "juuri nyt"
 
-#: lib/homesite_web/components/layouts.ex:595
+#: lib/homesite_web/components/layouts.ex:603
 #, elixir-autogen, elixir-format
 msgid "Brownie"
 msgstr "Brownie"
@@ -3352,8 +3357,8 @@ msgstr "Blogikirjoitus linkitetty"
 msgid "Blog post unlinked"
 msgstr "Blogikirjoituksen linkitys poistettu"
 
-#: lib/homesite_web/components/layouts.ex:291
-#: lib/homesite_web/components/layouts.ex:409
+#: lib/homesite_web/components/layouts.ex:294
+#: lib/homesite_web/components/layouts.ex:417
 #: lib/homesite_web/live/chat_live/index.ex:17
 #: lib/homesite_web/live/chat_live/index.ex:27
 #, elixir-autogen, elixir-format
@@ -4025,6 +4030,11 @@ msgstr "Seuraaminen onnistui"
 msgid "Followers"
 msgstr "Seuraajat"
 
+#: lib/homesite_web/components/layouts.ex:284
+#: lib/homesite_web/components/layouts.ex:402
+#: lib/homesite_web/live/following_live/index.ex:20
+#: lib/homesite_web/live/following_live/index.ex:140
+#: lib/homesite_web/live/following_live/index.ex:147
 #: lib/homesite_web/live/notification_live/index.ex:116
 #: lib/homesite_web/live/user_live/followers.ex:66
 #, elixir-autogen, elixir-format
@@ -4273,7 +4283,7 @@ msgstr "Ilmoitusasetukset"
 msgid "Notification Types"
 msgstr "Ilmoitustyypit"
 
-#: lib/homesite_web/components/layouts.ex:453
+#: lib/homesite_web/components/layouts.ex:461
 #: lib/homesite_web/components/notification_bell.ex:29
 #: lib/homesite_web/components/notification_bell.ex:30
 #: lib/homesite_web/live/notification_live/index.ex:21
@@ -5429,7 +5439,7 @@ msgstr "IMDB-osoite"
 msgid "ISBN"
 msgstr "ISBN"
 
-#: lib/homesite_web/live/media_live/index.ex:315
+#: lib/homesite_web/live/media_live/index.ex:428
 #, elixir-autogen, elixir-format
 msgid "JPG, PNG, WebP up to 20MB (max 10 files). Large images are automatically resized."
 msgstr "JPG, PNG, WebP max 20MB (enintään 10 tiedostoa). Suuret kuvat pienennetään automaattisesti."
@@ -5559,7 +5569,7 @@ msgstr "Muotoiltu teksti"
 msgid "Runtime"
 msgstr "Kesto"
 
-#: lib/homesite_web/live/media_live/index.ex:375
+#: lib/homesite_web/live/media_live/index.ex:514
 #, elixir-autogen, elixir-format
 msgid "Save %{count} image(s)"
 msgstr "Tallenna %{count} kuva(a)"
@@ -5825,7 +5835,7 @@ msgstr "Mastodon (tulossa pian)"
 msgid "Max Uses"
 msgstr "Käyttökerrat enintään"
 
-#: lib/homesite_web/components/layouts.ex:365
+#: lib/homesite_web/components/layouts.ex:368
 #, elixir-autogen, elixir-format
 msgid "Mobile navigation"
 msgstr "Mobiilinavigointi"
@@ -5879,7 +5889,7 @@ msgstr "Rooli"
 msgid "Save Feed Source"
 msgstr "Tallenna syötelähde"
 
-#: lib/homesite_web/components/layouts.ex:521
+#: lib/homesite_web/components/layouts.ex:529
 #, elixir-autogen, elixir-format
 msgid "Switch to English"
 msgstr "Vaihda englanniksi"
@@ -5909,7 +5919,7 @@ msgstr "Käyttäjä vahvistettu onnistuneesti."
 msgid "Uses"
 msgstr "Käyttökerrat"
 
-#: lib/homesite_web/components/layouts.ex:531
+#: lib/homesite_web/components/layouts.ex:539
 #, elixir-autogen, elixir-format
 msgid "Vaihda suomeksi"
 msgstr "Vaihda suomeksi"
@@ -6965,7 +6975,7 @@ msgstr "Synkronoitu %{count} ongelmaa GitHubista"
 msgid "View on GitHub"
 msgstr "Näytä GitHubissa"
 
-#: lib/homesite_web/components/layouts.ex:616
+#: lib/homesite_web/components/layouts.ex:624
 #, elixir-autogen, elixir-format
 msgid "1 user online"
 msgid_plural "%{count} users online"
@@ -7086,7 +7096,7 @@ msgstr "Aktiviteettitrendit"
 msgid "Activity by Type"
 msgstr "Aktiviteetti tyypeittäin"
 
-#: lib/homesite_web/live/media_live/index.ex:449
+#: lib/homesite_web/live/media_live/index.ex:608
 #, elixir-autogen, elixir-format
 msgid "All images are in use - none are orphaned."
 msgstr "Kaikki kuvat ovat käytössä - ei orpoja kuvia."
@@ -7128,7 +7138,7 @@ msgstr "Hakuaktiviteetti (30 päivää)"
 msgid "Searches"
 msgstr "Haut"
 
-#: lib/homesite_web/live/media_live/index.ex:434
+#: lib/homesite_web/live/media_live/index.ex:593
 #, elixir-autogen, elixir-format
 msgid "Unused"
 msgstr "Käyttämättömät"
@@ -7164,3 +7174,70 @@ msgstr "Kopioitu!"
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Copy link"
 msgstr "Kopioi linkki"
+
+#: lib/homesite_web/live/media_live/index.ex:489
+#, elixir-autogen, elixir-format
+msgid "Apply tags to uploaded images:"
+msgstr "Lisää tagit ladattaviin kuviin:"
+
+#: lib/homesite_web/live/media_live/index.ex:705
+#, elixir-autogen, elixir-format
+msgid "Edit Tags"
+msgstr "Muokkaa tageja"
+
+#: lib/homesite_web/live/media_live/index.ex:663
+#, elixir-autogen, elixir-format
+msgid "Edit tags"
+msgstr "Muokkaa tageja"
+
+#: lib/homesite_web/live/media_live/index.ex:315
+#, elixir-autogen, elixir-format
+msgid "Failed to update tags"
+msgstr "Tagien päivittäminen epäonnistui"
+
+#: lib/homesite_web/live/following_live/index.ex:37
+#, elixir-autogen, elixir-format
+msgid "Follow other users to see their posts here."
+msgstr "Seuraa muita käyttäjiä nähdäksesi heidän julkaisunsa täällä."
+
+#: lib/homesite_web/live/following_live/index.ex:45
+#, elixir-autogen, elixir-format
+msgid "No posts from users you follow yet."
+msgstr "Ei vielä julkaisuja seuraamiltasi käyttäjiltä."
+
+#: lib/homesite_web/live/media_live/index.ex:714
+#, elixir-autogen, elixir-format
+msgid "No tags available. Create tags first in the Tags section."
+msgstr "Ei tageja saatavilla. Luo ensin tageja Tagit-osiossa."
+
+#: lib/homesite_web/live/following_live/index.ex:22
+#, elixir-autogen, elixir-format
+msgid "Posts from %{count} user you follow"
+msgid_plural "Posts from %{count} users you follow"
+msgstr[0] "Julkaisuja %{count} seuraamaltasi käyttäjältä"
+msgstr[1] "Julkaisuja %{count} seuraamaltasi käyttäjältä"
+
+#: lib/homesite_web/live/media_live/index.ex:707
+#, elixir-autogen, elixir-format
+msgid "Select tags for:"
+msgstr "Valitse tagit kohteelle:"
+
+#: lib/homesite_web/live/media_live/index.ex:312
+#, elixir-autogen, elixir-format
+msgid "Tags updated successfully"
+msgstr "Tagit päivitetty onnistuneesti"
+
+#: lib/homesite_web/live/following_live/index.ex:35
+#, elixir-autogen, elixir-format
+msgid "You're not following anyone yet"
+msgstr "Et seuraa vielä ketään"
+
+#: lib/homesite_web/live/media_live/index.ex:548
+#, elixir-autogen, elixir-format
+msgid "Filter by aspect ratio"
+msgstr "Suodata kuvasuhteen mukaan"
+
+#: lib/homesite_web/live/media_live/index.ex:570
+#, elixir-autogen, elixir-format
+msgid "Filter by tag"
+msgstr "Suodata tagin mukaan"
