@@ -56,6 +56,73 @@ PHX_CHECK_ORIGIN_HOSTS=juhahalmu.fi
 
 ---
 
+## 2026-01-02 - Media Library Tagging System + Following Feed
+
+### Session Summary
+
+Implemented two major features: Media Library Tagging System and Following Feed.
+
+#### Features Implemented
+
+**Media Library Tagging System (#80)**
+- Created `media_item_tags` join table for many-to-many relationship
+- Created `MediaItemTag` schema at `lib/homesite/media/media_item_tag.ex`
+- Updated `MediaItem` schema with `many_to_many :tags` association
+- Added context functions: `update_media_item_tags/3`, `list_media_tags/1`, `count_media_items_by_tag/1`
+- Updated `list_media_items/2` and `list_orphaned_media_items/2` to filter by tag_id
+- UI features:
+  - Tag filter dropdown in media library
+  - Batch tag selection during upload (apply same tags to all images)
+  - Individual tag editing via modal
+  - Tag badges on media item cards
+
+**Following Feed**
+- Created `FollowingLive.Index` showing posts from followed users
+- Added `list_posts_from_following/2` to Content context
+- Added navigation link at `/following`
+
+#### Accessibility Fixes
+- Added `aria-label` to aspect ratio filter select
+- Added `aria-label` to tag filter select
+- Fixes critical a11y violations in media library
+
+#### Translations Added
+Finnish translations for all new strings:
+- Media tagging: "Lisää tagit ladattaviin kuviin", "Muokkaa tageja", "Tagit päivitetty onnistuneesti", etc.
+- Following feed: "Seuraa muita käyttäjiä nähdäksesi heidän julkaisunsa täällä", "Ei vielä julkaisuja seuraamiltasi käyttäjiltä", etc.
+- Aria labels: "Suodata kuvasuhteen mukaan", "Suodata tagin mukaan"
+
+#### Pre-existing Accessibility Issues (Not Fixed)
+These are pre-existing issues discovered during testing:
+- **Heading order violations**: Several pages use `h3` without proper `h1 > h2` hierarchy
+- **Portfolio empty state**: "No projects available" uses `h3` without parent headings
+- **Feed/Media cards**: Card titles use `h3` without proper hierarchy
+- **Login contrast in dark theme**: May have contrast ratio issues
+- **Orphan filter button test**: Test can't find button due to badge inside button element
+
+#### Files Created
+- `priv/repo/migrations/20260102072359_create_media_item_tags.exs`
+- `lib/homesite/media/media_item_tag.ex`
+- `lib/homesite_web/live/following_live/index.ex` (earlier in session)
+
+#### Files Modified
+- `lib/homesite/media/media_item.ex` - Added tags association
+- `lib/homesite/media.ex` - Added tag functions, updated queries with preload
+- `lib/homesite_web/live/media_live/index.ex` - Tag filter, upload tags, editing UI, aria-labels
+- `lib/homesite/content.ex` - Added `list_posts_from_following/2`
+- `priv/gettext/fi/LC_MESSAGES/default.po` - Finnish translations
+
+#### Commits
+- `5ef63a6` - feat: Add tagging system to media library (#80)
+- `5d01fd8` - fix: Add translations and aria-labels for media tagging
+
+#### Test Results
+- **1691 tests, 0 failures**
+- Playwright tests: 6 failures (all pre-existing accessibility issues)
+- Dialyzer: 5 errors (pre-existing, including known legacy warning in search.ex)
+
+---
+
 ## 2025-12-31 (evening) - Issues #75, #77 + Deployment
 
 ### Session Summary
