@@ -217,18 +217,16 @@
         <% end %>
       <% end %>
 
-      <%!-- External Feeds Section --%>
-      <%= if length(@feed_items) > 0 do %>
+      <%!-- External Feeds Section (authenticated users only) --%>
+      <%= if @current_scope && length(@feed_items) > 0 do %>
         <div class="mt-[var(--spacing-section)] space-y-[var(--spacing-md)]">
           <div class="flex items-center justify-between">
             <h2 class="text-[var(--font-size-fluid-xl)] font-bold">
               {gettext("Recent from Feeds")}
             </h2>
-            <%= if @current_scope do %>
-              <.link navigate={~p"/feeds"} class="btn btn-sm btn-ghost">
-                {gettext("View all feeds")} →
-              </.link>
-            <% end %>
+            <.link navigate={~p"/feeds"} class="btn btn-sm btn-ghost">
+              {gettext("View all feeds")} →
+            </.link>
           </div>
 
           <div class="gap-[var(--spacing-md)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
