@@ -9,6 +9,7 @@ defmodule Homesite.Content do
   alias Homesite.Activities
   alias Homesite.Analytics
   alias Homesite.Content.{Post, Tag}
+  alias Homesite.Follows
   alias Homesite.Moderation
   alias Homesite.Repo
 
@@ -408,6 +409,61 @@ defmodule Homesite.Content do
       end
 
     Repo.all(query)
+  end
+
+  @doc """
+  Returns public posts from users that the current user follows.
+
+  Only returns posts that are published and public, ordered by published_at descending.
+  Excludes posts from muted users. Supports pagination via limit/offset options.
+
+  ## Options
+
+    * `:limit` - Maximum number of posts to return (default: 10)
+    * `:offset` - Number of posts to skip (default: 0)
+
+  ## Examples
+
+      iex> list_posts_from_following(scope)
+      [%Post{}, ...]
+
+      iex> list_posts_from_following(scope, limit: 20, offset: 10)
+      [%Post{}, ...]
+
+  """
+  def list_posts_from_following(%Scope{} = scope, opts \\ []) do
+    limit = Keyword.get(opts, :limit, 10)
+    offset = Keyword.get(opts, :offset, 0)
+
+    # Get IDs of users we follow
+    following_ids =
+      Follows.list_following(scope)
+      |> Enum.map(& &1.user.id)
+
+    if following_ids == [] do
+      []
+    else
+      muted_ids = Moderation.muted_user_ids(scope)
+
+      # Exclude muted users from following list
+      following_ids = following_ids -- muted_ids
+
+      if following_ids == [] do
+        []
+      else
+        from(p in Post,
+          where:
+            p.user_id in ^following_ids and
+              not is_nil(p.published_at) and
+              p.is_public == true,
+          order_by: [desc: p.published_at],
+          limit: ^limit,
+          offset: ^offset,
+          preload: [:user, :tags]
+        )
+        |> Repo.all()
+      end
+    end
   end
 
   @doc """

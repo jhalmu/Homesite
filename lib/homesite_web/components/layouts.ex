@@ -281,6 +281,9 @@ defmodule HomesiteWeb.Layouts do
                 <.link navigate={~p"/feed"}>{gettext("Feed")}</.link>
               </li>
               <li class="nav-item">
+                <.link navigate={~p"/following"}>{gettext("Following")}</.link>
+              </li>
+              <li class="nav-item">
                 <.link navigate={~p"/posts"}>{gettext("Posts")}</.link>
               </li>
               <li class="nav-item">
@@ -392,6 +395,11 @@ defmodule HomesiteWeb.Layouts do
             <li>
               <.link navigate={~p"/feed"} class="text-base">
                 <.icon name="hero-rss" class="h-5 w-5" /> {gettext("Feed")}
+              </.link>
+            </li>
+            <li>
+              <.link navigate={~p"/following"} class="text-base">
+                <.icon name="hero-user-group" class="h-5 w-5" /> {gettext("Following")}
               </.link>
             </li>
             <li>
