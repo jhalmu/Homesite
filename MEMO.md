@@ -75,10 +75,10 @@ Implemented 4 GitHub issues: tag filter search, featured image search fixes, fro
 - Added tag filter dropdown in media picker
 - Added orientation filter (landscape/portrait/square)
 
-**#86 - Frontpage Feed Items Public** (commit `ec9829d`)
-- Show 3 feed items (reduced from 6)
-- No login required - public to all visitors
-- Added `list_public_feed_items/1` function
+**#86 - Frontpage Feed Items** (final: `20436f4`)
+- Public to all visitors
+- Max 3 items per feed source, max 8 total
+- "View all feeds" link only for authenticated users
 
 **#87 - First Post Featured Image** (commit `ec9829d`)
 - Featured image shown only on the first/latest post
