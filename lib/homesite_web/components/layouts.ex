@@ -262,45 +262,45 @@ defmodule HomesiteWeb.Layouts do
         >
           <ul class="menu menu-horizontal gap-[var(--spacing-xs)]">
             <li class="nav-item">
-              <.link navigate={~p"/search"}>
+              <.link navigate={~p"/search"} class="nav-link">
                 <.icon name="hero-magnifying-glass" class="h-5 w-5" />
                 {gettext("Search")}
               </.link>
             </li>
             <li class="nav-item">
-              <.link navigate={~p"/portfolio"}>
+              <.link navigate={~p"/portfolio"} class="nav-link">
                 <.icon name="hero-folder" class="h-5 w-5" />
                 {gettext("Portfolio")}
               </.link>
             </li>
             <%= if @current_scope do %>
               <li class="nav-item">
-                <.link navigate={~p"/dashboard"}>{gettext("Dashboard")}</.link>
+                <.link navigate={~p"/dashboard"} class="nav-link">{gettext("Dashboard")}</.link>
               </li>
               <li class="nav-item">
-                <.link navigate={~p"/feed"}>{gettext("Feed")}</.link>
+                <.link navigate={~p"/feed"} class="nav-link">{gettext("Feed")}</.link>
               </li>
               <li class="nav-item">
-                <.link navigate={~p"/following"}>{gettext("Following")}</.link>
+                <.link navigate={~p"/following"} class="nav-link">{gettext("Following")}</.link>
               </li>
               <li class="nav-item">
-                <.link navigate={~p"/posts"}>{gettext("Posts")}</.link>
+                <.link navigate={~p"/posts"} class="nav-link">{gettext("Posts")}</.link>
               </li>
               <li class="nav-item">
-                <.link navigate={~p"/tags"}>{gettext("Tags")}</.link>
+                <.link navigate={~p"/tags"} class="nav-link">{gettext("Tags")}</.link>
               </li>
               <li class="nav-item">
-                <.link navigate={~p"/chat"} class="relative">
+                <.link navigate={~p"/chat"} class="nav-link relative">
                   {gettext("Chat")}
                   <.chat_online_indicator />
                 </.link>
               </li>
               <li class="nav-item">
-                <.link navigate={~p"/faqs"}>{gettext("FAQs")}</.link>
+                <.link navigate={~p"/faqs"} class="nav-link">{gettext("FAQs")}</.link>
               </li>
               <%= if Homesite.Accounts.Scope.admin?(@current_scope) do %>
                 <li class="nav-item">
-                  <.link navigate={~p"/admin"}>{gettext("Admin")}</.link>
+                  <.link navigate={~p"/admin"} class="nav-link">{gettext("Admin")}</.link>
                 </li>
               <% end %>
               <li>
@@ -339,14 +339,14 @@ defmodule HomesiteWeb.Layouts do
               </li>
             <% else %>
               <li class="nav-item">
-                <.link navigate={~p"/faqs"}>{gettext("FAQs")}</.link>
+                <.link navigate={~p"/faqs"} class="nav-link">{gettext("FAQs")}</.link>
               </li>
               <%!-- Registration disabled for testing phase --%>
               <%!-- <li>
-              <.link navigate={~p"/users/register"}>{gettext("Register")}</.link>
+              <.link navigate={~p"/users/register"} class="nav-link">{gettext("Register")}</.link>
             </li> --%>
               <li class="nav-item">
-                <.link navigate={~p"/users/log-in"}>
+                <.link navigate={~p"/users/log-in"} class="nav-link">
                   {gettext("Log in")}
                 </.link>
               </li>
