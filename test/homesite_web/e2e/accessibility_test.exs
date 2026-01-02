@@ -338,8 +338,8 @@ defmodule HomesiteWeb.E2E.AccessibilityTest do
       |> visit(~p"/media")
       |> assert_has("body .phx-connected")
       |> then(fn session ->
-        # Click the orphan filter button
-        session = click(session, "button", "Unused")
+        # Click the orphan filter button (using attribute selector since button has badge inside)
+        session = click(session, "button[phx-click='toggle-orphan-filter']")
         assert_no_violations(session)
       end)
     end

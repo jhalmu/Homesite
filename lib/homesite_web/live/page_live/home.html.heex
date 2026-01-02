@@ -226,7 +226,7 @@
                   </div>
 
                   <%!-- Item title --%>
-                  <h3 class="mb-[var(--spacing-sm)] text-[var(--font-size-fluid-lg)] line-clamp-2 font-semibold">
+                  <h2 class="mb-[var(--spacing-sm)] text-[var(--font-size-fluid-lg)] line-clamp-2 font-semibold">
                     <%= if item.url do %>
                       <a
                         href={item.url}
@@ -239,7 +239,7 @@
                     <% else %>
                       {item.title}
                     <% end %>
-                  </h3>
+                  </h2>
 
                   <%!-- Item metadata --%>
                   <div class="text-[var(--text-xs)] gap-[var(--spacing-inline)] flex items-center opacity-70">

@@ -51,7 +51,7 @@ defmodule HomesiteWeb.PortfolioLive.Index do
             <div class="alert alert-info">
               <.icon name="hero-information-circle" class="h-6 w-6" />
               <div>
-                <h3 class="font-bold">{gettext("No projects available")}</h3>
+                <h2 class="font-bold">{gettext("No projects available")}</h2>
                 <div class="text-[var(--text-sm)]">
                   {gettext(
                     "Only portfolios with images are shown here. Add media items to your projects to display them."

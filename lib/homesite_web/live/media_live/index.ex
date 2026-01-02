@@ -632,11 +632,11 @@ defmodule HomesiteWeb.MediaLive.Index do
                   </figure>
                   <div class="card-body p-[var(--space-sm)]">
                     <%= if media.title do %>
-                      <h3 class="card-title text-[var(--text-sm)]">{media.title}</h3>
+                      <h2 class="card-title text-[var(--text-sm)]">{media.title}</h2>
                     <% else %>
-                      <h3 class="text-base-content/60 text-[var(--text-xs)]">
+                      <h2 class="text-base-content/60 text-[var(--text-xs)]">
                         {media.original_filename}
-                      </h3>
+                      </h2>
                     <% end %>
 
                     <div class="gap-[var(--space-inline)] text-[var(--text-xs)] flex flex-wrap opacity-70">
@@ -702,7 +702,7 @@ defmodule HomesiteWeb.MediaLive.Index do
         <%= if @editing_tags_for do %>
           <div class="modal modal-open">
             <div class="modal-box">
-              <h3 class="text-lg font-bold">{gettext("Edit Tags")}</h3>
+              <h2 class="text-lg font-bold">{gettext("Edit Tags")}</h2>
               <p class="py-2 text-sm opacity-70">
                 {gettext("Select tags for:")} {@editing_tags_for.title ||
                   @editing_tags_for.original_filename}
