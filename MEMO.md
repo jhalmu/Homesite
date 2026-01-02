@@ -56,6 +56,45 @@ PHX_CHECK_ORIGIN_HOSTS=juhahalmu.fi
 
 ---
 
+## 2026-01-02 (evening) - Post-Style Tag Selection + 7 New Issues
+
+### Session Summary
+
+Replaced dropdown tag selection in media library with post-style search/autocomplete pattern.
+
+#### Implementation Complete
+
+**Post-Style Tag Selection for Media Library**
+- Search input with autocomplete suggestions (matching post form pattern)
+- Selected tags shown as badges with remove buttons
+- Inline tag creation when no exact match
+- Separate state for upload vs edit contexts:
+  - `selected_upload_tags`, `upload_tag_search`, `upload_tag_suggestions`
+  - `selected_edit_tags`, `edit_tag_search`, `edit_tag_suggestions`
+
+#### GitHub Issues Created (#81-#87)
+
+**Bug Fixes:**
+- **#82** - Featured Image Search broken + missing filters (tags, orientation, filename)
+- **#85** - User page URL popup copy button doesn't work
+
+**Enhancements:**
+- **#81** - Media library: Replace tag filter dropdown with search
+- **#84** - Show post images on user profile page
+- **#86** - Frontpage: Show 3 feed items including public feeds
+- **#87** - Frontpage: Only first post should show featured image
+
+**Question:**
+- **#83** - Consider: Show image preview in posts list (maybe skip)
+
+#### Files Modified
+- `lib/homesite_web/live/media_live/index.ex` - Post-style tag selection
+
+#### Test Results
+- **1691 tests, 0 failures**
+
+---
+
 ## 2026-01-02 - Media Library Tagging System + Following Feed
 
 ### Session Summary
