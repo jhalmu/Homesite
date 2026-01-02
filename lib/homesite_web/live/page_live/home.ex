@@ -16,13 +16,8 @@ defmodule HomesiteWeb.PageLive.Home do
   def mount(_params, _session, socket) do
     posts = load_posts(0)
 
-    # Fetch feed items if user is authenticated
-    feed_items =
-      if socket.assigns[:current_scope] do
-        ExternalFeeds.list_feed_items(socket.assigns.current_scope, limit: 6)
-      else
-        []
-      end
+    # Fetch feed items (public, limit 3)
+    feed_items = ExternalFeeds.list_public_feed_items(limit: 3)
 
     # Fetch public projects for showcase
     public_projects = Media.list_public_projects(limit: 6)

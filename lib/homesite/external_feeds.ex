@@ -269,6 +269,30 @@ defmodule Homesite.ExternalFeeds do
   end
 
   @doc """
+  Returns feed items from all enabled feed sources (no auth required).
+  Used for public display on the homepage.
+
+  ## Options
+    * `:limit` - Maximum number of items to return (default: 3)
+  """
+  def list_public_feed_items(opts \\ []) do
+    limit = Keyword.get(opts, :limit, 3)
+
+    feed_source_ids =
+      FeedSource
+      |> where(enabled: true)
+      |> select([f], f.id)
+      |> Repo.all()
+
+    FeedItem
+    |> where([i], i.feed_source_id in ^feed_source_ids)
+    |> order_by([i], desc: i.published_at)
+    |> limit(^limit)
+    |> preload(:feed_source)
+    |> Repo.all()
+  end
+
+  @doc """
   Returns the list of feed items with interaction data (read/unread, bookmarks).
   This is the main function for the unified feed view.
 
