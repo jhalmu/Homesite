@@ -56,39 +56,49 @@ PHX_CHECK_ORIGIN_HOSTS=juhahalmu.fi
 
 ---
 
-## 2026-01-02 (evening) - Post-Style Tag Selection + 7 New Issues
+## 2026-01-02 (evening) - Issues #81, #82, #86, #87 Implemented
 
 ### Session Summary
 
-Replaced dropdown tag selection in media library with post-style search/autocomplete pattern.
+Implemented 4 GitHub issues: tag filter search, featured image search fixes, frontpage improvements.
 
-#### Implementation Complete
+#### Issues Completed
 
-**Post-Style Tag Selection for Media Library**
-- Search input with autocomplete suggestions (matching post form pattern)
-- Selected tags shown as badges with remove buttons
-- Inline tag creation when no exact match
-- Separate state for upload vs edit contexts:
-  - `selected_upload_tags`, `upload_tag_search`, `upload_tag_suggestions`
-  - `selected_edit_tags`, `edit_tag_search`, `edit_tag_suggestions`
+**#81 - Media Library Tag Filter Search** (commit `0ddc23d`)
+- Replaced dropdown with search input + autocomplete
+- Shows selected tag as badge with clear button
+- 1+ char triggers search with post counts in suggestions
 
-#### GitHub Issues Created (#81-#87)
+**#82 - Featured Image Search Fixed** (commit `1524274`)
+- Search now includes original filename and alt text
+- Uses ILIKE for short queries (< 3 chars)
+- Added tag filter dropdown in media picker
+- Added orientation filter (landscape/portrait/square)
 
-**Bug Fixes:**
-- **#82** - Featured Image Search broken + missing filters (tags, orientation, filename)
+**#86 - Frontpage Feed Items Public** (commit `ec9829d`)
+- Show 3 feed items (reduced from 6)
+- No login required - public to all visitors
+- Added `list_public_feed_items/1` function
+
+**#87 - First Post Featured Image** (commit `ec9829d`)
+- Featured image shown only on the first/latest post
+- Grid posts and older posts don't show images
+- Clickable image links to post
+
+#### GitHub Issues Created Earlier (#81-#87)
+
+**Remaining:**
+- **#83** - Consider: Show image preview in posts list (maybe skip)
+- **#84** - Show post images on user profile page
 - **#85** - User page URL popup copy button doesn't work
 
-**Enhancements:**
-- **#81** - Media library: Replace tag filter dropdown with search
-- **#84** - Show post images on user profile page
-- **#86** - Frontpage: Show 3 feed items including public feeds
-- **#87** - Frontpage: Only first post should show featured image
-
-**Question:**
-- **#83** - Consider: Show image preview in posts list (maybe skip)
-
 #### Files Modified
-- `lib/homesite_web/live/media_live/index.ex` - Post-style tag selection
+- `lib/homesite_web/live/media_live/index.ex` - Tag filter search
+- `lib/homesite/media.ex` - Improved search_media_items
+- `lib/homesite_web/live/post_live/form.ex` - Media picker filters
+- `lib/homesite/external_feeds.ex` - list_public_feed_items
+- `lib/homesite_web/live/page_live/home.ex` - Use public feed items
+- `lib/homesite_web/live/page_live/home.html.heex` - Featured image on first post
 
 #### Test Results
 - **1691 tests, 0 failures**
