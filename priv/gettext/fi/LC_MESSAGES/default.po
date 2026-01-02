@@ -174,7 +174,7 @@ msgstr "Sisältö"
 #: lib/homesite_web/live/media_live/index.ex:632
 #: lib/homesite_web/live/media_live/index.ex:1057
 #: lib/homesite_web/live/moderation_live/report.ex:298
-#: lib/homesite_web/live/post_live/form.ex:350
+#: lib/homesite_web/live/post_live/form.ex:378
 #: lib/homesite_web/live/tag_live/form.ex:97
 #, elixir-autogen, elixir-format
 msgid "Cancel"
@@ -195,7 +195,7 @@ msgstr "Peruuta"
 msgid "Edit"
 msgstr "Muokkaa"
 
-#: lib/homesite_web/live/post_live/form.ex:385
+#: lib/homesite_web/live/post_live/form.ex:413
 #, elixir-autogen, elixir-format
 msgid "Edit Post"
 msgstr "Muokkaa kirjoitusta"
@@ -212,18 +212,18 @@ msgid "Make this post publicly visible"
 msgstr "Tee tästä kirjoituksesta julkinen"
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:322
-#: lib/homesite_web/live/post_live/form.ex:403
+#: lib/homesite_web/live/post_live/form.ex:434
 #: lib/homesite_web/live/post_live/index.ex:18
 #, elixir-autogen, elixir-format
 msgid "New Post"
 msgstr "Uusi kirjoitus"
 
-#: lib/homesite_web/live/post_live/form.ex:633
+#: lib/homesite_web/live/post_live/form.ex:717
 #, elixir-autogen, elixir-format
 msgid "Post created successfully"
 msgstr "Kirjoitus luotu onnistuneesti"
 
-#: lib/homesite_web/live/post_live/form.ex:615
+#: lib/homesite_web/live/post_live/form.ex:699
 #, elixir-autogen, elixir-format
 msgid "Post updated successfully"
 msgstr "Kirjoitus päivitetty onnistuneesti"
@@ -233,7 +233,7 @@ msgstr "Kirjoitus päivitetty onnistuneesti"
 msgid "Publication Date & Time"
 msgstr "Julkaisupäivä ja -aika"
 
-#: lib/homesite_web/live/post_live/form.ex:347
+#: lib/homesite_web/live/post_live/form.ex:375
 #, elixir-autogen, elixir-format
 msgid "Save Post"
 msgstr "Tallenna kirjoitus"
@@ -241,7 +241,7 @@ msgstr "Tallenna kirjoitus"
 #: lib/homesite_web/live/admin_live/users/index.ex:215
 #: lib/homesite_web/live/faq_live/form.ex:94
 #: lib/homesite_web/live/feed_source_live/form.html.heex:68
-#: lib/homesite_web/live/post_live/form.ex:346
+#: lib/homesite_web/live/post_live/form.ex:374
 #: lib/homesite_web/live/tag_live/form.ex:90
 #: lib/homesite_web/live/user_live/settings.ex:174
 #: lib/homesite_web/live/user_live/settings.ex:243
@@ -954,6 +954,7 @@ msgstr "Julkiset tagit näkyvät kaikille. Poista valinta tehdäksesi tagista yk
 msgid "%{published} published, %{draft} drafts"
 msgstr "%{published} julkaistu, %{draft} luonnosta"
 
+#: lib/homesite_web/live/post_live/form.ex:297
 #: lib/homesite_web/live/tag_live/index.ex:38
 #, elixir-autogen, elixir-format
 msgid "All Tags"
@@ -964,7 +965,7 @@ msgstr "Kaikki tagit"
 msgid "Consider using one of these existing tags instead of creating a new one."
 msgstr "Harkitse näiden olemassa olevien tagien käyttämistä uuden luomisen sijaan."
 
-#: lib/homesite_web/live/post_live/form.ex:484
+#: lib/homesite_web/live/post_live/form.ex:518
 #, elixir-autogen, elixir-format
 msgid "Could not create tag"
 msgstr "Tagin luominen epäonnistui"
@@ -1513,7 +1514,7 @@ msgstr "Varaa käyttäjänimesi luodaksesi oman kotisivun!"
 
 #: lib/homesite_web/components/content_section_components.ex:995
 #: lib/homesite_web/components/content_section_components.ex:1027
-#: lib/homesite_web/live/post_live/form.ex:336
+#: lib/homesite_web/live/post_live/form.ex:364
 #: lib/homesite_web/live/user_live/settings.ex:287
 #, elixir-autogen, elixir-format
 msgid "Close"
@@ -2510,6 +2511,7 @@ msgid "File Size"
 msgstr "Tiedostokoko"
 
 #: lib/homesite_web/live/media_live/index.ex:781
+#: lib/homesite_web/live/post_live/form.ex:311
 #, elixir-autogen, elixir-format
 msgid "Landscape"
 msgstr "Vaaka"
@@ -2559,6 +2561,7 @@ msgid "Portfolio"
 msgstr "Portfolio"
 
 #: lib/homesite_web/live/media_live/index.ex:784
+#: lib/homesite_web/live/post_live/form.ex:314
 #, elixir-autogen, elixir-format
 msgid "Portrait"
 msgstr "Pysty"
@@ -2569,6 +2572,7 @@ msgid "Search by title or caption..."
 msgstr "Hae otsikon tai kuvatekstin perusteella..."
 
 #: lib/homesite_web/live/media_live/index.ex:787
+#: lib/homesite_web/live/post_live/form.ex:317
 #, elixir-autogen, elixir-format
 msgid "Square"
 msgstr "Neliö"
@@ -2603,7 +2607,7 @@ msgstr "Vaihda kuva"
 msgid "Featured Image"
 msgstr "Artikkelikuva"
 
-#: lib/homesite_web/live/post_live/form.ex:300
+#: lib/homesite_web/live/post_live/form.ex:328
 #, elixir-autogen, elixir-format
 msgid "No media available. Upload images in the Media Library first."
 msgstr "Ei mediaa saatavilla. Lataa ensin kuvia mediakirjastoon."
@@ -2614,11 +2618,6 @@ msgstr "Ei mediaa saatavilla. Lataa ensin kuvia mediakirjastoon."
 #, elixir-autogen, elixir-format
 msgid "Remove"
 msgstr "Poista"
-
-#: lib/homesite_web/live/post_live/form.ex:286
-#, elixir-autogen, elixir-format
-msgid "Search media..."
-msgstr "Hae mediaa..."
 
 #: lib/homesite_web/live/post_live/form.ex:252
 #, elixir-autogen, elixir-format
@@ -7259,3 +7258,13 @@ msgstr "Suodata tagilla..."
 #, elixir-autogen, elixir-format
 msgid "Remove tag"
 msgstr "Poista tagi"
+
+#: lib/homesite_web/live/post_live/form.ex:309
+#, elixir-autogen, elixir-format
+msgid "All Orientations"
+msgstr "Kaikki suunnat"
+
+#: lib/homesite_web/live/post_live/form.ex:286
+#, elixir-autogen, elixir-format
+msgid "Search by name, title, or caption..."
+msgstr "Hae nimellä, otsikolla tai kuvatekstillä..."

@@ -279,16 +279,44 @@ defmodule HomesiteWeb.PostLive.Form do
             <div class="modal-box max-w-4xl">
               <h3 class="text-[var(--text-lg)] font-bold">{gettext("Select Media")}</h3>
               
-    <!-- Search -->
-              <div class="form-control mt-[var(--space-sm)]">
+    <!-- Search and Filters -->
+              <div class="mt-[var(--space-sm)] gap-[var(--space-sm)] flex flex-wrap">
                 <input
                   type="text"
-                  placeholder={gettext("Search media...")}
+                  placeholder={gettext("Search by name, title, or caption...")}
                   value={@media_search}
                   phx-keyup="search-media"
                   phx-debounce="300"
-                  class="input input-bordered"
+                  class="input input-bordered flex-1"
                 />
+                <select
+                  phx-change="filter-media-tag"
+                  name="tag"
+                  class="select select-bordered"
+                >
+                  <option value="">{gettext("All Tags")}</option>
+                  <%= for tag <- @available_tags do %>
+                    <option value={tag.id} selected={@media_tag_filter == tag.id}>
+                      {tag.name}
+                    </option>
+                  <% end %>
+                </select>
+                <select
+                  phx-change="filter-media-aspect"
+                  name="aspect"
+                  class="select select-bordered"
+                >
+                  <option value="">{gettext("All Orientations")}</option>
+                  <option value="landscape" selected={@media_aspect_filter == "landscape"}>
+                    {gettext("Landscape")}
+                  </option>
+                  <option value="portrait" selected={@media_aspect_filter == "portrait"}>
+                    {gettext("Portrait")}
+                  </option>
+                  <option value="square" selected={@media_aspect_filter == "square"}>
+                    {gettext("Square")}
+                  </option>
+                </select>
               </div>
               
     <!-- Media Grid -->
@@ -392,7 +420,10 @@ defmodule HomesiteWeb.PostLive.Form do
     |> assign(:hero_image, hero_image)
     |> assign(:show_media_picker, false)
     |> assign(:media_search, "")
+    |> assign(:media_tag_filter, nil)
+    |> assign(:media_aspect_filter, nil)
     |> assign(:available_media, [])
+    |> assign(:available_tags, Content.list_tags(socket.assigns.current_scope))
     |> assign(:form, to_form(Content.change_post(socket.assigns.current_scope, post)))
   end
 
@@ -410,7 +441,10 @@ defmodule HomesiteWeb.PostLive.Form do
     |> assign(:hero_image, nil)
     |> assign(:show_media_picker, false)
     |> assign(:media_search, "")
+    |> assign(:media_tag_filter, nil)
+    |> assign(:media_aspect_filter, nil)
     |> assign(:available_media, [])
+    |> assign(:available_tags, Content.list_tags(socket.assigns.current_scope))
     |> assign(:form, to_form(Content.change_post(socket.assigns.current_scope, post)))
   end
 
@@ -500,16 +534,26 @@ defmodule HomesiteWeb.PostLive.Form do
      assign(socket,
        show_media_picker: show_picker,
        available_media: available_media,
-       media_search: ""
+       media_search: "",
+       media_tag_filter: nil,
+       media_aspect_filter: nil
      )}
   end
 
   def handle_event("search-media", %{"value" => query}, socket) do
+    opts = [
+      tag_id: socket.assigns.media_tag_filter,
+      aspect_category: socket.assigns.media_aspect_filter
+    ]
+
     available_media =
       if String.trim(query) == "" do
-        Media.list_media_items(socket.assigns.current_scope)
+        Media.list_media_items(socket.assigns.current_scope, %{
+          tag_id: opts[:tag_id],
+          aspect_category: opts[:aspect_category]
+        })
       else
-        Media.search_media_items(socket.assigns.current_scope, query)
+        Media.search_media_items(socket.assigns.current_scope, query, opts)
       end
 
     {:noreply,
@@ -517,6 +561,43 @@ defmodule HomesiteWeb.PostLive.Form do
        media_search: query,
        available_media: available_media
      )}
+  end
+
+  def handle_event("filter-media-tag", %{"tag" => tag_id_str}, socket) do
+    tag_filter = if tag_id_str == "", do: nil, else: String.to_integer(tag_id_str)
+
+    opts = [tag_id: tag_filter, aspect_category: socket.assigns.media_aspect_filter]
+
+    available_media =
+      if socket.assigns.media_search == "" do
+        Media.list_media_items(socket.assigns.current_scope, %{
+          tag_id: tag_filter,
+          aspect_category: socket.assigns.media_aspect_filter
+        })
+      else
+        Media.search_media_items(socket.assigns.current_scope, socket.assigns.media_search, opts)
+      end
+
+    {:noreply, assign(socket, media_tag_filter: tag_filter, available_media: available_media)}
+  end
+
+  def handle_event("filter-media-aspect", %{"aspect" => aspect}, socket) do
+    aspect_filter = if aspect == "", do: nil, else: aspect
+
+    opts = [tag_id: socket.assigns.media_tag_filter, aspect_category: aspect_filter]
+
+    available_media =
+      if socket.assigns.media_search == "" do
+        Media.list_media_items(socket.assigns.current_scope, %{
+          tag_id: socket.assigns.media_tag_filter,
+          aspect_category: aspect_filter
+        })
+      else
+        Media.search_media_items(socket.assigns.current_scope, socket.assigns.media_search, opts)
+      end
+
+    {:noreply,
+     assign(socket, media_aspect_filter: aspect_filter, available_media: available_media)}
   end
 
   def handle_event("select-hero", %{"id" => id}, socket) do
@@ -527,6 +608,8 @@ defmodule HomesiteWeb.PostLive.Form do
        hero_image: media_item,
        show_media_picker: false,
        media_search: "",
+       media_tag_filter: nil,
+       media_aspect_filter: nil,
        available_media: []
      )}
   end

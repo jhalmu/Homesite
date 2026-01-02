@@ -174,7 +174,7 @@ msgstr "Body"
 #: lib/homesite_web/live/media_live/index.ex:632
 #: lib/homesite_web/live/media_live/index.ex:1057
 #: lib/homesite_web/live/moderation_live/report.ex:298
-#: lib/homesite_web/live/post_live/form.ex:350
+#: lib/homesite_web/live/post_live/form.ex:378
 #: lib/homesite_web/live/tag_live/form.ex:97
 #, elixir-autogen, elixir-format
 msgid "Cancel"
@@ -195,7 +195,7 @@ msgstr "Cancel"
 msgid "Edit"
 msgstr "Edit"
 
-#: lib/homesite_web/live/post_live/form.ex:385
+#: lib/homesite_web/live/post_live/form.ex:413
 #, elixir-autogen, elixir-format
 msgid "Edit Post"
 msgstr "Edit Post"
@@ -212,18 +212,18 @@ msgid "Make this post publicly visible"
 msgstr "Make this post publicly visible"
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:322
-#: lib/homesite_web/live/post_live/form.ex:403
+#: lib/homesite_web/live/post_live/form.ex:434
 #: lib/homesite_web/live/post_live/index.ex:18
 #, elixir-autogen, elixir-format
 msgid "New Post"
 msgstr "New Post"
 
-#: lib/homesite_web/live/post_live/form.ex:633
+#: lib/homesite_web/live/post_live/form.ex:717
 #, elixir-autogen, elixir-format
 msgid "Post created successfully"
 msgstr "Post created successfully"
 
-#: lib/homesite_web/live/post_live/form.ex:615
+#: lib/homesite_web/live/post_live/form.ex:699
 #, elixir-autogen, elixir-format
 msgid "Post updated successfully"
 msgstr "Post updated successfully"
@@ -233,7 +233,7 @@ msgstr "Post updated successfully"
 msgid "Publication Date & Time"
 msgstr "Publication Date & Time"
 
-#: lib/homesite_web/live/post_live/form.ex:347
+#: lib/homesite_web/live/post_live/form.ex:375
 #, elixir-autogen, elixir-format
 msgid "Save Post"
 msgstr "Save Post"
@@ -241,7 +241,7 @@ msgstr "Save Post"
 #: lib/homesite_web/live/admin_live/users/index.ex:215
 #: lib/homesite_web/live/faq_live/form.ex:94
 #: lib/homesite_web/live/feed_source_live/form.html.heex:68
-#: lib/homesite_web/live/post_live/form.ex:346
+#: lib/homesite_web/live/post_live/form.ex:374
 #: lib/homesite_web/live/tag_live/form.ex:90
 #: lib/homesite_web/live/user_live/settings.ex:174
 #: lib/homesite_web/live/user_live/settings.ex:243
@@ -954,6 +954,7 @@ msgstr "Public tags can be seen by everyone. Turn off to make this tag private."
 msgid "%{published} published, %{draft} drafts"
 msgstr "%{published} published, %{draft} drafts"
 
+#: lib/homesite_web/live/post_live/form.ex:297
 #: lib/homesite_web/live/tag_live/index.ex:38
 #, elixir-autogen, elixir-format
 msgid "All Tags"
@@ -964,7 +965,7 @@ msgstr "All Tags"
 msgid "Consider using one of these existing tags instead of creating a new one."
 msgstr "Consider using one of these existing tags instead of creating a new one."
 
-#: lib/homesite_web/live/post_live/form.ex:484
+#: lib/homesite_web/live/post_live/form.ex:518
 #, elixir-autogen, elixir-format
 msgid "Could not create tag"
 msgstr "Could not create tag"
@@ -1513,7 +1514,7 @@ msgstr "Claim your username to create your personal homepage!"
 
 #: lib/homesite_web/components/content_section_components.ex:995
 #: lib/homesite_web/components/content_section_components.ex:1027
-#: lib/homesite_web/live/post_live/form.ex:336
+#: lib/homesite_web/live/post_live/form.ex:364
 #: lib/homesite_web/live/user_live/settings.ex:287
 #, elixir-autogen, elixir-format
 msgid "Close"
@@ -2510,6 +2511,7 @@ msgid "File Size"
 msgstr "File Size"
 
 #: lib/homesite_web/live/media_live/index.ex:781
+#: lib/homesite_web/live/post_live/form.ex:311
 #, elixir-autogen, elixir-format
 msgid "Landscape"
 msgstr "Landscape"
@@ -2559,6 +2561,7 @@ msgid "Portfolio"
 msgstr "Portfolio"
 
 #: lib/homesite_web/live/media_live/index.ex:784
+#: lib/homesite_web/live/post_live/form.ex:314
 #, elixir-autogen, elixir-format
 msgid "Portrait"
 msgstr "Portrait"
@@ -2569,6 +2572,7 @@ msgid "Search by title or caption..."
 msgstr "Search by title or caption..."
 
 #: lib/homesite_web/live/media_live/index.ex:787
+#: lib/homesite_web/live/post_live/form.ex:317
 #, elixir-autogen, elixir-format
 msgid "Square"
 msgstr "Square"
@@ -2603,7 +2607,7 @@ msgstr "Change Image"
 msgid "Featured Image"
 msgstr "Featured Image"
 
-#: lib/homesite_web/live/post_live/form.ex:300
+#: lib/homesite_web/live/post_live/form.ex:328
 #, elixir-autogen, elixir-format
 msgid "No media available. Upload images in the Media Library first."
 msgstr "No media available. Upload images in the Media Library first."
@@ -2614,11 +2618,6 @@ msgstr "No media available. Upload images in the Media Library first."
 #, elixir-autogen, elixir-format
 msgid "Remove"
 msgstr "Remove"
-
-#: lib/homesite_web/live/post_live/form.ex:286
-#, elixir-autogen, elixir-format
-msgid "Search media..."
-msgstr "Search media..."
 
 #: lib/homesite_web/live/post_live/form.ex:252
 #, elixir-autogen, elixir-format
@@ -7259,3 +7258,13 @@ msgstr "Filter by:"
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Remove tag"
 msgstr "Remove image"
+
+#: lib/homesite_web/live/post_live/form.ex:309
+#, elixir-autogen, elixir-format
+msgid "All Orientations"
+msgstr ""
+
+#: lib/homesite_web/live/post_live/form.ex:286
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Search by name, title, or caption..."
+msgstr "Search by title or caption..."

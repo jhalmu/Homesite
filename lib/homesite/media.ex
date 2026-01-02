@@ -592,27 +592,97 @@ defmodule Homesite.Media do
   ## Search
 
   @doc """
-  Searches media items by title and caption using trigram similarity.
+  Searches media items by title, caption, original filename, and alt text.
+
+  Uses ILIKE for short queries (< 3 chars) and trigram similarity for longer ones.
+
+  ## Options
+    * `:tag_id` - Filter by tag ID
+    * `:aspect_category` - Filter by aspect category ("landscape", "portrait", "square")
 
   Returns empty list if query is blank.
   """
-  def search_media_items(%Scope{} = scope, query) when is_binary(query) do
+  def search_media_items(%Scope{} = scope, query, opts \\ []) when is_binary(query) do
     query = String.trim(query)
 
     if query == "" do
-      []
+      list_media_items(scope, %{
+        tag_id: opts[:tag_id],
+        aspect_category: opts[:aspect_category]
+      })
     else
-      from(m in MediaItem,
-        where: m.user_id == ^scope.user.id,
-        where: fragment("? % ? OR ? % ?", m.title, ^query, m.caption, ^query),
-        order_by: [
-          desc:
-            fragment("similarity(?, ?) + similarity(?, ?)", m.title, ^query, m.caption, ^query)
-        ],
-        limit: 50,
-        preload: [:tags]
-      )
-      |> Repo.all()
+      search_pattern = "%#{query}%"
+
+      base_query =
+        from(m in MediaItem,
+          where: m.user_id == ^scope.user.id,
+          limit: 50,
+          preload: [:tags]
+        )
+
+      # For short queries, use ILIKE; for longer ones, use trigram OR ILIKE
+      base_query =
+        if String.length(query) < 3 do
+          from(m in base_query,
+            where:
+              ilike(m.title, ^search_pattern) or
+                ilike(m.caption, ^search_pattern) or
+                ilike(m.original_filename, ^search_pattern) or
+                ilike(m.alt_text, ^search_pattern),
+            order_by: [desc: m.inserted_at]
+          )
+        else
+          from(m in base_query,
+            where:
+              fragment(
+                "? % ? OR ? % ? OR ? % ? OR ? % ?",
+                m.title,
+                ^query,
+                m.caption,
+                ^query,
+                m.original_filename,
+                ^query,
+                m.alt_text,
+                ^query
+              ) or
+                ilike(m.title, ^search_pattern) or
+                ilike(m.original_filename, ^search_pattern),
+            order_by: [
+              desc:
+                fragment(
+                  "similarity(COALESCE(?, ''), ?) + similarity(COALESCE(?, ''), ?) + similarity(COALESCE(?, ''), ?)",
+                  m.title,
+                  ^query,
+                  m.caption,
+                  ^query,
+                  m.original_filename,
+                  ^query
+                )
+            ]
+          )
+        end
+
+      # Apply tag filter
+      base_query =
+        if opts[:tag_id] do
+          from(m in base_query,
+            join: mt in "media_item_tags",
+            on: mt.media_item_id == m.id,
+            where: mt.tag_id == ^opts[:tag_id]
+          )
+        else
+          base_query
+        end
+
+      # Apply aspect filter
+      base_query =
+        if opts[:aspect_category] do
+          from(m in base_query, where: m.aspect_category == ^opts[:aspect_category])
+        else
+          base_query
+        end
+
+      Repo.all(base_query)
     end
   end
 
