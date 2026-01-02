@@ -23,9 +23,15 @@ defmodule HomesiteWeb.MediaLive.Index do
      |> assign(:gallery_filter, nil)
      |> assign(:tag_filter, nil)
      |> assign(:available_tags, available_tags)
-     |> assign(:upload_tag_ids, [])
+     # Upload tag selection (post-style)
+     |> assign(:selected_upload_tags, [])
+     |> assign(:upload_tag_search, "")
+     |> assign(:upload_tag_suggestions, [])
+     # Edit tag selection (post-style)
      |> assign(:editing_tags_for, nil)
-     |> assign(:editing_tag_ids, [])
+     |> assign(:selected_edit_tags, [])
+     |> assign(:edit_tag_search, "")
+     |> assign(:edit_tag_suggestions, [])
      |> assign(:orphan_filter, false)
      |> assign(:orphan_count, orphan_count)
      |> assign(:page, 1)
@@ -269,45 +275,101 @@ defmodule HomesiteWeb.MediaLive.Index do
 
   def handle_event("edit-tags", %{"id" => id}, socket) do
     media_item = Media.get_media_item!(socket.assigns.current_scope, id)
-    current_tag_ids = Enum.map(media_item.tags, & &1.id)
 
     {:noreply,
      socket
      |> assign(:editing_tags_for, media_item)
-     |> assign(:editing_tag_ids, current_tag_ids)}
+     |> assign(:selected_edit_tags, media_item.tags || [])
+     |> assign(:edit_tag_search, "")
+     |> assign(:edit_tag_suggestions, [])}
   end
 
   def handle_event("close-tag-editor", _params, socket) do
     {:noreply,
      socket
      |> assign(:editing_tags_for, nil)
-     |> assign(:editing_tag_ids, [])}
+     |> assign(:selected_edit_tags, [])
+     |> assign(:edit_tag_search, "")
+     |> assign(:edit_tag_suggestions, [])}
   end
 
-  def handle_event("toggle-media-tag", %{"tag-id" => tag_id_str}, socket) do
-    tag_id = String.to_integer(tag_id_str)
-    current_tags = socket.assigns.editing_tag_ids
-
-    new_tags =
-      if tag_id in current_tags do
-        List.delete(current_tags, tag_id)
+  # Edit tags - search
+  def handle_event("search-edit-tags", %{"value" => query}, socket) do
+    suggestions =
+      if String.length(query) >= 2 do
+        Content.list_all_public_tags(query)
       else
-        [tag_id | current_tags]
+        []
       end
 
-    {:noreply, assign(socket, :editing_tag_ids, new_tags)}
+    {:noreply,
+     assign(socket,
+       edit_tag_search: query,
+       edit_tag_suggestions: suggestions
+     )}
+  end
+
+  # Edit tags - add existing tag
+  def handle_event("add-edit-tag", %{"tag-id" => tag_id_str}, socket) do
+    tag_id = String.to_integer(tag_id_str)
+
+    tag =
+      case Enum.find(socket.assigns.edit_tag_suggestions, fn {t, _} -> t.id == tag_id end) do
+        {tag, _count} -> tag
+        nil -> Homesite.Repo.get!(Content.Tag, tag_id)
+      end
+
+    selected_tags = Enum.uniq_by([tag | socket.assigns.selected_edit_tags], & &1.id)
+
+    {:noreply,
+     assign(socket,
+       selected_edit_tags: selected_tags,
+       edit_tag_search: "",
+       edit_tag_suggestions: []
+     )}
+  end
+
+  # Edit tags - remove tag
+  def handle_event("remove-edit-tag", %{"tag-id" => tag_id_str}, socket) do
+    tag_id = String.to_integer(tag_id_str)
+    selected_tags = Enum.reject(socket.assigns.selected_edit_tags, &(&1.id == tag_id))
+    {:noreply, assign(socket, selected_edit_tags: selected_tags)}
+  end
+
+  # Edit tags - create new tag
+  def handle_event("create-edit-tag", %{"name" => name}, socket) do
+    case Content.get_or_create_tag(socket.assigns.current_scope, %{
+           "name" => name,
+           "is_public" => true
+         }) do
+      {:ok, tag} ->
+        selected_tags = Enum.uniq_by([tag | socket.assigns.selected_edit_tags], & &1.id)
+
+        {:noreply,
+         assign(socket,
+           selected_edit_tags: selected_tags,
+           edit_tag_search: "",
+           edit_tag_suggestions: [],
+           available_tags: Content.list_tags(socket.assigns.current_scope)
+         )}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, gettext("Failed to create tag"))}
+    end
   end
 
   def handle_event("save-media-tags", _params, socket) do
     media_item = socket.assigns.editing_tags_for
-    tag_ids = socket.assigns.editing_tag_ids
+    tag_ids = Enum.map(socket.assigns.selected_edit_tags, & &1.id)
 
     case Media.update_media_item_tags(socket.assigns.current_scope, media_item, tag_ids) do
       {:ok, updated_item} ->
         {:noreply,
          socket
          |> assign(:editing_tags_for, nil)
-         |> assign(:editing_tag_ids, [])
+         |> assign(:selected_edit_tags, [])
+         |> assign(:edit_tag_search, "")
+         |> assign(:edit_tag_suggestions, [])
          |> stream_insert(:media_items, updated_item)
          |> put_flash(:info, gettext("Tags updated successfully"))}
 
@@ -320,22 +382,73 @@ defmodule HomesiteWeb.MediaLive.Index do
     {:noreply, socket}
   end
 
-  def handle_event("toggle-upload-tag", %{"tag-id" => tag_id_str}, socket) do
-    tag_id = String.to_integer(tag_id_str)
-    current_tags = socket.assigns.upload_tag_ids
-
-    new_tags =
-      if tag_id in current_tags do
-        List.delete(current_tags, tag_id)
+  # Upload tags - search
+  def handle_event("search-upload-tags", %{"value" => query}, socket) do
+    suggestions =
+      if String.length(query) >= 2 do
+        Content.list_all_public_tags(query)
       else
-        [tag_id | current_tags]
+        []
       end
 
-    {:noreply, assign(socket, :upload_tag_ids, new_tags)}
+    {:noreply,
+     assign(socket,
+       upload_tag_search: query,
+       upload_tag_suggestions: suggestions
+     )}
+  end
+
+  # Upload tags - add existing tag
+  def handle_event("add-upload-tag", %{"tag-id" => tag_id_str}, socket) do
+    tag_id = String.to_integer(tag_id_str)
+
+    tag =
+      case Enum.find(socket.assigns.upload_tag_suggestions, fn {t, _} -> t.id == tag_id end) do
+        {tag, _count} -> tag
+        nil -> Homesite.Repo.get!(Content.Tag, tag_id)
+      end
+
+    selected_tags = Enum.uniq_by([tag | socket.assigns.selected_upload_tags], & &1.id)
+
+    {:noreply,
+     assign(socket,
+       selected_upload_tags: selected_tags,
+       upload_tag_search: "",
+       upload_tag_suggestions: []
+     )}
+  end
+
+  # Upload tags - remove tag
+  def handle_event("remove-upload-tag", %{"tag-id" => tag_id_str}, socket) do
+    tag_id = String.to_integer(tag_id_str)
+    selected_tags = Enum.reject(socket.assigns.selected_upload_tags, &(&1.id == tag_id))
+    {:noreply, assign(socket, selected_upload_tags: selected_tags)}
+  end
+
+  # Upload tags - create new tag
+  def handle_event("create-upload-tag", %{"name" => name}, socket) do
+    case Content.get_or_create_tag(socket.assigns.current_scope, %{
+           "name" => name,
+           "is_public" => true
+         }) do
+      {:ok, tag} ->
+        selected_tags = Enum.uniq_by([tag | socket.assigns.selected_upload_tags], & &1.id)
+
+        {:noreply,
+         assign(socket,
+           selected_upload_tags: selected_tags,
+           upload_tag_search: "",
+           upload_tag_suggestions: [],
+           available_tags: Content.list_tags(socket.assigns.current_scope)
+         )}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, gettext("Failed to create tag"))}
+    end
   end
 
   def handle_event("save-uploads", _params, socket) do
-    tag_ids = socket.assigns.upload_tag_ids
+    tag_ids = Enum.map(socket.assigns.selected_upload_tags, & &1.id)
 
     uploaded_files =
       consume_uploaded_entries(socket, :images, fn %{path: path}, entry ->
@@ -388,7 +501,11 @@ defmodule HomesiteWeb.MediaLive.Index do
       end
 
     # Clear upload tag selection after upload
-    {:noreply, assign(socket, :upload_tag_ids, [])}
+    {:noreply,
+     socket
+     |> assign(:selected_upload_tags, [])
+     |> assign(:upload_tag_search, "")
+     |> assign(:upload_tag_suggestions, [])}
   end
 
   def handle_event("cancel-upload", %{"ref" => ref}, socket) do
@@ -482,31 +599,90 @@ defmodule HomesiteWeb.MediaLive.Index do
                   <% end %>
                 <% end %>
 
-                <%!-- Tag Selection for Upload --%>
-                <%= if @available_tags != [] do %>
-                  <div class="mt-[var(--space-sm)]">
-                    <p class="text-[var(--text-sm)] mb-[var(--space-xs)] font-medium">
-                      {gettext("Apply tags to uploaded images:")}
-                    </p>
-                    <div class="gap-[var(--space-xs)] flex flex-wrap">
-                      <%= for tag <- @available_tags do %>
-                        <button
-                          type="button"
-                          phx-click="toggle-upload-tag"
-                          phx-value-tag-id={tag.id}
-                          class={[
-                            "badge gap-[var(--space-inline)] cursor-pointer transition-colors",
-                            tag.id in @upload_tag_ids && "badge-primary",
-                            tag.id not in @upload_tag_ids && "badge-outline"
-                          ]}
-                        >
-                          <.icon name="hero-tag" class="h-3 w-3" />
+                <%!-- Tag Selection for Upload (post-style) --%>
+                <div class="mt-[var(--space-sm)]">
+                  <p class="text-[var(--text-sm)] mb-[var(--space-xs)] font-medium">
+                    {gettext("Apply tags to uploaded images:")}
+                  </p>
+
+                  <%!-- Selected tags --%>
+                  <%= if @selected_upload_tags != [] do %>
+                    <div class="gap-[var(--space-xs)] mb-[var(--space-xs)] flex flex-wrap">
+                      <%= for tag <- @selected_upload_tags do %>
+                        <span class="badge badge-primary gap-[var(--space-inline)]">
                           {tag.name}
-                        </button>
+                          <button
+                            type="button"
+                            phx-click="remove-upload-tag"
+                            phx-value-tag-id={tag.id}
+                            class="hover:text-error"
+                            aria-label={gettext("Remove tag")}
+                          >
+                            <.icon name="hero-x-mark" class="h-3 w-3" />
+                          </button>
+                        </span>
                       <% end %>
                     </div>
+                  <% end %>
+
+                  <%!-- Tag search input --%>
+                  <div class="relative">
+                    <input
+                      type="text"
+                      name="upload_tag_search"
+                      value={@upload_tag_search}
+                      phx-keyup="search-upload-tags"
+                      phx-debounce="300"
+                      placeholder={gettext("Search or create tags...")}
+                      class="input input-bordered input-sm w-full"
+                      autocomplete="off"
+                    />
+
+                    <%!-- Suggestions dropdown --%>
+                    <%= if @upload_tag_suggestions != [] or @upload_tag_search != "" do %>
+                      <ul class="menu bg-base-200 border-base-300 absolute z-50 mt-1 max-h-48 w-full overflow-auto rounded-lg border shadow-lg">
+                        <%= for {tag, post_count} <- @upload_tag_suggestions do %>
+                          <li>
+                            <button
+                              type="button"
+                              phx-click="add-upload-tag"
+                              phx-value-tag-id={tag.id}
+                              class="flex justify-between"
+                            >
+                              <span>{tag.name}</span>
+                              <span class="badge badge-ghost badge-xs">{post_count}</span>
+                            </button>
+                          </li>
+                        <% end %>
+                        <%= cond do %>
+                          <% exact_tag = find_exact_match(@upload_tag_suggestions, @upload_tag_search) -> %>
+                            <li>
+                              <button
+                                type="button"
+                                phx-click="add-upload-tag"
+                                phx-value-tag-id={exact_tag.id}
+                                class="text-primary"
+                              >
+                                {gettext("Add")} "{exact_tag.name}"
+                              </button>
+                            </li>
+                          <% @upload_tag_search != "" -> %>
+                            <li>
+                              <button
+                                type="button"
+                                phx-click="create-upload-tag"
+                                phx-value-name={@upload_tag_search}
+                                class="text-success"
+                              >
+                                {gettext("Create")} "{@upload_tag_search}"
+                              </button>
+                            </li>
+                          <% true -> %>
+                        <% end %>
+                      </ul>
+                    <% end %>
                   </div>
-                <% end %>
+                </div>
 
                 <div class="mt-[var(--space-sm)]">
                   <button type="submit" class="btn btn-primary">
@@ -698,7 +874,7 @@ defmodule HomesiteWeb.MediaLive.Index do
           <% end %>
         </div>
 
-        <%!-- Tag Editor Modal --%>
+        <%!-- Tag Editor Modal (post-style) --%>
         <%= if @editing_tags_for do %>
           <div class="modal modal-open">
             <div class="modal-box">
@@ -708,30 +884,83 @@ defmodule HomesiteWeb.MediaLive.Index do
                   @editing_tags_for.original_filename}
               </p>
 
-              <%= if @available_tags == [] do %>
-                <div class="alert alert-info">
-                  <.icon name="hero-information-circle" class="h-5 w-5" />
-                  <span>{gettext("No tags available. Create tags first in the Tags section.")}</span>
-                </div>
-              <% else %>
-                <div class="gap-[var(--space-sm)] flex flex-wrap py-4">
-                  <%= for tag <- @available_tags do %>
-                    <button
-                      type="button"
-                      phx-click="toggle-media-tag"
-                      phx-value-tag-id={tag.id}
-                      class={[
-                        "badge gap-[var(--space-inline)] cursor-pointer transition-colors",
-                        tag.id in @editing_tag_ids && "badge-primary",
-                        tag.id not in @editing_tag_ids && "badge-outline"
-                      ]}
-                    >
-                      <.icon name="hero-tag" class="h-3 w-3" />
+              <%!-- Selected tags --%>
+              <%= if @selected_edit_tags != [] do %>
+                <div class="gap-[var(--space-xs)] mb-[var(--space-sm)] flex flex-wrap">
+                  <%= for tag <- @selected_edit_tags do %>
+                    <span class="badge badge-primary gap-[var(--space-inline)]">
                       {tag.name}
-                    </button>
+                      <button
+                        type="button"
+                        phx-click="remove-edit-tag"
+                        phx-value-tag-id={tag.id}
+                        class="hover:text-error"
+                        aria-label={gettext("Remove tag")}
+                      >
+                        <.icon name="hero-x-mark" class="h-3 w-3" />
+                      </button>
+                    </span>
                   <% end %>
                 </div>
               <% end %>
+
+              <%!-- Tag search input --%>
+              <div class="relative">
+                <input
+                  type="text"
+                  name="edit_tag_search"
+                  value={@edit_tag_search}
+                  phx-keyup="search-edit-tags"
+                  phx-debounce="300"
+                  placeholder={gettext("Search or create tags...")}
+                  class="input input-bordered w-full"
+                  autocomplete="off"
+                />
+
+                <%!-- Suggestions dropdown --%>
+                <%= if @edit_tag_suggestions != [] or @edit_tag_search != "" do %>
+                  <ul class="menu bg-base-200 border-base-300 absolute z-50 mt-1 max-h-48 w-full overflow-auto rounded-lg border shadow-lg">
+                    <%= for {tag, post_count} <- @edit_tag_suggestions do %>
+                      <li>
+                        <button
+                          type="button"
+                          phx-click="add-edit-tag"
+                          phx-value-tag-id={tag.id}
+                          class="flex justify-between"
+                        >
+                          <span>{tag.name}</span>
+                          <span class="badge badge-ghost badge-xs">{post_count}</span>
+                        </button>
+                      </li>
+                    <% end %>
+                    <%= cond do %>
+                      <% exact_tag = find_exact_match(@edit_tag_suggestions, @edit_tag_search) -> %>
+                        <li>
+                          <button
+                            type="button"
+                            phx-click="add-edit-tag"
+                            phx-value-tag-id={exact_tag.id}
+                            class="text-primary"
+                          >
+                            {gettext("Add")} "{exact_tag.name}"
+                          </button>
+                        </li>
+                      <% @edit_tag_search != "" -> %>
+                        <li>
+                          <button
+                            type="button"
+                            phx-click="create-edit-tag"
+                            phx-value-name={@edit_tag_search}
+                            class="text-success"
+                          >
+                            {gettext("Create")} "{@edit_tag_search}"
+                          </button>
+                        </li>
+                      <% true -> %>
+                    <% end %>
+                  </ul>
+                <% end %>
+              </div>
 
               <div class="modal-action">
                 <button type="button" phx-click="close-tag-editor" class="btn btn-ghost">
@@ -778,4 +1007,12 @@ defmodule HomesiteWeb.MediaLive.Index do
     do: gettext("File type not accepted (use JPG, PNG, GIF, or WebP)")
 
   defp error_to_string(:external_client_failure), do: gettext("Upload failed")
+
+  defp find_exact_match(suggestions, query) do
+    query_downcase = String.downcase(String.trim(query))
+
+    Enum.find_value(suggestions, fn {tag, _count} ->
+      if String.downcase(tag.name) == query_downcase, do: tag
+    end)
+  end
 end
