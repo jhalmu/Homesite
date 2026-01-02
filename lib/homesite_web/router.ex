@@ -62,6 +62,7 @@ defmodule HomesiteWeb.Router do
 
     # Image serving for OpenGraph and social sharing
     get "/images/posts/:post_id/hero", ImageController, :post_hero
+    get "/images/posts/:post_id/og-card.png", ImageController, :post_og_card
     get "/images/users/:user_id/avatar", ImageController, :user_avatar
     get "/images/users/:user_id/avatar.png", ImageController, :user_avatar_png
     get "/images/og-default.png", ImageController, :default_og_image

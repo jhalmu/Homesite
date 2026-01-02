@@ -15,6 +15,14 @@ defmodule HomesiteWeb.ImageController do
 
   # Default OG image dimensions
   @og_image_size 400
+  # OG card dimensions (Facebook/LinkedIn standard)
+  @og_card_width 1200
+  @og_card_height 630
+  @og_avatar_size 200
+  # Brand colors
+  @og_bg_color "#1a1a2e"
+  @og_text_color "#ffffff"
+  @og_subtitle_color "#888888"
 
   @doc """
   Serves the hero image for a post.
@@ -401,6 +409,172 @@ defmodule HomesiteWeb.ImageController do
       end
     after
       File.rm(tmp_path)
+    end
+  end
+
+  @doc """
+  Serves a branded OG card for a post (avatar + title).
+
+  GET /images/posts/:post_id/og-card.png
+
+  Creates a 1200x630 image with:
+  - Small avatar on the left
+  - Post title on the right
+  - Site name below
+  """
+  def post_og_card(conn, %{"post_id" => post_id}) do
+    post_id = String.to_integer(post_id)
+
+    # Fetch post with user
+    post =
+      from(p in Homesite.Content.Post,
+        where: p.id == ^post_id,
+        preload: [:user]
+      )
+      |> Repo.one()
+
+    case post do
+      nil ->
+        serve_default_og_image(conn)
+
+      post ->
+        case generate_og_card(post) do
+          {:ok, png_data} ->
+            conn
+            |> put_resp_content_type("image/png")
+            |> put_resp_header("cache-control", "public, max-age=86400")
+            |> send_resp(200, png_data)
+
+          {:error, _reason} ->
+            serve_default_og_image(conn)
+        end
+    end
+  end
+
+  defp generate_og_card(post) do
+    tmp_dir = System.tmp_dir!()
+    unique_id = :erlang.unique_integer([:positive])
+    avatar_path = Path.join(tmp_dir, "og_avatar_#{unique_id}.png")
+    output_path = Path.join(tmp_dir, "og_card_#{unique_id}.png")
+
+    try do
+      # Get avatar PNG for the user
+      avatar_result =
+        if post.user do
+          get_avatar_png(post.user)
+        else
+          {:error, :no_user}
+        end
+
+      # Write avatar to temp file or use placeholder
+      avatar_ready =
+        case avatar_result do
+          {:ok, avatar_data} ->
+            File.write!(avatar_path, avatar_data)
+            true
+
+          _ ->
+            # Create a simple colored circle as fallback
+            case System.cmd("magick", [
+                   "-size",
+                   "#{@og_avatar_size}x#{@og_avatar_size}",
+                   "xc:#{@og_bg_color}",
+                   "-fill",
+                   "#FF6B35",
+                   "-draw",
+                   "circle #{div(@og_avatar_size, 2)},#{div(@og_avatar_size, 2)} #{div(@og_avatar_size, 2)},10",
+                   avatar_path
+                 ]) do
+              {_, 0} -> true
+              _ -> false
+            end
+        end
+
+      if avatar_ready do
+        # Truncate title if too long
+        title = truncate_title(post.title, 60)
+        site_name = "Juha Halmun blogi"
+
+        # Create the OG card with ImageMagick
+        # Layout: avatar on left (with padding), title + site name on right
+        result =
+          System.cmd("magick", [
+            # Create background
+            "-size",
+            "#{@og_card_width}x#{@og_card_height}",
+            "xc:#{@og_bg_color}",
+            # Composite the avatar (circular, positioned left)
+            "(",
+            avatar_path,
+            "-resize",
+            "#{@og_avatar_size}x#{@og_avatar_size}",
+            "-gravity",
+            "center",
+            # Make circular with mask
+            "(",
+            "+clone",
+            "-alpha",
+            "extract",
+            "-draw",
+            "fill black polygon 0,0 0,#{@og_avatar_size} #{@og_avatar_size},#{@og_avatar_size} #{@og_avatar_size},0 fill white circle #{div(@og_avatar_size, 2)},#{div(@og_avatar_size, 2)} #{div(@og_avatar_size, 2)},1",
+            ")",
+            "-alpha",
+            "off",
+            "-compose",
+            "CopyOpacity",
+            "-composite",
+            ")",
+            "-gravity",
+            "West",
+            "-geometry",
+            "+80+0",
+            "-composite",
+            # Add title text
+            "-gravity",
+            "West",
+            "-fill",
+            @og_text_color,
+            "-font",
+            "Helvetica-Bold",
+            "-pointsize",
+            "48",
+            "-annotate",
+            "+#{80 + @og_avatar_size + 60}+0",
+            title,
+            # Add site name below title
+            "-fill",
+            @og_subtitle_color,
+            "-font",
+            "Helvetica",
+            "-pointsize",
+            "28",
+            "-annotate",
+            "+#{80 + @og_avatar_size + 60}+60",
+            site_name,
+            output_path
+          ])
+
+        case result do
+          {_, 0} ->
+            {:ok, File.read!(output_path)}
+
+          {error, _} ->
+            {:error, {:imagemagick_failed, error}}
+        end
+      else
+        {:error, :avatar_not_ready}
+      end
+    after
+      File.rm(avatar_path)
+      File.rm(output_path)
+    end
+  end
+
+  defp truncate_title(title, max_length) do
+    if String.length(title) > max_length do
+      String.slice(title, 0, max_length - 3) <> "..."
+    else
+      title
     end
   end
 end

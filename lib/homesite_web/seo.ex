@@ -77,7 +77,7 @@ defmodule HomesiteWeb.SEO do
   end
 
   # Helper to get image URL for OpenGraph
-  # Priority: explicit seo_image > post hero image > author avatar (PNG) > default
+  # Priority: explicit seo_image > post hero image > OG card (avatar+title) > default
   defp get_image_url(conn) do
     cond do
       # Explicit SEO image set
@@ -88,17 +88,13 @@ defmodule HomesiteWeb.SEO do
       conn.assigns[:post] && conn.assigns[:hero_image] ->
         url(~p"/images/posts/#{conn.assigns.post.id}/hero")
 
-      # Post with author (use author avatar as PNG for social media compatibility)
-      conn.assigns[:post] && post_has_user?(conn.assigns.post) ->
-        url(~p"/images/users/#{conn.assigns.post.user.id}/avatar.png")
+      # Post without hero - use branded OG card (avatar + title)
+      conn.assigns[:post] ->
+        url(~p"/images/posts/#{conn.assigns.post.id}/og-card.png")
 
       # Default OG image
       true ->
         url(~p"/images/og-default.png")
     end
   end
-
-  # Check if post has a loaded user association
-  defp post_has_user?(%{user: %Homesite.Accounts.User{} = _user}), do: true
-  defp post_has_user?(_), do: false
 end
