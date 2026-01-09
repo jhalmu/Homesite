@@ -124,6 +124,48 @@ defmodule HomesiteWeb.SEO.JsonLDTest do
 
       assert result["author"]["name"] == "test@example.com"
     end
+
+    test "includes keywords when post has tags" do
+      post = %{
+        title: "Test Post",
+        body: "Body",
+        published_at: DateTime.utc_now(),
+        updated_at: DateTime.utc_now(),
+        inserted_at: DateTime.utc_now(),
+        featured_image_url: nil,
+        tags: [
+          %{name: "elixir"},
+          %{name: "phoenix"},
+          %{name: "web development"}
+        ]
+      }
+
+      author = %{display_name: "Author", email: "test@example.com"}
+      url = "https://example.com/posts/1"
+
+      result = JsonLD.article(post, author, url)
+
+      assert result["keywords"] == ["elixir", "phoenix", "web development"]
+    end
+
+    test "does not include keywords when post has no tags" do
+      post = %{
+        title: "Test Post",
+        body: "Body",
+        published_at: DateTime.utc_now(),
+        updated_at: DateTime.utc_now(),
+        inserted_at: DateTime.utc_now(),
+        featured_image_url: nil,
+        tags: []
+      }
+
+      author = %{display_name: "Author", email: "test@example.com"}
+      url = "https://example.com/posts/1"
+
+      result = JsonLD.article(post, author, url)
+
+      refute Map.has_key?(result, "keywords")
+    end
   end
 
   describe "breadcrumbs/2" do

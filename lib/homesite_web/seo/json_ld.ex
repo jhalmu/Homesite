@@ -26,6 +26,7 @@ defmodule HomesiteWeb.SEO.JsonLD do
       "url" => url
     }
     |> maybe_add_image(post)
+    |> maybe_add_keywords(post)
   end
 
   @doc """
@@ -133,6 +134,17 @@ defmodule HomesiteWeb.SEO.JsonLD do
 
       _ ->
         # Default OG image when no featured image set
+        json_ld
+    end
+  end
+
+  defp maybe_add_keywords(json_ld, post) do
+    case Map.get(post, :tags) do
+      tags when is_list(tags) and tags != [] ->
+        keywords = Enum.map(tags, & &1.name)
+        Map.put(json_ld, "keywords", keywords)
+
+      _ ->
         json_ld
     end
   end
