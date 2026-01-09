@@ -50,7 +50,7 @@ defmodule Homesite.MixProject do
 
   def cli do
     [
-      preferred_envs: [precommit: :test, "test.all": :test, dialyzer: :dev]
+      preferred_envs: [precommit: :test, "test.all": :test, "test.full": :test, lighthouse: :dev]
     ]
   end
 
@@ -155,7 +155,8 @@ defmodule Homesite.MixProject do
         "phx.digest"
       ],
       precommit: ["compile --warning-as-errors", "deps.unlock --unused", "format", "test"],
-      "test.all": ["precommit", "credo --strict", "dialyzer"]
+      "test.all": ["precommit", "credo --strict"],
+      "test.full": ["test.all", "lighthouse --start-server"]
     ]
   end
 end

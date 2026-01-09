@@ -1,0 +1,240 @@
+defmodule Mix.Tasks.Lighthouse do
+  @moduledoc """
+  Runs Lighthouse audit against the local dev server.
+
+  ## Usage
+
+      mix lighthouse [--url URL] [--threshold SCORE] [--start-server]
+
+  ## Options
+
+    * `--url` - URL to audit (default: http://localhost:4000)
+    * `--threshold` - Minimum performance score to pass (default: 50)
+    * `--start-server` - Start the Phoenix server automatically (default: false)
+
+  ## Requirements
+
+    * Node.js and npx must be installed
+    * Playwright's Chromium browser (run: npx playwright install chromium)
+
+  ## Examples
+
+      mix lighthouse
+      mix lighthouse --start-server
+      mix lighthouse --url http://localhost:4000/posts
+      mix lighthouse --threshold 70
+
+  """
+  use Mix.Task
+
+  @shortdoc "Run Lighthouse audit on local server"
+
+  @default_url "http://localhost:4000"
+  @default_threshold 50
+
+  @impl Mix.Task
+  def run(args) do
+    {opts, _, _} =
+      OptionParser.parse(args,
+        strict: [url: :string, threshold: :integer, start_server: :boolean],
+        aliases: [u: :url, t: :threshold, s: :start_server]
+      )
+
+    url = Keyword.get(opts, :url, @default_url)
+    threshold = Keyword.get(opts, :threshold, @default_threshold)
+    start_server = Keyword.get(opts, :start_server, false)
+
+    # Find Chrome path (Playwright's bundled Chromium)
+    chrome_path = find_chrome_path()
+
+    unless chrome_path do
+      Mix.raise("""
+      Chrome/Chromium not found. Please install Playwright's Chromium:
+
+          npx playwright install chromium
+
+      Or install Google Chrome.
+      """)
+    end
+
+    # Start server if requested
+    server_pid =
+      if start_server do
+        Mix.shell().info("Starting Phoenix server...")
+        start_phoenix_server()
+      else
+        nil
+      end
+
+    try do
+      # Wait for server to be ready
+      unless wait_for_server(url, 30) do
+        Mix.raise("""
+        Server is not running at #{url}.
+
+        Either start the server first with `mix phx.server`,
+        or use the --start-server flag:
+
+            mix lighthouse --start-server
+        """)
+      end
+
+      Mix.shell().info("Running Lighthouse audit on #{url}...")
+
+      # Create temp directory for reports
+      report_dir = Path.join(System.tmp_dir!(), "lighthouse-#{:rand.uniform(100_000)}")
+      File.mkdir_p!(report_dir)
+      report_path = Path.join(report_dir, "report")
+
+      try do
+        # Run Lighthouse
+        {output, exit_code} =
+          System.cmd(
+            "npx",
+            [
+              "lighthouse",
+              url,
+              "--output=json",
+              "--output-path=#{report_path}",
+              "--chrome-flags=--headless --no-sandbox --disable-gpu",
+              "--only-categories=performance,accessibility,best-practices,seo",
+              "--quiet"
+            ],
+            env: [{"CHROME_PATH", chrome_path}],
+            stderr_to_stdout: true
+          )
+
+        if exit_code != 0 do
+          Mix.shell().error("Lighthouse failed:")
+          Mix.shell().error(output)
+          Mix.raise("Lighthouse audit failed")
+        end
+
+        # Parse results - lighthouse may output as .report.json or just the path
+        json_path =
+          cond do
+            File.exists?("#{report_path}.report.json") -> "#{report_path}.report.json"
+            File.exists?(report_path) -> report_path
+            true -> nil
+          end
+
+        unless json_path do
+          Mix.raise("Lighthouse report not found at #{report_path}")
+        end
+
+        results = json_path |> File.read!() |> Jason.decode!()
+        categories = results["categories"]
+
+        scores = %{
+          performance: round(categories["performance"]["score"] * 100),
+          accessibility: round(categories["accessibility"]["score"] * 100),
+          best_practices: round(categories["best-practices"]["score"] * 100),
+          seo: round(categories["seo"]["score"] * 100)
+        }
+
+        # Display results
+        Mix.shell().info("")
+        Mix.shell().info("═══════════════════════════════════════")
+        Mix.shell().info("        LIGHTHOUSE AUDIT RESULTS       ")
+        Mix.shell().info("═══════════════════════════════════════")
+        Mix.shell().info("")
+
+        Enum.each(scores, fn {category, score} ->
+          icon = if score >= 90, do: "✅", else: if(score >= 50, do: "🟡", else: "❌")
+          name = category |> Atom.to_string() |> String.replace("_", " ") |> String.capitalize()
+          Mix.shell().info("  #{icon} #{String.pad_trailing(name, 15)} #{score}")
+        end)
+
+        Mix.shell().info("")
+
+        # Check threshold
+        if scores.performance < threshold do
+          Mix.raise(
+            "Performance score #{scores.performance} is below threshold #{threshold}"
+          )
+        end
+
+        Mix.shell().info("✅ All scores meet requirements (performance >= #{threshold})")
+      after
+        # Cleanup
+        File.rm_rf!(report_dir)
+      end
+    after
+      # Stop server if we started it
+      if server_pid do
+        Mix.shell().info("Stopping Phoenix server...")
+        stop_phoenix_server(server_pid)
+      end
+    end
+  end
+
+  defp find_chrome_path do
+    # Check for Playwright's Chromium first (macOS ARM and Intel)
+    playwright_paths = [
+      "~/Library/Caches/ms-playwright/chromium-*/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+      "~/Library/Caches/ms-playwright/chromium-*/chrome-mac/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+      "~/.cache/ms-playwright/chromium-*/chrome-linux/chrome"
+    ]
+
+    playwright_chrome =
+      playwright_paths
+      |> Enum.flat_map(&(Path.expand(&1) |> Path.wildcard()))
+      |> Enum.find(&File.exists?/1)
+
+    cond do
+      playwright_chrome ->
+        playwright_chrome
+
+      # macOS Chrome locations
+      File.exists?("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome") ->
+        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+
+      # Linux
+      System.find_executable("google-chrome") ->
+        System.find_executable("google-chrome")
+
+      System.find_executable("chromium") ->
+        System.find_executable("chromium")
+
+      System.find_executable("chromium-browser") ->
+        System.find_executable("chromium-browser")
+
+      true ->
+        nil
+    end
+  end
+
+  defp wait_for_server(url, timeout_seconds) do
+    uri = URI.parse(url)
+    host = String.to_charlist(uri.host || "localhost")
+    port = uri.port || 4000
+
+    Enum.any?(1..timeout_seconds, fn attempt ->
+      case :gen_tcp.connect(host, port, [], 1000) do
+        {:ok, socket} ->
+          :gen_tcp.close(socket)
+          true
+
+        {:error, _} ->
+          if attempt < timeout_seconds do
+            Process.sleep(1000)
+          end
+
+          false
+      end
+    end)
+  end
+
+  defp start_phoenix_server do
+    # Start all required applications
+    Application.ensure_all_started(:homesite)
+
+    # Return a marker - the server runs in the application supervision tree
+    :server_started
+  end
+
+  defp stop_phoenix_server(:server_started) do
+    # Stop the application
+    Application.stop(:homesite)
+  end
+end
