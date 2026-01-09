@@ -276,7 +276,13 @@ defmodule HomesiteWeb.UserLive.Settings do
                   <.icon name="hero-share" class="h-5 w-5" />
                   {gettext("Share")}
                 </button>
-                <button type="button" phx-click="copy_username_url" class="btn btn-outline">
+                <button
+                  type="button"
+                  phx-click="copy_username_url"
+                  phx-hook="CopyToClipboard"
+                  id="copy-username-btn"
+                  class="btn btn-outline"
+                >
                   <.icon name="hero-clipboard" class="h-5 w-5" />
                   {gettext("Copy")}
                 </button>
