@@ -42,11 +42,11 @@ defmodule HomesiteWeb.MediaLive.Index do
      |> assign(:media_empty, media_items == [])
      |> assign(:uploaded_files, [])
      |> allow_upload(:images,
-       accept: ~w(.jpg .jpeg .png .gif .webp),
+       accept: ~w(.jpg .jpeg .png .webp),
        max_entries: 10,
        # 20MB - large images will be auto-resized by ImageProcessor
        max_file_size: 20_000_000,
-       auto_upload: true
+       auto_upload: false
      )
      |> stream(:media_items, media_items)}
   end
@@ -606,10 +606,17 @@ defmodule HomesiteWeb.MediaLive.Index do
                 <div class="gap-[var(--space-sm)] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
                   <%= for entry <- @uploads.images.entries do %>
                     <div class="bg-base-200 relative overflow-hidden rounded-lg">
-                      <.live_img_preview
-                        entry={entry}
-                        class="aspect-square h-full w-full object-cover"
-                      />
+                      <%= if entry.valid? do %>
+                        <.live_img_preview
+                          entry={entry}
+                          class="aspect-square h-full w-full object-cover"
+                        />
+                      <% else %>
+                        <%!-- Fallback for invalid entries --%>
+                        <div class="bg-error/20 aspect-square flex items-center justify-center">
+                          <.icon name="hero-exclamation-triangle" class="text-error h-8 w-8" />
+                        </div>
+                      <% end %>
                       <%!-- Progress overlay --%>
                       <%= if entry.progress < 100 do %>
                         <div class="bg-black/50 absolute inset-0 flex items-center justify-center">
@@ -1090,11 +1097,11 @@ defmodule HomesiteWeb.MediaLive.Index do
     end
   end
 
-  defp error_to_string(:too_large), do: gettext("File is too large (max 5MB)")
+  defp error_to_string(:too_large), do: gettext("File is too large (max 20MB)")
   defp error_to_string(:too_many_files), do: gettext("Too many files (max 10)")
 
   defp error_to_string(:not_accepted),
-    do: gettext("File type not accepted (use JPG, PNG, GIF, or WebP)")
+    do: gettext("File type not accepted (use JPG, PNG, or WebP)")
 
   defp error_to_string(:external_client_failure), do: gettext("Upload failed")
 
