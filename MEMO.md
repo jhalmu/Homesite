@@ -94,6 +94,12 @@ Implemented slug-based URLs for posts and added featured image support to profil
 - LiveView can now properly detect file selection and update uploads
 - Previews now appear immediately before form submission
 
+**Content Security Policy Fix** (commit `5cdf7e3`)
+- Added `blob:` to CSP `img-src` directive
+- Fixes browser blocking LiveView upload preview images
+- Blob URLs are created client-side from file inputs (safe to allow)
+- Resolves CSP error: "blocked the loading of a resource (img-src) at blob:..."
+
 #### Housekeeping
 
 **Archived BUGFIXES_PLAN.md**
@@ -135,12 +141,16 @@ Implemented slug-based URLs for posts and added featured image support to profil
 **Media Library:**
 - `lib/homesite_web/live/media_live/index.ex` - Fixed file input structure
 
+**Security:**
+- `lib/homesite_web/plugs/content_security_policy.ex` - Added blob: to img-src
+
 #### Commits This Session
 1. `ecf1134` - feat: Use slugs instead of IDs in post URLs (#88)
 2. `20d4756` - feat: Show featured images on user profile posts (#84)
 3. `9d6361a` - docs: Update MEMO.md with session summary
 4. `da9d431` - fix: Remove unreachable route to fix CI/CD warning
 5. `5062e47` - fix: Fix media library upload preview not showing
+6. `5cdf7e3` - fix: Add blob: URLs to Content-Security-Policy img-src
 
 #### Test Results
 - **1693 tests, 0 failures**
