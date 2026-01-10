@@ -143,7 +143,7 @@ defmodule HomesiteWeb.Router do
 
       live "/posts", PostLive.Index, :index
       live "/posts/new", PostLive.Form, :new
-      live "/posts/:id/edit", PostLive.Form, :edit
+      live "/posts/:slug/edit", PostLive.Form, :edit
 
       live "/tags", TagLive.Index, :index
       live "/tags/new", TagLive.Form, :new
@@ -295,8 +295,12 @@ defmodule HomesiteWeb.Router do
       live "/users/:user_identifier/projects", UserLive.Projects, :index
       live "/users/:user_identifier/followers", UserLive.Followers, :followers
       live "/users/:user_identifier/following", UserLive.Followers, :following
-      live "/posts/:id", PostLive.Show, :show
+      live "/posts/:slug", PostLive.Show, :show
     end
+
+    # Redirect old /posts/:id/:slug and /posts/:id URLs to new /posts/:slug format
+    get "/posts/:id/:slug", PostRedirectController, :show_with_slug
+    get "/posts/:id", PostRedirectController, :show_id_only
 
     delete "/users/log-out", UserSessionController, :delete
   end

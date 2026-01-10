@@ -231,7 +231,7 @@ defmodule HomesiteWeb.E2E.AccessibilityTest do
         )
 
       conn
-      |> visit(~p"/posts/#{post}")
+      |> visit(~p"/posts/#{post.slug}")
       |> assert_has("body .phx-connected")
       |> assert_no_violations()
     end

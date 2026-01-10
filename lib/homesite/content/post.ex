@@ -35,16 +35,24 @@ defmodule Homesite.Content.Post do
 
   @doc false
   def changeset(post, attrs, user_scope) do
+    # For existing posts (updates), don't allow slug changes
+    cast_fields =
+      if is_nil(post.id) do
+        [
+          :title,
+          :body,
+          :slug,
+          :published_at,
+          :is_public,
+          :featured_image_url,
+          :featured_image_alt
+        ]
+      else
+        [:title, :body, :published_at, :is_public, :featured_image_url, :featured_image_alt]
+      end
+
     post
-    |> cast(attrs, [
-      :title,
-      :body,
-      :slug,
-      :published_at,
-      :is_public,
-      :featured_image_url,
-      :featured_image_alt
-    ])
+    |> cast(attrs, cast_fields)
     |> validate_required([:title, :body, :published_at])
     |> validate_length(:title, min: 3, max: 200)
     |> validate_length(:body, min: 10)
@@ -88,22 +96,60 @@ defmodule Homesite.Content.Post do
   end
 
   defp generate_slug(changeset) do
-    case get_change(changeset, :title) do
-      nil ->
-        changeset
+    # Only generate slug for new posts (id is nil)
+    # Existing posts keep their slug even when title changes
+    if is_nil(changeset.data.id) do
+      case get_change(changeset, :title) do
+        nil ->
+          changeset
 
-      title ->
-        base_slug =
-          title
-          |> String.downcase()
-          |> transliterate()
-          # Keep only alphanumeric and hyphens
-          |> String.replace(~r/[^a-z0-9-]+/, "-")
-          |> String.trim("-")
-
-        slug = "#{base_slug}-#{:os.system_time(:millisecond)}"
-        put_change(changeset, :slug, slug)
+        title ->
+          base_slug = slugify(title)
+          unique_slug = ensure_unique_slug(base_slug)
+          put_change(changeset, :slug, unique_slug)
+      end
+    else
+      changeset
     end
+  end
+
+  defp slugify(title) do
+    slug =
+      title
+      |> String.downcase()
+      |> transliterate()
+      # Keep only alphanumeric and hyphens
+      |> String.replace(~r/[^a-z0-9-]+/, "-")
+      |> String.trim("-")
+
+    # Fallback for titles with only non-Latin characters (Japanese, Chinese, etc.)
+    if slug == "" do
+      "post-#{:os.system_time(:millisecond)}"
+    else
+      slug
+    end
+  end
+
+  defp ensure_unique_slug(base_slug) do
+    if slug_exists?(base_slug) do
+      find_available_slug(base_slug, 2)
+    else
+      base_slug
+    end
+  end
+
+  defp find_available_slug(base_slug, counter) do
+    candidate = "#{base_slug}-#{counter}"
+
+    if slug_exists?(candidate) do
+      find_available_slug(base_slug, counter + 1)
+    else
+      candidate
+    end
+  end
+
+  defp slug_exists?(slug) do
+    Homesite.Repo.exists?(from p in __MODULE__, where: p.slug == ^slug)
   end
 
   # Transliterate special characters to ASCII for URL-friendly slugs

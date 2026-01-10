@@ -25,7 +25,10 @@ defmodule HomesiteWeb.PostLive.Show do
                 <.icon name="hero-arrow-left" />
               </.button>
               <%= if @can_edit do %>
-                <.button variant="primary" navigate={~p"/posts/#{@post}/edit?return_to=show"}>
+                <.button
+                  variant="primary"
+                  navigate={~p"/posts/#{@post.slug}/edit?return_to=show"}
+                >
                   <.icon name="hero-pencil-square" /> Edit post
                 </.button>
               <% end %>
@@ -132,25 +135,25 @@ defmodule HomesiteWeb.PostLive.Show do
   end
 
   @impl true
-  def mount(%{"id" => id}, _session, socket) do
+  def mount(%{"slug" => slug}, _session, socket) do
     current_scope = socket.assigns.current_scope
 
-    # Fetch post based on authentication status
+    # Fetch post by slug based on authentication status
     post =
       if current_scope do
         # Authenticated: can see public posts + own posts
         if connected?(socket), do: Content.subscribe_posts(current_scope)
-        Content.get_post_by_id!(current_scope, id)
+        Content.get_post_by_slug!(current_scope, slug)
       else
         # Not authenticated: can only see public posts
-        Content.get_public_post!(id)
+        Content.get_public_post_by_slug!(slug)
       end
 
     # Check if current user can edit (only if authenticated and is owner)
     can_edit = current_scope && post.user_id == current_scope.user.id
 
     # Generate JSON-LD for SEO
-    post_url = url(~p"/posts/#{id}")
+    post_url = url(~p"/posts/#{post.slug}")
     json_ld = JsonLD.article(post, post.user, post_url) |> Jason.encode!()
 
     # Render markdown and extract headings for TOC
@@ -165,7 +168,7 @@ defmodule HomesiteWeb.PostLive.Show do
      |> assign(:page_title, post.title)
      |> assign(:post, post)
      |> assign(:can_edit, can_edit)
-     |> assign(:current_url, url(~p"/posts/#{id}"))
+     |> assign(:current_url, url(~p"/posts/#{post.slug}"))
      |> assign(:json_ld, json_ld)
      |> assign(:rendered_html, rendered_html)
      |> assign(:headings, headings)

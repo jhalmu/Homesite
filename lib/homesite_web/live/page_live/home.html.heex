@@ -18,7 +18,10 @@
         <article class="post-card">
           <%!-- Featured Image (only for first post) --%>
           <%= if latest_post.featured_image_url do %>
-            <.link navigate={~p"/posts/#{latest_post.id}"} class="mb-[var(--spacing-md)] block">
+            <.link
+              navigate={~p"/posts/#{latest_post.slug}"}
+              class="mb-[var(--spacing-md)] block"
+            >
               <figure class="rounded-box aspect-video overflow-hidden">
                 <img
                   src={latest_post.featured_image_url}
@@ -42,7 +45,7 @@
             <% end %>
           </div>
 
-          <.link navigate={~p"/posts/#{latest_post.id}"} class="group">
+          <.link navigate={~p"/posts/#{latest_post.slug}"} class="group">
             <h2 class="post-title duration-[var(--duration-normal)] transition-colors group-hover:text-primary">
               {latest_post.title}
             </h2>
@@ -81,7 +84,7 @@
                 </time>
               </div>
 
-              <.link navigate={~p"/posts/#{post.id}"} class="group">
+              <.link navigate={~p"/posts/#{post.slug}"} class="group">
                 <h3 class="post-title text-[var(--font-size-fluid-lg)] duration-[var(--duration-normal)] transition-colors group-hover:text-primary">
                   {post.title}
                 </h3>
@@ -171,7 +174,7 @@
                   <% end %>
                 </div>
 
-                <.link navigate={~p"/posts/#{post.id}"} class="group">
+                <.link navigate={~p"/posts/#{post.slug}"} class="group">
                   <h3 class="post-title duration-[var(--duration-normal)] transition-colors group-hover:text-primary">
                     {post.title}
                   </h3>

@@ -376,7 +376,10 @@
             <%= for post <- Enum.take(@posts, 5) do %>
               <tr>
                 <td>
-                  <.link navigate={~p"/posts/#{post}"} class="link link-hover font-medium">
+                  <.link
+                    navigate={~p"/posts/#{post.slug}"}
+                    class="link link-hover font-medium"
+                  >
                     {post.title}
                   </.link>
                 </td>
@@ -389,10 +392,16 @@
                 </td>
                 <td>
                   <div class="gap-[var(--space-xs)] flex">
-                    <.link navigate={~p"/posts/#{post}"} class="btn btn-ghost btn-xs">
+                    <.link
+                      navigate={~p"/posts/#{post.slug}"}
+                      class="btn btn-ghost btn-xs"
+                    >
                       {gettext("View")}
                     </.link>
-                    <.link navigate={~p"/posts/#{post}/edit"} class="btn btn-ghost btn-xs">
+                    <.link
+                      navigate={~p"/posts/#{post.slug}/edit"}
+                      class="btn btn-ghost btn-xs"
+                    >
                       {gettext("Edit")}
                     </.link>
                   </div>

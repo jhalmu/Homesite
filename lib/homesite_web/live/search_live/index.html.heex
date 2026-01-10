@@ -96,7 +96,10 @@
                       <div class="gap-[var(--space-sm)] flex items-start justify-between">
                         <div class="min-w-0 flex-1">
                           <h3 class="text-[var(--text-base)] font-medium">
-                            <.link navigate={~p"/posts/#{post.id}"} class="link link-hover">
+                            <.link
+                              navigate={~p"/posts/#{post.slug}"}
+                              class="link link-hover"
+                            >
                               {post.title}
                             </.link>
                           </h3>
@@ -125,7 +128,7 @@
                           </div>
                         </div>
                         <.link
-                          navigate={~p"/posts/#{post.id}"}
+                          navigate={~p"/posts/#{post.slug}"}
                           class="btn btn-ghost btn-xs flex-shrink-0"
                         >
                           <.icon name="hero-arrow-right" class="h-4 w-4" />

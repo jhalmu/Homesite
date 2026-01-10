@@ -16,22 +16,20 @@ defmodule HomesiteWeb.Plugs.SEOPlug do
 
   def init(opts), do: opts
 
-  def call(%{path_info: ["posts", id]} = conn, _opts) when is_binary(id) do
-    case Integer.parse(id) do
-      {post_id, ""} -> assign_post_seo_data(conn, post_id)
-      _ -> assign_default_seo(conn)
-    end
+  # Handle post URL format: /posts/:slug
+  def call(%{path_info: ["posts", slug]} = conn, _opts) when is_binary(slug) do
+    assign_post_seo_data(conn, slug)
   end
 
   def call(conn, _opts), do: assign_default_seo(conn)
 
-  defp assign_post_seo_data(conn, post_id) do
-    case fetch_public_post(post_id) do
+  defp assign_post_seo_data(conn, slug) do
+    case fetch_public_post_by_slug(slug) do
       nil ->
         assign_default_seo(conn)
 
       post ->
-        hero_image = get_hero_image(post_id)
+        hero_image = get_hero_image(post.id)
 
         # Build article detail for OpenGraph (type derived from detail.published_time)
         article_detail = %{
@@ -44,7 +42,7 @@ defmodule HomesiteWeb.Plugs.SEOPlug do
         |> assign(:post, post)
         |> assign(:hero_image, hero_image)
         |> assign(:page_title, post.title)
-        |> assign(:current_url, url(~p"/posts/#{post_id}"))
+        |> assign(:current_url, url(~p"/posts/#{post.slug}"))
         # Set SEO item with article detail for OpenGraph type detection
         |> SEO.assign(%{detail: article_detail})
     end
@@ -56,9 +54,9 @@ defmodule HomesiteWeb.Plugs.SEOPlug do
     assign(conn, :current_url, current_url)
   end
 
-  defp fetch_public_post(id) do
+  defp fetch_public_post_by_slug(slug) do
     Content.Post
-    |> where([p], p.id == ^id and not is_nil(p.published_at) and p.is_public == true)
+    |> where([p], p.slug == ^slug and not is_nil(p.published_at) and p.is_public == true)
     |> preload(:user)
     |> Repo.one()
   end

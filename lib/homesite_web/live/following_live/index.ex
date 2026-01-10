@@ -73,7 +73,7 @@ defmodule HomesiteWeb.FollowingLive.Index do
                           </time>
                         </div>
 
-                        <.link navigate={~p"/posts/#{post}"} class="group">
+                        <.link navigate={~p"/posts/#{post.slug}"} class="group">
                           <h2 class="card-title mb-[var(--spacing-sm)] text-[var(--font-size-fluid-lg)] duration-[var(--duration-normal)] transition-colors group-hover:text-primary">
                             {post.title}
                           </h2>

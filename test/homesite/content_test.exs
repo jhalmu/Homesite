@@ -356,7 +356,7 @@ defmodule Homesite.ContentTest do
       assert {:ok, %Post{} = post} = Content.create_post(scope, valid_attrs)
       assert post.title == "some title"
       assert post.body == "some body content"
-      assert post.slug =~ "some-title-"
+      assert post.slug == "some-title"
       assert post.published_at == ~U[2025-11-20 11:44:00Z]
       assert post.user_id == scope.user.id
     end
@@ -369,6 +369,7 @@ defmodule Homesite.ContentTest do
     test "update_post/3 with valid data updates the post" do
       scope = user_scope_fixture()
       post = post_fixture(scope)
+      original_slug = post.slug
 
       update_attrs = %{
         title: "some updated title",
@@ -377,11 +378,12 @@ defmodule Homesite.ContentTest do
         published_at: ~U[2025-11-21 11:44:00Z]
       }
 
-      assert {:ok, %Post{} = post} = Content.update_post(scope, post, update_attrs)
-      assert post.title == "some updated title"
-      assert post.body == "some updated body content"
-      assert post.slug =~ "some-updated-title-"
-      assert post.published_at == ~U[2025-11-21 11:44:00Z]
+      assert {:ok, %Post{} = updated_post} = Content.update_post(scope, post, update_attrs)
+      assert updated_post.title == "some updated title"
+      assert updated_post.body == "some updated body content"
+      # Slug should NOT change on update (to preserve existing links)
+      assert updated_post.slug == original_slug
+      assert updated_post.published_at == ~U[2025-11-21 11:44:00Z]
     end
 
     test "update_post/3 with invalid scope raises" do

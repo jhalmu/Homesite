@@ -1729,7 +1729,10 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
               <%= for post <- @linked_posts do %>
                 <div class="bg-base-200 p-[var(--space-xs)] flex items-center justify-between rounded-lg">
                   <div class="flex-1">
-                    <.link navigate={~p"/posts/#{post.id}"} class="link link-hover font-medium">
+                    <.link
+                      navigate={~p"/posts/#{post.slug}"}
+                      class="link link-hover font-medium"
+                    >
                       {post.title}
                     </.link>
                     <%= if post.published_at do %>

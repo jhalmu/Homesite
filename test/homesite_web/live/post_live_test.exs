@@ -67,9 +67,9 @@ defmodule HomesiteWeb.PostLiveTest do
 
       assert {:ok, form_live, _html} =
                index_live
-               |> element("#posts-#{post.id} a[href='/posts/#{post.id}/edit']")
+               |> element("#posts-#{post.id} a[href='/posts/#{post.slug}/edit']")
                |> render_click()
-               |> follow_redirect(conn, ~p"/posts/#{post}/edit")
+               |> follow_redirect(conn, ~p"/posts/#{post.slug}/edit")
 
       assert render(form_live) =~ "Edit Post"
 
@@ -100,14 +100,14 @@ defmodule HomesiteWeb.PostLiveTest do
     setup [:create_post]
 
     test "displays post", %{conn: conn, post: post} do
-      {:ok, _show_live, html} = live(conn, ~p"/posts/#{post}")
+      {:ok, _show_live, html} = live(conn, ~p"/posts/#{post.slug}")
 
       assert html =~ post.title
       assert html =~ post.body
     end
 
     test "shows edit button for post owner", %{conn: conn, post: post} do
-      {:ok, show_live, _html} = live(conn, ~p"/posts/#{post}")
+      {:ok, show_live, _html} = live(conn, ~p"/posts/#{post.slug}")
 
       assert has_element?(show_live, "a", "Edit post")
     end
@@ -117,19 +117,19 @@ defmodule HomesiteWeb.PostLiveTest do
       other_post = Homesite.ContentFixtures.post_fixture(other_scope, %{is_public: true})
 
       conn = build_conn() |> log_in_user(scope.user)
-      {:ok, show_live, _html} = live(conn, ~p"/posts/#{other_post}")
+      {:ok, show_live, _html} = live(conn, ~p"/posts/#{other_post.slug}")
 
       refute has_element?(show_live, "a", "Edit post")
     end
 
     test "updates post and returns to show", %{conn: conn, post: post} do
-      {:ok, show_live, _html} = live(conn, ~p"/posts/#{post}")
+      {:ok, show_live, _html} = live(conn, ~p"/posts/#{post.slug}")
 
       assert {:ok, form_live, _} =
                show_live
                |> element("a", "Edit")
                |> render_click()
-               |> follow_redirect(conn, ~p"/posts/#{post}/edit?return_to=show")
+               |> follow_redirect(conn, ~p"/posts/#{post.slug}/edit?return_to=show")
 
       assert render(form_live) =~ "Edit Post"
 
@@ -141,7 +141,7 @@ defmodule HomesiteWeb.PostLiveTest do
                form_live
                |> form("#post-form", post: @update_attrs)
                |> render_submit()
-               |> follow_redirect(conn, ~p"/posts/#{post}")
+               |> follow_redirect(conn, ~p"/posts/#{post.slug}")
 
       html = render(show_live)
       assert html =~ "Post updated successfully"
@@ -155,7 +155,7 @@ defmodule HomesiteWeb.PostLiveTest do
       public_post = Homesite.ContentFixtures.post_fixture(scope, %{is_public: true})
 
       conn = build_conn()
-      {:ok, _show_live, html} = live(conn, ~p"/posts/#{public_post}")
+      {:ok, _show_live, html} = live(conn, ~p"/posts/#{public_post.slug}")
 
       assert html =~ public_post.title
       assert html =~ public_post.body
@@ -170,7 +170,7 @@ defmodule HomesiteWeb.PostLiveTest do
       # The LiveView will raise Ecto.NoResultsError during mount
       # Phoenix catches this and renders a 404 error page
       assert_error_sent 404, fn ->
-        live(conn, ~p"/posts/#{private_post}")
+        live(conn, ~p"/posts/#{private_post.slug}")
       end
     end
 
@@ -179,7 +179,7 @@ defmodule HomesiteWeb.PostLiveTest do
       public_post = Homesite.ContentFixtures.post_fixture(scope, %{is_public: true})
 
       conn = build_conn()
-      {:ok, show_live, _html} = live(conn, ~p"/posts/#{public_post}")
+      {:ok, show_live, _html} = live(conn, ~p"/posts/#{public_post.slug}")
 
       refute has_element?(show_live, "a", "Edit post")
     end

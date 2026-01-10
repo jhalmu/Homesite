@@ -21,7 +21,7 @@ defmodule HomesiteWeb.SitemapController do
       Content.list_all_published_posts()
       |> Enum.map(fn post ->
         %{
-          loc: url(~p"/posts/#{post.id}"),
+          loc: url(~p"/posts/#{post.slug}"),
           lastmod: format_date(post.updated_at),
           changefreq: "weekly",
           priority: "0.8"

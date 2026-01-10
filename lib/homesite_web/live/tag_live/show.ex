@@ -65,7 +65,7 @@ defmodule HomesiteWeb.TagLive.Show do
             <%= for post <- @user_posts do %>
               <div class="listing-card">
                 <h3 class="listing-title">
-                  <.link navigate={~p"/posts/#{post}"} class="link link-hover">
+                  <.link navigate={~p"/posts/#{post.slug}"} class="link link-hover">
                     {post.title}
                   </.link>
                 </h3>
@@ -81,10 +81,13 @@ defmodule HomesiteWeb.TagLive.Show do
                     <% end %>
                   </div>
                   <div class="gap-[var(--space-xs)] flex">
-                    <.link navigate={~p"/posts/#{post}"} class="btn btn-sm btn-ghost">
+                    <.link navigate={~p"/posts/#{post.slug}"} class="btn btn-sm btn-ghost">
                       {gettext("View")}
                     </.link>
-                    <.link navigate={~p"/posts/#{post}/edit"} class="btn btn-sm btn-primary">
+                    <.link
+                      navigate={~p"/posts/#{post.slug}/edit"}
+                      class="btn btn-sm btn-primary"
+                    >
                       {gettext("Edit")}
                     </.link>
                   </div>

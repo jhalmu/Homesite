@@ -83,7 +83,7 @@ defmodule HomesiteWeb.SearchLive.IndexTest do
 
       html = render_submit(view, "search", %{"query" => "Elixir"})
 
-      assert html =~ "/posts/#{post1.id}"
+      assert html =~ "/posts/#{post1.slug}"
     end
 
     test "shows post metadata (author, date)", %{conn: conn, post1: post1, scope: scope} do

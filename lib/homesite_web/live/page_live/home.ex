@@ -42,7 +42,7 @@ defmodule HomesiteWeb.PageLive.Home do
     Content.list_all_published_posts(limit: @posts_per_page, offset: offset)
     |> Enum.map(fn post ->
       # Add absolute URL for share buttons
-      Map.put(post, :absolute_url, url(~p"/posts/#{post}"))
+      Map.put(post, :absolute_url, url(~p"/posts/#{post.slug}"))
     end)
   end
 

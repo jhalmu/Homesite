@@ -122,7 +122,7 @@ defmodule HomesiteWeb.E2E.PostWorkflowsTest do
 
       conn
       |> playwright_log_in_user(user)
-      |> visit(~p"/posts/#{post}/edit")
+      |> visit(~p"/posts/#{post.slug}/edit")
       |> assert_has("body .phx-connected")
       |> assert_has("h1", text: "Edit Post")
       |> assert_has("input[value='Original Title']")
@@ -134,7 +134,7 @@ defmodule HomesiteWeb.E2E.PostWorkflowsTest do
 
       conn
       |> playwright_log_in_user(user)
-      |> visit(~p"/posts/#{post}/edit")
+      |> visit(~p"/posts/#{post.slug}/edit")
       |> assert_has("body .phx-connected")
       |> fill_in("Title", with: "Updated Title")
       |> click_button("Save Post")
@@ -157,7 +157,7 @@ defmodule HomesiteWeb.E2E.PostWorkflowsTest do
         })
 
       conn
-      |> visit(~p"/posts/#{post}")
+      |> visit(~p"/posts/#{post.slug}")
       |> assert_has("body .phx-connected")
       |> assert_has("h1", text: "Public Post")
       |> assert_has("article", text: "This is public content")
@@ -178,7 +178,7 @@ defmodule HomesiteWeb.E2E.PostWorkflowsTest do
 
       conn
       |> playwright_log_in_user(user)
-      |> visit(~p"/posts/#{post}")
+      |> visit(~p"/posts/#{post.slug}")
       |> assert_has("body .phx-connected")
       |> assert_has("h1", text: "Tagged Post")
       # Tags are displayed as badge links in the post metadata
@@ -191,7 +191,7 @@ defmodule HomesiteWeb.E2E.PostWorkflowsTest do
 
       conn
       |> playwright_log_in_user(user)
-      |> visit(~p"/posts/#{post}")
+      |> visit(~p"/posts/#{post.slug}")
       |> assert_has("body .phx-connected")
       |> assert_has("a", text: "Edit post")
     end

@@ -394,9 +394,9 @@ defmodule HomesiteWeb.PostLive.Form do
   defp return_to("show"), do: "show"
   defp return_to(_), do: "index"
 
-  defp apply_action(socket, :edit, %{"id" => id}) do
+  defp apply_action(socket, :edit, %{"slug" => slug}) do
     post =
-      Content.get_post!(socket.assigns.current_scope, id)
+      Content.get_post_by_slug!(socket.assigns.current_scope, slug)
       |> Homesite.Repo.preload([:tags, :media_items])
 
     # Find hero image if exists
@@ -746,7 +746,7 @@ defmodule HomesiteWeb.PostLive.Form do
   end
 
   defp return_path(_scope, "index", _post), do: ~p"/posts"
-  defp return_path(_scope, "show", post), do: ~p"/posts/#{post}"
+  defp return_path(_scope, "show", post), do: ~p"/posts/#{post.slug}"
 
   # Helper to format DateTime for date input (YYYY-MM-DD)
   defp format_date(nil), do: Date.utc_today() |> Date.to_string()

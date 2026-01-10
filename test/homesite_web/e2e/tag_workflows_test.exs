@@ -83,7 +83,7 @@ defmodule HomesiteWeb.E2E.TagWorkflowsTest do
   @tag :playwright
   test "public post shows tags", %{conn: conn, post: post} do
     conn
-    |> visit(~p"/posts/#{post}")
+    |> visit(~p"/posts/#{post.slug}")
     |> assert_has("body .phx-connected")
     |> assert_has("h1", text: "Getting Started with Elixir")
     # Should show the tag badge

@@ -675,6 +675,67 @@ defmodule Homesite.Content do
   end
 
   @doc """
+  Gets a single post by slug for authenticated user (can see own posts + public).
+
+  Returns posts where the slug matches and either:
+  - The post is public (is_public = true), OR
+  - The post belongs to the current user
+
+  Raises `Ecto.NoResultsError` if the Post does not exist or is not accessible.
+
+  ## Examples
+
+      iex> get_post_by_slug!(scope, "my-post-slug")
+      %Post{}
+
+      iex> get_post_by_slug!(scope, "non-existent")
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_post_by_slug!(%Scope{} = scope, slug) when is_binary(slug) do
+    user_id = scope.user.id
+
+    Post
+    |> where([p], p.slug == ^slug)
+    |> where([p], p.is_public == true or p.user_id == ^user_id)
+    |> Repo.one!()
+    |> Repo.preload([:user, :tags, :media_items])
+  end
+
+  @doc """
+  Gets a single public post by slug without requiring authentication.
+
+  Returns only posts with is_public = true and published_at set.
+  Raises `Ecto.NoResultsError` if the Post does not exist or is not public.
+
+  ## Examples
+
+      iex> get_public_post_by_slug!("my-post-slug")
+      %Post{}
+
+      iex> get_public_post_by_slug!("private-post")
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_public_post_by_slug!(slug) when is_binary(slug) do
+    Post
+    |> where([p], p.slug == ^slug and p.is_public == true and not is_nil(p.published_at))
+    |> Repo.one!()
+    |> Repo.preload([:user, :tags, :media_items])
+  end
+
+  @doc """
+  Gets a post with just id and slug for URL redirects.
+  Returns nil if not found.
+  """
+  def get_post_for_redirect(id) do
+    Post
+    |> where([p], p.id == ^id)
+    |> select([p], %{id: p.id, slug: p.slug})
+    |> Repo.one()
+  end
+
+  @doc """
   Creates a post.
 
   ## Examples

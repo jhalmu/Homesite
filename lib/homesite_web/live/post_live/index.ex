@@ -30,7 +30,7 @@ defmodule HomesiteWeb.PostLive.Index do
               <div class="card-body">
                 <div class="gap-[var(--spacing-md)] flex items-start justify-between">
                   <div class="min-w-0 flex-1">
-                    <.link navigate={~p"/posts/#{post}"} class="group">
+                    <.link navigate={~p"/posts/#{post.slug}"} class="group">
                       <h2 class="card-title mb-[var(--spacing-sm)] text-[var(--font-size-fluid-xl)] duration-[var(--duration-normal)] transition-colors group-hover:text-primary">
                         {post.title}
                       </h2>
@@ -136,14 +136,14 @@ defmodule HomesiteWeb.PostLive.Index do
                   <%= if @current_scope && post.user_id == @current_scope.user.id do %>
                     <div class="gap-[var(--spacing-inline)] flex flex-shrink-0">
                       <.link
-                        navigate={~p"/posts/#{post}"}
+                        navigate={~p"/posts/#{post.slug}"}
                         class="btn btn-sm btn-ghost"
                         aria-label={gettext("View post")}
                       >
                         <.icon name="hero-eye" class="h-4 w-4" />
                       </.link>
                       <.link
-                        navigate={~p"/posts/#{post}/edit"}
+                        navigate={~p"/posts/#{post.slug}/edit"}
                         class="btn btn-sm btn-ghost"
                         aria-label={gettext("Edit post")}
                       >
@@ -204,7 +204,7 @@ defmodule HomesiteWeb.PostLive.Index do
   @impl true
   def handle_event("share_bluesky", %{"id" => id}, socket) do
     post = Content.get_public_post!(id)
-    post_url = url(~p"/posts/#{post.id}")
+    post_url = url(~p"/posts/#{post.slug}")
     text = "#{post.title} #{post_url}"
     bluesky_url = "https://bsky.app/intent/compose?text=#{URI.encode_www_form(text)}"
 
@@ -214,7 +214,7 @@ defmodule HomesiteWeb.PostLive.Index do
   @impl true
   def handle_event("share_mastodon", %{"id" => id}, socket) do
     post = Content.get_public_post!(id)
-    post_url = url(~p"/posts/#{post.id}")
+    post_url = url(~p"/posts/#{post.slug}")
     text = "#{post.title} #{post_url}"
     mastodon_url = "https://mastodonshare.com/?text=#{URI.encode_www_form(text)}"
 
@@ -224,7 +224,7 @@ defmodule HomesiteWeb.PostLive.Index do
   @impl true
   def handle_event("share_linkedin", %{"id" => id}, socket) do
     post = Content.get_public_post!(id)
-    post_url = url(~p"/posts/#{post.id}")
+    post_url = url(~p"/posts/#{post.slug}")
     linkedin_url = "https://www.linkedin.com/sharing/share-offsite/?url=#{URI.encode(post_url)}"
 
     {:noreply, push_event(socket, "open_window", %{url: linkedin_url})}
@@ -233,7 +233,7 @@ defmodule HomesiteWeb.PostLive.Index do
   @impl true
   def handle_event("share_email", %{"id" => id}, socket) do
     post = Content.get_public_post!(id)
-    post_url = url(~p"/posts/#{post.id}")
+    post_url = url(~p"/posts/#{post.slug}")
     subject = post.title
     body = "#{post.title}: #{post_url}"
     mailto = "mailto:?subject=#{URI.encode(subject)}&body=#{URI.encode(body)}"

@@ -139,7 +139,7 @@ defmodule HomesiteWeb.UserLive.Profile do
           <div class="gap-[var(--space-sm)] grid grid-cols-1 md:grid-cols-3">
             <.link
               :for={post <- @recent_posts}
-              navigate={~p"/posts/#{post}"}
+              navigate={~p"/posts/#{post.slug}"}
               class="card card-compact bg-base-200 group transition-colors hover:bg-base-300"
             >
               <div class="card-body p-[var(--space-sm)]">
@@ -277,7 +277,7 @@ defmodule HomesiteWeb.UserLive.Profile do
               class="gap-[var(--space-sm)] py-[var(--space-sm)] flex items-end"
             >
               <div class="min-w-0 flex-1">
-                <.link navigate={~p"/posts/#{post}"} class="group">
+                <.link navigate={~p"/posts/#{post.slug}"} class="group">
                   <h3 class="text-base font-semibold transition-colors group-hover:text-primary">
                     {post.title}
                   </h3>
@@ -295,7 +295,7 @@ defmodule HomesiteWeb.UserLive.Profile do
               </div>
 
               <div class="shrink-0">
-                <.link navigate={~p"/posts/#{post}"} class="btn btn-primary btn-sm">
+                <.link navigate={~p"/posts/#{post.slug}"} class="btn btn-primary btn-sm">
                   {gettext("Read more")}
                 </.link>
               </div>

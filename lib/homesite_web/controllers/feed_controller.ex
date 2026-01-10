@@ -283,12 +283,12 @@ defmodule HomesiteWeb.FeedController do
         content = if full_content, do: post.body, else: truncate_html(post.body, 500)
 
         Atomex.Entry.new(
-          url(~p"/posts/#{post.id}"),
+          url(~p"/posts/#{post.slug}"),
           post.published_at || post.inserted_at,
           post.title
         )
         |> Atomex.Entry.author(post.user.display_name || post.user.email)
-        |> Atomex.Entry.link(url(~p"/posts/#{post.id}"))
+        |> Atomex.Entry.link(url(~p"/posts/#{post.slug}"))
         |> Atomex.Entry.published(post.published_at || post.inserted_at)
         |> Atomex.Entry.summary(truncate_html(post.body, 200))
         |> Atomex.Entry.content(content, type: "html")
@@ -321,7 +321,7 @@ defmodule HomesiteWeb.FeedController do
     items =
       Enum.map_join(posts, "\n", fn post ->
         pub_date = format_rfc822_date(post.published_at || post.inserted_at)
-        post_url = url(~p"/posts/#{post.id}")
+        post_url = url(~p"/posts/#{post.slug}")
         content = if full_content, do: post.body, else: truncate_html(post.body, 500)
 
         image_enclosure =
@@ -371,8 +371,8 @@ defmodule HomesiteWeb.FeedController do
         user_path = if post.user.username, do: "@#{post.user.username}", else: post.user.id
 
         base_item = %{
-          id: url(~p"/posts/#{post.id}"),
-          url: url(~p"/posts/#{post.id}"),
+          id: url(~p"/posts/#{post.slug}"),
+          url: url(~p"/posts/#{post.slug}"),
           title: post.title,
           content_html: content,
           summary: truncate_html(post.body, 200),

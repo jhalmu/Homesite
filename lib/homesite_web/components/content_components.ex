@@ -59,7 +59,7 @@ defmodule HomesiteWeb.ContentComponents do
       <div class="card-body">
         <div class="gap-[var(--spacing-md)] flex items-start justify-between">
           <div class="min-w-0 flex-1">
-            <.link navigate={~p"/posts/#{@post}"} class="group">
+            <.link navigate={~p"/posts/#{@post.slug}"} class="group">
               <h2 class="card-title mb-[var(--spacing-sm)] text-[var(--font-size-fluid-xl)] duration-[var(--duration-normal)] transition-colors group-hover:text-primary">
                 {@post.title}
               </h2>
@@ -94,7 +94,7 @@ defmodule HomesiteWeb.ContentComponents do
                 <%= if @post.is_public do %>
                   <div class="opacity-70">
                     <.link
-                      navigate={~p"/posts/#{@post.id}"}
+                      navigate={~p"/posts/#{@post.slug}"}
                       class="gap-[var(--spacing-inline)] duration-[var(--duration-fast)] inline-flex items-center transition-colors hover:underline"
                     >
                       <.icon name="hero-share" class="h-4 w-4" /> {gettext("Share this post")}
@@ -143,7 +143,7 @@ defmodule HomesiteWeb.ContentComponents do
           <%= if @show_actions && @current_scope && @post.user_id == @current_scope.user.id do %>
             <div class="gap-[var(--spacing-inline)] flex flex-shrink-0">
               <.link
-                navigate={~p"/posts/#{@post}"}
+                navigate={~p"/posts/#{@post.slug}"}
                 class="btn btn-sm btn-ghost"
                 aria-label={gettext("View post")}
               >
