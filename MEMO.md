@@ -82,6 +82,18 @@ Implemented slug-based URLs for posts and added featured image support to profil
 - Clickable images link to full post
 - Changed flex alignment from `items-end` to `items-start`
 
+**CI/CD Compilation Warning Fix** (commit `da9d431`)
+- Removed unreachable route `get "/posts/:id"` that caused compilation warning
+- Route was unreachable because `live "/posts/:slug"` matched first
+- Very old `/posts/123` URLs now 404 (acceptable, format deprecated long ago)
+- Recent `/posts/123/my-slug` URLs still redirect correctly
+
+**Media Library Upload Preview Fix** (commit `5062e47`)
+- Fixed image previews not showing after file selection
+- Moved `<.live_file_input>` outside of `<label>` element
+- LiveView can now properly detect file selection and update uploads
+- Previews now appear immediately before form submission
+
 #### Housekeeping
 
 **Archived BUGFIXES_PLAN.md**
@@ -116,9 +128,24 @@ Implemented slug-based URLs for posts and added featured image support to profil
 **Profile Images:**
 - `lib/homesite_web/live/user_live/profile.ex` - Added featured image display
 
+**CI/CD Fixes:**
+- `lib/homesite_web/router.ex` - Removed unreachable route
+- `lib/homesite_web/controllers/post_redirect_controller.ex` - Removed unused function
+
+**Media Library:**
+- `lib/homesite_web/live/media_live/index.ex` - Fixed file input structure
+
+#### Commits This Session
+1. `ecf1134` - feat: Use slugs instead of IDs in post URLs (#88)
+2. `20d4756` - feat: Show featured images on user profile posts (#84)
+3. `9d6361a` - docs: Update MEMO.md with session summary
+4. `da9d431` - fix: Remove unreachable route to fix CI/CD warning
+5. `5062e47` - fix: Fix media library upload preview not showing
+
 #### Test Results
 - **1693 tests, 0 failures**
 - Credo: 53 refactoring opportunities (pre-existing)
+- CI/CD: All pipelines passing ✓
 
 #### Technical Notes
 
