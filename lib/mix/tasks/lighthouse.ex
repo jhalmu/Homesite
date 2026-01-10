@@ -149,9 +149,7 @@ defmodule Mix.Tasks.Lighthouse do
 
         # Check threshold
         if scores.performance < threshold do
-          Mix.raise(
-            "Performance score #{scores.performance} is below threshold #{threshold}"
-          )
+          Mix.raise("Performance score #{scores.performance} is below threshold #{threshold}")
         end
 
         Mix.shell().info("✅ All scores meet requirements (performance >= #{threshold})")

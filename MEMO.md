@@ -56,6 +56,62 @@ PHX_CHECK_ORIGIN_HOSTS=juhahalmu.fi
 
 ---
 
+## 2026-01-10 - Bug Fixes, Lighthouse Testing, SEO Improvements
+
+### Session Summary
+
+Fixed bugs, added Lighthouse CI testing, improved SEO with tags in structured data.
+
+#### Issues Completed
+
+**#85 - User page URL popup copy button doesn't work** (commit `4a85e74`)
+- Copy button was missing `phx-hook="CopyToClipboard"` attribute
+- Added hook and id to receive clipboard events from server
+
+#### Features Implemented
+
+**Media Library Upload Preview Fix** (commit `329e640`)
+- Disabled `auto_upload` to allow `live_img_preview` to work properly
+- Added `entry.valid?` check before rendering preview with error fallback
+- Removed GIF from accepted types (ImageProcessor doesn't support it)
+- Fixed error messages (max file size 5MB → 20MB)
+
+**Lighthouse CI Testing** (commit `c21bf82`)
+- New `mix lighthouse` task runs Google Lighthouse audits
+- Uses Playwright's bundled Chromium browser
+- Supports `--start-server` flag to auto-start Phoenix server
+- Supports `--threshold` flag to set minimum performance score
+- New `test.full` alias: runs `test.all` + lighthouse
+
+**SEO: Tags in JSON-LD** (commit `4e00836`)
+- Post tags now included as `"keywords"` in BlogPosting structured data
+- Improves SEO by providing search engines with structured tag data
+
+#### GitHub Issues
+
+**Created:**
+- **#88** - Use slugs instead of IDs in post URLs (enhancement, planned)
+
+**Closed:**
+- **#85** - Copy button fix
+- **#87** - Already implemented (first post featured image)
+
+**Remaining:**
+- **#83** - Consider: Show image preview in posts list (maybe skip)
+- **#84** - Show post images on user profile page
+- **#88** - Use slugs instead of IDs in post URLs (new)
+
+#### Lighthouse Audit Results (Dev Mode)
+- Performance: 55-68 (expected in dev, unminified assets)
+- Accessibility: 100 ✅
+- Best Practices: 100 ✅
+- SEO: 100 ✅
+
+#### Test Results
+- **1697 tests, 0 failures**
+
+---
+
 ## 2026-01-02 (evening) - Issues #81, #82, #86, #87 Implemented
 
 ### Session Summary
