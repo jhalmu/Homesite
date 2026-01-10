@@ -585,9 +585,9 @@ defmodule HomesiteWeb.MediaLive.Index do
             >
               <.icon name="hero-cloud-arrow-up" class="text-base-content/40 mx-auto h-12 w-12" />
               <div class="mt-[var(--space-sm)]">
+                <.live_file_input upload={@uploads.images} class="hidden" />
                 <label for={@uploads.images.ref} class="btn btn-primary btn-sm cursor-pointer">
                   {gettext("Choose Files")}
-                  <.live_file_input upload={@uploads.images} class="hidden" />
                 </label>
                 <p class="mt-[var(--space-xs)] text-[var(--text-sm)] text-base-content/60">
                   {gettext("or drag and drop images here")}
