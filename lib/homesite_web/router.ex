@@ -298,9 +298,8 @@ defmodule HomesiteWeb.Router do
       live "/posts/:slug", PostLive.Show, :show
     end
 
-    # Redirect old /posts/:id/:slug and /posts/:id URLs to new /posts/:slug format
+    # Redirect old /posts/:id/:slug URLs to new /posts/:slug format
     get "/posts/:id/:slug", PostRedirectController, :show_with_slug
-    get "/posts/:id", PostRedirectController, :show_id_only
 
     delete "/users/log-out", UserSessionController, :delete
   end
