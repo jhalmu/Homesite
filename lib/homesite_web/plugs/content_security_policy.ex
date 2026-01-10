@@ -37,8 +37,8 @@ defmodule HomesiteWeb.Plugs.ContentSecurityPolicy do
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       # Default: Only allow from same origin
       "default-src 'self'",
-      # Images: Allow self and data URIs (for inline images)
-      "img-src 'self' data: https:",
+      # Images: Allow self, data URIs, blob URLs (for upload previews), and https
+      "img-src 'self' data: blob: https:",
       # Fonts: Allow self and Google Fonts
       "font-src 'self' data: https://fonts.gstatic.com",
       # Connect: Allow self and websockets (required for LiveView)
