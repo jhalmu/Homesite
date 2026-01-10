@@ -274,8 +274,20 @@ defmodule HomesiteWeb.UserLive.Profile do
           <div class="divide-base-300 divide-y">
             <article
               :for={post <- @posts}
-              class="gap-[var(--space-sm)] py-[var(--space-sm)] flex items-end"
+              class="gap-[var(--space-sm)] py-[var(--space-sm)] flex items-start"
             >
+              <%!-- Featured Image Thumbnail --%>
+              <%= if post.featured_image_url do %>
+                <div class="shrink-0">
+                  <.link navigate={~p"/posts/#{post.slug}"} class="block">
+                    <img
+                      src={post.featured_image_url}
+                      alt={post.featured_image_alt || post.title}
+                      class="h-24 w-24 rounded-lg object-cover"
+                    />
+                  </.link>
+                </div>
+              <% end %>
               <div class="min-w-0 flex-1">
                 <.link navigate={~p"/posts/#{post.slug}"} class="group">
                   <h3 class="text-base font-semibold transition-colors group-hover:text-primary">
