@@ -56,6 +56,80 @@ PHX_CHECK_ORIGIN_HOSTS=juhahalmu.fi
 
 ---
 
+## 2026-01-10 (evening) - Slug-Based Post URLs, Featured Images, Bugfixes Plan Archive
+
+### Session Summary
+
+Implemented slug-based URLs for posts and added featured image support to profile pages. Archived completed bugfixes plan.
+
+#### Issues Completed
+
+**#88 - Use Slugs Instead of IDs in Post URLs** (commit `ecf1134`)
+- Changed post URLs from `/posts/:id/:slug` to `/posts/:slug`
+- Benefits: Cleaner URLs, better SEO, consistent with tag pattern
+- Added `get_post_by_slug!` and `get_public_post_by_slug!` to Content context
+- Updated 80+ URL references across 25 files
+- Created PostRedirectController with 301 redirects for old URLs:
+  - `/posts/:id/:slug` → `/posts/:slug` (old format)
+  - `/posts/:id` → `/posts/:slug` (legacy format)
+- Updated router, LiveViews (Show, Form), SEO plug, feeds, sitemap
+- Updated all templates and tests
+- Router warning for overlapping patterns is harmless (redirects work correctly)
+
+**#84 - Show Post Images on User Profile Page** (commit `20d4756`)
+- Added featured image thumbnails (24x24) to profile post listings
+- Images only show when `featured_image_url` is present
+- Clickable images link to full post
+- Changed flex alignment from `items-end` to `items-start`
+
+#### Housekeeping
+
+**Archived BUGFIXES_PLAN.md**
+- Moved to `archived_docs/BUGFIXES_PLAN_2025-12-31.md`
+- All issues from that plan (#73-#80) have been completed
+
+#### GitHub Issues
+
+**Closed:**
+- **#88** - Slug-based post URLs (implemented)
+- **#84** - Profile post images (implemented)
+
+**Remaining:**
+- **#83** - Consider: Show image preview in posts list (marked "maybe skip")
+
+#### Files Modified
+
+**Core Changes:**
+- `lib/homesite/content.ex` - Added slug-based lookup functions
+- `lib/homesite_web/router.ex` - Updated routes to use :slug only
+- `lib/homesite_web/controllers/post_redirect_controller.ex` - New redirect controller
+- `lib/homesite_web/live/post_live/show.ex` - Fetch by slug
+- `lib/homesite_web/live/post_live/form.ex` - Updated apply_action, return_path
+- `lib/homesite_web/plugs/seo_plug.ex` - Match and fetch by slug
+
+**URL Updates (80+ locations):**
+- Components: content_components.ex
+- Controllers: feed_controller.ex, sitemap_controller.ex
+- LiveViews: dashboard, page/home, search, post, following, user/profile, tag, project
+- Tests: All test files updated to use slug-based URLs
+
+**Profile Images:**
+- `lib/homesite_web/live/user_live/profile.ex` - Added featured image display
+
+#### Test Results
+- **1693 tests, 0 failures**
+- Credo: 53 refactoring opportunities (pre-existing)
+
+#### Technical Notes
+
+- Post slugs already unique in database with constraint
+- Router pattern `/posts/:slug` matches both numeric IDs and slugs at compile time
+- Redirect routes handle old URLs correctly via Integer.parse check
+- LiveView routes take precedence, but slug lookup fails for numeric IDs (404)
+- This is correct behavior - old numeric URLs get redirected
+
+---
+
 ## 2026-01-10 - Bug Fixes, Lighthouse Testing, SEO Improvements
 
 ### Session Summary
