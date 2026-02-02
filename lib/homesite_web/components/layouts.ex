@@ -341,10 +341,9 @@ defmodule HomesiteWeb.Layouts do
               <li class="nav-item">
                 <.link navigate={~p"/faqs"} class="nav-link">{gettext("FAQs")}</.link>
               </li>
-              <%!-- Registration disabled for testing phase --%>
-              <%!-- <li>
-              <.link navigate={~p"/users/register"} class="nav-link">{gettext("Register")}</.link>
-            </li> --%>
+              <li class="nav-item">
+                <.link navigate={~p"/users/register"} class="nav-link">{gettext("Register")}</.link>
+              </li>
               <li class="nav-item">
                 <.link navigate={~p"/users/log-in"} class="nav-link">
                   {gettext("Log in")}
@@ -475,6 +474,11 @@ defmodule HomesiteWeb.Layouts do
             <li>
               <.link navigate={~p"/faqs"} class="text-base">
                 <.icon name="hero-question-mark-circle" class="h-5 w-5" /> {gettext("FAQs")}
+              </.link>
+            </li>
+            <li>
+              <.link navigate={~p"/users/register"} class="text-base">
+                <.icon name="hero-user-plus" class="h-5 w-5" /> {gettext("Register")}
               </.link>
             </li>
             <li>

@@ -110,7 +110,11 @@ defmodule Homesite.Content do
            |> Tag.changeset(attrs, scope)
            |> Repo.insert() do
       broadcast_tag(scope, {:created, tag})
-      log_activity_async("create", "tag", scope.user.id, tag.id, opts)
+
+      metadata = %{name: tag.name, slug: tag.slug}
+      opts_with_metadata = Keyword.put(opts, :metadata, metadata)
+      log_activity_async("create", "tag", scope.user.id, tag.id, opts_with_metadata)
+
       {:ok, tag}
     end
   end
@@ -754,8 +758,10 @@ defmodule Homesite.Content do
            |> Repo.insert() do
       broadcast_post(scope, {:created, post})
 
-      # Log activity asynchronously
-      log_activity_async("create", "post", scope.user.id, post.id, opts)
+      # Log activity asynchronously with metadata
+      metadata = %{title: post.title, slug: post.slug}
+      opts_with_metadata = Keyword.put(opts, :metadata, metadata)
+      log_activity_async("create", "post", scope.user.id, post.id, opts_with_metadata)
 
       # Invalidate feed caches if post is published
       if post.published_at do
@@ -788,6 +794,10 @@ defmodule Homesite.Content do
            |> Repo.update() do
       broadcast_post(scope, {:updated, updated_post})
 
+      # Prepare metadata
+      metadata = %{title: updated_post.title, slug: updated_post.slug}
+      opts_with_metadata = Keyword.put(opts, :metadata, metadata)
+
       # Track activity if post is being published for the first time
       if not was_published and updated_post.published_at do
         Activities.create_activity(
@@ -798,10 +808,10 @@ defmodule Homesite.Content do
         )
 
         # Log publish activity
-        log_activity_async("publish", "post", scope.user.id, updated_post.id, opts)
+        log_activity_async("publish", "post", scope.user.id, updated_post.id, opts_with_metadata)
       else
         # Log update activity
-        log_activity_async("update", "post", scope.user.id, updated_post.id, opts)
+        log_activity_async("update", "post", scope.user.id, updated_post.id, opts_with_metadata)
       end
 
       # Invalidate feed caches if post was or is published
@@ -831,12 +841,16 @@ defmodule Homesite.Content do
     # Load tags before deletion for cache invalidation
     post_with_tags = Repo.preload(post, :tags)
 
+    # Capture metadata before deletion
+    metadata = %{title: post.title, slug: post.slug}
+
     with {:ok, deleted_post = %Post{}} <-
            Repo.delete(post) do
       broadcast_post(scope, {:deleted, deleted_post})
 
-      # Log activity asynchronously
-      log_activity_async("delete", "post", scope.user.id, deleted_post.id, opts)
+      # Log activity asynchronously with metadata
+      opts_with_metadata = Keyword.put(opts, :metadata, metadata)
+      log_activity_async("delete", "post", scope.user.id, deleted_post.id, opts_with_metadata)
 
       # Invalidate feed caches if post was published
       if deleted_post.published_at do
@@ -1302,7 +1316,8 @@ defmodule Homesite.Content do
         user_id: user_id,
         resource_id: resource_id,
         ip_address: Keyword.get(opts, :ip_address),
-        user_agent: Keyword.get(opts, :user_agent)
+        user_agent: Keyword.get(opts, :user_agent),
+        metadata: Keyword.get(opts, :metadata, %{})
       )
     end)
   end

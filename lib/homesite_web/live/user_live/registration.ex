@@ -11,6 +11,17 @@ defmodule HomesiteWeb.UserLive.Registration do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="min-h-[calc(100vh-200px)] px-[var(--spacing-card)] py-[var(--spacing-xl)] flex items-center justify-center">
         <div class="max-w-[var(--card-max-width)] w-full">
+          <%= if @is_preview do %>
+            <div class="alert alert-info mb-[var(--spacing-md)]">
+              <.icon name="hero-information-circle" class="h-5 w-5" />
+              <span>
+                {gettext("Admin Preview Mode")} - {gettext(
+                  "You are viewing this page as an admin. The registration form is disabled while you're logged in."
+                )}
+              </span>
+            </div>
+          <% end %>
+
           <%= if @registration_mode == :closed do %>
             <div class="text-center">
               <.header>
@@ -34,7 +45,12 @@ defmodule HomesiteWeb.UserLive.Registration do
               </.header>
             </div>
 
-            <.form for={@form} id="registration_form" phx-submit="save" phx-change="validate">
+            <.form
+              for={@form}
+              id="registration_form"
+              phx-submit={if @is_preview, do: nil, else: "save"}
+              phx-change={if @is_preview, do: nil, else: "validate"}
+            >
               <%= if @registration_mode == :invite_only do %>
                 <.input
                   field={@form[:invitation_code]}
@@ -105,8 +121,13 @@ defmodule HomesiteWeb.UserLive.Registration do
               <.button
                 phx-disable-with={gettext("Creating account...")}
                 class="btn btn-primary w-full"
+                disabled={@is_preview}
               >
-                {gettext("Create an account")}
+                <%= if @is_preview do %>
+                  {gettext("Preview Mode - Cannot Register")}
+                <% else %>
+                  {gettext("Create an account")}
+                <% end %>
               </.button>
             </.form>
           <% end %>
@@ -117,29 +138,30 @@ defmodule HomesiteWeb.UserLive.Registration do
   end
 
   @impl true
-  def mount(_params, _session, %{assigns: %{current_scope: %{user: user}}} = socket)
-      when not is_nil(user) do
-    {:ok, redirect(socket, to: HomesiteWeb.UserAuth.signed_in_path(socket))}
-  end
+  def mount(params, _session, %{assigns: %{current_scope: current_scope}} = socket) do
+    # Allow admins to view the registration page, but redirect regular users
+    if current_scope && current_scope.user && !Homesite.Accounts.Scope.admin?(current_scope) do
+      {:ok, redirect(socket, to: HomesiteWeb.UserAuth.signed_in_path(socket))}
+    else
+      # Get invitation code from URL params (e.g., /users/register?invite=ABC123XY)
+      invitation_code = Map.get(params, "invite", "")
 
-  def mount(params, _session, socket) do
-    # Get invitation code from URL params (e.g., /users/register?invite=ABC123XY)
-    invitation_code = Map.get(params, "invite", "")
+      # Check registration mode and CAPTCHA settings
+      registration_mode = Settings.registration_mode()
+      turnstile_enabled = Settings.turnstile_enabled?()
 
-    # Check registration mode and CAPTCHA settings
-    registration_mode = Settings.registration_mode()
-    turnstile_enabled = Settings.turnstile_enabled?()
+      changeset = Accounts.change_user_email(%User{}, %{}, validate_unique: false)
 
-    changeset = Accounts.change_user_email(%User{}, %{}, validate_unique: false)
+      socket =
+        socket
+        |> assign(:invitation_code, invitation_code)
+        |> assign(:registration_mode, registration_mode)
+        |> assign(:turnstile_enabled, turnstile_enabled)
+        |> assign(:is_preview, current_scope && current_scope.user != nil)
+        |> assign_form(changeset)
 
-    socket =
-      socket
-      |> assign(:invitation_code, invitation_code)
-      |> assign(:registration_mode, registration_mode)
-      |> assign(:turnstile_enabled, turnstile_enabled)
-      |> assign_form(changeset)
-
-    {:ok, socket, temporary_assigns: [form: nil]}
+      {:ok, socket, temporary_assigns: [form: nil]}
+    end
   end
 
   @impl true

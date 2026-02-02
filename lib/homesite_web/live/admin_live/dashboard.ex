@@ -5,6 +5,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
   alias Homesite.Analytics
   alias Homesite.Content
   alias Homesite.Media
+  alias Homesite.Repo
   import HomesiteWeb.Helpers.DateHelpers
 
   @impl true
@@ -13,10 +14,10 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <.header>
         {gettext("Admin Dashboard")}
-        <:subtitle>{gettext("System overview and analytics")}</:subtitle>
+        <:subtitle>{gettext("Platform overview and analytics")}</:subtitle>
       </.header>
 
-      <%!-- System Overview - Key metrics at a glance --%>
+      <%!-- Key Metrics --%>
       <div class="mt-[var(--space-lg)] gap-[var(--space-md)] grid grid-cols-2 lg:grid-cols-4">
         <.dashboard_card variant="stat">
           <div class="stat-figure text-primary">
@@ -53,17 +54,17 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
 
         <.dashboard_card variant="stat">
           <div class="stat-figure text-info">
-            <.icon name="hero-folder" class="h-8 w-8" />
+            <.icon name="hero-chart-bar" class="h-8 w-8" />
           </div>
-          <div class="stat-title">{gettext("Projects")}</div>
-          <div class="stat-value text-info">{@media_stats.total_projects}</div>
+          <div class="stat-title">{gettext("Activity Today")}</div>
+          <div class="stat-value text-info">{@activity_stats.today_count}</div>
           <div class="stat-desc">
-            {@media_stats.portfolio_count} {gettext("portfolios")}
+            {@activity_stats.week_count} {gettext("this week")}
           </div>
         </.dashboard_card>
       </div>
 
-      <%!-- Quick Admin Actions --%>
+      <%!-- Quick Actions --%>
       <div class="mt-[var(--space-lg)]">
         <.dashboard_card variant="content">
           <h3 class="card-title mb-[var(--space-sm)]">{gettext("Quick Actions")}</h3>
@@ -74,8 +75,8 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
             <.link navigate={~p"/admin/invitations"} class="btn btn-outline btn-sm">
               <.icon name="hero-envelope" class="h-4 w-4" /> {gettext("Invitations")}
             </.link>
-            <.link navigate={~p"/admin/analytics"} class="btn btn-outline btn-sm">
-              <.icon name="hero-chart-bar" class="h-4 w-4" /> {gettext("Analytics")}
+            <.link navigate={~p"/admin/moderation"} class="btn btn-outline btn-sm">
+              <.icon name="hero-shield-exclamation" class="h-4 w-4" /> {gettext("Moderation")}
             </.link>
             <.link navigate={~p"/admin/feedback"} class="btn btn-outline btn-sm">
               <.icon name="hero-chat-bubble-left-right" class="h-4 w-4" /> {gettext("Feedback")}
@@ -83,265 +84,154 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
             <.link navigate={~p"/admin/system"} class="btn btn-outline btn-sm">
               <.icon name="hero-cog-6-tooth" class="h-4 w-4" /> {gettext("System Info")}
             </.link>
-            <.link navigate={~p"/faqs"} class="btn btn-outline btn-sm">
-              <.icon name="hero-book-open" class="h-4 w-4" /> {gettext("Dev FAQs")}
+            <.link navigate={~p"/admin/settings"} class="btn btn-outline btn-sm">
+              <.icon name="hero-adjustments-horizontal" class="h-4 w-4" /> {gettext("Settings")}
+            </.link>
+            <.link navigate={~p"/users/register"} class="btn btn-outline btn-sm">
+              <.icon name="hero-user-plus" class="h-4 w-4" /> {gettext("Registration")}
             </.link>
           </div>
         </.dashboard_card>
       </div>
 
-      <%!-- Quick Insights Charts --%>
-      <div class="mt-[var(--space-lg)]">
-        <h3 class="card-title mb-[var(--space-md)]">{gettext("Quick Insights")}</h3>
-        <div class="gap-[var(--space-md)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          <%!-- Activity Sparkline --%>
-          <%= if length(@activity_trend) > 0 do %>
-            <.dashboard_card variant="content">
-              <h4 class="text-base-content/80 mb-[var(--space-xs)] font-semibold">
-                <.icon name="hero-arrow-trending-up" class="mr-1 inline h-4 w-4" />
-                {gettext("Activity (7 days)")}
-              </h4>
-              <div class="h-20">
-                <div
-                  id="admin-activity-sparkline"
-                  phx-hook="ApexChart"
-                  phx-update="ignore"
-                  data-chart={activity_sparkline_data(@activity_trend)}
-                >
+      <%!-- Growth Trends --%>
+      <%= if length(@user_stats.user_growth) > 0 or length(@content_stats.post_growth) > 0 do %>
+        <div class="mt-[var(--space-lg)]">
+          <h3 class="card-title mb-[var(--space-md)]">{gettext("Growth Trends (30 days)")}</h3>
+          <div class="gap-[var(--space-md)] grid grid-cols-1 lg:grid-cols-2">
+            <%!-- User Registrations --%>
+            <%= if length(@user_stats.user_growth) > 0 do %>
+              <.dashboard_card variant="content">
+                <h4 class="text-base-content/80 mb-[var(--space-sm)] gap-[var(--space-xs)] flex items-center font-semibold">
+                  <.icon name="hero-user-plus" class="h-5 w-5 text-green-600" />
+                  {gettext("User Registrations")}
+                </h4>
+                <div class="h-48">
+                  <div
+                    id="user-growth-chart"
+                    phx-hook="ApexChart"
+                    phx-update="ignore"
+                    data-chart={user_growth_chart_data(@user_stats.user_growth)}
+                  >
+                  </div>
                 </div>
-              </div>
-            </.dashboard_card>
-          <% end %>
+              </.dashboard_card>
+            <% end %>
+            <%!-- Post Publishing --%>
+            <%= if length(@content_stats.post_growth) > 0 do %>
+              <.dashboard_card variant="content">
+                <h4 class="text-base-content/80 mb-[var(--space-sm)] gap-[var(--space-xs)] flex items-center font-semibold">
+                  <.icon name="hero-document-plus" class="h-5 w-5 text-indigo-600" />
+                  {gettext("Post Publishing")}
+                </h4>
+                <div class="h-48">
+                  <div
+                    id="post-growth-chart"
+                    phx-hook="ApexChart"
+                    phx-update="ignore"
+                    data-chart={post_growth_chart_data(@content_stats.post_growth)}
+                  >
+                  </div>
+                </div>
+              </.dashboard_card>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
 
-          <%!-- Users Breakdown --%>
+      <%!-- Platform Activity --%>
+      <%= if length(@activity_trend_30d) > 0 do %>
+        <div class="mt-[var(--space-lg)]">
           <.dashboard_card variant="content">
-            <h4 class="text-base-content/80 mb-[var(--space-xs)] font-semibold">
-              <.icon name="hero-users" class="mr-1 inline h-4 w-4" />
-              {gettext("User Breakdown")}
-            </h4>
-            <div class="h-36">
+            <h3 class="card-title mb-[var(--space-sm)] gap-[var(--space-xs)] flex items-center">
+              <.icon name="hero-arrow-trending-up" class="h-6 w-6 text-indigo-600" />
+              {gettext("Platform Activity (30 days)")}
+            </h3>
+            <div class="h-64">
               <div
-                id="admin-users-donut"
+                id="activity-trend-chart"
                 phx-hook="ApexChart"
                 phx-update="ignore"
-                data-chart={users_donut_data(@user_stats)}
-              >
-              </div>
-            </div>
-          </.dashboard_card>
-
-          <%!-- Content Breakdown --%>
-          <.dashboard_card variant="content">
-            <h4 class="text-base-content/80 mb-[var(--space-xs)] font-semibold">
-              <.icon name="hero-document-text" class="mr-1 inline h-4 w-4" />
-              {gettext("Content Status")}
-            </h4>
-            <div class="h-36">
-              <div
-                id="admin-content-donut"
-                phx-hook="ApexChart"
-                phx-update="ignore"
-                data-chart={content_donut_data(@content_stats)}
+                data-chart={activity_trend_chart_data(@activity_trend_30d)}
               >
               </div>
             </div>
           </.dashboard_card>
         </div>
-      </div>
+      <% end %>
 
-      <%!-- Detailed Stats Grid --%>
-      <div class="mt-[var(--space-lg)] gap-[var(--space-md)] grid grid-cols-1 lg:grid-cols-2">
-        <%!-- User Statistics --%>
-        <.dashboard_card variant="content">
-          <h3 class="card-title">{gettext("User Statistics")}</h3>
-          <div class="overflow-x-auto">
-            <table class="table-sm table">
-              <tbody>
-                <tr>
-                  <td class="font-medium">{gettext("Total Users")}</td>
-                  <td class="text-right">{@user_stats.total_users}</td>
-                </tr>
-                <tr>
-                  <td class="font-medium">{gettext("Admins")}</td>
-                  <td class="text-right">{@user_stats.admin_count}</td>
-                </tr>
-                <tr>
-                  <td class="font-medium">{gettext("New Users (7 days)")}</td>
-                  <td class="text-success text-right">+{@user_stats.new_users_7d}</td>
-                </tr>
-                <tr>
-                  <td class="font-medium">{gettext("New Users (30 days)")}</td>
-                  <td class="text-success text-right">+{@user_stats.new_users_30d}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </.dashboard_card>
-
-        <%!-- Content Statistics --%>
-        <.dashboard_card variant="content">
-          <h3 class="card-title">{gettext("Content Statistics")}</h3>
-          <div class="overflow-x-auto">
-            <table class="table-sm table">
-              <tbody>
-                <tr>
-                  <td class="font-medium">{gettext("Published Posts")}</td>
-                  <td class="text-right">{@content_stats.total_posts}</td>
-                </tr>
-                <tr>
-                  <td class="font-medium">{gettext("Drafts")}</td>
-                  <td class="text-right">{@content_stats.total_drafts}</td>
-                </tr>
-                <tr>
-                  <td class="font-medium">{gettext("Total Tags")}</td>
-                  <td class="text-right">{@content_stats.total_tags}</td>
-                </tr>
-                <tr>
-                  <td class="font-medium">{gettext("Avg Post Length")}</td>
-                  <td class="text-right">{@content_stats.avg_post_length} {gettext("chars")}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </.dashboard_card>
-
-        <%!-- Media Statistics --%>
-        <.dashboard_card variant="content">
-          <h3 class="card-title">{gettext("Media Statistics")}</h3>
-          <div class="overflow-x-auto">
-            <table class="table-sm table">
-              <tbody>
-                <tr>
-                  <td class="font-medium">{gettext("Total Media Items")}</td>
-                  <td class="text-right">{@media_stats.total_media}</td>
-                </tr>
-                <tr>
-                  <td class="font-medium">{gettext("Storage Used")}</td>
-                  <td class="text-right">{@media_stats.total_size_formatted}</td>
-                </tr>
-                <tr>
-                  <td class="font-medium">{gettext("Projects")}</td>
-                  <td class="text-right">{@media_stats.total_projects}</td>
-                </tr>
-                <tr>
-                  <td class="font-medium">{gettext("Public Projects")}</td>
-                  <td class="text-right">{@media_stats.public_count}</td>
-                </tr>
-                <tr>
-                  <td class="font-medium">{gettext("Collections")}</td>
-                  <td class="text-right">{@media_stats.total_collections}</td>
-                </tr>
-                <tr>
-                  <td class="font-medium">{gettext("Collaborators")}</td>
-                  <td class="text-right">{@media_stats.total_collaborators}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </.dashboard_card>
-
-        <%!-- Top Authors --%>
-        <.dashboard_card variant="content">
-          <h3 class="card-title">{gettext("Top Authors")}</h3>
-          <div class="overflow-x-auto">
-            <table class="table-sm table">
-              <thead>
-                <tr>
-                  <th>{gettext("Author")}</th>
-                  <th class="text-right">{gettext("Posts")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <%= for author <- @content_stats.top_authors do %>
-                  <tr>
-                    <td class="text-[var(--text-sm)]">{author.email}</td>
-                    <td class="text-right font-medium">{author.post_count}</td>
-                  </tr>
-                <% end %>
-                <%= if @content_stats.top_authors == [] do %>
-                  <tr>
-                    <td colspan="2" class="text-base-content/60 text-center">
-                      {gettext("No authors yet")}
-                    </td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
-        </.dashboard_card>
-      </div>
-
-      <%!-- Popular Tags --%>
+      <%!-- Content & Geographic Insights --%>
       <div class="mt-[var(--space-lg)]">
-        <.dashboard_card variant="content">
-          <h3 class="card-title">{gettext("Popular Tags")}</h3>
-          <div class="gap-[var(--space-xs)] flex flex-wrap">
-            <%= for tag <- @content_stats.popular_tags do %>
-              <span class="badge badge-outline gap-[var(--space-inline)]">
-                {tag.name}
-                <span class="badge badge-sm badge-primary">{tag.usage_count}</span>
-              </span>
-            <% end %>
-            <%= if @content_stats.popular_tags == [] do %>
-              <span class="text-base-content/60">{gettext("No tags yet")}</span>
-            <% end %>
-          </div>
-        </.dashboard_card>
+        <h3 class="card-title mb-[var(--space-md)]">{gettext("Content & Geographic Insights")}</h3>
+        <div class="gap-[var(--space-md)] grid grid-cols-1 lg:grid-cols-2">
+          <%!-- Popular Tags --%>
+          <%= if length(@content_stats.popular_tags) > 0 do %>
+            <.dashboard_card variant="content">
+              <h4 class="text-base-content/80 mb-[var(--space-sm)] gap-[var(--space-xs)] flex items-center font-semibold">
+                <.icon name="hero-tag" class="h-5 w-5 text-indigo-600" />
+                {gettext("Popular Tags")}
+              </h4>
+              <div class="h-64">
+                <div
+                  id="tags-chart"
+                  phx-hook="ApexChart"
+                  phx-update="ignore"
+                  data-chart={tags_chart_data(@content_stats.popular_tags)}
+                >
+                </div>
+              </div>
+            </.dashboard_card>
+          <% end %>
+          <%!-- Top Countries --%>
+          <%= if length(@visitors_by_country) > 0 do %>
+            <.dashboard_card variant="content">
+              <h4 class="text-base-content/80 mb-[var(--space-sm)] gap-[var(--space-xs)] flex items-center font-semibold">
+                <.icon name="hero-globe-alt" class="h-5 w-5 text-teal-600" />
+                {gettext("Top Countries")}
+              </h4>
+              <div class="h-64">
+                <div
+                  id="countries-chart"
+                  phx-hook="ApexChart"
+                  phx-update="ignore"
+                  data-chart={countries_chart_data(@visitors_by_country)}
+                >
+                </div>
+              </div>
+            </.dashboard_card>
+          <% end %>
+        </div>
       </div>
 
-      <%!-- Recent Activity --%>
-      <div class="mt-[var(--space-lg)]">
-        <.dashboard_card variant="content">
-          <h3 class="card-title">{gettext("Recent Activity")}</h3>
-          <div class="overflow-x-auto">
-            <table class="table-sm table">
-              <thead>
-                <tr>
-                  <th>{gettext("Time")}</th>
-                  <th>{gettext("User")}</th>
-                  <th>{gettext("Action")}</th>
-                  <th>{gettext("Resource")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <%= for log <- @activity_logs do %>
-                  <tr>
-                    <td class="text-[var(--text-xs)]">
-                      {format_datetime(log.inserted_at)}
-                    </td>
-                    <td>{(log.user && log.user.email) || gettext("Unknown")}</td>
-                    <td>
-                      <span class="badge badge-sm">{log.action}</span>
-                    </td>
-                    <td>
-                      {log.resource_type} {if log.resource_id,
-                        do: "##{log.resource_id}",
-                        else: ""}
-                    </td>
-                  </tr>
-                <% end %>
-                <%= if @activity_logs == [] do %>
-                  <tr>
-                    <td colspan="4" class="text-base-content/60 text-center">
-                      {gettext("No recent activity")}
-                    </td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
-        </.dashboard_card>
-      </div>
+      <%!-- Search Intelligence --%>
+      <%= if length(@search_trend_30d) > 0 do %>
+        <div class="mt-[var(--space-lg)]">
+          <.dashboard_card variant="content">
+            <h3 class="card-title mb-[var(--space-sm)] gap-[var(--space-xs)] flex items-center">
+              <.icon name="hero-magnifying-glass" class="h-6 w-6 text-amber-600" />
+              {gettext("Search Activity (30 days)")}
+            </h3>
+            <div class="h-64">
+              <div
+                id="search-trend-chart"
+                phx-hook="ApexChart"
+                phx-update="ignore"
+                data-chart={search_trend_chart_data(@search_trend_30d)}
+              >
+              </div>
+            </div>
+          </.dashboard_card>
+        </div>
+      <% end %>
 
       <%!-- Search Statistics --%>
       <div class="mt-[var(--space-lg)]">
         <.dashboard_card variant="content">
-          <h3 class="card-title">{gettext("Search Statistics")}</h3>
+          <h3 class="card-title mb-[var(--space-md)]">{gettext("Search Intelligence")}</h3>
           <p class="text-base-content/60 mb-[var(--space-md)] text-[var(--text-sm)]">
             {gettext("Last 7 days")}
           </p>
-
-          <%!-- Summary stats in compact grid --%>
+          <%!-- Summary stats --%>
           <div class="mb-[var(--space-md)] gap-[var(--space-md)] grid grid-cols-2 md:grid-cols-4">
             <div class="text-center">
               <p class="text-primary text-[var(--text-2xl)] font-bold">
@@ -374,8 +264,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
               <p class="text-base-content/60 text-[var(--text-xs)]">{gettext("Avg Results")}</p>
             </div>
           </div>
-
-          <%!-- Popular searches and no-results in side-by-side tables --%>
+          <%!-- Popular searches and gaps --%>
           <div class="gap-[var(--space-md)] grid grid-cols-1 lg:grid-cols-2">
             <div>
               <h4 class="text-base-content/80 mb-[var(--space-xs)] font-semibold">
@@ -407,7 +296,6 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
                 </table>
               </div>
             </div>
-
             <div>
               <h4 class="text-base-content/80 mb-[var(--space-xs)] font-semibold">
                 {gettext("Content Gaps")}
@@ -444,6 +332,100 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
           </div>
         </.dashboard_card>
       </div>
+
+      <%!-- Recent Activity --%>
+      <div class="mt-[var(--space-lg)]">
+        <h3 class="card-title mb-[var(--space-md)]">{gettext("Recent Activity")}</h3>
+        <div class="gap-[var(--space-md)] grid grid-cols-1 lg:grid-cols-3">
+          <%!-- Activity Feed (2/3 width) --%>
+          <div class="lg:col-span-2">
+            <.dashboard_card variant="content">
+              <%= if @activity_logs == [] do %>
+                <p class="text-base-content/60 py-[var(--space-md)] text-center">
+                  {gettext("No recent activity")}
+                </p>
+              <% else %>
+                <ul class="space-y-[var(--space-sm)]">
+                  <%= for log <- @activity_logs do %>
+                    <li class="gap-[var(--space-sm)] flex items-start">
+                      <span class="text-base-content/50 text-[var(--text-xs)] min-w-[5rem] flex-shrink-0 whitespace-nowrap">
+                        {format_relative_time(log.inserted_at)}
+                      </span>
+                      <span class="text-[var(--text-sm)] leading-relaxed">
+                        {user_name_link(log)}
+                        {" "}
+                        {format_narrative_action(log)}
+                      </span>
+                    </li>
+                  <% end %>
+                </ul>
+              <% end %>
+            </.dashboard_card>
+          </div>
+          <%!-- Activity Statistics (1/3 width) --%>
+          <div>
+            <.dashboard_card variant="content">
+              <h4 class="text-base-content/80 mb-[var(--space-md)] font-semibold">
+                {gettext("Activity Stats")}
+              </h4>
+              <div class="space-y-[var(--space-md)]">
+                <%!-- Today's Activity --%>
+                <div>
+                  <p class="text-base-content/60 text-[var(--text-xs)] uppercase">
+                    {gettext("Today")}
+                  </p>
+                  <p class="text-primary text-[var(--text-2xl)] font-bold">
+                    {@activity_stats.today_count}
+                  </p>
+                  <p class="text-base-content/70 text-[var(--text-xs)]">
+                    {gettext("actions")}
+                  </p>
+                </div>
+                <%!-- This Week --%>
+                <div>
+                  <p class="text-base-content/60 text-[var(--text-xs)] uppercase">
+                    {gettext("This Week")}
+                  </p>
+                  <p class="text-secondary text-[var(--text-2xl)] font-bold">
+                    {@activity_stats.week_count}
+                  </p>
+                  <p class="text-base-content/70 text-[var(--text-xs)]">
+                    {gettext("actions")}
+                  </p>
+                </div>
+                <%!-- Most Active User --%>
+                <%= if @activity_stats.most_active_user do %>
+                  <div>
+                    <p class="text-base-content/60 mb-[var(--space-xs)] text-[var(--text-xs)] uppercase">
+                      {gettext("Most Active Today")}
+                    </p>
+                    <p class="text-base-content font-medium">
+                      {user_link(@activity_stats.most_active_user)}
+                    </p>
+                    <p class="text-base-content/70 text-[var(--text-xs)]">
+                      {@activity_stats.most_active_count} {gettext("actions")}
+                    </p>
+                  </div>
+                <% end %>
+                <%!-- Activity Breakdown --%>
+                <div>
+                  <p class="text-base-content/60 mb-[var(--space-xs)] text-[var(--text-xs)] uppercase">
+                    {gettext("Top Actions")}
+                  </p>
+                  <div class="space-y-[var(--space-xs)]">
+                    <%= for {action, count} <- @activity_stats.top_actions do %>
+                      <div class="flex items-center justify-between">
+                        <span class="text-[var(--text-sm)]">{translate_action_verb(action)}</span>
+                        <span class="badge badge-sm badge-ghost">{count}</span>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </.dashboard_card>
+          </div>
+        </div>
+      </div>
     </Layouts.app>
     """
   end
@@ -451,17 +433,24 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
   @impl true
   def mount(_params, _session, socket) do
     # Admin access is verified by :require_admin on_mount hook in router
-    # Load all stats
+    # Load core stats
     user_stats = Accounts.get_user_stats()
     content_stats = Content.get_content_stats()
     media_stats = Media.get_admin_media_stats()
 
-    # Load analytics data
+    # Load trend data for charts (30 days)
+    activity_trend_30d = Analytics.activity_trend(30)
+    search_trend_30d = Analytics.search_trend(30)
+    visitors_by_country = Analytics.visitors_by_country(7, 8)
+
+    # Load search analytics
     search_stats = Analytics.search_performance_stats(7)
     popular_searches = Analytics.popular_searches(limit: 10, days: 7)
     no_result_searches = Analytics.no_result_searches(limit: 10, days: 7)
+
+    # Load recent activity
     activity_logs = Analytics.list_activity_logs(limit: 20)
-    activity_trend = Analytics.activity_trend(7)
+    activity_stats = calculate_activity_stats()
 
     {:ok,
      socket
@@ -470,20 +459,104 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
      |> assign(:user_stats, user_stats)
      |> assign(:content_stats, content_stats)
      |> assign(:media_stats, media_stats)
+     |> assign(:activity_trend_30d, activity_trend_30d)
+     |> assign(:search_trend_30d, search_trend_30d)
+     |> assign(:visitors_by_country, visitors_by_country)
      |> assign(:search_stats, search_stats || %{})
      |> assign(:popular_searches, popular_searches)
      |> assign(:no_result_searches, no_result_searches)
      |> assign(:activity_logs, activity_logs)
-     |> assign(:activity_trend, activity_trend)}
+     |> assign(:activity_stats, activity_stats)}
+  end
+
+  # Activity statistics calculation
+
+  defp calculate_activity_stats do
+    now = DateTime.utc_now()
+    today_start = DateTime.new!(Date.utc_today(), ~T[00:00:00])
+    week_start = DateTime.add(now, -7, :day)
+
+    # Get all activity logs for today and this week
+    today_logs =
+      Analytics.list_activity_logs(limit: 1000)
+      |> Enum.filter(fn log -> DateTime.compare(log.inserted_at, today_start) in [:gt, :eq] end)
+
+    week_logs =
+      Analytics.list_activity_logs(limit: 1000)
+      |> Enum.filter(fn log -> DateTime.compare(log.inserted_at, week_start) in [:gt, :eq] end)
+
+    # Count today's and week's activities
+    today_count = length(today_logs)
+    week_count = length(week_logs)
+
+    # Find most active user today
+    {most_active_user, most_active_count} =
+      today_logs
+      |> Enum.group_by(& &1.user_id)
+      |> Enum.map(fn {user_id, logs} -> {user_id, length(logs)} end)
+      |> Enum.max_by(fn {_user_id, count} -> count end, fn -> {nil, 0} end)
+
+    most_active_user =
+      if most_active_user do
+        Repo.get(Homesite.Accounts.User, most_active_user)
+      else
+        nil
+      end
+
+    # Get top actions today
+    top_actions =
+      today_logs
+      |> Enum.group_by(& &1.action)
+      |> Enum.map(fn {action, logs} -> {action, length(logs)} end)
+      |> Enum.sort_by(fn {_action, count} -> count end, :desc)
+      |> Enum.take(5)
+
+    %{
+      today_count: today_count,
+      week_count: week_count,
+      most_active_user: most_active_user,
+      most_active_count: most_active_count,
+      top_actions: top_actions
+    }
   end
 
   # Chart data helper functions for ApexCharts
 
-  defp activity_sparkline_data(activity_trend) do
+  defp user_growth_chart_data(user_growth) do
     %{
       type: "area",
-      height: 80,
-      sparkline: true,
+      showLegend: false,
+      series: [
+        %{
+          name: gettext("New Users"),
+          data: Enum.map(user_growth, & &1.count)
+        }
+      ],
+      categories: Enum.map(user_growth, fn t -> format_chart_date(t.date) end),
+      colors: ["#22c55e"]
+    }
+    |> Jason.encode!()
+  end
+
+  defp post_growth_chart_data(post_growth) do
+    %{
+      type: "area",
+      showLegend: false,
+      series: [
+        %{
+          name: gettext("Published Posts"),
+          data: Enum.map(post_growth, & &1.count)
+        }
+      ],
+      categories: Enum.map(post_growth, fn t -> format_chart_date(t.date) end),
+      colors: ["#6366f1"]
+    }
+    |> Jason.encode!()
+  end
+
+  defp activity_trend_chart_data(activity_trend) do
+    %{
+      type: "area",
       showLegend: false,
       series: [
         %{
@@ -491,7 +564,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
           data: Enum.map(activity_trend, & &1.count)
         }
       ],
-      categories: Enum.map(activity_trend, fn t -> format_sparkline_date(t.date) end),
+      categories: Enum.map(activity_trend, fn t -> format_chart_date(t.date) end),
       colors: ["#6366f1"],
       options: %{
         stroke: %{width: 2}
@@ -500,40 +573,246 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
     |> Jason.encode!()
   end
 
-  defp users_donut_data(user_stats) do
-    regular_users = user_stats.total_users - user_stats.admin_count
-
+  defp search_trend_chart_data(search_trend) do
     %{
-      type: "donut",
-      height: 150,
-      series: [regular_users, user_stats.admin_count],
-      colors: ["#22c55e", "#6366f1"],
-      showLegend: true,
-      options: %{
-        labels: [gettext("Users"), gettext("Admins")]
-      }
+      type: "area",
+      showLegend: false,
+      series: [
+        %{
+          name: gettext("Searches"),
+          data: Enum.map(search_trend, & &1.count)
+        }
+      ],
+      categories: Enum.map(search_trend, fn t -> format_chart_date(t.date) end),
+      colors: ["#f59e0b"]
     }
     |> Jason.encode!()
   end
 
-  defp content_donut_data(content_stats) do
-    published = content_stats.total_posts
-    drafts = content_stats.total_drafts
+  defp tags_chart_data(tags) do
+    tags = Enum.take(tags, 10)
 
     %{
-      type: "donut",
-      height: 150,
-      series: [published, drafts],
-      colors: ["#22c55e", "#94a3b8"],
-      showLegend: true,
-      options: %{
-        labels: [gettext("Published"), gettext("Drafts")]
-      }
+      type: "bar",
+      horizontal: true,
+      showLegend: false,
+      series: [
+        %{
+          name: gettext("Usage"),
+          data: Enum.map(tags, & &1.usage_count)
+        }
+      ],
+      categories: Enum.map(tags, & &1.name),
+      colors: ["#6366f1"]
     }
     |> Jason.encode!()
   end
 
-  defp format_sparkline_date(date) do
+  defp countries_chart_data(visitors_by_country) do
+    countries = Enum.take(visitors_by_country, 8)
+
+    %{
+      type: "bar",
+      horizontal: true,
+      showLegend: false,
+      series: [
+        %{
+          name: gettext("Actions"),
+          data: Enum.map(countries, & &1.count)
+        }
+      ],
+      categories: Enum.map(countries, fn c -> "#{country_flag(c.country)} #{c.country}" end),
+      colors: ["#14b8a6"]
+    }
+    |> Jason.encode!()
+  end
+
+  defp country_flag(nil), do: "🌍"
+
+  defp country_flag(code) when is_binary(code) do
+    code
+    |> String.upcase()
+    |> String.to_charlist()
+    |> Enum.map(&(&1 - ?A + 0x1F1E6))
+    |> List.to_string()
+  end
+
+  defp format_chart_date(date) do
     Calendar.strftime(date, "%b %d")
+  end
+
+  # Activity log formatting helpers
+
+  defp user_name_link(log) do
+    case log.user do
+      nil ->
+        Phoenix.HTML.raw("""
+        <strong class="text-base-content font-semibold">#{gettext("Unknown")}</strong>
+        """)
+
+      user ->
+        name = user.display_name || user.email
+        user_link(user, name)
+    end
+  end
+
+  defp user_link(user, text \\ nil) do
+    display_text = text || user.display_name || user.email
+
+    if user.username do
+      Phoenix.HTML.raw("""
+      <a href="/users/@#{user.username}" class="link link-hover font-semibold text-base-content">#{Phoenix.HTML.html_escape(display_text) |> Phoenix.HTML.safe_to_string()}</a>
+      """)
+    else
+      Phoenix.HTML.raw("""
+      <strong class="text-base-content font-semibold">#{Phoenix.HTML.html_escape(display_text) |> Phoenix.HTML.safe_to_string()}</strong>
+      """)
+    end
+  end
+
+  defp format_narrative_action(log) do
+    action_text = translate_action_verb(log.action)
+    resource_html = format_resource_with_link(log)
+
+    # Convert safe tuple to string if needed
+    resource_string =
+      case resource_html do
+        {:safe, html} -> IO.iodata_to_binary(html)
+        html when is_binary(html) -> html
+      end
+
+    Phoenix.HTML.raw("#{action_text} #{resource_string}")
+  end
+
+  defp translate_action_verb(action) do
+    case action do
+      "create" -> gettext("created")
+      "update" -> gettext("updated")
+      "delete" -> gettext("deleted")
+      "publish" -> gettext("published")
+      "unpublish" -> gettext("unpublished")
+      "login" -> gettext("logged in")
+      "logout" -> gettext("logged out")
+      "register" -> gettext("registered")
+      _ -> action
+    end
+  end
+
+  defp format_resource_with_link(log) do
+    title = get_resource_title(log)
+    link = get_resource_link(log)
+    resource_type = translate_resource_type(log.resource_type)
+    resource_id = log.resource_id
+
+    case {title, link} do
+      {title, link} when not is_nil(title) and not is_nil(link) ->
+        escaped_title = Phoenix.HTML.html_escape(title) |> Phoenix.HTML.safe_to_string()
+
+        Phoenix.HTML.raw("""
+        #{resource_type} <a href="#{link}" class="link link-primary font-semibold">"#{escaped_title}"</a> <span class="text-base-content/50">##{resource_id}</span>
+        """)
+
+      {title, nil} when not is_nil(title) ->
+        escaped_title = Phoenix.HTML.html_escape(title) |> Phoenix.HTML.safe_to_string()
+
+        Phoenix.HTML.raw("""
+        #{resource_type} <strong>"#{escaped_title}"</strong> <span class="text-base-content/50">##{resource_id}</span>
+        """)
+
+      _ ->
+        if link do
+          Phoenix.HTML.raw("""
+          #{resource_type} <a href="#{link}" class="link link-primary">##{resource_id}</a>
+          """)
+        else
+          "#{resource_type} ##{resource_id}"
+        end
+    end
+  end
+
+  defp get_resource_title(log) do
+    case log.resource_type do
+      "post" ->
+        cond do
+          is_map(log.metadata) and Map.has_key?(log.metadata, "title") ->
+            log.metadata["title"]
+
+          is_map(log.metadata) and Map.has_key?(log.metadata, :title) ->
+            log.metadata[:title]
+
+          true ->
+            nil
+        end
+
+      "tag" ->
+        cond do
+          is_map(log.metadata) and Map.has_key?(log.metadata, "name") ->
+            log.metadata["name"]
+
+          is_map(log.metadata) and Map.has_key?(log.metadata, :name) ->
+            log.metadata[:name]
+
+          true ->
+            nil
+        end
+
+      "user" ->
+        cond do
+          is_map(log.metadata) and Map.has_key?(log.metadata, "email") ->
+            log.metadata["email"]
+
+          is_map(log.metadata) and Map.has_key?(log.metadata, :email) ->
+            log.metadata[:email]
+
+          true ->
+            nil
+        end
+
+      _ ->
+        nil
+    end
+  end
+
+  defp get_resource_link(log) do
+    case {log.resource_type, log.resource_id, log.metadata} do
+      {"post", _id, metadata} when is_map(metadata) ->
+        # Posts use slug in the URL
+        slug = metadata["slug"] || metadata[:slug]
+
+        if slug && is_binary(slug) && slug != "" do
+          ~p"/posts/#{slug}"
+        else
+          nil
+        end
+
+      {"tag", _id, metadata} when is_map(metadata) ->
+        # Tags use slug in the URL (route param is called :id but expects slug)
+        slug = metadata["slug"] || metadata[:slug]
+
+        if slug && is_binary(slug) && slug != "" do
+          ~p"/tags/#{slug}"
+        else
+          nil
+        end
+
+      {"user", id, _} when not is_nil(id) ->
+        ~p"/admin/users"
+
+      _ ->
+        nil
+    end
+  end
+
+  defp translate_resource_type(resource_type) do
+    case resource_type do
+      "post" -> gettext("post")
+      "user" -> gettext("user")
+      "tag" -> gettext("tag")
+      "comment" -> gettext("comment")
+      "media" -> gettext("media")
+      "project" -> gettext("project")
+      "invitation" -> gettext("invitation")
+      _ -> String.downcase(resource_type)
+    end
   end
 end

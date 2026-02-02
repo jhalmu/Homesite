@@ -174,7 +174,7 @@ defmodule HomesiteWeb.PostLive.Form do
               </div>
             <% end %>
           </div>
-
+          
     <!-- Similar tags warning -->
           <%= if @similar_tags_warning != [] do %>
             <div class="alert alert-warning mt-[var(--space-xs)]">

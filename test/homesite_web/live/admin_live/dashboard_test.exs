@@ -22,7 +22,7 @@ defmodule HomesiteWeb.AdminLive.DashboardTest do
       {:ok, _lv, html} = live(conn, ~p"/admin")
 
       assert html =~ "Admin Dashboard"
-      assert html =~ "System overview"
+      assert html =~ "Platform overview"
     end
 
     test "displays search statistics cards", %{conn: conn} do
@@ -31,7 +31,7 @@ defmodule HomesiteWeb.AdminLive.DashboardTest do
 
       {:ok, _lv, html} = live(conn, ~p"/admin")
 
-      assert html =~ "Search Statistics"
+      assert html =~ "Search Intelligence"
       assert html =~ "Total Searches"
       assert html =~ "Avg Response"
       assert html =~ "No Results"
@@ -66,9 +66,6 @@ defmodule HomesiteWeb.AdminLive.DashboardTest do
       {:ok, _lv, html} = live(conn, ~p"/admin")
 
       assert html =~ "Recent Activity"
-      assert html =~ "Time"
-      assert html =~ "User"
-      assert html =~ "Action"
     end
 
     test "requires authentication", %{conn: conn} do
