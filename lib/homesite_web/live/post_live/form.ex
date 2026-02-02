@@ -32,7 +32,7 @@ defmodule HomesiteWeb.PostLive.Form do
           label={gettext("Body")}
           rows="12"
           phx-hook="AutoGrow"
-          phx-debounce="500"
+          phx-debounce="blur"
           id="post-body-textarea"
         />
 
@@ -174,12 +174,12 @@ defmodule HomesiteWeb.PostLive.Form do
               </div>
             <% end %>
           </div>
-          
+
     <!-- Similar tags warning -->
           <%= if @similar_tags_warning != [] do %>
             <div class="alert alert-warning mt-[var(--space-xs)]">
               <.icon name="hero-information-circle" />
-              <div>
+              <div class="flex-1">
                 <p class="font-semibold">{gettext("Similar tags exist:")}</p>
                 <div class="gap-[var(--space-xs)] mt-[var(--space-inline)] flex flex-wrap">
                   <%= for tag <- @similar_tags_warning do %>
@@ -187,12 +187,22 @@ defmodule HomesiteWeb.PostLive.Form do
                       type="button"
                       phx-click="add-tag"
                       phx-value-tag-id={tag.id}
-                      class="badge badge-sm badge-outline"
+                      class="badge badge-sm badge-outline hover:badge-primary"
                     >
                       {tag.name}
                     </button>
                   <% end %>
                 </div>
+                <button
+                  type="button"
+                  phx-click="create-and-add-tag"
+                  phx-value-name={@tag_search_query}
+                  phx-value-force="true"
+                  class="btn btn-sm btn-outline mt-[var(--space-xs)]"
+                >
+                  <.icon name="hero-plus" class="h-4 w-4" />
+                  {gettext("Create")} "{@tag_search_query}" {gettext("anyway")}
+                </button>
               </div>
             </div>
           <% end %>
@@ -492,11 +502,13 @@ defmodule HomesiteWeb.PostLive.Form do
     {:noreply, assign(socket, selected_tags: selected_tags)}
   end
 
-  def handle_event("create-and-add-tag", %{"name" => name}, socket) do
-    # Check for similar tags first
+  def handle_event("create-and-add-tag", %{"name" => name} = params, socket) do
+    force_create = Map.get(params, "force", "false") == "true"
+
+    # Check for similar tags first, but allow forced creation
     similar = Content.find_similar_tags(name)
 
-    if similar != [] do
+    if similar != [] and not force_create do
       {:noreply, assign(socket, similar_tags_warning: similar)}
     else
       case Content.get_or_create_tag(socket.assigns.current_scope, %{

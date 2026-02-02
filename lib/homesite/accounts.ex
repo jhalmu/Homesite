@@ -8,6 +8,7 @@ defmodule Homesite.Accounts do
   alias Homesite.Repo
 
   alias Homesite.Accounts.{AuthLog, Invitation, User, UserNotifier, UserToken}
+  alias Homesite.Settings
 
   # Account lockout settings
   @lockout_threshold 5
@@ -96,7 +97,13 @@ defmodule Homesite.Accounts do
   ## User registration
 
   @doc """
-  Registers a user with an invitation code.
+  Registers a new user according to the current registration mode.
+
+  ## Registration Modes
+
+  - `:closed` - Registration is disabled
+  - `:invite_only` - Requires a valid invitation code
+  - `:open` - Anyone can register (invitation code optional)
 
   ## Examples
 
@@ -107,7 +114,58 @@ defmodule Homesite.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def register_user(attrs) do
+  def register_user(attrs, mode \\ nil) do
+    mode = mode || Settings.registration_mode()
+
+    case mode do
+      :closed ->
+        {:error,
+         %User{}
+         |> User.email_changeset(attrs)
+         |> Ecto.Changeset.add_error(:base, "Registration is currently closed")
+         |> Map.put(:action, :insert)}
+
+      :open ->
+        register_user_open(attrs)
+
+      :invite_only ->
+        register_user_with_invitation(attrs)
+    end
+  end
+
+  @doc """
+  Registers a user in open mode (no invitation required).
+
+  If an invitation code is provided, it will be validated and used.
+  """
+  def register_user_open(attrs) do
+    invitation_code = Map.get(attrs, "invitation_code") || Map.get(attrs, :invitation_code)
+
+    # If invitation code provided, validate and use it
+    if invitation_code && invitation_code != "" do
+      register_user_with_invitation(attrs)
+    else
+      # No invitation code - register directly
+      changeset =
+        %User{}
+        |> User.email_changeset(attrs)
+        |> maybe_apply_password_changeset(attrs)
+
+      case Repo.insert(changeset) do
+        {:ok, user} ->
+          log_registration_async(user.id)
+          {:ok, user}
+
+        {:error, changeset} ->
+          {:error, changeset}
+      end
+    end
+  end
+
+  @doc """
+  Registers a user with an invitation code (original logic).
+  """
+  def register_user_with_invitation(attrs) do
     invitation_code = Map.get(attrs, "invitation_code") || Map.get(attrs, :invitation_code)
 
     # Quick validation first (before transaction)

@@ -102,6 +102,7 @@ defmodule Homesite.MixProject do
       # Security
       {:hammer, "~> 6.2"},
       {:hammer_plug, "~> 3.1"},
+      {:phoenix_turnstile, "~> 1.0"},
 
       # IP Geolocation (MaxMind GeoLite2)
       {:locus, "~> 2.3"},

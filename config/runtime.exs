@@ -20,6 +20,11 @@ if System.get_env("PHX_SERVER") do
   config :homesite, HomesiteWeb.Endpoint, server: true
 end
 
+# Configure Cloudflare Turnstile (CAPTCHA)
+config :phoenix_turnstile,
+  site_key: System.get_env("TURNSTILE_SITE_KEY"),
+  secret_key: System.get_env("TURNSTILE_SECRET_KEY")
+
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||

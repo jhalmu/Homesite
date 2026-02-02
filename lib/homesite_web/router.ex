@@ -220,6 +220,9 @@ defmodule HomesiteWeb.Router do
       # Admin FAQ management
       live "/faqs/new", FaqLive.Form, :new
       live "/faqs/:id/edit", FaqLive.Form, :edit
+
+      # Admin settings
+      live "/admin/settings", AdminLive.Settings.Index, :index
     end
   end
 
