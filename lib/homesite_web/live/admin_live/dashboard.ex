@@ -4,6 +4,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
   alias Homesite.Accounts
   alias Homesite.Analytics
   alias Homesite.Content
+  alias Homesite.Feedback
   alias Homesite.Media
   alias Homesite.Repo
   import HomesiteWeb.Helpers.DateHelpers
@@ -18,7 +19,18 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
       </.header>
 
       <%!-- Key Metrics --%>
-      <div class="mt-[var(--space-lg)] gap-[var(--space-md)] grid grid-cols-2 lg:grid-cols-4">
+      <div class="mt-[var(--space-lg)] gap-[var(--space-md)] grid grid-cols-2 lg:grid-cols-5">
+        <.dashboard_card variant="stat">
+          <div class="stat-figure text-warning">
+            <span class="text-4xl">😊</span>
+          </div>
+          <div class="stat-title">{gettext("Happiness Score")}</div>
+          <div class="stat-value text-warning">{@happiness_score.score}%</div>
+          <div class="stat-desc">
+            {@happiness_score.total_responses} {gettext("responses")}
+          </div>
+        </.dashboard_card>
+
         <.dashboard_card variant="stat">
           <div class="stat-figure text-primary">
             <.icon name="hero-users" class="h-8 w-8" />
@@ -463,6 +475,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
     user_stats = Accounts.get_user_stats()
     content_stats = Content.get_content_stats()
     media_stats = Media.get_admin_media_stats()
+    happiness_score = Feedback.calculate_happiness_score(90)
 
     # Load trend data for charts (30 days)
     activity_trend_30d = Analytics.activity_trend(30)
@@ -485,6 +498,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
      |> assign(:user_stats, user_stats)
      |> assign(:content_stats, content_stats)
      |> assign(:media_stats, media_stats)
+     |> assign(:happiness_score, happiness_score)
      |> assign(:activity_trend_30d, activity_trend_30d)
      |> assign(:search_trend_30d, search_trend_30d)
      |> assign(:visitors_by_country, visitors_by_country)
