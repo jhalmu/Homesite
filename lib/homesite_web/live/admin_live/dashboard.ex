@@ -345,20 +345,46 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
                   {gettext("No recent activity")}
                 </p>
               <% else %>
-                <ul class="space-y-[var(--space-sm)]">
-                  <%= for log <- @activity_logs do %>
-                    <li class="gap-[var(--space-sm)] flex items-start">
-                      <span class="text-base-content/50 text-[var(--text-xs)] min-w-[5rem] flex-shrink-0 whitespace-nowrap">
-                        {format_relative_time(log.inserted_at)}
-                      </span>
-                      <span class="text-[var(--text-sm)] leading-relaxed">
-                        {user_name_link(log)}
-                        {" "}
-                        {format_narrative_action(log)}
-                      </span>
-                    </li>
-                  <% end %>
-                </ul>
+                <div class="overflow-x-auto">
+                  <table class="table-sm table-zebra table">
+                    <thead>
+                      <tr>
+                        <th class="w-24">{gettext("Time")}</th>
+                        <th>{gettext("User")}</th>
+                        <th>{gettext("Action")}</th>
+                        <th>{gettext("Resource")}</th>
+                        <th>{gettext("Location")}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <%= for log <- @activity_logs do %>
+                        <tr>
+                          <td class="text-[var(--text-xs)] text-base-content/50 whitespace-nowrap">
+                            {format_relative_time(log.inserted_at)}
+                          </td>
+                          <td class="text-[var(--text-sm)]">
+                            {user_name_link(log)}
+                          </td>
+                          <td>
+                            <span class={["badge badge-sm", action_badge_class(log.action)]}>
+                              {translate_action_verb(log.action)}
+                            </span>
+                          </td>
+                          <td class="text-[var(--text-sm)]">
+                            {format_resource_with_link(log)}
+                          </td>
+                          <td class="text-[var(--text-xs)] text-base-content/60">
+                            <%= if log.country do %>
+                              {log.city || ""} {log.country}
+                            <% else %>
+                              <span class="text-base-content/40">-</span>
+                            <% end %>
+                          </td>
+                        </tr>
+                      <% end %>
+                    </tbody>
+                  </table>
+                </div>
               <% end %>
             </.dashboard_card>
           </div>
@@ -670,20 +696,6 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
     end
   end
 
-  defp format_narrative_action(log) do
-    action_text = translate_action_verb(log.action)
-    resource_html = format_resource_with_link(log)
-
-    # Convert safe tuple to string if needed
-    resource_string =
-      case resource_html do
-        {:safe, html} -> IO.iodata_to_binary(html)
-        html when is_binary(html) -> html
-      end
-
-    Phoenix.HTML.raw("#{action_text} #{resource_string}")
-  end
-
   defp translate_action_verb(action) do
     case action do
       "create" -> gettext("created")
@@ -813,6 +825,19 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
       "project" -> gettext("project")
       "invitation" -> gettext("invitation")
       _ -> String.downcase(resource_type)
+    end
+  end
+
+  defp action_badge_class(action) do
+    case action do
+      "create" -> "badge-success"
+      "update" -> "badge-info"
+      "delete" -> "badge-error"
+      "publish" -> "badge-primary"
+      "register" -> "badge-accent"
+      "view" -> "badge-ghost"
+      "search" -> "badge-secondary"
+      _ -> "badge-ghost"
     end
   end
 end
