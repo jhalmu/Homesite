@@ -82,6 +82,12 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
       <div class="px-[var(--spacing-card)] py-[var(--spacing-xl)] min-h-screen">
         <%!-- Header --%>
         <div class="mb-[var(--space-md)]">
+          <div class="mb-[var(--space-sm)]">
+            <.link navigate={~p"/admin"} class="btn btn-ghost btn-sm">
+              <.icon name="hero-arrow-left" class="h-4 w-4" />
+              {gettext("Back to Dashboard")}
+            </.link>
+          </div>
           <h1 class="mb-[var(--space-xs)] text-4xl font-bold">{gettext("Feedback Analytics")}</h1>
           <p class="text-base-content/70">
             {gettext("Monitor user feedback, happiness trends, and moderate testimonials")}

@@ -99,6 +99,12 @@ defmodule HomesiteWeb.AdminLive.Moderation.Violations do
         <:subtitle>
           {gettext("Monitor users with violations and take action")}
         </:subtitle>
+        <:actions>
+          <.link navigate={~p"/admin/moderation"} class="btn btn-ghost btn-sm">
+            <.icon name="hero-arrow-left" class="h-4 w-4" />
+            {gettext("Back to Dashboard")}
+          </.link>
+        </:actions>
       </.header>
 
       <div class="mt-[var(--space-md)]">

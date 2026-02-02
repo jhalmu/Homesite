@@ -149,6 +149,15 @@ defmodule HomesiteWeb.AdminLive.Moderation.Settings do
       <.header>
         {gettext("Moderation Settings")}
         <:subtitle>
+          {gettext("Configure moderation thresholds and presets")}
+        </:subtitle>
+        <:actions>
+          <.link navigate={~p"/admin/moderation"} class="btn btn-ghost btn-sm">
+            <.icon name="hero-arrow-left" class="h-4 w-4" />
+            {gettext("Back to Dashboard")}
+          </.link>
+        </:actions>
+        <:subtitle>
           {gettext("Configure moderation parameters and reason presets")}
         </:subtitle>
       </.header>

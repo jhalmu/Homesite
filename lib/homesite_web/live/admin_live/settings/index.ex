@@ -13,6 +13,12 @@ defmodule HomesiteWeb.AdminLive.Settings.Index do
           <:subtitle>
             {gettext("Configure registration mode and security features")}
           </:subtitle>
+          <:actions>
+            <.link navigate={~p"/admin"} class="btn btn-ghost btn-sm">
+              <.icon name="hero-arrow-left" class="h-4 w-4" />
+              {gettext("Back to Dashboard")}
+            </.link>
+          </:actions>
         </.header>
 
         <div class="mt-[var(--spacing-lg)] space-y-[var(--spacing-lg)]">

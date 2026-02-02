@@ -30,6 +30,12 @@ defmodule HomesiteWeb.AdminLive.Moderation.Dashboard do
         <:subtitle>
           {gettext("Overview of moderation activity and actions")}
         </:subtitle>
+        <:actions>
+          <.link navigate={~p"/admin"} class="btn btn-ghost btn-sm">
+            <.icon name="hero-arrow-left" class="h-4 w-4" />
+            {gettext("Back to Admin")}
+          </.link>
+        </:actions>
       </.header>
 
       <div class="mt-[var(--space-md)]">

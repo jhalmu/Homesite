@@ -16,6 +16,12 @@ defmodule HomesiteWeb.AdminLive.System.Index do
       <.header>
         {gettext("System Information")}
         <:subtitle>{gettext("Version, build info, and changelog")}</:subtitle>
+        <:actions>
+          <.link navigate={~p"/admin"} class="btn btn-ghost btn-sm">
+            <.icon name="hero-arrow-left" class="h-4 w-4" />
+            {gettext("Back to Dashboard")}
+          </.link>
+        </:actions>
       </.header>
 
       <%!-- Version Cards --%>

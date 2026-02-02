@@ -18,6 +18,12 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
       <.header>
         {gettext("User Management")}
         <:subtitle>{gettext("Manage users, roles, and flower permissions")}</:subtitle>
+        <:actions>
+          <.link navigate={~p"/admin"} class="btn btn-ghost btn-sm">
+            <.icon name="hero-arrow-left" class="h-4 w-4" />
+            {gettext("Back to Dashboard")}
+          </.link>
+        </:actions>
       </.header>
 
       <div class="mt-[var(--space-md)]">
