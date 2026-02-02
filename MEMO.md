@@ -7,6 +7,152 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2026-02-02 - Open Registration System + Bug Fixes #90, #89
+
+### Session Summary
+
+Implemented configurable user registration system with CAPTCHA protection and fixed two critical bugs.
+
+#### Features Implemented
+
+**Open User Registration System**
+- Three registration modes: Closed, Invite Only (default), Open
+- Cloudflare Turnstile CAPTCHA integration
+- Admin settings UI at `/admin/settings` for real-time configuration
+- Settings context with database storage (`app_settings` table)
+
+**Registration Modes:**
+- **Closed**: Registration disabled completely
+- **Invite Only**: Requires valid invitation code (existing behavior)
+- **Open**: Anyone can register, invitation code optional
+
+**CAPTCHA Protection:**
+- Optional Turnstile CAPTCHA widget in registration form
+- Server-side verification with `Turnstile.verify/1`
+- Environment variables: `TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`
+- Toggleable via admin settings
+
+**Admin Controls:**
+- Toggle registration mode (radio buttons)
+- Enable/disable CAPTCHA (toggle switch)
+- Changes take effect immediately
+- Route: `/admin/settings`
+
+#### Bug Fixes
+
+**#90 - Writing problems with long text** (HIGH PRIORITY)
+- **Symptom**: Page jumping and reloading when writing long blog posts
+- **Root cause**: `phx-change="validate"` with 500ms debounce triggered constant DOM updates
+- **Fix**: Changed body textarea debounce from `"500"` to `"blur"`
+- **Result**: Validation only triggers when user leaves the field, eliminating jumping
+- File: `lib/homesite_web/live/post_live/form.ex:35`
+
+**#89 - Can't add new tags when similar exist** (MEDIUM PRIORITY)
+- **Symptom**: Tag creation blocked entirely when similar tags found
+- **Root cause**: `create-and-add-tag` handler only showed warning, didn't allow creation
+- **Fix**:
+  - Added `force` parameter to handler
+  - Updated warning UI with "Create anyway" button
+  - Users now see suggestions first, can still create if needed
+- Files: `lib/homesite_web/live/post_live/form.ex:495-522, 179-198`
+
+#### Technical Implementation
+
+**Dependencies Added:**
+- `{:phoenix_turnstile, "~> 1.0"}` - Cloudflare Turnstile integration
+
+**Database Schema:**
+```sql
+CREATE TABLE app_settings (
+  id SERIAL PRIMARY KEY,
+  key VARCHAR NOT NULL UNIQUE,
+  value JSONB NOT NULL,
+  inserted_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP NOT NULL
+);
+```
+
+**Settings Context API:**
+```elixir
+Settings.registration_mode() # => :invite_only | :open | :closed
+Settings.turnstile_enabled?() # => boolean
+Settings.update_setting(key, value) # => {:ok, setting} | {:error, changeset}
+```
+
+**Accounts Context Updates:**
+```elixir
+# New function signature with mode support
+Accounts.register_user(attrs, mode \\ nil)
+  # Checks Settings.registration_mode() if mode not provided
+  # Branches to: register_user_open/1 or register_user_with_invitation/1
+
+# New public function
+Accounts.register_user_open(attrs)
+  # Allows registration without invitation (open mode)
+  # Uses invitation if provided
+```
+
+**Registration LiveView Updates:**
+- Checks registration mode on mount
+- Conditionally renders invitation field (required vs optional)
+- Shows CAPTCHA widget when enabled
+- Verifies CAPTCHA server-side before calling `Accounts.register_user/1`
+
+#### Files Created
+- `lib/homesite/settings.ex` - Settings context (4 functions)
+- `lib/homesite/settings/app_setting.ex` - AppSetting schema
+- `lib/homesite_web/live/admin_live/settings/index.ex` - Admin settings UI
+- `priv/repo/migrations/20260202182759_create_app_settings.exs`
+
+#### Files Modified
+- `mix.exs` - Added phoenix_turnstile dependency
+- `config/runtime.exs` - Turnstile configuration
+- `lib/homesite/accounts.ex` - Registration modes logic
+- `lib/homesite_web/components/layouts/root.html.heex` - Turnstile script
+- `lib/homesite_web/live/user_live/registration.ex` - Mode-aware form + CAPTCHA
+- `lib/homesite_web/live/post_live/form.ex` - Debounce fix + tag creation fix
+- `lib/homesite_web/router.ex` - Admin settings route
+
+#### GitHub Issues
+
+**Closed:**
+- **#90** - Writing problems (HIGH PRIORITY)
+- **#89** - Add new Tag bug (MEDIUM PRIORITY)
+
+**Remaining:**
+- **#83** - Consider: Show image preview in posts list (enhancement, can wait)
+
+#### Security Maintained
+- Rate limiting: 3 registrations/hour per IP (existing)
+- Account lockout: 5 failures = 15 min lockout (existing)
+- Auth logging: All events tracked (existing)
+- Moderation: Bans/suspensions enforced (existing)
+- **NEW**: Turnstile CAPTCHA prevents bot registrations
+
+#### Test Results
+- **1693 tests, 0 failures**
+- All precommit checks passed
+- Credo: 53 refactoring opportunities (pre-existing)
+
+#### Production Setup Required
+
+To enable CAPTCHA in production, add environment variables:
+```bash
+TURNSTILE_SITE_KEY=your_cloudflare_site_key
+TURNSTILE_SECRET_KEY=your_cloudflare_secret_key
+```
+
+Get keys at: https://dash.cloudflare.com/ → Turnstile
+
+**Default Settings:**
+- Registration mode: `invite_only`
+- CAPTCHA: `disabled`
+
+#### Commits
+- `c663934` - feat: Add open registration with CAPTCHA & fix writing bugs
+
+---
+
 ## EOD Workflow & Known Issues Guide
 
 ### Known Issues System
