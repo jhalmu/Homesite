@@ -107,28 +107,32 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
       </div>
 
       <%!-- Growth Trends --%>
-      <%= if length(@user_stats.user_growth) > 0 or length(@content_stats.post_growth) > 0 do %>
+      <%= if length(@user_stats.user_growth) > 0 do %>
         <div class="mt-[var(--space-lg)]">
           <h3 class="card-title mb-[var(--space-md)]">{gettext("Growth Trends (30 days)")}</h3>
+          <%!-- User Registrations (Full Width) --%>
+          <.dashboard_card variant="content">
+            <h4 class="text-base-content/80 mb-[var(--space-sm)] gap-[var(--space-xs)] flex items-center font-semibold">
+              <.icon name="hero-user-plus" class="h-5 w-5 text-green-600" />
+              {gettext("User Registrations")}
+            </h4>
+            <div class="h-48">
+              <div
+                id="user-growth-chart"
+                phx-hook="ApexChart"
+                phx-update="ignore"
+                data-chart={user_growth_chart_data(@user_stats.user_growth)}
+              >
+              </div>
+            </div>
+          </.dashboard_card>
+        </div>
+      <% end %>
+
+      <%!-- Post Publishing & Platform Activity --%>
+      <%= if length(@content_stats.post_growth) > 0 or length(@activity_trend_30d) > 0 do %>
+        <div class="mt-[var(--space-lg)]">
           <div class="gap-[var(--space-md)] grid grid-cols-1 lg:grid-cols-2">
-            <%!-- User Registrations --%>
-            <%= if length(@user_stats.user_growth) > 0 do %>
-              <.dashboard_card variant="content">
-                <h4 class="text-base-content/80 mb-[var(--space-sm)] gap-[var(--space-xs)] flex items-center font-semibold">
-                  <.icon name="hero-user-plus" class="h-5 w-5 text-green-600" />
-                  {gettext("User Registrations")}
-                </h4>
-                <div class="h-48">
-                  <div
-                    id="user-growth-chart"
-                    phx-hook="ApexChart"
-                    phx-update="ignore"
-                    data-chart={user_growth_chart_data(@user_stats.user_growth)}
-                  >
-                  </div>
-                </div>
-              </.dashboard_card>
-            <% end %>
             <%!-- Post Publishing --%>
             <%= if length(@content_stats.post_growth) > 0 do %>
               <.dashboard_card variant="content">
@@ -147,28 +151,25 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
                 </div>
               </.dashboard_card>
             <% end %>
+            <%!-- Platform Activity --%>
+            <%= if length(@activity_trend_30d) > 0 do %>
+              <.dashboard_card variant="content">
+                <h4 class="text-base-content/80 mb-[var(--space-sm)] gap-[var(--space-xs)] flex items-center font-semibold">
+                  <.icon name="hero-arrow-trending-up" class="h-5 w-5 text-purple-600" />
+                  {gettext("Platform Activity")}
+                </h4>
+                <div class="h-48">
+                  <div
+                    id="activity-trend-chart"
+                    phx-hook="ApexChart"
+                    phx-update="ignore"
+                    data-chart={activity_trend_chart_data(@activity_trend_30d)}
+                  >
+                  </div>
+                </div>
+              </.dashboard_card>
+            <% end %>
           </div>
-        </div>
-      <% end %>
-
-      <%!-- Platform Activity --%>
-      <%= if length(@activity_trend_30d) > 0 do %>
-        <div class="mt-[var(--space-lg)]">
-          <.dashboard_card variant="content">
-            <h3 class="card-title mb-[var(--space-sm)] gap-[var(--space-xs)] flex items-center">
-              <.icon name="hero-arrow-trending-up" class="h-6 w-6 text-indigo-600" />
-              {gettext("Platform Activity (30 days)")}
-            </h3>
-            <div class="h-64">
-              <div
-                id="activity-trend-chart"
-                phx-hook="ApexChart"
-                phx-update="ignore"
-                data-chart={activity_trend_chart_data(@activity_trend_30d)}
-              >
-              </div>
-            </div>
-          </.dashboard_card>
         </div>
       <% end %>
 
