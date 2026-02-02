@@ -7,7 +7,93 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
-## 2026-02-02 - Open Registration System + Bug Fixes #90, #89
+## 2026-02-02 (Evening) - Admin Dashboard Enhancements
+
+### Session Summary
+
+Major improvements to admin dashboard with analytics consolidation, navigation enhancements, and UI improvements.
+
+#### Admin Dashboard Improvements
+
+**Analytics Consolidation**
+- Merged `/admin/analytics` page into main dashboard
+- Removed duplicate metrics and uninformative charts
+- 46% code reduction (-710 lines: 1530→820)
+- Deleted entire analytics directory and route
+- Single source of truth for all analytics
+
+**Dashboard Enhancements:**
+1. **Happiness Score Card** - First metric showing user satisfaction (0-100%)
+2. **Enhanced Recent Activity** - Table format with colorful badges
+3. **Navigation Back Buttons** - Added to all admin sub-pages
+4. **Layout Improvements** - Better chart organization
+
+**Key Metrics Cards (5 total, was 4):**
+1. 😊 Happiness Score - User satisfaction percentage
+2. 👥 Total Users - Registered users count
+3. 📄 Published Posts - Total posts
+4. 🖼️ Media Items - Total media files
+5. 📊 Activity Today - Today's activity count
+
+**Recent Activity Table:**
+- Columns: Time | User | Action | Resource | Location
+- Short relative time ("5m ago" instead of full datetime)
+- Colorful action badges (create=green, update=blue, delete=red)
+- Clickable user profile links to `@username`
+- Clickable resource links (posts via slug, tags via slug)
+- Location data (city + country)
+- Statistics panel with today/week counts
+
+**Charts Removed (Uninformative):**
+- Published/Drafts pie chart (only 2 values)
+- Users/Admins donut chart (only 2 values)
+- Activity sparkline (too small)
+- Duplicate 30d metrics
+
+**Charts Reorganized:**
+- Row 1: User Registrations (full width)
+- Row 2: Post Publishing + Platform Activity (side-by-side)
+
+**Navigation Improvements:**
+- Back buttons on all admin sub-pages
+- Consistent styling: `btn btn-ghost btn-sm`
+- All moderation sub-pages have back to moderation dashboard
+- All main admin pages have back to admin dashboard
+
+#### Files Modified
+- `lib/homesite_web/live/admin_live/dashboard.ex` - Complete redesign
+- `lib/homesite_web/live/admin_live/system/index.ex` - Removed activity section
+- `lib/homesite_web/live/admin_live/*/index.ex` - Added back buttons
+- Deleted: `lib/homesite_web/live/admin_live/analytics/` directory
+- Deleted: `test/homesite_web/live/admin_live/analytics_index_test.exs`
+
+#### Test Fixes
+- Updated login test to allow registration link (open registration enabled)
+- All 1686 tests passing
+- Fixed async database connection warnings
+- No compilation errors
+
+#### Code Quality
+- 90 admin tests passing
+- No compilation warnings
+- Credo warnings are pre-existing (not from changes)
+- CI/CD pipeline will pass (tests pass, formatting correct)
+
+#### Technical Details
+- Added `Feedback.calculate_happiness_score/1` for happiness metric
+- Added `action_badge_class/1` helper for colorful badges
+- Metadata capture in activity logs (title, slug)
+- Enhanced `format_resource_with_link/1` for resource links
+- Removed unused `format_narrative_action/1` function
+
+### Next Steps
+- ✅ All changes committed and pushed
+- ✅ CI/CD pipeline ready to deploy
+- 📊 Issue #83 (image preview) remains open for consideration
+
+---
+
+## 2026-02-02 (Morning) - Open Registration System + Bug Fixes #90, #89
 
 ### Session Summary
 
