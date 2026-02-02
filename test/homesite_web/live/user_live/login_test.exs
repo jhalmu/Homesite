@@ -9,8 +9,7 @@ defmodule HomesiteWeb.UserLive.LoginTest do
       {:ok, _lv, html} = live(conn, ~p"/users/log-in")
 
       assert html =~ "Log in"
-      # Registration is disabled during testing phase
-      refute html =~ "Register"
+      # Registration link may be present depending on registration mode setting
       assert html =~ "Log in with email"
     end
   end
@@ -88,7 +87,6 @@ defmodule HomesiteWeb.UserLive.LoginTest do
       {:ok, _lv, html} = live(conn, ~p"/users/log-in")
 
       assert html =~ "You need to reauthenticate"
-      refute html =~ "Register"
       assert html =~ "Log in with email"
 
       assert html =~

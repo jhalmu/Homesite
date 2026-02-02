@@ -249,5 +249,4 @@ defmodule HomesiteWeb.AdminLive.System.Index do
     <span class={"#{@color} badge badge-xs"}></span>
     """
   end
-
 end
