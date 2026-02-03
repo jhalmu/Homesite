@@ -110,14 +110,14 @@ const Hooks = {
   },
   AutoDismissFlash: {
     mounted() {
-      // Auto-dismiss flash message after 10 seconds
+      // Auto-dismiss flash message after 30 seconds (increased from 10s for better visibility)
       this.timeout = setTimeout(() => {
         // Trigger the click event to dismiss the flash
         this.el.click()
-      }, 10000)
+      }, 30000)
     },
     destroyed() {
-      // Clear timeout if flash is manually dismissed before 10 seconds
+      // Clear timeout if flash is manually dismissed before 30 seconds
       if (this.timeout) {
         clearTimeout(this.timeout)
       }
