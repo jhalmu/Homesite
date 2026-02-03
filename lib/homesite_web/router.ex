@@ -29,7 +29,7 @@ defmodule HomesiteWeb.Router do
 
   pipeline :rate_limit_registration do
     plug Hammer.Plug,
-      rate_limit: {"auth:register", 3_600_000, 3},
+      rate_limit: {"auth:register", 900_000, 10},
       by: {:conn, &__MODULE__.get_ip/1}
   end
 
