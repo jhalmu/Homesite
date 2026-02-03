@@ -221,8 +221,13 @@ defmodule HomesiteWeb.UserLive.Registration do
     turnstile_params = %{"cf-turnstile-response" => user_params["cf-turnstile-response"]}
 
     case Turnstile.verify(turnstile_params) do
-      {:ok, _response} -> :ok
-      {:error, _reason} -> {:error, :captcha_failed}
+      {:ok, _response} ->
+        :ok
+
+      {:error, reason} ->
+        require Logger
+        Logger.error("Turnstile verification failed: #{inspect(reason)}")
+        {:error, :captcha_failed}
     end
   end
 
