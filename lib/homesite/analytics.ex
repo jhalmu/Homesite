@@ -146,6 +146,7 @@ defmodule Homesite.Analytics do
     user_id = Keyword.get(opts, :user_id)
     resource_type = Keyword.get(opts, :resource_type)
     action = Keyword.get(opts, :action)
+    since = Keyword.get(opts, :since)
 
     query =
       from(a in ActivityLog,
@@ -171,6 +172,13 @@ defmodule Homesite.Analytics do
     query =
       if action do
         from(a in query, where: a.action == ^to_string(action))
+      else
+        query
+      end
+
+    query =
+      if since do
+        from(a in query, where: a.inserted_at >= ^since)
       else
         query
       end

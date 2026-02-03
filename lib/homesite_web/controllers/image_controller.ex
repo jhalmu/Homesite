@@ -284,7 +284,7 @@ defmodule HomesiteWeb.ImageController do
       # Write SVG to temp file
       File.write!(svg_path, svg_content)
 
-      # Convert SVG to PNG using ImageMagick
+      # Convert SVG to PNG using ImageMagick 7+
       case System.cmd("magick", [
              svg_path,
              "-resize",
@@ -299,23 +299,7 @@ defmodule HomesiteWeb.ImageController do
           {:ok, png_data}
 
         {error, _} ->
-          # Try with 'convert' for older ImageMagick versions
-          case System.cmd("convert", [
-                 svg_path,
-                 "-resize",
-                 "#{@og_image_size}x#{@og_image_size}",
-                 "-background",
-                 "white",
-                 "-flatten",
-                 png_path
-               ]) do
-            {_, 0} ->
-              png_data = File.read!(png_path)
-              {:ok, png_data}
-
-            _ ->
-              {:error, {:conversion_failed, error}}
-          end
+          {:error, {:conversion_failed, error}}
       end
     after
       # Cleanup temp files
@@ -342,15 +326,7 @@ defmodule HomesiteWeb.ImageController do
           {:ok, File.read!(png_path)}
 
         _ ->
-          case System.cmd("convert", [
-                 input_path,
-                 "-resize",
-                 "#{@og_image_size}x#{@og_image_size}",
-                 png_path
-               ]) do
-            {_, 0} -> {:ok, File.read!(png_path)}
-            _ -> {:error, :conversion_failed}
-          end
+          {:error, :conversion_failed}
       end
     after
       File.rm(input_path)
@@ -425,29 +401,32 @@ defmodule HomesiteWeb.ImageController do
   def post_og_card(conn, %{"post_id" => post_id}) do
     post_id = String.to_integer(post_id)
 
-    # Fetch post with user
-    post =
-      from(p in Homesite.Content.Post,
-        where: p.id == ^post_id,
-        preload: [:user]
-      )
-      |> Repo.one()
+    # Try to get from cache first
+    case Homesite.OGImageCache.fetch(post_id, fn ->
+           # On cache miss, generate the image
+           post =
+             from(p in Homesite.Content.Post,
+               where: p.id == ^post_id,
+               preload: [:user]
+             )
+             |> Repo.one()
 
-    case post do
-      nil ->
+           case post do
+             nil -> :not_found
+             post -> generate_og_card(post)
+           end
+         end) do
+      :not_found ->
         serve_default_og_image(conn)
 
-      post ->
-        case generate_og_card(post) do
-          {:ok, png_data} ->
-            conn
-            |> put_resp_content_type("image/png")
-            |> put_resp_header("cache-control", "public, max-age=86400")
-            |> send_resp(200, png_data)
+      {:ok, png_data} ->
+        conn
+        |> put_resp_content_type("image/png")
+        |> put_resp_header("cache-control", "public, max-age=86400")
+        |> send_resp(200, png_data)
 
-          {:error, _reason} ->
-            serve_default_og_image(conn)
-        end
+      {:error, _reason} ->
+        serve_default_og_image(conn)
     end
   end
 

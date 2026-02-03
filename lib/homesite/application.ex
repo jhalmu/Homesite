@@ -16,6 +16,8 @@ defmodule Homesite.Application do
       {Oban, Application.fetch_env!(:homesite, Oban)},
       # Start FeedCache for RSS/Atom/JSON feed caching
       Homesite.FeedCache,
+      # Start OGImageCache for Open Graph image caching
+      Homesite.OGImageCache,
       # Chat presence tracking
       Homesite.Chat.Presence,
       # Task supervisor for async operations (search analytics, etc.)

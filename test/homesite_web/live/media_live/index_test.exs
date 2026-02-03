@@ -86,7 +86,7 @@ defmodule HomesiteWeb.MediaLive.IndexTest do
 
     test "orphan filter toggles correctly", %{conn: conn, scope: scope} do
       # Create orphan media with unique alt text
-      orphan =
+      _orphan =
         media_item_fixture(scope, %{title: "Orphan Media", alt_text: "Unique orphan alt text"})
 
       # Create attached media with unique alt text

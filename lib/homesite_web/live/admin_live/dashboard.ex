@@ -517,14 +517,9 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
     today_start = DateTime.new!(Date.utc_today(), ~T[00:00:00])
     week_start = DateTime.add(now, -7, :day)
 
-    # Get all activity logs for today and this week
-    today_logs =
-      Analytics.list_activity_logs(limit: 1000)
-      |> Enum.filter(fn log -> DateTime.compare(log.inserted_at, today_start) in [:gt, :eq] end)
-
-    week_logs =
-      Analytics.list_activity_logs(limit: 1000)
-      |> Enum.filter(fn log -> DateTime.compare(log.inserted_at, week_start) in [:gt, :eq] end)
+    # Get all activity logs for today and this week (filtered in database)
+    today_logs = Analytics.list_activity_logs(limit: 1000, since: today_start)
+    week_logs = Analytics.list_activity_logs(limit: 1000, since: week_start)
 
     # Count today's and week's activities
     today_count = length(today_logs)

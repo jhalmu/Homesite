@@ -275,24 +275,60 @@ defmodule Homesite.ExternalFeeds do
   Returns max 3 items per feed source, then takes 8 newest total.
   """
   def list_public_feed_items(_opts \\ []) do
-    # Get all enabled feed sources
-    feed_sources =
-      FeedSource
-      |> where(enabled: true)
-      |> Repo.all()
+    # Use window function to get top 3 items per feed source in a single query
+    # This avoids N+1 queries (one per feed source)
+    query =
+      from i in FeedItem,
+        join: s in FeedSource,
+        on: i.feed_source_id == s.id,
+        where: s.enabled == true,
+        select: %{
+          id: i.id,
+          feed_source_id: i.feed_source_id,
+          external_id: i.external_id,
+          title: i.title,
+          content: i.content,
+          author_name: i.author_name,
+          author_handle: i.author_handle,
+          author_avatar_url: i.author_avatar_url,
+          published_at: i.published_at,
+          url: i.url,
+          metadata: i.metadata,
+          inserted_at: i.inserted_at,
+          updated_at: i.updated_at,
+          row_num:
+            over(row_number(),
+              partition_by: i.feed_source_id,
+              order_by: [desc: i.published_at]
+            )
+        }
 
-    # For each feed source, get up to 3 newest items
-    feed_sources
-    |> Enum.flat_map(fn source ->
-      FeedItem
-      |> where([i], i.feed_source_id == ^source.id)
-      |> order_by([i], desc: i.published_at)
-      |> limit(3)
-      |> preload(:feed_source)
-      |> Repo.all()
-    end)
-    |> Enum.sort_by(& &1.published_at, {:desc, DateTime})
-    |> Enum.take(8)
+    # Get items where row_num <= 3 (top 3 per source)
+    ranked_items =
+      from subquery in subquery(query),
+        where: subquery.row_num <= 3,
+        order_by: [desc: subquery.published_at],
+        limit: 8,
+        select: %FeedItem{
+          id: subquery.id,
+          feed_source_id: subquery.feed_source_id,
+          external_id: subquery.external_id,
+          title: subquery.title,
+          content: subquery.content,
+          author_name: subquery.author_name,
+          author_handle: subquery.author_handle,
+          author_avatar_url: subquery.author_avatar_url,
+          published_at: subquery.published_at,
+          url: subquery.url,
+          metadata: subquery.metadata,
+          inserted_at: subquery.inserted_at,
+          updated_at: subquery.updated_at
+        }
+
+    # Preload feed_source for all items in a single query
+    ranked_items
+    |> Repo.all()
+    |> Repo.preload(:feed_source)
   end
 
   @doc """

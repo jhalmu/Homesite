@@ -58,7 +58,7 @@ defmodule Homesite.ExternalFeeds.FeedFetcherTest do
       assert updated_source.last_fetched_at != nil
     end
 
-    test "updates existing items on re-fetch", %{scope: scope} do
+    test "updates existing items on re-fetch", %{scope: _scope} do
       # This test would require a stable, predictable feed
       # For now, we'll skip it as it requires external dependencies
       # In a production app, you'd mock the HTTP responses

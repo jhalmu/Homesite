@@ -21,7 +21,7 @@ defmodule HomesiteWeb.FeedbackLiveTest do
 
     test "renders feedback form for authenticated users", %{conn: conn, user: user} do
       conn = log_in_user(conn, user)
-      {:ok, view, html} = live(conn, ~p"/feedback")
+      {:ok, _view, html} = live(conn, ~p"/feedback")
 
       assert html =~ "Share Your Feedback"
       assert html =~ "Overall Satisfaction"
@@ -32,7 +32,7 @@ defmodule HomesiteWeb.FeedbackLiveTest do
 
     test "shows 5-star rating inputs", %{conn: conn, user: user} do
       conn = log_in_user(conn, user)
-      {:ok, view, html} = live(conn, ~p"/feedback")
+      {:ok, _view, html} = live(conn, ~p"/feedback")
 
       # Check for star rating inputs (1-5)
       assert html =~ "name=\"feedback[overall_satisfaction]\" value=\"1\""
@@ -43,7 +43,7 @@ defmodule HomesiteWeb.FeedbackLiveTest do
 
     test "shows all three required fields", %{conn: conn, user: user} do
       conn = log_in_user(conn, user)
-      {:ok, view, html} = live(conn, ~p"/feedback")
+      {:ok, _view, html} = live(conn, ~p"/feedback")
 
       # Check for all three required fields
       assert html =~ "Overall Satisfaction"
@@ -56,7 +56,7 @@ defmodule HomesiteWeb.FeedbackLiveTest do
       {:ok, view, _html} = live(conn, ~p"/feedback")
 
       # Submit with required fields
-      result =
+      _result =
         view
         |> form("#feedback-form", %{
           "feedback" => %{
@@ -92,7 +92,7 @@ defmodule HomesiteWeb.FeedbackLiveTest do
       conn = log_in_user(conn, user)
       {:ok, view, _html} = live(conn, ~p"/feedback")
 
-      result =
+      _result =
         view
         |> form("#feedback-form", %{
           "feedback" => %{
@@ -134,7 +134,7 @@ defmodule HomesiteWeb.FeedbackLiveTest do
       |> render_submit()
 
       # Flash message should mention testimonial sharing
-      flash = assert_redirect(view, ~p"/")
+      _flash = assert_redirect(view, ~p"/")
     end
 
     test "shows rate limit error when submitting too frequently", %{conn: conn, user: user} do
@@ -182,7 +182,7 @@ defmodule HomesiteWeb.FeedbackLiveTest do
       {:ok, view, _html} = live(conn, ~p"/feedback")
 
       # Try to submit negative feedback - should redirect with error flash
-      result =
+      _result =
         view
         |> form("#feedback-form", %{
           "feedback" => %{
@@ -290,7 +290,7 @@ defmodule HomesiteWeb.FeedbackLiveTest do
     test "shows feedback link for authenticated users", %{conn: conn} do
       user = user_fixture()
       conn = log_in_user(conn, user)
-      {:ok, view, html} = live(conn, ~p"/")
+      {:ok, _view, html} = live(conn, ~p"/")
 
       # Should show feedback section in footer
       assert html =~ "Feedback"
@@ -300,7 +300,7 @@ defmodule HomesiteWeb.FeedbackLiveTest do
     end
 
     test "does not show feedback link for unauthenticated users", %{conn: conn} do
-      {:ok, view, html} = live(conn, ~p"/")
+      {:ok, _view, html} = live(conn, ~p"/")
 
       # Should not show feedback section
       refute html =~ "Share Your Feedback" and html =~ "Help us improve!"

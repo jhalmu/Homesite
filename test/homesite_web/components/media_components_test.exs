@@ -31,7 +31,7 @@ defmodule HomesiteWeb.MediaComponentsTest do
     end
 
     test "renders portfolio with clickable images", %{conn: conn, project: project} do
-      {:ok, view, html} = live(conn, ~p"/portfolio/#{project.slug}")
+      {:ok, _view, html} = live(conn, ~p"/portfolio/#{project.slug}")
 
       # Check page renders
       assert html =~ project.name

@@ -819,6 +819,9 @@ defmodule Homesite.Content do
         invalidate_feed_caches(updated_post)
       end
 
+      # Invalidate OG image cache (title or user changes affect the image)
+      Homesite.OGImageCache.invalidate(updated_post.id)
+
       {:ok, updated_post}
     end
   end
@@ -857,6 +860,9 @@ defmodule Homesite.Content do
         # Use the preloaded tags from before deletion
         invalidate_feed_caches(%{deleted_post | tags: post_with_tags.tags})
       end
+
+      # Invalidate OG image cache
+      Homesite.OGImageCache.invalidate(deleted_post.id)
 
       {:ok, deleted_post}
     end

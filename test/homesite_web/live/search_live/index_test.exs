@@ -3,7 +3,6 @@ defmodule HomesiteWeb.SearchLive.IndexTest do
 
   import Phoenix.LiveViewTest
   import Homesite.AccountsFixtures
-  import Homesite.ContentFixtures
 
   alias Homesite.Content
 

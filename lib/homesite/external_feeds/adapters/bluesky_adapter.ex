@@ -13,6 +13,8 @@ defmodule Homesite.ExternalFeeds.Adapters.BlueskyAdapter do
   alias Homesite.ExternalFeeds.FeedSource
   require Logger
 
+  alias Homesite.ExternalFeeds.Adapters.Helpers
+
   @public_api "https://public.api.bsky.app"
   @default_limit 25
 
@@ -203,32 +205,11 @@ defmodule Homesite.ExternalFeeds.Adapters.BlueskyAdapter do
   end
 
   # Generate ID from URI if CID is not available
-  defp generate_id_from_uri(uri) when is_binary(uri) and uri != "" do
-    :crypto.hash(:sha256, uri) |> Base.encode16(case: :lower)
-  end
-
-  defp generate_id_from_uri(_) do
-    :crypto.hash(:sha256, :rand.bytes(16)) |> Base.encode16(case: :lower)
-  end
+  defp generate_id_from_uri(uri), do: Helpers.generate_id_from_string(uri)
 
   # Parse Bluesky timestamp (ISO8601)
-  defp parse_bluesky_date(date_string) when is_binary(date_string) do
-    case DateTime.from_iso8601(date_string) do
-      {:ok, datetime, _offset} -> datetime
-      _ -> DateTime.utc_now()
-    end
-  end
-
-  defp parse_bluesky_date(_), do: DateTime.utc_now()
+  defp parse_bluesky_date(date_string), do: Helpers.parse_iso8601_date(date_string)
 
   # Truncate text to specified length
-  defp truncate_text(text, max_length) when is_binary(text) do
-    if String.length(text) > max_length do
-      String.slice(text, 0, max_length) <> "..."
-    else
-      text
-    end
-  end
-
-  defp truncate_text(_, _), do: "Untitled"
+  defp truncate_text(text, max_length), do: Helpers.truncate_text(text, max_length)
 end
