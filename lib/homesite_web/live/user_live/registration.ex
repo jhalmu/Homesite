@@ -51,15 +51,11 @@ defmodule HomesiteWeb.UserLive.Registration do
               phx-submit={if @is_preview, do: nil, else: "save"}
               phx-change={if @is_preview, do: nil, else: "validate"}
             >
-              <%!-- Display base errors (e.g., invitation code errors) prominently --%>
-              <%= if @form.errors[:base] do %>
+              <%!-- Display base errors (e.g., CAPTCHA errors, invitation code errors) prominently --%>
+              <%= for {:base, error_tuple} <- @form.errors do %>
                 <div class="alert alert-error mb-[var(--spacing-md)]" role="alert">
                   <.icon name="hero-exclamation-triangle" class="h-5 w-5" />
-                  <div>
-                    <%= for error <- @form.errors[:base] do %>
-                      <p>{error}</p>
-                    <% end %>
-                  </div>
+                  <p>{translate_error(error_tuple)}</p>
                 </div>
               <% end %>
 
