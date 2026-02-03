@@ -106,82 +106,96 @@ defmodule HomesiteWeb.FeedController do
   - full: Include full post content (default: false, uses excerpt)
   """
   def user(conn, %{"user_identifier" => user_identifier} = params) do
-    # Get user by identifier (ID or @username)
-    user = Accounts.get_user_by_identifier(user_identifier)
+    case Accounts.get_user_by_identifier(user_identifier) do
+      nil ->
+        send_not_found(conn, "User not found")
 
-    if user == nil do
-      conn
-      |> put_status(:not_found)
-      |> put_resp_content_type("text/plain")
-      |> send_resp(404, "User not found")
-    else
-      format = determine_feed_format(conn.request_path)
-      page = String.to_integer(params["page"] || "1")
-      full_content = params["full"] == "true"
-
-      # Calculate offset from page number
-      limit = 20
-      offset = (page - 1) * limit
-
-      # Use user.id for cache key consistency (whether accessed via ID or username)
-      cache_key = {:user, format, user.id, page, full_content}
-
-      feed =
-        FeedCache.fetch(cache_key, fn ->
-          posts = Content.list_user_posts_for_feed(user.id, limit, offset)
-
-          user_name = user.display_name || user.email
-
-          title = "#{user_name} - Posts"
-          description = "Recent posts by #{user_name}"
-          # Prefer username in URLs if available
-          user_path = if user.username, do: "@#{user.username}", else: user.id
-          link = url(~p"/users/#{user_path}")
-
-          case format do
-            :rss ->
-              generate_rss_feed(
-                posts,
-                title,
-                description,
-                link,
-                url(~p"/users/#{user_path}/rss.xml"),
-                full_content
-              )
-
-            :json ->
-              generate_json_feed(
-                posts,
-                title,
-                description,
-                link,
-                url(~p"/users/#{user_path}/feed.json"),
-                full_content
-              )
-
-            :atom ->
-              generate_atom_feed(
-                posts,
-                title,
-                description,
-                link,
-                url(~p"/users/#{user_path}/feed.xml"),
-                full_content
-              )
-          end
-        end)
-
-      case format do
-        :rss ->
-          conn |> put_resp_content_type("application/rss+xml") |> send_resp(200, feed)
-
-        :json ->
-          json(conn, feed)
-
-        :atom ->
-          conn |> put_resp_content_type("application/atom+xml") |> send_resp(200, feed)
-      end
+      user ->
+        generate_user_feed(conn, user, params)
     end
+  end
+
+  defp generate_user_feed(conn, user, params) do
+    format = determine_feed_format(conn.request_path)
+    page = String.to_integer(params["page"] || "1")
+    full_content = params["full"] == "true"
+
+    cache_key = {:user, format, user.id, page, full_content}
+    feed = FeedCache.fetch(cache_key, fn -> build_user_feed(user, format, page, full_content) end)
+
+    send_feed_response(conn, feed, format)
+  end
+
+  defp build_user_feed(user, format, page, full_content) do
+    limit = 20
+    offset = (page - 1) * limit
+    posts = Content.list_user_posts_for_feed(user.id, limit, offset)
+
+    user_name = user.display_name || user.email
+    user_path = if user.username, do: "@#{user.username}", else: user.id
+
+    feed_params = %{
+      posts: posts,
+      title: "#{user_name} - Posts",
+      description: "Recent posts by #{user_name}",
+      link: url(~p"/users/#{user_path}"),
+      user_path: user_path,
+      full_content: full_content
+    }
+
+    generate_feed_by_format(format, feed_params)
+  end
+
+  defp generate_feed_by_format(:rss, %{user_path: user_path} = params) do
+    generate_rss_feed(
+      params.posts,
+      params.title,
+      params.description,
+      params.link,
+      url(~p"/users/#{user_path}/rss.xml"),
+      params.full_content
+    )
+  end
+
+  defp generate_feed_by_format(:json, %{user_path: user_path} = params) do
+    generate_json_feed(
+      params.posts,
+      params.title,
+      params.description,
+      params.link,
+      url(~p"/users/#{user_path}/feed.json"),
+      params.full_content
+    )
+  end
+
+  defp generate_feed_by_format(:atom, %{user_path: user_path} = params) do
+    generate_atom_feed(
+      params.posts,
+      params.title,
+      params.description,
+      params.link,
+      url(~p"/users/#{user_path}/feed.xml"),
+      params.full_content
+    )
+  end
+
+  defp send_feed_response(conn, feed, :rss) do
+    conn |> put_resp_content_type("application/rss+xml") |> send_resp(200, feed)
+  end
+
+  defp send_feed_response(conn, feed, :json) do
+    json(conn, feed)
+  end
+
+  defp send_feed_response(conn, feed, :atom) do
+    conn |> put_resp_content_type("application/atom+xml") |> send_resp(200, feed)
+  end
+
+  defp send_not_found(conn, message) do
+    conn
+    |> put_status(:not_found)
+    |> put_resp_content_type("text/plain")
+    |> send_resp(404, message)
   end
 
   @doc """

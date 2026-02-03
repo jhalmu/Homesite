@@ -798,24 +798,10 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
   defp get_resource_link(log) do
     case {log.resource_type, log.resource_id, log.metadata} do
       {"post", _id, metadata} when is_map(metadata) ->
-        # Posts use slug in the URL
-        slug = metadata["slug"] || metadata[:slug]
-
-        if slug && is_binary(slug) && slug != "" do
-          ~p"/posts/#{slug}"
-        else
-          nil
-        end
+        build_slug_link(metadata, "/posts/")
 
       {"tag", _id, metadata} when is_map(metadata) ->
-        # Tags use slug in the URL (route param is called :id but expects slug)
-        slug = metadata["slug"] || metadata[:slug]
-
-        if slug && is_binary(slug) && slug != "" do
-          ~p"/tags/#{slug}"
-        else
-          nil
-        end
+        build_slug_link(metadata, "/tags/")
 
       {"user", id, _} when not is_nil(id) ->
         ~p"/admin/users"
@@ -824,6 +810,22 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
         nil
     end
   end
+
+  defp build_slug_link(metadata, path_prefix) do
+    case extract_slug(metadata) do
+      slug when is_binary(slug) and slug != "" ->
+        path_prefix <> slug
+
+      _ ->
+        nil
+    end
+  end
+
+  defp extract_slug(metadata) when is_map(metadata) do
+    metadata["slug"] || metadata[:slug]
+  end
+
+  defp extract_slug(_), do: nil
 
   defp translate_resource_type(resource_type) do
     case resource_type do

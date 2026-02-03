@@ -311,22 +311,30 @@ defmodule HomesiteWeb.UserAuth do
 
   defp mount_current_scope(socket, session) do
     Phoenix.Component.assign_new(socket, :current_scope, fn ->
-      {user, _} =
-        if user_token = session["user_token"] do
-          Accounts.get_user_by_session_token(user_token)
-        end || {nil, nil}
-
-      # Check moderation status for authenticated users
-      if user do
-        case check_user_moderation_status(user) do
-          :ok -> Scope.for_user(user)
-          {:banned, _ban} -> Scope.for_user(nil)
-          {:suspended, _suspension} -> Scope.for_user(nil)
-        end
-      else
-        Scope.for_user(nil)
-      end
+      session
+      |> get_session_user()
+      |> create_scope_with_moderation_check()
     end)
+  end
+
+  defp get_session_user(session) do
+    case session["user_token"] do
+      nil -> nil
+      token ->
+        case Accounts.get_user_by_session_token(token) do
+          {user, _} -> user
+          _ -> nil
+        end
+    end
+  end
+
+  defp create_scope_with_moderation_check(nil), do: Scope.for_user(nil)
+
+  defp create_scope_with_moderation_check(user) do
+    case check_user_moderation_status(user) do
+      :ok -> Scope.for_user(user)
+      _ -> Scope.for_user(nil)
+    end
   end
 
   @doc "Returns the path to redirect to after log in."

@@ -158,43 +158,42 @@ defmodule Mix.Tasks.SeedUsers do
     scope = Scope.for_user(user)
     locale = user.preferred_language
 
-    # Create common tags (shared across users)
-    common_tags = if locale == "en", do: @common_tags_en, else: @common_tags_fi
+    common_tags = create_common_tags(scope, locale)
+    unique_tags = create_unique_tags(scope, locale, user.id)
+    all_tags = common_tags ++ unique_tags
 
-    common_tag_records =
-      Enum.map(common_tags, fn tag_name ->
-        # Try to find existing tag or create new one
-        case Content.get_tag_by_name(scope, tag_name) do
-          nil ->
-            case Content.create_tag(scope, %{name: tag_name, is_public: true}) do
-              {:ok, tag} -> tag
-              _ -> nil
-            end
+    create_posts_with_tags(scope, locale, all_tags, user.email)
+  end
 
-          tag ->
-            tag
-        end
-      end)
-      |> Enum.reject(&is_nil/1)
+  defp create_common_tags(scope, locale) do
+    tag_names = if locale == "en", do: @common_tags_en, else: @common_tags_fi
 
-    # Create unique tags for this user
-    unique_templates =
-      if locale == "en", do: @unique_tag_templates_en, else: @unique_tag_templates_fi
+    Enum.map(tag_names, fn tag_name ->
+      case Content.get_tag_by_name(scope, tag_name) do
+        nil -> create_or_nil_tag(scope, tag_name)
+        tag -> tag
+      end
+    end)
+    |> Enum.reject(&is_nil/1)
+  end
 
-    unique_tag_records =
-      Enum.map(unique_templates, fn template ->
-        tag_name = "#{template} #{user.id}"
+  defp create_unique_tags(scope, locale, user_id) do
+    templates = if locale == "en", do: @unique_tag_templates_en, else: @unique_tag_templates_fi
 
-        case Content.create_tag(scope, %{name: tag_name, is_public: true}) do
-          {:ok, tag} -> tag
-          _ -> nil
-        end
-      end)
-      |> Enum.reject(&is_nil/1)
+    Enum.map(templates, fn template ->
+      create_or_nil_tag(scope, "#{template} #{user_id}")
+    end)
+    |> Enum.reject(&is_nil/1)
+  end
 
-    all_user_tags = common_tag_records ++ unique_tag_records
+  defp create_or_nil_tag(scope, tag_name) do
+    case Content.create_tag(scope, %{name: tag_name, is_public: true}) do
+      {:ok, tag} -> tag
+      _ -> nil
+    end
+  end
 
-    # Create 30 posts for this user
+  defp create_posts_with_tags(scope, locale, all_tags, user_email) do
     Enum.each(1..30, fn post_num ->
       post_attrs = %{
         title: generate_title(post_num, locale),
@@ -205,19 +204,21 @@ defmodule Mix.Tasks.SeedUsers do
 
       case Content.create_post(scope, post_attrs) do
         {:ok, post} ->
-          # Assign 3-5 random tags to this post
-          num_tags = Enum.random(3..5)
-          selected_tags = Enum.take_random(all_user_tags, num_tags)
-
-          Enum.each(selected_tags, fn tag ->
-            %PostTag{}
-            |> PostTag.changeset(%{post_id: post.id, tag_id: tag.id}, scope)
-            |> Repo.insert()
-          end)
+          assign_random_tags_to_post(scope, post, all_tags)
 
         {:error, _changeset} ->
-          Mix.shell().error("Failed to create post #{post_num} for user #{user.email}")
+          Mix.shell().error("Failed to create post #{post_num} for user #{user_email}")
       end
+    end)
+  end
+
+  defp assign_random_tags_to_post(scope, post, all_tags) do
+    all_tags
+    |> Enum.take_random(Enum.random(3..5))
+    |> Enum.each(fn tag ->
+      %PostTag{}
+      |> PostTag.changeset(%{post_id: post.id, tag_id: tag.id}, scope)
+      |> Repo.insert()
     end)
   end
 

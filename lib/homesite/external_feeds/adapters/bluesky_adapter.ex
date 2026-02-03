@@ -115,50 +115,54 @@ defmodule Homesite.ExternalFeeds.Adapters.BlueskyAdapter do
   defp parse_post(%{"post" => post}, feed_source) do
     record = post["record"] || %{}
     author = post["author"] || %{}
-    uri = post["uri"] || ""
-    cid = post["cid"] || ""
-
-    # Extract text content
-    text = record["text"] || ""
-
-    # Extract embed content (images, links, etc.)
-    embed_text = extract_embed_text(post["embed"])
-
-    # Combine text and embed info
-    content =
-      if embed_text != "" do
-        "#{text}\n\n#{embed_text}"
-      else
-        text
-      end
-
-    # Generate post URL
-    post_url = generate_post_url(author["handle"], uri)
 
     %{
-      external_id: cid || generate_id_from_uri(uri),
-      title: truncate_text(text, 100),
-      content: content,
+      external_id: extract_post_id(post),
+      title: extract_post_title(record),
+      content: build_post_content(record, post["embed"]),
       author_name: author["displayName"] || author["handle"],
       author_handle: "@#{author["handle"]}",
       author_avatar_url: author["avatar"],
       published_at: parse_bluesky_date(record["createdAt"]),
-      url: post_url,
-      metadata: %{
-        feed_source_id: feed_source.id,
-        feed_type: "bluesky",
-        uri: uri,
-        cid: cid,
-        reply_count: post["replyCount"] || 0,
-        repost_count: post["repostCount"] || 0,
-        like_count: post["likeCount"] || 0,
-        has_embed: !is_nil(post["embed"])
-      }
+      url: generate_post_url(author["handle"], post["uri"]),
+      metadata: build_post_metadata(post, feed_source.id)
     }
   rescue
     e ->
       Logger.warning("Failed to parse Bluesky post: #{Exception.message(e)}")
       nil
+  end
+
+  defp extract_post_id(post) do
+    post["cid"] || generate_id_from_uri(post["uri"] || "")
+  end
+
+  defp extract_post_title(record) do
+    truncate_text(record["text"] || "", 100)
+  end
+
+  defp build_post_content(record, embed) do
+    text = record["text"] || ""
+    embed_text = extract_embed_text(embed)
+
+    if embed_text != "" do
+      "#{text}\n\n#{embed_text}"
+    else
+      text
+    end
+  end
+
+  defp build_post_metadata(post, feed_source_id) do
+    %{
+      feed_source_id: feed_source_id,
+      feed_type: "bluesky",
+      uri: post["uri"] || "",
+      cid: post["cid"] || "",
+      reply_count: post["replyCount"] || 0,
+      repost_count: post["repostCount"] || 0,
+      like_count: post["likeCount"] || 0,
+      has_embed: !is_nil(post["embed"])
+    }
   end
 
   # Extract text from embeds (images, links, etc.)

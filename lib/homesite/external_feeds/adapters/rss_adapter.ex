@@ -7,6 +7,7 @@ defmodule Homesite.ExternalFeeds.Adapters.RssAdapter do
   @behaviour Homesite.ExternalFeeds.Adapters.FeedAdapter
 
   alias Homesite.ExternalFeeds.FeedSource
+  alias Homesite.ExternalFeeds.Adapters.Helpers
   import SweetXml
   require Logger
 
@@ -24,7 +25,7 @@ defmodule Homesite.ExternalFeeds.Adapters.RssAdapter do
       {:ok, items}
     else
       {:error, reason} = error ->
-        Logger.error("Failed to fetch feed from #{url}: #{inspect(reason)}")
+        Helpers.log_adapter_error(__MODULE__, "fetch_items", reason, %{url: url})
         error
     end
   end
