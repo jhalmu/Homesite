@@ -31,8 +31,8 @@ defmodule HomesiteWeb.Plugs.ContentSecurityPolicy do
 
   defp build_csp do
     [
-      # Scripts: Allow self and inline (required for LiveView)
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+      # Scripts: Allow self, inline (required for LiveView), and Cloudflare Turnstile
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com",
       # Styles: Allow self, inline, and Google Fonts
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       # Default: Only allow from same origin
@@ -41,8 +41,10 @@ defmodule HomesiteWeb.Plugs.ContentSecurityPolicy do
       "img-src 'self' data: blob: https:",
       # Fonts: Allow self and Google Fonts
       "font-src 'self' data: https://fonts.gstatic.com",
-      # Connect: Allow self and websockets (required for LiveView)
-      "connect-src 'self' ws: wss:",
+      # Connect: Allow self, websockets (required for LiveView), and Cloudflare Turnstile
+      "connect-src 'self' ws: wss: https://challenges.cloudflare.com",
+      # Frames: Allow Cloudflare Turnstile iframes
+      "frame-src https://challenges.cloudflare.com",
       # Frame ancestors: Prevent clickjacking
       "frame-ancestors 'none'",
       # Base URI: Restrict base tag

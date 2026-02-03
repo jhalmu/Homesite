@@ -27,6 +27,7 @@ import topbar from "../vendor/topbar"
 import WebShareApi from "./hooks/webShareApi"
 import CopyToClipboard from "./hooks/copyToClipboard"
 import { SortableProjects, SortableSections } from "./hooks/sortable"
+import { TurnstileHook } from "../../deps/phoenix_turnstile/priv/static/phoenix_turnstile"
 import Chart from "chart.js/auto"
 import ApexCharts from "apexcharts"
 
@@ -140,6 +141,7 @@ const Hooks = {
   CopyToClipboard,
   SortableProjects,
   SortableSections,
+  Turnstile: TurnstileHook,
   CopyButton: {
     mounted() {
       this.el.addEventListener('click', () => {
