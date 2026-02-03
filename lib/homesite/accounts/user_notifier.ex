@@ -88,6 +88,23 @@ defmodule Homesite.Accounts.UserNotifier do
     end)
   end
 
+  @doc """
+  Deliver notification to admins when a new user registers.
+  """
+  def deliver_new_user_notification(admin_email, new_user) do
+    deliver(admin_email, "New user registered", """
+
+    ==============================
+
+    A new user has registered on Orangedinos:
+
+    Email: #{new_user.email}
+    Registered: #{Calendar.strftime(DateTime.utc_now(), "%Y-%m-%d %H:%M UTC")}
+
+    ==============================
+    """)
+  end
+
   # Registration confirmation is sent in both languages for new users
   defp deliver_confirmation_instructions(user, url) do
     deliver(user.email, "Confirm your account / Vahvista tilisi", """

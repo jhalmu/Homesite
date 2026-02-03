@@ -190,6 +190,9 @@ defmodule HomesiteWeb.UserLive.Registration do
           &url(~p"/users/log-in/#{&1}")
         )
 
+      # Notify admins of new registration
+      Accounts.notify_admins_of_new_user(user)
+
       {:noreply,
        socket
        |> put_flash(

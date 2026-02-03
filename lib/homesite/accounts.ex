@@ -691,6 +691,27 @@ defmodule Homesite.Accounts do
     :ok
   end
 
+  @doc """
+  Notifies all admin users when a new user registers.
+
+  Sends email asynchronously to avoid blocking registration.
+
+  ## Examples
+
+      iex> notify_admins_of_new_user(user)
+      :ok
+
+  """
+  def notify_admins_of_new_user(%User{} = new_user) do
+    Task.Supervisor.start_child(Homesite.TaskSupervisor, fn ->
+      for admin <- list_admins() do
+        UserNotifier.deliver_new_user_notification(admin.email, new_user)
+      end
+    end)
+
+    :ok
+  end
+
   ## Admin User Management
 
   @doc """

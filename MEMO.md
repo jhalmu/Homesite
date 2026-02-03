@@ -7,6 +7,45 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2026-02-03 (Evening) - Admin Email Notifications & GitHub Issues
+
+### Session Summary
+
+Implemented admin email notification when new users register and created comprehensive GitHub issues for user feedback.
+
+#### Feature Implemented
+
+**Admin Email Notification on New User Registration**
+- Added `deliver_new_user_notification/2` to UserNotifier
+- Added `notify_admins_of_new_user/1` to Accounts context
+- Runs asynchronously via Task.Supervisor (non-blocking)
+- Emails all admin users when someone registers
+- Includes new user email and registration timestamp
+
+#### Files Modified
+- `lib/homesite/accounts/user_notifier.ex` - New notification function
+- `lib/homesite/accounts.ex` - Admin notification wrapper
+- `lib/homesite_web/live/user_live/registration.ex` - Hook after registration
+
+#### GitHub Issues Created/Updated
+
+| # | Title | Status |
+|---|-------|--------|
+| 97 | Old Helmet review | Open |
+| 98 | User account deletion (self + admin) | Updated |
+| 99 | User banning UX improvements | Open |
+| 100 | Expand user management options | Open |
+| 101 | Permission system design | Open |
+| 102 | Email notification on new user join | Open (implemented) |
+| 103 | GDPR compliance review | Updated |
+| 104 | User data export (GDPR) | Created |
+
+#### Test Results
+- **1686 tests, 0 failures**
+- Credo: Pre-existing warnings only
+
+---
+
 ## 2026-02-03 - Cloudflare Turnstile CAPTCHA Fix
 
 ### Session Summary
