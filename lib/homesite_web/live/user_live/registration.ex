@@ -175,9 +175,14 @@ defmodule HomesiteWeb.UserLive.Registration do
   end
 
   @impl true
-  def handle_event("save", %{"user" => user_params}, socket) do
+  def handle_event("save", %{"user" => user_params} = params, socket) do
+    # Get turnstile token from root params (not nested under user)
+    # The hidden input value gets cleared on form re-renders, but Turnstile's
+    # own callback sets it at the root level which persists
+    turnstile_token = params["cf-turnstile-response"]
+
     # Verify CAPTCHA if enabled
-    with :ok <- verify_turnstile(socket.assigns.turnstile_enabled, user_params),
+    with :ok <- verify_turnstile(socket.assigns.turnstile_enabled, turnstile_token),
          {:ok, user} <- Accounts.register_user(user_params) do
       {:ok, _} =
         Accounts.deliver_login_instructions(
@@ -204,10 +209,16 @@ defmodule HomesiteWeb.UserLive.Registration do
             gettext("CAPTCHA verification failed. Please try again.")
           )
 
-        {:noreply, assign_form(socket, changeset)}
+        {:noreply,
+         socket
+         |> Turnstile.refresh()
+         |> assign_form(changeset)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:noreply,
+         socket
+         |> Turnstile.refresh()
+         |> assign_form(changeset)}
     end
   end
 
@@ -216,11 +227,11 @@ defmodule HomesiteWeb.UserLive.Registration do
     {:noreply, assign_form(socket, Map.put(changeset, :action, :validate))}
   end
 
-  defp verify_turnstile(false, _user_params), do: :ok
+  defp verify_turnstile(false, _token), do: :ok
 
-  defp verify_turnstile(true, user_params) do
+  defp verify_turnstile(true, token) do
     # Turnstile.verify expects a map with "cf-turnstile-response" key
-    turnstile_params = %{"cf-turnstile-response" => user_params["cf-turnstile-response"]}
+    turnstile_params = %{"cf-turnstile-response" => token}
 
     case Turnstile.verify(turnstile_params) do
       {:ok, _response} ->

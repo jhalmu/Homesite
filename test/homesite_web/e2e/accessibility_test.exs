@@ -89,6 +89,24 @@ defmodule HomesiteWeb.E2E.AccessibilityTest do
     session
   end
 
+  describe "Registration Page Accessibility" do
+    @tag :playwright
+    test "registration page has no accessibility violations", %{conn: conn} do
+      conn
+      |> visit(~p"/users/register")
+      |> assert_has("body .phx-connected")
+      |> assert_no_violations()
+    end
+
+    @tag :playwright
+    test "registration page has no violations in dark theme", %{conn: conn} do
+      conn
+      |> visit(~p"/users/register")
+      |> assert_has("body .phx-connected")
+      |> assert_no_violations_dark()
+    end
+  end
+
   describe "Login Page Accessibility" do
     @tag :playwright
     test "login page has no accessibility violations", %{conn: conn} do

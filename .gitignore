@@ -1,3 +1,5 @@
+.env
+
 # The directory Mix will write compiled artifacts to.
 /_build/
 
@@ -45,4 +47,3 @@ npm-debug.log
 
 # Dialyzer PLT files
 /priv/plts/
-

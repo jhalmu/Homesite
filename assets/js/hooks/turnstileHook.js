@@ -10,34 +10,54 @@ function callbackEvent(self, name, eventName) {
 
 export const TurnstileHook = {
   mounted() {
-    // Find the parent form
-    const form = this.el.closest('form')
+    this.widgetId = null
+    this.form = this.el.closest('form')
+    this.renderWidget()
 
-    // Extract all data attributes for Turnstile configuration
+    this.handleEvent("turnstile:refresh", (event) => {
+      if (!event.id || event.id === this.el.id) {
+        this.resetWidget()
+      }
+    })
+
+    this.handleEvent("turnstile:remove", (event) => {
+      if (!event.id || event.id === this.el.id) {
+        this.removeWidget()
+      }
+    })
+  },
+
+  destroyed() {
+    this.removeWidget()
+  },
+
+  renderWidget() {
+    if (typeof turnstile === 'undefined') {
+      setTimeout(() => this.renderWidget(), 100)
+      return
+    }
+
     const options = {
       sitekey: this.el.dataset.sitekey,
       callback: (token) => {
-        // When Turnstile completes, update the token in the existing hidden input
-        // Look for the input with the correct name attribute for LiveView forms
-        const tokenInput = form?.querySelector('input[name="user[cf-turnstile-response]"]') ||
-                          form?.querySelector('input[name="cf-turnstile-response"]')
-
-        if (tokenInput) {
-          tokenInput.value = token
-          console.log('Turnstile token set:', token.substring(0, 50) + '...')
-        } else {
-          console.error('Could not find Turnstile token input field')
-        }
-
-        // Also call the event callback
+        this.setToken(token)
         callbackEvent(this, "success")(token)
       },
-      "error-callback": callbackEvent(this, "error"),
-      "expired-callback": callbackEvent(this, "expired"),
+      "error-callback": (errorCode) => {
+        console.error('Turnstile error:', errorCode)
+        callbackEvent(this, "error")(errorCode)
+      },
+      "expired-callback": () => {
+        this.setToken('')
+        callbackEvent(this, "expired")()
+      },
+      "timeout-callback": () => {
+        this.setToken('')
+        callbackEvent(this, "timeout")()
+      },
       "before-interactive-callback": callbackEvent(this, "beforeInteractive", "before-interactive"),
       "after-interactive-callback": callbackEvent(this, "afterInteractive", "after-interactive"),
-      "unsupported-callback": callbackEvent(this, "unsupported"),
-      "timeout-callback": callbackEvent(this, "timeout")
+      "unsupported-callback": callbackEvent(this, "unsupported")
     }
 
     // Add any other data attributes (like theme, size, etc.)
@@ -47,24 +67,36 @@ export const TurnstileHook = {
       }
     })
 
-    turnstile.render(this.el, options)
+    this.widgetId = turnstile.render(this.el, options)
+    console.log('Turnstile widget rendered with ID:', this.widgetId)
+  },
 
-    this.handleEvent("turnstile:refresh", (event) => {
-      if (!event.id || event.id === this.el.id) {
-        turnstile.reset(this.el)
-        // Clear the hidden input when refreshing
-        const input = form?.querySelector('input[name="cf-turnstile-response"]')
-        if (input) input.value = ''
+  setToken(token) {
+    const tokenInput = this.form?.querySelector('input[name="user[cf-turnstile-response]"]') ||
+                       this.form?.querySelector('input[name="cf-turnstile-response"]')
+    if (tokenInput) {
+      tokenInput.value = token
+      if (token) {
+        console.log('Turnstile token set:', token.substring(0, 50) + '...')
+      } else {
+        console.log('Turnstile token cleared')
       }
-    })
+    }
+  },
 
-    this.handleEvent("turnstile:remove", (event) => {
-      if (!event.id || event.id === this.el.id) {
-        turnstile.remove(this.el)
-        // Remove the hidden input
-        const input = form?.querySelector('input[name="cf-turnstile-response"]')
-        if (input) input.remove()
-      }
-    })
+  resetWidget() {
+    if (this.widgetId !== null && typeof turnstile !== 'undefined') {
+      turnstile.reset(this.widgetId)
+      this.setToken('')
+      console.log('Turnstile widget reset')
+    }
+  },
+
+  removeWidget() {
+    if (this.widgetId !== null && typeof turnstile !== 'undefined') {
+      turnstile.remove(this.widgetId)
+      this.widgetId = null
+      console.log('Turnstile widget removed')
+    }
   }
 }
