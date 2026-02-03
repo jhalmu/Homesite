@@ -21,6 +21,8 @@ services:
       SMTP_PASSWORD: "${SMTP_PASSWORD}"
       UPLOADS_PATH: "/app/uploads"
       MAXMIND_LICENSE_KEY: "${MAXMIND_LICENSE_KEY}"
+      TURNSTILE_SITE_KEY: "${TURNSTILE_SITE_KEY}"
+      TURNSTILE_SECRET_KEY: "${TURNSTILE_SECRET_KEY}"
     volumes:
       - uploads_data:/app/uploads
     networks:
