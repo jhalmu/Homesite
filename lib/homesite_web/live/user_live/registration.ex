@@ -221,7 +221,10 @@ defmodule HomesiteWeb.UserLive.Registration do
   defp verify_turnstile(false, _user_params), do: :ok
 
   defp verify_turnstile(true, user_params) do
-    case Turnstile.verify(user_params) do
+    # Turnstile.verify expects a map with "cf-turnstile-response" key
+    turnstile_params = %{"cf-turnstile-response" => user_params["cf-turnstile-response"]}
+
+    case Turnstile.verify(turnstile_params) do
       {:ok, _response} -> :ok
       {:error, _reason} -> {:error, :captcha_failed}
     end
