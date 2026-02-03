@@ -7279,27 +7279,27 @@ msgstr ""
 #: lib/homesite_web/live/admin_live/settings/index.ex:84
 #, elixir-autogen, elixir-format
 msgid "CAPTCHA Protection"
-msgstr ""
+msgstr "CAPTCHA-suojaus"
 
 #: lib/homesite_web/live/admin_live/settings/index.ex:162
 #, elixir-autogen, elixir-format
 msgid "CAPTCHA disabled"
-msgstr ""
+msgstr "CAPTCHA pois käytöstä"
 
 #: lib/homesite_web/live/admin_live/settings/index.ex:161
 #, elixir-autogen, elixir-format
 msgid "CAPTCHA enabled"
-msgstr ""
+msgstr "CAPTCHA käytössä"
 
 #: lib/homesite_web/live/admin_live/settings/index.ex:105
 #, elixir-autogen, elixir-format
 msgid "CAPTCHA is enabled. Make sure TURNSTILE_SITE_KEY and TURNSTILE_SECRET_KEY environment variables are configured."
-msgstr ""
+msgstr "CAPTCHA on käytössä. Varmista, että TURNSTILE_SITE_KEY ja TURNSTILE_SECRET_KEY ympäristömuuttujat on määritetty."
 
 #: lib/homesite_web/live/user_live/registration.ex:194
 #, elixir-autogen, elixir-format
 msgid "CAPTCHA verification failed. Please try again."
-msgstr ""
+msgstr "CAPTCHA-vahvistus epäonnistui. Yritä uudelleen."
 
 #: lib/homesite_web/live/admin_live/settings/index.ex:30
 #, elixir-autogen, elixir-format
@@ -7309,7 +7309,7 @@ msgstr "Sulje"
 #: lib/homesite_web/live/admin_live/settings/index.ex:14
 #, elixir-autogen, elixir-format
 msgid "Configure registration mode and security features"
-msgstr ""
+msgstr "Määritä rekisteröintitila ja turvallisuusominaisuudet"
 
 #: lib/homesite_web/live/admin_live/settings/index.ex:24
 #, elixir-autogen, elixir-format
@@ -7319,7 +7319,7 @@ msgstr "Hallitse, miten käyttäjät voivat rekisteröityä"
 #: lib/homesite_web/live/admin_live/settings/index.ex:86
 #, elixir-autogen, elixir-format
 msgid "Enable Cloudflare Turnstile CAPTCHA to prevent bot registrations"
-msgstr ""
+msgstr "Ota käyttöön Cloudflare Turnstile CAPTCHA estääksesi bottien rekisteröitymisen"
 
 #: lib/homesite_web/live/admin_live/settings/index.ex:91
 #, elixir-autogen, elixir-format
