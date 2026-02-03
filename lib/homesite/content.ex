@@ -131,7 +131,7 @@ defmodule Homesite.Content do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_tag(%Scope{} = scope, %Tag{} = tag, attrs) do
+  def update_tag(%Scope{} = scope, %Tag{} = tag, attrs, opts \\ []) do
     true = tag.user_id == scope.user.id
 
     with {:ok, tag = %Tag{}} <-
@@ -139,6 +139,12 @@ defmodule Homesite.Content do
            |> Tag.changeset(attrs, scope)
            |> Repo.update() do
       broadcast_tag(scope, {:updated, tag})
+
+      # Log activity asynchronously with metadata
+      metadata = %{name: tag.name, slug: tag.slug}
+      opts_with_metadata = Keyword.put(opts, :metadata, metadata)
+      log_activity_async("update", "tag", scope.user.id, tag.id, opts_with_metadata)
+
       {:ok, tag}
     end
   end
@@ -155,12 +161,20 @@ defmodule Homesite.Content do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_tag(%Scope{} = scope, %Tag{} = tag) do
+  def delete_tag(%Scope{} = scope, %Tag{} = tag, opts \\ []) do
     true = tag.user_id == scope.user.id
+
+    # Capture metadata before deletion
+    metadata = %{name: tag.name, slug: tag.slug}
 
     with {:ok, tag = %Tag{}} <-
            Repo.delete(tag) do
       broadcast_tag(scope, {:deleted, tag})
+
+      # Log activity asynchronously with metadata
+      opts_with_metadata = Keyword.put(opts, :metadata, metadata)
+      log_activity_async("delete", "tag", scope.user.id, tag.id, opts_with_metadata)
+
       {:ok, tag}
     end
   end

@@ -196,7 +196,7 @@ defmodule HomesiteWeb.PostLive.Index do
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     post = Content.get_post!(socket.assigns.current_scope, id)
-    {:ok, _} = Content.delete_post(socket.assigns.current_scope, post)
+    {:ok, _} = Content.delete_post(socket.assigns.current_scope, post, connection_opts(socket))
 
     {:noreply, stream_delete(socket, :posts, post)}
   end

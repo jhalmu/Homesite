@@ -70,7 +70,8 @@ defmodule HomesiteWeb.Router do
     live_session :public,
       on_mount: [
         {HomesiteWeb.UserAuth, :mount_current_scope},
-        {HomesiteWeb.SetLocaleHook, :default}
+        {HomesiteWeb.SetLocaleHook, :default},
+        {HomesiteWeb.CaptureConnectionInfoHook, :default}
       ] do
       live "/", PageLive.Home, :index
 
@@ -98,7 +99,8 @@ defmodule HomesiteWeb.Router do
     live_session :public_search,
       on_mount: [
         {HomesiteWeb.UserAuth, :mount_current_scope},
-        {HomesiteWeb.SetLocaleHook, :default}
+        {HomesiteWeb.SetLocaleHook, :default},
+        {HomesiteWeb.CaptureConnectionInfoHook, :default}
       ] do
       live "/search", SearchLive.Index, :index
     end
@@ -137,7 +139,8 @@ defmodule HomesiteWeb.Router do
     live_session :require_authenticated_user,
       on_mount: [
         {HomesiteWeb.UserAuth, :require_authenticated},
-        {HomesiteWeb.SetLocaleHook, :default}
+        {HomesiteWeb.SetLocaleHook, :default},
+        {HomesiteWeb.CaptureConnectionInfoHook, :default}
       ] do
       live "/dashboard", DashboardLive.Index, :index
 
@@ -197,7 +200,8 @@ defmodule HomesiteWeb.Router do
       on_mount: [
         {HomesiteWeb.UserAuth, :require_authenticated},
         {HomesiteWeb.UserAuth, :require_admin},
-        {HomesiteWeb.SetLocaleHook, :default}
+        {HomesiteWeb.SetLocaleHook, :default},
+        {HomesiteWeb.CaptureConnectionInfoHook, :default}
       ] do
       live "/admin", AdminLive.Dashboard, :index
       live "/admin/users", AdminLive.Users.Index, :index
@@ -237,7 +241,8 @@ defmodule HomesiteWeb.Router do
     live_session :registration,
       on_mount: [
         {HomesiteWeb.UserAuth, :mount_current_scope},
-        {HomesiteWeb.SetLocaleHook, :default}
+        {HomesiteWeb.SetLocaleHook, :default},
+        {HomesiteWeb.CaptureConnectionInfoHook, :default}
       ] do
       live "/users/register", UserLive.Registration, :new
     end
@@ -254,7 +259,8 @@ defmodule HomesiteWeb.Router do
     live_session :login,
       on_mount: [
         {HomesiteWeb.UserAuth, :mount_current_scope},
-        {HomesiteWeb.SetLocaleHook, :default}
+        {HomesiteWeb.SetLocaleHook, :default},
+        {HomesiteWeb.CaptureConnectionInfoHook, :default}
       ] do
       live "/users/log-in", UserLive.Login, :new
       live "/users/log-in/:token", UserLive.Confirmation, :new
@@ -291,7 +297,8 @@ defmodule HomesiteWeb.Router do
     live_session :current_user,
       on_mount: [
         {HomesiteWeb.UserAuth, :mount_current_scope},
-        {HomesiteWeb.SetLocaleHook, :default}
+        {HomesiteWeb.SetLocaleHook, :default},
+        {HomesiteWeb.CaptureConnectionInfoHook, :default}
       ] do
       live "/users/:user_identifier", UserLive.Profile, :show
       live "/users/:user_identifier/projects", UserLive.Projects, :index

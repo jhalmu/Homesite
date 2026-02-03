@@ -700,7 +700,12 @@ defmodule HomesiteWeb.PostLive.Form do
   end
 
   defp save_post(socket, :edit, post_params) do
-    case Content.update_post(socket.assigns.current_scope, socket.assigns.post, post_params) do
+    case Content.update_post(
+           socket.assigns.current_scope,
+           socket.assigns.post,
+           post_params,
+           connection_opts(socket)
+         ) do
       {:ok, post} ->
         # Update media association if hero image is selected
         update_media_association(socket, post)
@@ -718,7 +723,7 @@ defmodule HomesiteWeb.PostLive.Form do
   end
 
   defp save_post(socket, :new, post_params) do
-    case Content.create_post(socket.assigns.current_scope, post_params) do
+    case Content.create_post(socket.assigns.current_scope, post_params, connection_opts(socket)) do
       {:ok, post} ->
         # Add media association if hero image is selected
         update_media_association(socket, post)

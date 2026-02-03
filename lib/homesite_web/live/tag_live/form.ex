@@ -198,7 +198,12 @@ defmodule HomesiteWeb.TagLive.Form do
   end
 
   defp save_tag(socket, :edit, tag_params) do
-    case Content.update_tag(socket.assigns.current_scope, socket.assigns.tag, tag_params) do
+    case Content.update_tag(
+           socket.assigns.current_scope,
+           socket.assigns.tag,
+           tag_params,
+           connection_opts(socket)
+         ) do
       {:ok, tag} ->
         {:noreply,
          socket
@@ -213,7 +218,7 @@ defmodule HomesiteWeb.TagLive.Form do
   end
 
   defp save_tag(socket, :new, tag_params) do
-    case Content.create_tag(socket.assigns.current_scope, tag_params) do
+    case Content.create_tag(socket.assigns.current_scope, tag_params, connection_opts(socket)) do
       {:ok, tag} ->
         {:noreply,
          socket

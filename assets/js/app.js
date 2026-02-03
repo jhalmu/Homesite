@@ -123,17 +123,6 @@ const Hooks = {
       }
     }
   },
-  CopyToClipboard: {
-    mounted() {
-      this.handleEvent("copy-to-clipboard", ({text}) => {
-        navigator.clipboard.writeText(text).then(() => {
-          console.log("Copied to clipboard:", text)
-        }).catch((err) => {
-          console.error("Failed to copy to clipboard:", err)
-        })
-      })
-    }
-  },
   Share: {
     mounted() {
       this.handleEvent("share", async ({title, text, url}) => {

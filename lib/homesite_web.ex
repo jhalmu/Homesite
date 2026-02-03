@@ -52,6 +52,8 @@ defmodule HomesiteWeb do
     quote do
       use Phoenix.LiveView
 
+      import HomesiteWeb.LiveHelpers
+
       unquote(html_helpers())
     end
   end

@@ -197,7 +197,7 @@ defmodule HomesiteWeb.TagLive.Index do
 
   def handle_event("delete", %{"id" => id}, socket) do
     tag = Content.get_tag!(socket.assigns.current_scope, id)
-    {:ok, _} = Content.delete_tag(socket.assigns.current_scope, tag)
+    {:ok, _} = Content.delete_tag(socket.assigns.current_scope, tag, connection_opts(socket))
 
     {:noreply, stream_delete(socket, :tags, tag)}
   end
