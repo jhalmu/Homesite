@@ -319,7 +319,9 @@ defmodule HomesiteWeb.UserAuth do
 
   defp get_session_user(session) do
     case session["user_token"] do
-      nil -> nil
+      nil ->
+        nil
+
       token ->
         case Accounts.get_user_by_session_token(token) do
           {user, _} -> user

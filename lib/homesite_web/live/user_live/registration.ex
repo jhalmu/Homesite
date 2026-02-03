@@ -57,7 +57,7 @@ defmodule HomesiteWeb.UserLive.Registration do
                   <.icon name="hero-exclamation-triangle" class="h-5 w-5" />
                   <div>
                     <%= for error <- @form.errors[:base] do %>
-                      <p><%= error %></p>
+                      <p>{error}</p>
                     <% end %>
                   </div>
                 </div>
