@@ -123,6 +123,8 @@ defmodule HomesiteWeb.UserLive.Registration do
               <%= if @turnstile_enabled do %>
                 <div class="mb-[var(--spacing-md)]">
                   <Turnstile.widget theme="auto" />
+                  <%!-- Hidden input for Turnstile token - value set by JavaScript --%>
+                  <input type="hidden" name="user[cf-turnstile-response]" value="" />
                 </div>
               <% end %>
 

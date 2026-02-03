@@ -17,18 +17,16 @@ export const TurnstileHook = {
     const options = {
       sitekey: this.el.dataset.sitekey,
       callback: (token) => {
-        // When Turnstile completes, inject the token into the form
-        // Remove any existing hidden input first
-        const existingInput = form?.querySelector('input[name="cf-turnstile-response"]')
-        if (existingInput) {
-          existingInput.value = token
-        } else if (form) {
-          // Create hidden input for the token
-          const input = document.createElement('input')
-          input.type = 'hidden'
-          input.name = 'cf-turnstile-response'
-          input.value = token
-          form.appendChild(input)
+        // When Turnstile completes, update the token in the existing hidden input
+        // Look for the input with the correct name attribute for LiveView forms
+        const tokenInput = form?.querySelector('input[name="user[cf-turnstile-response]"]') ||
+                          form?.querySelector('input[name="cf-turnstile-response"]')
+
+        if (tokenInput) {
+          tokenInput.value = token
+          console.log('Turnstile token set:', token.substring(0, 50) + '...')
+        } else {
+          console.error('Could not find Turnstile token input field')
         }
 
         // Also call the event callback

@@ -142,6 +142,16 @@ const Hooks = {
   SortableProjects,
   SortableSections,
   Turnstile: TurnstileHook,
+  TurnstileForm: {
+    mounted() {
+      // Hook into LiveView's form submit to include Turnstile token
+      this.handleEvent("turnstile:get_token", () => {
+        const tokenInput = this.el.querySelector('input[name="cf-turnstile-response"]')
+        const token = tokenInput?.value || ""
+        this.pushEvent("turnstile:token", {token})
+      })
+    }
+  },
   CopyButton: {
     mounted() {
       this.el.addEventListener('click', () => {
