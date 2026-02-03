@@ -7,6 +7,52 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2026-02-03 - Cloudflare Turnstile CAPTCHA Fix
+
+### Session Summary
+
+Fixed Turnstile CAPTCHA verification failures. Widget showed green checkmark but server verification failed on first attempt.
+
+#### Root Causes Fixed
+
+1. **Script Loading Conflict** - Added `?render=explicit` to Turnstile script URL to prevent auto-render conflicts with JS hook
+2. **Widget ID Not Stored** - JS hook now stores `widgetId` for proper `reset()` and `remove()` operations
+3. **Token Read from Wrong Location** - Hidden input `user[cf-turnstile-response]` was cleared on form re-renders; now read from root params
+4. **No Token Refresh on Errors** - Added `Turnstile.refresh()` on all error paths
+
+#### Files Modified
+
+| File | Change |
+|------|--------|
+| `root.html.heex` | Added `?render=explicit` to script URL |
+| `turnstileHook.js` | Store widgetId, lifecycle cleanup, retry logic, clear on expiry |
+| `registration.ex` | Read token from root params, add refresh on errors |
+| `accessibility_test.exs` | Added registration page a11y tests (light + dark) |
+| `.gitignore` | Added `.env` for local dev secrets |
+
+#### Dev Setup Note
+
+For local development, `.env` file must use `export` prefix:
+```bash
+export TURNSTILE_SITE_KEY=0x4AAA...
+export TURNSTILE_SECRET_KEY=0x4BBB...
+```
+
+Then: `source .env && mix phx.server`
+
+Also add `localhost` to allowed hostnames in Cloudflare Turnstile dashboard.
+
+#### Test Results
+
+- **1686 tests, 0 failures**
+- Registration accessibility tests added (light + dark theme)
+
+#### Commits
+
+- `21b4133` - fix: Resolve Cloudflare Turnstile CAPTCHA verification failures
+
+---
+
 ## 2026-02-02 (Evening) - Admin Dashboard Enhancements
 
 ### Session Summary
