@@ -247,6 +247,50 @@ defmodule HomesiteWeb.UserLive.Settings do
 
         <div class="divider" />
 
+        <%!-- Data Export Section (GDPR) --%>
+        <div class="border-base-300 rounded-box p-[var(--space-md)] border">
+          <h3 class="mb-[var(--space-sm)] text-[var(--text-lg)] font-bold">
+            <.icon name="hero-arrow-down-tray" class="mr-2 inline h-5 w-5" />
+            {gettext("Download my data")}
+          </h3>
+          <p class="text-base-content/70 mb-[var(--space-md)]">
+            {gettext(
+              "Download all your personal data in a ZIP file. Includes your profile, posts, and tags in JSON format."
+            )}
+          </p>
+
+          <%= if @can_export_data do %>
+            <button
+              type="button"
+              phx-click="export_data"
+              phx-hook="Download"
+              id="download-data-btn"
+              class="btn btn-outline"
+              phx-disable-with={gettext("Generating...")}
+            >
+              <.icon name="hero-arrow-down-tray" class="h-4 w-4" />
+              {gettext("Download my data")}
+            </button>
+          <% else %>
+            <div class="alert alert-info">
+              <.icon name="hero-clock" class="h-5 w-5" />
+              <span>
+                {gettext(
+                  "You can export your data once every 24 hours. Please try again later."
+                )}
+              </span>
+            </div>
+          <% end %>
+
+          <p class="text-base-content/60 mt-[var(--space-sm)] text-[var(--text-sm)]">
+            <.link navigate={~p"/privacy"} class="link link-hover">
+              {gettext("Privacy Policy")}
+            </.link>
+          </p>
+        </div>
+
+        <div class="divider" />
+
         <%!-- Danger Zone: Delete Account --%>
         <div class="border-error/50 rounded-box p-[var(--space-md)] border-2">
           <h3 class="text-error mb-[var(--space-sm)] text-[var(--text-lg)] font-bold">
@@ -435,6 +479,7 @@ defmodule HomesiteWeb.UserLive.Settings do
       |> assign(:show_delete_modal, false)
       |> assign(:delete_mode, nil)
       |> assign(:delete_form, to_form(%{"email_confirmation" => ""}))
+      |> assign(:can_export_data, Accounts.can_export_data?(user))
       |> allow_upload(:avatar,
         accept: ~w(.jpg .jpeg .png),
         max_entries: 1,
@@ -669,6 +714,39 @@ defmodule HomesiteWeb.UserLive.Settings do
        |> put_flash(
          :error,
          gettext("Email does not match. Please enter your email address exactly.")
+       )}
+    end
+  end
+
+  @impl true
+  def handle_event("export_data", _params, socket) do
+    user = socket.assigns.current_scope.user
+
+    if Accounts.can_export_data?(user) do
+      {:ok, zip_binary} = Accounts.export_user_data(user)
+
+      # Update last export timestamp
+      now = DateTime.utc_now(:second)
+      {:ok, _user} = Accounts.update_last_data_export(user, now)
+
+      # Generate filename with timestamp
+      timestamp = Calendar.strftime(now, "%Y%m%d_%H%M%S")
+      filename = "data_export_#{timestamp}.zip"
+
+      {:noreply,
+       socket
+       |> assign(:can_export_data, false)
+       |> push_event("download", %{
+         data: Base.encode64(zip_binary),
+         filename: filename,
+         content_type: "application/zip"
+       })}
+    else
+      {:noreply,
+       put_flash(
+         socket,
+         :error,
+         gettext("You can only export data once every 24 hours.")
        )}
     end
   end

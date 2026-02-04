@@ -85,6 +85,9 @@ defmodule HomesiteWeb.Router do
       # Public portfolio showcase
       live "/portfolio", PortfolioLive.Index, :index
       live "/portfolio/:slug", PortfolioLive.Show, :show
+
+      # Legal pages
+      live "/privacy", PrivacyLive.Index, :index
     end
   end
 

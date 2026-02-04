@@ -1631,4 +1631,143 @@ defmodule Homesite.Accounts do
       Analytics.log_activity(:register, :user, user_id: user_id, resource_id: user_id)
     end)
   end
+
+  ## GDPR Data Export
+
+  @doc """
+  Exports all user data as a ZIP file for GDPR compliance.
+
+  Returns `{:ok, zip_binary}` containing:
+  - profile.json: User profile data
+  - posts.json: All user's posts
+  - tags.json: All user's tags
+  - avatar.* (if exists): User's avatar image
+
+  ## Examples
+
+      iex> export_user_data(user)
+      {:ok, <<80, 75, 3, 4, ...>>}
+
+  """
+  def export_user_data(%User{} = user) do
+    user = Repo.preload(user, [:posts, :tags])
+
+    profile_json = build_profile_json(user)
+    posts_json = build_posts_json(user.posts)
+    tags_json = build_tags_json(user.tags)
+
+    files = [
+      {~c"profile.json", profile_json},
+      {~c"posts.json", posts_json},
+      {~c"tags.json", tags_json}
+    ]
+
+    files = maybe_add_avatar(files, user)
+
+    {:ok, {_filename, zip_binary}} = :zip.create(~c"data_export.zip", files, [:memory])
+    {:ok, zip_binary}
+  end
+
+  defp build_profile_json(user) do
+    %{
+      email: user.email,
+      display_name: user.display_name,
+      username: user.username,
+      bio: user.bio,
+      website_url: user.website_url,
+      bluesky_handle: user.bluesky_handle,
+      mastodon_handle: user.mastodon_handle,
+      preferred_language: user.preferred_language,
+      timezone: user.timezone,
+      registered_at: user.inserted_at,
+      last_data_export_at: user.last_data_export_at
+    }
+    |> Jason.encode!(pretty: true)
+  end
+
+  defp build_posts_json(posts) do
+    posts
+    |> Repo.preload(:tags)
+    |> Enum.map(fn post ->
+      %{
+        title: post.title,
+        slug: post.slug,
+        body: post.body,
+        is_public: post.is_public,
+        published_at: post.published_at,
+        created_at: post.inserted_at,
+        updated_at: post.updated_at,
+        tags: Enum.map(post.tags, & &1.name)
+      }
+    end)
+    |> Jason.encode!(pretty: true)
+  end
+
+  defp build_tags_json(tags) do
+    tags
+    |> Enum.map(fn tag ->
+      %{
+        name: tag.name,
+        slug: tag.slug,
+        description: tag.description,
+        created_at: tag.inserted_at
+      }
+    end)
+    |> Jason.encode!(pretty: true)
+  end
+
+  defp maybe_add_avatar(files, %User{avatar: nil}), do: files
+  defp maybe_add_avatar(files, %User{avatar: ""}), do: files
+
+  defp maybe_add_avatar(files, %User{avatar: avatar_path}) do
+    # Avatar paths are stored as "/uploads/avatars/filename.jpg"
+    # We need to find the actual file
+    full_path =
+      avatar_path
+      |> String.trim_leading("/")
+      |> then(&Path.join(Application.app_dir(:homesite, "priv/static"), &1))
+
+    if File.exists?(full_path) do
+      extension = Path.extname(avatar_path)
+      avatar_filename = ~c"avatar#{extension}"
+      content = File.read!(full_path)
+      [{avatar_filename, content} | files]
+    else
+      files
+    end
+  end
+
+  @doc """
+  Checks if a user can export their data (rate limited to once per 24 hours).
+
+  ## Examples
+
+      iex> can_export_data?(user)
+      true
+
+      iex> can_export_data?(recently_exported_user)
+      false
+
+  """
+  def can_export_data?(%User{last_data_export_at: nil}), do: true
+
+  def can_export_data?(%User{last_data_export_at: last_export}) do
+    hours_since_export = DateTime.diff(DateTime.utc_now(), last_export, :hour)
+    hours_since_export >= 24
+  end
+
+  @doc """
+  Updates the last_data_export_at timestamp for a user.
+
+  ## Examples
+
+      iex> update_last_data_export(user, DateTime.utc_now())
+      {:ok, %User{}}
+
+  """
+  def update_last_data_export(%User{} = user, %DateTime{} = timestamp) do
+    user
+    |> Ecto.Changeset.change(last_data_export_at: timestamp)
+    |> Repo.update()
+  end
 end

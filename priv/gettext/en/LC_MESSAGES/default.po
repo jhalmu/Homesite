@@ -41,7 +41,6 @@ msgstr "Admin"
 msgid "Attempting to reconnect"
 msgstr "Attempting to reconnect"
 
-#: lib/homesite_web/components/layouts.ex:89
 #: lib/homesite_web/live/testimonial_live/show.ex:191
 #, elixir-autogen, elixir-format
 msgid "Built with"
@@ -174,7 +173,7 @@ msgstr "Body"
 #: lib/homesite_web/live/moderation_live/report.ex:298
 #: lib/homesite_web/live/post_live/form.ex:388
 #: lib/homesite_web/live/tag_live/form.ex:97
-#: lib/homesite_web/live/user_live/settings.ex:334
+#: lib/homesite_web/live/user_live/settings.ex:378
 #, elixir-autogen, elixir-format
 msgid "Cancel"
 msgstr "Cancel"
@@ -277,7 +276,7 @@ msgstr "Use this form to manage post records in your database."
 msgid "Public posts are visible to everyone. Turn off to make this post private."
 msgstr "Public posts are visible to everyone. Turn off to make this post private."
 
-#: lib/homesite_web/live/user_live/settings.ex:504
+#: lib/homesite_web/live/user_live/settings.ex:549
 #, elixir-autogen, elixir-format
 msgid "A link to confirm your email change has been sent to the new address."
 msgstr "A link to confirm your email change has been sent to the new address."
@@ -420,12 +419,12 @@ msgstr "Edit Tag"
 msgid "Email"
 msgstr "Email"
 
-#: lib/homesite_web/live/user_live/settings.ex:414
+#: lib/homesite_web/live/user_live/settings.ex:458
 #, elixir-autogen, elixir-format
 msgid "Email change link is invalid or it has expired."
 msgstr "Email change link is invalid or it has expired."
 
-#: lib/homesite_web/live/user_live/settings.ex:411
+#: lib/homesite_web/live/user_live/settings.ex:455
 #, elixir-autogen, elixir-format
 msgid "Email changed successfully."
 msgstr "Email changed successfully."
@@ -550,7 +549,7 @@ msgstr "Preferred Language"
 msgid "Private"
 msgstr "Private"
 
-#: lib/homesite_web/live/user_live/settings.ex:582
+#: lib/homesite_web/live/user_live/settings.ex:627
 #, elixir-autogen, elixir-format
 msgid "Profile updated successfully."
 msgstr "Profile updated successfully."
@@ -989,7 +988,7 @@ msgstr "My Tags"
 msgid "No tags found."
 msgstr "No tags found."
 
-#: lib/homesite_web/live/user_live/settings.ex:578
+#: lib/homesite_web/live/user_live/settings.ex:623
 #, elixir-autogen, elixir-format
 msgid "Profile updated successfully. Remember to also update your display name, bio, and social links to complete your profile!"
 msgstr "Profile updated successfully. Remember to also update your display name, bio, and social links to complete your profile!"
@@ -1052,7 +1051,7 @@ msgstr[1] ""
 msgid "Avatar image selected. Click 'Update Profile' below to save your changes!"
 msgstr "Avatar image selected. Click 'Update Profile' below to save your changes!"
 
-#: lib/homesite_web/live/user_live/settings.ex:461
+#: lib/homesite_web/live/user_live/settings.ex:506
 #, elixir-autogen, elixir-format
 msgid "⚠️ Avatar selected but not saved yet. Click 'Update Profile' to save your changes!"
 msgstr "⚠️ Avatar selected but not saved yet. Click 'Update Profile' to save your changes!"
@@ -1499,7 +1498,7 @@ msgstr "Claim your username to create your personal homepage!"
 #: lib/homesite_web/components/content_section_components.ex:995
 #: lib/homesite_web/components/content_section_components.ex:1027
 #: lib/homesite_web/live/post_live/form.ex:374
-#: lib/homesite_web/live/user_live/settings.ex:395
+#: lib/homesite_web/live/user_live/settings.ex:439
 #, elixir-autogen, elixir-format
 msgid "Close"
 msgstr "Close"
@@ -1509,14 +1508,14 @@ msgstr "Close"
 msgid "Color"
 msgstr "Color"
 
-#: lib/homesite_web/live/user_live/settings.ex:355
+#: lib/homesite_web/live/user_live/settings.ex:399
 #, elixir-autogen, elixir-format
 msgid "Congratulations! Your Username is Live!"
 msgstr "Congratulations! Your Username is Live!"
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:72
 #: lib/homesite_web/live/user_live/profile.ex:242
-#: lib/homesite_web/live/user_live/settings.ex:389
+#: lib/homesite_web/live/user_live/settings.ex:433
 #, elixir-autogen, elixir-format
 msgid "Copy"
 msgstr "Copy"
@@ -1815,7 +1814,7 @@ msgstr "Set to current time"
 #: lib/homesite_web/live/portfolio_live/show.ex:190
 #: lib/homesite_web/live/post_live/index.ex:68
 #: lib/homesite_web/live/user_live/profile.ex:235
-#: lib/homesite_web/live/user_live/settings.ex:379
+#: lib/homesite_web/live/user_live/settings.ex:423
 #, elixir-autogen, elixir-format
 msgid "Share"
 msgstr "Share"
@@ -1831,7 +1830,7 @@ msgstr "Share this post"
 msgid "Share your blog with a professional link"
 msgstr "Share your blog with a professional link"
 
-#: lib/homesite_web/live/user_live/settings.ex:368
+#: lib/homesite_web/live/user_live/settings.ex:412
 #, elixir-autogen, elixir-format
 msgid "Share your new homepage with the world!"
 msgstr "Share your new homepage with the world!"
@@ -1925,7 +1924,7 @@ msgstr "Your Public Profile"
 msgid "Your personal homepage is live! Share it with the world."
 msgstr "Your personal homepage is live! Share it with the world."
 
-#: lib/homesite_web/live/user_live/settings.ex:359
+#: lib/homesite_web/live/user_live/settings.ex:403
 #, elixir-autogen, elixir-format
 msgid "Your personal homepage is now available at:"
 msgstr "Your personal homepage is now available at:"
@@ -6680,21 +6679,6 @@ msgid_plural "projects"
 msgstr[0] "Project"
 msgstr[1] "Project"
 
-#: lib/homesite_web/components/layouts.ex:91
-#, elixir-autogen, elixir-format
-msgid "Elixir"
-msgstr ""
-
-#: lib/homesite_web/components/layouts.ex:90
-#, elixir-autogen, elixir-format
-msgid "Phoenix Framework"
-msgstr ""
-
-#: lib/homesite_web/components/layouts.ex:92
-#, elixir-autogen, elixir-format
-msgid "Tailwind CSS & DaisyUI"
-msgstr ""
-
 #: lib/homesite_web/components/layouts/root.html.heex:150
 #, elixir-autogen, elixir-format
 msgid "Skip to main content"
@@ -7219,7 +7203,7 @@ msgstr "Published"
 msgid "updated"
 msgstr "Uploaded"
 
-#: lib/homesite_web/live/user_live/settings.ex:282
+#: lib/homesite_web/live/user_live/settings.ex:326
 #, elixir-autogen, elixir-format
 msgid "\"Keep Content\" anonymizes your posts (author shown as \"Deleted User\"). \"Delete Everything\" removes all your data."
 msgstr ""
@@ -7266,23 +7250,23 @@ msgstr "Configure moderation parameters and reason presets"
 msgid "Content & Geographic Insights"
 msgstr "Content Gaps"
 
-#: lib/homesite_web/live/user_live/settings.ex:254
+#: lib/homesite_web/live/user_live/settings.ex:298
 #, elixir-autogen, elixir-format
 msgid "Danger Zone"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:268
-#: lib/homesite_web/live/user_live/settings.ex:296
+#: lib/homesite_web/live/user_live/settings.ex:312
+#: lib/homesite_web/live/user_live/settings.ex:340
 #, elixir-autogen, elixir-format
 msgid "Delete Account (Keep Content)"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:294
+#: lib/homesite_web/live/user_live/settings.ex:338
 #, elixir-autogen, elixir-format
 msgid "Delete Account and All Content"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:277
+#: lib/homesite_web/live/user_live/settings.ex:321
 #, elixir-autogen, elixir-format
 msgid "Delete Everything"
 msgstr "Delete section"
@@ -7298,7 +7282,7 @@ msgstr "Delete"
 msgid "Deleted User"
 msgstr "Delete folder"
 
-#: lib/homesite_web/live/user_live/settings.ex:339
+#: lib/homesite_web/live/user_live/settings.ex:383
 #, elixir-autogen, elixir-format
 msgid "Deleting..."
 msgstr ""
@@ -7308,12 +7292,12 @@ msgstr ""
 msgid "Edit Role"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:671
+#: lib/homesite_web/live/user_live/settings.ex:716
 #, elixir-autogen, elixir-format
 msgid "Email does not match. Please enter your email address exactly."
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:662
+#: lib/homesite_web/live/user_live/settings.ex:707
 #, elixir-autogen, elixir-format
 msgid "Failed to delete account: %{reason}"
 msgstr "Failed to delete banner"
@@ -7348,12 +7332,12 @@ msgstr ""
 msgid "New Users"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:341
+#: lib/homesite_web/live/user_live/settings.ex:385
 #, elixir-autogen, elixir-format
 msgid "Permanently Delete"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:257
+#: lib/homesite_web/live/user_live/settings.ex:301
 #, elixir-autogen, elixir-format
 msgid "Permanently delete your account. This action cannot be undone."
 msgstr ""
@@ -7407,12 +7391,12 @@ msgstr ""
 msgid "This Week"
 msgstr "this week"
 
-#: lib/homesite_web/live/user_live/settings.ex:308
+#: lib/homesite_web/live/user_live/settings.ex:352
 #, elixir-autogen, elixir-format
 msgid "This will delete your account. Your posts will remain but will be shown as \"Deleted User\". This cannot be undone!"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:304
+#: lib/homesite_web/live/user_live/settings.ex:348
 #, elixir-autogen, elixir-format
 msgid "This will permanently delete your account and ALL your posts, tags, and other content. This cannot be undone!"
 msgstr ""
@@ -7427,7 +7411,7 @@ msgstr ""
 msgid "Top Actions"
 msgstr "Top Authors"
 
-#: lib/homesite_web/live/user_live/settings.ex:321
+#: lib/homesite_web/live/user_live/settings.ex:365
 #, elixir-autogen, elixir-format
 msgid "Type your email address to confirm:"
 msgstr ""
@@ -7447,7 +7431,7 @@ msgstr "User updated successfully"
 msgid "You cannot delete your own account from here"
 msgstr ""
 
-#: lib/homesite_web/live/user_live/settings.ex:653
+#: lib/homesite_web/live/user_live/settings.ex:698
 #, elixir-autogen, elixir-format
 msgid "Your account has been deleted. Goodbye!"
 msgstr ""
@@ -7463,3 +7447,131 @@ msgstr "Actions"
 #, elixir-autogen, elixir-format
 msgid "responses"
 msgstr "Responses"
+
+#: lib/homesite_web/live/privacy_live/index.ex:93
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Contact"
+msgstr "Content"
+
+#: lib/homesite_web/live/privacy_live/index.ex:75
+#, elixir-autogen, elixir-format
+msgid "Cookies"
+msgstr ""
+
+#: lib/homesite_web/live/privacy_live/index.ex:66
+#, elixir-autogen, elixir-format
+msgid "Data Retention"
+msgstr ""
+
+#: lib/homesite_web/live/privacy_live/index.ex:95
+#, elixir-autogen, elixir-format
+msgid "For questions about your data or this privacy policy, please contact the site administrator."
+msgstr ""
+
+#: lib/homesite_web/live/privacy_live/index.ex:31
+#, elixir-autogen, elixir-format
+msgid "How we use your data"
+msgstr ""
+
+#: lib/homesite_web/live/privacy_live/index.ex:102
+#, elixir-autogen, elixir-format
+msgid "Last updated: February 2026"
+msgstr ""
+
+#: lib/homesite_web/components/layouts.ex:91
+#: lib/homesite_web/live/privacy_live/index.ex:17
+#: lib/homesite_web/live/user_live/settings.ex:287
+#, elixir-autogen, elixir-format
+msgid "Privacy Policy"
+msgstr ""
+
+#: lib/homesite_web/live/privacy_live/index.ex:43
+#, elixir-autogen, elixir-format
+msgid "Right to access: You can download all your data from Settings → Download my data"
+msgstr ""
+
+#: lib/homesite_web/live/privacy_live/index.ex:58
+#, elixir-autogen, elixir-format
+msgid "Right to data portability: Your data export is provided in machine-readable JSON format"
+msgstr ""
+
+#: lib/homesite_web/live/privacy_live/index.ex:53
+#, elixir-autogen, elixir-format
+msgid "Right to erasure: You can delete your account from Settings → Delete Account"
+msgstr ""
+
+#: lib/homesite_web/live/privacy_live/index.ex:48
+#, elixir-autogen, elixir-format
+msgid "Right to rectification: You can edit your profile and content at any time"
+msgstr ""
+
+#: lib/homesite_web/live/privacy_live/index.ex:84
+#, elixir-autogen, elixir-format
+msgid "Third-party services"
+msgstr ""
+
+#: lib/homesite_web/live/privacy_live/index.ex:24
+#, elixir-autogen, elixir-format
+msgid "We collect only the information necessary to provide our services. This includes your email address (for authentication), profile information you choose to provide (display name, bio, avatar), and content you create (posts, tags)."
+msgstr ""
+
+#: lib/homesite_web/live/privacy_live/index.ex:86
+#, elixir-autogen, elixir-format
+msgid "We use Cloudflare Turnstile for CAPTCHA protection during registration. No other third-party analytics or tracking services are used."
+msgstr ""
+
+#: lib/homesite_web/live/privacy_live/index.ex:77
+#, elixir-autogen, elixir-format
+msgid "We use essential cookies only: a session cookie for authentication and a locale preference cookie. We do not use tracking or advertising cookies."
+msgstr ""
+
+#: lib/homesite_web/live/privacy_live/index.ex:22
+#, elixir-autogen, elixir-format
+msgid "What data we collect"
+msgstr ""
+
+#: lib/homesite_web/live/privacy_live/index.ex:68
+#, elixir-autogen, elixir-format
+msgid "Your account data is retained as long as your account is active. When you delete your account, you can choose to anonymize your content (keeping posts with author shown as 'Deleted User') or delete everything. Server logs are retained for security purposes for up to 90 days."
+msgstr ""
+
+#: lib/homesite_web/live/privacy_live/index.ex:33
+#, elixir-autogen, elixir-format
+msgid "Your data is used to provide the blog service, authenticate your account, and display your content. We do not sell your data to third parties or use it for advertising purposes."
+msgstr ""
+
+#: lib/homesite_web/live/privacy_live/index.ex:40
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Your rights"
+msgstr "Your Tags"
+
+#: lib/homesite_web/live/user_live/settings.ex:257
+#, elixir-autogen, elixir-format
+msgid "Download all your personal data in a ZIP file. Includes your profile, posts, and tags in JSON format."
+msgstr ""
+
+#: lib/homesite_web/live/user_live/settings.ex:254
+#: lib/homesite_web/live/user_live/settings.ex:272
+#, elixir-autogen, elixir-format
+msgid "Download my data"
+msgstr ""
+
+#: lib/homesite_web/live/user_live/settings.ex:269
+#, elixir-autogen, elixir-format
+msgid "Generating..."
+msgstr ""
+
+#: lib/homesite_web/live/user_live/settings.ex:278
+#, elixir-autogen, elixir-format
+msgid "You can export your data once every 24 hours. Please try again later."
+msgstr ""
+
+#: lib/homesite_web/live/user_live/settings.ex:749
+#, elixir-autogen, elixir-format
+msgid "You can only export data once every 24 hours."
+msgstr ""
+
+#: lib/homesite_web/components/layouts.ex:89
+#, elixir-autogen, elixir-format
+msgid "Legal"
+msgstr ""

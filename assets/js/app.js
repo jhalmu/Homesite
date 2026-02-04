@@ -172,6 +172,29 @@ const Hooks = {
       })
     }
   },
+  Download: {
+    mounted() {
+      this.handleEvent("download", ({data, filename, content_type}) => {
+        // Decode base64 data to binary
+        const binaryString = atob(data)
+        const bytes = new Uint8Array(binaryString.length)
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i)
+        }
+
+        // Create blob and download link
+        const blob = new Blob([bytes], {type: content_type})
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = filename
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        URL.revokeObjectURL(url)
+      })
+    }
+  },
   TableOfContents: {
     mounted() {
       this.observer = null

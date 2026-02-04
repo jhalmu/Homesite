@@ -41,7 +41,6 @@ msgstr "Ylläpito"
 msgid "Attempting to reconnect"
 msgstr "Yritetään yhdistää uudelleen"
 
-#: lib/homesite_web/components/layouts.ex:89
 #: lib/homesite_web/live/testimonial_live/show.ex:191
 #, elixir-autogen, elixir-format
 msgid "Built with"
@@ -174,7 +173,7 @@ msgstr "Sisältö"
 #: lib/homesite_web/live/moderation_live/report.ex:298
 #: lib/homesite_web/live/post_live/form.ex:388
 #: lib/homesite_web/live/tag_live/form.ex:97
-#: lib/homesite_web/live/user_live/settings.ex:334
+#: lib/homesite_web/live/user_live/settings.ex:378
 #, elixir-autogen, elixir-format
 msgid "Cancel"
 msgstr "Peruuta"
@@ -277,7 +276,7 @@ msgstr "Käytä tätä lomaketta hallinnoidaksesi kirjoituksia tietokannassasi."
 msgid "Public posts are visible to everyone. Turn off to make this post private."
 msgstr "Julkiset kirjoitukset ovat kaikkien nähtävillä. Kytke pois päältä tehdäksesi kirjoituksesta yksityisen."
 
-#: lib/homesite_web/live/user_live/settings.ex:504
+#: lib/homesite_web/live/user_live/settings.ex:549
 #, elixir-autogen, elixir-format
 msgid "A link to confirm your email change has been sent to the new address."
 msgstr "Linkki sähköpostin vaihdon vahvistamiseen on lähetetty uuteen osoitteeseen."
@@ -420,12 +419,12 @@ msgstr "Muokkaa tagia"
 msgid "Email"
 msgstr "Sähköposti"
 
-#: lib/homesite_web/live/user_live/settings.ex:414
+#: lib/homesite_web/live/user_live/settings.ex:458
 #, elixir-autogen, elixir-format
 msgid "Email change link is invalid or it has expired."
 msgstr "Sähköpostin vaihto linkki on virheellinen tai vanhentunut."
 
-#: lib/homesite_web/live/user_live/settings.ex:411
+#: lib/homesite_web/live/user_live/settings.ex:455
 #, elixir-autogen, elixir-format
 msgid "Email changed successfully."
 msgstr "Sähköposti vaihdettu onnistuneesti."
@@ -550,7 +549,7 @@ msgstr "Ensisijainen kieli"
 msgid "Private"
 msgstr "Yksityinen"
 
-#: lib/homesite_web/live/user_live/settings.ex:582
+#: lib/homesite_web/live/user_live/settings.ex:627
 #, elixir-autogen, elixir-format
 msgid "Profile updated successfully."
 msgstr "Profiili päivitetty onnistuneesti."
@@ -989,7 +988,7 @@ msgstr "Omat tagit"
 msgid "No tags found."
 msgstr "Tageja ei löytynyt."
 
-#: lib/homesite_web/live/user_live/settings.ex:578
+#: lib/homesite_web/live/user_live/settings.ex:623
 #, elixir-autogen, elixir-format
 msgid "Profile updated successfully. Remember to also update your display name, bio, and social links to complete your profile!"
 msgstr "Profiili päivitetty onnistuneesti. Muista päivittää myös näyttönimesi, esittelytekstisi ja sosiaalisen median linkkisi täydentääksesi profiilisi!"
@@ -1052,7 +1051,7 @@ msgstr[1] "kirjoitusta"
 msgid "Avatar image selected. Click 'Update Profile' below to save your changes!"
 msgstr "Avatar-kuva valittu. Muista klikata 'Päivitä profiili' tallentaaksesi muutoksesi!"
 
-#: lib/homesite_web/live/user_live/settings.ex:461
+#: lib/homesite_web/live/user_live/settings.ex:506
 #, elixir-autogen, elixir-format
 msgid "⚠️ Avatar selected but not saved yet. Click 'Update Profile' to save your changes!"
 msgstr "⚠️ Avatar-kuva valittu, mutta ei vielä tallennettu. Klikkaa 'Päivitä profiili' tallentaaksesi muutokset!"
@@ -1499,7 +1498,7 @@ msgstr "Varaa käyttäjänimesi luodaksesi oman kotisivun!"
 #: lib/homesite_web/components/content_section_components.ex:995
 #: lib/homesite_web/components/content_section_components.ex:1027
 #: lib/homesite_web/live/post_live/form.ex:374
-#: lib/homesite_web/live/user_live/settings.ex:395
+#: lib/homesite_web/live/user_live/settings.ex:439
 #, elixir-autogen, elixir-format
 msgid "Close"
 msgstr "Sulje"
@@ -1509,14 +1508,14 @@ msgstr "Sulje"
 msgid "Color"
 msgstr "Väri"
 
-#: lib/homesite_web/live/user_live/settings.ex:355
+#: lib/homesite_web/live/user_live/settings.ex:399
 #, elixir-autogen, elixir-format
 msgid "Congratulations! Your Username is Live!"
 msgstr "Onneksi olkoon! Käyttäjänimesi on nyt käytössä!"
 
 #: lib/homesite_web/live/dashboard_live/index.html.heex:72
 #: lib/homesite_web/live/user_live/profile.ex:242
-#: lib/homesite_web/live/user_live/settings.ex:389
+#: lib/homesite_web/live/user_live/settings.ex:433
 #, elixir-autogen, elixir-format
 msgid "Copy"
 msgstr "Kopioi"
@@ -1815,7 +1814,7 @@ msgstr "Aseta nykyiseen aikaan"
 #: lib/homesite_web/live/portfolio_live/show.ex:190
 #: lib/homesite_web/live/post_live/index.ex:68
 #: lib/homesite_web/live/user_live/profile.ex:235
-#: lib/homesite_web/live/user_live/settings.ex:379
+#: lib/homesite_web/live/user_live/settings.ex:423
 #, elixir-autogen, elixir-format
 msgid "Share"
 msgstr "Jaa"
@@ -1831,7 +1830,7 @@ msgstr "Jaa tämä kirjoitus"
 msgid "Share your blog with a professional link"
 msgstr "Jaa blogisi ammattimaisella linkillä"
 
-#: lib/homesite_web/live/user_live/settings.ex:368
+#: lib/homesite_web/live/user_live/settings.ex:412
 #, elixir-autogen, elixir-format
 msgid "Share your new homepage with the world!"
 msgstr "Jaa uusi kotisivusi maailmalle!"
@@ -1925,7 +1924,7 @@ msgstr "Julkinen profiilisi"
 msgid "Your personal homepage is live! Share it with the world."
 msgstr "Henkilökohtainen kotisivusi on julkaistu! Jaa se maailmalle."
 
-#: lib/homesite_web/live/user_live/settings.ex:359
+#: lib/homesite_web/live/user_live/settings.ex:403
 #, elixir-autogen, elixir-format
 msgid "Your personal homepage is now available at:"
 msgstr "Henkilökohtainen kotisivusi on nyt saatavilla:"
@@ -6680,21 +6679,6 @@ msgid_plural "projects"
 msgstr[0] "projekti"
 msgstr[1] "projektia"
 
-#: lib/homesite_web/components/layouts.ex:91
-#, elixir-autogen, elixir-format
-msgid "Elixir"
-msgstr "Elixir"
-
-#: lib/homesite_web/components/layouts.ex:90
-#, elixir-autogen, elixir-format
-msgid "Phoenix Framework"
-msgstr "Phoenix Framework"
-
-#: lib/homesite_web/components/layouts.ex:92
-#, elixir-autogen, elixir-format
-msgid "Tailwind CSS & DaisyUI"
-msgstr "Tailwind CSS & DaisyUI"
-
 #: lib/homesite_web/components/layouts/root.html.heex:150
 #, elixir-autogen, elixir-format
 msgid "Skip to main content"
@@ -7219,7 +7203,7 @@ msgstr "piilotti"
 msgid "updated"
 msgstr "päivitti"
 
-#: lib/homesite_web/live/user_live/settings.ex:282
+#: lib/homesite_web/live/user_live/settings.ex:326
 #, elixir-autogen, elixir-format
 msgid "\"Keep Content\" anonymizes your posts (author shown as \"Deleted User\"). \"Delete Everything\" removes all your data."
 msgstr "\"Säilytä sisältö\" anonymisoi kirjoituksesi (kirjoittaja näytetään nimellä \"Poistettu käyttäjä\"). \"Poista kaikki\" poistaa kaiken tietosi."
@@ -7266,23 +7250,23 @@ msgstr "Määritä moderoinnin rajat ja asetukset"
 msgid "Content & Geographic Insights"
 msgstr "Sisältö- ja sijaintitiedot"
 
-#: lib/homesite_web/live/user_live/settings.ex:254
+#: lib/homesite_web/live/user_live/settings.ex:298
 #, elixir-autogen, elixir-format
 msgid "Danger Zone"
 msgstr "Vaaravyöhyke"
 
-#: lib/homesite_web/live/user_live/settings.ex:268
-#: lib/homesite_web/live/user_live/settings.ex:296
+#: lib/homesite_web/live/user_live/settings.ex:312
+#: lib/homesite_web/live/user_live/settings.ex:340
 #, elixir-autogen, elixir-format
 msgid "Delete Account (Keep Content)"
 msgstr "Poista tili (säilytä sisältö)"
 
-#: lib/homesite_web/live/user_live/settings.ex:294
+#: lib/homesite_web/live/user_live/settings.ex:338
 #, elixir-autogen, elixir-format
 msgid "Delete Account and All Content"
 msgstr "Poista tili ja kaikki sisältö"
 
-#: lib/homesite_web/live/user_live/settings.ex:277
+#: lib/homesite_web/live/user_live/settings.ex:321
 #, elixir-autogen, elixir-format
 msgid "Delete Everything"
 msgstr "Poista kaikki"
@@ -7298,7 +7282,7 @@ msgstr "Poista käyttäjä"
 msgid "Deleted User"
 msgstr "Poistettu käyttäjä"
 
-#: lib/homesite_web/live/user_live/settings.ex:339
+#: lib/homesite_web/live/user_live/settings.ex:383
 #, elixir-autogen, elixir-format
 msgid "Deleting..."
 msgstr "Poistetaan..."
@@ -7308,12 +7292,12 @@ msgstr "Poistetaan..."
 msgid "Edit Role"
 msgstr "Muokkaa roolia"
 
-#: lib/homesite_web/live/user_live/settings.ex:671
+#: lib/homesite_web/live/user_live/settings.ex:716
 #, elixir-autogen, elixir-format
 msgid "Email does not match. Please enter your email address exactly."
 msgstr "Sähköposti ei täsmää. Kirjoita sähköpostiosoitteesi tarkasti."
 
-#: lib/homesite_web/live/user_live/settings.ex:662
+#: lib/homesite_web/live/user_live/settings.ex:707
 #, elixir-autogen, elixir-format
 msgid "Failed to delete account: %{reason}"
 msgstr "Tilin poistaminen epäonnistui: %{reason}"
@@ -7348,12 +7332,12 @@ msgstr "Aktiivisimmat tänään"
 msgid "New Users"
 msgstr "Uudet käyttäjät"
 
-#: lib/homesite_web/live/user_live/settings.ex:341
+#: lib/homesite_web/live/user_live/settings.ex:385
 #, elixir-autogen, elixir-format
 msgid "Permanently Delete"
 msgstr "Poista pysyvästi"
 
-#: lib/homesite_web/live/user_live/settings.ex:257
+#: lib/homesite_web/live/user_live/settings.ex:301
 #, elixir-autogen, elixir-format
 msgid "Permanently delete your account. This action cannot be undone."
 msgstr "Poista tilisi pysyvästi. Tätä toimintoa ei voi peruuttaa."
@@ -7407,12 +7391,12 @@ msgstr "Jäädytetty"
 msgid "This Week"
 msgstr "Tällä viikolla"
 
-#: lib/homesite_web/live/user_live/settings.ex:308
+#: lib/homesite_web/live/user_live/settings.ex:352
 #, elixir-autogen, elixir-format
 msgid "This will delete your account. Your posts will remain but will be shown as \"Deleted User\". This cannot be undone!"
 msgstr "Tämä poistaa tilisi. Kirjoituksesi säilyvät, mutta ne näytetään nimellä \"Poistettu käyttäjä\". Tätä ei voi peruuttaa!"
 
-#: lib/homesite_web/live/user_live/settings.ex:304
+#: lib/homesite_web/live/user_live/settings.ex:348
 #, elixir-autogen, elixir-format
 msgid "This will permanently delete your account and ALL your posts, tags, and other content. This cannot be undone!"
 msgstr "Tämä poistaa pysyvästi tilisi ja KAIKKI kirjoituksesi, tagisi ja muun sisältösi. Tätä ei voi peruuttaa!"
@@ -7427,7 +7411,7 @@ msgstr "Tänään"
 msgid "Top Actions"
 msgstr "Yleisimmät toiminnot"
 
-#: lib/homesite_web/live/user_live/settings.ex:321
+#: lib/homesite_web/live/user_live/settings.ex:365
 #, elixir-autogen, elixir-format
 msgid "Type your email address to confirm:"
 msgstr "Kirjoita sähköpostiosoitteesi vahvistaaksesi:"
@@ -7447,7 +7431,7 @@ msgstr "Käyttäjä poistettu onnistuneesti"
 msgid "You cannot delete your own account from here"
 msgstr "Et voi poistaa omaa tiliäsi täältä"
 
-#: lib/homesite_web/live/user_live/settings.ex:653
+#: lib/homesite_web/live/user_live/settings.ex:698
 #, elixir-autogen, elixir-format
 msgid "Your account has been deleted. Goodbye!"
 msgstr "Tilisi on poistettu. Näkemiin!"
@@ -7463,3 +7447,131 @@ msgstr "toimintoa"
 #, elixir-autogen, elixir-format
 msgid "responses"
 msgstr "vastausta"
+
+#: lib/homesite_web/live/privacy_live/index.ex:93
+#, elixir-autogen, elixir-format
+msgid "Contact"
+msgstr "Yhteystiedot"
+
+#: lib/homesite_web/live/privacy_live/index.ex:75
+#, elixir-autogen, elixir-format
+msgid "Cookies"
+msgstr "Evästeet"
+
+#: lib/homesite_web/live/privacy_live/index.ex:66
+#, elixir-autogen, elixir-format
+msgid "Data Retention"
+msgstr "Tietojen säilytys"
+
+#: lib/homesite_web/live/privacy_live/index.ex:95
+#, elixir-autogen, elixir-format
+msgid "For questions about your data or this privacy policy, please contact the site administrator."
+msgstr "Kysymyksissä tiedoistasi tai tästä tietosuojaselosteesta ota yhteyttä sivuston ylläpitäjään."
+
+#: lib/homesite_web/live/privacy_live/index.ex:31
+#, elixir-autogen, elixir-format
+msgid "How we use your data"
+msgstr "Miten käytämme tietojasi"
+
+#: lib/homesite_web/live/privacy_live/index.ex:102
+#, elixir-autogen, elixir-format
+msgid "Last updated: February 2026"
+msgstr "Päivitetty viimeksi: Helmikuu 2026"
+
+#: lib/homesite_web/components/layouts.ex:91
+#: lib/homesite_web/live/privacy_live/index.ex:17
+#: lib/homesite_web/live/user_live/settings.ex:287
+#, elixir-autogen, elixir-format
+msgid "Privacy Policy"
+msgstr "Tietosuojaseloste"
+
+#: lib/homesite_web/live/privacy_live/index.ex:43
+#, elixir-autogen, elixir-format
+msgid "Right to access: You can download all your data from Settings → Download my data"
+msgstr "Oikeus saada tietoja: Voit ladata kaikki tietosi kohdasta Asetukset → Lataa omat tiedot"
+
+#: lib/homesite_web/live/privacy_live/index.ex:58
+#, elixir-autogen, elixir-format
+msgid "Right to data portability: Your data export is provided in machine-readable JSON format"
+msgstr "Oikeus siirtää tiedot: Tietojen vienti toimitetaan koneluettavassa JSON-muodossa"
+
+#: lib/homesite_web/live/privacy_live/index.ex:53
+#, elixir-autogen, elixir-format
+msgid "Right to erasure: You can delete your account from Settings → Delete Account"
+msgstr "Oikeus poistamiseen: Voit poistaa tilisi kohdasta Asetukset → Poista tili"
+
+#: lib/homesite_web/live/privacy_live/index.ex:48
+#, elixir-autogen, elixir-format
+msgid "Right to rectification: You can edit your profile and content at any time"
+msgstr "Oikeus oikaisuun: Voit muokata profiiliasi ja sisältöjäsi milloin tahansa"
+
+#: lib/homesite_web/live/privacy_live/index.ex:84
+#, elixir-autogen, elixir-format
+msgid "Third-party services"
+msgstr "Kolmannen osapuolen palvelut"
+
+#: lib/homesite_web/live/privacy_live/index.ex:24
+#, elixir-autogen, elixir-format
+msgid "We collect only the information necessary to provide our services. This includes your email address (for authentication), profile information you choose to provide (display name, bio, avatar), and content you create (posts, tags)."
+msgstr "Keräämme vain palveluidemme tarjoamiseen tarvittavat tiedot. Näitä ovat sähköpostiosoitteesi (tunnistautumiseen), valitsemasi profiilitiedot (näyttönimi, kuvaus, avatar) sekä luomasi sisältö (julkaisut, tagit)."
+
+#: lib/homesite_web/live/privacy_live/index.ex:86
+#, elixir-autogen, elixir-format
+msgid "We use Cloudflare Turnstile for CAPTCHA protection during registration. No other third-party analytics or tracking services are used."
+msgstr "Käytämme Cloudflare Turnstilea CAPTCHA-suojaukseen rekisteröinnin aikana. Muita kolmannen osapuolen analytiikka- tai seurantapalveluita ei käytetä."
+
+#: lib/homesite_web/live/privacy_live/index.ex:77
+#, elixir-autogen, elixir-format
+msgid "We use essential cookies only: a session cookie for authentication and a locale preference cookie. We do not use tracking or advertising cookies."
+msgstr "Käytämme vain välttämättömiä evästeitä: istuntoevästettä tunnistautumiseen ja kieliasetusevästettä. Emme käytä seuranta- tai mainosevästeitä."
+
+#: lib/homesite_web/live/privacy_live/index.ex:22
+#, elixir-autogen, elixir-format
+msgid "What data we collect"
+msgstr "Mitä tietoja keräämme"
+
+#: lib/homesite_web/live/privacy_live/index.ex:68
+#, elixir-autogen, elixir-format
+msgid "Your account data is retained as long as your account is active. When you delete your account, you can choose to anonymize your content (keeping posts with author shown as 'Deleted User') or delete everything. Server logs are retained for security purposes for up to 90 days."
+msgstr "Tilitietosi säilytetään niin kauan kuin tilisi on aktiivinen. Kun poistat tilisi, voit valita sisällön anonymisoinnin (julkaisut säilyvät tekijänä 'Poistettu käyttäjä') tai kaiken poistamisen. Palvelinlokit säilytetään turvallisuussyistä enintään 90 päivää."
+
+#: lib/homesite_web/live/privacy_live/index.ex:33
+#, elixir-autogen, elixir-format
+msgid "Your data is used to provide the blog service, authenticate your account, and display your content. We do not sell your data to third parties or use it for advertising purposes."
+msgstr "Tietojasi käytetään blogipalvelun tarjoamiseen, tilisi tunnistautumiseen ja sisältösi näyttämiseen. Emme myy tietojasi kolmansille osapuolille emmekä käytä niitä mainontaan."
+
+#: lib/homesite_web/live/privacy_live/index.ex:40
+#, elixir-autogen, elixir-format
+msgid "Your rights"
+msgstr "Oikeutesi"
+
+#: lib/homesite_web/live/user_live/settings.ex:257
+#, elixir-autogen, elixir-format
+msgid "Download all your personal data in a ZIP file. Includes your profile, posts, and tags in JSON format."
+msgstr "Lataa kaikki henkilötietosi ZIP-tiedostona. Sisältää profiilisi, julkaisusi ja tagisi JSON-muodossa."
+
+#: lib/homesite_web/live/user_live/settings.ex:254
+#: lib/homesite_web/live/user_live/settings.ex:272
+#, elixir-autogen, elixir-format
+msgid "Download my data"
+msgstr "Lataa omat tiedot"
+
+#: lib/homesite_web/live/user_live/settings.ex:269
+#, elixir-autogen, elixir-format
+msgid "Generating..."
+msgstr "Luodaan..."
+
+#: lib/homesite_web/live/user_live/settings.ex:278
+#, elixir-autogen, elixir-format
+msgid "You can export your data once every 24 hours. Please try again later."
+msgstr "Voit viedä tietosi kerran 24 tunnin aikana. Yritä myöhemmin uudelleen."
+
+#: lib/homesite_web/live/user_live/settings.ex:749
+#, elixir-autogen, elixir-format
+msgid "You can only export data once every 24 hours."
+msgstr "Voit viedä tietosi vain kerran 24 tunnin aikana."
+
+#: lib/homesite_web/components/layouts.ex:89
+#, elixir-autogen, elixir-format
+msgid "Legal"
+msgstr "Lakiasiat"

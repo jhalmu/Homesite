@@ -86,10 +86,10 @@ defmodule HomesiteWeb.Layouts do
             <% end %>
           </div>
           <div class="gap-[var(--space-xs)] flex flex-col">
-            <span class="footer-title">{gettext("Built with")}</span>
-            <p class="text-[var(--text-sm)] opacity-70">{gettext("Phoenix Framework")}</p>
-            <p class="text-[var(--text-sm)] opacity-70">{gettext("Elixir")}</p>
-            <p class="text-[var(--text-sm)] opacity-70">{gettext("Tailwind CSS & DaisyUI")}</p>
+            <span class="footer-title">{gettext("Legal")}</span>
+            <.link href={~p"/privacy"} class="link-hover link">
+              {gettext("Privacy Policy")}
+            </.link>
           </div>
           <div class="gap-[var(--space-xs)] flex flex-col">
             <span class="footer-title">{gettext("Subscribe")}</span>

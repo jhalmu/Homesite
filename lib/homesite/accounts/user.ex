@@ -86,6 +86,9 @@ defmodule Homesite.Accounts.User do
     field :notification_preferences, :map,
       default: %{"new_follower" => true, "show_toast" => true}
 
+    # GDPR data export tracking
+    field :last_data_export_at, :utc_datetime
+
     has_many :posts, Homesite.Content.Post
     has_many :tags, Homesite.Content.Tag
     has_many :feed_sources, Homesite.ExternalFeeds.FeedSource

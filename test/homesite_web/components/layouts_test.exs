@@ -26,9 +26,8 @@ defmodule HomesiteWeb.LayoutsTest do
         })
 
       assert html =~ "Orangedinos"
-      assert html =~ "Phoenix Framework"
-      assert html =~ "Elixir"
-      assert html =~ "Tailwind CSS"
+      # Footer now has Legal section with Privacy Policy
+      assert html =~ "Privacy Policy" || html =~ "Tietosuojaseloste"
     end
 
     test "renders RSS and JSON feed links in footer" do
