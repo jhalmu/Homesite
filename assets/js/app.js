@@ -28,8 +28,7 @@ import WebShareApi from "./hooks/webShareApi"
 import CopyToClipboard from "./hooks/copyToClipboard"
 import { SortableProjects, SortableSections } from "./hooks/sortable"
 import { TurnstileHook } from "./hooks/turnstileHook"
-import Chart from "chart.js/auto"
-import ApexCharts from "apexcharts"
+// Chart libraries loaded dynamically on demand (code-splitting for performance)
 
 // Custom hooks for date formatting
 const Hooks = {
@@ -400,81 +399,25 @@ const Hooks = {
       }
     }
   },
-  // Chart.js hook for analytics visualizations (legacy)
-  ChartJS: {
-    mounted() {
-      this.chart = null
-      this.renderChart()
-    },
-    updated() {
-      this.renderChart()
-    },
-    destroyed() {
-      if (this.chart) {
-        this.chart.destroy()
-      }
-    },
-    renderChart() {
-      const config = JSON.parse(this.el.dataset.chart)
-
-      if (this.chart) {
-        this.chart.destroy()
-      }
-
-      // Default styling for dark/light mode compatibility
-      const isDark = document.documentElement.getAttribute('data-theme')?.includes('dark') ||
-                     window.matchMedia('(prefers-color-scheme: dark)').matches
-
-      const textColor = isDark ? '#a6adbb' : '#1f2937'
-      const gridColor = isDark ? 'rgba(166, 173, 187, 0.1)' : 'rgba(31, 41, 55, 0.1)'
-
-      // Apply default options
-      Chart.defaults.color = textColor
-      Chart.defaults.borderColor = gridColor
-
-      this.chart = new Chart(this.el, {
-        type: config.type,
-        data: config.data,
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              display: config.showLegend !== false,
-              position: config.legendPosition || 'bottom',
-              labels: { color: textColor }
-            }
-          },
-          scales: config.type === 'doughnut' || config.type === 'pie' ? {} : {
-            x: {
-              grid: { color: gridColor },
-              ticks: { color: textColor }
-            },
-            y: {
-              grid: { color: gridColor },
-              ticks: { color: textColor },
-              beginAtZero: true
-            }
-          },
-          ...config.options
-        }
-      })
-    }
-  },
-  // ApexCharts hook for modern analytics visualizations
+  // ApexCharts hook for analytics visualizations (dynamically loaded)
   ApexChart: {
     mounted() {
       this.chart = null
-      this.renderChart()
+      this.ApexCharts = null
+      this.loadAndRender()
       // Listen for theme changes
-      this.themeObserver = new MutationObserver(() => this.renderChart())
+      this.themeObserver = new MutationObserver(() => {
+        if (this.ApexCharts) this.renderChart()
+      })
       this.themeObserver.observe(document.documentElement, {
         attributes: true,
         attributeFilter: ['data-theme']
       })
     },
     updated() {
-      this.renderChart()
+      if (this.ApexCharts) {
+        this.renderChart()
+      }
     },
     destroyed() {
       if (this.chart) {
@@ -483,6 +426,12 @@ const Hooks = {
       if (this.themeObserver) {
         this.themeObserver.disconnect()
       }
+    },
+    async loadAndRender() {
+      // Dynamic import - only loads when hook is mounted
+      const { default: ApexCharts } = await import("apexcharts")
+      this.ApexCharts = ApexCharts
+      this.renderChart()
     },
     renderChart() {
       const config = JSON.parse(this.el.dataset.chart)
@@ -619,7 +568,7 @@ const Hooks = {
       // Set series data
       baseOptions.series = config.series || []
 
-      this.chart = new ApexCharts(this.el, baseOptions)
+      this.chart = new this.ApexCharts(this.el, baseOptions)
       this.chart.render()
     }
   }

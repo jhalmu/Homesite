@@ -1,22 +1,41 @@
 # Lighthouse Performance Improvement TODO
 
-**Current Score**: 54-71/100 (as of 2026-02-04)
-- Dev mode (unminified): 54
-- With minified JS: 71
-**Target**: 80+
+**Current Score**: 80/100 (as of 2026-02-04)
+**Target**: 80+ (ACHIEVED)
+
+## Optimization Summary (2026-02-04)
+
+Successfully improved performance from 71 to 80 through:
+
+1. **Removed unused chart.js** (was 161KB minified)
+   - ChartJS hook was marked "legacy" but never used
+   - ApexCharts provides same functionality
+
+2. **Enabled esbuild code splitting**
+   - Added `--splitting --format=esm` to esbuild config
+   - Changed script tag to `type="module"`
+   - ApexCharts now loads dynamically only on admin dashboard
+
+### Bundle Size Comparison
+
+| Version | app.js Size | ApexCharts (lazy) | Total | Performance Score |
+|---------|-------------|-------------------|-------|-------------------|
+| Before optimization | 970 KB | - | 970 KB | 71 |
+| After optimization | 180 KB | 566 KB (on demand) | 180 KB* | 80 |
+
+*Regular users only download 180KB. Admin dashboard users load additional 566KB when viewing charts.
 
 ## Root Cause Analysis (2026-02-04)
 
-The primary issue is **JavaScript bundle size**:
+The primary issue was **JavaScript bundle size**:
 
 | Build Mode | app.js Size | Performance Score |
 |------------|-------------|-------------------|
 | Dev (unminified) | 5.8 MB | 54 |
-| Minified | 970 KB | 71 |
+| Minified (before) | 970 KB | 71 |
+| Minified (after code-split) | 180 KB | 80 |
 
 Lighthouse simulates slow 4G (1.6 Mbps), so large bundles severely impact scores.
-
-**Note**: Production builds (`mix assets.deploy`) already enable minification, so deployed sites will have the 71+ score.
 
 ## Detailed Analysis
 
@@ -69,31 +88,30 @@ Common causes for low Phoenix/LiveView performance scores:
 
 ## Action Items
 
-### Already Done
+### Completed
 - [x] JS minification in production (via `mix assets.deploy`)
 - [x] CSS minification in production
+- [x] Remove unused chart.js dependency (saved 161KB)
+- [x] Code-split ApexCharts with dynamic imports (566KB loaded on demand)
+- [x] Enable esbuild splitting for ESM output
+- [x] Update script tag to `type="module"`
+- [x] Analyze bundle with esbuild --analyze
+- [x] Preconnect hints for Google Fonts (already had)
 
-### Quick Wins (Do First)
+### Quick Wins (Optional - Score already at 80)
 1. [ ] Add explicit dimensions to all images (prevents CLS)
 2. [ ] Add `loading="lazy"` to below-fold images
 3. [ ] Set cache headers for static assets in production
-4. [ ] Minify CSS in dev mode for consistent testing
 
-### Medium Effort - Reduce Bundle Size (970KB → target 500KB)
-5. [ ] Analyze bundle with `npx esbuild-visualizer`
-6. [ ] Code-split LiveView hooks (load on demand)
-7. [ ] Tree-shake unused Phoenix/LiveView code
-8. [ ] Review dependencies in assets/js/app.js
+### Medium Effort - Further Improvements (if targeting 90+)
+4. [ ] Tree-shake unused Phoenix/LiveView code
+5. [ ] Implement critical CSS inlining
+6. [ ] Review and optimize database queries on home page
 
-### Medium Effort - Other
-9. [ ] Add preconnect hints for Google Fonts, Cloudflare
-10. [ ] Implement critical CSS inlining
-11. [ ] Review and optimize database queries on home page
-
-### Larger Projects
-12. [ ] Implement image optimization pipeline (WebP generation)
-13. [ ] Set up CDN for static assets
-14. [ ] Profile and optimize LiveView mount time
+### Larger Projects (if targeting 95+)
+7. [ ] Implement image optimization pipeline (WebP generation)
+8. [ ] Set up CDN for static assets
+9. [ ] Profile and optimize LiveView mount time
 
 ## How to Test
 
@@ -109,7 +127,8 @@ mix lighthouse
 ```
 
 ## Related Issues
-- Performance optimization tracking: Create GitHub issue when starting work
+- Performance optimization tracking: Target achieved (80+)
 
 ---
 Created: 2026-02-04
+Updated: 2026-02-04 (Code splitting optimization completed)

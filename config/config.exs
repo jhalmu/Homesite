@@ -85,11 +85,13 @@ config :homesite, HomesiteWeb.Endpoint,
 config :homesite, Homesite.Mailer, adapter: Swoosh.Adapters.Local
 
 # Configure esbuild (the version is required)
+# Note: --splitting and --format=esm enable dynamic imports for code-splitting
+# This requires <script type="module"> in the HTML layout
 config :esbuild,
   version: "0.27.0",
   homesite: [
     args:
-      ~w(js/app.js --bundle --target=es2022 --outdir=../priv/static/assets/js --external:/fonts/* --external:/images/* --alias:@=.),
+      ~w(js/app.js --bundle --target=es2022 --outdir=../priv/static/assets/js --external:/fonts/* --external:/images/* --alias:@=. --splitting --format=esm),
     cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => [Path.expand("../deps", __DIR__), Mix.Project.build_path()]}
   ]
