@@ -20,6 +20,10 @@ defmodule Homesite.Application do
       Homesite.FeedCache,
       # Start OGImageCache for Open Graph image caching
       Homesite.OGImageCache,
+      # Threat reputation cache for IP/country scoring
+      Homesite.ThreatReputation.Cache,
+      # Real-time threat monitoring
+      Homesite.ThreatReputation.Monitor,
       # Chat presence tracking
       Homesite.Chat.Presence,
       # Task supervisor for async operations (search analytics, etc.)
@@ -38,6 +42,9 @@ defmodule Homesite.Application do
     # Initialize geo lookup service (ETS cache + optional MaxMind loader)
     Homesite.Analytics.Geo.init_cache()
     Homesite.Analytics.Geo.start_loader()
+
+    # Initialize external IP reputation cache (AbuseIPDB)
+    Homesite.ThreatReputation.ExternalReputation.init_cache()
 
     result
   end

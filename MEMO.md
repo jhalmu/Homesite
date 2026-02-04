@@ -7,6 +7,106 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2026-02-04 (Late Night) - Geo-Based Threat Reputation System
+
+### Session Summary
+
+Implemented comprehensive automated threat detection and defense system with external IP reputation integration and real-time monitoring.
+
+#### Features Implemented
+
+**1. Core Threat Reputation System**
+- Multi-signal threat scoring (0-100%) per IP and country
+- Auto-blocking at 80%+ score with progressive durations (15min → 1hr → 24hr → 7 days)
+- Threat-aware rate limiting integration with Hammer 7.x
+
+**Score Components:**
+| Signal | Max Points |
+|--------|------------|
+| Failed login ratio | 30 |
+| Suspicious activity | 25 |
+| External reputation (AbuseIPDB) | 20 |
+| Request volume anomaly | 10 |
+| Historical violations | 10 |
+| Watchlist boost | 15 |
+
+**Auto-Defense Thresholds:**
+| Score | Action |
+|-------|--------|
+| 0-30 | Normal rate limits |
+| 31-60 | 50% stricter rate limits |
+| 61-79 | 75% stricter + alert admins |
+| 80+ | Auto-block IP |
+
+**2. External IP Reputation (AbuseIPDB)**
+- Integration with AbuseIPDB API v2
+- 24-hour ETS cache to minimize API calls (free tier: 1,000/day)
+- Score mapping from abuse confidence to internal points
+- Human-readable category names for 23 attack types
+- Configuration via `ABUSEIPDB_API_KEY` environment variable
+
+**3. Real-time Threat Monitor**
+- GenServer with 5-minute sliding window tracking
+- Attack pattern detection:
+  - Brute force (10+ events from single IP)
+  - Credential stuffing (20+ unique usernames targeted)
+  - Distributed attacks (5+ IPs with 10+ events)
+- PubSub broadcasts for live dashboard updates
+- Stats: events/minute, unique IPs, top attackers
+
+**4. Admin UI**
+- Dashboard at `/admin/threats` with real-time stats
+- IP watchlist management at `/admin/threats/ip-watchlist`
+- Country watchlist management at `/admin/threats/country-watchlist`
+- Live updates via PubSub subscription
+
+**5. Background Workers (Oban)**
+- `ThreatScoreDecayWorker` - Hourly 5% score decay
+- `ThreatCleanupWorker` - Daily cleanup of expired blocks and old events
+
+#### Files Created
+
+**Core System:**
+- `priv/repo/migrations/20260204180000_create_threat_reputation_tables.exs`
+- `lib/homesite/threat_reputation.ex` - Main context
+- `lib/homesite/threat_reputation/ip_reputation.ex`
+- `lib/homesite/threat_reputation/country_reputation.ex`
+- `lib/homesite/threat_reputation/threat_event.ex`
+- `lib/homesite/threat_reputation/ip_watchlist_entry.ex`
+- `lib/homesite/threat_reputation/country_watchlist_entry.ex`
+- `lib/homesite/threat_reputation/score_calculator.ex`
+- `lib/homesite/threat_reputation/cache.ex`
+- `lib/homesite/threat_reputation/external_reputation.ex`
+- `lib/homesite/threat_reputation/monitor.ex`
+
+**Web Layer:**
+- `lib/homesite_web/plugs/threat_rate_limit_plug.ex`
+- `lib/homesite_web/live/admin_live/threat/dashboard.ex`
+- `lib/homesite_web/live/admin_live/threat/ip_watchlist.ex`
+- `lib/homesite_web/live/admin_live/threat/country_watchlist.ex`
+
+**Workers:**
+- `lib/homesite/workers/threat_score_decay_worker.ex`
+- `lib/homesite/workers/threat_cleanup_worker.ex`
+
+**Tests:**
+- `test/homesite/threat_reputation_test.exs` - 15 tests
+- `test/homesite/threat_reputation/external_reputation_test.exs` - 17 tests
+- `test/homesite/threat_reputation/monitor_test.exs` - 13 tests
+
+#### Files Modified
+- `lib/homesite/application.ex` - Added Cache, Monitor, ExternalReputation init
+- `lib/homesite/rate_limiter.ex` - Added `check_rate_with_threat/2`
+- `lib/homesite/accounts.ex` - Hooked threat recording to auth events
+- `lib/homesite_web/router.ex` - Added admin threat routes
+- `config/config.exs` - Added Oban cron jobs
+
+#### Test Results
+- **1791 tests, 0 failures**
+- Credo: Style warnings only (non-blocking)
+
+---
+
 ## 2026-02-04 (Night) - Hammer 7.x Upgrade
 
 ### Session Summary

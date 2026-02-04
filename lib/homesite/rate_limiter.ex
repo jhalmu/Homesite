@@ -1,6 +1,6 @@
 defmodule Homesite.RateLimiter do
   @moduledoc """
-  Rate limiting using Hammer 7.x.
+  Rate limiting using Hammer 7.x with threat-aware adjustments.
 
   Provides rate limiting for various operations:
   - `:auth` - Login attempts: 5 per minute
@@ -21,9 +21,20 @@ defmodule Homesite.RateLimiter do
         # proceed
       end
 
+  ## Threat-Aware Rate Limiting
+
+      case RateLimiter.check_rate_with_threat(:auth, user_ip) do
+        {:allow, _count} -> # proceed
+        {:deny, retry_after} -> # rate limited
+        {:blocked, expires_at} -> # IP is blocked
+      end
+
   """
 
   use Hammer, backend: :ets
+
+  alias Homesite.ThreatReputation
+  alias Homesite.ThreatReputation.ScoreCalculator
 
   # Rate limit configurations: {scale_ms, limit}
   @limits %{
@@ -93,5 +104,57 @@ defmodule Homesite.RateLimiter do
   @spec get_config(atom()) :: {non_neg_integer(), non_neg_integer()}
   def get_config(limiter_type) do
     Map.fetch!(@limits, limiter_type)
+  end
+
+  @doc """
+  Check rate limit with threat reputation awareness.
+
+  Returns:
+  - `{:allow, count}` if allowed
+  - `{:deny, retry_after_ms}` if rate limited
+  - `{:blocked, expires_at}` if IP is blocked
+
+  Threat scoring adjusts rate limits:
+  - Score 0-30: Normal limits (100%)
+  - Score 31-60: 50% of normal limits
+  - Score 61-79: 25% of normal limits + alert
+  - Score 80+: Blocked
+  """
+  @spec check_rate_with_threat(atom(), String.t()) ::
+          {:allow, non_neg_integer()}
+          | {:deny, non_neg_integer()}
+          | {:blocked, DateTime.t() | nil}
+  def check_rate_with_threat(limiter_type, ip_address)
+      when is_atom(limiter_type) and is_binary(ip_address) do
+    # Check if IP is blocked first
+    status = ThreatReputation.check_ip_status(ip_address)
+
+    if status.blocked do
+      {:blocked, status.block_expires_at}
+    else
+      # Apply threat-adjusted rate limit
+      {scale, base_limit} = Map.fetch!(@limits, limiter_type)
+      multiplier = ScoreCalculator.rate_limit_multiplier(status.action)
+
+      # Minimum limit of 1 to prevent division by zero
+      adjusted_limit = max(1, round(base_limit * multiplier))
+
+      full_key = "#{limiter_type}:threat:#{ip_address}"
+      hit(full_key, scale, adjusted_limit)
+    end
+  end
+
+  @doc """
+  Get threat-adjusted rate limit configuration.
+
+  Returns `{scale_ms, adjusted_limit}` tuple based on IP threat score.
+  """
+  @spec get_threat_adjusted_config(atom(), String.t()) :: {non_neg_integer(), non_neg_integer()}
+  def get_threat_adjusted_config(limiter_type, ip_address) do
+    {scale, base_limit} = Map.fetch!(@limits, limiter_type)
+    status = ThreatReputation.check_ip_status(ip_address)
+    multiplier = ScoreCalculator.rate_limit_multiplier(status.action)
+    adjusted_limit = max(1, round(base_limit * multiplier))
+    {scale, adjusted_limit}
   end
 end

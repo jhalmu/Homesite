@@ -212,6 +212,11 @@ defmodule HomesiteWeb.Router do
 
       # Admin settings
       live "/admin/settings", AdminLive.Settings.Index, :index
+
+      # Admin threat reputation management
+      live "/admin/threats", AdminLive.Threat.Dashboard, :index
+      live "/admin/threats/ip-watchlist", AdminLive.Threat.IpWatchlist, :index
+      live "/admin/threats/country-watchlist", AdminLive.Threat.CountryWatchlist, :index
     end
   end
 

@@ -1268,20 +1268,35 @@ defmodule Homesite.Accounts do
 
   """
   def log_auth_event(event_type, email, opts \\ []) do
+    ip_address = Keyword.get(opts, :ip_address)
+
     attrs = %{
       event_type: event_type,
       email: email,
       success: Keyword.get(opts, :success, false),
       user_id: get_in(opts, [:user, Access.key(:id)]),
-      ip_address: Keyword.get(opts, :ip_address),
+      ip_address: ip_address,
       user_agent: Keyword.get(opts, :user_agent),
       failure_reason: Keyword.get(opts, :failure_reason),
       metadata: Keyword.get(opts, :metadata, %{})
     }
 
-    %AuthLog{}
-    |> AuthLog.changeset(attrs)
-    |> Repo.insert()
+    result =
+      %AuthLog{}
+      |> AuthLog.changeset(attrs)
+      |> Repo.insert()
+
+    # Record threat event for failed logins (asynchronously)
+    if ip_address && event_type in ["login_failure", "magic_link_failure"] do
+      Task.Supervisor.start_child(Homesite.TaskSupervisor, fn ->
+        Homesite.ThreatReputation.record_threat_event(ip_address, "failed_login",
+          details: %{email: email, failure_reason: Keyword.get(opts, :failure_reason)},
+          user_id: get_in(opts, [:user, Access.key(:id)])
+        )
+      end)
+    end
+
+    result
   end
 
   @doc """
@@ -1441,6 +1456,8 @@ defmodule Homesite.Accounts do
   @doc """
   Logs suspicious activity and optionally notifies admins.
 
+  Also records a threat event for the IP if provided.
+
   ## Examples
 
       iex> log_suspicious_activity("attacker@example.com", "credential_stuffing", %{ip: "1.2.3.4"})
@@ -1448,17 +1465,34 @@ defmodule Homesite.Accounts do
 
   """
   def log_suspicious_activity(email, reason, details \\ %{}, opts \\ []) do
+    ip_address = Keyword.get(opts, :ip_address)
+
     log_auth_event("suspicious_activity", email,
       success: false,
       failure_reason: reason,
       metadata: details,
-      ip_address: Keyword.get(opts, :ip_address),
+      ip_address: ip_address,
       user_agent: Keyword.get(opts, :user_agent)
     )
+
+    # Record threat event for IP reputation tracking
+    if ip_address do
+      Task.Supervisor.start_child(Homesite.TaskSupervisor, fn ->
+        Homesite.ThreatReputation.record_threat_event(ip_address, "suspicious_activity",
+          details: Map.merge(details, %{email: email, reason: reason}),
+          severity: threat_severity_for_reason(reason)
+        )
+      end)
+    end
 
     # Notify all admins about suspicious activity
     notify_admins_suspicious_activity(email, reason, details)
   end
+
+  defp threat_severity_for_reason("credential_stuffing"), do: "high"
+  defp threat_severity_for_reason("ip_abuse"), do: "high"
+  defp threat_severity_for_reason("high_failure_rate"), do: "medium"
+  defp threat_severity_for_reason(_), do: "medium"
 
   # Notifies all admin users about suspicious activity
   defp notify_admins_suspicious_activity(email, reason, details) do

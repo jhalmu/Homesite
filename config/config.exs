@@ -42,7 +42,11 @@ config :homesite, Oban,
        # Check for users due for feedback prompts daily at 9 AM
        {"0 9 * * *", Homesite.Workers.FeedbackPromptWorker},
        # Recalculate user ranks weekly on Sunday at 3 AM
-       {"0 3 * * 0", Homesite.Workers.RankCalculationWorker}
+       {"0 3 * * 0", Homesite.Workers.RankCalculationWorker},
+       # Decay threat scores hourly (at minute 15)
+       {"15 * * * *", Homesite.Workers.ThreatScoreDecayWorker},
+       # Clean up threat reputation data daily at 3 AM
+       {"0 3 * * *", Homesite.Workers.ThreatCleanupWorker}
      ]}
   ]
 
