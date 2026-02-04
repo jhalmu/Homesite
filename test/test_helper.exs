@@ -1,5 +1,8 @@
-# Start Playwright browser pool (required for phoenix_test_playwright 0.10+)
-{:ok, _} = PhoenixTest.Playwright.Supervisor.start_link()
+# Start Playwright browser pool only when playwright tests will run
+# (not in CI where playwright isn't installed)
+unless System.get_env("CI") do
+  {:ok, _} = PhoenixTest.Playwright.Supervisor.start_link()
+end
 
 Application.put_env(:phoenix_test, :base_url, HomesiteWeb.Endpoint.url())
 
