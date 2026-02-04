@@ -1,11 +1,26 @@
 # Lighthouse Performance Improvement TODO
 
-**Current Score**: 55/100 (as of 2026-02-04)
+**Current Score**: 54-71/100 (as of 2026-02-04)
+- Dev mode (unminified): 54
+- With minified JS: 71
 **Target**: 80+
 
-## Analysis of Low Performance Score
+## Root Cause Analysis (2026-02-04)
 
-The Lighthouse performance score of 55 indicates several areas need improvement. Common causes for low Phoenix/LiveView performance scores:
+The primary issue is **JavaScript bundle size**:
+
+| Build Mode | app.js Size | Performance Score |
+|------------|-------------|-------------------|
+| Dev (unminified) | 5.8 MB | 54 |
+| Minified | 970 KB | 71 |
+
+Lighthouse simulates slow 4G (1.6 Mbps), so large bundles severely impact scores.
+
+**Note**: Production builds (`mix assets.deploy`) already enable minification, so deployed sites will have the 71+ score.
+
+## Detailed Analysis
+
+Common causes for low Phoenix/LiveView performance scores:
 
 ### 1. Large JavaScript Bundle
 - **Issue**: LiveView JS + custom hooks can create large bundles
@@ -54,22 +69,31 @@ The Lighthouse performance score of 55 indicates several areas need improvement.
 
 ## Action Items
 
-### Quick Wins (Do First)
-1. [ ] Add explicit dimensions to all images
-2. [ ] Enable CSS/JS minification in production config
-3. [ ] Add `loading="lazy"` to below-fold images
-4. [ ] Set cache headers for static assets
+### Already Done
+- [x] JS minification in production (via `mix assets.deploy`)
+- [x] CSS minification in production
 
-### Medium Effort
-5. [ ] Analyze and reduce JavaScript bundle size
-6. [ ] Implement critical CSS inlining
-7. [ ] Add preconnect hints for external resources
-8. [ ] Review and optimize database queries on home page
+### Quick Wins (Do First)
+1. [ ] Add explicit dimensions to all images (prevents CLS)
+2. [ ] Add `loading="lazy"` to below-fold images
+3. [ ] Set cache headers for static assets in production
+4. [ ] Minify CSS in dev mode for consistent testing
+
+### Medium Effort - Reduce Bundle Size (970KB → target 500KB)
+5. [ ] Analyze bundle with `npx esbuild-visualizer`
+6. [ ] Code-split LiveView hooks (load on demand)
+7. [ ] Tree-shake unused Phoenix/LiveView code
+8. [ ] Review dependencies in assets/js/app.js
+
+### Medium Effort - Other
+9. [ ] Add preconnect hints for Google Fonts, Cloudflare
+10. [ ] Implement critical CSS inlining
+11. [ ] Review and optimize database queries on home page
 
 ### Larger Projects
-9. [ ] Implement image optimization pipeline (WebP generation)
-10. [ ] Set up CDN for static assets
-11. [ ] Profile and optimize LiveView mount time
+12. [ ] Implement image optimization pipeline (WebP generation)
+13. [ ] Set up CDN for static assets
+14. [ ] Profile and optimize LiveView mount time
 
 ## How to Test
 
