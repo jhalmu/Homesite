@@ -7,6 +7,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
   alias Homesite.Feedback
   alias Homesite.Media
   alias Homesite.Repo
+  alias Homesite.ThreatReputation
   import HomesiteWeb.Helpers.DateHelpers
 
   @impl true
@@ -19,7 +20,7 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
       </.header>
 
       <%!-- Key Metrics --%>
-      <div class="mt-[var(--space-lg)] gap-[var(--space-md)] grid grid-cols-2 lg:grid-cols-5">
+      <div class="mt-[var(--space-lg)] gap-[var(--space-md)] grid grid-cols-2 lg:grid-cols-6">
         <.dashboard_card variant="stat">
           <div class="stat-figure text-warning">
             <span class="text-4xl">😊</span>
@@ -74,6 +75,23 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
             {@activity_stats.week_count} {gettext("this week")}
           </div>
         </.dashboard_card>
+
+        <.dashboard_card variant="stat">
+          <div class="stat-figure">
+            <span class={["badge", security_status_badge(@threat_stats)]}>
+              {security_status_label(@threat_stats)}
+            </span>
+          </div>
+          <div class="stat-title">{gettext("Security Status")}</div>
+          <div class="stat-value text-[var(--text-lg)]">
+            <span class="text-error">{@threat_stats.blocked_ips}</span>
+            <span class="text-base-content/50 text-[var(--text-sm)]">/</span>
+            <span class="text-warning">{@threat_stats.high_risk_ips}</span>
+          </div>
+          <div class="stat-desc">
+            {gettext("blocked / at risk")}
+          </div>
+        </.dashboard_card>
       </div>
 
       <%!-- Quick Actions --%>
@@ -98,6 +116,9 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
             </.link>
             <.link navigate={~p"/admin/settings"} class="btn btn-outline btn-sm">
               <.icon name="hero-adjustments-horizontal" class="h-4 w-4" /> {gettext("Settings")}
+            </.link>
+            <.link navigate={~p"/admin/threats"} class="btn btn-outline btn-sm">
+              <.icon name="hero-shield-check" class="h-4 w-4" /> {gettext("Security")}
             </.link>
             <.link navigate={~p"/users/register"} class="btn btn-outline btn-sm">
               <.icon name="hero-user-plus" class="h-4 w-4" /> {gettext("Registration")}
@@ -492,6 +513,9 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
     activity_logs = Analytics.list_activity_logs(limit: 20)
     activity_stats = calculate_activity_stats()
 
+    # Load threat stats
+    threat_stats = ThreatReputation.get_dashboard_stats()
+
     {:ok,
      socket
      |> assign(:page_title, gettext("Admin Dashboard"))
@@ -507,7 +531,8 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
      |> assign(:popular_searches, popular_searches)
      |> assign(:no_result_searches, no_result_searches)
      |> assign(:activity_logs, activity_logs)
-     |> assign(:activity_stats, activity_stats)}
+     |> assign(:activity_stats, activity_stats)
+     |> assign(:threat_stats, threat_stats)}
   end
 
   # Activity statistics calculation
@@ -850,6 +875,34 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
       "view" -> "badge-ghost"
       "search" -> "badge-secondary"
       _ -> "badge-ghost"
+    end
+  end
+
+  # Security status helpers
+
+  defp security_status_badge(threat_stats) do
+    cond do
+      threat_stats.blocked_ips > 0 or threat_stats.auto_blocks_24h > 5 ->
+        "badge-error"
+
+      threat_stats.high_risk_ips > 0 or threat_stats.auto_blocks_24h > 0 ->
+        "badge-warning"
+
+      true ->
+        "badge-success"
+    end
+  end
+
+  defp security_status_label(threat_stats) do
+    cond do
+      threat_stats.blocked_ips > 0 or threat_stats.auto_blocks_24h > 5 ->
+        gettext("Active Threats")
+
+      threat_stats.high_risk_ips > 0 or threat_stats.auto_blocks_24h > 0 ->
+        gettext("Monitoring")
+
+      true ->
+        gettext("All Clear")
     end
   end
 end

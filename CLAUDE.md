@@ -51,12 +51,13 @@ In templates: `@current_scope.user` (NOT `@current_user`)
 ### EOD Workflow
 
 When user says **"EOD"**: Execute immediately without confirmation:
-1. Run `mix test.all`
-2. Sync GitHub issues (`gh issue list/close/comment`)
-3. Update MEMO.md
-4. Commit & push
+1. Stop dev server (`pkill -f "mix phx.server" || pkill -f "beam.smp"`)
+2. Run `mix test.all`
+3. Sync GitHub issues (`gh issue list/close/comment`)
+4. Update MEMO.md
+5. Commit & push
 
-Commands allowed without asking: `git`, `gh`, `mix test`, `mix format`, `mix credo`
+Commands allowed without asking: `git`, `gh`, `mix test`, `mix format`, `mix credo`, `pkill`
 
 ### Commit Message Format
 ```

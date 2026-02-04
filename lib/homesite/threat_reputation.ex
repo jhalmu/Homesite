@@ -12,9 +12,12 @@ defmodule Homesite.ThreatReputation do
 
   import Ecto.Query
 
+  alias Homesite.Accounts
+  alias Homesite.Accounts.UserNotifier
   alias Homesite.Analytics.Geo
   alias Homesite.Notifications
   alias Homesite.Repo
+  alias Homesite.Settings
 
   alias Homesite.ThreatReputation.{
     Cache,
@@ -25,6 +28,7 @@ defmodule Homesite.ThreatReputation do
     IpWatchlistEntry,
     Monitor,
     ScoreCalculator,
+    SecurityAuditLog,
     ThreatEvent
   }
 
@@ -190,6 +194,10 @@ defmodule Homesite.ThreatReputation do
           "Auto-blocked IP #{ip_address} for #{div(duration_seconds, 60)} minutes (block ##{block_count + 1})"
         )
 
+        # Send email alert
+        country_code = updated.country_code || Geo.lookup_country(ip_address)
+        alert_ip_auto_blocked(ip_address, updated.score, country_code, div(duration_seconds, 60))
+
         {:ok, updated}
 
       {:error, changeset} ->
@@ -203,6 +211,7 @@ defmodule Homesite.ThreatReputation do
   def manual_block_ip(ip_address, admin_user, opts \\ []) do
     duration_seconds = Keyword.get(opts, :duration, 24 * 60 * 60)
     reason = Keyword.get(opts, :reason, "Manual admin block")
+    request_ip = Keyword.get(opts, :request_ip)
 
     ip_rep = get_or_create_ip_reputation(ip_address)
     block_expires_at = DateTime.add(DateTime.utc_now(), duration_seconds, :second)
@@ -227,6 +236,12 @@ defmodule Homesite.ThreatReputation do
           }
         )
 
+        # Log audit action
+        log_security_action(admin_user, "ip_manual_block", "ip_address", ip_address,
+          details: %{reason: reason, duration_seconds: duration_seconds},
+          ip_address: request_ip
+        )
+
         {:ok, updated}
 
       {:error, changeset} ->
@@ -239,6 +254,7 @@ defmodule Homesite.ThreatReputation do
   """
   def unblock_ip(ip_address, opts \\ []) do
     admin_user = Keyword.get(opts, :admin)
+    request_ip = Keyword.get(opts, :request_ip)
 
     case get_ip_reputation(ip_address) do
       nil ->
@@ -263,6 +279,14 @@ defmodule Homesite.ThreatReputation do
               end
 
             record_threat_event(ip_address, "unblock", details: details)
+
+            # Log audit action for manual unblock
+            if admin_user do
+              log_security_action(admin_user, "ip_manual_unblock", "ip_address", ip_address,
+                ip_address: request_ip
+              )
+            end
+
             {:ok, updated}
 
           {:error, changeset} ->
@@ -277,10 +301,14 @@ defmodule Homesite.ThreatReputation do
   Adds an IP to the watchlist.
   """
   def add_ip_to_watchlist(ip_address, admin_user, opts \\ []) do
+    boost_score = Keyword.get(opts, :boost_score, 15)
+    reason = Keyword.get(opts, :reason)
+    request_ip = Keyword.get(opts, :request_ip)
+
     attrs = %{
       ip_address: ip_address,
-      boost_score: Keyword.get(opts, :boost_score, 15),
-      reason: Keyword.get(opts, :reason),
+      boost_score: boost_score,
+      reason: reason,
       notes: Keyword.get(opts, :notes),
       expires_at: Keyword.get(opts, :expires_at),
       added_by_id: admin_user.id
@@ -289,6 +317,13 @@ defmodule Homesite.ThreatReputation do
     case %IpWatchlistEntry{} |> IpWatchlistEntry.changeset(attrs) |> Repo.insert() do
       {:ok, entry} ->
         Cache.invalidate_ip(ip_address)
+
+        # Log audit action
+        log_security_action(admin_user, "ip_watchlist_add", "ip_address", ip_address,
+          details: %{boost_score: boost_score, reason: reason},
+          ip_address: request_ip
+        )
+
         {:ok, entry}
 
       {:error, changeset} ->
@@ -299,7 +334,9 @@ defmodule Homesite.ThreatReputation do
   @doc """
   Removes an IP from the watchlist.
   """
-  def remove_ip_from_watchlist(ip_address) do
+  def remove_ip_from_watchlist(ip_address, admin_user \\ nil, opts \\ []) do
+    request_ip = Keyword.get(opts, :request_ip)
+
     case get_ip_watchlist_entry(ip_address) do
       nil ->
         {:error, :not_found}
@@ -308,6 +345,14 @@ defmodule Homesite.ThreatReputation do
         case Repo.delete(entry) do
           {:ok, deleted} ->
             Cache.invalidate_ip(ip_address)
+
+            # Log audit action
+            if admin_user do
+              log_security_action(admin_user, "ip_watchlist_remove", "ip_address", ip_address,
+                ip_address: request_ip
+              )
+            end
+
             {:ok, deleted}
 
           {:error, changeset} ->
@@ -337,10 +382,14 @@ defmodule Homesite.ThreatReputation do
   Adds a country to the watchlist.
   """
   def add_country_to_watchlist(country_code, admin_user, opts \\ []) do
+    boost_score = Keyword.get(opts, :boost_score, 15)
+    reason = Keyword.get(opts, :reason)
+    request_ip = Keyword.get(opts, :request_ip)
+
     attrs = %{
       country_code: country_code,
-      boost_score: Keyword.get(opts, :boost_score, 15),
-      reason: Keyword.get(opts, :reason),
+      boost_score: boost_score,
+      reason: reason,
       notes: Keyword.get(opts, :notes),
       expires_at: Keyword.get(opts, :expires_at),
       added_by_id: admin_user.id
@@ -349,6 +398,13 @@ defmodule Homesite.ThreatReputation do
     case %CountryWatchlistEntry{} |> CountryWatchlistEntry.changeset(attrs) |> Repo.insert() do
       {:ok, entry} ->
         Cache.invalidate_country(country_code)
+
+        # Log audit action
+        log_security_action(admin_user, "country_watchlist_add", "country_code", country_code,
+          details: %{boost_score: boost_score, reason: reason},
+          ip_address: request_ip
+        )
+
         {:ok, entry}
 
       {:error, changeset} ->
@@ -359,7 +415,9 @@ defmodule Homesite.ThreatReputation do
   @doc """
   Removes a country from the watchlist.
   """
-  def remove_country_from_watchlist(country_code) do
+  def remove_country_from_watchlist(country_code, admin_user \\ nil, opts \\ []) do
+    request_ip = Keyword.get(opts, :request_ip)
+
     case get_country_watchlist_entry(country_code) do
       nil ->
         {:error, :not_found}
@@ -368,6 +426,18 @@ defmodule Homesite.ThreatReputation do
         case Repo.delete(entry) do
           {:ok, deleted} ->
             Cache.invalidate_country(country_code)
+
+            # Log audit action
+            if admin_user do
+              log_security_action(
+                admin_user,
+                "country_watchlist_remove",
+                "country_code",
+                country_code,
+                ip_address: request_ip
+              )
+            end
+
             {:ok, deleted}
 
           {:error, changeset} ->
@@ -623,6 +693,162 @@ defmodule Homesite.ThreatReputation do
     end
 
     {ip_count, country_count}
+  end
+
+  # Security Audit Logging
+
+  @doc """
+  Logs a security action performed by an admin.
+
+  ## Parameters
+  - `admin` - The admin user performing the action
+  - `action_type` - Type of action (see SecurityAuditLog.action_types/0)
+  - `target_type` - Type of target (ip_address, country_code, setting)
+  - `target_value` - The target value (e.g., "1.2.3.4", "US", "auto_block_threshold")
+  - `opts` - Optional details and IP address
+  """
+  def log_security_action(admin, action_type, target_type, target_value, opts \\ []) do
+    attrs = %{
+      admin_id: admin.id,
+      action_type: action_type,
+      target_type: target_type,
+      target_value: target_value,
+      details: Keyword.get(opts, :details, %{}),
+      ip_address: Keyword.get(opts, :ip_address)
+    }
+
+    %SecurityAuditLog{}
+    |> SecurityAuditLog.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Lists security audit logs with optional filters.
+
+  ## Options
+  - `:limit` - Maximum number of entries (default 50)
+  - `:offset` - Offset for pagination
+  - `:action_type` - Filter by action type
+  - `:admin_id` - Filter by admin user
+  """
+  def list_security_audit_logs(opts \\ []) do
+    limit = Keyword.get(opts, :limit, 50)
+    offset = Keyword.get(opts, :offset, 0)
+    action_type = Keyword.get(opts, :action_type)
+    admin_id = Keyword.get(opts, :admin_id)
+
+    query =
+      from(l in SecurityAuditLog,
+        order_by: [desc: l.inserted_at],
+        limit: ^limit,
+        offset: ^offset,
+        preload: [:admin]
+      )
+
+    query =
+      if action_type do
+        from(l in query, where: l.action_type == ^action_type)
+      else
+        query
+      end
+
+    query =
+      if admin_id do
+        from(l in query, where: l.admin_id == ^admin_id)
+      else
+        query
+      end
+
+    Repo.all(query)
+  end
+
+  @doc """
+  Counts security audit logs with optional filters.
+  """
+  def count_security_audit_logs(opts \\ []) do
+    action_type = Keyword.get(opts, :action_type)
+    admin_id = Keyword.get(opts, :admin_id)
+
+    query = from(l in SecurityAuditLog, select: count(l.id))
+
+    query =
+      if action_type do
+        from(l in query, where: l.action_type == ^action_type)
+      else
+        query
+      end
+
+    query =
+      if admin_id do
+        from(l in query, where: l.admin_id == ^admin_id)
+      else
+        query
+      end
+
+    Repo.one(query)
+  end
+
+  # Email Alert Functions
+
+  @doc """
+  Sends a security alert email to all admins if alerts are enabled.
+
+  Alert types: :attack_detected, :ip_auto_blocked, :threshold_exceeded, :ip_warning
+  """
+  def send_security_alert(alert_type, details) do
+    if Settings.should_alert?(alert_type) do
+      Task.Supervisor.async_nolink(Homesite.TaskSupervisor, fn ->
+        for admin <- Accounts.list_admins() do
+          UserNotifier.deliver_security_alert(admin, alert_type, details)
+        end
+      end)
+
+      :ok
+    else
+      :skipped
+    end
+  end
+
+  @doc """
+  Sends an alert when an attack is detected.
+  """
+  def alert_attack_detected(attack_type, ip_address, event_count, country_code \\ nil) do
+    send_security_alert(:attack_detected, %{
+      attack_type: attack_type,
+      ip_address: ip_address,
+      event_count: event_count,
+      country: country_code
+    })
+  end
+
+  @doc """
+  Sends an alert when an IP is auto-blocked.
+  """
+  def alert_ip_auto_blocked(ip_address, score, country_code, block_duration_minutes) do
+    duration_str =
+      cond do
+        block_duration_minutes < 60 -> "#{block_duration_minutes} minutes"
+        block_duration_minutes < 1440 -> "#{div(block_duration_minutes, 60)} hours"
+        true -> "#{div(block_duration_minutes, 1440)} days"
+      end
+
+    send_security_alert(:ip_auto_blocked, %{
+      ip_address: ip_address,
+      score: score,
+      country: country_code,
+      block_duration: duration_str
+    })
+  end
+
+  @doc """
+  Sends an alert when an IP reaches warning level.
+  """
+  def alert_ip_warning(ip_address, score, country_code) do
+    send_security_alert(:ip_warning, %{
+      ip_address: ip_address,
+      score: score,
+      country: country_code
+    })
   end
 
   # Private functions

@@ -1,6 +1,7 @@
 defmodule HomesiteWeb.AdminLive.Threat.Dashboard do
   use HomesiteWeb, :live_view
 
+  alias Homesite.Settings
   alias Homesite.ThreatReputation
   import HomesiteWeb.Helpers.DateHelpers
 
@@ -22,9 +23,144 @@ defmodule HomesiteWeb.AdminLive.Threat.Dashboard do
           <.link navigate={~p"/admin/threats/country-watchlist"} class="btn btn-outline btn-sm">
             <.icon name="hero-globe-alt" class="h-4 w-4" /> {gettext("Country Watchlist")}
           </.link>
+          <.link navigate={~p"/admin/threats/audit-log"} class="btn btn-outline btn-sm">
+            <.icon name="hero-clipboard-document-list" class="h-4 w-4" /> {gettext("Audit Log")}
+          </.link>
           <.link navigate={~p"/admin/moderation"} class="btn btn-outline btn-sm">
             <.icon name="hero-shield-exclamation" class="h-4 w-4" /> {gettext("Moderation")}
           </.link>
+        </div>
+      </div>
+
+      <%!-- Alert Configuration --%>
+      <div class="collapse collapse-arrow mt-[var(--space-md)] bg-base-200">
+        <input type="checkbox" />
+        <div class="collapse-title font-medium">
+          <div class="gap-[var(--space-sm)] flex items-center">
+            <.icon name="hero-bell-alert" class="h-5 w-5" />
+            {gettext("Email Alert Configuration")}
+            <%= if @alert_config.enabled do %>
+              <span class="badge badge-success badge-sm">{gettext("Enabled")}</span>
+            <% else %>
+              <span class="badge badge-ghost badge-sm">{gettext("Disabled")}</span>
+            <% end %>
+          </div>
+        </div>
+        <div class="collapse-content">
+          <form phx-change="update_alert_config" class="space-y-[var(--space-md)]">
+            <%!-- Enable/Disable Toggle --%>
+            <div class="form-control">
+              <label class="label gap-[var(--space-sm)] cursor-pointer justify-start">
+                <input
+                  type="checkbox"
+                  name="enabled"
+                  value="true"
+                  checked={@alert_config.enabled}
+                  class="toggle toggle-success"
+                />
+                <span class="label-text">{gettext("Enable email alerts")}</span>
+              </label>
+            </div>
+
+            <%!-- Alert Level --%>
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text font-semibold">{gettext("Alert Level")}</span>
+              </label>
+              <div class="space-y-[var(--space-xs)]">
+                <label class="label gap-[var(--space-sm)] cursor-pointer justify-start">
+                  <input
+                    type="radio"
+                    name="level"
+                    value="critical"
+                    checked={@alert_config.level == :critical}
+                    class="radio radio-sm"
+                  />
+                  <div>
+                    <span class="label-text font-medium">{gettext("Critical only")}</span>
+                    <p class="text-base-content/60 text-[var(--text-xs)]">
+                      {gettext("Attack patterns: brute force, credential stuffing, distributed")}
+                    </p>
+                  </div>
+                </label>
+                <label class="label gap-[var(--space-sm)] cursor-pointer justify-start">
+                  <input
+                    type="radio"
+                    name="level"
+                    value="auto_blocks"
+                    checked={@alert_config.level == :auto_blocks}
+                    class="radio radio-sm"
+                  />
+                  <div>
+                    <span class="label-text font-medium">{gettext("+ Auto-blocks")}</span>
+                    <p class="text-base-content/60 text-[var(--text-xs)]">
+                      {gettext("Critical + when IPs are automatically blocked")}
+                    </p>
+                  </div>
+                </label>
+                <label class="label gap-[var(--space-sm)] cursor-pointer justify-start">
+                  <input
+                    type="radio"
+                    name="level"
+                    value="threshold"
+                    checked={@alert_config.level == :threshold}
+                    class="radio radio-sm"
+                  />
+                  <div>
+                    <span class="label-text font-medium">{gettext("+ Threshold exceeded")}</span>
+                    <p class="text-base-content/60 text-[var(--text-xs)]">
+                      {gettext("Above + daily threat count exceeds limit")}
+                    </p>
+                  </div>
+                </label>
+                <label class="label gap-[var(--space-sm)] cursor-pointer justify-start">
+                  <input
+                    type="radio"
+                    name="level"
+                    value="verbose"
+                    checked={@alert_config.level == :verbose}
+                    class="radio radio-sm"
+                  />
+                  <div>
+                    <span class="label-text font-medium">{gettext("+ Warning level IPs")}</span>
+                    <p class="text-base-content/60 text-[var(--text-xs)]">
+                      {gettext("Above + when IPs reach 61-79%% score")}
+                    </p>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <%!-- Threshold (only shown if level >= threshold) --%>
+            <%= if @alert_config.level in [:threshold, :verbose] do %>
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text">{gettext("Daily event threshold")}</span>
+                </label>
+                <input
+                  type="number"
+                  name="threshold"
+                  value={@alert_config.threshold}
+                  min="10"
+                  max="1000"
+                  class="input input-bordered input-sm w-32"
+                />
+                <label class="label">
+                  <span class="label-text-alt text-base-content/60">
+                    {gettext("Alert when daily events exceed this number")}
+                  </span>
+                </label>
+              </div>
+            <% end %>
+
+            <%!-- Test Button --%>
+            <div class="mt-[var(--space-md)]">
+              <button type="button" phx-click="send_test_alert" class="btn btn-ghost btn-sm">
+                <.icon name="hero-paper-airplane" class="h-4 w-4" />
+                {gettext("Send Test Alert")}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
 
@@ -336,6 +472,7 @@ defmodule HomesiteWeb.AdminLive.Threat.Dashboard do
     top_threats = ThreatReputation.list_top_threats(limit: 10)
     recent_blocks = ThreatReputation.list_recent_blocks(limit: 10)
     recent_events = ThreatReputation.list_recent_events(limit: 20)
+    alert_config = Settings.security_alert_config()
 
     {:ok,
      socket
@@ -344,7 +481,8 @@ defmodule HomesiteWeb.AdminLive.Threat.Dashboard do
      |> assign(:monitor_stats, monitor_stats)
      |> assign(:top_threats, top_threats)
      |> assign(:recent_blocks, recent_blocks)
-     |> assign(:recent_events, recent_events)}
+     |> assign(:recent_events, recent_events)
+     |> assign(:alert_config, alert_config)}
   end
 
   @impl true
@@ -380,6 +518,63 @@ defmodule HomesiteWeb.AdminLive.Threat.Dashboard do
         {:noreply, put_flash(socket, :error, gettext("Failed to unblock IP"))}
     end
   end
+
+  def handle_event("update_alert_config", params, socket) do
+    admin = socket.assigns.current_scope.user
+
+    config = %{
+      enabled: params["enabled"] == "true",
+      level: params["level"] || "critical",
+      threshold: parse_threshold(params["threshold"])
+    }
+
+    case Settings.update_security_alert_config(config) do
+      {:ok, _} ->
+        # Log the config change
+        ThreatReputation.log_security_action(
+          admin,
+          "alert_config_change",
+          "setting",
+          "security_alerts",
+          details: config
+        )
+
+        {:noreply, assign(socket, :alert_config, Settings.security_alert_config())}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, gettext("Failed to update alert configuration"))}
+    end
+  end
+
+  def handle_event("send_test_alert", _, socket) do
+    admin = socket.assigns.current_scope.user
+
+    # Send a test alert to the current admin only
+    Homesite.Accounts.UserNotifier.deliver_security_alert(
+      admin,
+      :attack_detected,
+      %{
+        attack_type: "Test Alert",
+        ip_address: "127.0.0.1",
+        country: "TEST",
+        event_count: 0
+      }
+    )
+
+    {:noreply, put_flash(socket, :info, gettext("Test alert sent to your email"))}
+  end
+
+  defp parse_threshold(nil), do: 100
+  defp parse_threshold(""), do: 100
+
+  defp parse_threshold(value) when is_binary(value) do
+    case Integer.parse(value) do
+      {num, _} when num >= 10 and num <= 1000 -> num
+      _ -> 100
+    end
+  end
+
+  defp parse_threshold(value) when is_integer(value), do: value
 
   # Handle real-time monitor updates
   @impl true

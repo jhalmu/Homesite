@@ -7,6 +7,75 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## Future Ideas
+
+### User Security UI (when time permits)
+- [ ] Show location (city/country) in user's "Viimeaikainen toiminta" section
+- [ ] Create dedicated user Security page showing login history, locations, devices/sessions
+
+---
+
+## 2026-02-05 - Security Admin UI Enhancements
+
+### Session Summary
+
+Enhanced the IP security system with admin UI improvements, audit logging, and email alerts.
+
+#### Features Implemented
+
+**1. Security Audit Logging**
+- Created `security_audit_logs` table for tracking admin security actions
+- Logs: watchlist add/remove, manual block/unblock, threshold changes, alert config changes
+- Includes admin ID, action type, target, details, and request IP
+
+**2. Admin Dashboard Security Widget**
+- Added Security Status card showing blocked IPs, high-risk IPs
+- Status badge: green (All Clear), yellow (Monitoring), red (Active Threats)
+- Added "Security" quick action button linking to threat dashboard
+
+**3. Security Audit Log Page**
+- New page at `/admin/threats/audit-log`
+- Filterable by action type and admin
+- Paginated with 50 items per page
+- Shows time, admin, action, target, details, IP
+
+**4. Email Alert System**
+- Configurable alert levels (cumulative):
+  - Critical: Attack patterns (brute force, credential stuffing)
+  - Auto-blocks: + when IPs get auto-blocked
+  - Threshold: + daily event count exceeds limit
+  - Verbose: + when IPs reach warning level (61-79%)
+- Alert config UI in threat dashboard (collapsible section)
+- Test alert button to verify email delivery
+- Alerts sent to all admin users
+
+**5. EOD Workflow Update**
+- Added "stop dev server" as first step in EOD workflow
+- Added `pkill` to allowed commands
+
+#### Files Created
+- `priv/repo/migrations/20260204222553_create_security_audit_logs.exs`
+- `lib/homesite/threat_reputation/security_audit_log.ex`
+- `lib/homesite_web/live/admin_live/threat/audit_log.ex`
+- `test/homesite/threat_reputation/security_audit_log_test.exs`
+- `test/homesite/settings_security_alerts_test.exs`
+
+#### Files Modified
+- `lib/homesite/threat_reputation.ex` - Added audit logging, alert functions
+- `lib/homesite/settings.ex` - Added security alert config functions
+- `lib/homesite/accounts/user_notifier.ex` - Added security alert emails
+- `lib/homesite_web/live/admin_live/dashboard.ex` - Added security widget
+- `lib/homesite_web/live/admin_live/threat/dashboard.ex` - Added alert config UI
+- `lib/homesite_web/router.ex` - Added audit log route
+- `CLAUDE.md` - Updated EOD workflow
+- `MEMO.md` - Added future ideas section
+
+#### Test Results
+- **1815 tests, 0 failures**
+- Added 24 new tests for security audit and alert settings
+
+---
+
 ## 2026-02-04 (Late Night) - Geo-Based Threat Reputation System
 
 ### Session Summary

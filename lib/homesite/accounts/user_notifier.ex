@@ -136,4 +136,149 @@ defmodule Homesite.Accounts.UserNotifier do
     ==============================
     """)
   end
+
+  # Security alert emails
+
+  @doc """
+  Delivers a security alert email to an admin.
+
+  ## Alert Types:
+  - `:attack_detected` - Attack pattern detected
+  - `:ip_auto_blocked` - IP was automatically blocked
+  - `:threshold_exceeded` - Daily threat count exceeded
+  - `:ip_warning` - IP reached warning level
+
+  """
+  def deliver_security_alert(admin, alert_type, details) do
+    {subject, body} = format_security_alert(alert_type, details)
+
+    deliver(admin.email, "[Homesite Security] #{subject}", body)
+  end
+
+  defp format_security_alert(:attack_detected, details) do
+    attack_type = details[:attack_type] || "Unknown"
+    ip_address = details[:ip_address] || "N/A"
+    country = details[:country] || "Unknown"
+    event_count = details[:event_count] || 0
+
+    subject = "Attack Detected: #{attack_type}"
+
+    body = """
+
+    ==============================
+    SECURITY ALERT: ATTACK DETECTED
+    ==============================
+
+    Attack Type: #{attack_type}
+    Source IP: #{ip_address}
+    Country: #{country}
+    Events: #{event_count}
+    Time: #{Calendar.strftime(DateTime.utc_now(), "%Y-%m-%d %H:%M UTC")}
+
+    This IP has been flagged for suspicious activity patterns.
+    Review the threat dashboard for more details.
+
+    ==============================
+    """
+
+    {subject, body}
+  end
+
+  defp format_security_alert(:ip_auto_blocked, details) do
+    ip_address = details[:ip_address] || "N/A"
+    score = details[:score] || 0
+    country = details[:country] || "Unknown"
+    block_duration = details[:block_duration] || "Unknown"
+
+    subject = "IP Auto-Blocked: #{ip_address}"
+
+    body = """
+
+    ==============================
+    SECURITY ALERT: IP AUTO-BLOCKED
+    ==============================
+
+    IP Address: #{ip_address}
+    Threat Score: #{score}%
+    Country: #{country}
+    Block Duration: #{block_duration}
+    Time: #{Calendar.strftime(DateTime.utc_now(), "%Y-%m-%d %H:%M UTC")}
+
+    This IP has been automatically blocked due to high threat score.
+
+    ==============================
+    """
+
+    {subject, body}
+  end
+
+  defp format_security_alert(:threshold_exceeded, details) do
+    event_count = details[:event_count] || 0
+    threshold = details[:threshold] || 100
+
+    subject = "Daily Threat Threshold Exceeded"
+
+    body = """
+
+    ==============================
+    SECURITY ALERT: THRESHOLD EXCEEDED
+    ==============================
+
+    Events Today: #{event_count}
+    Threshold: #{threshold}
+    Time: #{Calendar.strftime(DateTime.utc_now(), "%Y-%m-%d %H:%M UTC")}
+
+    The daily threat event count has exceeded the configured threshold.
+    Consider reviewing the threat dashboard for unusual activity.
+
+    ==============================
+    """
+
+    {subject, body}
+  end
+
+  defp format_security_alert(:ip_warning, details) do
+    ip_address = details[:ip_address] || "N/A"
+    score = details[:score] || 0
+    country = details[:country] || "Unknown"
+
+    subject = "IP Warning Level: #{ip_address}"
+
+    body = """
+
+    ==============================
+    SECURITY ALERT: IP WARNING
+    ==============================
+
+    IP Address: #{ip_address}
+    Threat Score: #{score}%
+    Country: #{country}
+    Time: #{Calendar.strftime(DateTime.utc_now(), "%Y-%m-%d %H:%M UTC")}
+
+    This IP has reached warning level (61-79% threat score).
+    It may be auto-blocked if suspicious activity continues.
+
+    ==============================
+    """
+
+    {subject, body}
+  end
+
+  defp format_security_alert(_, details) do
+    subject = "Security Alert"
+
+    body = """
+
+    ==============================
+    SECURITY ALERT
+    ==============================
+
+    Details: #{inspect(details)}
+    Time: #{Calendar.strftime(DateTime.utc_now(), "%Y-%m-%d %H:%M UTC")}
+
+    ==============================
+    """
+
+    {subject, body}
+  end
 end
