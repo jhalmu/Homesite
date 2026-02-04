@@ -6,7 +6,7 @@ defmodule HomesiteWeb.PlaywrightJsHelper do
   enabling integration with tools like axe-core for accessibility testing.
   """
 
-  alias PhoenixTest.Playwright.Frame
+  alias PlaywrightEx.Frame
 
   @doc """
   Executes JavaScript code in the current Playwright session.
@@ -40,7 +40,7 @@ defmodule HomesiteWeb.PlaywrightJsHelper do
         javascript
       end
 
-    case Frame.evaluate(frame_id, wrapped_js) do
+    case Frame.evaluate(frame_id, expression: wrapped_js) do
       {:ok, result} -> {session, result}
       {:error, reason} -> raise "JavaScript execution failed: #{inspect(reason)}"
     end

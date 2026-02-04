@@ -1,3 +1,6 @@
+# Start Playwright browser pool (required for phoenix_test_playwright 0.10+)
+{:ok, _} = PhoenixTest.Playwright.Supervisor.start_link()
+
 Application.put_env(:phoenix_test, :base_url, HomesiteWeb.Endpoint.url())
 
 # Exclude external integration tests and playwright tests by default

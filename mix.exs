@@ -67,7 +67,7 @@ defmodule Homesite.MixProject do
       {:phoenix, "~> 1.8.1"},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.13"},
-      {:postgrex, ">= 0.0.0"},
+      {:postgrex, "~> 0.22"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_view, "~> 1.1.0"},
       {:heroicons,
@@ -77,18 +77,18 @@ defmodule Homesite.MixProject do
        app: false,
        compile: false,
        depth: 1},
-      {:swoosh, "~> 1.16"},
+      {:swoosh, "~> 1.21"},
       {:gen_smtp, "~> 1.2"},
       {:req, "~> 0.5"},
       {:gettext, "~> 0.26"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.2.0"},
-      {:bandit, "~> 1.5"},
+      {:bandit, "~> 1.10"},
 
       # Extra adds
       {:phoenix_seo, "0.1.11"},
       {:atomex, "0.5.1"},
-      {:mdex, "0.10.0"},
+      {:mdex, "~> 0.11.3"},
       {:yaml_elixir, "2.12.0"},
       {:nimble_publisher, "1.1.1"},
       {:nimble_csv, "~> 1.1"},
@@ -108,7 +108,7 @@ defmodule Homesite.MixProject do
       {:locus, "~> 2.3"},
 
       # Background Jobs & Feed Processing
-      {:oban, "~> 2.18"},
+      {:oban, "~> 2.20"},
       {:html_sanitize_ex, "~> 1.4"},
       {:timex, "~> 3.7"},
       {:sweet_xml, "~> 0.7"},
@@ -118,20 +118,20 @@ defmodule Homesite.MixProject do
 
       # Dev and Test
       {:phoenix_test, "0.9.1", only: :test, runtime: false},
-      {:phoenix_test_playwright, "0.9.1", only: :test, runtime: false},
-      {:a11y_audit, "0.3.0", only: :test, runtime: false},
+      {:phoenix_test_playwright, "~> 0.10.1", only: :test, runtime: false},
+      {:a11y_audit, "~> 0.3.1", only: :test, runtime: false},
       {:esbuild, "0.10.0", runtime: Mix.env() == :dev},
       {:tailwind, "0.4.1", runtime: Mix.env() == :dev},
-      {:phoenix_live_reload, "1.6.1", only: :dev},
+      {:phoenix_live_reload, "~> 1.6.2", only: :dev},
       {:tailwind_formatter, "0.4.2", only: [:dev, :test], runtime: false},
-      {:credo, "1.7.13", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.7.16", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:sobelow, "~> 0.14", only: [:dev, :test], runtime: false},
       {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
       {:lazy_html, "0.1.8", only: :test},
       {:tidewave, "~> 0.5", only: :dev},
       # {:tidewave_formatter, "~> 0.5", only: [:dev, :test], runtime: false},
-      {:igniter, "0.7.0", only: [:dev, :test]},
+      {:igniter, "~> 0.7.2", only: [:dev, :test]},
       {:usage_rules, "~> 0.1", only: [:dev]}
     ]
   end

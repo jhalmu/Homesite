@@ -287,7 +287,10 @@ defmodule HomesiteWeb.ContentComponentsTest do
 
       html = rendered_to_string(~H"<.post_card {assigns} />")
 
-      refute html =~ "onerror="
+      # Verify the img tag is escaped as text, not rendered as HTML element
+      # The < and > should be escaped, making the onerror handler harmless
+      refute html =~ "<img src=x"
+      assert html =~ "&lt;img src=x"
     end
 
     test "handles special characters in post title", %{published_post: post, scope: scope} do
