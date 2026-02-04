@@ -7,6 +7,48 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2026-02-04 (Evening) - Performance Optimization: Lighthouse 71 → 80
+
+### Session Summary
+
+Achieved Lighthouse performance target of 80+ through JavaScript code-splitting.
+
+#### Optimizations Completed
+
+**1. Removed Unused chart.js (161KB saved)**
+- ChartJS hook was marked "legacy" but never used
+- ApexCharts provides same functionality for admin dashboard
+
+**2. Enabled esbuild Code Splitting**
+- Added `--splitting --format=esm` flags to esbuild config
+- Updated script tag to `type="module"` for ESM support
+- ApexCharts now loads dynamically only when admin dashboard is viewed
+
+#### Bundle Size Results
+
+| Version | app.js | ApexCharts | Performance |
+|---------|--------|------------|-------------|
+| Before | 970 KB | bundled | 71 |
+| After | 180 KB | 566 KB (lazy) | 80 |
+
+**81% reduction** in main bundle size for regular users.
+
+#### Files Modified
+- `assets/js/app.js` - Removed chart.js, dynamic ApexCharts import
+- `assets/package.json` - Removed chart.js dependency
+- `config/config.exs` - Added --splitting --format=esm to esbuild
+- `lib/homesite_web/components/layouts/root.html.heex` - Changed to type="module"
+- `docs/LIGHTHOUSE_PERFORMANCE_TODO.md` - Updated with completed items
+
+#### Test Results
+- **1705 tests, 0 failures**
+- Lighthouse: Performance 80, Accessibility 100, SEO 100
+
+#### Commits
+- `d1e47b4` - perf: Improve Lighthouse score from 71 to 80 via code splitting
+
+---
+
 ## 2026-02-04 - User Management, Translations & Quality Fixes
 
 ### Session Summary
