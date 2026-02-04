@@ -12,12 +12,12 @@ defmodule HomesiteWeb.PrivacyLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="container mx-auto max-w-4xl px-[var(--space-sm)] py-[var(--space-lg)]">
-      <h1 class="text-3xl font-bold mb-[var(--space-md)]">
+    <div class="px-[var(--space-sm)] py-[var(--space-lg)] container mx-auto max-w-4xl">
+      <h1 class="mb-[var(--space-md)] text-3xl font-bold">
         {gettext("Privacy Policy")}
       </h1>
 
-      <div class="prose prose-lg dark:prose-invert max-w-none space-y-[var(--space-md)]">
+      <div class="space-y-[var(--space-md)] prose prose-lg max-w-none dark:prose-invert">
         <section>
           <h2 class="text-xl font-semibold">{gettext("What data we collect")}</h2>
           <p>
@@ -38,21 +38,17 @@ defmodule HomesiteWeb.PrivacyLive.Index do
 
         <section>
           <h2 class="text-xl font-semibold">{gettext("Your rights")}</h2>
-          <ul class="list-disc pl-[var(--space-sm)]">
+          <ul class="pl-[var(--space-sm)] list-disc">
             <li>
               {gettext(
                 "Right to access: You can download all your data from Settings → Download my data"
               )}
             </li>
             <li>
-              {gettext(
-                "Right to rectification: You can edit your profile and content at any time"
-              )}
+              {gettext("Right to rectification: You can edit your profile and content at any time")}
             </li>
             <li>
-              {gettext(
-                "Right to erasure: You can delete your account from Settings → Delete Account"
-              )}
+              {gettext("Right to erasure: You can delete your account from Settings → Delete Account")}
             </li>
             <li>
               {gettext(
@@ -98,7 +94,7 @@ defmodule HomesiteWeb.PrivacyLive.Index do
           </p>
         </section>
 
-        <p class="text-sm text-base-content/70 mt-[var(--space-lg)]">
+        <p class="text-base-content/70 mt-[var(--space-lg)] text-sm">
           {gettext("Last updated: February 2026")}
         </p>
       </div>

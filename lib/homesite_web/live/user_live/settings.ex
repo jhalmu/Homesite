@@ -275,9 +275,7 @@ defmodule HomesiteWeb.UserLive.Settings do
             <div class="alert alert-info">
               <.icon name="hero-clock" class="h-5 w-5" />
               <span>
-                {gettext(
-                  "You can export your data once every 24 hours. Please try again later."
-                )}
+                {gettext("You can export your data once every 24 hours. Please try again later.")}
               </span>
             </div>
           <% end %>
