@@ -6,6 +6,69 @@ category: "features"
 
 # Recent Features & Updates
 
+## February 2026
+
+### User Management System ✅
+
+**Two-Tier Permission System**
+- **Role-based access**: User vs Admin roles control section access
+- **Flower-based permissions**: 🌸 levels (1-5) control admin actions
+- Hierarchical delegation (can only assign ≤ own level)
+- Full audit logging of all permission changes
+
+**Permission Levels:**
+| Flowers | Access |
+|---------|--------|
+| 🌸 | View admin dashboard |
+| 🌸🌸 | Manage FAQs, content moderation |
+| 🌸🌸🌸 | User management (ban/suspend/delete) |
+| 🌸🌸🌸🌸 | Promote users, assign flowers |
+| 🌸🌸🌸🌸🌸 | Full system access |
+
+**User Status Management**
+- **Ban**: Permanent block, requires manual unban
+- **Suspend**: Temporary block with auto-expiry
+- **Reactivate**: Restore access instantly
+- Reason required, shown to affected user
+- All actions logged with timestamp and actor
+
+**User Deletion Options**
+- **Full delete**: Remove user + all content
+- **Soft delete**: Remove user, keep content as "Deleted User"
+- Password confirmation required
+- Audit trail preserved
+
+**Admin User List** (`/admin/users`)
+- Search by email, username, display name
+- Filter by status (active/suspended/banned/admin)
+- Stats overview (total, admin, banned, suspended)
+- Paginated with 20 users per page
+
+### Internationalization Fixes ✅
+
+**Locale Handling**
+- Fixed SetLocale plug to use configured default locale
+- Fixed SetLocaleHook for LiveView WebSocket connections
+- Removed hardcoded "fi" fallback
+- Test environment correctly uses English locale
+
+**Translation Updates**
+- 47 Finnish translations fixed
+- Cleared incorrect English fuzzy matches
+- All user management UI fully translated
+
+### Comprehensive FAQ System ✅
+
+**Three Audience Types:**
+- **Public FAQs**: What is this site? How to subscribe?
+- **User FAQs**: How to write posts? Profile setup?
+- **Admin FAQs**: Permission system, user management
+
+**Coverage:**
+- 20 bilingual FAQs (English + Finnish)
+- Practical how-to guides
+- Markdown formatting with code examples
+
 ## December 2025
 
 ### User Profile & Dashboard Enhancements
@@ -145,14 +208,16 @@ category: "features"
 
 ## Testing Infrastructure
 
-### Current Test Count: 704 tests
+### Current Test Count: 1705 tests
 
 **Test Categories:**
-- Content tests: 106 tests (posts, tags)
-- Feed tests: 106 tests (adapters, interactions, folders)
-- Search tests: 48 tests (unified search, fuzzy matching)
-- FAQ tests: 17 tests (bilingual, CRUD)
+- Content tests: 150+ tests (posts, tags, projects)
+- Feed tests: 150+ tests (adapters, interactions, folders)
+- Search tests: 50+ tests (unified search, fuzzy matching)
+- FAQ tests: 20+ tests (bilingual, CRUD)
 - Accessibility tests: 10 tests (WCAG AA compliance)
+- User management tests: 100+ tests (ban, suspend, delete, permissions)
+- Playwright E2E tests: 206 tests across 14 test files
 - Security tests: Scope isolation across all contexts
 
 ### Running Tests
