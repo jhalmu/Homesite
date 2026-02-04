@@ -53,20 +53,20 @@ defmodule HomesiteWeb.AdminLive.Moderation.SuspensionsTest do
       {:ok, lv, html} = live(conn, ~p"/admin/moderation/suspensions")
 
       # Initially no form visible
-      refute html =~ ~r/<input[^>]*name="user_id"/
+      refute html =~ ~r/<input[^>]*name="user_search"/
 
       # Show form using header button
       html = lv |> element("button.btn-warning[phx-click=toggle_form]") |> render_click()
-      assert html =~ ~r/<input[^>]*name="user_id"/
+      assert html =~ ~r/<input[^>]*name="user_search"/
       assert html =~ "Expires At"
       assert html =~ "Reason"
 
       # Hide form using cancel button
       html = lv |> element("button.btn-ghost[phx-click=toggle_form]") |> render_click()
-      refute html =~ ~r/<input[^>]*name="user_id"/
+      refute html =~ ~r/<input[^>]*name="user_search"/
     end
 
-    test "can suspend a user", %{conn: conn} do
+    test "can suspend a user via user search", %{conn: conn} do
       admin = admin_fixture(%{admin_flowers: 5})
       user = user_fixture()
       conn = log_in_user(conn, admin)
@@ -75,6 +75,12 @@ defmodule HomesiteWeb.AdminLive.Moderation.SuspensionsTest do
 
       # Show form
       lv |> element("button.btn-warning[phx-click=toggle_form]") |> render_click()
+
+      # Search for user
+      lv |> render_hook("search_users", %{query: user.email})
+
+      # Select the user
+      lv |> render_click("select_user", %{id: to_string(user.id)})
 
       # Submit suspension
       expires_at =
@@ -85,7 +91,6 @@ defmodule HomesiteWeb.AdminLive.Moderation.SuspensionsTest do
       html =
         lv
         |> form("#suspend-form", %{
-          user_id: to_string(user.id),
           reason: "Testing suspension functionality",
           expires_at: expires_at
         })

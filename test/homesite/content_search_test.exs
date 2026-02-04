@@ -4,7 +4,6 @@ defmodule Homesite.ContentSearchTest do
   alias Homesite.Content
 
   import Homesite.AccountsFixtures
-  import Homesite.ContentFixtures
 
   describe "search_posts/2" do
     setup do

@@ -89,7 +89,13 @@ defmodule HomesiteWeb.ContentComponents do
                   {@post.read_time_minutes} {gettext("min read")}
                 </div>
                 <div class="opacity-70">
-                  <span>{@post.user.display_name || @post.user.email}</span>
+                  <span>
+                    <%= if @post.user do %>
+                      {@post.user.display_name || @post.user.email}
+                    <% else %>
+                      {gettext("Deleted User")}
+                    <% end %>
+                  </span>
                 </div>
                 <%= if @post.is_public do %>
                   <div class="opacity-70">

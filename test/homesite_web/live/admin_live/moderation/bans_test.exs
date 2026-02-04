@@ -50,20 +50,20 @@ defmodule HomesiteWeb.AdminLive.Moderation.BansTest do
       {:ok, lv, html} = live(conn, ~p"/admin/moderation/bans")
 
       # Initially no form visible
-      refute html =~ ~r/<input[^>]*name="user_id"/
+      refute html =~ ~r/<input[^>]*name="user_search"/
 
       # Show form using header button - should have warning about permanence
       html = lv |> element("button.btn-error[phx-click=toggle_form]") |> render_click()
-      assert html =~ ~r/<input[^>]*name="user_id"/
+      assert html =~ ~r/<input[^>]*name="user_search"/
       assert html =~ "Reason"
       assert html =~ "permanent"
 
       # Hide form using cancel button
       html = lv |> element("button.btn-ghost[phx-click=toggle_form]") |> render_click()
-      refute html =~ ~r/<input[^>]*name="user_id"/
+      refute html =~ ~r/<input[^>]*name="user_search"/
     end
 
-    test "can ban a user", %{conn: conn} do
+    test "can ban a user via user search", %{conn: conn} do
       admin = admin_fixture(%{admin_flowers: 5})
       user = user_fixture()
       conn = log_in_user(conn, admin)
@@ -73,11 +73,16 @@ defmodule HomesiteWeb.AdminLive.Moderation.BansTest do
       # Show form using header button
       lv |> element("button.btn-error[phx-click=toggle_form]") |> render_click()
 
+      # Search for user
+      lv |> render_hook("search_users", %{query: user.email})
+
+      # Select the user
+      lv |> render_click("select_user", %{id: to_string(user.id)})
+
       # Submit ban
       html =
         lv
         |> form("#ban-form", %{
-          user_id: to_string(user.id),
           reason: "Permanent ban for severe violations"
         })
         |> render_submit()

@@ -344,7 +344,7 @@ defmodule HomesiteWeb.ProjectLiveTest do
   describe "ProjectLive.SteppedForm - Step 2 (Metadata) - Category Picker" do
     setup [:create_user_and_log_in]
 
-    test "can add category via create-category event", %{conn: conn, scope: scope} do
+    test "can add category via create-category event", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/projects/new")
 
       # Fill step 1
@@ -361,7 +361,7 @@ defmodule HomesiteWeb.ProjectLiveTest do
       assert html =~ "Photography"
     end
 
-    test "can remove category via remove-category event", %{conn: conn, scope: scope} do
+    test "can remove category via remove-category event", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/projects/new")
 
       # Fill step 1

@@ -6,6 +6,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Suspensions do
   """
   use HomesiteWeb, :live_view
 
+  alias Homesite.Accounts
   alias Homesite.Moderation
 
   @impl true
@@ -13,21 +14,33 @@ defmodule HomesiteWeb.AdminLive.Moderation.Suspensions do
     suspensions = Moderation.list_suspensions(active_only: true)
     prefill_user_id = params["user_id"]
 
+    # If prefilling, load the user
+    selected_user =
+      if prefill_user_id do
+        case Integer.parse(prefill_user_id) do
+          {id, ""} -> Accounts.get_user!(id)
+          _ -> nil
+        end
+      else
+        nil
+      end
+
     {:ok,
      socket
      |> assign(:page_title, gettext("User Suspensions"))
      |> assign(:suspensions, suspensions)
      |> assign(:show_form, prefill_user_id != nil)
-     |> assign(:prefill_user_id, prefill_user_id)
-     |> assign(:form, build_form(prefill_user_id))}
+     |> assign(:user_search, "")
+     |> assign(:user_suggestions, [])
+     |> assign(:selected_user, selected_user)
+     |> assign(:form, build_form())}
   end
 
-  defp build_form(user_id) do
+  defp build_form do
     # Default to 24 hours from now
     default_expires = DateTime.utc_now() |> DateTime.add(86_400, :second) |> DateTime.to_iso8601()
 
     to_form(%{
-      "user_id" => user_id || "",
       "reason" => "",
       "expires_at" => default_expires
     })
@@ -35,49 +48,86 @@ defmodule HomesiteWeb.AdminLive.Moderation.Suspensions do
 
   @impl true
   def handle_event("toggle_form", _params, socket) do
-    {:noreply, assign(socket, :show_form, !socket.assigns.show_form)}
+    {:noreply,
+     socket
+     |> assign(:show_form, !socket.assigns.show_form)
+     |> assign(:user_search, "")
+     |> assign(:user_suggestions, [])
+     |> assign(:selected_user, nil)}
   end
 
   @impl true
-  def handle_event(
-        "validate",
-        %{"user_id" => user_id, "reason" => reason, "expires_at" => expires_at},
-        socket
-      ) do
+  def handle_event("search_users", %{"query" => query}, socket) do
+    suggestions =
+      if String.length(query) >= 2 do
+        # Exclude already suspended users and current admin
+        suspended_ids = Enum.map(socket.assigns.suspensions, & &1.user_id)
+        exclude_ids = [socket.assigns.current_scope.user.id | suspended_ids]
+        Accounts.search_users(query, limit: 8, exclude_ids: exclude_ids)
+      else
+        []
+      end
+
+    {:noreply,
+     socket
+     |> assign(:user_search, query)
+     |> assign(:user_suggestions, suggestions)}
+  end
+
+  @impl true
+  def handle_event("select_user", %{"id" => user_id}, socket) do
+    user = Accounts.get_user!(user_id)
+
+    {:noreply,
+     socket
+     |> assign(:selected_user, user)
+     |> assign(:user_search, "")
+     |> assign(:user_suggestions, [])}
+  end
+
+  @impl true
+  def handle_event("clear_user", _params, socket) do
+    {:noreply, assign(socket, :selected_user, nil)}
+  end
+
+  @impl true
+  def handle_event("validate", %{"reason" => reason, "expires_at" => expires_at}, socket) do
     {:noreply,
      assign(
        socket,
        :form,
-       to_form(%{"user_id" => user_id, "reason" => reason, "expires_at" => expires_at})
+       to_form(%{"reason" => reason, "expires_at" => expires_at})
      )}
   end
 
   @impl true
-  def handle_event(
-        "suspend",
-        %{"user_id" => user_id, "reason" => reason, "expires_at" => expires_at},
-        socket
-      ) do
+  def handle_event("suspend", %{"reason" => reason, "expires_at" => expires_at}, socket) do
     scope = socket.assigns.current_scope
+    selected_user = socket.assigns.selected_user
 
-    with {user_id, ""} <- Integer.parse(user_id),
-         {:ok, expires_at, _} <- DateTime.from_iso8601(expires_at),
-         {:ok, _suspension} <- Moderation.suspend_user(scope, user_id, reason, expires_at) do
-      suspensions = Moderation.list_suspensions(active_only: true)
-
-      {:noreply,
-       socket
-       |> assign(:suspensions, suspensions)
-       |> assign(:show_form, false)
-       |> assign(:form, build_form(nil))
-       |> put_flash(:info, gettext("User suspended successfully"))}
+    if is_nil(selected_user) do
+      {:noreply, put_flash(socket, :error, gettext("Please select a user to suspend"))}
     else
-      {:error, %Ecto.Changeset{} = changeset} ->
-        errors = format_errors(changeset)
-        {:noreply, put_flash(socket, :error, errors)}
+      with {:ok, expires_at, _} <- DateTime.from_iso8601(expires_at),
+           {:ok, _suspension} <-
+             Moderation.suspend_user(scope, selected_user.id, reason, expires_at) do
+        suspensions = Moderation.list_suspensions(active_only: true)
 
-      _ ->
-        {:noreply, put_flash(socket, :error, gettext("Invalid input"))}
+        {:noreply,
+         socket
+         |> assign(:suspensions, suspensions)
+         |> assign(:show_form, false)
+         |> assign(:selected_user, nil)
+         |> assign(:form, build_form())
+         |> put_flash(:info, gettext("User suspended successfully"))}
+      else
+        {:error, %Ecto.Changeset{} = changeset} ->
+          errors = format_errors(changeset)
+          {:noreply, put_flash(socket, :error, errors)}
+
+        _ ->
+          {:noreply, put_flash(socket, :error, gettext("Invalid input"))}
+      end
     end
   end
 
@@ -137,32 +187,81 @@ defmodule HomesiteWeb.AdminLive.Moderation.Suspensions do
             <div class="card-body">
               <h3 class="card-title">{gettext("Suspend User")}</h3>
               <.form for={@form} phx-change="validate" phx-submit="suspend" id="suspend-form">
-                <div class="gap-[var(--space-sm)] grid grid-cols-1 md:grid-cols-2">
-                  <div class="form-control">
-                    <label class="label">
-                      <span class="label-text">{gettext("User ID")}</span>
-                    </label>
-                    <input
-                      type="number"
-                      name="user_id"
-                      value={@form[:user_id].value}
-                      class="input input-bordered"
-                      placeholder={gettext("Enter user ID")}
-                      required
-                    />
-                  </div>
-                  <div class="form-control">
-                    <label class="label">
-                      <span class="label-text">{gettext("Expires At")}</span>
-                    </label>
-                    <input
-                      type="datetime-local"
-                      name="expires_at"
-                      value={format_datetime_local(@form[:expires_at].value)}
-                      class="input input-bordered"
-                      required
-                    />
-                  </div>
+                <div class="form-control mb-[var(--space-sm)]">
+                  <label class="label">
+                    <span class="label-text">{gettext("User")}</span>
+                  </label>
+                  <%= if @selected_user do %>
+                    <div class="gap-[var(--space-xs)] border-base-300 bg-base-100 flex items-center rounded-lg border p-3">
+                      <.avatar user={@selected_user} class="h-10 w-10" />
+                      <div class="flex-1">
+                        <div class="font-medium">
+                          {@selected_user.display_name || @selected_user.username ||
+                            @selected_user.email}
+                        </div>
+                        <div class="text-[var(--text-sm)] text-base-content/60">
+                          {@selected_user.email}
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        phx-click="clear_user"
+                        class="btn btn-ghost btn-sm btn-circle"
+                      >
+                        <.icon name="hero-x-mark" class="h-4 w-4" />
+                      </button>
+                    </div>
+                  <% else %>
+                    <div class="relative">
+                      <input
+                        type="text"
+                        value={@user_search}
+                        phx-keyup="search_users"
+                        phx-value-query={@user_search}
+                        phx-debounce="200"
+                        class="input input-bordered w-full"
+                        placeholder={gettext("Search by email, username, or name...")}
+                        autocomplete="off"
+                        name="user_search"
+                      />
+                      <%= if @user_suggestions != [] do %>
+                        <ul class="menu bg-base-200 rounded-box absolute z-50 mt-1 max-h-60 w-full overflow-auto shadow-lg">
+                          <%= for user <- @user_suggestions do %>
+                            <li>
+                              <button
+                                type="button"
+                                phx-click="select_user"
+                                phx-value-id={user.id}
+                                class="gap-[var(--space-xs)] flex items-center"
+                              >
+                                <.avatar user={user} class="h-8 w-8" />
+                                <div>
+                                  <div class="font-medium">
+                                    {user.display_name || user.username || user.email}
+                                  </div>
+                                  <div class="text-[var(--text-xs)] text-base-content/60">
+                                    {user.email}
+                                  </div>
+                                </div>
+                              </button>
+                            </li>
+                          <% end %>
+                        </ul>
+                      <% end %>
+                    </div>
+                  <% end %>
+                </div>
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text">{gettext("Expires At")}</span>
+                  </label>
+                  <input
+                    type="datetime-local"
+                    name="expires_at"
+                    value={format_datetime_local(@form[:expires_at].value)}
+                    class="input input-bordered"
+                    required
+                  />
                 </div>
                 <div class="form-control mt-[var(--space-sm)]">
                   <label class="label">

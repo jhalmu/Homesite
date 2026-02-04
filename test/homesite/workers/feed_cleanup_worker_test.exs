@@ -25,7 +25,7 @@ defmodule Homesite.Workers.FeedCleanupWorkerTest do
     end
 
     # Helper function to create a feed item
-    defp create_feed_item(feed_source, attrs \\ %{}) do
+    defp create_feed_item(feed_source, attrs) do
       unique_id = System.unique_integer()
 
       default_attrs = %{

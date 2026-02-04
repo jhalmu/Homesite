@@ -1001,4 +1001,141 @@ defmodule Homesite.AccountsTest do
       assert "should be at least 3 character(s)" in errors_on(changeset).username
     end
   end
+
+  describe "search_users/2" do
+    test "returns empty list for empty query" do
+      _user = user_fixture()
+      assert Accounts.search_users("") == []
+      assert Accounts.search_users(nil) == []
+    end
+
+    test "searches by email" do
+      unique = System.unique_integer([:positive])
+      user = user_fixture(%{email: "xyzfind#{unique}@example.com"})
+      _other = user_fixture(%{email: "other#{unique}@example.com"})
+
+      results = Accounts.search_users("xyzfind#{unique}")
+      assert length(results) == 1
+      assert hd(results).id == user.id
+    end
+
+    test "searches by username" do
+      unique = System.unique_integer([:positive])
+      user = user_fixture()
+      {:ok, user} = Accounts.update_user_profile(user, %{username: "findme#{unique}"})
+      other = user_fixture()
+      {:ok, _other} = Accounts.update_user_profile(other, %{username: "other#{unique}"})
+
+      results = Accounts.search_users("findme#{unique}")
+      assert length(results) == 1
+      assert hd(results).id == user.id
+    end
+
+    test "searches by display name" do
+      unique = System.unique_integer([:positive])
+      user = user_fixture()
+
+      {:ok, user} =
+        Accounts.update_user_profile(user, %{display_name: "Findable Person #{unique}"})
+
+      other = user_fixture()
+
+      {:ok, _other} =
+        Accounts.update_user_profile(other, %{display_name: "Other Person #{unique}"})
+
+      results = Accounts.search_users("Findable Person #{unique}")
+      assert length(results) == 1
+      assert hd(results).id == user.id
+    end
+
+    test "respects limit option" do
+      unique = System.unique_integer([:positive])
+      for i <- 1..5, do: user_fixture(%{email: "limit#{unique}_#{i}@example.com"})
+
+      results = Accounts.search_users("limit#{unique}", limit: 3)
+      assert length(results) == 3
+    end
+
+    test "excludes specified user IDs" do
+      unique = System.unique_integer([:positive])
+      user1 = user_fixture(%{email: "exclude#{unique}_1@example.com"})
+      user2 = user_fixture(%{email: "exclude#{unique}_2@example.com"})
+
+      results = Accounts.search_users("exclude#{unique}", exclude_ids: [user1.id])
+      assert length(results) == 1
+      assert hd(results).id == user2.id
+    end
+  end
+
+  describe "admin_delete_user/1" do
+    test "deletes a user by ID" do
+      user = user_fixture()
+      assert {:ok, %User{}} = Accounts.admin_delete_user(user.id)
+      assert_raise Ecto.NoResultsError, fn -> Accounts.get_user!(user.id) end
+    end
+
+    test "returns error for non-existent user" do
+      assert {:error, :not_found} = Accounts.admin_delete_user(999_999)
+    end
+
+    test "accepts string ID" do
+      user = user_fixture()
+      assert {:ok, %User{}} = Accounts.admin_delete_user(Integer.to_string(user.id))
+    end
+
+    test "returns error for invalid string ID" do
+      assert {:error, :invalid_id} = Accounts.admin_delete_user("not_a_number")
+    end
+  end
+
+  describe "delete_user_account/2" do
+    alias Homesite.Content
+
+    test "anonymize mode keeps posts with nil user_id" do
+      user = user_fixture()
+      scope = Accounts.Scope.for_user(user)
+
+      # Create a post with all required fields
+      {:ok, post} =
+        Content.create_post(scope, %{
+          title: "Test Post",
+          body: "Test body content",
+          slug: "test-post-anon-#{System.unique_integer([:positive])}",
+          published_at: DateTime.utc_now()
+        })
+
+      # Delete with anonymize mode
+      assert {:ok, _} = Accounts.delete_user_account(user, "anonymize")
+
+      # Post should still exist but with nil user_id
+      updated_post = Homesite.Repo.get!(Content.Post, post.id)
+      assert is_nil(updated_post.user_id)
+    end
+
+    test "full mode deletes posts" do
+      user = user_fixture()
+      scope = Accounts.Scope.for_user(user)
+
+      # Create a post with all required fields
+      {:ok, post} =
+        Content.create_post(scope, %{
+          title: "Test Post",
+          body: "Test body content",
+          slug: "test-post-full-#{System.unique_integer([:positive])}",
+          published_at: DateTime.utc_now()
+        })
+
+      # Delete with full mode
+      assert {:ok, _} = Accounts.delete_user_account(user, "full")
+
+      # Post should be deleted
+      assert is_nil(Homesite.Repo.get(Content.Post, post.id))
+    end
+
+    test "deletes the user account" do
+      user = user_fixture()
+      assert {:ok, _} = Accounts.delete_user_account(user, "anonymize")
+      assert_raise Ecto.NoResultsError, fn -> Accounts.get_user!(user.id) end
+    end
+  end
 end

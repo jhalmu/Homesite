@@ -24,7 +24,7 @@ defmodule HomesiteWeb.UserLive.ProfileTest do
     test "displays user profile with username routing", %{conn: conn, user: user} do
       # Set username and display name for the user
       {:ok, user} = Accounts.update_user_username(user, %{username: "testuser"})
-      {:ok, user} = Accounts.update_user_profile(user, %{display_name: "Test User"})
+      {:ok, _user} = Accounts.update_user_profile(user, %{display_name: "Test User"})
 
       {:ok, _view, html} = live(conn, ~p"/users/@testuser")
 

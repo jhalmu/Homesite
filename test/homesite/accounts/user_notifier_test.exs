@@ -4,7 +4,6 @@ defmodule Homesite.Accounts.UserNotifierTest do
   alias Homesite.Accounts.UserNotifier
 
   import Homesite.AccountsFixtures
-  import Swoosh.TestAssertions
 
   describe "deliver_update_email_instructions/2" do
     test "sends email with update instructions" do

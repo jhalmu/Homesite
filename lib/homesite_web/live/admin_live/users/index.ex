@@ -9,6 +9,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
   import HomesiteWeb.Helpers.DateHelpers
 
   alias Homesite.Accounts
+  alias Homesite.Moderation
   alias Phoenix.HTML.Form
 
   @impl true
@@ -17,7 +18,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <.header>
         {gettext("User Management")}
-        <:subtitle>{gettext("Manage users, roles, and flower permissions")}</:subtitle>
+        <:subtitle>{gettext("Manage users, roles, and permissions")}</:subtitle>
         <:actions>
           <.link navigate={~p"/admin"} class="btn btn-ghost btn-sm">
             <.icon name="hero-arrow-left" class="h-4 w-4" />
@@ -27,20 +28,40 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
       </.header>
 
       <div class="mt-[var(--space-md)]">
-        <%!-- Search Form --%>
-        <.form for={%{}} phx-change="search" phx-submit="search" class="mb-[var(--space-md)]">
-          <div class="gap-[var(--space-md)] flex">
-            <div class="flex-1">
+        <%!-- Search and Filter Form --%>
+        <.form for={%{}} phx-change="filter" phx-submit="filter" class="mb-[var(--space-md)]">
+          <div class="gap-[var(--space-sm)] flex flex-wrap items-end">
+            <div class="min-w-[200px] flex-1">
+              <label class="label">
+                <span class="label-text">{gettext("Search")}</span>
+              </label>
               <input
                 type="text"
                 name="search"
                 value={@search}
-                placeholder={gettext("Search by email...")}
-                class="input w-full"
+                placeholder={gettext("Search by email, username, or name...")}
+                class="input input-bordered w-full"
                 phx-debounce="300"
               />
             </div>
-            <button type="button" phx-click="clear_search" class="btn btn-ghost">
+            <div class="w-40">
+              <label class="label">
+                <span class="label-text">{gettext("Status")}</span>
+              </label>
+              <select name="status_filter" class="select select-bordered w-full" phx-change="filter">
+                <option value="all" selected={@status_filter == "all"}>{gettext("All users")}</option>
+                <option value="active" selected={@status_filter == "active"}>
+                  {gettext("Active")}
+                </option>
+                <option value="banned" selected={@status_filter == "banned"}>
+                  {gettext("Banned")}
+                </option>
+                <option value="suspended" selected={@status_filter == "suspended"}>
+                  {gettext("Suspended")}
+                </option>
+              </select>
+            </div>
+            <button type="button" phx-click="clear_filters" class="btn btn-ghost">
               <.icon name="hero-x-mark" class="h-5 w-5" /> {gettext("Clear")}
             </button>
           </div>
@@ -57,8 +78,12 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
             <div class="stat-value text-secondary">{@admin_count}</div>
           </div>
           <div class="stat">
-            <div class="stat-title">{gettext("Page")}</div>
-            <div class="stat-value text-accent">{@page} / {@total_pages}</div>
+            <div class="stat-title">{gettext("Banned")}</div>
+            <div class="stat-value text-error">{@banned_count}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-title">{gettext("Suspended")}</div>
+            <div class="stat-value text-warning">{@suspended_count}</div>
           </div>
         </div>
 
@@ -67,48 +92,56 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
           <table class="table-zebra table w-full">
             <thead>
               <tr>
-                <th>{gettext("Avatar")}</th>
-                <th>{gettext("Email")}</th>
-                <th>{gettext("Display Name")}</th>
+                <th>{gettext("User")}</th>
                 <th>{gettext("Role")}</th>
-                <th>{gettext("Flowers")}</th>
+                <th>{gettext("Status")}</th>
                 <th>{gettext("Joined")}</th>
                 <th>{gettext("Posts")}</th>
-                <th>{gettext("Actions")}</th>
+                <th class="text-right">{gettext("Actions")}</th>
               </tr>
             </thead>
             <tbody>
               <%= if @users == [] do %>
                 <tr>
-                  <td colspan="8" class="py-[var(--space-lg)] text-center">
+                  <td colspan="6" class="py-[var(--space-lg)] text-center">
                     <p class="text-base-content/70">{gettext("No users found")}</p>
                   </td>
                 </tr>
               <% else %>
                 <%= for user <- @users do %>
-                  <tr>
+                  <tr id={"user-#{user.id}"}>
                     <td>
-                      <.avatar user={user} class="h-10 w-10" />
-                    </td>
-                    <td>{user.email}</td>
-                    <td>{user.display_name || "-"}</td>
-                    <td>
-                      <span class={[
-                        "badge",
-                        user.role == "admin" && "badge-primary",
-                        user.role == "user" && "badge-ghost"
-                      ]}>
-                        {user.role}
-                      </span>
+                      <div class="gap-[var(--space-xs)] flex items-center">
+                        <.avatar user={user} class="h-10 w-10" />
+                        <div>
+                          <div class="font-medium">
+                            {user.display_name || user.username || user.email}
+                          </div>
+                          <div class="text-[var(--text-sm)] text-base-content/60">{user.email}</div>
+                        </div>
+                      </div>
                     </td>
                     <td>
-                      <%= if user.role == "admin" do %>
-                        <span class="text-[var(--text-lg)]">
-                          {String.duplicate("🌸", user.admin_flowers || 0)}
+                      <div class="gap-[var(--space-xs)] flex items-center">
+                        <span class={[
+                          "badge",
+                          user.role == "admin" && "badge-primary",
+                          user.role == "user" && "badge-ghost"
+                        ]}>
+                          {user.role}
                         </span>
-                      <% else %>
-                        <span class="text-base-content/70">-</span>
-                      <% end %>
+                        <%= if user.role == "admin" && user.admin_flowers > 0 do %>
+                          <span
+                            class="text-[var(--text-sm)]"
+                            title={gettext("Flower level %{level}", level: user.admin_flowers)}
+                          >
+                            {String.duplicate("🌸", user.admin_flowers)}
+                          </span>
+                        <% end %>
+                      </div>
+                    </td>
+                    <td>
+                      <.user_status_badge user={user} />
                     </td>
                     <td>
                       <span class="text-[var(--text-sm)]">
@@ -118,14 +151,8 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
                     <td>
                       <span class="badge badge-sm">{user.post_count || 0}</span>
                     </td>
-                    <td>
-                      <button
-                        phx-click="edit_user"
-                        phx-value-id={user.id}
-                        class="btn btn-sm btn-ghost"
-                      >
-                        <.icon name="hero-pencil" class="h-4 w-4" /> {gettext("Edit")}
-                      </button>
+                    <td class="text-right">
+                      <.user_actions_dropdown user={user} current_user_id={@current_scope.user.id} />
                     </td>
                   </tr>
                 <% end %>
@@ -230,6 +257,83 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
     """
   end
 
+  # Components for user status and actions
+  defp user_status_badge(assigns) do
+    ~H"""
+    <div class="flex flex-wrap gap-1">
+      <%= cond do %>
+        <% @user.is_banned -> %>
+          <span class="badge badge-error badge-sm">{gettext("Banned")}</span>
+        <% @user.is_suspended -> %>
+          <span class="badge badge-warning badge-sm">{gettext("Suspended")}</span>
+        <% true -> %>
+          <span class="badge badge-success badge-sm">{gettext("Active")}</span>
+      <% end %>
+    </div>
+    """
+  end
+
+  defp user_actions_dropdown(assigns) do
+    ~H"""
+    <div class="dropdown dropdown-end">
+      <div tabindex="0" role="button" class="btn btn-ghost btn-sm">
+        <.icon name="hero-ellipsis-vertical" class="h-5 w-5" />
+      </div>
+      <ul tabindex="0" class="dropdown-content menu bg-base-200 rounded-box z-[1] w-52 p-2 shadow">
+        <li>
+          <.link navigate={"/@#{@user.username || @user.id}"}>
+            <.icon name="hero-user" class="h-4 w-4" /> {gettext("View Profile")}
+          </.link>
+        </li>
+        <li>
+          <button phx-click="edit_user" phx-value-id={@user.id}>
+            <.icon name="hero-pencil" class="h-4 w-4" /> {gettext("Edit Role")}
+          </button>
+        </li>
+        <%= if @user.id != @current_user_id do %>
+          <li class="border-base-300 mt-1 border-t pt-1">
+            <%= if @user.is_suspended do %>
+              <button phx-click="unsuspend_user" phx-value-id={@user.id} class="text-success">
+                <.icon name="hero-check-circle" class="h-4 w-4" /> {gettext("Unsuspend")}
+              </button>
+            <% else %>
+              <.link
+                navigate={~p"/admin/moderation/suspensions?user_id=#{@user.id}"}
+                class="text-warning"
+              >
+                <.icon name="hero-clock" class="h-4 w-4" /> {gettext("Suspend")}
+              </.link>
+            <% end %>
+          </li>
+          <li>
+            <%= if @user.is_banned do %>
+              <button phx-click="unban_user" phx-value-id={@user.id} class="text-success">
+                <.icon name="hero-check-circle" class="h-4 w-4" /> {gettext("Unban")}
+              </button>
+            <% else %>
+              <.link navigate={~p"/admin/moderation/bans?user_id=#{@user.id}"} class="text-error">
+                <.icon name="hero-no-symbol" class="h-4 w-4" /> {gettext("Ban")}
+              </.link>
+            <% end %>
+          </li>
+          <li class="border-base-300 mt-1 border-t pt-1">
+            <button
+              phx-click="delete_user"
+              phx-value-id={@user.id}
+              data-confirm={
+                gettext("Are you sure you want to delete this user? This action cannot be undone.")
+              }
+              class="text-error"
+            >
+              <.icon name="hero-trash" class="h-4 w-4" /> {gettext("Delete User")}
+            </button>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+    """
+  end
+
   @impl true
   def mount(_params, _session, socket) do
     # Verify admin access
@@ -249,9 +353,11 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
          |> assign(:page, 1)
          |> assign(:per_page, 20)
          |> assign(:search, "")
+         |> assign(:status_filter, "all")
          |> assign(:selected_user, nil)
          |> assign(:form, nil)
-         |> load_users()}
+         |> load_users()
+         |> load_moderation_stats()}
       end
     else
       {:ok,
@@ -262,20 +368,86 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
   end
 
   @impl true
-  def handle_event("search", %{"search" => search}, socket) do
+  def handle_event("filter", params, socket) do
+    search = Map.get(params, "search", socket.assigns.search)
+    status_filter = Map.get(params, "status_filter", socket.assigns.status_filter)
+
     {:noreply,
      socket
      |> assign(:search, search)
+     |> assign(:status_filter, status_filter)
      |> assign(:page, 1)
      |> load_users()}
   end
 
-  def handle_event("clear_search", _params, socket) do
+  def handle_event("clear_filters", _params, socket) do
     {:noreply,
      socket
      |> assign(:search, "")
+     |> assign(:status_filter, "all")
      |> assign(:page, 1)
      |> load_users()}
+  end
+
+  def handle_event("unsuspend_user", %{"id" => user_id}, socket) do
+    user_id = String.to_integer(user_id)
+    scope = socket.assigns.current_scope
+
+    case Moderation.unsuspend_user(scope, user_id) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, gettext("User unsuspended successfully"))
+         |> load_users()
+         |> load_moderation_stats()}
+
+      {:error, :not_found} ->
+        {:noreply, put_flash(socket, :error, gettext("Suspension not found"))}
+    end
+  end
+
+  def handle_event("unban_user", %{"id" => user_id}, socket) do
+    user_id = String.to_integer(user_id)
+    scope = socket.assigns.current_scope
+
+    case Moderation.unban_user(scope, user_id) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, gettext("User unbanned successfully"))
+         |> load_users()
+         |> load_moderation_stats()}
+
+      {:error, :not_found} ->
+        {:noreply, put_flash(socket, :error, gettext("Ban not found"))}
+    end
+  end
+
+  def handle_event("delete_user", %{"id" => user_id}, socket) do
+    user_id = String.to_integer(user_id)
+
+    # Can't delete yourself
+    if user_id == socket.assigns.current_scope.user.id do
+      {:noreply,
+       put_flash(socket, :error, gettext("You cannot delete your own account from here"))}
+    else
+      case Accounts.admin_delete_user(user_id) do
+        {:ok, _} ->
+          {:noreply,
+           socket
+           |> put_flash(:info, gettext("User deleted successfully"))
+           |> load_users()
+           |> load_moderation_stats()}
+
+        {:error, reason} ->
+          {:noreply,
+           put_flash(
+             socket,
+             :error,
+             gettext("Failed to delete user: %{reason}", reason: inspect(reason))
+           )}
+      end
+    end
   end
 
   def handle_event("prev_page", _params, socket) do
@@ -369,19 +541,32 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
   end
 
   defp load_users(socket) do
+    # Get banned and suspended user IDs for status display
+    banned_ids = Moderation.list_bans(active_only: true) |> Enum.map(& &1.user_id) |> MapSet.new()
+
+    suspended_ids =
+      Moderation.list_suspensions(active_only: true) |> Enum.map(& &1.user_id) |> MapSet.new()
+
     opts = [
       page: socket.assigns.page,
       per_page: socket.assigns.per_page,
-      search: socket.assigns.search
+      search: socket.assigns.search,
+      status_filter: socket.assigns.status_filter,
+      banned_ids: banned_ids,
+      suspended_ids: suspended_ids
     ]
 
     users = Accounts.list_users_paginated(opts)
 
-    # Add post counts to users
-    users_with_counts =
+    # Add post counts and status to users
+    users_with_data =
       Enum.map(users, fn user ->
         stats = Accounts.get_user_with_stats(user.id)
-        Map.put(user, :post_count, stats.post_count)
+
+        user
+        |> Map.put(:post_count, stats.post_count)
+        |> Map.put(:is_banned, MapSet.member?(banned_ids, user.id))
+        |> Map.put(:is_suspended, MapSet.member?(suspended_ids, user.id))
       end)
 
     total_count = Accounts.count_users(search: socket.assigns.search)
@@ -392,10 +577,19 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
       |> Enum.count(fn user -> user.role == "admin" end)
 
     socket
-    |> assign(:users, users_with_counts)
+    |> assign(:users, users_with_data)
     |> assign(:total_count, total_count)
     |> assign(:total_pages, max(total_pages, 1))
     |> assign(:admin_count, admin_count)
+  end
+
+  defp load_moderation_stats(socket) do
+    banned_count = Moderation.list_bans(active_only: true) |> length()
+    suspended_count = Moderation.list_suspensions(active_only: true) |> length()
+
+    socket
+    |> assign(:banned_count, banned_count)
+    |> assign(:suspended_count, suspended_count)
   end
 
   # Helper to generate pagination range with ellipsis

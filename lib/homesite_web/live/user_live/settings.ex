@@ -245,6 +245,108 @@ defmodule HomesiteWeb.UserLive.Settings do
           </.button>
         </.form>
 
+        <div class="divider" />
+
+        <%!-- Danger Zone: Delete Account --%>
+        <div class="border-error/50 rounded-box p-[var(--space-md)] border-2">
+          <h3 class="text-error mb-[var(--space-sm)] text-[var(--text-lg)] font-bold">
+            <.icon name="hero-exclamation-triangle" class="mr-2 inline h-5 w-5" />
+            {gettext("Danger Zone")}
+          </h3>
+          <p class="text-base-content/70 mb-[var(--space-md)]">
+            {gettext("Permanently delete your account. This action cannot be undone.")}
+          </p>
+
+          <div class="gap-[var(--space-sm)] flex flex-wrap">
+            <button
+              type="button"
+              phx-click="show_delete_modal"
+              phx-value-mode="anonymize"
+              class="btn btn-outline btn-error"
+            >
+              <.icon name="hero-user-minus" class="h-4 w-4" />
+              {gettext("Delete Account (Keep Content)")}
+            </button>
+            <button
+              type="button"
+              phx-click="show_delete_modal"
+              phx-value-mode="full"
+              class="btn btn-error"
+            >
+              <.icon name="hero-trash" class="h-4 w-4" />
+              {gettext("Delete Everything")}
+            </button>
+          </div>
+
+          <p class="text-base-content/60 mt-[var(--space-sm)] text-[var(--text-sm)]">
+            {gettext(
+              "\"Keep Content\" anonymizes your posts (author shown as \"Deleted User\"). \"Delete Everything\" removes all your data."
+            )}
+          </p>
+        </div>
+
+        <%!-- Delete Account Confirmation Modal --%>
+        <%= if @show_delete_modal do %>
+          <div class="modal modal-open">
+            <div class="modal-box">
+              <h3 class="text-error text-[var(--text-lg)] font-bold">
+                <%= if @delete_mode == "full" do %>
+                  {gettext("Delete Account and All Content")}
+                <% else %>
+                  {gettext("Delete Account (Keep Content)")}
+                <% end %>
+              </h3>
+
+              <div class="alert alert-error my-[var(--space-md)]">
+                <.icon name="hero-exclamation-triangle" class="h-5 w-5" />
+                <span>
+                  <%= if @delete_mode == "full" do %>
+                    {gettext(
+                      "This will permanently delete your account and ALL your posts, tags, and other content. This cannot be undone!"
+                    )}
+                  <% else %>
+                    {gettext(
+                      "This will delete your account. Your posts will remain but will be shown as \"Deleted User\". This cannot be undone!"
+                    )}
+                  <% end %>
+                </span>
+              </div>
+
+              <.form
+                for={@delete_form}
+                phx-submit="confirm_delete_account"
+                class="space-y-[var(--space-sm)]"
+              >
+                <p class="text-base-content/70">
+                  {gettext("Type your email address to confirm:")}
+                </p>
+                <.input
+                  field={@delete_form[:email_confirmation]}
+                  type="email"
+                  placeholder={@current_email}
+                  required
+                  autocomplete="off"
+                />
+                <input type="hidden" name="delete_mode" value={@delete_mode} />
+
+                <div class="modal-action">
+                  <button type="button" phx-click="hide_delete_modal" class="btn">
+                    {gettext("Cancel")}
+                  </button>
+                  <button
+                    type="submit"
+                    class="btn btn-error"
+                    phx-disable-with={gettext("Deleting...")}
+                  >
+                    {gettext("Permanently Delete")}
+                  </button>
+                </div>
+              </.form>
+            </div>
+            <div class="modal-backdrop" phx-click="hide_delete_modal"></div>
+          </div>
+        <% end %>
+
         <%!-- Username Celebration Modal --%>
         <%= if assigns[:show_celebration] && @show_celebration do %>
           <div class="modal modal-open">
@@ -330,6 +432,9 @@ defmodule HomesiteWeb.UserLive.Settings do
       |> assign(:trigger_submit, false)
       |> assign(:avatar_pending, false)
       |> assign(:show_celebration, false)
+      |> assign(:show_delete_modal, false)
+      |> assign(:delete_mode, nil)
+      |> assign(:delete_form, to_form(%{"email_confirmation" => ""}))
       |> allow_upload(:avatar,
         accept: ~w(.jpg .jpeg .png),
         max_entries: 1,
@@ -515,6 +620,57 @@ defmodule HomesiteWeb.UserLive.Settings do
      socket
      |> put_flash(:info, "Profile URL copied to clipboard!")
      |> push_event("copy-to-clipboard", %{text: profile_url})}
+  end
+
+  def handle_event("show_delete_modal", %{"mode" => mode}, socket) do
+    {:noreply,
+     socket
+     |> assign(:show_delete_modal, true)
+     |> assign(:delete_mode, mode)
+     |> assign(:delete_form, to_form(%{"email_confirmation" => ""}))}
+  end
+
+  def handle_event("hide_delete_modal", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(:show_delete_modal, false)
+     |> assign(:delete_mode, nil)}
+  end
+
+  def handle_event(
+        "confirm_delete_account",
+        %{"email_confirmation" => email, "delete_mode" => mode},
+        socket
+      ) do
+    user = socket.assigns.current_scope.user
+    true = Accounts.sudo_mode?(user)
+
+    if String.downcase(email) == String.downcase(user.email) do
+      case Accounts.delete_user_account(user, mode) do
+        {:ok, _} ->
+          {:noreply,
+           socket
+           |> put_flash(:info, gettext("Your account has been deleted. Goodbye!"))
+           |> redirect(to: ~p"/")}
+
+        {:error, reason} ->
+          {:noreply,
+           socket
+           |> assign(:show_delete_modal, false)
+           |> put_flash(
+             :error,
+             gettext("Failed to delete account: %{reason}", reason: inspect(reason))
+           )}
+      end
+    else
+      {:noreply,
+       socket
+       |> assign(:delete_form, to_form(%{"email_confirmation" => email}))
+       |> put_flash(
+         :error,
+         gettext("Email does not match. Please enter your email address exactly.")
+       )}
+    end
   end
 
   # Build timezone options with friendly labels

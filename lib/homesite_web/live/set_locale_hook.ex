@@ -8,7 +8,7 @@ defmodule HomesiteWeb.SetLocaleHook do
   Locale priority:
   1. Authenticated user's preferred_language
   2. Session locale (set by SetLocale plug from cookie/header)
-  3. Default to "fi"
+  3. Configured default locale
   """
 
   @supported_locales Gettext.known_locales(HomesiteWeb.Gettext)
@@ -45,5 +45,9 @@ defmodule HomesiteWeb.SetLocaleHook do
   end
 
   defp validate_locale(locale) when locale in @supported_locales, do: locale
-  defp validate_locale(_), do: "fi"
+  defp validate_locale(_), do: default_locale()
+
+  defp default_locale do
+    Application.get_env(:homesite, HomesiteWeb.Gettext)[:default_locale] || "fi"
+  end
 end

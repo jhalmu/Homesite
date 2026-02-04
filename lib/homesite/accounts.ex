@@ -736,6 +736,9 @@ defmodule Homesite.Accounts do
     page = Keyword.get(opts, :page, 1)
     per_page = Keyword.get(opts, :per_page, 20)
     search = Keyword.get(opts, :search, nil)
+    status_filter = Keyword.get(opts, :status_filter, "all")
+    banned_ids = Keyword.get(opts, :banned_ids, MapSet.new())
+    suspended_ids = Keyword.get(opts, :suspended_ids, MapSet.new())
 
     offset = (page - 1) * per_page
 
@@ -745,12 +748,37 @@ defmodule Homesite.Accounts do
         limit: ^per_page,
         offset: ^offset
 
+    # Search by email, username, or display_name
     query =
       if search && search != "" do
         search_pattern = "%#{search}%"
-        from u in query, where: ilike(u.email, ^search_pattern)
+
+        from u in query,
+          where:
+            ilike(u.email, ^search_pattern) or
+              ilike(u.username, ^search_pattern) or
+              ilike(u.display_name, ^search_pattern)
       else
         query
+      end
+
+    # Filter by status
+    query =
+      case status_filter do
+        "banned" ->
+          banned_list = MapSet.to_list(banned_ids)
+          from u in query, where: u.id in ^banned_list
+
+        "suspended" ->
+          suspended_list = MapSet.to_list(suspended_ids)
+          from u in query, where: u.id in ^suspended_list
+
+        "active" ->
+          all_moderated = MapSet.union(banned_ids, suspended_ids) |> MapSet.to_list()
+          from u in query, where: u.id not in ^all_moderated
+
+        _ ->
+          query
       end
 
     Repo.all(query)
@@ -785,6 +813,40 @@ defmodule Homesite.Accounts do
   end
 
   @doc """
+  Searches users by email, username, or display name for autocomplete.
+
+  Returns up to `limit` users matching the search query.
+  Used by admin interfaces for user selection (ban, suspend, etc.).
+
+  ## Examples
+
+      iex> search_users("john", limit: 10)
+      [%User{email: "john@example.com"}, %User{username: "johnny"}, ...]
+
+  """
+  def search_users(query, opts \\ []) do
+    limit = Keyword.get(opts, :limit, 10)
+    exclude_ids = Keyword.get(opts, :exclude_ids, [])
+
+    if query == "" or is_nil(query) do
+      []
+    else
+      search_pattern = "%#{query}%"
+
+      from(u in User,
+        where:
+          ilike(u.email, ^search_pattern) or
+            ilike(u.username, ^search_pattern) or
+            ilike(u.display_name, ^search_pattern),
+        where: u.id not in ^exclude_ids,
+        order_by: [asc: u.email],
+        limit: ^limit
+      )
+      |> Repo.all()
+    end
+  end
+
+  @doc """
   Updates a user's admin settings (role and flower permissions).
 
   Only admins should be able to call this function.
@@ -807,6 +869,80 @@ defmodule Homesite.Accounts do
       |> Ecto.Changeset.validate_inclusion(:admin_flowers, 0..5)
 
     Repo.update(changeset)
+  end
+
+  @doc """
+  Deletes a user account (admin action).
+
+  This performs a hard delete of the user and all associated data.
+  Only admins should call this function.
+
+  ## Examples
+
+      iex> admin_delete_user(user_id)
+      {:ok, %User{}}
+
+      iex> admin_delete_user(non_existent_id)
+      {:error, :not_found}
+
+  """
+  def admin_delete_user(user_id) when is_integer(user_id) do
+    case Repo.get(User, user_id) do
+      nil ->
+        {:error, :not_found}
+
+      user ->
+        # Delete user and let database cascades handle related records
+        Repo.delete(user)
+    end
+  end
+
+  def admin_delete_user(user_id) when is_binary(user_id) do
+    case Integer.parse(user_id) do
+      {id, ""} -> admin_delete_user(id)
+      _ -> {:error, :invalid_id}
+    end
+  end
+
+  @doc """
+  Deletes a user's own account (self-deletion).
+
+  Supports two modes:
+  - "anonymize": Delete account but keep content with author set to nil
+  - "full": Delete account and all associated content
+
+  ## Examples
+
+      iex> delete_user_account(user, "anonymize")
+      {:ok, %User{}}
+
+      iex> delete_user_account(user, "full")
+      {:ok, %User{}}
+
+  """
+  def delete_user_account(%User{} = user, mode) when mode in ["anonymize", "full"] do
+    Repo.transaction(fn ->
+      case mode do
+        "anonymize" ->
+          # Delete user - the foreign key constraint will nilify posts automatically
+          # Posts remain with user_id = NULL (shown as "Deleted User" in UI)
+          case Repo.delete(user) do
+            {:ok, deleted_user} -> deleted_user
+            {:error, changeset} -> Repo.rollback(changeset)
+          end
+
+        "full" ->
+          # Delete all user's posts first (full deletion mode)
+          from(p in Homesite.Content.Post, where: p.user_id == ^user.id)
+          |> Repo.delete_all()
+
+          # Delete user - other cascades will handle remaining relations
+          case Repo.delete(user) do
+            {:ok, deleted_user} -> deleted_user
+            {:error, changeset} -> Repo.rollback(changeset)
+          end
+      end
+    end)
   end
 
   @doc """

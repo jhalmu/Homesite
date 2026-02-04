@@ -66,7 +66,7 @@ defmodule Homesite.TagSearchTest do
       assert Enum.any?(results, &(&1.id == tag.id))
     end
 
-    test "handles fuzzy matching with typos", %{elixir: tag} do
+    test "handles fuzzy matching with typos", %{elixir: _tag} do
       results = Content.search_tags("elxir")
       # Should find "elixir" with typo
       assert length(results) >= 1
@@ -87,7 +87,7 @@ defmodule Homesite.TagSearchTest do
       assert results == []
     end
 
-    test "orders results by relevance", %{elixir: elixir, phoenix: phoenix} do
+    test "orders results by relevance", %{elixir: elixir, phoenix: _phoenix} do
       results = Content.search_tags("eli")
       # "Elixir" should rank higher than other matches for "eli"
       assert length(results) >= 1

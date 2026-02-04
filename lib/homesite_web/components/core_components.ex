@@ -711,50 +711,79 @@ defmodule HomesiteWeb.CoreComponents do
   attr :rest, :global, doc: "arbitrary HTML attributes"
 
   def author_byline(assigns) do
-    # Get user's preferred locale, fallback to current Gettext locale
-    locale =
-      get_in(assigns, [:current_scope, :user, :preferred_language]) ||
-        Gettext.get_locale(HomesiteWeb.Gettext)
+    # Handle deleted/nil user
+    if is_nil(assigns.user) do
+      assigns = assign(assigns, :locale, Gettext.get_locale(HomesiteWeb.Gettext))
 
-    # Generate profile URL
-    profile_path =
-      if assigns.user.username do
-        "/users/@#{assigns.user.username}"
-      else
-        "/users/#{assigns.user.id}"
-      end
-
-    assigns =
-      assigns
-      |> assign(:locale, locale)
-      |> assign(:profile_path, profile_path)
-
-    ~H"""
-    <div class={["gap-[var(--spacing-sm)] flex items-center", @class]} {@rest}>
-      <.link navigate={@profile_path} class="shrink-0">
-        <.avatar user={@user} class="h-10 w-10 transition-all hover:ring-primary hover:ring-2" />
-      </.link>
-      <div class="flex flex-col">
-        <.link
-          navigate={@profile_path}
-          class="text-[var(--font-size-fluid-sm)] font-medium transition-colors hover:text-primary"
-        >
-          {@user.display_name || String.split(@user.email, "@") |> List.first()}
-        </.link>
-        <time
-          :if={@date}
-          class="text-[var(--text-sm)] text-gray-600 dark:text-gray-400"
-          datetime={DateTime.to_iso8601(@date)}
-          phx-hook="LocalTime"
-          data-locale={@locale}
-          data-relative={to_string(@relative)}
-          id={"time-#{System.unique_integer([:positive])}"}
-        >
-          {format_date(@date)}
-        </time>
+      ~H"""
+      <div class={["gap-[var(--spacing-sm)] flex items-center", @class]} {@rest}>
+        <div class="bg-base-300 flex h-10 w-10 shrink-0 items-center justify-center rounded-full">
+          <.icon name="hero-user" class="text-base-content/50 h-6 w-6" />
+        </div>
+        <div class="flex flex-col">
+          <span class="text-[var(--font-size-fluid-sm)] text-base-content/70 font-medium italic">
+            {gettext("Deleted User")}
+          </span>
+          <time
+            :if={@date}
+            class="text-[var(--text-sm)] text-gray-600 dark:text-gray-400"
+            datetime={DateTime.to_iso8601(@date)}
+            phx-hook="LocalTime"
+            data-locale={@locale}
+            data-relative={to_string(@relative)}
+            id={"time-#{System.unique_integer([:positive])}"}
+          >
+            {format_date(@date)}
+          </time>
+        </div>
       </div>
-    </div>
-    """
+      """
+    else
+      # Get user's preferred locale, fallback to current Gettext locale
+      locale =
+        get_in(assigns, [:current_scope, :user, :preferred_language]) ||
+          Gettext.get_locale(HomesiteWeb.Gettext)
+
+      # Generate profile URL
+      profile_path =
+        if assigns.user.username do
+          "/users/@#{assigns.user.username}"
+        else
+          "/users/#{assigns.user.id}"
+        end
+
+      assigns =
+        assigns
+        |> assign(:locale, locale)
+        |> assign(:profile_path, profile_path)
+
+      ~H"""
+      <div class={["gap-[var(--spacing-sm)] flex items-center", @class]} {@rest}>
+        <.link navigate={@profile_path} class="shrink-0">
+          <.avatar user={@user} class="h-10 w-10 transition-all hover:ring-primary hover:ring-2" />
+        </.link>
+        <div class="flex flex-col">
+          <.link
+            navigate={@profile_path}
+            class="text-[var(--font-size-fluid-sm)] font-medium transition-colors hover:text-primary"
+          >
+            {@user.display_name || String.split(@user.email, "@") |> List.first()}
+          </.link>
+          <time
+            :if={@date}
+            class="text-[var(--text-sm)] text-gray-600 dark:text-gray-400"
+            datetime={DateTime.to_iso8601(@date)}
+            phx-hook="LocalTime"
+            data-locale={@locale}
+            data-relative={to_string(@relative)}
+            id={"time-#{System.unique_integer([:positive])}"}
+          >
+            {format_date(@date)}
+          </time>
+        </div>
+      </div>
+      """
+    end
   end
 
   @doc """

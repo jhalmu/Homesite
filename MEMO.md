@@ -7,6 +7,61 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2026-02-04 - User Management, Translations & Quality Fixes
+
+### Session Summary
+
+Comprehensive quality pass: translations, accessibility, tests, and locale handling.
+
+#### Completed Tasks
+
+**1. Finnish Translations Fixed (47 strings)**
+- Fixed all 30+ empty msgstr entries in `priv/gettext/fi/LC_MESSAGES/default.po`
+- Fixed 27 fuzzy translations with incorrect auto-matched text
+- Key areas: user management (Banned/Suspended), account deletion, admin dashboard
+
+**2. English Translations Fixed**
+- Cleared incorrect fuzzy-matched msgstr values that broke tests
+- Fixed: "All users" → "" (was "All sources"), "Banned" → "" (was "Banned On"), etc.
+
+**3. Locale Handling Improvements**
+- Fixed `SetLocale` plug to use configured default locale instead of hardcoded "fi"
+- Fixed `SetLocaleHook` LiveView hook to use configured default
+- Test environment now correctly uses English locale
+
+**4. Compilation Warnings Fixed (8 warnings)**
+- Fixed unused variables in test files: project_live_test, feedback_test, tag_search_test, profile_test
+- Fixed unused imports: content_search_test, user_notifier_test
+- Fixed unused default parameter: feed_cleanup_worker_test
+
+**5. Lighthouse Audit**
+- Accessibility: 100
+- SEO: 100
+- Best Practices: 73
+- Performance: 55 (meets threshold)
+
+**6. Playwright Test Coverage Verified**
+- 14 E2E test files, 206 test cases
+- Comprehensive accessibility testing with axe-core (light & dark themes)
+- Tests cover: auth, profile, feed, search, projects, tags, notifications, portfolio
+
+#### Files Modified
+
+| File | Change |
+|------|--------|
+| `priv/gettext/fi/LC_MESSAGES/default.po` | 47 translations added/fixed |
+| `priv/gettext/en/LC_MESSAGES/default.po` | Cleared incorrect fuzzy matches |
+| `lib/homesite_web/plugs/set_locale.ex` | Use configured default locale |
+| `lib/homesite_web/live/set_locale_hook.ex` | Use configured default locale |
+| `test/**/*.exs` (7 files) | Fixed unused variable warnings |
+
+#### Test Results
+- **1705 tests, 0 failures**
+- No compilation warnings
+- Credo: 1 warning (pre-existing), 51 refactoring opportunities
+
+---
+
 ## 2026-02-03 (Evening) - Admin Email Notifications & GitHub Issues
 
 ### Session Summary

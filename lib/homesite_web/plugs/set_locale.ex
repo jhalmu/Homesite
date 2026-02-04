@@ -74,7 +74,11 @@ defmodule HomesiteWeb.Plugs.SetLocale do
     |> Enum.find(&(&1 in @supported_locales))
   end
 
-  # Validate locale is supported, fallback to default
+  # Validate locale is supported, fallback to configured default
   defp validate_locale(locale) when locale in @supported_locales, do: locale
-  defp validate_locale(_), do: "fi"
+  defp validate_locale(_), do: default_locale()
+
+  defp default_locale do
+    Application.get_env(:homesite, HomesiteWeb.Gettext)[:default_locale] || "fi"
+  end
 end
