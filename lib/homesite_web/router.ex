@@ -20,38 +20,21 @@ defmodule HomesiteWeb.Router do
     plug :accepts, ["json"]
   end
 
-  # Rate limiting for authentication actions
+  # Rate limiting pipelines using Hammer 7.x via RateLimitPlug
   pipeline :rate_limit_auth do
-    plug Hammer.Plug,
-      rate_limit: {"auth:login", 60_000, 5},
-      by: {:conn, &__MODULE__.get_ip/1}
+    plug HomesiteWeb.Plugs.RateLimitPlug, limiter: :auth
   end
 
   pipeline :rate_limit_registration do
-    plug Hammer.Plug,
-      rate_limit: {"auth:register", 900_000, 10},
-      by: {:conn, &__MODULE__.get_ip/1}
+    plug HomesiteWeb.Plugs.RateLimitPlug, limiter: :registration
   end
 
-  # Rate limiting for search to prevent DoS
   pipeline :rate_limit_search do
-    plug Hammer.Plug,
-      rate_limit: {"search", 60_000, 30},
-      by: {:conn, &__MODULE__.get_ip/1}
+    plug HomesiteWeb.Plugs.RateLimitPlug, limiter: :search
   end
 
-  # Rate limiting for public feeds
   pipeline :rate_limit_feeds do
-    plug Hammer.Plug,
-      rate_limit: {"feeds", 60_000, 20},
-      by: {:conn, &__MODULE__.get_ip/1}
-  end
-
-  # Helper function to get IP address for rate limiting
-  def get_ip(conn) do
-    conn.remote_ip
-    |> Tuple.to_list()
-    |> Enum.join(".")
+    plug HomesiteWeb.Plugs.RateLimitPlug, limiter: :feeds
   end
 
   scope "/", HomesiteWeb do

@@ -100,8 +100,7 @@ defmodule Homesite.MixProject do
       {:telemetry_poller, "1.3.0"},
 
       # Security
-      {:hammer, "~> 6.2"},
-      {:hammer_plug, "~> 3.1"},
+      {:hammer, "~> 7.1"},
       {:phoenix_turnstile, "~> 1.0"},
 
       # IP Geolocation (MaxMind GeoLite2)

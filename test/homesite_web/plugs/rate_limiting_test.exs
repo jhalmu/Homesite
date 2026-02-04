@@ -1,46 +1,66 @@
 defmodule HomesiteWeb.Plugs.RateLimitingTest do
   use HomesiteWeb.ConnCase, async: true
 
-  alias HomesiteWeb.Router
+  alias Homesite.RateLimiter
+  alias HomesiteWeb.Plugs.RateLimitPlug
 
-  describe "get_ip/1 helper" do
+  describe "RateLimitPlug.get_ip/1" do
     test "extracts IPv4 address from conn", %{conn: conn} do
       conn = %{conn | remote_ip: {127, 0, 0, 1}}
-      assert Router.get_ip(conn) == "127.0.0.1"
+      assert RateLimitPlug.get_ip(conn) == "127.0.0.1"
     end
 
     test "handles different IPv4 addresses", %{conn: conn} do
       conn = %{conn | remote_ip: {192, 168, 1, 100}}
-      assert Router.get_ip(conn) == "192.168.1.100"
+      assert RateLimitPlug.get_ip(conn) == "192.168.1.100"
     end
 
     test "handles edge case IPv4 addresses", %{conn: conn} do
       conn = %{conn | remote_ip: {255, 255, 255, 255}}
-      assert Router.get_ip(conn) == "255.255.255.255"
+      assert RateLimitPlug.get_ip(conn) == "255.255.255.255"
     end
 
     test "handles zeroed IPv4 address", %{conn: conn} do
       conn = %{conn | remote_ip: {0, 0, 0, 0}}
-      assert Router.get_ip(conn) == "0.0.0.0"
+      assert RateLimitPlug.get_ip(conn) == "0.0.0.0"
     end
   end
 
-  describe "hammer configuration" do
-    test "hammer backend is configured" do
-      config = Application.get_env(:hammer, :backend)
-      assert {Hammer.Backend.ETS, opts} = config
-      assert Keyword.has_key?(opts, :expiry_ms)
-      assert Keyword.has_key?(opts, :cleanup_interval_ms)
+  describe "RateLimiter configuration" do
+    test "auth limiter is 5 per minute" do
+      {scale, limit} = RateLimiter.get_config(:auth)
+      assert scale == 60_000
+      assert limit == 5
     end
 
-    test "hammer backend has 4 hour expiry" do
-      {Hammer.Backend.ETS, opts} = Application.get_env(:hammer, :backend)
-      assert opts[:expiry_ms] == 60_000 * 60 * 4
+    test "registration limiter is 10 per 15 minutes" do
+      {scale, limit} = RateLimiter.get_config(:registration)
+      assert scale == 900_000
+      assert limit == 10
     end
 
-    test "hammer backend has 10 minute cleanup interval" do
-      {Hammer.Backend.ETS, opts} = Application.get_env(:hammer, :backend)
-      assert opts[:cleanup_interval_ms] == 60_000 * 10
+    test "search limiter is 30 per minute" do
+      {scale, limit} = RateLimiter.get_config(:search)
+      assert scale == 60_000
+      assert limit == 30
+    end
+
+    test "feeds limiter is 20 per minute" do
+      {scale, limit} = RateLimiter.get_config(:feeds)
+      assert scale == 60_000
+      assert limit == 20
+    end
+
+    test "geo limiter is 45 per minute" do
+      {scale, limit} = RateLimiter.get_config(:geo)
+      assert scale == 60_000
+      assert limit == 45
+    end
+
+    test "report limiter is 5 per hour" do
+      {scale, limit} = RateLimiter.get_config(:report)
+      assert scale == 3_600_000
+      assert limit == 5
     end
   end
 
@@ -62,47 +82,46 @@ defmodule HomesiteWeb.Plugs.RateLimitingTest do
     end
   end
 
-  describe "Hammer.check_rate/3 direct testing" do
+  describe "RateLimiter.check_rate/2 direct testing" do
     test "allows requests under the limit" do
-      # Test the rate limiter directly
-      key = "test:#{System.unique_integer()}"
+      key = "test:direct:#{System.unique_integer()}"
 
-      # Should allow 5 requests within 60 seconds
-      for _ <- 1..5 do
-        {:allow, _count} = Hammer.check_rate(key, 60_000, 5)
+      # Should allow 5 requests within 60 seconds (auth limit)
+      for i <- 1..5 do
+        assert {:allow, ^i} = RateLimiter.check_rate(:auth, key)
       end
     end
 
     test "blocks requests over the limit" do
-      key = "test:#{System.unique_integer()}"
+      key = "test:direct:#{System.unique_integer()}"
 
       # Use up all allowed requests
       for _ <- 1..5 do
-        {:allow, _count} = Hammer.check_rate(key, 60_000, 5)
+        {:allow, _count} = RateLimiter.check_rate(:auth, key)
       end
 
       # Next request should be denied
-      {:deny, _limit} = Hammer.check_rate(key, 60_000, 5)
+      assert {:deny, _retry_after} = RateLimiter.check_rate(:auth, key)
     end
 
-    test "registration limit is 3 per hour" do
+    test "registration limit is 10 per 15 minutes" do
       key = "test:register:#{System.unique_integer()}"
 
-      for i <- 1..3 do
-        {:allow, ^i} = Hammer.check_rate(key, 3_600_000, 3)
+      for i <- 1..10 do
+        assert {:allow, ^i} = RateLimiter.check_rate(:registration, key)
       end
 
-      {:deny, 3} = Hammer.check_rate(key, 3_600_000, 3)
+      assert {:deny, _retry_after} = RateLimiter.check_rate(:registration, key)
     end
 
-    test "login limit is 5 per minute" do
-      key = "test:login:#{System.unique_integer()}"
+    test "search limit is 30 per minute" do
+      key = "test:search:#{System.unique_integer()}"
 
-      for i <- 1..5 do
-        {:allow, ^i} = Hammer.check_rate(key, 60_000, 5)
+      for i <- 1..30 do
+        assert {:allow, ^i} = RateLimiter.check_rate(:search, key)
       end
 
-      {:deny, 5} = Hammer.check_rate(key, 60_000, 5)
+      assert {:deny, _retry_after} = RateLimiter.check_rate(:search, key)
     end
   end
 end

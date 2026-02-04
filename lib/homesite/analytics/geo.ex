@@ -23,10 +23,6 @@ defmodule Homesite.Analytics.Geo do
   @cache_ttl_seconds 86400
   @database_id :geolite2_city
 
-  # Rate limiting: 45 requests per minute for ip-api.com free tier
-  @rate_limit_scale 60_000
-  @rate_limit_requests 45
-
   @type geo_result :: %{
           country: String.t() | nil,
           city: String.t() | nil
@@ -185,9 +181,9 @@ defmodule Homesite.Analytics.Geo do
   end
 
   defp check_rate_limit do
-    case Hammer.check_rate("geo:ipapi", @rate_limit_scale, @rate_limit_requests) do
+    case Homesite.RateLimiter.check_rate(:geo, "ipapi") do
       {:allow, _count} -> :ok
-      {:deny, _limit} -> :rate_limited
+      {:deny, _retry_after} -> :rate_limited
     end
   end
 

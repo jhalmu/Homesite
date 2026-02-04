@@ -10,6 +10,8 @@ defmodule Homesite.Application do
     children = [
       HomesiteWeb.Telemetry,
       Homesite.Repo,
+      # Rate limiter (Hammer 7.x ETS backend)
+      Homesite.RateLimiter,
       {DNSCluster, query: Application.get_env(:homesite, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Homesite.PubSub},
       # Start Oban background job processor

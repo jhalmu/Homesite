@@ -24,9 +24,8 @@ config :homesite,
   ecto_repos: [Homesite.Repo],
   generators: [timestamp_type: :utc_datetime]
 
-# Configures Hammer rate limiting
-config :hammer,
-  backend: {Hammer.Backend.ETS, [expiry_ms: 60_000 * 60 * 4, cleanup_interval_ms: 60_000 * 10]}
+# Hammer 7.x rate limiting is configured via the RateLimiter module
+# See lib/homesite/rate_limiter.ex
 
 # Configures Oban background jobs
 config :homesite, Oban,

@@ -175,13 +175,11 @@ defmodule Homesite.Moderation do
   """
   def create_report(%Scope{} = scope, reported_user_id, reason, metadata \\ %{}) do
     # Rate limiting: 5 reports per hour per user
-    rate_key = "moderation:report:#{scope.user.id}"
-
-    case Hammer.check_rate(rate_key, 3_600_000, 5) do
+    case Homesite.RateLimiter.check_rate(:report, to_string(scope.user.id)) do
       {:allow, _count} ->
         do_create_report(scope, reported_user_id, reason, metadata)
 
-      {:deny, _limit} ->
+      {:deny, _retry_after} ->
         {:error, :rate_limited}
     end
   end
@@ -1198,13 +1196,11 @@ defmodule Homesite.Moderation do
   """
   def create_report_with_tracking(%Scope{} = scope, reported_user_id, reason, metadata \\ %{}) do
     # Rate limiting: 5 reports per hour per user
-    rate_key = "moderation:report:#{scope.user.id}"
-
-    case Hammer.check_rate(rate_key, 3_600_000, 5) do
+    case Homesite.RateLimiter.check_rate(:report, to_string(scope.user.id)) do
       {:allow, _count} ->
         do_create_report_with_tracking(scope, reported_user_id, reason, metadata)
 
-      {:deny, _limit} ->
+      {:deny, _retry_after} ->
         {:error, :rate_limited}
     end
   end

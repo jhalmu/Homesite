@@ -7,6 +7,56 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2026-02-04 (Night) - Hammer 7.x Upgrade
+
+### Session Summary
+
+Upgraded Hammer rate limiting library from 6.x to 7.x following TDD approach.
+
+#### Breaking Changes in Hammer 7.x
+
+- `Hammer.Plug` removed (was in separate `hammer_plug` package)
+- `Hammer.check_rate/3` replaced with module-based API using `use Hammer`
+- No longer uses `:backend` config key - now configured via module
+
+#### Implementation
+
+**New Modules Created:**
+- `Homesite.RateLimiter` - Central rate limiting module with `use Hammer, backend: :ets`
+- `HomesiteWeb.Plugs.RateLimitPlug` - Custom plug replacing `Hammer.Plug`
+
+**Rate Limiters Configured:**
+| Limiter | Limit | Window |
+|---------|-------|--------|
+| `:auth` | 5 | 1 minute |
+| `:registration` | 10 | 15 minutes |
+| `:search` | 30 | 1 minute |
+| `:feeds` | 20 | 1 minute |
+| `:geo` | 45 | 1 minute |
+| `:report` | 5 | 1 hour |
+
+#### Files Created
+- `lib/homesite/rate_limiter.ex` - Module-based rate limiter
+- `lib/homesite_web/plugs/rate_limit_plug.ex` - Custom plug for pipelines
+- `test/homesite/rate_limiter_test.exs` - 12 tests
+- `test/homesite_web/plugs/rate_limit_plug_test.exs` - 7 tests
+
+#### Files Modified
+- `mix.exs` - Updated `{:hammer, "~> 7.1"}`, removed `{:hammer_plug, ...}`
+- `config/config.exs` - Removed old `:hammer :backend` config
+- `lib/homesite/application.ex` - Added `Homesite.RateLimiter` to supervision tree
+- `lib/homesite_web/router.ex` - Updated pipelines to use new `RateLimitPlug`
+- `lib/homesite/analytics/geo.ex` - Use `RateLimiter.check_rate(:geo, ...)`
+- `lib/homesite/moderation.ex` - Use `RateLimiter.check_rate(:report, ...)`
+- `test/homesite_web/plugs/rate_limiting_test.exs` - Updated for new API
+
+#### Test Results
+- **1746 tests, 0 failures**
+- All rate limiting tests pass
+- No compilation warnings
+
+---
+
 ## 2026-02-04 (Evening) - Performance Optimization: Lighthouse 71 → 80
 
 ### Session Summary
