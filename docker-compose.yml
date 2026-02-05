@@ -23,6 +23,7 @@ services:
       MAXMIND_LICENSE_KEY: "${MAXMIND_LICENSE_KEY}"
       TURNSTILE_SITE_KEY: "${TURNSTILE_SITE_KEY}"
       TURNSTILE_SECRET_KEY: "${TURNSTILE_SECRET_KEY}"
+      ABUSEIPDB_API_KEY: "${ABUSEIPDB_API_KEY}"
     volumes:
       - uploads_data:/app/uploads
     networks:
