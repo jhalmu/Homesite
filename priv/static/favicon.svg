@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Orange Dino Favicon -->
+  <defs>
+    <linearGradient id="dinoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF8C00"/>
+      <stop offset="100%" style="stop-color:#FF6B00"/>
+    </linearGradient>
+  </defs>
+  <!-- Body -->
+  <ellipse cx="32" cy="38" rx="18" ry="14" fill="url(#dinoGrad)"/>
+  <!-- Head -->
+  <circle cx="44" cy="24" r="12" fill="url(#dinoGrad)"/>
+  <!-- Snout -->
+  <ellipse cx="52" cy="26" rx="6" ry="4" fill="url(#dinoGrad)"/>
+  <!-- Eye -->
+  <circle cx="46" cy="22" r="3" fill="#1a1a2e"/>
+  <circle cx="47" cy="21" r="1" fill="white"/>
+  <!-- Spikes on back -->
+  <path d="M18 32 L22 24 L26 32" fill="#FF5500"/>
+  <path d="M24 30 L28 20 L32 30" fill="#FF5500"/>
+  <path d="M30 28 L34 18 L38 28" fill="#FF5500"/>
+  <!-- Legs -->
+  <ellipse cx="22" cy="50" rx="5" ry="6" fill="url(#dinoGrad)"/>
+  <ellipse cx="38" cy="50" rx="5" ry="6" fill="url(#dinoGrad)"/>
+  <!-- Tail -->
+  <path d="M14 38 Q6 36 4 42 Q6 44 14 42" fill="url(#dinoGrad)"/>
+  <!-- Smile -->
+  <path d="M50 28 Q54 30 52 28" stroke="#1a1a2e" stroke-width="1" fill="none"/>
+</svg>
