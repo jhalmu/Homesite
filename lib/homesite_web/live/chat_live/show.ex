@@ -280,7 +280,9 @@ defmodule HomesiteWeb.ChatLive.Show do
             </h1>
           </div>
           <%= if @channel.description do %>
-            <span class="text-base-content/60 text-[var(--text-sm)]">{@channel.description}</span>
+            <span class="text-base-content/60 text-[var(--text-sm)]">
+              {translate_channel_description(@channel.description)}
+            </span>
           <% end %>
         </div>
 
@@ -467,4 +469,12 @@ defmodule HomesiteWeb.ChatLive.Show do
     </Layouts.app>
     """
   end
+
+  # Translate known channel descriptions
+  defp translate_channel_description("General discussion"), do: gettext("General discussion")
+
+  defp translate_channel_description("Private channel for administrators"),
+    do: gettext("Private channel for administrators")
+
+  defp translate_channel_description(description), do: description
 end

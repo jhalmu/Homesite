@@ -19,7 +19,7 @@ defmodule HomesiteWeb.PostLive.Show do
         <article>
           <.header>
             {@post.title}
-            <:subtitle>Published post</:subtitle>
+            <:subtitle>{gettext("Published post")}</:subtitle>
             <:actions>
               <.button navigate={~p"/"} aria-label={gettext("Back to home")}>
                 <.icon name="hero-arrow-left" />
@@ -29,7 +29,7 @@ defmodule HomesiteWeb.PostLive.Show do
                   variant="primary"
                   navigate={~p"/posts/#{@post.slug}/edit?return_to=show"}
                 >
-                  <.icon name="hero-pencil-square" /> Edit post
+                  <.icon name="hero-pencil-square" /> {gettext("Edit post")}
                 </.button>
               <% end %>
             </:actions>
@@ -39,7 +39,7 @@ defmodule HomesiteWeb.PostLive.Show do
             <.author_byline user={@post.user} date={@post.published_at} />
             <div class="gap-[var(--space-xs)] text-[var(--text-sm)] mt-[var(--space-xs)] flex flex-wrap items-center opacity-70">
               <.icon name="hero-clock" class="h-4 w-4" />
-              <span>{@post.read_time_minutes} min read</span>
+              <span>{@post.read_time_minutes} {gettext("min read")}</span>
 
               <%= if was_edited?(@post) do %>
                 <span>•</span>

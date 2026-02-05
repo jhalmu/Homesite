@@ -77,10 +77,24 @@ defmodule HomesiteWeb.PrivacyLive.Index do
         </section>
 
         <section>
+          <h2 class="text-xl font-semibold">{gettext("Security and IP monitoring")}</h2>
+          <p>
+            {gettext(
+              "To protect the site from abuse, we monitor IP addresses and their activity. This includes tracking failed login attempts, suspicious behavior patterns, and geographic information (country). IP addresses may be temporarily or permanently blocked based on threat scoring."
+            )}
+          </p>
+          <p class="mt-[var(--space-sm)]">
+            {gettext(
+              "We use AbuseIPDB, an external IP reputation service, to check if IP addresses have been reported for malicious activity elsewhere. This helps protect our site and its users from known threats."
+            )}
+          </p>
+        </section>
+
+        <section>
           <h2 class="text-xl font-semibold">{gettext("Third-party services")}</h2>
           <p>
             {gettext(
-              "We use Cloudflare Turnstile for CAPTCHA protection during registration. No other third-party analytics or tracking services are used."
+              "We use Cloudflare Turnstile for CAPTCHA protection during registration and AbuseIPDB for IP reputation checking. No other third-party analytics or tracking services are used."
             )}
           </p>
         </section>
