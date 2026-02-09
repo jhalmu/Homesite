@@ -7,7 +7,16 @@ defmodule Homesite.Accounts do
   alias Homesite.Analytics
   alias Homesite.Repo
 
-  alias Homesite.Accounts.{AuthLog, AvatarGenerator, Invitation, User, UsernameChange, UserNotifier, UserToken}
+  alias Homesite.Accounts.{
+    AuthLog,
+    AvatarGenerator,
+    Invitation,
+    User,
+    UsernameChange,
+    UserNotifier,
+    UserToken
+  }
+
   alias Homesite.Settings
 
   # Account lockout settings

@@ -2069,8 +2069,12 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
     """
   end
 
-  defp content_step_tip("photography"), do: gettext("Add your best shots. First image becomes cover.")
-  defp content_step_tip("coding"), do: gettext("Screenshots, architecture diagrams, or demo GIFs work great.")
+  defp content_step_tip("photography"),
+    do: gettext("Add your best shots. First image becomes cover.")
+
+  defp content_step_tip("coding"),
+    do: gettext("Screenshots, architecture diagrams, or demo GIFs work great.")
+
   defp content_step_tip("writing"), do: gettext("Add cover art or related imagery.")
   defp content_step_tip("books"), do: gettext("Book covers and interior shots.")
   defp content_step_tip("gears"), do: gettext("Product photos from multiple angles.")

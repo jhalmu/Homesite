@@ -54,7 +54,9 @@ defmodule HomesiteWeb.FeedLive.Index do
 
     case ExternalFeeds.mark_item_as_read(socket.assigns.current_scope, feed_item_id) do
       {:ok, _interaction} ->
-        items = refresh_item_in_list(socket.assigns.items, socket.assigns.current_scope, feed_item_id)
+        items =
+          refresh_item_in_list(socket.assigns.items, socket.assigns.current_scope, feed_item_id)
+
         unread_count = ExternalFeeds.get_unread_count(socket.assigns.current_scope)
 
         {:noreply, assign(socket, items: items, unread_count: unread_count)}
@@ -70,7 +72,9 @@ defmodule HomesiteWeb.FeedLive.Index do
 
     case ExternalFeeds.mark_item_as_unread(socket.assigns.current_scope, feed_item_id) do
       {:ok, _interaction} ->
-        items = refresh_item_in_list(socket.assigns.items, socket.assigns.current_scope, feed_item_id)
+        items =
+          refresh_item_in_list(socket.assigns.items, socket.assigns.current_scope, feed_item_id)
+
         unread_count = ExternalFeeds.get_unread_count(socket.assigns.current_scope)
 
         {:noreply, assign(socket, items: items, unread_count: unread_count)}
@@ -86,7 +90,8 @@ defmodule HomesiteWeb.FeedLive.Index do
 
     case ExternalFeeds.bookmark_item(socket.assigns.current_scope, feed_item_id) do
       {:ok, _interaction} ->
-        items = refresh_item_in_list(socket.assigns.items, socket.assigns.current_scope, feed_item_id)
+        items =
+          refresh_item_in_list(socket.assigns.items, socket.assigns.current_scope, feed_item_id)
 
         {:noreply, assign(socket, items: items)}
 

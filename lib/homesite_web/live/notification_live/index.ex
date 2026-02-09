@@ -186,7 +186,11 @@ defmodule HomesiteWeb.NotificationLive.Index do
     case Notifications.mark_as_read(current_scope, notification_id) do
       {:ok, updated_notification} ->
         notifications =
-          replace_notification(socket.assigns.notifications, notification_id, updated_notification)
+          replace_notification(
+            socket.assigns.notifications,
+            notification_id,
+            updated_notification
+          )
 
         unread_count = max(0, socket.assigns.unread_count - 1)
 

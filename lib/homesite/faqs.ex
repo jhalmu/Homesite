@@ -272,7 +272,9 @@ defmodule Homesite.Faqs do
   end
 
   defp maybe_filter_by_category(query, nil), do: query
-  defp maybe_filter_by_category(query, category), do: from(f in query, where: f.category == ^category)
+
+  defp maybe_filter_by_category(query, category),
+    do: from(f in query, where: f.category == ^category)
 
   ## Helpers
 

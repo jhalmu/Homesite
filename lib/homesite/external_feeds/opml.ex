@@ -261,7 +261,14 @@ defmodule Homesite.ExternalFeeds.OPML do
 
       :import ->
         do_import_outline(
-          scope, outline, xml_url, create_folders, folder_cache, imported, skipped, errors
+          scope,
+          outline,
+          xml_url,
+          create_folders,
+          folder_cache,
+          imported,
+          skipped,
+          errors
         )
     end
   end
@@ -273,7 +280,14 @@ defmodule Homesite.ExternalFeeds.OPML do
   end
 
   defp do_import_outline(
-         scope, outline, xml_url, create_folders, folder_cache, imported, skipped, errors
+         scope,
+         outline,
+         xml_url,
+         create_folders,
+         folder_cache,
+         imported,
+         skipped,
+         errors
        ) do
     title =
       non_empty(Map.get(outline, :title)) || non_empty(Map.get(outline, :text)) || "Untitled Feed"
