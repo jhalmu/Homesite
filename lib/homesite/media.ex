@@ -541,17 +541,15 @@ defmodule Homesite.Media do
   def auto_tag_from_exif(%Scope{} = scope, %MediaItem{} = item) do
     true = item.user_id == scope.user.id
     exif = item.exif_data || %{}
+    tag_names = if exif == %{}, do: [], else: build_exif_tag_names(exif)
 
-    if exif == %{} do
-      {:ok, :no_exif}
-    else
-      tag_names = build_exif_tag_names(exif)
-
-      if tag_names == [] do
+    case tag_names do
+      [] ->
         {:ok, :no_exif}
-      else
+
+      names ->
         tags =
-          Enum.map(tag_names, fn name ->
+          Enum.map(names, fn name ->
             {:ok, tag} =
               Homesite.Content.get_or_create_tag(scope, %{
                 "name" => name,
@@ -561,14 +559,12 @@ defmodule Homesite.Media do
             tag
           end)
 
-        # Merge with existing tags
         item = Repo.preload(item, :tags)
         existing_tag_ids = Enum.map(item.tags, & &1.id)
         new_tag_ids = Enum.map(tags, & &1.id)
         all_tag_ids = Enum.uniq(existing_tag_ids ++ new_tag_ids)
 
         update_media_item_tags(scope, item, all_tag_ids)
-      end
     end
   end
 

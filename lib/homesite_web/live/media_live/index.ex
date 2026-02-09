@@ -552,18 +552,11 @@ defmodule HomesiteWeb.MediaLive.Index do
         }
 
         # Upload and process the image
-        case Media.upload_media(socket.assigns.current_scope, path, entry.client_type, attrs) do
+        scope = socket.assigns.current_scope
+
+        case Media.upload_media(scope, path, entry.client_type, attrs) do
           {:ok, media_item} ->
-            # Apply tags if any selected
-            if tag_ids != [] do
-              Media.update_media_item_tags(socket.assigns.current_scope, media_item, tag_ids)
-            end
-
-            # Auto-tag from EXIF if enabled
-            if socket.assigns.auto_tag_exif do
-              Media.auto_tag_from_exif(socket.assigns.current_scope, media_item)
-            end
-
+            apply_post_upload_actions(scope, media_item, tag_ids, socket.assigns.auto_tag_exif)
             {:ok, media_item}
 
           {:error, _changeset} ->
@@ -575,25 +568,29 @@ defmodule HomesiteWeb.MediaLive.Index do
     failed_uploads = Enum.filter(uploaded_files, &(&1 == :error))
 
     socket =
-      if length(failed_uploads) > 0 do
-        put_flash(
-          socket,
-          :error,
-          gettext("Failed to upload %{count} file(s)", count: length(failed_uploads))
-        )
-      else
-        socket
+      case failed_uploads do
+        [] ->
+          socket
+
+        failures ->
+          put_flash(
+            socket,
+            :error,
+            gettext("Failed to upload %{count} file(s)", count: length(failures))
+          )
       end
 
     socket =
-      if length(successful_uploads) > 0 do
-        put_flash(
-          socket,
-          :info,
-          gettext("Successfully uploaded %{count} file(s)", count: length(successful_uploads))
-        )
-      else
-        socket
+      case successful_uploads do
+        [] ->
+          socket
+
+        successes ->
+          put_flash(
+            socket,
+            :info,
+            gettext("Successfully uploaded %{count} file(s)", count: length(successes))
+          )
       end
 
     # Refresh camera models after upload (new cameras may have been added)
@@ -1158,6 +1155,11 @@ defmodule HomesiteWeb.MediaLive.Index do
       </div>
     </Layouts.app>
     """
+  end
+
+  defp apply_post_upload_actions(scope, media_item, tag_ids, auto_tag_exif) do
+    if tag_ids != [], do: Media.update_media_item_tags(scope, media_item, tag_ids)
+    if auto_tag_exif, do: Media.auto_tag_from_exif(scope, media_item)
   end
 
   defp list_media_items(scope, filters, opts) do

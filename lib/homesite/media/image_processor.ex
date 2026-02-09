@@ -209,24 +209,27 @@ defmodule Homesite.Media.ImageProcessor do
 
   def parse_exif_rational(value) when is_binary(value) do
     case String.split(value, "/") do
-      [num, den] ->
-        with {n, _} <- Integer.parse(num),
-             {d, _} <- Integer.parse(den),
-             true <- d != 0 do
-          result = n / d
-          if result == trunc(result), do: trunc(result), else: Float.round(result, 1)
-        else
-          _ -> nil
-        end
+      [num, den] -> parse_rational_fraction(num, den)
+      [single] -> parse_exif_float(single)
+      _ -> nil
+    end
+  end
 
-      [single] ->
-        case Float.parse(single) do
-          {val, _} -> if val == trunc(val), do: trunc(val), else: Float.round(val, 1)
-          :error -> nil
-        end
+  defp parse_rational_fraction(num, den) do
+    with {n, _} <- Integer.parse(num),
+         {d, _} <- Integer.parse(den),
+         true <- d != 0 do
+      result = n / d
+      if result == trunc(result), do: trunc(result), else: Float.round(result, 1)
+    else
+      _ -> nil
+    end
+  end
 
-      _ ->
-        nil
+  defp parse_exif_float(str) do
+    case Float.parse(str) do
+      {val, _} -> if val == trunc(val), do: trunc(val), else: Float.round(val, 1)
+      :error -> nil
     end
   end
 
@@ -260,20 +263,21 @@ defmodule Homesite.Media.ImageProcessor do
 
   defp format_shutter_speed(value) when is_binary(value) do
     case String.split(value, "/") do
-      [num, den] ->
-        with {n, _} <- Integer.parse(num),
-             {d, _} <- Integer.parse(den) do
-          cond do
-            d == 1 -> "#{n}s"
-            n == 1 -> "1/#{d}"
-            true -> "#{n}/#{d}"
-          end
-        else
-          _ -> value
-        end
+      [num, den] -> format_shutter_fraction(num, den, value)
+      _ -> value
+    end
+  end
 
-      _ ->
-        value
+  defp format_shutter_fraction(num, den, fallback) do
+    with {n, _} <- Integer.parse(num),
+         {d, _} <- Integer.parse(den) do
+      cond do
+        d == 1 -> "#{n}s"
+        n == 1 -> "1/#{d}"
+        true -> "#{n}/#{d}"
+      end
+    else
+      _ -> fallback
     end
   end
 
