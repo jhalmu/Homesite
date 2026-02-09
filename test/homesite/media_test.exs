@@ -1209,10 +1209,6 @@ defmodule Homesite.MediaTest do
 
     @tag :exiftool
     test "upload_media/4 stores exif_data from JPEG with EXIF" do
-      if System.find_executable("exiftool") == nil do
-        flunk("exiftool not installed")
-      end
-
       scope = user_scope_fixture()
       temp_path = create_test_image("exif-rich.jpg")
 
@@ -1246,10 +1242,6 @@ defmodule Homesite.MediaTest do
 
     @tag :exiftool
     test "auto_tag_from_exif/2 creates tags from EXIF data" do
-      if System.find_executable("exiftool") == nil do
-        flunk("exiftool not installed")
-      end
-
       scope = user_scope_fixture()
       temp_path = create_test_image("auto-tag.jpg")
 
@@ -1295,10 +1287,6 @@ defmodule Homesite.MediaTest do
 
     @tag :exiftool
     test "list_camera_models/1 returns distinct camera models" do
-      if System.find_executable("exiftool") == nil do
-        flunk("exiftool not installed")
-      end
-
       scope = user_scope_fixture()
 
       # Upload image with EXIF
@@ -1331,10 +1319,6 @@ defmodule Homesite.MediaTest do
 
     @tag :exiftool
     test "list_media_items/2 filters by camera_model" do
-      if System.find_executable("exiftool") == nil do
-        flunk("exiftool not installed")
-      end
-
       scope = user_scope_fixture()
 
       # Upload Canon image

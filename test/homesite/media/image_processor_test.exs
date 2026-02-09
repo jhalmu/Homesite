@@ -7,17 +7,26 @@ defmodule Homesite.Media.ImageProcessorTest do
     import Homesite.MediaFixtures, only: [create_test_image: 1]
 
     test "should return empty map for PNG without EXIF" do
-      # Create a PNG (no EXIF)
+      # Create a minimal valid PNG file (1x1 pixel, blue)
       temp_path =
         Path.join(System.tmp_dir!(), "test-exif-#{System.unique_integer([:positive])}.png")
 
-      {_, 0} =
-        System.cmd("magick", [
-          "-size",
-          "50x50",
-          "xc:blue",
-          temp_path
-        ])
+      # Minimal 1x1 blue PNG (valid binary)
+      png_header = <<137, 80, 78, 71, 13, 10, 26, 10>>
+
+      ihdr_data = <<0, 0, 0, 1, 0, 0, 0, 1, 8, 2, 0, 0, 0>>
+      ihdr_crc = :erlang.crc32(<<"IHDR", ihdr_data::binary>>)
+      ihdr = <<13::32, "IHDR", ihdr_data::binary, ihdr_crc::32>>
+
+      raw_data = <<0, 0, 0, 255>>
+      compressed = :zlib.compress(raw_data)
+      idat_crc = :erlang.crc32(<<"IDAT", compressed::binary>>)
+      idat = <<byte_size(compressed)::32, "IDAT", compressed::binary, idat_crc::32>>
+
+      iend_crc = :erlang.crc32("IEND")
+      iend = <<0::32, "IEND", iend_crc::32>>
+
+      File.write!(temp_path, png_header <> ihdr <> idat <> iend)
 
       result = ImageProcessor.extract_exif(temp_path)
       assert result == %{}
@@ -44,10 +53,6 @@ defmodule Homesite.Media.ImageProcessorTest do
 
     @tag :exiftool
     test "should extract EXIF from JPEG with embedded EXIF data" do
-      if System.find_executable("exiftool") == nil do
-        flunk("exiftool not installed, skipping EXIF extraction test")
-      end
-
       temp_path =
         Path.join(System.tmp_dir!(), "test-with-exif-#{System.unique_integer([:positive])}.jpg")
 
