@@ -15,6 +15,32 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2026-02-09 - Credo Zero: Eliminate All Strict Warnings
+
+### Session Summary
+
+Swept the entire codebase to achieve `mix credo --strict` reporting **0 issues** across 350 source files (2973 modules/functions).
+
+#### Changes (97 files, 1719 insertions, 1601 deletions)
+
+| Category | Count | Examples |
+|----------|-------|---------|
+| `length/1` warnings | 77 | `length(list) > 0` → `list != []` |
+| Nesting too deep | ~36 | Extracted helper functions across contexts |
+| Cyclomatic complexity | 18 | Pattern-matched clauses, helper extraction |
+| `Enum.map_join` | 9 | `Enum.map \|> Enum.join` → `Enum.map_join` |
+| Negated conditions | 7 | `unless...else`, `if not` → positive conditions |
+| Predicate naming | 4 | `is_following?` → `following?` |
+| Implicit try | 6 | Explicit `try do...end` → implicit |
+| Alias usage | 66 | Inline `Homesite.Foo.Bar` → aliased `Bar` |
+| Alias ordering | 4 | Alphabetical sort within groups |
+| `@moduledoc` tags | 5 | Added `@moduledoc false` |
+| Other | 12 | Number format, string sigil, Logger metadata |
+
+**Commit:** `91b90dc`
+
+---
+
 ## 2026-02-09 - Image Gallery EXIF Metadata (Issue #105)
 
 ### Session Summary
