@@ -79,6 +79,60 @@ defmodule Homesite.Media.ImageProcessor do
     {:ok, upload_path}
   end
 
+  @doc """
+  Applies a semi-transparent watermark text to an image binary.
+
+  Overlays `"© watermark_text"` in the bottom-right corner using ImageMagick.
+  Returns `{:ok, watermarked_binary}` or `{:error, reason}`.
+  """
+  def apply_watermark(image_binary, watermark_text, content_type) do
+    ext = mime_to_extension(content_type)
+    tmp_dir = System.tmp_dir!()
+    unique_id = :erlang.unique_integer([:positive])
+    input_path = Path.join(tmp_dir, "wm_input_#{unique_id}.#{ext}")
+    output_path = Path.join(tmp_dir, "wm_output_#{unique_id}.#{ext}")
+
+    try do
+      File.write!(input_path, image_binary)
+
+      text = "© #{watermark_text}"
+
+      case System.cmd("magick", [
+             input_path,
+             "-gravity",
+             "SouthEast",
+             "-fill",
+             "rgba(255,255,255,0.5)",
+             "-stroke",
+             "rgba(0,0,0,0.3)",
+             "-strokewidth",
+             "1",
+             "-pointsize",
+             "24",
+             "-annotate",
+             "+10+10",
+             text,
+             output_path
+           ]) do
+        {_, 0} ->
+          {:ok, File.read!(output_path)}
+
+        {error, _} ->
+          {:error, {:watermark_failed, error}}
+      end
+    rescue
+      e -> {:error, {:watermark_failed, Exception.message(e)}}
+    after
+      File.rm(input_path)
+      File.rm(output_path)
+    end
+  end
+
+  defp mime_to_extension("image/jpeg"), do: "jpg"
+  defp mime_to_extension("image/png"), do: "png"
+  defp mime_to_extension("image/webp"), do: "webp"
+  defp mime_to_extension(_), do: "jpg"
+
   # Private functions
 
   defp validate_file(upload_path, content_type) do

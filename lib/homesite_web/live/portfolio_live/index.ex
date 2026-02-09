@@ -69,10 +69,11 @@ defmodule HomesiteWeb.PortfolioLive.Index do
                     <figure class="aspect-[4/3] bg-base-300 relative overflow-hidden">
                       <%= if project.cover_media_item do %>
                         <img
-                          src={"data:#{project.cover_media_item.content_type};base64,#{Base.encode64(project.cover_media_item.medium_data || project.cover_media_item.thumb_data)}"}
+                          src={~p"/images/media/#{project.cover_media_item.id}/public"}
                           alt={project.cover_media_item.alt_text || project.name}
                           class="duration-[var(--duration-normal)] h-full w-full object-cover transition-transform group-hover:scale-105"
                           loading="lazy"
+                          draggable="false"
                         />
                       <% else %>
                         <div class="flex h-full w-full items-center justify-center">

@@ -49,6 +49,7 @@ defmodule HomesiteWeb.Router do
     get "/images/users/:user_id/avatar", ImageController, :user_avatar
     get "/images/users/:user_id/avatar.png", ImageController, :user_avatar_png
     get "/images/og-default.png", ImageController, :default_og_image
+    get "/images/media/:id/public", ImageController, :public_media
 
     live_session :public,
       on_mount: [

@@ -20,6 +20,8 @@ defmodule Homesite.Application do
       Homesite.FeedCache,
       # Start OGImageCache for Open Graph image caching
       Homesite.OGImageCache,
+      # Start PortfolioImageCache for watermarked portfolio images
+      Homesite.PortfolioImageCache,
       # Threat reputation cache for IP/country scoring
       Homesite.ThreatReputation.Cache,
       # Real-time threat monitoring

@@ -10,8 +10,10 @@ defmodule HomesiteWeb.ImageController do
   import Ecto.Query
 
   alias Homesite.Repo
-  alias Homesite.Media.MediaItem
+  alias Homesite.Media
+  alias Homesite.Media.{ImageProcessor, MediaItem}
   alias Homesite.Accounts
+  alias Homesite.PortfolioImageCache
 
   # Default OG image dimensions
   @og_image_size 400
@@ -87,6 +89,57 @@ defmodule HomesiteWeb.ImageController do
       _ ->
         # Generate SVG avatar
         serve_generated_avatar(conn, user)
+    end
+  rescue
+    Ecto.NoResultsError ->
+      send_resp(conn, 404, "Not found")
+  end
+
+  @doc """
+  Serves a watermarked medium-resolution image for public portfolio display.
+
+  GET /images/media/:id/public
+
+  Only serves images that belong to a public portfolio project.
+  Applies a watermark with the image owner's display name.
+  """
+  def public_media(conn, %{"id" => id}) do
+    media_item_id = String.to_integer(id)
+
+    case PortfolioImageCache.fetch(media_item_id, fn ->
+           case Media.get_public_media_item(media_item_id) do
+             {:ok, item} ->
+               user = Accounts.get_user!(item.user_id)
+               watermark_text = user.display_name || user.email
+
+               case ImageProcessor.apply_watermark(
+                      item.medium_data,
+                      watermark_text,
+                      item.content_type
+                    ) do
+                 {:ok, watermarked} ->
+                   {:ok, {watermarked, item.content_type}}
+
+                 {:error, _reason} ->
+                   # Fallback: serve un-watermarked medium_data
+                   {:ok, {item.medium_data, item.content_type}}
+               end
+
+             {:error, :not_found} ->
+               :not_found
+           end
+         end) do
+      {:ok, {image_data, content_type}} ->
+        etag = Base.encode16(:crypto.hash(:md5, image_data), case: :lower)
+
+        conn
+        |> put_resp_content_type(content_type)
+        |> put_resp_header("cache-control", "public, max-age=3600")
+        |> put_resp_header("etag", ~s("#{etag}"))
+        |> send_resp(200, image_data)
+
+      :not_found ->
+        send_resp(conn, 404, "Not found")
     end
   rescue
     Ecto.NoResultsError ->

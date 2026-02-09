@@ -1173,3 +1173,18 @@ dialog button:focus-visible {
 
 /* Skip test for now - this is a DaisyUI theming limitation that */
 /* requires more investigation to fix properly */
+
+/* ============================================================================
+   PROTECTED IMAGE WRAPPER
+   Prevents casual image saving via right-click, drag, and touch actions
+   ============================================================================ */
+
+.protected-image-wrapper {
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+
+.protected-image-wrapper img {
+    pointer-events: none;
+    -webkit-user-drag: none;
+}

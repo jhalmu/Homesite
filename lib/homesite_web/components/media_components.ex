@@ -36,6 +36,7 @@ defmodule HomesiteWeb.MediaComponents do
   attr :on_close, :string, required: true, doc: "Event name for closing the lightbox"
   attr :on_prev, :string, required: true, doc: "Event name for previous image"
   attr :on_next, :string, required: true, doc: "Event name for next image"
+  attr :public, :boolean, default: false, doc: "Use URL-based images instead of base64"
 
   def lightbox(assigns) do
     assigns =
@@ -133,11 +134,22 @@ defmodule HomesiteWeb.MediaComponents do
         onclick="event.stopPropagation()"
       >
         <%= if @current_image do %>
-          <img
-            src={"data:#{@current_image.content_type};base64,#{Base.encode64(@current_image.large_data)}"}
-            alt={@current_image.alt_text}
-            class="max-h-[75vh] max-w-full rounded-lg object-contain shadow-2xl"
-          />
+          <%= if @public do %>
+            <div class="protected-image-wrapper">
+              <img
+                src={~p"/images/media/#{@current_image.id}/public"}
+                alt={@current_image.alt_text}
+                class="max-h-[75vh] max-w-full rounded-lg object-contain shadow-2xl"
+                draggable="false"
+              />
+            </div>
+          <% else %>
+            <img
+              src={"data:#{@current_image.content_type};base64,#{Base.encode64(@current_image.large_data)}"}
+              alt={@current_image.alt_text}
+              class="max-h-[75vh] max-w-full rounded-lg object-contain shadow-2xl"
+            />
+          <% end %>
 
           <%!-- Image info --%>
           <div class="mt-[var(--space-sm)] text-center text-white">
@@ -174,6 +186,7 @@ defmodule HomesiteWeb.MediaComponents do
   attr :index, :integer, required: true, doc: "Index of this image in the gallery"
   attr :on_click, :string, required: true, doc: "Event name for opening lightbox"
   attr :class, :string, default: "", doc: "Additional CSS classes"
+  attr :public, :boolean, default: false, doc: "Use URL-based images instead of base64"
 
   def lightbox_thumbnail(assigns) do
     ~H"""
@@ -187,12 +200,24 @@ defmodule HomesiteWeb.MediaComponents do
       phx-value-index={@index}
       aria-label={gettext("View %{title} in lightbox", title: @media.title || @media.alt_text)}
     >
-      <img
-        src={"data:#{@media.content_type};base64,#{Base.encode64(@media.medium_data)}"}
-        alt={@media.alt_text}
-        class="h-auto w-full object-cover transition-transform duration-200 hover:scale-105"
-        loading="lazy"
-      />
+      <%= if @public do %>
+        <div class="protected-image-wrapper">
+          <img
+            src={~p"/images/media/#{@media.id}/public"}
+            alt={@media.alt_text}
+            class="h-auto w-full object-cover transition-transform duration-200 hover:scale-105"
+            loading="lazy"
+            draggable="false"
+          />
+        </div>
+      <% else %>
+        <img
+          src={"data:#{@media.content_type};base64,#{Base.encode64(@media.medium_data)}"}
+          alt={@media.alt_text}
+          class="h-auto w-full object-cover transition-transform duration-200 hover:scale-105"
+          loading="lazy"
+        />
+      <% end %>
     </button>
     """
   end
@@ -212,6 +237,7 @@ defmodule HomesiteWeb.MediaComponents do
     doc: "Whether to show the template type badge"
 
   attr :class, :string, default: "", doc: "Additional CSS classes"
+  attr :public, :boolean, default: false, doc: "Use URL-based images instead of base64"
 
   def project_card(assigns) do
     ~H"""
@@ -221,11 +247,20 @@ defmodule HomesiteWeb.MediaComponents do
     >
       <figure class="bg-base-200 aspect-video">
         <%= if @project.cover_media_item do %>
-          <img
-            src={"data:#{@project.cover_media_item.content_type};base64,#{Base.encode64(@project.cover_media_item.medium_data)}"}
-            alt={@project.name}
-            class="h-full w-full object-cover"
-          />
+          <%= if @public do %>
+            <img
+              src={~p"/images/media/#{@project.cover_media_item.id}/public"}
+              alt={@project.name}
+              class="h-full w-full object-cover"
+              draggable="false"
+            />
+          <% else %>
+            <img
+              src={"data:#{@project.cover_media_item.content_type};base64,#{Base.encode64(@project.cover_media_item.medium_data)}"}
+              alt={@project.name}
+              class="h-full w-full object-cover"
+            />
+          <% end %>
         <% else %>
           <div class="flex h-full w-full items-center justify-center">
             <.icon

@@ -399,9 +399,23 @@ defmodule Homesite.Accounts do
       delete_avatar_file(user.avatar)
     end
 
-    user
-    |> User.profile_changeset(attrs)
-    |> Repo.update()
+    result =
+      user
+      |> User.profile_changeset(attrs)
+      |> Repo.update()
+
+    # Clear portfolio image cache when display_name changes (watermark text changes)
+    case result do
+      {:ok, updated_user} ->
+        if updated_user.display_name != user.display_name do
+          Homesite.PortfolioImageCache.clear_all()
+        end
+
+        {:ok, updated_user}
+
+      error ->
+        error
+    end
   end
 
   @doc """

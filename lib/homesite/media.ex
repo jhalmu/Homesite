@@ -419,6 +419,7 @@ defmodule Homesite.Media do
            item
            |> MediaItem.changeset(Map.merge(Map.from_struct(item), allowed_attrs), scope)
            |> Repo.update() do
+      Homesite.PortfolioImageCache.invalidate(item.id)
       broadcast_media_item(scope, {:updated, item})
       {:ok, item}
     end
@@ -432,6 +433,7 @@ defmodule Homesite.Media do
     true = item.user_id == scope.user.id
 
     with {:ok, item} <- Repo.delete(item) do
+      Homesite.PortfolioImageCache.invalidate(item.id)
       broadcast_media_item(scope, {:deleted, item})
       {:ok, item}
     end
@@ -683,6 +685,41 @@ defmodule Homesite.Media do
         end
 
       Repo.all(base_query)
+    end
+  end
+
+  ## Public Media Access (no scope required)
+
+  @doc """
+  Gets a media item for public portfolio display (no scope required).
+
+  Only returns media items that belong to a public portfolio project.
+  Returns medium-resolution data only (600px max) for image protection.
+
+  Returns `{:ok, item}` or `{:error, :not_found}`.
+  """
+  def get_public_media_item(media_item_id) do
+    query =
+      from(m in MediaItem,
+        join: pmi in ProjectMediaItem,
+        on: pmi.media_item_id == m.id,
+        join: p in Project,
+        on: p.id == pmi.project_id,
+        where: m.id == ^media_item_id and p.is_public == true and p.is_portfolio == true,
+        select: %{
+          id: m.id,
+          medium_data: m.medium_data,
+          content_type: m.content_type,
+          user_id: m.user_id,
+          medium_width: m.medium_width,
+          medium_height: m.medium_height
+        },
+        limit: 1
+      )
+
+    case Repo.one(query) do
+      nil -> {:error, :not_found}
+      item -> {:ok, item}
     end
   end
 

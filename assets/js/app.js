@@ -348,6 +348,20 @@ const Hooks = {
       })
     }
   },
+  ImageProtect: {
+    mounted() {
+      this.el.addEventListener('contextmenu', (e) => {
+        if (e.target.tagName === 'IMG') {
+          e.preventDefault()
+        }
+      })
+      this.el.addEventListener('dragstart', (e) => {
+        if (e.target.tagName === 'IMG') {
+          e.preventDefault()
+        }
+      })
+    }
+  },
   OpenWindow: {
     mounted() {
       this.handleEvent("open_window", ({url}) => {

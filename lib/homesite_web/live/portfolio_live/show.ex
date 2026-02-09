@@ -334,25 +334,34 @@ defmodule HomesiteWeb.PortfolioLive.Show do
             </div>
 
             <%!-- Masonry-style grid - bigger images, tighter spacing --%>
-            <div class="gap-[var(--spacing-xs)] columns-1 sm:columns-2 lg:columns-3">
+            <div
+              id="portfolio-gallery"
+              phx-hook="ImageProtect"
+              class="gap-[var(--spacing-xs)] columns-1 sm:columns-2 lg:columns-3"
+            >
               <%= for {media, idx} <- Enum.with_index(@project.media_items) do %>
                 <article class="mb-[var(--spacing-xs)] break-inside-avoid">
-                  <button
-                    type="button"
-                    class="bg-base-300 block w-full cursor-zoom-in overflow-hidden rounded-lg focus:ring-primary focus:outline-none focus:ring-2"
-                    phx-click="open_lightbox"
-                    phx-value-index={idx}
-                    aria-label={
-                      gettext("View %{title} in fullscreen", title: media.title || media.alt_text)
-                    }
-                  >
-                    <img
-                      src={"data:#{media.content_type};base64,#{Base.encode64(media.large_data || media.medium_data)}"}
-                      alt={media.alt_text}
-                      class="duration-[var(--duration-normal)] w-full transition-transform hover:scale-[1.02]"
-                      loading="lazy"
-                    />
-                  </button>
+                  <div class="protected-image-wrapper">
+                    <button
+                      type="button"
+                      class="bg-base-300 block w-full cursor-zoom-in overflow-hidden rounded-lg focus:ring-primary focus:outline-none focus:ring-2"
+                      phx-click="open_lightbox"
+                      phx-value-index={idx}
+                      aria-label={
+                        gettext("View %{title} in fullscreen",
+                          title: media.title || media.alt_text
+                        )
+                      }
+                    >
+                      <img
+                        src={~p"/images/media/#{media.id}/public"}
+                        alt={media.alt_text}
+                        class="duration-[var(--duration-normal)] w-full transition-transform hover:scale-[1.02]"
+                        loading="lazy"
+                        draggable="false"
+                      />
+                    </button>
+                  </div>
                 </article>
               <% end %>
             </div>
@@ -368,6 +377,7 @@ defmodule HomesiteWeb.PortfolioLive.Show do
             on_close="close_lightbox"
             on_prev="lightbox_prev"
             on_next="lightbox_next"
+            public={true}
           />
         <% end %>
       </div>
