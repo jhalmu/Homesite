@@ -190,35 +190,35 @@ defmodule Homesite.Media.Project do
   # Maximum: 100%
   defp calculate_completion(changeset, attrs \\ %{}) do
     data = apply_changes(changeset)
+    has_tags = tags_present?(changeset, attrs, data)
 
-    # Check if tags are present (from attrs or existing association)
-    has_tags =
-      case attrs do
-        %{"tag_ids" => tag_ids} when is_list(tag_ids) ->
-          tag_ids |> Enum.reject(&(&1 == "" || is_nil(&1))) |> length() > 0
-
-        _ ->
-          # Check existing tags from changeset
-          case get_change(changeset, :tags) do
-            nil -> Ecto.assoc_loaded?(data.tags) && length(data.tags) > 0
-            tags -> length(tags) > 0
-          end
-      end
-
-    # Base (has name)
+    # Base (has name) + field scores
+    # Note: Collaborators (+10%) and affiliation links (+10%) are counted in context layer
     percentage =
       20 +
-        if(data.description && data.description != "", do: 15, else: 0) +
-        if(data.categories && length(data.categories) > 0, do: 10, else: 0) +
-        if(has_tags, do: 10, else: 0) +
-        if(data.project_date, do: 10, else: 0) +
-        if(data.cover_media_item_id, do: 15, else: 0)
-
-    # Note: Collaborators (+10%) and affiliation links (+10%) are counted in context layer
-    # when those associations are preloaded, since they're not directly accessible here
+        field_score(data.description && data.description != "", 15) +
+        field_score(data.categories != nil && data.categories != [], 10) +
+        field_score(has_tags, 10) +
+        field_score(data.project_date != nil, 10) +
+        field_score(data.cover_media_item_id != nil, 15)
 
     put_change(changeset, :completion_percentage, min(percentage, 100))
   end
+
+  defp tags_present?(_changeset, %{"tag_ids" => tag_ids}, _data) when is_list(tag_ids) do
+    tag_ids |> Enum.reject(&(&1 == "" || is_nil(&1))) |> Enum.any?()
+  end
+
+  defp tags_present?(changeset, _attrs, data) do
+    case get_change(changeset, :tags) do
+      nil -> Ecto.assoc_loaded?(data.tags) && data.tags != []
+      tags -> tags != []
+    end
+  end
+
+  defp field_score(true, points), do: points
+  defp field_score(false, _points), do: 0
+  defp field_score(nil, _points), do: 0
 
   # Validates categories: max 10 categories, each max 50 chars
   defp validate_categories(changeset) do

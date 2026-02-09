@@ -121,7 +121,7 @@ defmodule Mix.Tasks.Faq.ExportSql do
     -- Export complete
     """
 
-    body = faqs |> Enum.map(&generate_insert_statement/1) |> Enum.join("\n")
+    body = Enum.map_join(faqs, "\n", &generate_insert_statement/1)
 
     header <> body <> footer
   end

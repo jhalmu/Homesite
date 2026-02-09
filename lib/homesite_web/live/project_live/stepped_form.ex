@@ -3,6 +3,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
 
   alias Homesite.Content
   alias Homesite.Media
+  alias Homesite.Media.ContentSection
   alias Homesite.Media.Project
   alias Homesite.Media.ProjectTemplate
 
@@ -213,42 +214,20 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
   def handle_event("add_collaborator", _params, socket) do
     new_collab = socket.assigns.new_collaborator
 
-    if new_collab.name == "" do
-      {:noreply, put_flash(socket, :error, gettext("Collaborator name is required"))}
-    else
-      if socket.assigns.project.id do
-        # Edit mode: persist immediately
-        attrs = %{
-          "name" => new_collab.name,
-          "contact" => new_collab.contact,
-          "contact_type" => new_collab.contact_type,
-          "project_id" => socket.assigns.project.id
-        }
+    cond do
+      new_collab.name == "" ->
+        {:noreply, put_flash(socket, :error, gettext("Collaborator name is required"))}
 
-        case Media.create_collaborator(socket.assigns.current_scope, attrs) do
-          {:ok, _collaborator} ->
-            collaborators =
-              Media.list_collaborators(socket.assigns.current_scope, socket.assigns.project.id)
-
-            {:noreply,
-             socket
-             |> assign(:collaborators, collaborators)
-             |> assign(:new_collaborator, %{name: "", contact: "", contact_type: "none"})
-             |> assign(:input_reset_key, socket.assigns.input_reset_key + 1)
-             |> put_flash(:info, gettext("Collaborator added"))}
-
-          {:error, _changeset} ->
-            {:noreply, put_flash(socket, :error, gettext("Failed to add collaborator"))}
-        end
-      else
-        # New mode: project doesn't exist yet, show message
+      is_nil(socket.assigns.project.id) ->
         {:noreply,
          put_flash(
            socket,
            :info,
            gettext("Save the project first, then you can add collaborators")
          )}
-      end
+
+      true ->
+        persist_collaborator(socket, new_collab)
     end
   end
 
@@ -275,40 +254,16 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
   def handle_event("add_affiliation_link", _params, socket) do
     new_link = socket.assigns.new_link
 
-    if new_link.title == "" or new_link.url == "" do
-      {:noreply, put_flash(socket, :error, gettext("Link title and URL are required"))}
-    else
-      if socket.assigns.project.id do
-        # Edit mode: persist immediately
-        attrs = %{
-          "title" => new_link.title,
-          "url" => new_link.url,
-          "project_id" => socket.assigns.project.id
-        }
+    cond do
+      new_link.title == "" or new_link.url == "" ->
+        {:noreply, put_flash(socket, :error, gettext("Link title and URL are required"))}
 
-        case Media.create_affiliation_link(socket.assigns.current_scope, attrs) do
-          {:ok, _link} ->
-            links =
-              Media.list_affiliation_links(
-                socket.assigns.current_scope,
-                socket.assigns.project.id
-              )
-
-            {:noreply,
-             socket
-             |> assign(:affiliation_links, links)
-             |> assign(:new_link, %{title: "", url: ""})
-             |> assign(:input_reset_key, socket.assigns.input_reset_key + 1)
-             |> put_flash(:info, gettext("Link added"))}
-
-          {:error, _changeset} ->
-            {:noreply, put_flash(socket, :error, gettext("Failed to add link"))}
-        end
-      else
-        # New mode: project doesn't exist yet, show message
+      is_nil(socket.assigns.project.id) ->
         {:noreply,
          put_flash(socket, :info, gettext("Save the project first, then you can add links"))}
-      end
+
+      true ->
+        persist_affiliation_link(socket, new_link)
     end
   end
 
@@ -446,19 +401,19 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
   def handle_event("create-and-add-tag", %{"name" => name}, socket) do
     case Content.get_or_create_tag(socket.assigns.current_scope, %{"name" => name}) do
       {:ok, tag} ->
-        if not Enum.any?(socket.assigns.selected_tags, &(&1.id == tag.id)) do
+        if Enum.any?(socket.assigns.selected_tags, &(&1.id == tag.id)) do
+          {:noreply,
+           socket
+           |> assign(:tag_search_query, "")
+           |> assign(:tag_suggestions, [])
+           |> put_flash(:info, gettext("Tag already selected"))}
+        else
           {:noreply,
            socket
            |> assign(:selected_tags, socket.assigns.selected_tags ++ [tag])
            |> assign(:tag_search_query, "")
            |> assign(:tag_suggestions, [])
            |> assign(:similar_tags_warning, nil)}
-        else
-          {:noreply,
-           socket
-           |> assign(:tag_search_query, "")
-           |> assign(:tag_suggestions, [])
-           |> put_flash(:info, gettext("Tag already selected"))}
         end
 
       {:error, _} ->
@@ -724,7 +679,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
 
     changeset =
       section
-      |> Homesite.Media.ContentSection.changeset(section_params, socket.assigns.current_scope)
+      |> ContentSection.changeset(section_params, socket.assigns.current_scope)
       |> Map.put(:action, :validate)
 
     # Update modal_section with the current form values so the form fields
@@ -869,6 +824,58 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
     {:noreply, assign(socket, :content_sections, sections)}
   end
 
+  defp persist_collaborator(socket, new_collab) do
+    attrs = %{
+      "name" => new_collab.name,
+      "contact" => new_collab.contact,
+      "contact_type" => new_collab.contact_type,
+      "project_id" => socket.assigns.project.id
+    }
+
+    case Media.create_collaborator(socket.assigns.current_scope, attrs) do
+      {:ok, _collaborator} ->
+        collaborators =
+          Media.list_collaborators(socket.assigns.current_scope, socket.assigns.project.id)
+
+        {:noreply,
+         socket
+         |> assign(:collaborators, collaborators)
+         |> assign(:new_collaborator, %{name: "", contact: "", contact_type: "none"})
+         |> assign(:input_reset_key, socket.assigns.input_reset_key + 1)
+         |> put_flash(:info, gettext("Collaborator added"))}
+
+      {:error, _changeset} ->
+        {:noreply, put_flash(socket, :error, gettext("Failed to add collaborator"))}
+    end
+  end
+
+  defp persist_affiliation_link(socket, new_link) do
+    attrs = %{
+      "title" => new_link.title,
+      "url" => new_link.url,
+      "project_id" => socket.assigns.project.id
+    }
+
+    case Media.create_affiliation_link(socket.assigns.current_scope, attrs) do
+      {:ok, _link} ->
+        links =
+          Media.list_affiliation_links(
+            socket.assigns.current_scope,
+            socket.assigns.project.id
+          )
+
+        {:noreply,
+         socket
+         |> assign(:affiliation_links, links)
+         |> assign(:new_link, %{title: "", url: ""})
+         |> assign(:input_reset_key, socket.assigns.input_reset_key + 1)
+         |> put_flash(:info, gettext("Link added"))}
+
+      {:error, _changeset} ->
+        {:noreply, put_flash(socket, :error, gettext("Failed to add link"))}
+    end
+  end
+
   # Helper to add an item to a metadata array (categories, genres, etc.)
   defp add_metadata_item(socket, key, value) do
     value = String.trim(value)
@@ -941,7 +948,7 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
 
   defp build_section_form(section, scope) do
     section
-    |> Homesite.Media.ContentSection.changeset(%{}, scope)
+    |> ContentSection.changeset(%{}, scope)
     |> to_form()
   end
 
@@ -1844,21 +1851,10 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
     template_type = assigns.project.template_type || "photography"
     template = ProjectTemplate.get(template_type) || ProjectTemplate.get("photography")
 
-    tip =
-      case template_type do
-        "photography" -> gettext("Add your best shots. First image becomes cover.")
-        "coding" -> gettext("Screenshots, architecture diagrams, or demo GIFs work great.")
-        "writing" -> gettext("Add cover art or related imagery.")
-        "books" -> gettext("Book covers and interior shots.")
-        "gears" -> gettext("Product photos from multiple angles.")
-        "movies" -> gettext("Posters, stills, or behind-the-scenes.")
-        _ -> gettext("Add images to showcase your project.")
-      end
-
     assigns =
       assigns
       |> assign(:template, template)
-      |> assign(:tip, tip)
+      |> assign(:tip, content_step_tip(template_type))
 
     ~H"""
     <div class="space-y-[var(--space-md)]">
@@ -2072,4 +2068,12 @@ defmodule HomesiteWeb.ProjectLive.SteppedForm do
     </div>
     """
   end
+
+  defp content_step_tip("photography"), do: gettext("Add your best shots. First image becomes cover.")
+  defp content_step_tip("coding"), do: gettext("Screenshots, architecture diagrams, or demo GIFs work great.")
+  defp content_step_tip("writing"), do: gettext("Add cover art or related imagery.")
+  defp content_step_tip("books"), do: gettext("Book covers and interior shots.")
+  defp content_step_tip("gears"), do: gettext("Product photos from multiple angles.")
+  defp content_step_tip("movies"), do: gettext("Posters, stills, or behind-the-scenes.")
+  defp content_step_tip(_), do: gettext("Add images to showcase your project.")
 end

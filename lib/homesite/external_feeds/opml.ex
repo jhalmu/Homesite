@@ -160,54 +160,54 @@ defmodule Homesite.ExternalFeeds.OPML do
   end
 
   defp parse_opml(opml_content) when is_binary(opml_content) do
-    try do
-      # Parse top-level outlines with their nested children
-      top_level_outlines =
-        opml_content
-        |> xpath(~x"//body/outline"l,
+    # Parse top-level outlines with their nested children
+    top_level_outlines =
+      opml_content
+      |> xpath(~x"//body/outline"l,
+        text: ~x"./@text"s,
+        title: ~x"./@title"s,
+        xml_url: ~x"./@xmlUrl"s,
+        type: ~x"./@type"s,
+        children: [
+          ~x"./outline"l,
           text: ~x"./@text"s,
           title: ~x"./@title"s,
           xml_url: ~x"./@xmlUrl"s,
-          type: ~x"./@type"s,
-          children: [
-            ~x"./outline"l,
-            text: ~x"./@text"s,
-            title: ~x"./@title"s,
-            xml_url: ~x"./@xmlUrl"s,
-            type: ~x"./@type"s
-          ]
-        )
+          type: ~x"./@type"s
+        ]
+      )
 
-      # Flatten the hierarchy, assigning category from parent folder
-      outlines = flatten_outlines(top_level_outlines)
+    # Flatten the hierarchy, assigning category from parent folder
+    outlines = flatten_outlines(top_level_outlines)
 
-      {:ok, outlines}
-    rescue
-      e ->
-        {:error, "Failed to parse OPML: #{inspect(e)}"}
-    catch
-      :exit, reason ->
-        {:error, "Failed to parse OPML: #{inspect(reason)}"}
-    end
+    {:ok, outlines}
+  rescue
+    e ->
+      {:error, "Failed to parse OPML: #{inspect(e)}"}
+  catch
+    :exit, reason ->
+      {:error, "Failed to parse OPML: #{inspect(reason)}"}
   end
 
   # Flatten hierarchical outlines, assigning category based on parent folder
   defp flatten_outlines(top_level_outlines) do
-    Enum.flat_map(top_level_outlines, fn outline ->
-      children = Map.get(outline, :children, [])
-      xml_url = Map.get(outline, :xml_url)
-      folder_name = non_empty(Map.get(outline, :text)) || non_empty(Map.get(outline, :title))
+    Enum.flat_map(top_level_outlines, &flatten_outline/1)
+  end
 
-      if is_nil(xml_url) or xml_url == "" do
-        # This is a folder - add category to children
-        Enum.map(children, fn child ->
-          Map.put(child, :category, folder_name || "")
-        end)
-      else
-        # This is a direct feed (no folder)
-        [Map.put(outline, :category, "") |> Map.delete(:children)]
-      end
-    end)
+  defp flatten_outline(outline) do
+    children = Map.get(outline, :children, [])
+    xml_url = Map.get(outline, :xml_url)
+    folder_name = non_empty(Map.get(outline, :text)) || non_empty(Map.get(outline, :title))
+
+    if is_nil(xml_url) or xml_url == "" do
+      # This is a folder - add category to children
+      Enum.map(children, fn child ->
+        Map.put(child, :category, folder_name || "")
+      end)
+    else
+      # This is a direct feed (no folder)
+      [Map.put(outline, :category, "") |> Map.delete(:children)]
+    end
   end
 
   defp import_feeds(scope, outlines, create_folders, skip_duplicates) do
@@ -251,74 +251,92 @@ defmodule Homesite.ExternalFeeds.OPML do
          errors
        ) do
     xml_url = Map.get(outline, :xml_url)
-    # Handle empty strings from SweetXml (which returns "" for missing attributes)
+
+    case classify_outline(xml_url, existing_urls) do
+      :skip ->
+        {imported, skipped, errors, folder_cache}
+
+      :duplicate ->
+        {imported, [xml_url | skipped], errors, folder_cache}
+
+      :import ->
+        do_import_outline(
+          scope, outline, xml_url, create_folders, folder_cache, imported, skipped, errors
+        )
+    end
+  end
+
+  defp classify_outline(xml_url, _existing_urls) when is_nil(xml_url) or xml_url == "", do: :skip
+
+  defp classify_outline(xml_url, existing_urls) do
+    if MapSet.member?(existing_urls, xml_url), do: :duplicate, else: :import
+  end
+
+  defp do_import_outline(
+         scope, outline, xml_url, create_folders, folder_cache, imported, skipped, errors
+       ) do
     title =
       non_empty(Map.get(outline, :title)) || non_empty(Map.get(outline, :text)) || "Untitled Feed"
 
     category = Map.get(outline, :category)
 
-    cond do
-      # Skip if no xmlUrl (likely a folder/category outline)
-      is_nil(xml_url) or xml_url == "" ->
-        {imported, skipped, errors, folder_cache}
+    {folder_id, updated_cache} =
+      resolve_folder(scope, category, create_folders, folder_cache)
 
-      # Skip if duplicate URL
-      MapSet.member?(existing_urls, xml_url) ->
-        {imported, [xml_url | skipped], errors, folder_cache}
+    attrs = %{
+      name: title,
+      url: xml_url,
+      feed_type: detect_feed_type(xml_url),
+      enabled: true,
+      folder_id: folder_id
+    }
 
-      # Import feed
-      true ->
-        {folder_id, updated_cache} =
-          if create_folders and category != nil and category != "" do
-            get_or_create_folder(scope, category, folder_cache)
-          else
-            {nil, folder_cache}
-          end
+    case ExternalFeeds.create_feed_source(scope, attrs) do
+      {:ok, _feed} ->
+        {[xml_url | imported], skipped, errors, updated_cache}
 
-        attrs = %{
-          name: title,
-          url: xml_url,
-          feed_type: detect_feed_type(xml_url),
-          enabled: true,
-          folder_id: folder_id
-        }
-
-        case ExternalFeeds.create_feed_source(scope, attrs) do
-          {:ok, _feed} ->
-            {[xml_url | imported], skipped, errors, updated_cache}
-
-          {:error, changeset} ->
-            error_msg = "#{title}: #{format_changeset_errors(changeset)}"
-            {imported, skipped, [error_msg | errors], updated_cache}
-        end
+      {:error, changeset} ->
+        error_msg = "#{title}: #{format_changeset_errors(changeset)}"
+        {imported, skipped, [error_msg | errors], updated_cache}
     end
+  end
+
+  defp resolve_folder(scope, category, true, folder_cache)
+       when not is_nil(category) and category != "" do
+    get_or_create_folder(scope, category, folder_cache)
+  end
+
+  defp resolve_folder(_scope, _category, _create_folders, folder_cache) do
+    {nil, folder_cache}
   end
 
   defp get_or_create_folder(scope, category_name, folder_cache) do
     case Map.get(folder_cache, category_name) do
       nil ->
-        # Try to find existing folder
-        existing =
-          ExternalFeeds.list_feed_folders(scope)
-          |> Enum.find(fn f -> f.name == category_name end)
-
-        case existing do
-          nil ->
-            # Create new folder
-            case ExternalFeeds.create_feed_folder(scope, %{name: category_name}) do
-              {:ok, folder} ->
-                {folder.id, Map.put(folder_cache, category_name, folder.id)}
-
-              {:error, _} ->
-                {nil, folder_cache}
-            end
-
-          folder ->
-            {folder.id, Map.put(folder_cache, category_name, folder.id)}
-        end
+        find_or_create_folder(scope, category_name, folder_cache)
 
       folder_id ->
         {folder_id, folder_cache}
+    end
+  end
+
+  defp find_or_create_folder(scope, category_name, folder_cache) do
+    existing =
+      ExternalFeeds.list_feed_folders(scope)
+      |> Enum.find(fn f -> f.name == category_name end)
+
+    case existing do
+      nil ->
+        case ExternalFeeds.create_feed_folder(scope, %{name: category_name}) do
+          {:ok, folder} ->
+            {folder.id, Map.put(folder_cache, category_name, folder.id)}
+
+          {:error, _} ->
+            {nil, folder_cache}
+        end
+
+      folder ->
+        {folder.id, Map.put(folder_cache, category_name, folder.id)}
     end
   end
 

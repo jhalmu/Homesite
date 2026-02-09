@@ -2,6 +2,8 @@ defmodule Homesite.Accounts.DataExportTest do
   use Homesite.DataCase
 
   alias Homesite.Accounts
+  alias Homesite.Accounts.Scope
+  alias Repo
 
   import Homesite.AccountsFixtures
   import Homesite.ContentFixtures
@@ -20,7 +22,7 @@ defmodule Homesite.Accounts.DataExportTest do
       {:ok, user} =
         user
         |> Ecto.Changeset.change(%{display_name: "Test User", bio: "My bio"})
-        |> Homesite.Repo.update()
+        |> Repo.update()
 
       {:ok, zip_binary} = Accounts.export_user_data(user)
       {:ok, files} = :zip.unzip(zip_binary, [:memory])
@@ -38,7 +40,7 @@ defmodule Homesite.Accounts.DataExportTest do
 
     test "ZIP contains posts.json with user's posts" do
       user = user_fixture()
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
       _post = post_fixture(scope, %{title: "My Post", body: "Post content"})
 
       {:ok, zip_binary} = Accounts.export_user_data(user)
@@ -55,7 +57,7 @@ defmodule Homesite.Accounts.DataExportTest do
 
     test "ZIP contains tags.json with user's tags" do
       user = user_fixture()
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
       tag = tag_fixture(scope, %{name: "My Tag"})
 
       {:ok, zip_binary} = Accounts.export_user_data(user)
@@ -81,7 +83,7 @@ defmodule Homesite.Accounts.DataExportTest do
       {:ok, user} =
         user
         |> Ecto.Changeset.change(%{avatar: "/" <> avatar_path})
-        |> Homesite.Repo.update()
+        |> Repo.update()
 
       {:ok, zip_binary} = Accounts.export_user_data(user)
       {:ok, files} = :zip.unzip(zip_binary, [:memory])

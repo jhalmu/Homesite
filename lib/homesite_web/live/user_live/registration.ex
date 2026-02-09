@@ -2,6 +2,7 @@ defmodule HomesiteWeb.UserLive.Registration do
   use HomesiteWeb, :live_view
 
   alias Homesite.Accounts
+  alias Homesite.Accounts.Scope
   alias Homesite.Accounts.User
   alias Homesite.Settings
 
@@ -150,7 +151,7 @@ defmodule HomesiteWeb.UserLive.Registration do
   @impl true
   def mount(params, _session, %{assigns: %{current_scope: current_scope}} = socket) do
     # Allow admins to view the registration page, but redirect regular users
-    if current_scope && current_scope.user && !Homesite.Accounts.Scope.admin?(current_scope) do
+    if current_scope && current_scope.user && !Scope.admin?(current_scope) do
       {:ok, redirect(socket, to: HomesiteWeb.UserAuth.signed_in_path(socket))}
     else
       # Get invitation code from URL params (e.g., /users/register?invite=ABC123XY)

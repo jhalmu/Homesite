@@ -271,15 +271,7 @@ defmodule Homesite.ThreatReputation.Monitor do
             n -> Map.put(ips, ip, n - 1)
           end
 
-        users =
-          if username do
-            case Map.get(users, username, 0) do
-              n when n <= 1 -> Map.delete(users, username)
-              n -> Map.put(users, username, n - 1)
-            end
-          else
-            users
-          end
+        users = decrement_username_count(users, username)
 
         {ips, users, count + 1}
       end)
@@ -296,6 +288,15 @@ defmodule Homesite.ThreatReputation.Monitor do
         events_in_window: max(0, state.events_in_window - evicted_count),
         unique_ips_in_window: map_size(ip_counts)
     }
+  end
+
+  defp decrement_username_count(users, nil), do: users
+
+  defp decrement_username_count(users, username) do
+    case Map.get(users, username, 0) do
+      n when n <= 1 -> Map.delete(users, username)
+      n -> Map.put(users, username, n - 1)
+    end
   end
 
   defp detect_attacks(state, event) do

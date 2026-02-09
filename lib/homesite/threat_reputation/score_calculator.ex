@@ -224,15 +224,13 @@ defmodule Homesite.ThreatReputation.ScoreCalculator do
       |> Repo.one()
 
     base_score =
-      cond do
-        is_nil(stats) or stats.total_ips == 0 ->
-          0
-
-        true ->
-          # Weight: 60% average IP score, 40% blocked ratio
-          avg_score = stats.avg_score || 0
-          blocked_ratio = (stats.blocked_ips || 0) / stats.total_ips * 100
-          round(avg_score * 0.6 + blocked_ratio * 0.4)
+      if is_nil(stats) or stats.total_ips == 0 do
+        0
+      else
+        # Weight: 60% average IP score, 40% blocked ratio
+        avg_score = stats.avg_score || 0
+        blocked_ratio = (stats.blocked_ips || 0) / stats.total_ips * 100
+        round(avg_score * 0.6 + blocked_ratio * 0.4)
       end
 
     total = min(base_score + watchlist_boost, 100)

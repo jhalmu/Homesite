@@ -7,7 +7,7 @@ defmodule Homesite.Accounts do
   alias Homesite.Analytics
   alias Homesite.Repo
 
-  alias Homesite.Accounts.{AuthLog, Invitation, User, UserNotifier, UserToken}
+  alias Homesite.Accounts.{AuthLog, AvatarGenerator, Invitation, User, UsernameChange, UserNotifier, UserToken}
   alias Homesite.Settings
 
   # Account lockout settings
@@ -173,60 +173,68 @@ defmodule Homesite.Accounts do
       :ok ->
         # CRITICAL: Wrap in transaction to ensure atomicity
         Repo.transaction(fn ->
-          # Lock invitation row to prevent race conditions
-          invitation =
-            from(i in Invitation, where: i.code == ^invitation_code, lock: "FOR UPDATE")
-            |> Repo.one()
-
-          # Re-validate inside transaction (code could have been deleted or exhausted)
-          cond do
-            is_nil(invitation) ->
-              Repo.rollback(:invitation_deleted)
-
-            not Invitation.valid?(invitation) ->
-              Repo.rollback(:invitation_invalid)
-
-            true ->
-              # Create user with invitation tracking
-              # Apply password changeset only if password is provided (supports passwordless registration)
-              changeset =
-                %User{}
-                |> User.email_changeset(attrs)
-                |> maybe_apply_password_changeset(attrs)
-                |> Ecto.Changeset.cast(%{invitation_code_used: invitation_code}, [
-                  :invitation_code_used
-                ])
-
-              with {:ok, user} <- Repo.insert(changeset),
-                   {:ok, _invitation} <- increment_invitation_usage(invitation) do
-                user
-              else
-                {:error, changeset} -> Repo.rollback(changeset)
-              end
-          end
+          register_with_locked_invitation(attrs, invitation_code)
         end)
-        |> case do
-          {:ok, user} ->
-            # Log registration activity asynchronously
-            log_registration_async(user.id)
-            {:ok, user}
-
-          {:error, %Ecto.Changeset{} = changeset} ->
-            {:error, changeset}
-
-          {:error, reason} when reason in [:invitation_deleted, :invitation_invalid] ->
-            {:error,
-             %User{}
-             |> User.email_changeset(attrs)
-             |> Ecto.Changeset.add_error(:invitation_code, invitation_error_message(:not_found))
-             |> Map.put(:action, :insert)}
-        end
+        |> handle_invitation_registration_result(attrs)
 
       {:error, reason} ->
         {:error,
          %User{}
          |> User.email_changeset(attrs)
          |> Ecto.Changeset.add_error(:invitation_code, invitation_error_message(reason))
+         |> Map.put(:action, :insert)}
+    end
+  end
+
+  defp register_with_locked_invitation(attrs, invitation_code) do
+    # Lock invitation row to prevent race conditions
+    invitation =
+      from(i in Invitation, where: i.code == ^invitation_code, lock: "FOR UPDATE")
+      |> Repo.one()
+
+    # Re-validate inside transaction (code could have been deleted or exhausted)
+    cond do
+      is_nil(invitation) ->
+        Repo.rollback(:invitation_deleted)
+
+      not Invitation.valid?(invitation) ->
+        Repo.rollback(:invitation_invalid)
+
+      true ->
+        # Create user with invitation tracking
+        # Apply password changeset only if password is provided (supports passwordless registration)
+        changeset =
+          %User{}
+          |> User.email_changeset(attrs)
+          |> maybe_apply_password_changeset(attrs)
+          |> Ecto.Changeset.cast(%{invitation_code_used: invitation_code}, [
+            :invitation_code_used
+          ])
+
+        with {:ok, user} <- Repo.insert(changeset),
+             {:ok, _invitation} <- increment_invitation_usage(invitation) do
+          user
+        else
+          {:error, changeset} -> Repo.rollback(changeset)
+        end
+    end
+  end
+
+  defp handle_invitation_registration_result(transaction_result, attrs) do
+    case transaction_result do
+      {:ok, user} ->
+        # Log registration activity asynchronously
+        log_registration_async(user.id)
+        {:ok, user}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:error, changeset}
+
+      {:error, reason} when reason in [:invitation_deleted, :invitation_invalid] ->
+        {:error,
+         %User{}
+         |> User.email_changeset(attrs)
+         |> Ecto.Changeset.add_error(:invitation_code, invitation_error_message(:not_found))
          |> Map.put(:action, :insert)}
     end
   end
@@ -438,7 +446,7 @@ defmodule Homesite.Accounts do
   end
 
   def get_avatar_url(user) do
-    Homesite.Accounts.AvatarGenerator.generate_avatar(user)
+    AvatarGenerator.generate_avatar(user)
   end
 
   @doc """
@@ -544,8 +552,8 @@ defmodule Homesite.Accounts do
       user_agent: Keyword.get(opts, :user_agent)
     }
 
-    %Homesite.Accounts.UsernameChange{}
-    |> Homesite.Accounts.UsernameChange.changeset(attrs)
+    %UsernameChange{}
+    |> UsernameChange.changeset(attrs)
     |> Repo.insert()
   end
 
@@ -561,7 +569,7 @@ defmodule Homesite.Accounts do
 
   """
   def list_username_changes(user_id) do
-    Homesite.Accounts.UsernameChange
+    UsernameChange
     |> where([c], c.user_id == ^user_id)
     |> order_by([c], desc: c.changed_at)
     |> Repo.all()
@@ -936,27 +944,29 @@ defmodule Homesite.Accounts do
   """
   def delete_user_account(%User{} = user, mode) when mode in ["anonymize", "full"] do
     Repo.transaction(fn ->
-      case mode do
-        "anonymize" ->
-          # Delete user - the foreign key constraint will nilify posts automatically
-          # Posts remain with user_id = NULL (shown as "Deleted User" in UI)
-          case Repo.delete(user) do
-            {:ok, deleted_user} -> deleted_user
-            {:error, changeset} -> Repo.rollback(changeset)
-          end
-
-        "full" ->
-          # Delete all user's posts first (full deletion mode)
-          from(p in Homesite.Content.Post, where: p.user_id == ^user.id)
-          |> Repo.delete_all()
-
-          # Delete user - other cascades will handle remaining relations
-          case Repo.delete(user) do
-            {:ok, deleted_user} -> deleted_user
-            {:error, changeset} -> Repo.rollback(changeset)
-          end
-      end
+      perform_user_deletion(user, mode)
     end)
+  end
+
+  defp perform_user_deletion(user, "anonymize") do
+    # Delete user - the foreign key constraint will nilify posts automatically
+    # Posts remain with user_id = NULL (shown as "Deleted User" in UI)
+    case Repo.delete(user) do
+      {:ok, deleted_user} -> deleted_user
+      {:error, changeset} -> Repo.rollback(changeset)
+    end
+  end
+
+  defp perform_user_deletion(user, "full") do
+    # Delete all user's posts first (full deletion mode)
+    from(p in Homesite.Content.Post, where: p.user_id == ^user.id)
+    |> Repo.delete_all()
+
+    # Delete user - other cascades will handle remaining relations
+    case Repo.delete(user) do
+      {:ok, deleted_user} -> deleted_user
+      {:error, changeset} -> Repo.rollback(changeset)
+    end
   end
 
   @doc """

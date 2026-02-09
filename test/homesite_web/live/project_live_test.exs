@@ -5,6 +5,8 @@ defmodule HomesiteWeb.ProjectLiveTest do
   import Homesite.AccountsFixtures
   import Homesite.MediaFixtures
 
+  alias Homesite.Accounts.Scope
+
   describe "ProjectLive.Index" do
     setup [:create_user_and_log_in]
 
@@ -1563,7 +1565,7 @@ defmodule HomesiteWeb.ProjectLiveTest do
   # Helper to create user and log in
   defp create_user_and_log_in(%{conn: conn}) do
     user = user_fixture()
-    scope = Homesite.Accounts.Scope.for_user(user)
+    scope = Scope.for_user(user)
     conn = log_in_user(conn, user)
     %{conn: conn, user: user, scope: scope}
   end

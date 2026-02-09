@@ -273,18 +273,21 @@ defmodule Homesite.Content do
         {:ok, tag}
 
       {:error, %Ecto.Changeset{errors: errors} = changeset} ->
-        # Check if error is due to unique constraint (race condition)
-        case Keyword.get(errors, :name) do
-          {msg, _} when msg in ["This public tag name already exists"] and retries > 0 ->
-            # Another user created it concurrently, fetch and return
-            case Repo.get_by(Tag, name: attrs["name"], is_public: true) do
-              %Tag{} = tag -> {:ok, tag}
-              nil -> create_tag_with_retry(scope, attrs, retries - 1)
-            end
+        handle_tag_creation_error(scope, attrs, errors, changeset, retries)
+    end
+  end
 
-          _ ->
-            {:error, changeset}
+  defp handle_tag_creation_error(scope, attrs, errors, changeset, retries) do
+    case Keyword.get(errors, :name) do
+      {msg, _} when msg in ["This public tag name already exists"] and retries > 0 ->
+        # Another user created it concurrently, fetch and return
+        case Repo.get_by(Tag, name: attrs["name"], is_public: true) do
+          %Tag{} = tag -> {:ok, tag}
+          nil -> create_tag_with_retry(scope, attrs, retries - 1)
         end
+
+      _ ->
+        {:error, changeset}
     end
   end
 

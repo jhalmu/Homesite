@@ -5,11 +5,12 @@ defmodule HomesiteWeb.FeedControllerTest do
   import Homesite.ContentFixtures
 
   alias Homesite.Accounts
+  alias Homesite.Accounts.Scope
 
   describe "User feed with ID routing" do
     setup do
       user = user_fixture()
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
       post = post_fixture(scope, %{published_at: DateTime.utc_now()})
 
       %{user: user, scope: scope, post: post}
@@ -50,7 +51,7 @@ defmodule HomesiteWeb.FeedControllerTest do
     setup do
       user = user_fixture()
       {:ok, user} = Accounts.update_user_username(user, %{username: "testauthor"})
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
       post = post_fixture(scope, %{published_at: DateTime.utc_now()})
 
       %{user: user, scope: scope, post: post}
@@ -115,7 +116,7 @@ defmodule HomesiteWeb.FeedControllerTest do
     test "both ID and username routes return same content", %{conn: conn} do
       user = user_fixture()
       {:ok, user} = Accounts.update_user_username(user, %{username: "author123"})
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
       _post = post_fixture(scope, %{published_at: DateTime.utc_now()})
 
       conn_id = get(conn, ~p"/users/#{user.id}/feed.json")
@@ -136,7 +137,7 @@ defmodule HomesiteWeb.FeedControllerTest do
     test "ID and username routes share same cache", %{conn: conn} do
       user = user_fixture()
       {:ok, user} = Accounts.update_user_username(user, %{username: "cached"})
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
       _post = post_fixture(scope, %{published_at: DateTime.utc_now()})
 
       # Access via username first

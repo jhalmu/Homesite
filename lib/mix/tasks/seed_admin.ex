@@ -78,91 +78,93 @@ defmodule Mix.Tasks.SeedAdmin do
     # Check if user already exists
     case Repo.get_by(User, email: email) do
       nil ->
-        # Create new admin user
-        attrs = %{
-          email: email,
-          password: password,
-          role: "admin",
-          admin_flowers: flowers,
-          display_name: "Admin User"
-        }
-
-        case Accounts.register_admin(attrs) do
-          {:ok, user} ->
-            # Create an unlimited invitation code for this admin
-            {:ok, invitation} = Accounts.create_invitation(user, %{})
-
-            Mix.shell().info("""
-
-            ✅ Admin user created successfully!
-
-            Email:         #{user.email}
-            Role:          #{user.role}
-            Flowers:       #{"🌸" |> String.duplicate(flowers)}  (Level #{flowers})
-            Password:      #{password}
-            Invitation:    #{invitation.code}
-
-            ⚠️  IMPORTANT: Save this password and invitation code securely!
-
-            The invitation code can be used by new users to register.
-            Share it only with people you want to grant access to.
-            """)
-
-            log_admin_creation(user, flowers, invitation.code)
-
-          {:error, changeset} ->
-            Mix.shell().error("Error creating admin user:")
-
-            Enum.each(changeset.errors, fn {field, {msg, _}} ->
-              Mix.shell().error("  - #{field}: #{msg}")
-            end)
-
-            System.halt(1)
-        end
+        create_new_admin(email, password, flowers)
 
       existing_user ->
-        # User exists, update to admin with flowers
-        changeset =
-          existing_user
-          |> Ecto.Changeset.change(%{role: "admin", admin_flowers: flowers})
-
-        case Repo.update(changeset) do
-          {:ok, user} ->
-            # Create an invitation code if the user doesn't have one
-            invitation =
-              case Accounts.list_invitations(user) do
-                [] ->
-                  {:ok, inv} = Accounts.create_invitation(user, %{})
-                  inv
-
-                [inv | _] ->
-                  inv
-              end
-
-            Mix.shell().info("""
-
-            ✅ Existing user updated to admin!
-
-            Email:         #{user.email}
-            Role:          #{user.role}
-            Flowers:       #{"🌸" |> String.duplicate(flowers)}  (Level #{flowers})
-            Invitation:    #{invitation.code}
-
-            Note: Password was not changed. Use existing password or reset via settings.
-            """)
-
-            log_admin_creation(user, flowers, invitation.code)
-
-          {:error, changeset} ->
-            Mix.shell().error("Error updating user to admin:")
-
-            Enum.each(changeset.errors, fn {field, {msg, _}} ->
-              Mix.shell().error("  - #{field}: #{msg}")
-            end)
-
-            System.halt(1)
-        end
+        update_existing_to_admin(existing_user, flowers)
     end
+  end
+
+  defp create_new_admin(email, password, flowers) do
+    attrs = %{
+      email: email,
+      password: password,
+      role: "admin",
+      admin_flowers: flowers,
+      display_name: "Admin User"
+    }
+
+    case Accounts.register_admin(attrs) do
+      {:ok, user} ->
+        {:ok, invitation} = Accounts.create_invitation(user, %{})
+
+        Mix.shell().info("""
+
+        ✅ Admin user created successfully!
+
+        Email:         #{user.email}
+        Role:          #{user.role}
+        Flowers:       #{"🌸" |> String.duplicate(flowers)}  (Level #{flowers})
+        Password:      #{password}
+        Invitation:    #{invitation.code}
+
+        ⚠️  IMPORTANT: Save this password and invitation code securely!
+
+        The invitation code can be used by new users to register.
+        Share it only with people you want to grant access to.
+        """)
+
+        log_admin_creation(user, flowers, invitation.code)
+
+      {:error, changeset} ->
+        print_errors_and_halt("Error creating admin user:", changeset)
+    end
+  end
+
+  defp update_existing_to_admin(existing_user, flowers) do
+    changeset =
+      existing_user
+      |> Ecto.Changeset.change(%{role: "admin", admin_flowers: flowers})
+
+    case Repo.update(changeset) do
+      {:ok, user} ->
+        invitation =
+          case Accounts.list_invitations(user) do
+            [] ->
+              {:ok, inv} = Accounts.create_invitation(user, %{})
+              inv
+
+            [inv | _] ->
+              inv
+          end
+
+        Mix.shell().info("""
+
+        ✅ Existing user updated to admin!
+
+        Email:         #{user.email}
+        Role:          #{user.role}
+        Flowers:       #{"🌸" |> String.duplicate(flowers)}  (Level #{flowers})
+        Invitation:    #{invitation.code}
+
+        Note: Password was not changed. Use existing password or reset via settings.
+        """)
+
+        log_admin_creation(user, flowers, invitation.code)
+
+      {:error, changeset} ->
+        print_errors_and_halt("Error updating user to admin:", changeset)
+    end
+  end
+
+  defp print_errors_and_halt(message, changeset) do
+    Mix.shell().error(message)
+
+    Enum.each(changeset.errors, fn {field, {msg, _}} ->
+      Mix.shell().error("  - #{field}: #{msg}")
+    end)
+
+    System.halt(1)
   end
 
   defp generate_password do

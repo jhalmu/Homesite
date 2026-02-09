@@ -6,8 +6,8 @@ defmodule Homesite.ExternalFeeds.Adapters.RssAdapter do
 
   @behaviour Homesite.ExternalFeeds.Adapters.FeedAdapter
 
-  alias Homesite.ExternalFeeds.FeedSource
   alias Homesite.ExternalFeeds.Adapters.Helpers
+  alias Homesite.ExternalFeeds.FeedSource
   import SweetXml
   require Logger
 
@@ -50,21 +50,19 @@ defmodule Homesite.ExternalFeeds.Adapters.RssAdapter do
 
   # Parse feed based on type - auto-detect if set to rss/atom
   defp parse_feed(body, feed_type, feed_source) do
-    try do
-      # Auto-detect feed type by checking XML structure
-      detected_type = detect_feed_type(body, feed_type)
+    # Auto-detect feed type by checking XML structure
+    detected_type = detect_feed_type(body, feed_type)
 
-      items =
-        case detected_type do
-          "atom" -> parse_atom(body, feed_source)
-          _ -> parse_rss(body, feed_source)
-        end
+    items =
+      case detected_type do
+        "atom" -> parse_atom(body, feed_source)
+        _ -> parse_rss(body, feed_source)
+      end
 
-      {:ok, items}
-    rescue
-      e ->
-        {:error, "Failed to parse #{feed_type} feed: #{Exception.message(e)}"}
-    end
+    {:ok, items}
+  rescue
+    e ->
+      {:error, "Failed to parse #{feed_type} feed: #{Exception.message(e)}"}
   end
 
   # Auto-detect feed type from XML content
@@ -203,7 +201,7 @@ defmodule Homesite.ExternalFeeds.Adapters.RssAdapter do
       is_binary(item.media_content_url) and item.media_content_url != "" ->
         item.media_content_url
 
-      is_binary(item.enclosure_url) and item.enclosure_url != "" and is_image_enclosure?(item) ->
+      is_binary(item.enclosure_url) and item.enclosure_url != "" and image_enclosure?(item) ->
         item.enclosure_url
 
       true ->
@@ -236,11 +234,11 @@ defmodule Homesite.ExternalFeeds.Adapters.RssAdapter do
   end
 
   # Check if enclosure is an image type
-  defp is_image_enclosure?(%{enclosure_type: type}) when is_binary(type) do
+  defp image_enclosure?(%{enclosure_type: type}) when is_binary(type) do
     String.starts_with?(type, "image/")
   end
 
-  defp is_image_enclosure?(_), do: false
+  defp image_enclosure?(_), do: false
 
   # Add image URL to metadata if present
   defp maybe_add_image(metadata, nil), do: metadata

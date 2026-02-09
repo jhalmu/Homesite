@@ -4,6 +4,7 @@ defmodule HomesiteWeb.UserLive.Settings do
   on_mount {HomesiteWeb.UserAuth, :require_sudo_mode}
 
   alias Homesite.Accounts
+  alias Homesite.Accounts.User
 
   @impl true
   def render(assigns) do
@@ -493,7 +494,7 @@ defmodule HomesiteWeb.UserLive.Settings do
     %{"user" => user_params} = params
 
     # Check if an avatar file has been selected
-    has_avatar_upload? = length(socket.assigns.uploads.avatar.entries) > 0
+    has_avatar_upload? = socket.assigns.uploads.avatar.entries != []
 
     socket =
       if has_avatar_upload? do
@@ -751,7 +752,7 @@ defmodule HomesiteWeb.UserLive.Settings do
 
   # Build timezone options with friendly labels
   defp timezone_options do
-    Homesite.Accounts.User.supported_timezones()
+    User.supported_timezones()
     |> Enum.map(fn tz ->
       label = tz |> String.replace("_", " ") |> String.replace("/", " / ")
       {label, tz}

@@ -6,6 +6,9 @@ defmodule HomesiteWeb.UserLive.ProfileTest do
   import Homesite.ContentFixtures
 
   alias Homesite.Accounts
+  alias Homesite.Accounts.Scope
+  alias Homesite.Content.Post
+  alias Homesite.Repo
 
   describe "Profile page" do
     setup do
@@ -32,7 +35,7 @@ defmodule HomesiteWeb.UserLive.ProfileTest do
     end
 
     test "displays user's published posts", %{conn: conn, user: user} do
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
       post = post_fixture(scope, %{published_at: DateTime.utc_now()})
 
       {:ok, _view, html} = live(conn, ~p"/users/#{user.id}")
@@ -42,14 +45,14 @@ defmodule HomesiteWeb.UserLive.ProfileTest do
     end
 
     test "does not display unpublished posts", %{conn: conn, user: user} do
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
       # Create published and unpublished posts
       _published =
         post_fixture(scope, %{title: "Published Post", published_at: DateTime.utc_now()})
 
       # Create unpublished post directly via repo (bypassing post_fixture validation)
       unpublished =
-        Homesite.Repo.insert!(%Homesite.Content.Post{
+        Repo.insert!(%Post{
           title: "Unpublished Post",
           body: "unpublished content that should not appear",
           slug: "unpublished-#{System.unique_integer([:positive])}",

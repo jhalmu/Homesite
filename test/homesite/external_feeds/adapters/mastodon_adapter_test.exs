@@ -82,7 +82,7 @@ defmodule Homesite.ExternalFeeds.Adapters.MastodonAdapterTest do
       case MastodonAdapter.fetch_items(feed_source) do
         {:ok, items} ->
           assert is_list(items)
-          assert length(items) > 0
+          assert items != []
 
           # Check first item structure
           first_item = List.first(items)

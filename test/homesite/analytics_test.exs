@@ -300,7 +300,7 @@ defmodule Homesite.AnalyticsTest do
       trend = Analytics.activity_trend(7)
 
       # Should have at least one day with data
-      assert length(trend) >= 1
+      assert trend != []
 
       # Today's entry should have count increased by 5
       today_entry =
@@ -358,7 +358,7 @@ defmodule Homesite.AnalyticsTest do
 
       trend = Analytics.search_trend(7)
 
-      assert length(trend) >= 1
+      assert trend != []
 
       today_entry =
         Enum.find(trend, fn t ->

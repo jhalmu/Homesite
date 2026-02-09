@@ -31,6 +31,9 @@ defmodule HomesiteWeb.E2E.AccessibilityTest do
   import HomesiteWeb.PlaywrightJsHelper
   import Homesite.AccountsFixtures
 
+  alias Homesite.Accounts.Scope
+  alias Homesite.ExternalFeeds
+
   setup do
     # Playwright.Case handles sandbox, but we need test invitation for fixtures
     Homesite.DataCase.ensure_test_invitation()
@@ -130,7 +133,7 @@ defmodule HomesiteWeb.E2E.AccessibilityTest do
             v.id == "color-contrast"
           end)
 
-        if length(contrast_violations) > 0 do
+        if contrast_violations != [] do
           IO.puts("\n❌ Color Contrast Violations Found:")
 
           Enum.each(contrast_violations, fn violation ->
@@ -164,7 +167,7 @@ defmodule HomesiteWeb.E2E.AccessibilityTest do
             v.id == "color-contrast"
           end)
 
-        if length(contrast_violations) > 0 do
+        if contrast_violations != [] do
           IO.puts("\n❌ Color Contrast Violations Found (DARK THEME):")
 
           Enum.each(contrast_violations, fn violation ->
@@ -239,7 +242,7 @@ defmodule HomesiteWeb.E2E.AccessibilityTest do
 
       {:ok, post} =
         Homesite.Content.create_post(
-          %Homesite.Accounts.Scope{user: user},
+          %Scope{user: user},
           %{
             title: "Test Post for A11y",
             body: "This is a test post for accessibility testing.",
@@ -273,7 +276,7 @@ defmodule HomesiteWeb.E2E.AccessibilityTest do
 
       {:ok, tag} =
         Homesite.Content.create_tag(
-          %Homesite.Accounts.Scope{user: user},
+          %Scope{user: user},
           %{
             name: "Accessibility",
             description: "Posts about accessibility",
@@ -323,7 +326,7 @@ defmodule HomesiteWeb.E2E.AccessibilityTest do
     @tag :playwright
     test "media library with items has no accessibility violations", %{conn: conn} do
       user = user_fixture()
-      scope = %Homesite.Accounts.Scope{user: user}
+      scope = %Scope{user: user}
 
       # Create a media item
       _media =
@@ -342,7 +345,7 @@ defmodule HomesiteWeb.E2E.AccessibilityTest do
     @tag :playwright
     test "media library orphan filter has accessible button", %{conn: conn} do
       user = user_fixture()
-      scope = %Homesite.Accounts.Scope{user: user}
+      scope = %Scope{user: user}
 
       # Create an orphan media item
       _orphan =
@@ -378,11 +381,11 @@ defmodule HomesiteWeb.E2E.AccessibilityTest do
     @tag :playwright
     test "feed page with items has no accessibility violations", %{conn: conn} do
       user = user_fixture()
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
 
       # Create a feed source and item
       {:ok, feed_source} =
-        Homesite.ExternalFeeds.create_feed_source(scope, %{
+        ExternalFeeds.create_feed_source(scope, %{
           feed_type: "rss",
           name: "Test Blog",
           url: "https://example.com/feed.xml",
@@ -390,7 +393,7 @@ defmodule HomesiteWeb.E2E.AccessibilityTest do
         })
 
       {:ok, _item} =
-        Homesite.ExternalFeeds.upsert_feed_item(feed_source.id, %{
+        ExternalFeeds.upsert_feed_item(feed_source.id, %{
           external_id: "a11y-test",
           title: "Accessible Feed Item",
           content: "Test content for accessibility",

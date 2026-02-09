@@ -189,7 +189,7 @@ defmodule HomesiteWeb.PostLive.Index do
     {:ok,
      socket
      |> assign(:page_title, gettext("Listing Posts"))
-     |> assign(:has_posts, length(posts) > 0)
+     |> assign(:has_posts, posts != [])
      |> stream(:posts, posts)}
   end
 
@@ -248,7 +248,7 @@ defmodule HomesiteWeb.PostLive.Index do
 
     {:noreply,
      socket
-     |> assign(:has_posts, length(posts) > 0)
+     |> assign(:has_posts, posts != [])
      |> stream(:posts, posts, reset: true)}
   end
 

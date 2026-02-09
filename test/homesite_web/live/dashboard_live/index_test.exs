@@ -5,6 +5,8 @@ defmodule HomesiteWeb.DashboardLive.IndexTest do
   import Homesite.AccountsFixtures
   import Homesite.ContentFixtures
 
+  alias Homesite.Accounts.Scope
+
   describe "dashboard page" do
     test "redirects unauthenticated users to login", %{conn: conn} do
       assert {:error, redirect} = live(conn, ~p"/dashboard")
@@ -24,7 +26,7 @@ defmodule HomesiteWeb.DashboardLive.IndexTest do
     test "displays post statistics", %{conn: conn} do
       user = user_fixture()
       conn = log_in_user(conn, user)
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
 
       # Create a published post
       _published_post =
@@ -38,7 +40,7 @@ defmodule HomesiteWeb.DashboardLive.IndexTest do
     test "displays tag statistics", %{conn: conn} do
       user = user_fixture()
       conn = log_in_user(conn, user)
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
 
       _tag = tag_fixture(scope, %{name: "test-tag"})
 
@@ -61,7 +63,7 @@ defmodule HomesiteWeb.DashboardLive.IndexTest do
     test "shows post count", %{conn: conn} do
       user = user_fixture()
       conn = log_in_user(conn, user)
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
 
       # Create 3 published posts
       for i <- 1..3 do
@@ -77,7 +79,7 @@ defmodule HomesiteWeb.DashboardLive.IndexTest do
     test "shows tags count", %{conn: conn} do
       user = user_fixture()
       conn = log_in_user(conn, user)
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
 
       # Create 2 tags
       for i <- 1..2 do

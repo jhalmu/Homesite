@@ -157,9 +157,7 @@ defmodule Mix.Tasks.Seed.Export do
   end
 
   defp generate_faq_list(faqs) do
-    faqs
-    |> Enum.map(&generate_faq_map/1)
-    |> Enum.join(",\n")
+    Enum.map_join(faqs, ",\n", &generate_faq_map/1)
   end
 
   defp generate_faq_map(faq) do

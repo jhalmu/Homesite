@@ -3,13 +3,14 @@ defmodule Homesite.TimelineTest do
 
   import Homesite.AccountsFixtures
 
+  alias Homesite.Accounts.Scope
   alias Homesite.Content
   alias Homesite.ExternalFeeds
   alias Homesite.Timeline
 
   setup do
     user = user_fixture()
-    scope = Homesite.Accounts.Scope.for_user(user)
+    scope = Scope.for_user(user)
 
     # Create a feed source
     {:ok, feed_source} =
@@ -284,7 +285,7 @@ defmodule Homesite.TimelineTest do
 
       # Create user B
       user_b = user_fixture(%{email: "userb@example.com"})
-      scope_b = Homesite.Accounts.Scope.for_user(user_b)
+      scope_b = Scope.for_user(user_b)
 
       {:ok, feed_source_b} =
         ExternalFeeds.create_feed_source(scope_b, %{

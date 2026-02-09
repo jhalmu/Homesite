@@ -20,7 +20,7 @@ defmodule Homesite.Analytics.Geo do
   require Logger
 
   @cache_table :geo_cache
-  @cache_ttl_seconds 86400
+  @cache_ttl_seconds 86_400
   @database_id :geolite2_city
 
   @type geo_result :: %{
@@ -189,19 +189,23 @@ defmodule Homesite.Analytics.Geo do
 
   defp get_cached(ip) do
     if :ets.info(@cache_table) != :undefined do
-      case :ets.lookup(@cache_table, ip) do
-        [{^ip, result, expires_at}] ->
-          if System.system_time(:second) < expires_at do
-            {:ok, result}
-          else
-            :miss
-          end
-
-        [] ->
-          :miss
-      end
+      lookup_cached_entry(ip)
     else
       :miss
+    end
+  end
+
+  defp lookup_cached_entry(ip) do
+    case :ets.lookup(@cache_table, ip) do
+      [{^ip, result, expires_at}] ->
+        if System.system_time(:second) < expires_at do
+          {:ok, result}
+        else
+          :miss
+        end
+
+      [] ->
+        :miss
     end
   end
 

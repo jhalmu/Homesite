@@ -248,22 +248,80 @@ defmodule HomesiteWeb.Export.ProjectHTML do
     """
     <div class="project-header">
       <h1 class="project-title">#{escape_html(project.name)}</h1>
-      #{if show_field?(project, "description") && project.description, do: "<p class=\"project-description\">#{escape_html(project.description)}</p>", else: ""}
+      #{render_description(project)}
 
       <div class="project-meta">
-        #{if show_field?(project, "category") && project.categories && length(project.categories) > 0, do: render_categories(project.categories), else: ""}
-        #{if show_field?(project, "project_date") && project.project_date, do: "<span class=\"badge badge-secondary\">#{format_date(project.project_date)}</span>", else: ""}
+        #{render_categories_section(project)}
+        #{render_date_section(project)}
       </div>
 
-      #{if show_field?(project, "tags") && project.tags && length(project.tags) > 0, do: render_tags(project.tags), else: ""}
+      #{render_tags_section(project)}
     </div>
 
-    #{if opts[:include_collaborators] && show_field?(project, "collaborators") && length(project.collaborators) > 0, do: render_collaborators(project.collaborators), else: ""}
+    #{render_collaborators_section(project, opts)}
 
-    #{if opts[:include_links] && show_field?(project, "affiliation_links") && length(project.affiliation_links) > 0, do: render_affiliation_links(project.affiliation_links), else: ""}
+    #{render_links_section(project, opts)}
 
-    #{if length(project.media_items) > 0, do: render_media_items(project.media_items), else: ""}
+    #{render_media_section(project)}
     """
+  end
+
+  defp render_description(project) do
+    if show_field?(project, "description") && project.description do
+      "<p class=\"project-description\">#{escape_html(project.description)}</p>"
+    else
+      ""
+    end
+  end
+
+  defp render_categories_section(project) do
+    if show_field?(project, "category") && project.categories != nil && project.categories != [] do
+      render_categories(project.categories)
+    else
+      ""
+    end
+  end
+
+  defp render_date_section(project) do
+    if show_field?(project, "project_date") && project.project_date do
+      "<span class=\"badge badge-secondary\">#{format_date(project.project_date)}</span>"
+    else
+      ""
+    end
+  end
+
+  defp render_tags_section(project) do
+    if show_field?(project, "tags") && project.tags != nil && project.tags != [] do
+      render_tags(project.tags)
+    else
+      ""
+    end
+  end
+
+  defp render_collaborators_section(project, opts) do
+    if opts[:include_collaborators] && show_field?(project, "collaborators") &&
+         project.collaborators != [] do
+      render_collaborators(project.collaborators)
+    else
+      ""
+    end
+  end
+
+  defp render_links_section(project, opts) do
+    if opts[:include_links] && show_field?(project, "affiliation_links") &&
+         project.affiliation_links != [] do
+      render_affiliation_links(project.affiliation_links)
+    else
+      ""
+    end
+  end
+
+  defp render_media_section(project) do
+    if project.media_items != [] do
+      render_media_items(project.media_items)
+    else
+      ""
+    end
   end
 
   defp render_categories(categories) do

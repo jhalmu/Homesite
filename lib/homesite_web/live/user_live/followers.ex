@@ -117,7 +117,7 @@ defmodule HomesiteWeb.UserLive.Followers do
 
               <%!-- Follow/Unfollow button (only if viewing someone else and logged in) --%>
               <%= if @current_scope && item.user.id != @current_scope.user.id do %>
-                <%= if is_following?(@current_scope.user.id, item.user.id, @following_ids) do %>
+                <%= if following?(@current_scope.user.id, item.user.id, @following_ids) do %>
                   <button
                     type="button"
                     phx-click="unfollow"
@@ -249,7 +249,7 @@ defmodule HomesiteWeb.UserLive.Followers do
     end
   end
 
-  defp is_following?(current_user_id, target_user_id, following_ids) do
+  defp following?(current_user_id, target_user_id, following_ids) do
     current_user_id != target_user_id && MapSet.member?(following_ids, target_user_id)
   end
 end

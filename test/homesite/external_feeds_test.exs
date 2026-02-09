@@ -843,7 +843,7 @@ defmodule Homesite.ExternalFeedsTest do
       result = ExternalFeeds.list_feed_items_limited_per_source(scope, limit_per_source: 3)
 
       # Should have items, unread ones should appear in the limit
-      assert length(result) > 0
+      assert result != []
 
       # Count unread items in result
       unread_count =

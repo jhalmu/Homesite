@@ -169,7 +169,7 @@ defmodule HomesiteWeb.TagLive.Index do
      |> assign(:page_title, gettext("Listing Tags"))
      |> assign(:current_tab, current_tab)
      |> assign(:search_query, "")
-     |> assign(:has_tags, length(tags) > 0)
+     |> assign(:has_tags, tags != [])
      |> stream(:tags, tags)}
   end
 
@@ -181,7 +181,7 @@ defmodule HomesiteWeb.TagLive.Index do
      socket
      |> assign(:current_tab, tab)
      |> assign(:search_query, "")
-     |> assign(:has_tags, length(tags) > 0)
+     |> assign(:has_tags, tags != [])
      |> stream(:tags, tags, reset: true)}
   end
 
@@ -191,7 +191,7 @@ defmodule HomesiteWeb.TagLive.Index do
     {:noreply,
      socket
      |> assign(:search_query, query)
-     |> assign(:has_tags, length(tags) > 0)
+     |> assign(:has_tags, tags != [])
      |> stream(:tags, tags, reset: true)}
   end
 
@@ -214,7 +214,7 @@ defmodule HomesiteWeb.TagLive.Index do
 
     {:noreply,
      socket
-     |> assign(:has_tags, length(tags) > 0)
+     |> assign(:has_tags, tags != [])
      |> stream(:tags, tags, reset: true)}
   end
 

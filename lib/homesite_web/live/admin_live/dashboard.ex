@@ -731,19 +731,15 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
     end
   end
 
-  defp translate_action_verb(action) do
-    case action do
-      "create" -> gettext("created")
-      "update" -> gettext("updated")
-      "delete" -> gettext("deleted")
-      "publish" -> gettext("published")
-      "unpublish" -> gettext("unpublished")
-      "login" -> gettext("logged in")
-      "logout" -> gettext("logged out")
-      "register" -> gettext("registered")
-      _ -> action
-    end
-  end
+  defp translate_action_verb("create"), do: gettext("created")
+  defp translate_action_verb("update"), do: gettext("updated")
+  defp translate_action_verb("delete"), do: gettext("deleted")
+  defp translate_action_verb("publish"), do: gettext("published")
+  defp translate_action_verb("unpublish"), do: gettext("unpublished")
+  defp translate_action_verb("login"), do: gettext("logged in")
+  defp translate_action_verb("logout"), do: gettext("logged out")
+  defp translate_action_verb("register"), do: gettext("registered")
+  defp translate_action_verb(action), do: action
 
   defp format_resource_with_link(log) do
     title = get_resource_title(log)
@@ -779,46 +775,23 @@ defmodule HomesiteWeb.AdminLive.Dashboard do
 
   defp get_resource_title(log) do
     case log.resource_type do
-      "post" ->
-        cond do
-          is_map(log.metadata) and Map.has_key?(log.metadata, "title") ->
-            log.metadata["title"]
-
-          is_map(log.metadata) and Map.has_key?(log.metadata, :title) ->
-            log.metadata[:title]
-
-          true ->
-            nil
-        end
-
-      "tag" ->
-        cond do
-          is_map(log.metadata) and Map.has_key?(log.metadata, "name") ->
-            log.metadata["name"]
-
-          is_map(log.metadata) and Map.has_key?(log.metadata, :name) ->
-            log.metadata[:name]
-
-          true ->
-            nil
-        end
-
-      "user" ->
-        cond do
-          is_map(log.metadata) and Map.has_key?(log.metadata, "email") ->
-            log.metadata["email"]
-
-          is_map(log.metadata) and Map.has_key?(log.metadata, :email) ->
-            log.metadata[:email]
-
-          true ->
-            nil
-        end
-
-      _ ->
-        nil
+      "post" -> extract_metadata_value(log.metadata, "title")
+      "tag" -> extract_metadata_value(log.metadata, "name")
+      "user" -> extract_metadata_value(log.metadata, "email")
+      _ -> nil
     end
   end
+
+  defp extract_metadata_value(metadata, key) when is_map(metadata) and is_binary(key) do
+    case Map.get(metadata, key) do
+      nil -> Map.get(metadata, String.to_existing_atom(key))
+      value -> value
+    end
+  rescue
+    ArgumentError -> nil
+  end
+
+  defp extract_metadata_value(_metadata, _key), do: nil
 
   defp get_resource_link(log) do
     case {log.resource_type, log.resource_id, log.metadata} do

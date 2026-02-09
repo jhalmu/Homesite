@@ -1,4 +1,5 @@
 defmodule HomesiteWeb.AdminLive.Settings.Index do
+  @moduledoc false
   use HomesiteWeb, :live_view
 
   alias Homesite.Settings

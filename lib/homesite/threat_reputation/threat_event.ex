@@ -67,43 +67,41 @@ defmodule Homesite.ThreatReputation.ThreatEvent do
   """
   def severity_levels, do: @severity_levels
 
+  @score_impacts %{
+    "failed_login" => 5,
+    "suspicious_activity" => 10,
+    "rate_limit_exceeded" => 8,
+    "credential_stuffing" => 15,
+    "brute_force" => 20,
+    "anomalous_request" => 5,
+    "watchlist_hit" => 0,
+    "blocked_request" => 2,
+    "manual_block" => 0,
+    "auto_block" => 0,
+    "unblock" => 0
+  }
+
+  @severities %{
+    "failed_login" => "low",
+    "suspicious_activity" => "medium",
+    "rate_limit_exceeded" => "low",
+    "credential_stuffing" => "high",
+    "brute_force" => "critical",
+    "anomalous_request" => "low",
+    "watchlist_hit" => "medium",
+    "blocked_request" => "low",
+    "manual_block" => "high",
+    "auto_block" => "high",
+    "unblock" => "low"
+  }
+
   @doc """
   Returns the score impact for an event type.
   """
-  def score_impact_for(event_type) do
-    case event_type do
-      "failed_login" -> 5
-      "suspicious_activity" -> 10
-      "rate_limit_exceeded" -> 8
-      "credential_stuffing" -> 15
-      "brute_force" -> 20
-      "anomalous_request" -> 5
-      "watchlist_hit" -> 0
-      "blocked_request" -> 2
-      "manual_block" -> 0
-      "auto_block" -> 0
-      "unblock" -> 0
-      _ -> 0
-    end
-  end
+  def score_impact_for(event_type), do: Map.get(@score_impacts, event_type, 0)
 
   @doc """
   Returns the severity for an event type.
   """
-  def severity_for(event_type) do
-    case event_type do
-      "failed_login" -> "low"
-      "suspicious_activity" -> "medium"
-      "rate_limit_exceeded" -> "low"
-      "credential_stuffing" -> "high"
-      "brute_force" -> "critical"
-      "anomalous_request" -> "low"
-      "watchlist_hit" -> "medium"
-      "blocked_request" -> "low"
-      "manual_block" -> "high"
-      "auto_block" -> "high"
-      "unblock" -> "low"
-      _ -> "low"
-    end
-  end
+  def severity_for(event_type), do: Map.get(@severities, event_type, "low")
 end

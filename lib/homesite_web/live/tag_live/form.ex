@@ -143,40 +143,16 @@ defmodule HomesiteWeb.TagLive.Form do
 
   @impl true
   def handle_event("validate", %{"tag" => tag_params}, socket) do
-    # Update is_public from params if present, otherwise keep current value
-    is_public =
-      case tag_params["is_public"] do
-        "true" -> true
-        "false" -> false
-        _ -> socket.assigns.is_public
-      end
-
-    # Always include is_public in params based on current state
+    is_public = parse_is_public(tag_params["is_public"], socket.assigns.is_public)
     tag_params = Map.put(tag_params, "is_public", if(is_public, do: "true", else: "false"))
 
     changeset = Content.change_tag(socket.assigns.current_scope, socket.assigns.tag, tag_params)
+    similar_tags = find_similar_tags_for_validation(tag_params["name"], socket)
 
-    # Check for similar tags when creating new tag or when name changes during edit
-    similar_tags =
-      case tag_params["name"] do
-        name when is_binary(name) and byte_size(name) >= 2 ->
-          # When editing, exclude the current tag from similar results
-          exclude_id =
-            if socket.assigns.live_action == :edit, do: socket.assigns.tag.id, else: nil
-
-          Content.find_similar_tags(name, exclude_id)
-
-        _ ->
-          []
-      end
-
-    # Reset confirmation when similar tags change
     confirmed_similar =
-      if similar_tags != socket.assigns.similar_tags do
-        false
-      else
-        socket.assigns.confirmed_similar
-      end
+      if similar_tags != socket.assigns.similar_tags,
+        do: false,
+        else: socket.assigns.confirmed_similar
 
     {:noreply,
      socket
@@ -231,6 +207,20 @@ defmodule HomesiteWeb.TagLive.Form do
         {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
+
+  defp parse_is_public("true", _default), do: true
+  defp parse_is_public("false", _default), do: false
+  defp parse_is_public(_, default), do: default
+
+  defp find_similar_tags_for_validation(name, socket)
+       when is_binary(name) and byte_size(name) >= 2 do
+    exclude_id =
+      if socket.assigns.live_action == :edit, do: socket.assigns.tag.id, else: nil
+
+    Content.find_similar_tags(name, exclude_id)
+  end
+
+  defp find_similar_tags_for_validation(_, _socket), do: []
 
   defp return_path(_scope, "index", _tag), do: ~p"/tags"
   defp return_path(_scope, "show", tag), do: ~p"/tags/#{tag}"

@@ -181,19 +181,10 @@ defmodule Homesite.Settings do
   @spec update_security_alert_config(map()) ::
           {:ok, AppSetting.t()} | {:error, Ecto.Changeset.t()}
   def update_security_alert_config(config) when is_map(config) do
-    level = config[:level] || config["level"] || :critical
-
-    level =
-      cond do
-        is_atom(level) and level in @alert_levels -> Atom.to_string(level)
-        is_binary(level) -> level
-        true -> "critical"
-      end
-
     value = %{
-      "enabled" => config[:enabled] || config["enabled"] || false,
-      "level" => level,
-      "threshold" => config[:threshold] || config["threshold"] || 100
+      "enabled" => config_value(config, :enabled, false),
+      "level" => normalize_alert_level(config_value(config, :level, :critical)),
+      "threshold" => config_value(config, :threshold, 100)
     }
 
     update_setting("security_alerts", value)
@@ -219,9 +210,7 @@ defmodule Homesite.Settings do
   def should_alert?(alert_type) do
     config = security_alert_config()
 
-    if not config.enabled do
-      false
-    else
+    if config.enabled do
       level_index = Enum.find_index(@alert_levels, &(&1 == config.level))
 
       case alert_type do
@@ -231,6 +220,20 @@ defmodule Homesite.Settings do
         :ip_warning -> level_index >= 3
         _ -> false
       end
+    else
+      false
     end
   end
+
+  # Extracts a value from a map that may have atom or string keys
+  defp config_value(config, key, default) do
+    config[key] || config[Atom.to_string(key)] || default
+  end
+
+  defp normalize_alert_level(level) when is_atom(level) and level in @alert_levels do
+    Atom.to_string(level)
+  end
+
+  defp normalize_alert_level(level) when is_binary(level), do: level
+  defp normalize_alert_level(_), do: "critical"
 end

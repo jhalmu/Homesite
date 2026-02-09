@@ -178,45 +178,46 @@ defmodule Homesite.ExternalFeeds.Adapters.MastodonAdapter do
     account = status["account"] || %{}
     content = status["content"] || ""
 
-    # Strip HTML tags for title
-    text_content = strip_html(content)
-
-    # Extract media attachments
-    media_text = extract_media_text(status["media_attachments"] || [])
-
-    # Combine content and media info
-    full_content =
-      if media_text != "" do
-        "#{content}\n\n#{media_text}"
-      else
-        content
-      end
-
     %{
       external_id: status["id"] || generate_random_id(),
-      title: truncate_text(text_content, 100),
-      content: full_content,
+      title: truncate_text(strip_html(content), 100),
+      content: build_full_content(content, status["media_attachments"] || []),
       author_name: account["display_name"] || account["username"],
       author_handle: "@#{account["acct"]}",
       author_avatar_url: account["avatar"],
       published_at: parse_mastodon_date(status["created_at"]),
-      url: status["url"] || "https://#{instance}/@#{account["username"]}/#{status["id"]}",
-      metadata: %{
-        feed_source_id: feed_source.id,
-        feed_type: "mastodon",
-        visibility: status["visibility"],
-        replies_count: status["replies_count"] || 0,
-        reblogs_count: status["reblogs_count"] || 0,
-        favourites_count: status["favourites_count"] || 0,
-        sensitive: status["sensitive"] || false,
-        spoiler_text: status["spoiler_text"],
-        language: status["language"]
-      }
+      url: status["url"] || build_status_url(instance, account, status),
+      metadata: build_status_metadata(status, feed_source)
     }
   rescue
     e ->
       Logger.warning("Failed to parse Mastodon status: #{Exception.message(e)}")
       nil
+  end
+
+  defp build_full_content(content, media_attachments) do
+    case extract_media_text(media_attachments) do
+      "" -> content
+      media_text -> "#{content}\n\n#{media_text}"
+    end
+  end
+
+  defp build_status_url(instance, account, status) do
+    "https://#{instance}/@#{account["username"]}/#{status["id"]}"
+  end
+
+  defp build_status_metadata(status, feed_source) do
+    %{
+      feed_source_id: feed_source.id,
+      feed_type: "mastodon",
+      visibility: status["visibility"],
+      replies_count: status["replies_count"] || 0,
+      reblogs_count: status["reblogs_count"] || 0,
+      favourites_count: status["favourites_count"] || 0,
+      sensitive: status["sensitive"] || false,
+      spoiler_text: status["spoiler_text"],
+      language: status["language"]
+    }
   end
 
   # Strip HTML tags from content

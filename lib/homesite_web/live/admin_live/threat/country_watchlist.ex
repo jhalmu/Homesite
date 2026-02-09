@@ -1,4 +1,5 @@
 defmodule HomesiteWeb.AdminLive.Threat.CountryWatchlist do
+  @moduledoc false
   use HomesiteWeb, :live_view
 
   alias Homesite.ThreatReputation

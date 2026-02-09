@@ -1,6 +1,7 @@
 defmodule Homesite.SocialTest do
   use Homesite.DataCase
 
+  alias Homesite.Accounts.Scope
   alias Homesite.Social
 
   import Homesite.AccountsFixtures
@@ -9,7 +10,7 @@ defmodule Homesite.SocialTest do
   describe "log_share/1" do
     setup do
       user = user_fixture()
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
       post = post_fixture(scope)
 
       %{user: user, post: post}
@@ -171,7 +172,7 @@ defmodule Homesite.SocialTest do
   describe "log_share/1 edge cases" do
     setup do
       user = user_fixture()
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
       post = post_fixture(scope)
 
       %{user: user, post: post}
@@ -366,7 +367,7 @@ defmodule Homesite.SocialTest do
   describe "get_post_share_stats/1" do
     setup do
       user = user_fixture()
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
       post = post_fixture(scope)
 
       %{post: post}
@@ -408,7 +409,7 @@ defmodule Homesite.SocialTest do
 
     test "returns stats for all posts with shares" do
       user = user_fixture()
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
       post1 = post_fixture(scope)
       post2 = post_fixture(scope)
 
@@ -425,7 +426,7 @@ defmodule Homesite.SocialTest do
 
     test "orders by share count descending" do
       user = user_fixture()
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
       post1 = post_fixture(scope)
       post2 = post_fixture(scope)
 
@@ -449,7 +450,7 @@ defmodule Homesite.SocialTest do
 
     test "returns recent shares with default limit" do
       user = user_fixture()
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
       post = post_fixture(scope)
 
       for _ <- 1..25 do
@@ -463,7 +464,7 @@ defmodule Homesite.SocialTest do
 
     test "respects custom limit" do
       user = user_fixture()
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
       post = post_fixture(scope)
 
       for _ <- 1..15 do
@@ -477,7 +478,7 @@ defmodule Homesite.SocialTest do
 
     test "orders by most recent first" do
       user = user_fixture()
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
       post = post_fixture(scope)
 
       {:ok, _first} =
@@ -498,7 +499,7 @@ defmodule Homesite.SocialTest do
 
     test "preloads post and user associations" do
       user = user_fixture()
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
       post = post_fixture(scope)
 
       Social.log_share(%{

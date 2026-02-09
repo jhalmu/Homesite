@@ -176,7 +176,7 @@ defmodule Homesite.ThreatReputation.MonitorTest do
       assert_receive {:attack_detected, %{type: :brute_force, ip: ^ip}}, 1000
 
       attacks = Monitor.get_recent_attacks()
-      assert length(attacks) >= 1
+      assert attacks != []
       assert Enum.any?(attacks, fn a -> a.type == :brute_force and a.ip == ip end)
     end
 

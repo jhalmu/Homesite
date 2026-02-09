@@ -87,9 +87,7 @@ defmodule HomesiteWeb.Plugs.ThreatRateLimitPlug do
   defp format_ip({a, b, c, d}), do: "#{a}.#{b}.#{c}.#{d}"
 
   defp format_ip({a, b, c, d, e, f, g, h}) do
-    [a, b, c, d, e, f, g, h]
-    |> Enum.map(&Integer.to_string(&1, 16))
-    |> Enum.join(":")
+    Enum.map_join([a, b, c, d, e, f, g, h], ":", &Integer.to_string(&1, 16))
   end
 
   defp record_rate_limit_event(ip, limiter) do

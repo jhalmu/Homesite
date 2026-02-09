@@ -170,7 +170,7 @@ defmodule Homesite.ModerationTest do
       {:ok, _report} = Moderation.create_report(scope, other_user.id, "This user is spamming")
 
       logs = Moderation.list_moderation_logs(action: "report_user")
-      assert length(logs) >= 1
+      assert logs != []
     end
 
     test "create_report/4 cannot report yourself" do
@@ -199,7 +199,7 @@ defmodule Homesite.ModerationTest do
       {:ok, _report} = Moderation.create_report(scope, other_user.id, "This user is spamming")
 
       reports = Moderation.list_pending_reports()
-      assert length(reports) >= 1
+      assert reports != []
       assert Enum.all?(reports, fn r -> r.status == "pending" end)
     end
 
@@ -695,7 +695,7 @@ defmodule Homesite.ModerationTest do
       {:ok, _mute} = Moderation.mute_user(scope, other_user.id)
 
       logs = Moderation.list_moderation_logs()
-      assert length(logs) >= 1
+      assert logs != []
     end
 
     test "list_moderation_logs/1 filters by action" do
@@ -803,7 +803,7 @@ defmodule Homesite.ModerationTest do
       {:ok, _} = Moderation.record_violation(attrs, reporter)
 
       violations = Moderation.list_user_violations(target_user.id)
-      assert length(violations) >= 1
+      assert violations != []
       assert Enum.all?(violations, fn v -> v.user_id == target_user.id end)
     end
 
@@ -822,7 +822,7 @@ defmodule Homesite.ModerationTest do
 
       # All should be unresolved initially
       violations = Moderation.list_user_violations(target_user.id, unresolved_only: true)
-      assert length(violations) >= 1
+      assert violations != []
       assert Enum.all?(violations, fn v -> is_nil(v.resolved_at) end)
     end
 
@@ -914,7 +914,7 @@ defmodule Homesite.ModerationTest do
 
       # Verify violation was also created
       violations = Moderation.list_user_violations(target_user.id)
-      assert length(violations) >= 1
+      assert violations != []
       assert Enum.any?(violations, fn v -> v.action_type == "report" end)
     end
 
@@ -1010,7 +1010,7 @@ defmodule Homesite.ModerationTest do
     test "list_reason_presets/1 returns presets for a category" do
       presets = Moderation.list_reason_presets("report")
       assert is_list(presets)
-      assert length(presets) >= 1
+      assert presets != []
       assert Enum.all?(presets, fn p -> p.category == "report" end)
     end
 

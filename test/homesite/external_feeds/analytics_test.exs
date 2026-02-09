@@ -3,12 +3,13 @@ defmodule Homesite.ExternalFeeds.AnalyticsTest do
 
   import Homesite.AccountsFixtures
 
+  alias Homesite.Accounts.Scope
   alias Homesite.ExternalFeeds
   alias Homesite.ExternalFeeds.Analytics
 
   setup do
     user = user_fixture()
-    scope = Homesite.Accounts.Scope.for_user(user)
+    scope = Scope.for_user(user)
 
     {:ok, feed_source} =
       ExternalFeeds.create_feed_source(scope, %{
@@ -354,7 +355,7 @@ defmodule Homesite.ExternalFeeds.AnalyticsTest do
 
       # Create user B
       user_b = user_fixture(%{email: "userb@example.com"})
-      scope_b = Homesite.Accounts.Scope.for_user(user_b)
+      scope_b = Scope.for_user(user_b)
 
       {:ok, feed_b} =
         ExternalFeeds.create_feed_source(scope_b, %{

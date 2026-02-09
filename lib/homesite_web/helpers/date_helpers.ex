@@ -159,31 +159,13 @@ defmodule HomesiteWeb.Helpers.DateHelpers do
         if locale == "fi", do: "juuri nyt", else: "just now"
 
       diff_seconds < 3600 ->
-        minutes = div(diff_seconds, 60)
-
-        if locale == "fi" do
-          "#{minutes} #{if minutes == 1, do: "minuutti", else: "minuuttia"} sitten"
-        else
-          "#{minutes} #{if minutes == 1, do: "minute", else: "minutes"} ago"
-        end
+        format_relative_minutes(div(diff_seconds, 60), locale)
 
       diff_seconds < 86_400 ->
-        hours = div(diff_seconds, 3600)
-
-        if locale == "fi" do
-          "#{hours} #{if hours == 1, do: "tunti", else: "tuntia"} sitten"
-        else
-          "#{hours} #{if hours == 1, do: "hour", else: "hours"} ago"
-        end
+        format_relative_hours(div(diff_seconds, 3600), locale)
 
       diff_seconds < 604_800 ->
-        days = div(diff_seconds, 86_400)
-
-        if locale == "fi" do
-          "#{days} #{if days == 1, do: "päivä", else: "päivää"} sitten"
-        else
-          "#{days} #{if days == 1, do: "day", else: "days"} ago"
-        end
+        format_relative_days(div(diff_seconds, 86_400), locale)
 
       true ->
         # Fall back to regular date format for older dates
@@ -192,6 +174,24 @@ defmodule HomesiteWeb.Helpers.DateHelpers do
   end
 
   # Private helpers
+
+  defp format_relative_minutes(minutes, "fi"),
+    do: "#{minutes} #{if minutes == 1, do: "minuutti", else: "minuuttia"} sitten"
+
+  defp format_relative_minutes(minutes, _locale),
+    do: "#{minutes} #{if minutes == 1, do: "minute", else: "minutes"} ago"
+
+  defp format_relative_hours(hours, "fi"),
+    do: "#{hours} #{if hours == 1, do: "tunti", else: "tuntia"} sitten"
+
+  defp format_relative_hours(hours, _locale),
+    do: "#{hours} #{if hours == 1, do: "hour", else: "hours"} ago"
+
+  defp format_relative_days(days, "fi"),
+    do: "#{days} #{if days == 1, do: "päivä", else: "päivää"} sitten"
+
+  defp format_relative_days(days, _locale),
+    do: "#{days} #{if days == 1, do: "day", else: "days"} ago"
 
   defp format_date_en(date) do
     Calendar.strftime(date, "%B %d, %Y")

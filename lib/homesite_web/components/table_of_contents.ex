@@ -101,29 +101,24 @@ defmodule HomesiteWeb.Components.TableOfContents do
   # Build nested structure (h3s as children of h2s)
   defp build_hierarchy(headings) do
     headings
-    |> Enum.reduce({[], nil}, fn heading, {acc, current_h2} ->
-      case heading.level do
-        2 ->
-          # New h2: save previous h2 (if exists) and start new one
-          new_acc = if current_h2, do: [current_h2 | acc], else: acc
-          {new_acc, heading}
-
-        3 ->
-          # h3: add as child of current h2
-          if current_h2 do
-            updated_h2 = %{current_h2 | children: current_h2.children ++ [heading]}
-            {acc, updated_h2}
-          else
-            # Orphan h3 (no parent h2): treat as top-level
-            {[heading | acc], nil}
-          end
-      end
-    end)
+    |> Enum.reduce({[], nil}, &reduce_heading/2)
     |> then(fn {acc, current_h2} ->
       # Add final h2 if exists
       if current_h2, do: [current_h2 | acc], else: acc
     end)
     |> Enum.reverse()
+  end
+
+  # New h2: save previous h2 (if exists) and start new one
+  defp reduce_heading(%{level: 2} = heading, {acc, nil}), do: {acc, heading}
+  defp reduce_heading(%{level: 2} = heading, {acc, current_h2}), do: {[current_h2 | acc], heading}
+
+  # h3: add as child of current h2, or treat as top-level if orphaned
+  defp reduce_heading(%{level: 3} = heading, {acc, nil}), do: {[heading | acc], nil}
+
+  defp reduce_heading(%{level: 3} = heading, {acc, current_h2}) do
+    updated_h2 = %{current_h2 | children: current_h2.children ++ [heading]}
+    {acc, updated_h2}
   end
 
   # Convert text to URL-friendly slug

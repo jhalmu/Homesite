@@ -337,12 +337,10 @@ defmodule Homesite.Media.ImageProcessor do
   end
 
   defp get_dimensions(upload_path) do
-    try do
-      %{width: width, height: height} = identify(upload_path)
-      {:ok, {width, height}}
-    rescue
-      _ -> {:error, "Could not read image dimensions"}
-    end
+    %{width: width, height: height} = identify(upload_path)
+    {:ok, {width, height}}
+  rescue
+    _ -> {:error, "Could not read image dimensions"}
   end
 
   defp generate_sizes(upload_path, {orig_width, orig_height}) do
@@ -370,24 +368,22 @@ defmodule Homesite.Media.ImageProcessor do
   end
 
   defp resize_to_binary(upload_path, max_dimension) do
-    try do
-      # Create temp file for resized version
-      temp_path = "#{upload_path}.#{max_dimension}.tmp"
+    # Create temp file for resized version
+    temp_path = "#{upload_path}.#{max_dimension}.tmp"
 
-      open(upload_path)
-      |> resize_to_limit("#{max_dimension}x#{max_dimension}")
-      |> quality(85)
-      # Remove EXIF data for privacy
-      |> custom("strip")
-      |> save(path: temp_path)
+    open(upload_path)
+    |> resize_to_limit("#{max_dimension}x#{max_dimension}")
+    |> quality(85)
+    # Remove EXIF data for privacy
+    |> custom("strip")
+    |> save(path: temp_path)
 
-      binary = File.read!(temp_path)
-      File.rm!(temp_path)
+    binary = File.read!(temp_path)
+    File.rm!(temp_path)
 
-      {:ok, binary}
-    rescue
-      e -> {:error, "Resize failed: #{inspect(e)}"}
-    end
+    {:ok, binary}
+  rescue
+    e -> {:error, "Resize failed: #{inspect(e)}"}
   end
 
   defp calculate_resize_dimensions(width, height, max_dimension) do

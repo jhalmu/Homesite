@@ -5,6 +5,9 @@ defmodule HomesiteWeb.PageLive.HomeTest do
   import Homesite.AccountsFixtures
   import Homesite.ContentFixtures
 
+  alias Homesite.Accounts.Scope
+  alias HomesiteWeb.PageLive.Home
+
   describe "home page (public)" do
     test "renders welcome message", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/")
@@ -14,7 +17,7 @@ defmodule HomesiteWeb.PageLive.HomeTest do
 
     test "displays published posts", %{conn: conn} do
       user = user_fixture()
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
       post = post_fixture(scope, %{title: "Public Post", published_at: DateTime.utc_now(:second)})
 
       {:ok, _lv, html} = live(conn, ~p"/")
@@ -24,7 +27,7 @@ defmodule HomesiteWeb.PageLive.HomeTest do
 
     test "only displays published posts", %{conn: conn} do
       user = user_fixture()
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
 
       # Create a published post with a specific title
       published_post =
@@ -56,7 +59,7 @@ defmodule HomesiteWeb.PageLive.HomeTest do
   describe "markdown_preview/2" do
     test "truncates long text" do
       markdown = String.duplicate("Hello ", 100)
-      preview = HomesiteWeb.PageLive.Home.markdown_preview(markdown, 50)
+      preview = Home.markdown_preview(markdown, 50)
 
       assert String.length(preview) <= 53
       assert String.ends_with?(preview, "...")
@@ -64,14 +67,14 @@ defmodule HomesiteWeb.PageLive.HomeTest do
 
     test "does not add ellipsis to short text" do
       markdown = "Short text"
-      preview = HomesiteWeb.PageLive.Home.markdown_preview(markdown, 100)
+      preview = Home.markdown_preview(markdown, 100)
 
       refute String.ends_with?(preview, "...")
     end
 
     test "strips HTML from markdown" do
       markdown = "# Heading\n\nParagraph text"
-      preview = HomesiteWeb.PageLive.Home.markdown_preview(markdown, 100)
+      preview = Home.markdown_preview(markdown, 100)
 
       refute preview =~ "<h1>"
       refute preview =~ "<p>"

@@ -1,6 +1,7 @@
 defmodule Homesite.ContentSearchTest do
   use Homesite.DataCase
 
+  alias Homesite.Accounts.Scope
   alias Homesite.Content
 
   import Homesite.AccountsFixtures
@@ -8,7 +9,7 @@ defmodule Homesite.ContentSearchTest do
   describe "search_posts/2" do
     setup do
       user = user_fixture()
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
 
       # Create test posts with different content
       {:ok, post1} =
@@ -38,7 +39,7 @@ defmodule Homesite.ContentSearchTest do
     test "returns posts matching title" do
       results = Content.search_posts("Elixir")
 
-      assert length(results) >= 1
+      assert results != []
       titles = Enum.map(results, & &1.title)
       assert "Learning Elixir Programming" in titles
     end
@@ -54,7 +55,7 @@ defmodule Homesite.ContentSearchTest do
       results = Content.search_posts("Elixir")
 
       # Should match both "Learning Elixir" and "Phoenix Framework" (mentions Elixir)
-      assert length(results) >= 1
+      assert results != []
     end
 
     test "returns empty list for non-matching query" do
@@ -79,7 +80,7 @@ defmodule Homesite.ContentSearchTest do
     test "preloads user and tags associations" do
       results = Content.search_posts("Elixir")
 
-      assert length(results) > 0
+      assert results != []
       post = hd(results)
       assert Ecto.assoc_loaded?(post.user)
       assert Ecto.assoc_loaded?(post.tags)
@@ -90,8 +91,8 @@ defmodule Homesite.ContentSearchTest do
     setup do
       user1 = user_fixture()
       user2 = user_fixture()
-      scope1 = Homesite.Accounts.Scope.for_user(user1)
-      scope2 = Homesite.Accounts.Scope.for_user(user2)
+      scope1 = Scope.for_user(user1)
+      scope2 = Scope.for_user(user2)
 
       {:ok, _post1} =
         Content.create_post(scope1, %{
@@ -141,7 +142,7 @@ defmodule Homesite.ContentSearchTest do
   describe "search_posts/2 edge cases" do
     setup do
       user = user_fixture()
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
 
       {:ok, post1} =
         Content.create_post(scope, %{
@@ -269,7 +270,7 @@ defmodule Homesite.ContentSearchTest do
   describe "search_user_posts/3 edge cases" do
     setup do
       user = user_fixture()
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
 
       {:ok, _post} =
         Content.create_post(scope, %{

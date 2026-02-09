@@ -47,25 +47,23 @@ defmodule Homesite.Chat.Block do
         changeset
 
       blocked_user_id ->
-        case get_user_fn.(blocked_user_id) do
-          nil ->
-            changeset
+        check_admin_role(changeset, get_user_fn.(blocked_user_id))
+    end
+  end
 
-          user ->
-            if user.role == "admin" do
-              add_error(changeset, :blocked_user_id, "cannot block admin accounts")
-            else
-              changeset
-            end
-        end
+  defp check_admin_role(changeset, nil), do: changeset
+
+  defp check_admin_role(changeset, user) do
+    if user.role == "admin" do
+      add_error(changeset, :blocked_user_id, "cannot block admin accounts")
+    else
+      changeset
     end
   end
 
   defp default_get_user(id) do
-    try do
-      Homesite.Accounts.get_user!(id)
-    rescue
-      Ecto.NoResultsError -> nil
-    end
+    Homesite.Accounts.get_user!(id)
+  rescue
+    Ecto.NoResultsError -> nil
   end
 end

@@ -45,9 +45,11 @@ defmodule HomesiteWeb.ConnCase do
   It stores an updated connection and a registered user in the
   test context.
   """
+  alias Homesite.Accounts.Scope
+
   def register_and_log_in_user(%{conn: conn} = context) do
     user = Homesite.AccountsFixtures.user_fixture()
-    scope = Homesite.Accounts.Scope.for_user(user)
+    scope = Scope.for_user(user)
 
     opts =
       context

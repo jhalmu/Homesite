@@ -54,17 +54,7 @@ defmodule HomesiteWeb.FeedLive.Index do
 
     case ExternalFeeds.mark_item_as_read(socket.assigns.current_scope, feed_item_id) do
       {:ok, _interaction} ->
-        # Update the items list to reflect the change
-        items =
-          Enum.map(socket.assigns.items, fn item ->
-            if item.feed_item.id == feed_item_id do
-              # Reload interaction data
-              update_item_interaction(item, socket.assigns.current_scope, feed_item_id)
-            else
-              item
-            end
-          end)
-
+        items = refresh_item_in_list(socket.assigns.items, socket.assigns.current_scope, feed_item_id)
         unread_count = ExternalFeeds.get_unread_count(socket.assigns.current_scope)
 
         {:noreply, assign(socket, items: items, unread_count: unread_count)}
@@ -80,15 +70,7 @@ defmodule HomesiteWeb.FeedLive.Index do
 
     case ExternalFeeds.mark_item_as_unread(socket.assigns.current_scope, feed_item_id) do
       {:ok, _interaction} ->
-        items =
-          Enum.map(socket.assigns.items, fn item ->
-            if item.feed_item.id == feed_item_id do
-              update_item_interaction(item, socket.assigns.current_scope, feed_item_id)
-            else
-              item
-            end
-          end)
-
+        items = refresh_item_in_list(socket.assigns.items, socket.assigns.current_scope, feed_item_id)
         unread_count = ExternalFeeds.get_unread_count(socket.assigns.current_scope)
 
         {:noreply, assign(socket, items: items, unread_count: unread_count)}
@@ -104,14 +86,7 @@ defmodule HomesiteWeb.FeedLive.Index do
 
     case ExternalFeeds.bookmark_item(socket.assigns.current_scope, feed_item_id) do
       {:ok, _interaction} ->
-        items =
-          Enum.map(socket.assigns.items, fn item ->
-            if item.feed_item.id == feed_item_id do
-              update_item_interaction(item, socket.assigns.current_scope, feed_item_id)
-            else
-              item
-            end
-          end)
+        items = refresh_item_in_list(socket.assigns.items, socket.assigns.current_scope, feed_item_id)
 
         {:noreply, assign(socket, items: items)}
 
@@ -234,6 +209,14 @@ defmodule HomesiteWeb.FeedLive.Index do
 
   defp maybe_add_source_filter(opts, source_id) do
     Keyword.put(opts, :feed_source_id, String.to_integer(source_id))
+  end
+
+  defp refresh_item_in_list(items, scope, feed_item_id) do
+    Enum.map(items, fn item ->
+      if item.feed_item.id == feed_item_id,
+        do: update_item_interaction(item, scope, feed_item_id),
+        else: item
+    end)
   end
 
   defp update_item_interaction(item, scope, feed_item_id) do

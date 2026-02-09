@@ -68,7 +68,7 @@ defmodule Homesite.FaqSearchTest do
 
     test "finds FAQ by exact question match (English)", %{user_faq1: faq} do
       results = Faqs.search_faqs("How to create a post")
-      assert length(results) >= 1
+      assert results != []
       result = Enum.find(results, &(&1.id == faq.id))
       assert result
       assert result.question == "How to create a post?"
@@ -76,19 +76,19 @@ defmodule Homesite.FaqSearchTest do
 
     test "finds FAQ by partial question match", %{user_faq1: faq} do
       results = Faqs.search_faqs("create post")
-      assert length(results) >= 1
+      assert results != []
       assert Enum.any?(results, &(&1.id == faq.id))
     end
 
     test "finds FAQ by answer content (English)", %{user_faq1: faq} do
       results = Faqs.search_faqs("New Post button")
-      assert length(results) >= 1
+      assert results != []
       assert Enum.any?(results, &(&1.id == faq.id))
     end
 
     test "finds FAQ by Finnish question", %{user_faq1: faq} do
       results = Faqs.search_faqs("Miten luodaan", locale: "fi")
-      assert length(results) >= 1
+      assert results != []
       result = Enum.find(results, &(&1.id == faq.id))
       assert result
       assert result.question == "Miten luodaan julkaisu?"
@@ -96,7 +96,7 @@ defmodule Homesite.FaqSearchTest do
 
     test "finds FAQ by Finnish answer", %{user_faq1: faq} do
       results = Faqs.search_faqs("täytä lomake", locale: "fi")
-      assert length(results) >= 1
+      assert results != []
       assert Enum.any?(results, &(&1.id == faq.id))
     end
 
@@ -153,18 +153,18 @@ defmodule Homesite.FaqSearchTest do
     test "handles fuzzy matching with typos" do
       results = Faqs.search_faqs("crate post")
       # Should still find "create post" with typo
-      assert length(results) >= 1
+      assert results != []
     end
 
     test "case-insensitive search" do
       results = Faqs.search_faqs("HOW TO CREATE")
-      assert length(results) >= 1
+      assert results != []
     end
 
     test "orders results by relevance" do
       # FAQ with exact match in question should rank higher
       results = Faqs.search_faqs("create post")
-      assert length(results) >= 1
+      assert results != []
       # First result should have "create" and "post" in question
       first_result = hd(results)
       assert first_result.question =~ ~r/create|post/i

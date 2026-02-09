@@ -4,6 +4,7 @@ defmodule Homesite.Workers.FeedCleanupWorkerTest do
 
   import Homesite.AccountsFixtures
 
+  alias Homesite.Accounts.Scope
   alias Homesite.ExternalFeeds
   alias Homesite.Repo
   alias Homesite.Workers.FeedCleanupWorker
@@ -11,7 +12,7 @@ defmodule Homesite.Workers.FeedCleanupWorkerTest do
   describe "perform/1" do
     setup do
       user = user_fixture()
-      scope = Homesite.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
 
       {:ok, feed_source} =
         ExternalFeeds.create_feed_source(scope, %{

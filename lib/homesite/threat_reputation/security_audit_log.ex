@@ -65,17 +65,13 @@ defmodule Homesite.ThreatReputation.SecurityAuditLog do
   @doc """
   Returns a human-readable description of an action.
   """
-  def describe_action(action_type) do
-    case action_type do
-      "ip_watchlist_add" -> "Added IP to watchlist"
-      "ip_watchlist_remove" -> "Removed IP from watchlist"
-      "country_watchlist_add" -> "Added country to watchlist"
-      "country_watchlist_remove" -> "Removed country from watchlist"
-      "ip_manual_block" -> "Manually blocked IP"
-      "ip_manual_unblock" -> "Manually unblocked IP"
-      "threshold_change" -> "Changed security threshold"
-      "alert_config_change" -> "Changed alert configuration"
-      _ -> action_type
-    end
-  end
+  def describe_action("ip_watchlist_add"), do: "Added IP to watchlist"
+  def describe_action("ip_watchlist_remove"), do: "Removed IP from watchlist"
+  def describe_action("country_watchlist_add"), do: "Added country to watchlist"
+  def describe_action("country_watchlist_remove"), do: "Removed country from watchlist"
+  def describe_action("ip_manual_block"), do: "Manually blocked IP"
+  def describe_action("ip_manual_unblock"), do: "Manually unblocked IP"
+  def describe_action("threshold_change"), do: "Changed security threshold"
+  def describe_action("alert_config_change"), do: "Changed alert configuration"
+  def describe_action(action_type), do: action_type
 end

@@ -267,32 +267,37 @@ defmodule Homesite.ThreatReputation do
           block_expires_at: nil
         }
 
-        case ip_rep |> IpReputation.changeset(attrs) |> Repo.update() do
-          {:ok, updated} ->
-            Cache.invalidate_ip(ip_address)
-
-            details =
-              if admin_user do
-                %{admin_id: admin_user.id, admin_email: admin_user.email}
-              else
-                %{automatic: true}
-              end
-
-            record_threat_event(ip_address, "unblock", details: details)
-
-            # Log audit action for manual unblock
-            if admin_user do
-              log_security_action(admin_user, "ip_manual_unblock", "ip_address", ip_address,
-                ip_address: request_ip
-              )
-            end
-
-            {:ok, updated}
-
-          {:error, changeset} ->
-            {:error, changeset}
-        end
+        ip_rep
+        |> IpReputation.changeset(attrs)
+        |> Repo.update()
+        |> handle_unblock_result(ip_address, admin_user, request_ip)
     end
+  end
+
+  defp handle_unblock_result({:error, changeset}, _ip_address, _admin_user, _request_ip) do
+    {:error, changeset}
+  end
+
+  defp handle_unblock_result({:ok, updated}, ip_address, admin_user, request_ip) do
+    Cache.invalidate_ip(ip_address)
+
+    details =
+      if admin_user do
+        %{admin_id: admin_user.id, admin_email: admin_user.email}
+      else
+        %{automatic: true}
+      end
+
+    record_threat_event(ip_address, "unblock", details: details)
+
+    # Log audit action for manual unblock
+    if admin_user do
+      log_security_action(admin_user, "ip_manual_unblock", "ip_address", ip_address,
+        ip_address: request_ip
+      )
+    end
+
+    {:ok, updated}
   end
 
   # IP Watchlist Management
@@ -342,23 +347,27 @@ defmodule Homesite.ThreatReputation do
         {:error, :not_found}
 
       entry ->
-        case Repo.delete(entry) do
-          {:ok, deleted} ->
-            Cache.invalidate_ip(ip_address)
-
-            # Log audit action
-            if admin_user do
-              log_security_action(admin_user, "ip_watchlist_remove", "ip_address", ip_address,
-                ip_address: request_ip
-              )
-            end
-
-            {:ok, deleted}
-
-          {:error, changeset} ->
-            {:error, changeset}
-        end
+        entry
+        |> Repo.delete()
+        |> handle_ip_watchlist_removal(ip_address, admin_user, request_ip)
     end
+  end
+
+  defp handle_ip_watchlist_removal({:error, changeset}, _ip_address, _admin_user, _request_ip) do
+    {:error, changeset}
+  end
+
+  defp handle_ip_watchlist_removal({:ok, deleted}, ip_address, admin_user, request_ip) do
+    Cache.invalidate_ip(ip_address)
+
+    # Log audit action
+    if admin_user do
+      log_security_action(admin_user, "ip_watchlist_remove", "ip_address", ip_address,
+        ip_address: request_ip
+      )
+    end
+
+    {:ok, deleted}
   end
 
   @doc """
@@ -423,27 +432,36 @@ defmodule Homesite.ThreatReputation do
         {:error, :not_found}
 
       entry ->
-        case Repo.delete(entry) do
-          {:ok, deleted} ->
-            Cache.invalidate_country(country_code)
-
-            # Log audit action
-            if admin_user do
-              log_security_action(
-                admin_user,
-                "country_watchlist_remove",
-                "country_code",
-                country_code,
-                ip_address: request_ip
-              )
-            end
-
-            {:ok, deleted}
-
-          {:error, changeset} ->
-            {:error, changeset}
-        end
+        entry
+        |> Repo.delete()
+        |> handle_country_watchlist_removal(country_code, admin_user, request_ip)
     end
+  end
+
+  defp handle_country_watchlist_removal(
+         {:error, changeset},
+         _country_code,
+         _admin_user,
+         _request_ip
+       ) do
+    {:error, changeset}
+  end
+
+  defp handle_country_watchlist_removal({:ok, deleted}, country_code, admin_user, request_ip) do
+    Cache.invalidate_country(country_code)
+
+    # Log audit action
+    if admin_user do
+      log_security_action(
+        admin_user,
+        "country_watchlist_remove",
+        "country_code",
+        country_code,
+        ip_address: request_ip
+      )
+    end
+
+    {:ok, deleted}
   end
 
   @doc """
@@ -798,14 +816,18 @@ defmodule Homesite.ThreatReputation do
   def send_security_alert(alert_type, details) do
     if Settings.should_alert?(alert_type) do
       Task.Supervisor.async_nolink(Homesite.TaskSupervisor, fn ->
-        for admin <- Accounts.list_admins() do
-          UserNotifier.deliver_security_alert(admin, alert_type, details)
-        end
+        deliver_alerts_to_admins(alert_type, details)
       end)
 
       :ok
     else
       :skipped
+    end
+  end
+
+  defp deliver_alerts_to_admins(alert_type, details) do
+    for admin <- Accounts.list_admins() do
+      UserNotifier.deliver_security_alert(admin, alert_type, details)
     end
   end
 
@@ -952,55 +974,68 @@ defmodule Homesite.ThreatReputation do
   end
 
   defp update_country_reputation(country_code) do
-    # Get aggregate stats
-    stats =
-      from(r in IpReputation,
-        where: r.country_code == ^country_code,
-        select: %{
-          total_ips: count(r.id),
-          blocked_ips: sum(fragment("CASE WHEN ? THEN 1 ELSE 0 END", r.blocked)),
-          avg_score: avg(r.score)
-        }
-      )
-      |> Repo.one()
-
-    # Get threat events count
-    events_count =
-      from(e in ThreatEvent, where: e.country_code == ^country_code, select: count(e.id))
-      |> Repo.one()
-
-    # Get watchlist boost
-    watchlist = get_country_watchlist_entry(country_code)
-
-    watchlist_boost =
-      if watchlist && CountryWatchlistEntry.active?(watchlist), do: watchlist.boost_score, else: 0
-
-    # Calculate score
-    base_score =
-      cond do
-        is_nil(stats) or stats.total_ips == 0 or is_nil(stats.total_ips) ->
-          0
-
-        true ->
-          avg_score = normalize_decimal(stats.avg_score) || 0
-          blocked_count = normalize_decimal(stats.blocked_ips) || 0
-          total_count = normalize_decimal(stats.total_ips)
-          blocked_ratio = blocked_count / total_count * 100
-          round(avg_score * 0.6 + blocked_ratio * 0.4)
-      end
-
-    total_ips = if stats, do: stats.total_ips || 0, else: 0
-    blocked_ips = if stats, do: normalize_decimal(stats.blocked_ips) || 0, else: 0
+    stats = fetch_country_ip_stats(country_code)
+    events_count = fetch_country_events_count(country_code)
+    watchlist_boost = calculate_watchlist_boost(country_code)
+    base_score = calculate_base_score(stats)
 
     attrs = %{
       country_code: country_code,
       score: min(base_score + watchlist_boost, 100),
-      total_ips: total_ips,
-      blocked_ips: round(blocked_ips),
+      total_ips: safe_stat(stats, :total_ips),
+      blocked_ips: round(safe_stat(stats, :blocked_ips)),
       threat_events_count: events_count,
       watchlist_boost: watchlist_boost
     }
 
+    upsert_country_reputation(country_code, attrs)
+    Cache.invalidate_country(country_code)
+  end
+
+  defp fetch_country_ip_stats(country_code) do
+    from(r in IpReputation,
+      where: r.country_code == ^country_code,
+      select: %{
+        total_ips: count(r.id),
+        blocked_ips: sum(fragment("CASE WHEN ? THEN 1 ELSE 0 END", r.blocked)),
+        avg_score: avg(r.score)
+      }
+    )
+    |> Repo.one()
+  end
+
+  defp fetch_country_events_count(country_code) do
+    from(e in ThreatEvent, where: e.country_code == ^country_code, select: count(e.id))
+    |> Repo.one()
+  end
+
+  defp calculate_watchlist_boost(country_code) do
+    watchlist = get_country_watchlist_entry(country_code)
+
+    if watchlist && CountryWatchlistEntry.active?(watchlist), do: watchlist.boost_score, else: 0
+  end
+
+  defp calculate_base_score(nil), do: 0
+
+  defp calculate_base_score(%{total_ips: total})
+       when is_nil(total) or total == 0,
+       do: 0
+
+  defp calculate_base_score(stats) do
+    avg_score = normalize_decimal(stats.avg_score) || 0
+    blocked_count = normalize_decimal(stats.blocked_ips) || 0
+    total_count = normalize_decimal(stats.total_ips)
+    blocked_ratio = blocked_count / total_count * 100
+    round(avg_score * 0.6 + blocked_ratio * 0.4)
+  end
+
+  defp safe_stat(nil, _key), do: 0
+
+  defp safe_stat(stats, key) do
+    normalize_decimal(Map.get(stats, key)) || 0
+  end
+
+  defp upsert_country_reputation(country_code, attrs) do
     case Repo.get_by(CountryReputation, country_code: country_code) do
       nil ->
         %CountryReputation{}
@@ -1012,8 +1047,6 @@ defmodule Homesite.ThreatReputation do
         |> CountryReputation.changeset(attrs)
         |> Repo.update()
     end
-
-    Cache.invalidate_country(country_code)
   end
 
   defp normalize_decimal(nil), do: nil

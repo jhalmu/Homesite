@@ -38,20 +38,23 @@ defmodule Homesite.Feedback do
         |> Map.put("user_rank_at_time", User.get_rank(user))
         |> Map.put("days_since_signup", days_since_signup(user))
 
-      changeset = FeedbackResponse.changeset(%FeedbackResponse{}, attrs)
-
-      Repo.transaction(fn ->
-        case Repo.insert(changeset) do
-          {:ok, feedback} ->
-            # Update user's feedback counters
-            update_feedback_counters(user, rating)
-            feedback
-
-          {:error, changeset} ->
-            Repo.rollback(changeset)
-        end
-      end)
+      insert_feedback_in_transaction(attrs, user, rating)
     end
+  end
+
+  defp insert_feedback_in_transaction(attrs, user, rating) do
+    changeset = FeedbackResponse.changeset(%FeedbackResponse{}, attrs)
+
+    Repo.transaction(fn ->
+      case Repo.insert(changeset) do
+        {:ok, feedback} ->
+          update_feedback_counters(user, rating)
+          feedback
+
+        {:error, changeset} ->
+          Repo.rollback(changeset)
+      end
+    end)
   end
 
   @doc """
@@ -430,20 +433,22 @@ defmodule Homesite.Feedback do
       |> Repo.stream()
       |> Stream.chunk_every(batch_size)
       |> Stream.each(fn batch ->
-        Enum.each(batch, fn user ->
-          case calculate_rank(user) do
-            {:ok, _rank} ->
-              :ok
-
-            {:error, reason} ->
-              Logger.warning("Failed to calculate rank for user #{user.id}: #{inspect(reason)}")
-          end
-        end)
+        Enum.each(batch, &recalculate_user_rank/1)
       end)
       |> Stream.run()
     end)
 
     :ok
+  end
+
+  defp recalculate_user_rank(user) do
+    case calculate_rank(user) do
+      {:ok, _rank} ->
+        :ok
+
+      {:error, reason} ->
+        Logger.warning("Failed to calculate rank for user #{user.id}: #{inspect(reason)}")
+    end
   end
 
   ## Admin Functions

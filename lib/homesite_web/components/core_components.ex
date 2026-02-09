@@ -30,6 +30,7 @@ defmodule HomesiteWeb.CoreComponents do
   use Gettext, backend: HomesiteWeb.Gettext
   import HomesiteWeb.Helpers.DateHelpers
 
+  alias Phoenix.HTML.Form
   alias Phoenix.LiveView.JS
 
   @doc """
@@ -190,7 +191,7 @@ defmodule HomesiteWeb.CoreComponents do
     assigns =
       assigns
       |> assign_new(:checked, fn ->
-        Phoenix.HTML.Form.normalize_value("checkbox", assigns[:value])
+        Form.normalize_value("checkbox", assigns[:value])
       end)
       |> assign(:error_id, error_id)
       |> assign(:has_errors, has_errors)
@@ -267,7 +268,7 @@ defmodule HomesiteWeb.CoreComponents do
               {@rest}
             >
               <option :if={@prompt} value="">{@prompt}</option>
-              {Phoenix.HTML.Form.options_for_select(@options, @value)}
+              {Form.options_for_select(@options, @value)}
             </select>
           </label>
           <.error :for={{msg, index} <- Enum.with_index(@errors)} id={"#{@error_id}-#{index}"}>
@@ -317,7 +318,7 @@ defmodule HomesiteWeb.CoreComponents do
               aria-invalid={@has_errors && "true"}
               aria-required={@is_required && "true"}
               {@rest}
-            >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
+            >{Form.normalize_value("textarea", @value)}</textarea>
           </label>
           <.error :for={{msg, index} <- Enum.with_index(@errors)} id={"#{@error_id}-#{index}"}>
             {msg}
@@ -364,7 +365,7 @@ defmodule HomesiteWeb.CoreComponents do
               type={@type}
               name={@name}
               id={@id}
-              value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+              value={Form.normalize_value(@type, @value)}
               class={[@class || "input w-full", @has_errors && (@error_class || "input-error")]}
               aria-describedby={@has_errors && @error_id}
               aria-invalid={@has_errors && "true"}

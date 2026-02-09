@@ -264,20 +264,24 @@ defmodule Homesite.ThreatReputation.ExternalReputation do
 
   defp get_cached(ip_address) do
     if :ets.info(@cache_table) != :undefined do
-      case :ets.lookup(@cache_table, ip_address) do
-        [{^ip_address, result, expires_at}] ->
-          if System.system_time(:second) < expires_at do
-            {:ok, result}
-          else
-            :ets.delete(@cache_table, ip_address)
-            :miss
-          end
-
-        [] ->
-          :miss
-      end
+      lookup_cached_entry(ip_address)
     else
       :miss
+    end
+  end
+
+  defp lookup_cached_entry(ip_address) do
+    case :ets.lookup(@cache_table, ip_address) do
+      [{^ip_address, result, expires_at}] ->
+        if System.system_time(:second) < expires_at do
+          {:ok, result}
+        else
+          :ets.delete(@cache_table, ip_address)
+          :miss
+        end
+
+      [] ->
+        :miss
     end
   end
 

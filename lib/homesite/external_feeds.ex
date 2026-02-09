@@ -8,6 +8,7 @@ defmodule Homesite.ExternalFeeds do
   alias Homesite.Accounts.Scope
   alias Homesite.ExternalFeeds.{FeedFolder, FeedItem, FeedItemInteraction, FeedSource}
   alias Homesite.Repo
+  alias Homesite.Workers.FeedRefreshWorker
 
   # Helper: Check if map has string keys (for form params)
   # Returns true if map is empty or has at least one string key
@@ -484,64 +485,64 @@ defmodule Homesite.ExternalFeeds do
       result =
         Repo.query!(sql, [scope.user.id, feed_source_ids, limit_per_source, total_limit, offset])
 
-      # Map results to structs
-      Enum.map(result.rows, fn row ->
-        [
-          id,
-          feed_source_id,
-          external_id,
-          title,
-          url,
-          content,
-          author_name,
-          author_handle,
-          author_avatar_url,
-          published_at,
-          metadata,
-          inserted_at,
-          updated_at,
-          interaction_id,
-          read_at,
-          bookmarked_at,
-          interaction_user_id,
-          _row_num
-        ] = row
-
-        feed_item = %FeedItem{
-          id: id,
-          feed_source_id: feed_source_id,
-          external_id: external_id,
-          title: title,
-          url: url,
-          content: content,
-          author_name: author_name,
-          author_handle: author_handle,
-          author_avatar_url: author_avatar_url,
-          published_at: published_at,
-          metadata: metadata,
-          inserted_at: inserted_at,
-          updated_at: updated_at
-        }
-
-        interaction =
-          if interaction_id do
-            %FeedItemInteraction{
-              id: interaction_id,
-              feed_item_id: id,
-              user_id: interaction_user_id,
-              read_at: read_at,
-              bookmarked_at: bookmarked_at
-            }
-          else
-            nil
-          end
-
-        # Preload feed_source
-        feed_item_with_source = Repo.preload(feed_item, :feed_source)
-
-        %{feed_item: feed_item_with_source, interaction: interaction}
-      end)
+      Enum.map(result.rows, &row_to_feed_item_with_interaction/1)
     end
+  end
+
+  defp row_to_feed_item_with_interaction(row) do
+    [
+      id,
+      feed_source_id,
+      external_id,
+      title,
+      url,
+      content,
+      author_name,
+      author_handle,
+      author_avatar_url,
+      published_at,
+      metadata,
+      inserted_at,
+      updated_at,
+      interaction_id,
+      read_at,
+      bookmarked_at,
+      interaction_user_id,
+      _row_num
+    ] = row
+
+    feed_item = %FeedItem{
+      id: id,
+      feed_source_id: feed_source_id,
+      external_id: external_id,
+      title: title,
+      url: url,
+      content: content,
+      author_name: author_name,
+      author_handle: author_handle,
+      author_avatar_url: author_avatar_url,
+      published_at: published_at,
+      metadata: metadata,
+      inserted_at: inserted_at,
+      updated_at: updated_at
+    }
+
+    interaction =
+      if interaction_id do
+        %FeedItemInteraction{
+          id: interaction_id,
+          feed_item_id: id,
+          user_id: interaction_user_id,
+          read_at: read_at,
+          bookmarked_at: bookmarked_at
+        }
+      else
+        nil
+      end
+
+    feed_item_with_source = Repo.preload(feed_item, :feed_source)
+
+    %{feed_item: feed_item_with_source, interaction: interaction}
   end
 
   @doc """
@@ -893,14 +894,14 @@ defmodule Homesite.ExternalFeeds do
   Schedules a background job to refresh a specific feed source.
   """
   def schedule_refresh(feed_source_id) do
-    Homesite.Workers.FeedRefreshWorker.schedule_refresh(feed_source_id)
+    FeedRefreshWorker.schedule_refresh(feed_source_id)
   end
 
   @doc """
   Schedules a background job to refresh all enabled feed sources.
   """
   def schedule_refresh_all do
-    Homesite.Workers.FeedRefreshWorker.schedule_refresh_all()
+    FeedRefreshWorker.schedule_refresh_all()
   end
 
   @doc """
@@ -908,7 +909,7 @@ defmodule Homesite.ExternalFeeds do
   Useful for parallel processing and better error isolation.
   """
   def schedule_individual_refreshes do
-    Homesite.Workers.FeedRefreshWorker.schedule_individual_refreshes()
+    FeedRefreshWorker.schedule_individual_refreshes()
   end
 
   @doc """

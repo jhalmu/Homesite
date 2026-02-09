@@ -101,8 +101,6 @@ defmodule HomesiteWeb.E2E.TagWorkflowsTest do
     |> assert_has("h1", text: "New Post")
   end
 
-  # TODO: Add more authenticated flow tests
-  #
   # @tag :playwright
   # test "create post with tag search - would have caught KeyError bug!", %{conn: conn} do
   #   conn

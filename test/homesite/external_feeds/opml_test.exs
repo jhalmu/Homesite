@@ -3,13 +3,14 @@ defmodule Homesite.ExternalFeeds.OPMLTest do
 
   import Homesite.AccountsFixtures
 
+  alias Homesite.Accounts.Scope
   alias Homesite.ExternalFeeds
   alias Homesite.ExternalFeeds.OPML
 
   setup do
     # Each test gets its own user with unique email (via user_fixture default)
     user = user_fixture()
-    scope = Homesite.Accounts.Scope.for_user(user)
+    scope = Scope.for_user(user)
 
     %{scope: scope, user: user}
   end
@@ -483,7 +484,7 @@ defmodule Homesite.ExternalFeeds.OPMLTest do
     test "respects scope isolation - user A cannot import into user B's scope", %{scope: scope_a} do
       # Create user B
       user_b = user_fixture(%{email: "userb@example.com"})
-      scope_b = Homesite.Accounts.Scope.for_user(user_b)
+      scope_b = Scope.for_user(user_b)
 
       # Create feed for user B
       {:ok, _feed_b} =

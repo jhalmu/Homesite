@@ -6,7 +6,7 @@ defmodule Homesite.TextHelpersTest do
   describe "check_text/1" do
     test "detects common misspellings" do
       issues = TextHelpers.check_text("This is teh quick brown fox.")
-      assert length(issues) > 0
+      assert issues != []
 
       misspelling = Enum.find(issues, &(&1.type == :misspelling))
       assert misspelling.word == "teh"
@@ -119,18 +119,18 @@ defmodule Homesite.TextHelpersTest do
   describe "find_passive_voice/1" do
     test "detects was + past participle ending in -wn" do
       passive = TextHelpers.find_passive_voice("The ball was thrown by John.")
-      assert length(passive) > 0
+      assert passive != []
       assert Enum.any?(passive, &(&1 =~ "was thrown"))
     end
 
     test "detects is + past participle ending in -en" do
       passive = TextHelpers.find_passive_voice("The report is written by the team.")
-      assert length(passive) > 0
+      assert passive != []
     end
 
     test "detects was + past participle ending in -ed" do
       passive = TextHelpers.find_passive_voice("The letter was delivered yesterday.")
-      assert length(passive) > 0
+      assert passive != []
       assert Enum.any?(passive, &(&1 =~ "was delivered"))
     end
 
@@ -153,7 +153,7 @@ defmodule Homesite.TextHelpersTest do
           threshold: 0.2
         )
 
-      assert length(overused) > 0
+      assert overused != []
       assert Enum.any?(overused, &(&1.word == "great"))
     end
 
@@ -208,7 +208,7 @@ defmodule Homesite.TextHelpersTest do
 
     test "includes passive voice" do
       result = TextHelpers.analyze("The ball was thrown by John.")
-      assert length(result.passive_voice) > 0
+      assert result.passive_voice != []
     end
 
     test "includes stats" do

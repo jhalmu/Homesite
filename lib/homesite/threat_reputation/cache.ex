@@ -202,20 +202,24 @@ defmodule Homesite.ThreatReputation.Cache do
 
   defp get_cached(table, key) do
     if :ets.info(table) != :undefined do
-      case :ets.lookup(table, key) do
-        [{^key, data, expires_at}] ->
-          if System.system_time(:second) < expires_at do
-            {:ok, data}
-          else
-            :ets.delete(table, key)
-            :miss
-          end
-
-        [] ->
-          :miss
-      end
+      lookup_cached_entry(table, key)
     else
       :miss
+    end
+  end
+
+  defp lookup_cached_entry(table, key) do
+    case :ets.lookup(table, key) do
+      [{^key, data, expires_at}] ->
+        if System.system_time(:second) < expires_at do
+          {:ok, data}
+        else
+          :ets.delete(table, key)
+          :miss
+        end
+
+      [] ->
+        :miss
     end
   end
 

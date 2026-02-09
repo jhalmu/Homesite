@@ -183,9 +183,10 @@ defmodule Homesite.ExternalFeeds.Adapters.Helpers do
   Logs an error with context about the adapter and operation.
   """
   def log_adapter_error(adapter_name, operation, error, context \\ %{}) do
+    context_str = if context == %{}, do: "", else: " context=#{inspect(context)}"
+
     Logger.error(
-      "[#{adapter_name}] #{operation} failed: #{inspect(error)}",
-      context: context
+      "[#{adapter_name}] #{operation} failed: #{inspect(error)}#{context_str}"
     )
   end
 end

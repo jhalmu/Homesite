@@ -5,6 +5,9 @@ defmodule Homesite.Application do
 
   use Application
 
+  alias Homesite.Analytics.Geo
+  alias Homesite.ThreatReputation.ExternalReputation
+
   @impl true
   def start(_type, _args) do
     children = [
@@ -42,11 +45,11 @@ defmodule Homesite.Application do
     result = Supervisor.start_link(children, opts)
 
     # Initialize geo lookup service (ETS cache + optional MaxMind loader)
-    Homesite.Analytics.Geo.init_cache()
-    Homesite.Analytics.Geo.start_loader()
+    Geo.init_cache()
+    Geo.start_loader()
 
     # Initialize external IP reputation cache (AbuseIPDB)
-    Homesite.ThreatReputation.ExternalReputation.init_cache()
+    ExternalReputation.init_cache()
 
     result
   end

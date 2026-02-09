@@ -189,7 +189,7 @@ defmodule Homesite.ContentTest do
       similar = Content.find_similar_tags("Elixir")
 
       # Should find both "Elixir" and "Elixer" due to trigram similarity
-      assert length(similar) >= 1
+      assert similar != []
       tag_names = Enum.map(similar, & &1.name)
       assert "Elixir" in tag_names or "Elixer" in tag_names
     end

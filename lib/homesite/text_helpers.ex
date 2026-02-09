@@ -227,7 +227,7 @@ defmodule Homesite.TextHelpers do
             }
           ]
 
-        is_double_word?(words, idx) ->
+        double_word?(words, idx) ->
           [%{type: :repeated_word, word: word, index: idx, suggestions: ["Remove duplicate"]}]
 
         true ->
@@ -236,13 +236,13 @@ defmodule Homesite.TextHelpers do
     end)
   end
 
-  defp is_double_word?(words, idx) when idx > 0 do
+  defp double_word?(words, idx) when idx > 0 do
     current = Enum.at(words, idx) |> String.downcase() |> String.replace(~r/[^\w]/, "")
     prev = Enum.at(words, idx - 1) |> String.downcase() |> String.replace(~r/[^\w]/, "")
     current == prev and String.length(current) > 2
   end
 
-  defp is_double_word?(_, _), do: false
+  defp double_word?(_, _), do: false
 
   defp count_syllables(word) do
     word

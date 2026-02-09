@@ -17,16 +17,16 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
   @impl true
   def mount(_params, _session, socket) do
     # Verify admin access
-    unless socket.assigns.current_scope && socket.assigns.current_scope.admin_override? do
-      {:ok,
-       socket
-       |> put_flash(:error, gettext("You must be an admin to access this page."))
-       |> push_navigate(to: ~p"/")}
-    else
+    if socket.assigns.current_scope && socket.assigns.current_scope.admin_override? do
       {:ok,
        socket
        |> assign(:hide_feedback_modal, true)
        |> load_analytics()}
+    else
+      {:ok,
+       socket
+       |> put_flash(:error, gettext("You must be an admin to access this page."))
+       |> push_navigate(to: ~p"/")}
     end
   end
 

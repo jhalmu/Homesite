@@ -1,6 +1,8 @@
 defmodule HomesiteWeb.AdminLive.Threat.Dashboard do
+  @moduledoc false
   use HomesiteWeb, :live_view
 
+  alias Homesite.Accounts.UserNotifier
   alias Homesite.Settings
   alias Homesite.ThreatReputation
   import HomesiteWeb.Helpers.DateHelpers
@@ -550,7 +552,7 @@ defmodule HomesiteWeb.AdminLive.Threat.Dashboard do
     admin = socket.assigns.current_scope.user
 
     # Send a test alert to the current admin only
-    Homesite.Accounts.UserNotifier.deliver_security_alert(
+    UserNotifier.deliver_security_alert(
       admin,
       :attack_detected,
       %{
@@ -647,8 +649,6 @@ defmodule HomesiteWeb.AdminLive.Threat.Dashboard do
   defp format_event_details(details) when details == %{}, do: "-"
 
   defp format_event_details(details) when is_map(details) do
-    details
-    |> Enum.map(fn {k, v} -> "#{k}: #{v}" end)
-    |> Enum.join(", ")
+    Enum.map_join(details, ", ", fn {k, v} -> "#{k}: #{v}" end)
   end
 end

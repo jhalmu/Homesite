@@ -4,11 +4,12 @@ defmodule HomesiteWeb.SearchLive.IndexTest do
   import Phoenix.LiveViewTest
   import Homesite.AccountsFixtures
 
+  alias Homesite.Accounts.Scope
   alias Homesite.Content
 
   setup do
     user = user_fixture()
-    scope = Homesite.Accounts.Scope.for_user(user)
+    scope = Scope.for_user(user)
 
     # Create searchable posts
     {:ok, post1} =

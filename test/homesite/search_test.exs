@@ -61,15 +61,15 @@ defmodule Homesite.SearchTest do
       results = Search.search_all("Elixir")
 
       # Should find the post
-      assert length(results.posts) >= 1
+      assert results.posts != []
       assert Enum.any?(results.posts, &(&1.id == post.id))
 
       # Should find the tag
-      assert length(results.tags) >= 1
+      assert results.tags != []
       assert Enum.any?(results.tags, &(&1.id == tag.id))
 
       # Should find the FAQ
-      assert length(results.faqs) >= 1
+      assert results.faqs != []
       assert Enum.any?(results.faqs, &(&1.id == faq.id))
 
       # Total count should be sum of all results
@@ -137,12 +137,12 @@ defmodule Homesite.SearchTest do
     test "finds items by different search terms" do
       # Search for "Phoenix" should find post and tag
       phoenix_results = Search.search_all("Phoenix")
-      assert length(phoenix_results.posts) >= 1
-      assert length(phoenix_results.tags) >= 1
+      assert phoenix_results.posts != []
+      assert phoenix_results.tags != []
 
       # Search for "LiveView" should find post
       liveview_results = Search.search_all("LiveView")
-      assert length(liveview_results.posts) >= 1
+      assert liveview_results.posts != []
     end
 
     test "handles queries with no matches gracefully" do
@@ -170,7 +170,7 @@ defmodule Homesite.SearchTest do
 
     test "delegates to Content.search_posts/2", %{post: post} do
       results = Search.search_posts("Elixir")
-      assert length(results) >= 1
+      assert results != []
       assert Enum.any?(results, &(&1.id == post.id))
     end
 
@@ -189,7 +189,7 @@ defmodule Homesite.SearchTest do
 
     test "delegates to Content.search_tags/2", %{tag: tag} do
       results = Search.search_tags("Elixir")
-      assert length(results) >= 1
+      assert results != []
       assert Enum.any?(results, &(&1.id == tag.id))
     end
 
@@ -219,7 +219,7 @@ defmodule Homesite.SearchTest do
 
     test "delegates to Faqs.search_faqs/2", %{faq: faq} do
       results = Search.search_faqs("Elixir")
-      assert length(results) >= 1
+      assert results != []
       assert Enum.any?(results, &(&1.id == faq.id))
     end
 
@@ -227,7 +227,7 @@ defmodule Homesite.SearchTest do
       results = Search.search_faqs("Elixir", limit: 1, locale: "fi")
       assert length(results) <= 1
 
-      if length(results) > 0 do
+      if results != [] do
         assert hd(results).question =~ ~r/Mikä|Elixir/
       end
     end

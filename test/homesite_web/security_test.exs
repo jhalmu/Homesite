@@ -8,6 +8,7 @@ defmodule HomesiteWeb.SecurityTest do
   import Homesite.DataCase, only: [errors_on: 1]
 
   alias Homesite.Accounts
+  alias Homesite.Accounts.Invitation
   alias Homesite.Content
   alias Homesite.Media
 
@@ -444,7 +445,7 @@ defmodule HomesiteWeb.SecurityTest do
 
       # Verify posts still exist
       all_posts = Content.list_posts(scope)
-      assert length(all_posts) >= 1
+      assert all_posts != []
     end
 
     test "search does not expose XSS vulnerabilities", %{conn: _conn} do
@@ -664,7 +665,7 @@ defmodule HomesiteWeb.SecurityTest do
       # This proves atomic consumption with pessimistic locking worked
       updated_invitation = Accounts.get_invitation_by_code(invitation.code)
       assert updated_invitation.current_uses == 5
-      refute Homesite.Accounts.Invitation.valid?(updated_invitation)
+      refute Invitation.valid?(updated_invitation)
     end
 
     test "exhausted invitation cannot be reused", %{conn: _conn} do
@@ -703,7 +704,7 @@ defmodule HomesiteWeb.SecurityTest do
       # Verify invitation is fully consumed
       updated_invitation = Accounts.get_invitation_by_code(invitation.code)
       assert updated_invitation.current_uses == 1
-      refute Homesite.Accounts.Invitation.valid?(updated_invitation)
+      refute Invitation.valid?(updated_invitation)
     end
 
     test "invitation code is tracked in user record for audit trail", %{conn: _conn} do
@@ -737,8 +738,8 @@ defmodule HomesiteWeb.SecurityTest do
   end
 
   describe "Feedback Security: Scope Isolation" do
-    alias Homesite.Feedback
     alias Homesite.Accounts.Scope
+    alias Homesite.Feedback
 
     test "user A cannot view user B's feedback responses", %{conn: _conn} do
       user_a = user_fixture(%{email: "user-a-feedback@example.com"})
@@ -822,8 +823,8 @@ defmodule HomesiteWeb.SecurityTest do
   end
 
   describe "Feedback Security: Admin Authorization" do
-    alias Homesite.Feedback
     alias Homesite.Accounts.Scope
+    alias Homesite.Feedback
 
     test "non-admin cannot approve testimonials", %{conn: _conn} do
       user = user_fixture(%{email: "regular-user@example.com"})
@@ -942,8 +943,8 @@ defmodule HomesiteWeb.SecurityTest do
   end
 
   describe "Feedback Security: Public Access" do
-    alias Homesite.Feedback
     alias Homesite.Accounts.Scope
+    alias Homesite.Feedback
 
     test "anyone can view approved public testimonials", %{conn: _conn} do
       admin = admin_fixture(%{email: "admin-public@example.com"})
@@ -1572,8 +1573,8 @@ defmodule HomesiteWeb.SecurityTest do
   end
 
   describe "Feedback Security: Rate Limiting" do
-    alias Homesite.Feedback
     alias Homesite.Accounts.Scope
+    alias Homesite.Feedback
 
     test "user cannot submit feedback within 7 days", %{conn: _conn} do
       user = user_fixture(%{email: "rate-limit@example.com"})
@@ -1631,8 +1632,8 @@ defmodule HomesiteWeb.SecurityTest do
   end
 
   describe "Feedback Security: Testimonial Approval Workflow" do
-    alias Homesite.Feedback
     alias Homesite.Accounts.Scope
+    alias Homesite.Feedback
 
     test "shared but unapproved testimonials require admin approval", %{conn: _conn} do
       user = user_fixture(%{email: "approval-workflow@example.com"})

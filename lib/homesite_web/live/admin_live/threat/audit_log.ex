@@ -1,4 +1,5 @@
 defmodule HomesiteWeb.AdminLive.Threat.AuditLog do
+  @moduledoc false
   use HomesiteWeb, :live_view
 
   alias Homesite.Accounts
@@ -232,25 +233,20 @@ defmodule HomesiteWeb.AdminLive.Threat.AuditLog do
     |> assign(:total_count, total_count)
   end
 
-  defp action_badge_class(action_type) do
-    case action_type do
-      "ip_watchlist_add" -> "badge-warning"
-      "ip_watchlist_remove" -> "badge-info"
-      "country_watchlist_add" -> "badge-warning"
-      "country_watchlist_remove" -> "badge-info"
-      "ip_manual_block" -> "badge-error"
-      "ip_manual_unblock" -> "badge-success"
-      "threshold_change" -> "badge-secondary"
-      "alert_config_change" -> "badge-secondary"
-      _ -> "badge-ghost"
-    end
-  end
+  defp action_badge_class("ip_watchlist_add"), do: "badge-warning"
+  defp action_badge_class("ip_watchlist_remove"), do: "badge-info"
+  defp action_badge_class("country_watchlist_add"), do: "badge-warning"
+  defp action_badge_class("country_watchlist_remove"), do: "badge-info"
+  defp action_badge_class("ip_manual_block"), do: "badge-error"
+  defp action_badge_class("ip_manual_unblock"), do: "badge-success"
+  defp action_badge_class("threshold_change"), do: "badge-secondary"
+  defp action_badge_class("alert_config_change"), do: "badge-secondary"
+  defp action_badge_class(_), do: "badge-ghost"
 
   defp format_details(details) when is_map(details) do
     details
     |> Enum.take(3)
-    |> Enum.map(fn {k, v} -> "#{k}: #{inspect(v)}" end)
-    |> Enum.join(", ")
+    |> Enum.map_join(", ", fn {k, v} -> "#{k}: #{inspect(v)}" end)
   end
 
   defp format_details(_), do: ""

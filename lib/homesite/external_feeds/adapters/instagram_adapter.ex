@@ -47,17 +47,13 @@ defmodule Homesite.ExternalFeeds.Adapters.InstagramAdapter do
     # Delegate to RSS adapter since we're using RSS bridges
     case RssAdapter.fetch_items(feed_source) do
       {:ok, items} ->
-        # Enhance items with Instagram-specific metadata
-        enhanced_items =
-          Enum.map(items, fn item ->
-            Map.update!(item, :metadata, fn meta ->
-              Map.merge(meta, %{
-                feed_type: "instagram",
-                instagram_username: username,
-                source: "rss_bridge"
-              })
-            end)
-          end)
+        extra_metadata = %{
+          feed_type: "instagram",
+          instagram_username: username,
+          source: "rss_bridge"
+        }
+
+        enhanced_items = enhance_items_metadata(items, extra_metadata)
 
         Logger.info(
           "Successfully fetched #{length(enhanced_items)} items from Instagram @#{username}"
@@ -69,5 +65,11 @@ defmodule Homesite.ExternalFeeds.Adapters.InstagramAdapter do
         Logger.error("Failed to fetch Instagram feed for @#{username}: #{inspect(reason)}")
         error
     end
+  end
+
+  defp enhance_items_metadata(items, extra_metadata) do
+    Enum.map(items, fn item ->
+      Map.update!(item, :metadata, &Map.merge(&1, extra_metadata))
+    end)
   end
 end

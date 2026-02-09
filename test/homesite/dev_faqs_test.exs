@@ -12,7 +12,7 @@ defmodule Homesite.DevFaqsTest do
       assert is_list(articles)
 
       # If articles exist, verify they're sorted by order
-      if length(articles) > 0 do
+      if articles != [] do
         orders = Enum.map(articles, & &1.order)
         assert orders == Enum.sort(orders)
       end
@@ -80,7 +80,7 @@ defmodule Homesite.DevFaqsTest do
       assert is_list(categories)
 
       # In test environment, may be empty; in dev, should have categories
-      if length(categories) > 0 do
+      if categories != [] do
         # Should be sorted
         assert categories == Enum.sort(categories)
 

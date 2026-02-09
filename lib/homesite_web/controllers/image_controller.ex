@@ -9,11 +9,11 @@ defmodule HomesiteWeb.ImageController do
 
   import Ecto.Query
 
-  alias Homesite.Repo
+  alias Homesite.Accounts
   alias Homesite.Media
   alias Homesite.Media.{ImageProcessor, MediaItem}
-  alias Homesite.Accounts
   alias Homesite.PortfolioImageCache
+  alias Homesite.Repo
 
   # Default OG image dimensions
   @og_image_size 400
@@ -106,29 +106,7 @@ defmodule HomesiteWeb.ImageController do
   def public_media(conn, %{"id" => id}) do
     media_item_id = String.to_integer(id)
 
-    case PortfolioImageCache.fetch(media_item_id, fn ->
-           case Media.get_public_media_item(media_item_id) do
-             {:ok, item} ->
-               user = Accounts.get_user!(item.user_id)
-               watermark_text = user.display_name || user.email
-
-               case ImageProcessor.apply_watermark(
-                      item.medium_data,
-                      watermark_text,
-                      item.content_type
-                    ) do
-                 {:ok, watermarked} ->
-                   {:ok, {watermarked, item.content_type}}
-
-                 {:error, _reason} ->
-                   # Fallback: serve un-watermarked medium_data
-                   {:ok, {item.medium_data, item.content_type}}
-               end
-
-             {:error, :not_found} ->
-               :not_found
-           end
-         end) do
+    case PortfolioImageCache.fetch(media_item_id, fn -> fetch_watermarked_image(media_item_id) end) do
       {:ok, {image_data, content_type}} ->
         etag = Base.encode16(:crypto.hash(:md5, image_data), case: :lower)
 
@@ -144,6 +122,30 @@ defmodule HomesiteWeb.ImageController do
   rescue
     Ecto.NoResultsError ->
       send_resp(conn, 404, "Not found")
+  end
+
+  defp fetch_watermarked_image(media_item_id) do
+    case Media.get_public_media_item(media_item_id) do
+      {:ok, item} ->
+        watermark_public_item(item)
+
+      {:error, :not_found} ->
+        :not_found
+    end
+  end
+
+  defp watermark_public_item(item) do
+    user = Accounts.get_user!(item.user_id)
+    watermark_text = user.display_name || user.email
+
+    case ImageProcessor.apply_watermark(item.medium_data, watermark_text, item.content_type) do
+      {:ok, watermarked} ->
+        {:ok, {watermarked, item.content_type}}
+
+      {:error, _reason} ->
+        # Fallback: serve un-watermarked medium_data
+        {:ok, {item.medium_data, item.content_type}}
+    end
   end
 
   defp serve_data_uri(conn, data_uri) do
@@ -263,25 +265,20 @@ defmodule HomesiteWeb.ImageController do
   end
 
   defp convert_data_uri_to_png(data_uri) do
-    with {:ok, binary_data} <- extract_data_uri(data_uri),
-         {:ok, png_data} <- convert_binary_to_png(binary_data) do
-      {:ok, png_data}
+    with {:ok, binary_data} <- extract_data_uri(data_uri) do
+      convert_binary_to_png(binary_data)
     end
   end
 
   defp convert_file_avatar_to_png(path) do
     # Resolve the file path - check both priv/static and UPLOADS_PATH
     full_path =
-      cond do
-        # Check UPLOADS_PATH first (production)
-        uploads_path = System.get_env("UPLOADS_PATH") ->
-          # path is like "/uploads/avatars/file.jpg" - strip /uploads prefix
-          relative_path = String.replace_prefix(path, "/uploads/", "")
-          Path.join(uploads_path, relative_path)
-
-        # Fall back to priv/static (development)
-        true ->
-          Application.app_dir(:homesite, "priv/static#{path}")
+      if uploads_path = System.get_env("UPLOADS_PATH") do
+        # path is like "/uploads/avatars/file.jpg" - strip /uploads prefix
+        relative_path = String.replace_prefix(path, "/uploads/", "")
+        Path.join(uploads_path, relative_path)
+      else
+        Application.app_dir(:homesite, "priv/static#{path}")
       end
 
     if File.exists?(full_path) do
@@ -455,20 +452,7 @@ defmodule HomesiteWeb.ImageController do
     post_id = String.to_integer(post_id)
 
     # Try to get from cache first
-    case Homesite.OGImageCache.fetch(post_id, fn ->
-           # On cache miss, generate the image
-           post =
-             from(p in Homesite.Content.Post,
-               where: p.id == ^post_id,
-               preload: [:user]
-             )
-             |> Repo.one()
-
-           case post do
-             nil -> :not_found
-             post -> generate_og_card(post)
-           end
-         end) do
+    case Homesite.OGImageCache.fetch(post_id, fn -> fetch_og_card_for_post(post_id) end) do
       :not_found ->
         serve_default_og_image(conn)
 
@@ -483,6 +467,20 @@ defmodule HomesiteWeb.ImageController do
     end
   end
 
+  defp fetch_og_card_for_post(post_id) do
+    post =
+      from(p in Homesite.Content.Post,
+        where: p.id == ^post_id,
+        preload: [:user]
+      )
+      |> Repo.one()
+
+    case post do
+      nil -> :not_found
+      post -> generate_og_card(post)
+    end
+  end
+
   defp generate_og_card(post) do
     tmp_dir = System.tmp_dir!()
     unique_id = :erlang.unique_integer([:positive])
@@ -490,115 +488,106 @@ defmodule HomesiteWeb.ImageController do
     output_path = Path.join(tmp_dir, "og_card_#{unique_id}.png")
 
     try do
-      # Get avatar PNG for the user
-      avatar_result =
-        if post.user do
-          get_avatar_png(post.user)
-        else
-          {:error, :no_user}
-        end
-
-      # Write avatar to temp file or use placeholder
-      avatar_ready =
-        case avatar_result do
-          {:ok, avatar_data} ->
-            File.write!(avatar_path, avatar_data)
-            true
-
-          _ ->
-            # Create a simple colored circle as fallback
-            case System.cmd("magick", [
-                   "-size",
-                   "#{@og_avatar_size}x#{@og_avatar_size}",
-                   "xc:#{@og_bg_color}",
-                   "-fill",
-                   "#FF6B35",
-                   "-draw",
-                   "circle #{div(@og_avatar_size, 2)},#{div(@og_avatar_size, 2)} #{div(@og_avatar_size, 2)},10",
-                   avatar_path
-                 ]) do
-              {_, 0} -> true
-              _ -> false
-            end
-        end
-
-      if avatar_ready do
-        # Truncate title if too long
-        title = truncate_title(post.title, 60)
-        site_name = "Juha Halmun blogi"
-
-        # Create the OG card with ImageMagick
-        # Layout: avatar on left (with padding), title + site name on right
-        result =
-          System.cmd("magick", [
-            # Create background
-            "-size",
-            "#{@og_card_width}x#{@og_card_height}",
-            "xc:#{@og_bg_color}",
-            # Composite the avatar (circular, positioned left)
-            "(",
-            avatar_path,
-            "-resize",
-            "#{@og_avatar_size}x#{@og_avatar_size}",
-            "-gravity",
-            "center",
-            # Make circular with mask
-            "(",
-            "+clone",
-            "-alpha",
-            "extract",
-            "-draw",
-            "fill black polygon 0,0 0,#{@og_avatar_size} #{@og_avatar_size},#{@og_avatar_size} #{@og_avatar_size},0 fill white circle #{div(@og_avatar_size, 2)},#{div(@og_avatar_size, 2)} #{div(@og_avatar_size, 2)},1",
-            ")",
-            "-alpha",
-            "off",
-            "-compose",
-            "CopyOpacity",
-            "-composite",
-            ")",
-            "-gravity",
-            "West",
-            "-geometry",
-            "+80+0",
-            "-composite",
-            # Add title text
-            "-gravity",
-            "West",
-            "-fill",
-            @og_text_color,
-            "-font",
-            "Helvetica-Bold",
-            "-pointsize",
-            "48",
-            "-annotate",
-            "+#{80 + @og_avatar_size + 60}+0",
-            title,
-            # Add site name below title
-            "-fill",
-            @og_subtitle_color,
-            "-font",
-            "Helvetica",
-            "-pointsize",
-            "28",
-            "-annotate",
-            "+#{80 + @og_avatar_size + 60}+60",
-            site_name,
-            output_path
-          ])
-
-        case result do
-          {_, 0} ->
-            {:ok, File.read!(output_path)}
-
-          {error, _} ->
-            {:error, {:imagemagick_failed, error}}
-        end
-      else
-        {:error, :avatar_not_ready}
+      with :ok <- prepare_avatar(post.user, avatar_path) do
+        render_og_card(post, avatar_path, output_path)
       end
     after
       File.rm(avatar_path)
       File.rm(output_path)
+    end
+  end
+
+  defp prepare_avatar(nil, avatar_path), do: generate_fallback_avatar(avatar_path)
+
+  defp prepare_avatar(user, avatar_path) do
+    case get_avatar_png(user) do
+      {:ok, avatar_data} ->
+        File.write!(avatar_path, avatar_data)
+        :ok
+
+      _ ->
+        generate_fallback_avatar(avatar_path)
+    end
+  end
+
+  defp generate_fallback_avatar(avatar_path) do
+    case System.cmd("magick", [
+           "-size",
+           "#{@og_avatar_size}x#{@og_avatar_size}",
+           "xc:#{@og_bg_color}",
+           "-fill",
+           "#FF6B35",
+           "-draw",
+           "circle #{div(@og_avatar_size, 2)},#{div(@og_avatar_size, 2)} #{div(@og_avatar_size, 2)},10",
+           avatar_path
+         ]) do
+      {_, 0} -> :ok
+      _ -> {:error, :avatar_not_ready}
+    end
+  end
+
+  defp render_og_card(post, avatar_path, output_path) do
+    title = truncate_title(post.title, 60)
+    site_name = "Juha Halmun blogi"
+
+    result =
+      System.cmd("magick", [
+        "-size",
+        "#{@og_card_width}x#{@og_card_height}",
+        "xc:#{@og_bg_color}",
+        "(",
+        avatar_path,
+        "-resize",
+        "#{@og_avatar_size}x#{@og_avatar_size}",
+        "-gravity",
+        "center",
+        "(",
+        "+clone",
+        "-alpha",
+        "extract",
+        "-draw",
+        "fill black polygon 0,0 0,#{@og_avatar_size} #{@og_avatar_size},#{@og_avatar_size} #{@og_avatar_size},0 fill white circle #{div(@og_avatar_size, 2)},#{div(@og_avatar_size, 2)} #{div(@og_avatar_size, 2)},1",
+        ")",
+        "-alpha",
+        "off",
+        "-compose",
+        "CopyOpacity",
+        "-composite",
+        ")",
+        "-gravity",
+        "West",
+        "-geometry",
+        "+80+0",
+        "-composite",
+        "-gravity",
+        "West",
+        "-fill",
+        @og_text_color,
+        "-font",
+        "Helvetica-Bold",
+        "-pointsize",
+        "48",
+        "-annotate",
+        "+#{80 + @og_avatar_size + 60}+0",
+        title,
+        "-fill",
+        @og_subtitle_color,
+        "-font",
+        "Helvetica",
+        "-pointsize",
+        "28",
+        "-annotate",
+        "+#{80 + @og_avatar_size + 60}+60",
+        site_name,
+        output_path
+      ])
+
+    case result do
+      {_, 0} ->
+        {:ok, File.read!(output_path)}
+
+      {error, _} ->
+        {:error, {:imagemagick_failed, error}}
     end
   end
 

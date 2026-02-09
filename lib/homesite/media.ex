@@ -6,18 +6,19 @@ defmodule Homesite.Media do
   import Ecto.Query, warn: false
 
   alias Homesite.Accounts.Scope
-
   alias Homesite.Content.Tag
 
   alias Homesite.Media.{
     AffiliationLink,
-    Collection,
     Collaborator,
+    Collection,
+    ContentSection,
     ImageProcessor,
     MediaItem,
     MediaItemTag,
     Project,
-    ProjectMediaItem
+    ProjectMediaItem,
+    ProjectTemplate
   }
 
   alias Homesite.Repo
@@ -714,22 +715,7 @@ defmodule Homesite.Media do
         end
 
       if new_index != current_index do
-        # Swap the two items
-        items
-        |> Enum.with_index()
-        |> Enum.each(fn {item, idx} ->
-          new_order =
-            cond do
-              idx == current_index -> new_index
-              idx == new_index -> current_index
-              true -> idx
-            end
-
-          item
-          |> Ecto.Changeset.change(display_order: new_order)
-          |> Repo.update!()
-        end)
-
+        swap_display_orders(items, current_index, new_index)
         {:ok, :reordered}
       else
         {:ok, :no_change}
@@ -737,6 +723,23 @@ defmodule Homesite.Media do
     else
       {:error, :not_found}
     end
+  end
+
+  defp swap_display_orders(items, current_index, new_index) do
+    items
+    |> Enum.with_index()
+    |> Enum.each(fn {item, idx} ->
+      new_order =
+        cond do
+          idx == current_index -> new_index
+          idx == new_index -> current_index
+          true -> idx
+        end
+
+      item
+      |> Ecto.Changeset.change(display_order: new_order)
+      |> Repo.update!()
+    end)
   end
 
   ## Search
@@ -761,79 +764,68 @@ defmodule Homesite.Media do
         aspect_category: opts[:aspect_category]
       })
     else
-      search_pattern = "%#{query}%"
-
-      base_query =
-        from(m in MediaItem,
-          where: m.user_id == ^scope.user.id,
-          limit: 50,
-          preload: [:tags]
-        )
-
-      # For short queries, use ILIKE; for longer ones, use trigram OR ILIKE
-      base_query =
-        if String.length(query) < 3 do
-          from(m in base_query,
-            where:
-              ilike(m.title, ^search_pattern) or
-                ilike(m.caption, ^search_pattern) or
-                ilike(m.original_filename, ^search_pattern) or
-                ilike(m.alt_text, ^search_pattern),
-            order_by: [desc: m.inserted_at]
-          )
-        else
-          from(m in base_query,
-            where:
-              fragment(
-                "? % ? OR ? % ? OR ? % ? OR ? % ?",
-                m.title,
-                ^query,
-                m.caption,
-                ^query,
-                m.original_filename,
-                ^query,
-                m.alt_text,
-                ^query
-              ) or
-                ilike(m.title, ^search_pattern) or
-                ilike(m.original_filename, ^search_pattern),
-            order_by: [
-              desc:
-                fragment(
-                  "similarity(COALESCE(?, ''), ?) + similarity(COALESCE(?, ''), ?) + similarity(COALESCE(?, ''), ?)",
-                  m.title,
-                  ^query,
-                  m.caption,
-                  ^query,
-                  m.original_filename,
-                  ^query
-                )
-            ]
-          )
-        end
-
-      # Apply tag filter
-      base_query =
-        if opts[:tag_id] do
-          from(m in base_query,
-            join: mt in "media_item_tags",
-            on: mt.media_item_id == m.id,
-            where: mt.tag_id == ^opts[:tag_id]
-          )
-        else
-          base_query
-        end
-
-      # Apply aspect filter
-      base_query =
-        if opts[:aspect_category] do
-          from(m in base_query, where: m.aspect_category == ^opts[:aspect_category])
-        else
-          base_query
-        end
-
-      Repo.all(base_query)
+      from(m in MediaItem,
+        where: m.user_id == ^scope.user.id,
+        limit: 50,
+        preload: [:tags]
+      )
+      |> apply_search_strategy(query)
+      |> maybe_filter_by_tag(opts[:tag_id])
+      |> maybe_filter_by_aspect(opts[:aspect_category])
+      |> Repo.all()
     end
+  end
+
+  defp apply_search_strategy(base_query, query) when byte_size(query) > 0 do
+    search_pattern = "%#{query}%"
+
+    if String.length(query) < 3 do
+      apply_ilike_search(base_query, search_pattern)
+    else
+      apply_trigram_search(base_query, query, search_pattern)
+    end
+  end
+
+  defp apply_ilike_search(base_query, search_pattern) do
+    from(m in base_query,
+      where:
+        ilike(m.title, ^search_pattern) or
+          ilike(m.caption, ^search_pattern) or
+          ilike(m.original_filename, ^search_pattern) or
+          ilike(m.alt_text, ^search_pattern),
+      order_by: [desc: m.inserted_at]
+    )
+  end
+
+  defp apply_trigram_search(base_query, query, search_pattern) do
+    from(m in base_query,
+      where:
+        fragment(
+          "? % ? OR ? % ? OR ? % ? OR ? % ?",
+          m.title,
+          ^query,
+          m.caption,
+          ^query,
+          m.original_filename,
+          ^query,
+          m.alt_text,
+          ^query
+        ) or
+          ilike(m.title, ^search_pattern) or
+          ilike(m.original_filename, ^search_pattern),
+      order_by: [
+        desc:
+          fragment(
+            "similarity(COALESCE(?, ''), ?) + similarity(COALESCE(?, ''), ?) + similarity(COALESCE(?, ''), ?)",
+            m.title,
+            ^query,
+            m.caption,
+            ^query,
+            m.original_filename,
+            ^query
+          )
+      ]
+    )
   end
 
   ## Public Media Access (no scope required)
@@ -1253,8 +1245,8 @@ defmodule Homesite.Media do
     base_percentage = project.completion_percentage
 
     # Add association bonuses
-    collaborator_bonus = if length(project.collaborators) > 0, do: 10, else: 0
-    link_bonus = if length(project.affiliation_links) > 0, do: 10, else: 0
+    collaborator_bonus = if project.collaborators != [], do: 10, else: 0
+    link_bonus = if project.affiliation_links != [], do: 10, else: 0
 
     total_percentage = min(base_percentage + collaborator_bonus + link_bonus, 100)
 
@@ -1468,8 +1460,6 @@ defmodule Homesite.Media do
 
   ## Content Sections
 
-  alias Homesite.Media.ContentSection
-
   @doc """
   Returns the list of content sections for a project, ordered by display_order.
   """
@@ -1556,7 +1546,7 @@ defmodule Homesite.Media do
   Creates default content sections for a project based on its template type.
   """
   def create_default_sections_for_template(%Scope{} = scope, project, template_type) do
-    template = Homesite.Media.ProjectTemplate.get(template_type)
+    template = ProjectTemplate.get(template_type)
 
     if template && Map.has_key?(template, :default_sections) do
       template.default_sections

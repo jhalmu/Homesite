@@ -517,13 +517,11 @@ defmodule HomesiteWeb.UserLive.Profile do
     |> Enum.sum()
   end
 
+  defp calculate_avg_read_time([]), do: 0
+
   defp calculate_avg_read_time(posts) do
-    if length(posts) > 0 do
-      total = Enum.sum(Enum.map(posts, & &1.read_time_minutes))
-      div(total, length(posts))
-    else
-      0
-    end
+    total = Enum.sum(Enum.map(posts, & &1.read_time_minutes))
+    div(total, length(posts))
   end
 
   defp has_social_links?(user) do

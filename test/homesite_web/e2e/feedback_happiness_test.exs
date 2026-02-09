@@ -14,6 +14,11 @@ defmodule HomesiteWeb.E2E.FeedbackHappinessTest do
   import Homesite.AccountsFixtures
   import HomesiteWeb.PlaywrightAuthHelper
 
+  alias Homesite.Accounts.Scope
+  alias Homesite.Feedback
+  alias Homesite.Feedback.FeedbackResponse
+  alias Homesite.Repo
+
   setup do
     Homesite.DataCase.ensure_test_invitation()
     user = user_fixture()
@@ -142,10 +147,10 @@ defmodule HomesiteWeb.E2E.FeedbackHappinessTest do
     @tag :playwright
     test "can view testimonial by share token", %{conn: conn, user: user} do
       # Create feedback response that could become a testimonial
-      scope = %Homesite.Accounts.Scope{user: user}
+      scope = %Scope{user: user}
 
       {:ok, feedback} =
-        Homesite.Feedback.create_feedback_response(scope, %{
+        Feedback.create_feedback_response(scope, %{
           "overall_satisfaction" => "5",
           "performance_rating" => "5",
           "open_feedback" => "Amazing platform!",
@@ -157,8 +162,8 @@ defmodule HomesiteWeb.E2E.FeedbackHappinessTest do
 
       # Make testimonial publicly shareable
       {:ok, feedback} =
-        Homesite.Repo.update(
-          Homesite.Feedback.FeedbackResponse.share_changeset(feedback, %{
+        Repo.update(
+          FeedbackResponse.share_changeset(feedback, %{
             "shared_publicly" => true
           })
         )
@@ -172,10 +177,10 @@ defmodule HomesiteWeb.E2E.FeedbackHappinessTest do
 
     @tag :playwright
     test "testimonial page shows star rating", %{conn: conn, user: user} do
-      scope = %Homesite.Accounts.Scope{user: user}
+      scope = %Scope{user: user}
 
       {:ok, feedback} =
-        Homesite.Feedback.create_feedback_response(scope, %{
+        Feedback.create_feedback_response(scope, %{
           "overall_satisfaction" => "5",
           "performance_rating" => "4",
           "open_feedback" => "Great experience!",
@@ -186,8 +191,8 @@ defmodule HomesiteWeb.E2E.FeedbackHappinessTest do
 
       # Make testimonial publicly shareable
       {:ok, feedback} =
-        Homesite.Repo.update(
-          Homesite.Feedback.FeedbackResponse.share_changeset(feedback, %{
+        Repo.update(
+          FeedbackResponse.share_changeset(feedback, %{
             "shared_publicly" => true
           })
         )
@@ -200,10 +205,10 @@ defmodule HomesiteWeb.E2E.FeedbackHappinessTest do
 
     @tag :playwright
     test "testimonial page shows back link to happiness meter", %{conn: conn, user: user} do
-      scope = %Homesite.Accounts.Scope{user: user}
+      scope = %Scope{user: user}
 
       {:ok, feedback} =
-        Homesite.Feedback.create_feedback_response(scope, %{
+        Feedback.create_feedback_response(scope, %{
           "overall_satisfaction" => "5",
           "performance_rating" => "5",
           "open_feedback" => "Excellent!",
@@ -214,8 +219,8 @@ defmodule HomesiteWeb.E2E.FeedbackHappinessTest do
 
       # Make testimonial publicly shareable
       {:ok, feedback} =
-        Homesite.Repo.update(
-          Homesite.Feedback.FeedbackResponse.share_changeset(feedback, %{
+        Repo.update(
+          FeedbackResponse.share_changeset(feedback, %{
             "shared_publicly" => true
           })
         )

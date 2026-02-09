@@ -130,28 +130,30 @@ defmodule Mix.Tasks.SeedUsers do
       {first_name, last_name} = Enum.at(names, i - 1)
       email = "#{String.downcase(first_name)}.#{String.downcase(last_name)}@example.com"
 
-      # First create user with email and password
-      case Accounts.register_user(%{email: email, password: "password123"}) do
-        {:ok, user} ->
-          # Then update profile fields
-          profile_attrs = %{
-            display_name: "#{first_name} #{last_name}",
-            bio: generate_bio(first_name, locale),
-            preferred_language: locale,
-            website_url: "https://#{String.downcase(first_name)}.example.com"
-          }
-
-          case Accounts.update_user_profile(user, profile_attrs) do
-            {:ok, updated_user} -> updated_user
-            {:error, _changeset} -> user
-          end
-
-        {:error, changeset} ->
-          Mix.shell().error("Failed to create user #{email}: #{inspect(changeset.errors)}")
-          nil
-      end
+      register_and_update_profile(email, first_name, last_name, locale)
     end)
     |> Enum.reject(&is_nil/1)
+  end
+
+  defp register_and_update_profile(email, first_name, last_name, locale) do
+    case Accounts.register_user(%{email: email, password: "password123"}) do
+      {:ok, user} ->
+        profile_attrs = %{
+          display_name: "#{first_name} #{last_name}",
+          bio: generate_bio(first_name, locale),
+          preferred_language: locale,
+          website_url: "https://#{String.downcase(first_name)}.example.com"
+        }
+
+        case Accounts.update_user_profile(user, profile_attrs) do
+          {:ok, updated_user} -> updated_user
+          {:error, _changeset} -> user
+        end
+
+      {:error, changeset} ->
+        Mix.shell().error("Failed to create user #{email}: #{inspect(changeset.errors)}")
+        nil
+    end
   end
 
   defp create_tags_and_posts(user) do

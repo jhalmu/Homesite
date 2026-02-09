@@ -5,6 +5,8 @@ defmodule HomesiteWeb.Layouts do
   """
   use HomesiteWeb, :html
 
+  alias Homesite.Chat.Presence
+
   import HomesiteWeb.Components.NotificationBell
 
   # Embed all files in layouts/* within this module.
@@ -618,7 +620,7 @@ defmodule HomesiteWeb.Layouts do
   Shows a green dot when there are users online in chat.
   """
   def chat_online_indicator(assigns) do
-    online_count = Homesite.Chat.Presence.online_count()
+    online_count = Presence.online_count()
     assigns = assign(assigns, :online_count, online_count)
 
     ~H"""

@@ -110,7 +110,7 @@ defmodule HomesiteWeb.NotificationLive.Index do
                 <%!-- Action buttons for specific notification types --%>
                 <%= if notification.type == "new_follower" && notification.actor do %>
                   <div class="mt-[var(--space-xs)]">
-                    <%= if is_following_back?(notification.actor.id, @following_ids) do %>
+                    <%= if following_back?(notification.actor.id, @following_ids) do %>
                       <span class="text-base-content/60 text-[var(--text-xs)]">
                         <.icon name="hero-check" class="mr-[var(--space-inline)] inline h-3 w-3" />
                         {gettext("Following")}
@@ -185,11 +185,8 @@ defmodule HomesiteWeb.NotificationLive.Index do
 
     case Notifications.mark_as_read(current_scope, notification_id) do
       {:ok, updated_notification} ->
-        # Update the notification in the list
         notifications =
-          Enum.map(socket.assigns.notifications, fn n ->
-            if n.id == notification_id, do: updated_notification, else: n
-          end)
+          replace_notification(socket.assigns.notifications, notification_id, updated_notification)
 
         unread_count = max(0, socket.assigns.unread_count - 1)
 
@@ -234,14 +231,7 @@ defmodule HomesiteWeb.NotificationLive.Index do
 
     case Follows.follow_user(current_scope, user_id) do
       {:ok, _follower} ->
-        # Create notification for the user being followed
-        user = Accounts.get_user!(user_id)
-
-        if Accounts.notification_enabled?(user, "new_follower") do
-          Notifications.notify_new_follower(user_id, current_scope.user)
-        end
-
-        # Update following_ids set
+        notify_follow_back(user_id, current_scope)
         following_ids = MapSet.put(socket.assigns.following_ids, user_id)
 
         {:noreply,
@@ -251,6 +241,14 @@ defmodule HomesiteWeb.NotificationLive.Index do
 
       {:error, _changeset} ->
         {:noreply, put_flash(socket, :error, gettext("Could not follow user"))}
+    end
+  end
+
+  defp notify_follow_back(user_id, current_scope) do
+    user = Accounts.get_user!(user_id)
+
+    if Accounts.notification_enabled?(user, "new_follower") do
+      Notifications.notify_new_follower(user_id, current_scope.user)
     end
   end
 
@@ -329,7 +327,13 @@ defmodule HomesiteWeb.NotificationLive.Index do
     gettext("You have a new notification")
   end
 
-  defp is_following_back?(actor_id, following_ids) do
+  defp replace_notification(notifications, notification_id, replacement) do
+    Enum.map(notifications, fn n ->
+      if n.id == notification_id, do: replacement, else: n
+    end)
+  end
+
+  defp following_back?(actor_id, following_ids) do
     MapSet.member?(following_ids, actor_id)
   end
 end

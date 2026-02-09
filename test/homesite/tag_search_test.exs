@@ -43,13 +43,13 @@ defmodule Homesite.TagSearchTest do
 
     test "finds tag by slug", %{phoenix: tag} do
       results = Content.search_tags("phoenix")
-      assert length(results) >= 1
+      assert results != []
       assert Enum.any?(results, &(&1.id == tag.id))
     end
 
     test "finds tag by partial name match", %{liveview: tag} do
       results = Content.search_tags("LiveView")
-      assert length(results) >= 1
+      assert results != []
       assert Enum.any?(results, &(&1.id == tag.id))
     end
 
@@ -62,14 +62,14 @@ defmodule Homesite.TagSearchTest do
 
     test "case-insensitive search", %{elixir: tag} do
       results = Content.search_tags("ELIXIR")
-      assert length(results) >= 1
+      assert results != []
       assert Enum.any?(results, &(&1.id == tag.id))
     end
 
     test "handles fuzzy matching with typos", %{elixir: _tag} do
       results = Content.search_tags("elxir")
       # Should find "elixir" with typo
-      assert length(results) >= 1
+      assert results != []
     end
 
     test "respects limit option", %{scope: scope} do
@@ -90,7 +90,7 @@ defmodule Homesite.TagSearchTest do
     test "orders results by relevance", %{elixir: elixir, phoenix: _phoenix} do
       results = Content.search_tags("eli")
       # "Elixir" should rank higher than other matches for "eli"
-      assert length(results) >= 1
+      assert results != []
       first_result = hd(results)
       assert first_result.id == elixir.id or first_result.name =~ ~r/eli/i
     end
@@ -105,13 +105,13 @@ defmodule Homesite.TagSearchTest do
 
     test "finds tags by slug with hyphens", %{liveview: tag} do
       results = Content.search_tags("phoenix-liveview")
-      assert length(results) >= 1
+      assert results != []
       assert Enum.any?(results, &(&1.id == tag.id))
     end
 
     test "partial slug match", %{postgres: tag} do
       results = Content.search_tags("postgre")
-      assert length(results) >= 1
+      assert results != []
       assert Enum.any?(results, &(&1.id == tag.id))
     end
   end

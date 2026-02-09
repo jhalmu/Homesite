@@ -135,7 +135,7 @@ defmodule Homesite.ChatTest do
       message = message_fixture(scope, channel)
       messages = Chat.list_messages(channel.id)
 
-      assert length(messages) >= 1
+      assert messages != []
       assert Enum.any?(messages, fn m -> m.id == message.id end)
     end
 

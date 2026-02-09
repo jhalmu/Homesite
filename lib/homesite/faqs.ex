@@ -231,52 +231,48 @@ defmodule Homesite.Faqs do
         []
 
       trimmed_query ->
-        limit = Keyword.get(opts, :limit, 20)
-        limit = max(limit, 0)
         locale = Keyword.get(opts, :locale, "en")
-        category = Keyword.get(opts, :category)
 
-        base_query =
-          from(f in Faq,
-            where: f.is_active == true,
-            where:
-              fragment("similarity(?, ?) > 0.1", f.question_en, ^trimmed_query) or
-                fragment("similarity(?, ?) > 0.1", f.answer_en, ^trimmed_query) or
-                fragment("similarity(?, ?) > 0.1", f.question_fi, ^trimmed_query) or
-                fragment("similarity(?, ?) > 0.1", f.answer_fi, ^trimmed_query) or
-                fragment("? ILIKE ?", f.question_en, ^"%#{trimmed_query}%") or
-                fragment("? ILIKE ?", f.answer_en, ^"%#{trimmed_query}%") or
-                fragment("? ILIKE ?", f.question_fi, ^"%#{trimmed_query}%") or
-                fragment("? ILIKE ?", f.answer_fi, ^"%#{trimmed_query}%"),
-            order_by: [
-              desc:
-                fragment(
-                  "greatest(similarity(?, ?), similarity(?, ?), similarity(?, ?), similarity(?, ?))",
-                  f.question_en,
-                  ^trimmed_query,
-                  f.answer_en,
-                  ^trimmed_query,
-                  f.question_fi,
-                  ^trimmed_query,
-                  f.answer_fi,
-                  ^trimmed_query
-                )
-            ],
-            limit: ^limit
-          )
-
-        query_with_category =
-          if category do
-            from(f in base_query, where: f.category == ^category)
-          else
-            base_query
-          end
-
-        query_with_category
+        trimmed_query
+        |> build_faq_search_query(max(Keyword.get(opts, :limit, 20), 0))
+        |> maybe_filter_by_category(Keyword.get(opts, :category))
         |> Repo.all()
         |> Enum.map(&add_localized_content(&1, locale))
     end
   end
+
+  defp build_faq_search_query(trimmed_query, limit) do
+    from(f in Faq,
+      where: f.is_active == true,
+      where:
+        fragment("similarity(?, ?) > 0.1", f.question_en, ^trimmed_query) or
+          fragment("similarity(?, ?) > 0.1", f.answer_en, ^trimmed_query) or
+          fragment("similarity(?, ?) > 0.1", f.question_fi, ^trimmed_query) or
+          fragment("similarity(?, ?) > 0.1", f.answer_fi, ^trimmed_query) or
+          fragment("? ILIKE ?", f.question_en, ^"%#{trimmed_query}%") or
+          fragment("? ILIKE ?", f.answer_en, ^"%#{trimmed_query}%") or
+          fragment("? ILIKE ?", f.question_fi, ^"%#{trimmed_query}%") or
+          fragment("? ILIKE ?", f.answer_fi, ^"%#{trimmed_query}%"),
+      order_by: [
+        desc:
+          fragment(
+            "greatest(similarity(?, ?), similarity(?, ?), similarity(?, ?), similarity(?, ?))",
+            f.question_en,
+            ^trimmed_query,
+            f.answer_en,
+            ^trimmed_query,
+            f.question_fi,
+            ^trimmed_query,
+            f.answer_fi,
+            ^trimmed_query
+          )
+      ],
+      limit: ^limit
+    )
+  end
+
+  defp maybe_filter_by_category(query, nil), do: query
+  defp maybe_filter_by_category(query, category), do: from(f in query, where: f.category == ^category)
 
   ## Helpers
 

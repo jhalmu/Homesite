@@ -29,7 +29,7 @@ defmodule Homesite.ExternalFeeds.FeedFetcherTest do
 
           # Verify items were stored
           items = ExternalFeeds.list_feed_items(scope)
-          assert length(items) > 0
+          assert items != []
 
           # Check that last_fetched_at was updated
           updated_source = ExternalFeeds.get_feed_source!(scope, feed_source.id)
