@@ -15,6 +15,66 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2026-02-09 - Image Gallery EXIF Metadata (Issue #105)
+
+### Session Summary
+
+Implemented full EXIF metadata extraction, display, auto-tagging, and camera-based filtering for the media gallery.
+
+#### Features Implemented
+
+**1. EXIF Extraction & Storage**
+- `ImageProcessor.extract_exif/1` runs `magick identify -format "%[exif:*]"` on original file before resize/strip
+- Normalized map with: camera_make, camera_model, lens, focal_length, focal_length_35mm, iso, shutter_speed, aperture, date_taken, software, artist, copyright, flash
+- GPS data excluded for privacy
+- Added `exif_data` JSONB column to `media_items` (migration)
+- Graceful degradation: returns `%{}` for PNGs, corrupt files, or missing EXIF
+
+**2. Media Show Page - EXIF Card**
+- Displays all EXIF fields when available (camera, lens, focal length with 35mm equiv, aperture, shutter speed, ISO, flash, date taken, software, artist, copyright)
+- `camera_info/1` helper merges make+model intelligently (avoids "FUJIFILM FUJIFILM X-T5")
+- Accessibility: `role="region"`, `aria-label`, semantic `<time>` elements
+
+**3. Auto-tagging from EXIF**
+- "Create Tags from EXIF" button on show page
+- Creates tags for: camera model ("FUJIFILM X-T5"), focal length bucket (Wide/Normal/Portrait/Telephoto), ISO bucket (Low/Medium/High)
+- "Auto-tag from EXIF" checkbox on upload form
+- Merges with existing tags, no duplicates
+
+**4. Camera Filter**
+- Camera dropdown filter on media index (only shown when EXIF camera data exists)
+- `list_camera_models/1` - DISTINCT JSONB query
+- `maybe_filter_by_camera/2` - filters both regular and orphaned media
+
+**5. Translations & Accessibility**
+- Full Finnish translations for all 15 new EXIF strings (proper photography terms)
+- English translations added
+- Fixed 6 fuzzy translations
+- EXIF card has proper ARIA attributes
+
+**6. Tests**
+- 14 unit tests for `ImageProcessor.extract_exif/1` and parsing helpers
+- 6 integration tests for EXIF upload, auto-tagging, camera filtering
+- 16 Playwright E2E tests for EXIF display, auto-tag button, camera filter, accessibility
+- All 1847 tests pass
+
+#### Files Changed
+- `priv/repo/migrations/*_add_exif_data_to_media_items.exs` (new)
+- `lib/homesite/media/image_processor.ex` - `extract_exif/1` + parsing helpers
+- `lib/homesite/media/media_item.ex` - `exif_data` field
+- `lib/homesite/media.ex` - upload integration, auto-tagging, camera filter
+- `lib/homesite_web/live/media_live/show.ex` - EXIF card + auto-tag
+- `lib/homesite_web/live/media_live/index.ex` - camera filter + auto-tag checkbox
+- `priv/gettext/{fi,en}/LC_MESSAGES/default.po` - translations
+- `test/homesite/media/image_processor_test.exs` (new)
+- `test/homesite/media_test.exs` - 6 new tests
+- `test/homesite_web/e2e/media_exif_test.exs` (new)
+
+#### Issue Closed
+- #105 Image-gallery Exif
+
+---
+
 ## 2026-02-05 - Security Admin UI Enhancements
 
 ### Session Summary

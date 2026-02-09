@@ -133,6 +133,160 @@ defmodule Homesite.Media.ImageProcessor do
   defp mime_to_extension("image/webp"), do: "webp"
   defp mime_to_extension(_), do: "jpg"
 
+  @doc """
+  Extracts EXIF metadata from an image file before stripping.
+
+  Runs `magick identify -format "%[exif:*]"` on the original file and parses
+  the output into a normalized map. GPS data is excluded for privacy.
+
+  Returns `%{}` on failure (PNGs, corrupt files, missing EXIF).
+  """
+  def extract_exif(upload_path) do
+    case System.cmd("magick", ["identify", "-format", "%[exif:*]", upload_path],
+           stderr_to_stdout: true
+         ) do
+      {output, 0} ->
+        parse_exif_output(output)
+
+      _ ->
+        %{}
+    end
+  rescue
+    _ -> %{}
+  end
+
+  defp parse_exif_output(output) when is_binary(output) do
+    raw =
+      output
+      |> String.split("\n")
+      |> Enum.map(&String.trim/1)
+      |> Enum.reject(&(&1 == ""))
+      |> Enum.reduce(%{}, fn line, acc ->
+        case String.split(line, "=", parts: 2) do
+          [key, value] ->
+            key = key |> String.replace("exif:", "") |> String.trim()
+            Map.put(acc, key, String.trim(value))
+
+          _ ->
+            acc
+        end
+      end)
+
+    build_exif_map(raw)
+  end
+
+  defp build_exif_map(raw) when map_size(raw) == 0, do: %{}
+
+  defp build_exif_map(raw) do
+    %{}
+    |> maybe_put("camera_make", raw["Make"])
+    |> maybe_put("camera_model", raw["Model"])
+    |> maybe_put("lens", raw["LensModel"])
+    |> maybe_put("focal_length", parse_exif_rational(raw["FocalLength"]))
+    |> maybe_put("focal_length_35mm", parse_exif_integer(raw["FocalLengthIn35mmFilm"]))
+    |> maybe_put(
+      "iso",
+      parse_exif_integer(raw["ISOSpeedRatings"] || raw["PhotographicSensitivity"])
+    )
+    |> maybe_put("shutter_speed", format_shutter_speed(raw["ExposureTime"]))
+    |> maybe_put("aperture", parse_exif_rational(raw["FNumber"]))
+    |> maybe_put("date_taken", parse_exif_datetime(raw["DateTimeOriginal"] || raw["DateTime"]))
+    |> maybe_put("software", raw["Software"])
+    |> maybe_put("artist", raw["Artist"])
+    |> maybe_put("copyright", raw["Copyright"])
+    |> maybe_put("flash", parse_exif_flash(raw["Flash"]))
+    |> Enum.reject(fn {_k, v} -> is_nil(v) end)
+    |> Map.new()
+  end
+
+  defp maybe_put(map, _key, nil), do: map
+  defp maybe_put(map, _key, ""), do: map
+  defp maybe_put(map, key, value), do: Map.put(map, key, value)
+
+  @doc false
+  def parse_exif_rational(nil), do: nil
+  def parse_exif_rational(""), do: nil
+
+  def parse_exif_rational(value) when is_binary(value) do
+    case String.split(value, "/") do
+      [num, den] ->
+        with {n, _} <- Integer.parse(num),
+             {d, _} <- Integer.parse(den),
+             true <- d != 0 do
+          result = n / d
+          if result == trunc(result), do: trunc(result), else: Float.round(result, 1)
+        else
+          _ -> nil
+        end
+
+      [single] ->
+        case Float.parse(single) do
+          {val, _} -> if val == trunc(val), do: trunc(val), else: Float.round(val, 1)
+          :error -> nil
+        end
+
+      _ ->
+        nil
+    end
+  end
+
+  defp parse_exif_integer(nil), do: nil
+  defp parse_exif_integer(""), do: nil
+
+  defp parse_exif_integer(value) when is_binary(value) do
+    case Integer.parse(value) do
+      {int, _} -> int
+      :error -> nil
+    end
+  end
+
+  @doc false
+  def parse_exif_datetime(nil), do: nil
+  def parse_exif_datetime(""), do: nil
+
+  def parse_exif_datetime(value) when is_binary(value) do
+    # EXIF format: "2025:11:09 17:38:53"
+    case Regex.run(~r/^(\d{4}):(\d{2}):(\d{2})\s+(\d{2}):(\d{2}):(\d{2})/, value) do
+      [_, y, m, d, hh, mm, ss] ->
+        "#{y}-#{m}-#{d}T#{hh}:#{mm}:#{ss}"
+
+      _ ->
+        nil
+    end
+  end
+
+  defp format_shutter_speed(nil), do: nil
+  defp format_shutter_speed(""), do: nil
+
+  defp format_shutter_speed(value) when is_binary(value) do
+    case String.split(value, "/") do
+      [num, den] ->
+        with {n, _} <- Integer.parse(num),
+             {d, _} <- Integer.parse(den) do
+          cond do
+            d == 1 -> "#{n}s"
+            n == 1 -> "1/#{d}"
+            true -> "#{n}/#{d}"
+          end
+        else
+          _ -> value
+        end
+
+      _ ->
+        value
+    end
+  end
+
+  defp parse_exif_flash(nil), do: nil
+  defp parse_exif_flash(""), do: nil
+
+  defp parse_exif_flash(value) when is_binary(value) do
+    case Integer.parse(value) do
+      {int, _} -> Bitwise.band(int, 1) == 1
+      :error -> nil
+    end
+  end
+
   # Private functions
 
   defp validate_file(upload_path, content_type) do

@@ -14,6 +14,7 @@ defmodule HomesiteWeb.MediaLive.Index do
     media_items = list_media_items(scope, %{}, limit: @media_per_page)
     orphan_count = Media.count_orphaned_media_items(scope)
     available_tags = Content.list_tags(scope)
+    camera_models = Media.list_camera_models(scope)
 
     {:ok,
      socket
@@ -21,6 +22,8 @@ defmodule HomesiteWeb.MediaLive.Index do
      |> assign(:search_query, "")
      |> assign(:aspect_filter, nil)
      |> assign(:gallery_filter, nil)
+     |> assign(:camera_filter, nil)
+     |> assign(:camera_models, camera_models)
      |> assign(:tag_filter, nil)
      |> assign(:tag_filter_search, "")
      |> assign(:tag_filter_suggestions, [])
@@ -40,6 +43,7 @@ defmodule HomesiteWeb.MediaLive.Index do
      |> assign(:page, 1)
      |> assign(:has_more, length(media_items) == @media_per_page)
      |> assign(:media_empty, media_items == [])
+     |> assign(:auto_tag_exif, false)
      |> assign(:uploaded_files, [])
      |> allow_upload(:images,
        accept: ~w(.jpg .jpeg .png .webp),
@@ -114,7 +118,8 @@ defmodule HomesiteWeb.MediaLive.Index do
           aspect_category: aspect_filter,
           gallery_id: socket.assigns.gallery_filter,
           tag_id: socket.assigns.tag_filter,
-          orphans_only: socket.assigns.orphan_filter
+          orphans_only: socket.assigns.orphan_filter,
+          camera_model: socket.assigns.camera_filter
         },
         limit: @media_per_page
       )
@@ -122,6 +127,32 @@ defmodule HomesiteWeb.MediaLive.Index do
     {:noreply,
      socket
      |> assign(:aspect_filter, aspect_filter)
+     |> assign(:search_query, "")
+     |> assign(:page, 1)
+     |> assign(:has_more, length(media_items) == @media_per_page)
+     |> assign(:media_empty, media_items == [])
+     |> stream(:media_items, media_items, reset: true)}
+  end
+
+  def handle_event("filter-camera", %{"camera" => camera}, socket) do
+    camera_filter = if camera == "", do: nil, else: camera
+
+    media_items =
+      list_media_items(
+        socket.assigns.current_scope,
+        %{
+          aspect_category: socket.assigns.aspect_filter,
+          gallery_id: socket.assigns.gallery_filter,
+          tag_id: socket.assigns.tag_filter,
+          orphans_only: socket.assigns.orphan_filter,
+          camera_model: camera_filter
+        },
+        limit: @media_per_page
+      )
+
+    {:noreply,
+     socket
+     |> assign(:camera_filter, camera_filter)
      |> assign(:search_query, "")
      |> assign(:page, 1)
      |> assign(:has_more, length(media_items) == @media_per_page)
@@ -143,7 +174,8 @@ defmodule HomesiteWeb.MediaLive.Index do
           aspect_category: socket.assigns.aspect_filter,
           gallery_id: gallery_filter,
           tag_id: socket.assigns.tag_filter,
-          orphans_only: socket.assigns.orphan_filter
+          orphans_only: socket.assigns.orphan_filter,
+          camera_model: socket.assigns.camera_filter
         },
         limit: @media_per_page
       )
@@ -191,7 +223,8 @@ defmodule HomesiteWeb.MediaLive.Index do
           aspect_category: socket.assigns.aspect_filter,
           gallery_id: socket.assigns.gallery_filter,
           tag_id: tag_id,
-          orphans_only: socket.assigns.orphan_filter
+          orphans_only: socket.assigns.orphan_filter,
+          camera_model: socket.assigns.camera_filter
         },
         limit: @media_per_page
       )
@@ -218,7 +251,8 @@ defmodule HomesiteWeb.MediaLive.Index do
           aspect_category: socket.assigns.aspect_filter,
           gallery_id: socket.assigns.gallery_filter,
           tag_id: nil,
-          orphans_only: socket.assigns.orphan_filter
+          orphans_only: socket.assigns.orphan_filter,
+          camera_model: socket.assigns.camera_filter
         },
         limit: @media_per_page
       )
@@ -272,7 +306,8 @@ defmodule HomesiteWeb.MediaLive.Index do
           aspect_category: socket.assigns.aspect_filter,
           gallery_id: socket.assigns.gallery_filter,
           tag_id: socket.assigns.tag_filter,
-          orphans_only: socket.assigns.orphan_filter
+          orphans_only: socket.assigns.orphan_filter,
+          camera_model: socket.assigns.camera_filter
         },
         limit: @media_per_page,
         offset: offset
@@ -430,6 +465,10 @@ defmodule HomesiteWeb.MediaLive.Index do
     end
   end
 
+  def handle_event("toggle-auto-tag-exif", _params, socket) do
+    {:noreply, assign(socket, :auto_tag_exif, !socket.assigns.auto_tag_exif)}
+  end
+
   def handle_event("validate", _params, socket) do
     {:noreply, socket}
   end
@@ -520,6 +559,11 @@ defmodule HomesiteWeb.MediaLive.Index do
               Media.update_media_item_tags(socket.assigns.current_scope, media_item, tag_ids)
             end
 
+            # Auto-tag from EXIF if enabled
+            if socket.assigns.auto_tag_exif do
+              Media.auto_tag_from_exif(socket.assigns.current_scope, media_item)
+            end
+
             {:ok, media_item}
 
           {:error, _changeset} ->
@@ -552,12 +596,17 @@ defmodule HomesiteWeb.MediaLive.Index do
         socket
       end
 
+    # Refresh camera models after upload (new cameras may have been added)
+    camera_models = Media.list_camera_models(socket.assigns.current_scope)
+
     # Clear upload tag selection after upload
     {:noreply,
      socket
      |> assign(:selected_upload_tags, [])
      |> assign(:upload_tag_search, "")
-     |> assign(:upload_tag_suggestions, [])}
+     |> assign(:upload_tag_suggestions, [])
+     |> assign(:auto_tag_exif, false)
+     |> assign(:camera_models, camera_models)}
   end
 
   def handle_event("cancel-upload", %{"ref" => ref}, socket) do
@@ -743,6 +792,22 @@ defmodule HomesiteWeb.MediaLive.Index do
                   </div>
                 </div>
 
+                <%!-- Auto-tag from EXIF checkbox --%>
+                <div class="mt-[var(--space-sm)]">
+                  <label class="label gap-[var(--space-sm)] cursor-pointer justify-start">
+                    <input
+                      type="checkbox"
+                      class="checkbox checkbox-sm checkbox-primary"
+                      checked={@auto_tag_exif}
+                      phx-click="toggle-auto-tag-exif"
+                    />
+                    <span class="label-text">
+                      <.icon name="hero-camera" class="mr-1 inline h-4 w-4" />
+                      {gettext("Auto-tag from EXIF (camera, focal length, ISO)")}
+                    </span>
+                  </label>
+                </div>
+
                 <div class="mt-[var(--space-sm)]">
                   <button type="submit" class="btn btn-primary">
                     <.icon name="hero-cloud-arrow-up" class="h-5 w-5" />
@@ -795,6 +860,25 @@ defmodule HomesiteWeb.MediaLive.Index do
               </option>
             </select>
           </div>
+          
+    <!-- Camera Filter -->
+          <%= if @camera_models != [] do %>
+            <div class="w-full md:w-48">
+              <select
+                phx-change="filter-camera"
+                name="camera"
+                aria-label={gettext("Filter by camera")}
+                class="select select-bordered w-full"
+              >
+                <option value="">{gettext("All Cameras")}</option>
+                <%= for model <- @camera_models do %>
+                  <option value={model} selected={@camera_filter == model}>
+                    {model}
+                  </option>
+                <% end %>
+              </select>
+            </div>
+          <% end %>
           
     <!-- Tag Filter (Search-based) -->
           <div class="relative w-full md:w-56">
@@ -1082,6 +1166,7 @@ defmodule HomesiteWeb.MediaLive.Index do
         scope,
         aspect_category: filters[:aspect_category],
         tag_id: filters[:tag_id],
+        camera_model: filters[:camera_model],
         limit: opts[:limit],
         offset: opts[:offset]
       )
@@ -1091,6 +1176,7 @@ defmodule HomesiteWeb.MediaLive.Index do
         gallery_id: filters[:gallery_id],
         aspect_category: filters[:aspect_category],
         tag_id: filters[:tag_id],
+        camera_model: filters[:camera_model],
         limit: opts[:limit],
         offset: opts[:offset]
       )

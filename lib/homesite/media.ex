@@ -287,6 +287,7 @@ defmodule Homesite.Media do
 
     query = maybe_filter_by_aspect(query, opts[:aspect_category])
     query = maybe_filter_by_tag(query, opts[:tag_id])
+    query = maybe_filter_by_camera(query, opts[:camera_model])
     query = from(m in query, limit: ^limit, offset: ^offset)
 
     Repo.all(query)
@@ -328,9 +329,24 @@ defmodule Homesite.Media do
     query = maybe_filter_by_project(query, opts[:project_id])
     query = maybe_filter_by_aspect(query, opts[:aspect_category])
     query = maybe_filter_by_tag(query, opts[:tag_id])
+    query = maybe_filter_by_camera(query, opts[:camera_model])
     query = from m in query, limit: ^limit, offset: ^offset
 
     Repo.all(query)
+  end
+
+  defp maybe_filter_by_camera(query, nil), do: query
+
+  defp maybe_filter_by_camera(query, camera_model) when is_binary(camera_model) do
+    from(m in query,
+      where:
+        fragment(
+          "COALESCE(?->>'camera_make', '') || ' ' || (?->>'camera_model') = ?",
+          m.exif_data,
+          m.exif_data,
+          ^camera_model
+        )
+    )
   end
 
   defp maybe_filter_by_project(query, nil), do: query
@@ -374,6 +390,10 @@ defmodule Homesite.Media do
   Accepts a Phoenix.LiveView.UploadEntry or a file path.
   """
   def upload_media(%Scope{} = scope, upload_path, content_type, attrs) do
+    # Extract EXIF before processing (which strips it)
+    exif_data = ImageProcessor.extract_exif(upload_path)
+    attrs = Map.put(attrs, :exif_data, exif_data)
+
     with {:ok, processed} <- ImageProcessor.process_upload(upload_path, content_type),
          {:ok, media_item} <- create_media_item_from_processed(scope, processed, attrs) do
       broadcast_media_item(scope, {:created, media_item})
@@ -504,6 +524,138 @@ defmodule Homesite.Media do
       order_by: [asc: t.name]
     )
     |> Repo.all()
+  end
+
+  ## EXIF Auto-Tagging
+
+  @doc """
+  Automatically creates and applies tags based on EXIF metadata.
+
+  Generates tags from:
+  - Camera model (e.g., "FUJIFILM X-T5")
+  - Focal length bucket (e.g., "Normal (24-50mm)")
+  - ISO bucket (e.g., "High ISO (3200+)")
+
+  Returns `{:ok, updated_item}` or `{:ok, :no_exif}` if no EXIF data.
+  """
+  def auto_tag_from_exif(%Scope{} = scope, %MediaItem{} = item) do
+    true = item.user_id == scope.user.id
+    exif = item.exif_data || %{}
+
+    if exif == %{} do
+      {:ok, :no_exif}
+    else
+      tag_names = build_exif_tag_names(exif)
+
+      if tag_names == [] do
+        {:ok, :no_exif}
+      else
+        tags =
+          Enum.map(tag_names, fn name ->
+            {:ok, tag} =
+              Homesite.Content.get_or_create_tag(scope, %{
+                "name" => name,
+                "is_public" => true
+              })
+
+            tag
+          end)
+
+        # Merge with existing tags
+        item = Repo.preload(item, :tags)
+        existing_tag_ids = Enum.map(item.tags, & &1.id)
+        new_tag_ids = Enum.map(tags, & &1.id)
+        all_tag_ids = Enum.uniq(existing_tag_ids ++ new_tag_ids)
+
+        update_media_item_tags(scope, item, all_tag_ids)
+      end
+    end
+  end
+
+  defp build_exif_tag_names(exif) do
+    []
+    |> maybe_add_camera_tag(exif)
+    |> maybe_add_focal_length_tag(exif)
+    |> maybe_add_iso_tag(exif)
+  end
+
+  defp maybe_add_camera_tag(tags, %{"camera_make" => make, "camera_model" => model})
+       when is_binary(make) and is_binary(model) do
+    # Avoid duplication if model already contains make
+    camera =
+      if String.contains?(String.upcase(model), String.upcase(make)) do
+        model
+      else
+        "#{make} #{model}"
+      end
+
+    [camera | tags]
+  end
+
+  defp maybe_add_camera_tag(tags, _), do: tags
+
+  defp maybe_add_focal_length_tag(tags, exif) do
+    # Prefer 35mm equivalent, fall back to actual focal length
+    focal = exif["focal_length_35mm"] || exif["focal_length"]
+
+    case focal do
+      nil ->
+        tags
+
+      fl when is_number(fl) ->
+        bucket =
+          cond do
+            fl < 24 -> "Wide (<24mm)"
+            fl <= 50 -> "Normal (24-50mm)"
+            fl <= 100 -> "Portrait (50-100mm)"
+            true -> "Telephoto (100mm+)"
+          end
+
+        [bucket | tags]
+
+      _ ->
+        tags
+    end
+  end
+
+  defp maybe_add_iso_tag(tags, %{"iso" => iso}) when is_integer(iso) do
+    bucket =
+      cond do
+        iso <= 400 -> "Low ISO (≤400)"
+        iso <= 1600 -> "Medium ISO (800-1600)"
+        true -> "High ISO (3200+)"
+      end
+
+    [bucket | tags]
+  end
+
+  defp maybe_add_iso_tag(tags, _), do: tags
+
+  ## Camera Filtering
+
+  @doc """
+  Returns distinct camera models from media items with EXIF data.
+  """
+  def list_camera_models(%Scope{} = scope) do
+    from(m in MediaItem,
+      where: m.user_id == ^scope.user.id,
+      where: not is_nil(fragment("?->>'camera_model'", m.exif_data)),
+      select:
+        fragment(
+          "DISTINCT COALESCE(?->>'camera_make', '') || ' ' || (?->>'camera_model')",
+          m.exif_data,
+          m.exif_data
+        ),
+      order_by:
+        fragment(
+          "COALESCE(?->>'camera_make', '') || ' ' || (?->>'camera_model')",
+          m.exif_data,
+          m.exif_data
+        )
+    )
+    |> Repo.all()
+    |> Enum.map(&String.trim/1)
+    |> Enum.reject(&(&1 == ""))
   end
 
   ## Project-Media Associations

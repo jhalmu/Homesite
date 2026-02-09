@@ -1183,6 +1183,193 @@ defmodule Homesite.MediaTest do
     end
   end
 
+  describe "exif data" do
+    import Homesite.AccountsFixtures, only: [user_scope_fixture: 0]
+    import Homesite.MediaFixtures
+
+    test "upload_media/4 stores exif_data from JPEG" do
+      scope = user_scope_fixture()
+      temp_path = create_test_image("exif-upload.jpg")
+      %{size: file_size} = File.stat!(temp_path)
+
+      attrs = %{
+        original_filename: "exif-upload.jpg",
+        alt_text: "EXIF test upload",
+        content_type: "image/jpeg",
+        file_size_bytes: file_size
+      }
+
+      {:ok, media} = Media.upload_media(scope, temp_path, "image/jpeg", attrs)
+
+      # Simple test images have no EXIF, so it should be %{}
+      assert media.exif_data == %{}
+
+      File.rm(temp_path)
+    end
+
+    @tag :exiftool
+    test "upload_media/4 stores exif_data from JPEG with EXIF" do
+      if System.find_executable("exiftool") == nil do
+        flunk("exiftool not installed")
+      end
+
+      scope = user_scope_fixture()
+      temp_path = create_test_image("exif-rich.jpg")
+
+      # Inject EXIF data
+      {_, 0} =
+        System.cmd("exiftool", [
+          "-overwrite_original",
+          "-Make=FUJIFILM",
+          "-Model=X-T5",
+          "-ISO=3200",
+          temp_path
+        ])
+
+      %{size: file_size} = File.stat!(temp_path)
+
+      attrs = %{
+        original_filename: "exif-rich.jpg",
+        alt_text: "EXIF rich test",
+        content_type: "image/jpeg",
+        file_size_bytes: file_size
+      }
+
+      {:ok, media} = Media.upload_media(scope, temp_path, "image/jpeg", attrs)
+
+      assert media.exif_data["camera_make"] == "FUJIFILM"
+      assert media.exif_data["camera_model"] == "X-T5"
+      assert media.exif_data["iso"] == 3200
+
+      File.rm(temp_path)
+    end
+
+    @tag :exiftool
+    test "auto_tag_from_exif/2 creates tags from EXIF data" do
+      if System.find_executable("exiftool") == nil do
+        flunk("exiftool not installed")
+      end
+
+      scope = user_scope_fixture()
+      temp_path = create_test_image("auto-tag.jpg")
+
+      # Inject EXIF data
+      {_, 0} =
+        System.cmd("exiftool", [
+          "-overwrite_original",
+          "-Make=FUJIFILM",
+          "-Model=X-T5",
+          "-FocalLength=35",
+          "-ISO=3200",
+          temp_path
+        ])
+
+      %{size: file_size} = File.stat!(temp_path)
+
+      attrs = %{
+        original_filename: "auto-tag.jpg",
+        alt_text: "Auto tag test",
+        content_type: "image/jpeg",
+        file_size_bytes: file_size
+      }
+
+      {:ok, media} = Media.upload_media(scope, temp_path, "image/jpeg", attrs)
+
+      # Auto-tag
+      {:ok, tagged_item} = Media.auto_tag_from_exif(scope, media)
+
+      tag_names = Enum.map(tagged_item.tags, & &1.name)
+      assert "FUJIFILM X-T5" in tag_names
+      assert "Normal (24-50mm)" in tag_names
+      assert "High ISO (3200+)" in tag_names
+
+      File.rm(temp_path)
+    end
+
+    test "auto_tag_from_exif/2 returns :no_exif for items without EXIF" do
+      scope = user_scope_fixture()
+      media = media_item_fixture(scope)
+
+      assert {:ok, :no_exif} = Media.auto_tag_from_exif(scope, media)
+    end
+
+    @tag :exiftool
+    test "list_camera_models/1 returns distinct camera models" do
+      if System.find_executable("exiftool") == nil do
+        flunk("exiftool not installed")
+      end
+
+      scope = user_scope_fixture()
+
+      # Upload image with EXIF
+      temp_path = create_test_image("camera-filter.jpg")
+
+      {_, 0} =
+        System.cmd("exiftool", [
+          "-overwrite_original",
+          "-Make=Canon",
+          "-Model=EOS R5",
+          temp_path
+        ])
+
+      %{size: file_size} = File.stat!(temp_path)
+
+      attrs = %{
+        original_filename: "camera-filter.jpg",
+        alt_text: "Camera filter test",
+        content_type: "image/jpeg",
+        file_size_bytes: file_size
+      }
+
+      {:ok, _media} = Media.upload_media(scope, temp_path, "image/jpeg", attrs)
+
+      cameras = Media.list_camera_models(scope)
+      assert "Canon EOS R5" in cameras
+
+      File.rm(temp_path)
+    end
+
+    @tag :exiftool
+    test "list_media_items/2 filters by camera_model" do
+      if System.find_executable("exiftool") == nil do
+        flunk("exiftool not installed")
+      end
+
+      scope = user_scope_fixture()
+
+      # Upload Canon image
+      temp_path1 = create_test_image("canon.jpg")
+
+      {_, 0} =
+        System.cmd("exiftool", [
+          "-overwrite_original",
+          "-Make=Canon",
+          "-Model=EOS R5",
+          temp_path1
+        ])
+
+      %{size: file_size1} = File.stat!(temp_path1)
+
+      {:ok, canon_media} =
+        Media.upload_media(scope, temp_path1, "image/jpeg", %{
+          original_filename: "canon.jpg",
+          alt_text: "Canon test",
+          content_type: "image/jpeg",
+          file_size_bytes: file_size1
+        })
+
+      # Upload image without EXIF
+      _no_exif = media_item_fixture(scope)
+
+      # Filter by Canon camera
+      filtered = Media.list_media_items(scope, camera_model: "Canon EOS R5")
+      assert length(filtered) == 1
+      assert hd(filtered).id == canon_media.id
+
+      File.rm(temp_path1)
+    end
+  end
+
   describe "content_sections" do
     alias Homesite.Media.ContentSection
 

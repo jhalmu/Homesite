@@ -23,6 +23,26 @@ defmodule HomesiteWeb.MediaLive.Show do
   end
 
   @impl true
+  def handle_event("auto-tag-exif", _params, socket) do
+    scope = socket.assigns.current_scope
+    media_item = socket.assigns.media_item
+
+    case Media.auto_tag_from_exif(scope, media_item) do
+      {:ok, :no_exif} ->
+        {:noreply, put_flash(socket, :info, gettext("No EXIF data available for tagging"))}
+
+      {:ok, updated_item} ->
+        {:noreply,
+         socket
+         |> assign(:media_item, updated_item)
+         |> put_flash(:info, gettext("Tags created from EXIF data"))}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, gettext("Failed to create tags from EXIF data"))}
+    end
+  end
+
+  @impl true
   def handle_event("delete", _params, socket) do
     media_item = socket.assigns.media_item
 
@@ -168,6 +188,131 @@ defmodule HomesiteWeb.MediaLive.Show do
               </div>
             </div>
             
+    <!-- EXIF Data Card -->
+            <%= if @media_item.exif_data && @media_item.exif_data != %{} do %>
+              <div class="card bg-base-200 shadow-lg" role="region" aria-label={gettext("EXIF Data")}>
+                <div class="card-body p-[var(--spacing-card)]">
+                  <h3 class="card-title text-[var(--font-size-fluid-md)]">
+                    <.icon name="hero-camera" class="h-5 w-5" />
+                    {gettext("EXIF Data")}
+                  </h3>
+
+                  <dl class="space-y-[var(--space-sm)] text-[var(--text-sm)]">
+                    <%= if camera_info(@media_item.exif_data) do %>
+                      <div>
+                        <dt class="text-base-content/60 font-semibold">{gettext("Camera")}</dt>
+                        <dd>{camera_info(@media_item.exif_data)}</dd>
+                      </div>
+                    <% end %>
+
+                    <%= if @media_item.exif_data["lens"] do %>
+                      <div>
+                        <dt class="text-base-content/60 font-semibold">{gettext("Lens")}</dt>
+                        <dd>{@media_item.exif_data["lens"]}</dd>
+                      </div>
+                    <% end %>
+
+                    <%= if @media_item.exif_data["focal_length"] do %>
+                      <div>
+                        <dt class="text-base-content/60 font-semibold">
+                          {gettext("Focal Length")}
+                        </dt>
+                        <dd>
+                          {@media_item.exif_data["focal_length"]}mm
+                          <%= if @media_item.exif_data["focal_length_35mm"] do %>
+                            <span class="opacity-70">
+                              ({@media_item.exif_data["focal_length_35mm"]}mm {gettext("equiv.")})
+                            </span>
+                          <% end %>
+                        </dd>
+                      </div>
+                    <% end %>
+
+                    <%= if @media_item.exif_data["aperture"] do %>
+                      <div>
+                        <dt class="text-base-content/60 font-semibold">{gettext("Aperture")}</dt>
+                        <dd>f/{@media_item.exif_data["aperture"]}</dd>
+                      </div>
+                    <% end %>
+
+                    <%= if @media_item.exif_data["shutter_speed"] do %>
+                      <div>
+                        <dt class="text-base-content/60 font-semibold">
+                          {gettext("Shutter Speed")}
+                        </dt>
+                        <dd>{@media_item.exif_data["shutter_speed"]}</dd>
+                      </div>
+                    <% end %>
+
+                    <%= if @media_item.exif_data["iso"] do %>
+                      <div>
+                        <dt class="text-base-content/60 font-semibold">ISO</dt>
+                        <dd>{@media_item.exif_data["iso"]}</dd>
+                      </div>
+                    <% end %>
+
+                    <%= if @media_item.exif_data["flash"] != nil do %>
+                      <div>
+                        <dt class="text-base-content/60 font-semibold">{gettext("Flash")}</dt>
+                        <dd>
+                          <%= if @media_item.exif_data["flash"] do %>
+                            {gettext("Fired")}
+                          <% else %>
+                            {gettext("Not fired")}
+                          <% end %>
+                        </dd>
+                      </div>
+                    <% end %>
+
+                    <%= if @media_item.exif_data["date_taken"] do %>
+                      <div>
+                        <dt class="text-base-content/60 font-semibold">
+                          {gettext("Date Taken")}
+                        </dt>
+                        <dd>
+                          <time datetime={@media_item.exif_data["date_taken"]}>
+                            {@media_item.exif_data["date_taken"]}
+                          </time>
+                        </dd>
+                      </div>
+                    <% end %>
+
+                    <%= if @media_item.exif_data["software"] do %>
+                      <div>
+                        <dt class="text-base-content/60 font-semibold">{gettext("Software")}</dt>
+                        <dd>{@media_item.exif_data["software"]}</dd>
+                      </div>
+                    <% end %>
+
+                    <%= if @media_item.exif_data["artist"] do %>
+                      <div>
+                        <dt class="text-base-content/60 font-semibold">{gettext("Artist")}</dt>
+                        <dd>{@media_item.exif_data["artist"]}</dd>
+                      </div>
+                    <% end %>
+
+                    <%= if @media_item.exif_data["copyright"] do %>
+                      <div>
+                        <dt class="text-base-content/60 font-semibold">{gettext("Copyright")}</dt>
+                        <dd>{@media_item.exif_data["copyright"]}</dd>
+                      </div>
+                    <% end %>
+                  </dl>
+
+                  <div class="mt-[var(--space-sm)]">
+                    <button
+                      phx-click="auto-tag-exif"
+                      class="btn btn-outline btn-sm gap-[var(--spacing-inline)]"
+                      aria-label={gettext("Create Tags from EXIF")}
+                    >
+                      <.icon name="hero-tag" class="h-4 w-4" />
+                      {gettext("Create Tags from EXIF")}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+            
     <!-- Usage Statistics Card -->
             <div class="card bg-base-200 shadow-lg">
               <div class="card-body p-[var(--spacing-card)]">
@@ -218,6 +363,17 @@ defmodule HomesiteWeb.MediaLive.Show do
     </Layouts.app>
     """
   end
+
+  defp camera_info(%{"camera_make" => make, "camera_model" => model}) do
+    if String.contains?(String.upcase(model), String.upcase(make)) do
+      model
+    else
+      "#{make} #{model}"
+    end
+  end
+
+  defp camera_info(%{"camera_model" => model}), do: model
+  defp camera_info(_), do: nil
 
   defp format_file_size(bytes) when bytes < 1024, do: "#{bytes} B"
   defp format_file_size(bytes) when bytes < 1024 * 1024, do: "#{Float.round(bytes / 1024, 1)} KB"

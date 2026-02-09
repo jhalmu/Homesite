@@ -32,6 +32,9 @@ defmodule Homesite.Media.MediaItem do
     field :large_width, :integer
     field :large_height, :integer
 
+    # EXIF metadata extracted before stripping
+    field :exif_data, :map, default: %{}
+
     belongs_to :user, Homesite.Accounts.User
 
     many_to_many :projects, Homesite.Media.Project,
@@ -71,7 +74,8 @@ defmodule Homesite.Media.MediaItem do
       :medium_width,
       :medium_height,
       :large_width,
-      :large_height
+      :large_height,
+      :exif_data
     ])
     |> validate_required([
       :original_filename,
