@@ -15,11 +15,11 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
-## 2026-03-01 - Dependency Update
+## 2026-03-01 - Dependency Update + Fix Hetzner Deploy
 
 ### Session Summary
 
-Updated all Elixir dependencies to latest versions. 11 deps updated, all tests pass.
+Updated all Elixir dependencies to latest versions. Fixed broken CI/CD deploy to Hetzner.
 
 #### Updated Dependencies
 - phoenix 1.8.3 → 1.8.4, phoenix_live_view 1.1.22 → 1.1.25
@@ -32,8 +32,17 @@ Updated all Elixir dependencies to latest versions. 11 deps updated, all tests p
 #### Blocked
 - gettext 0.26.2 → 1.0.2: blocked by timex `~> 0.26`
 
+#### Fix: Hetzner Deploy SSH Failure
+- **Root cause**: `deploy` user account was locked (`User deploy not allowed because account is locked`)
+- **Fix**: `sudo passwd -u deploy` to unlock, `sudo chsh -s /bin/bash deploy` to set shell
+- Generated new ed25519 keypair, installed on server, updated GitHub secrets
+- Updated `HETZNER_SSH_KEY` on Homesite repo and `DEPLOY_SSH_KEY` on dividendsomatic repo (production env)
+- Both CI/CD pipelines verified green
+- Added CI/CD check as EOD steps 6-7 in CLAUDE.md
+
 #### Verification
 - `mix test.all`: 1842 tests, 0 failures, credo clean
+- CI/CD: all jobs passing including deploy
 
 ---
 
