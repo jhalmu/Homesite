@@ -56,6 +56,8 @@ When user says **"EOD"**: Execute immediately without confirmation:
 3. Sync GitHub issues (`gh issue list/close/comment`)
 4. Update MEMO.md
 5. Commit & push
+6. Check CI/CD pipeline (`gh run list --limit 1` then `gh run view`)
+7. If CI fails: read the log (`gh run view --log-failed`), fix the issue, re-run `mix test.all`, commit & push, repeat from step 6 until green
 
 Commands allowed without asking: `git`, `gh`, `mix test`, `mix format`, `mix credo`, `pkill`
 
