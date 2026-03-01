@@ -43,8 +43,8 @@ defmodule HomesiteWeb.Plugs.ContentSecurityPolicy do
       "font-src 'self' data: https://fonts.gstatic.com",
       # Connect: Allow self, websockets (required for LiveView), and Cloudflare Turnstile
       "connect-src 'self' ws: wss: https://challenges.cloudflare.com",
-      # Frames: Allow Cloudflare Turnstile iframes
-      "frame-src https://challenges.cloudflare.com",
+      # Frames: Allow Cloudflare Turnstile iframes (and self for LiveReload in dev)
+      "frame-src 'self' https://challenges.cloudflare.com",
       # Frame ancestors: Prevent clickjacking
       "frame-ancestors 'none'",
       # Base URI: Restrict base tag

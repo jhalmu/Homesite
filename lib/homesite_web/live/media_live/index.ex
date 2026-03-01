@@ -56,7 +56,9 @@ defmodule HomesiteWeb.MediaLive.Index do
   end
 
   @impl true
-  def handle_info({:created, media_item}, socket) do
+  def handle_info({:created, %{id: id}}, socket) do
+    # Re-fetch from DB to get proper preloads (broadcast struct may lack associations)
+    media_item = Media.get_media_item!(socket.assigns.current_scope, id)
     orphan_count = Media.count_orphaned_media_items(socket.assigns.current_scope)
 
     {:noreply,
@@ -66,7 +68,8 @@ defmodule HomesiteWeb.MediaLive.Index do
      |> stream_insert(:media_items, media_item, at: 0)}
   end
 
-  def handle_info({:updated, media_item}, socket) do
+  def handle_info({:updated, %{id: id}}, socket) do
+    media_item = Media.get_media_item!(socket.assigns.current_scope, id)
     {:noreply, stream_insert(socket, :media_items, media_item)}
   end
 
@@ -556,7 +559,14 @@ defmodule HomesiteWeb.MediaLive.Index do
 
         case Media.upload_media(scope, path, entry.client_type, attrs) do
           {:ok, media_item} ->
-            apply_post_upload_actions(scope, media_item, tag_ids, socket.assigns.auto_tag_exif)
+            try do
+              apply_post_upload_actions(scope, media_item, tag_ids, socket.assigns.auto_tag_exif)
+            rescue
+              e ->
+                require Logger
+                Logger.error("Post-upload actions failed: #{inspect(e)}")
+            end
+
             {:ok, media_item}
 
           {:error, _changeset} ->
@@ -564,7 +574,7 @@ defmodule HomesiteWeb.MediaLive.Index do
         end
       end)
 
-    successful_uploads = Enum.filter(uploaded_files, &match?({:ok, _}, &1))
+    successful_uploads = Enum.reject(uploaded_files, &(&1 == :error))
     failed_uploads = Enum.filter(uploaded_files, &(&1 == :error))
 
     socket =
@@ -694,13 +704,15 @@ defmodule HomesiteWeb.MediaLive.Index do
                   <% end %>
                 </div>
 
-                <%!-- Upload Errors --%>
+                <%!-- Upload Errors (only for pre-upload validation, not during transfer) --%>
                 <%= for entry <- @uploads.images.entries do %>
-                  <%= for err <- upload_errors(@uploads.images, entry) do %>
-                    <p class="alert alert-error mt-[var(--space-xs)] text-[var(--text-sm)]">
-                      <.icon name="hero-exclamation-triangle" class="h-4 w-4" />
-                      {entry.client_name}: {error_to_string(err)}
-                    </p>
+                  <%= if entry.progress == 0 do %>
+                    <%= for err <- upload_errors(@uploads.images, entry) do %>
+                      <p class="alert alert-error mt-[var(--space-xs)] text-[var(--text-sm)]">
+                        <.icon name="hero-exclamation-triangle" class="h-4 w-4" />
+                        {entry.client_name}: {error_to_string(err)}
+                      </p>
+                    <% end %>
                   <% end %>
                 <% end %>
 
