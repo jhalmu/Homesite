@@ -3,6 +3,7 @@ defmodule HomesiteWeb.PortfolioLive.Show do
 
   import HomesiteWeb.Helpers.DateHelpers
   import HomesiteWeb.ContentSectionComponents, only: [content_section_display: 1]
+  import HomesiteWeb.MediaComponents, only: [lightbox: 1, template_icon: 1, template_name: 1]
 
   alias Homesite.Media
   alias HomesiteWeb.Export.ProjectHTML
@@ -25,13 +26,16 @@ defmodule HomesiteWeb.PortfolioLive.Show do
             :affiliation_links,
             :media_items,
             :tags,
-            :content_sections
+            :content_sections,
+            :cover_media_item
           ])
 
         {:noreply,
          socket
          |> assign(:page_title, project.name)
          |> assign(:project, project)
+         |> assign(:is_photography, project.template_type == "photography")
+         |> assign(:hero_image, hero_image(project))
          |> assign(:current_url, url(~p"/portfolio/#{slug}"))}
 
       {:error, :not_found} ->
@@ -166,221 +170,317 @@ defmodule HomesiteWeb.PortfolioLive.Show do
      |> put_flash(:info, gettext("Exporting HTML..."))}
   end
 
+  defp image_gallery(%{media_items: []} = assigns), do: ~H""
+
+  defp image_gallery(assigns) do
+    ~H"""
+    <div class="mt-[var(--spacing-lg)]">
+      <div class="mb-[var(--spacing-md)] text-[var(--text-sm)] opacity-70">
+        {gettext("%{count} image(s)", count: length(@media_items))}
+      </div>
+
+      <div
+        id="portfolio-gallery"
+        phx-hook="ImageProtect"
+        class="gap-[var(--spacing-xs)] columns-1 sm:columns-2 lg:columns-3"
+      >
+        <%= for {media, idx} <- Enum.with_index(@media_items) do %>
+          <article class="mb-[var(--spacing-xs)] break-inside-avoid">
+            <div class="protected-image-wrapper">
+              <button
+                type="button"
+                class="bg-base-300 block w-full cursor-zoom-in overflow-hidden rounded-lg focus:ring-primary focus:outline-none focus:ring-2"
+                phx-click="open_lightbox"
+                phx-value-index={idx}
+                aria-label={
+                  gettext("View %{title} in fullscreen",
+                    title: media.title || media.alt_text
+                  )
+                }
+              >
+                <img
+                  src={~p"/images/media/#{media.id}/public"}
+                  alt={media.alt_text}
+                  class="duration-[var(--duration-normal)] w-full transition-transform hover:scale-[1.02]"
+                  loading="lazy"
+                  draggable="false"
+                />
+              </button>
+            </div>
+          </article>
+        <% end %>
+      </div>
+    </div>
+    """
+  end
+
+  defp hero_image(project) do
+    cond do
+      project.cover_media_item ->
+        project.cover_media_item
+
+      project.template_type == "photography" && project.media_items != [] ->
+        List.first(project.media_items)
+
+      true ->
+        nil
+    end
+  end
+
+  defp has_content_sections?(project) do
+    Ecto.assoc_loaded?(project.content_sections) && project.content_sections != []
+  end
+
   defp show_field?(project, field_name) do
     Map.get(project.field_visibility || %{}, field_name, true)
   end
+
+  defp template_gradient("photography"), do: "from-amber-950 to-orange-900"
+  defp template_gradient("coding"), do: "from-slate-900 to-blue-950"
+  defp template_gradient("writing"), do: "from-stone-900 to-amber-950"
+  defp template_gradient("books"), do: "from-emerald-950 to-teal-900"
+  defp template_gradient("gears"), do: "from-zinc-900 to-slate-950"
+  defp template_gradient("movies"), do: "from-violet-950 to-indigo-900"
+  defp template_gradient(_), do: "from-gray-900 to-slate-950"
 
   @impl true
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="technical-main">
-        <.header>
-          {@project.name}
-          <:subtitle>
-            <%= if show_field?(@project, "description") && @project.description do %>
-              {@project.description}
-            <% end %>
-          </:subtitle>
-          <:actions>
-            <%!-- Share Menu --%>
-            <div id="share-menu" phx-hook="OpenWindow" class="dropdown dropdown-end">
-              <button tabindex="0" class="btn btn-ghost btn-sm">
-                <.icon name="hero-share" class="h-4 w-4" />
-                {gettext("Share")}
-              </button>
-              <ul
-                tabindex="0"
-                class="dropdown-content menu bg-base-200 rounded-box z-10 w-52 p-2 shadow-lg"
-              >
-                <li>
-                  <a phx-click="share_bluesky">
-                    <.icon name="hero-chat-bubble-left-ellipsis" class="h-4 w-4" />
-                    {gettext("Share on Bluesky")}
-                  </a>
-                </li>
-                <li>
-                  <a phx-click="share_mastodon">
-                    <.icon name="hero-globe-alt" class="h-4 w-4" />
-                    {gettext("Share on Mastodon")}
-                  </a>
-                </li>
-                <li>
-                  <a phx-click="share_linkedin">
-                    <.icon name="hero-briefcase" class="h-4 w-4" />
-                    {gettext("Share on LinkedIn")}
-                  </a>
-                </li>
-                <li>
-                  <a phx-click="share_email">
-                    <.icon name="hero-envelope" class="h-4 w-4" />
-                    {gettext("Share via Email")}
-                  </a>
-                </li>
-                <li>
-                  <a phx-click="copy_link">
-                    <.icon name="hero-clipboard-document" class="h-4 w-4" />
-                    {gettext("Copy Link")}
-                  </a>
-                </li>
-                <div class="divider my-[var(--space-inline)]"></div>
-                <li>
-                  <a phx-click="export_html">
-                    <.icon name="hero-arrow-down-tray" class="h-4 w-4" />
-                    {gettext("Export HTML")}
-                  </a>
-                </li>
-              </ul>
-            </div>
+      <%!-- ============ HERO SECTION ============ --%>
+      <div class="relative isolate overflow-hidden">
+        <%!-- Background: cover image or template gradient --%>
+        <%= if @hero_image do %>
+          <img
+            src={~p"/images/media/#{@hero_image.id}/public"}
+            alt={@project.name}
+            class="absolute inset-0 -z-10 h-full w-full object-cover"
+            draggable="false"
+          />
+          <div class="from-black/85 via-black/50 to-black/30 absolute inset-0 -z-10 bg-gradient-to-t" />
+        <% else %>
+          <div class={[
+            "absolute inset-0 -z-10 bg-gradient-to-br",
+            template_gradient(@project.template_type)
+          ]} />
+          <div class="opacity-[0.06] absolute right-4 -bottom-6 -z-10 sm:right-10 sm:-bottom-8">
+            <.icon
+              name={template_icon(@project.template_type)}
+              class="h-48 w-48 text-white sm:h-64 sm:w-64"
+            />
+          </div>
+        <% end %>
 
-            <.link navigate={~p"/portfolio"} class="btn btn-ghost btn-sm">
-              <.icon name="hero-arrow-left" class="h-4 w-4" />
-              {gettext("Back")}
-            </.link>
-          </:actions>
-        </.header>
+        <%!-- Navigation bar --%>
+        <div class="px-[var(--spacing-sm)] pt-[var(--spacing-sm)] flex items-center justify-between">
+          <.link
+            navigate={~p"/portfolio"}
+            class="btn btn-sm border-white/20 bg-white/15 text-white backdrop-blur-sm hover:bg-white/25"
+          >
+            <.icon name="hero-arrow-left" class="h-4 w-4" />
+            {gettext("Back")}
+          </.link>
 
-        <%!-- Project metadata --%>
-        <div class="mt-[var(--spacing-sm)] gap-[var(--spacing-sm)] text-[var(--text-sm)] flex flex-wrap items-center">
-          <%= if show_field?(@project, "category") && @project.categories && length(@project.categories) > 0 do %>
-            <%= for category <- @project.categories do %>
-              <span class="badge badge-secondary">{category}</span>
-            <% end %>
-          <% end %>
-
-          <%= if show_field?(@project, "project_date") && @project.project_date do %>
-            <span class="opacity-70">
-              {format_month_year(@project.project_date)}
-            </span>
-          <% end %>
-
-          <%= if @project.user do %>
-            <span class="opacity-70">
-              {gettext("by")} {@project.user.display_name || @project.user.email}
-            </span>
-          <% end %>
+          <div id="share-menu" phx-hook="OpenWindow" class="dropdown dropdown-end">
+            <button
+              tabindex="0"
+              class="btn btn-sm border-white/20 bg-white/15 text-white backdrop-blur-sm hover:bg-white/25"
+            >
+              <.icon name="hero-share" class="h-4 w-4" />
+              {gettext("Share")}
+            </button>
+            <ul
+              tabindex="0"
+              class="dropdown-content menu bg-base-200 rounded-box z-10 w-52 p-2 shadow-lg"
+            >
+              <li>
+                <a phx-click="share_bluesky">
+                  <.icon name="hero-chat-bubble-left-ellipsis" class="h-4 w-4" />
+                  {gettext("Share on Bluesky")}
+                </a>
+              </li>
+              <li>
+                <a phx-click="share_mastodon">
+                  <.icon name="hero-globe-alt" class="h-4 w-4" />
+                  {gettext("Share on Mastodon")}
+                </a>
+              </li>
+              <li>
+                <a phx-click="share_linkedin">
+                  <.icon name="hero-briefcase" class="h-4 w-4" />
+                  {gettext("Share on LinkedIn")}
+                </a>
+              </li>
+              <li>
+                <a phx-click="share_email">
+                  <.icon name="hero-envelope" class="h-4 w-4" />
+                  {gettext("Share via Email")}
+                </a>
+              </li>
+              <li>
+                <a phx-click="copy_link">
+                  <.icon name="hero-clipboard-document" class="h-4 w-4" />
+                  {gettext("Copy Link")}
+                </a>
+              </li>
+              <div class="divider my-[var(--space-inline)]"></div>
+              <li>
+                <a phx-click="export_html">
+                  <.icon name="hero-arrow-down-tray" class="h-4 w-4" />
+                  {gettext("Export HTML")}
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
 
-        <%!-- Tags Section --%>
+        <%!-- Hero content --%>
+        <div class="px-[var(--spacing-sm)] pb-[var(--spacing-lg)] pt-[var(--spacing-md)] mx-auto max-w-5xl sm:pb-[var(--spacing-xl)] sm:pt-[var(--spacing-lg)]">
+          <span class="mb-[var(--spacing-xs)] bg-white/20 text-[var(--text-xs)] inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-medium text-white backdrop-blur-sm">
+            <.icon name={template_icon(@project.template_type)} class="h-3.5 w-3.5" />
+            {template_name(@project.template_type)}
+          </span>
+
+          <h1 class="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+            {@project.name}
+          </h1>
+
+          <%= if show_field?(@project, "description") && @project.description do %>
+            <p class="mt-[var(--spacing-xs)] text-[var(--text-lg)] text-white/80 max-w-2xl">
+              {@project.description}
+            </p>
+          <% end %>
+
+          <%!-- Metadata strip --%>
+          <div class="mt-[var(--spacing-sm)] gap-x-[var(--spacing-sm)] gap-y-[var(--spacing-xs)] text-[var(--text-sm)] flex flex-wrap items-center">
+            <%= if show_field?(@project, "category") && @project.categories && length(@project.categories) > 0 do %>
+              <%= for category <- @project.categories do %>
+                <span class="bg-white/20 text-[var(--text-xs)] rounded-full px-2.5 py-0.5 font-medium text-white backdrop-blur-sm">
+                  {category}
+                </span>
+              <% end %>
+            <% end %>
+
+            <%= if show_field?(@project, "project_date") && @project.project_date do %>
+              <span class="text-white/60">{format_month_year(@project.project_date)}</span>
+            <% end %>
+
+            <%= if @project.user do %>
+              <span class="text-white/60">
+                {gettext("by")} {@project.user.display_name || @project.user.email}
+              </span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <%!-- ============ CONTENT BODY ============ --%>
+      <div class="px-[var(--spacing-sm)] py-[var(--spacing-lg)] mx-auto max-w-5xl">
+        <%!-- Tags --%>
         <%= if show_field?(@project, "tags") && Ecto.assoc_loaded?(@project.tags) && length(@project.tags) > 0 do %>
-          <div class="mt-[var(--spacing-md)]">
-            <h3 class="mb-[var(--spacing-sm)] text-[var(--text-sm)] font-semibold opacity-70">
-              {gettext("Tags")}
-            </h3>
-            <div class="gap-[var(--spacing-inline)] flex flex-wrap">
+          <div class="mb-[var(--spacing-lg)]">
+            <div class="gap-[var(--spacing-xs)] flex flex-wrap">
               <%= for tag <- @project.tags do %>
-                <span class="badge badge-outline badge-sm">{tag.name}</span>
+                <span class="badge badge-outline">{tag.name}</span>
               <% end %>
             </div>
           </div>
         <% end %>
 
-        <%!-- Collaborators Section --%>
+        <%!-- Collaborators --%>
         <%= if show_field?(@project, "collaborators") && length(@project.collaborators) > 0 do %>
-          <div class="mt-[var(--spacing-md)]">
-            <span class="opacity-70">{gettext("With")}</span>
+          <div class="text-[var(--text-sm)] mb-[var(--spacing-lg)] gap-[var(--spacing-xs)] flex flex-wrap items-center">
+            <span class="text-base-content/60 font-medium">{gettext("With")}</span>
             <%= for {collab, index} <- Enum.with_index(Enum.sort_by(@project.collaborators, & &1.display_order)) do %>
               <%= if index > 0 do %>
-                <span class="opacity-70">, </span>
+                <span class="text-base-content/40">&middot;</span>
               <% end %>
               <%= if collab.contact_type == "url" && collab.contact do %>
-                <a href={collab.contact} target="_blank" class="link link-primary">
+                <a href={collab.contact} target="_blank" class="link link-primary font-medium">
                   {collab.name}
                 </a>
               <% else %>
-                <span>{collab.name}</span>
+                <span class="font-medium">{collab.name}</span>
               <% end %>
             <% end %>
           </div>
         <% end %>
 
-        <%!-- Affiliation Links Section --%>
+        <%!-- Photography: images first, then content sections --%>
+        <%= if @is_photography do %>
+          <.image_gallery media_items={@project.media_items} />
+
+          <%= if has_content_sections?(@project) do %>
+            <div class="mt-[var(--spacing-lg)]">
+              <%= for section <- Enum.sort_by(@project.content_sections, & &1.display_order) do %>
+                <.content_section_display section={section} />
+              <% end %>
+            </div>
+          <% end %>
+        <% else %>
+          <%!-- Non-photography: content sections first, images as optional gallery --%>
+          <%= if has_content_sections?(@project) do %>
+            <div class="mb-[var(--spacing-lg)]">
+              <%= for section <- Enum.sort_by(@project.content_sections, & &1.display_order) do %>
+                <.content_section_display section={section} />
+              <% end %>
+            </div>
+          <% end %>
+
+          <%= if length(@project.media_items) > 0 do %>
+            <div class="mt-[var(--spacing-sm)]">
+              <h3 class="mb-[var(--spacing-sm)] gap-[var(--spacing-xs)] text-[var(--text-lg)] flex items-center font-semibold">
+                <.icon name="hero-photo" class="h-5 w-5" />
+                {gettext("Gallery")}
+                <span class="text-base-content/50 text-[var(--text-sm)] font-normal">
+                  ({length(@project.media_items)})
+                </span>
+              </h3>
+              <.image_gallery media_items={@project.media_items} />
+            </div>
+          <% end %>
+        <% end %>
+
+        <%!-- Affiliation Links --%>
         <%= if show_field?(@project, "affiliation_links") && length(@project.affiliation_links) > 0 do %>
           <div class="mt-[var(--spacing-lg)]">
-            <h3 class="mb-[var(--spacing-sm)] text-[var(--text-base)] font-semibold">
+            <h3 class="mb-[var(--spacing-sm)] text-[var(--text-lg)] font-semibold">
               {gettext("Related Links")}
             </h3>
-            <div class="space-y-[var(--spacing-inline)]">
+            <div class="gap-[var(--spacing-xs)] grid sm:grid-cols-2">
               <%= for link <- Enum.sort_by(@project.affiliation_links, & &1.display_order) do %>
                 <a
                   href={link.url}
                   target="_blank"
-                  class="gap-[var(--spacing-sm)] bg-base-200 duration-[var(--duration-fast)] p-[var(--spacing-sm)] flex items-center rounded-lg transition-colors hover:bg-base-300"
+                  class="border-base-300 bg-base-200/50 group gap-[var(--spacing-sm)] p-[var(--spacing-sm)] flex items-center rounded-xl border transition-all duration-200 hover:border-primary/30 hover:bg-base-200 hover:shadow-md"
                 >
-                  <.icon name="hero-link" class="text-primary h-5 w-5" />
+                  <div class="bg-primary/10 text-primary flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-colors group-hover:bg-primary/20">
+                    <.icon name="hero-link" class="h-5 w-5" />
+                  </div>
                   <span class="flex-1 font-medium">{link.title}</span>
-                  <.icon name="hero-arrow-top-right-on-square" class="h-4 w-4 opacity-60" />
+                  <.icon
+                    name="hero-arrow-top-right-on-square"
+                    class="h-4 w-4 opacity-40 transition-opacity group-hover:opacity-70"
+                  />
                 </a>
               <% end %>
             </div>
           </div>
         <% end %>
-
-        <%!-- Content Sections --%>
-        <%= if Ecto.assoc_loaded?(@project.content_sections) && length(@project.content_sections) > 0 do %>
-          <div class="mt-[var(--spacing-lg)]">
-            <%= for section <- Enum.sort_by(@project.content_sections, & &1.display_order) do %>
-              <.content_section_display section={section} />
-            <% end %>
-          </div>
-        <% end %>
-
-        <%!-- Media items grid (only shown when there are images) --%>
-        <%= if length(@project.media_items) > 0 do %>
-          <div class="mt-[var(--spacing-lg)]">
-            <%!-- Statistics --%>
-            <div class="mb-[var(--spacing-md)] text-[var(--text-sm)] opacity-70">
-              {gettext("%{count} image(s)", count: length(@project.media_items))}
-            </div>
-
-            <%!-- Masonry-style grid - bigger images, tighter spacing --%>
-            <div
-              id="portfolio-gallery"
-              phx-hook="ImageProtect"
-              class="gap-[var(--spacing-xs)] columns-1 sm:columns-2 lg:columns-3"
-            >
-              <%= for {media, idx} <- Enum.with_index(@project.media_items) do %>
-                <article class="mb-[var(--spacing-xs)] break-inside-avoid">
-                  <div class="protected-image-wrapper">
-                    <button
-                      type="button"
-                      class="bg-base-300 block w-full cursor-zoom-in overflow-hidden rounded-lg focus:ring-primary focus:outline-none focus:ring-2"
-                      phx-click="open_lightbox"
-                      phx-value-index={idx}
-                      aria-label={
-                        gettext("View %{title} in fullscreen",
-                          title: media.title || media.alt_text
-                        )
-                      }
-                    >
-                      <img
-                        src={~p"/images/media/#{media.id}/public"}
-                        alt={media.alt_text}
-                        class="duration-[var(--duration-normal)] w-full transition-transform hover:scale-[1.02]"
-                        loading="lazy"
-                        draggable="false"
-                      />
-                    </button>
-                  </div>
-                </article>
-              <% end %>
-            </div>
-          </div>
-        <% end %>
-
-        <%!-- Lightbox overlay --%>
-        <%= if @lightbox_open && length(@project.media_items) > 0 do %>
-          <.lightbox
-            id="portfolio-lightbox"
-            images={@project.media_items}
-            current_index={@lightbox_index}
-            on_close="close_lightbox"
-            on_prev="lightbox_prev"
-            on_next="lightbox_next"
-            public={true}
-          />
-        <% end %>
       </div>
+
+      <%!-- Lightbox overlay --%>
+      <%= if @lightbox_open && length(@project.media_items) > 0 do %>
+        <.lightbox
+          id="portfolio-lightbox"
+          images={@project.media_items}
+          current_index={@lightbox_index}
+          on_close="close_lightbox"
+          on_prev="lightbox_prev"
+          on_next="lightbox_next"
+          public={true}
+        />
+      <% end %>
     </Layouts.app>
     """
   end

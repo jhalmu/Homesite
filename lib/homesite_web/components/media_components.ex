@@ -285,19 +285,20 @@ defmodule HomesiteWeb.MediaComponents do
     """
   end
 
-  # Helper functions for template icons and names
-  defp template_icon(nil), do: "hero-folder"
-  defp template_icon("photography"), do: "hero-camera"
-  defp template_icon("coding"), do: "hero-code-bracket"
-  defp template_icon("writing"), do: "hero-document-text"
-  defp template_icon("books"), do: "hero-book-open"
-  defp template_icon("gears"), do: "hero-wrench-screwdriver"
-  defp template_icon("movies"), do: "hero-film"
-  defp template_icon(_), do: "hero-squares-plus"
+  @doc "Returns the hero icon name for a given template type."
+  def template_icon(nil), do: "hero-folder"
+  def template_icon("photography"), do: "hero-camera"
+  def template_icon("coding"), do: "hero-code-bracket"
+  def template_icon("writing"), do: "hero-document-text"
+  def template_icon("books"), do: "hero-book-open"
+  def template_icon("gears"), do: "hero-wrench-screwdriver"
+  def template_icon("movies"), do: "hero-film"
+  def template_icon(_), do: "hero-squares-plus"
 
-  defp template_name(nil), do: gettext("Project")
+  @doc "Returns the display name for a given template type."
+  def template_name(nil), do: gettext("Project")
 
-  defp template_name(type) when is_binary(type) do
+  def template_name(type) when is_binary(type) do
     case ProjectTemplate.get(type) do
       nil -> type
       template -> template.name

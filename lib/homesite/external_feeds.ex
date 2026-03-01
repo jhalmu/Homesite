@@ -333,6 +333,31 @@ defmodule Homesite.ExternalFeeds do
   end
 
   @doc """
+  Returns a public feed source for a given user, only if enabled.
+  Used for the public reading page on user profiles.
+  """
+  def get_public_feed_source(user_id, feed_source_id) do
+    FeedSource
+    |> where(id: ^feed_source_id, user_id: ^user_id, enabled: true)
+    |> Repo.one()
+  end
+
+  @doc """
+  Returns feed items for a specific public (enabled) feed source.
+  Used for the public reading page on user profiles.
+  """
+  def list_public_feed_items_for_source(user_id, feed_source_id, opts \\ []) do
+    limit = Keyword.get(opts, :limit, 30)
+
+    FeedItem
+    |> join(:inner, [i], s in FeedSource, on: i.feed_source_id == s.id)
+    |> where([i, s], s.id == ^feed_source_id and s.user_id == ^user_id and s.enabled == true)
+    |> order_by([i], desc: i.published_at)
+    |> limit(^limit)
+    |> Repo.all()
+  end
+
+  @doc """
   Returns the list of feed items with interaction data (read/unread, bookmarks).
   This is the main function for the unified feed view.
 

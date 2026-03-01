@@ -14,7 +14,9 @@ defmodule HomesiteWeb.UserLive.Profile do
   alias Homesite.Media
   alias Homesite.Notifications
 
-  import HomesiteWeb.MediaComponents, only: [project_card: 1]
+  import HomesiteWeb.MediaComponents, only: [project_card: 1, template_icon: 1, template_name: 1]
+
+  @template_display_order ~w(photography coding writing books gears movies custom)
 
   @posts_per_page 10
 
@@ -185,8 +187,17 @@ defmodule HomesiteWeb.UserLive.Profile do
             <% end %>
           </div>
 
-          <div class="gap-[var(--space-sm)] grid grid-cols-2 md:grid-cols-3">
-            <.project_card :for={project <- @projects} project={project} />
+          <div
+            :for={{template_type, group_projects} <- @grouped_projects}
+            class="mb-[var(--space-sm)]"
+          >
+            <h3 class="mb-[var(--space-xs)] gap-[var(--space-inline)] text-[var(--text-base)] flex items-center font-semibold">
+              <.icon name={template_icon(template_type)} class="h-4 w-4" />
+              {template_name(template_type)}
+            </h3>
+            <div class="gap-[var(--space-sm)] grid grid-cols-2 md:grid-cols-3">
+              <.project_card :for={project <- group_projects} project={project} />
+            </div>
           </div>
         </div>
         
@@ -251,16 +262,18 @@ defmodule HomesiteWeb.UserLive.Profile do
           </h2>
 
           <div class="gap-[var(--space-xs)] flex flex-wrap">
-            <a
+            <.link
               :for={source <- @feed_sources}
-              href={source.url}
-              target="_blank"
-              rel="noopener noreferrer"
+              navigate={
+                if @user.username,
+                  do: ~p"/users/@#{@user.username}/reading/#{source.id}",
+                  else: ~p"/users/#{@user.id}/reading/#{source.id}"
+              }
               class="border-base-300 gap-[var(--space-inline)] px-[var(--space-sm)] py-[var(--space-inline)] text-[var(--text-sm)] inline-flex items-center rounded-full border transition-colors hover:border-primary hover:text-primary"
             >
               <span>{source.icon}</span>
               <span class="font-medium">{source.name}</span>
-            </a>
+            </.link>
           </div>
         </div>
 
@@ -362,6 +375,7 @@ defmodule HomesiteWeb.UserLive.Profile do
 
         # Load user's public projects (max 6 for profile)
         projects = Media.list_public_projects_for_user(user.id, limit: 6)
+        grouped_projects = group_projects_by_template(projects)
 
         # Get follow counts for the profile user
         follow_counts = Follows.get_follow_counts(user.id)
@@ -393,6 +407,7 @@ defmodule HomesiteWeb.UserLive.Profile do
          |> assign(:recent_posts, recent_posts)
          |> assign(:feed_sources, feed_sources)
          |> assign(:projects, projects)
+         |> assign(:grouped_projects, grouped_projects)
          |> assign(:stats, stats)
          |> assign(:has_more_posts, length(posts) == @posts_per_page)
          |> assign(:follow_counts, follow_counts)
@@ -535,5 +550,17 @@ defmodule HomesiteWeb.UserLive.Profile do
       [username] -> "https://mastodon.social/@#{username}"
       _ -> "#"
     end
+  end
+
+  defp group_projects_by_template(projects) do
+    grouped = Enum.group_by(projects, & &1.template_type)
+
+    (@template_display_order ++ [nil])
+    |> Enum.flat_map(fn type ->
+      case Map.get(grouped, type) do
+        nil -> []
+        group -> [{type, group}]
+      end
+    end)
   end
 end

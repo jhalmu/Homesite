@@ -40,12 +40,14 @@ defmodule HomesiteWeb.PostLive.Index do
                       {preview_text(post.body)}
                     </p>
 
-                    <div class="gap-[var(--spacing-sm)] text-[var(--text-sm)] flex flex-wrap">
+                    <div class="gap-[var(--spacing-sm)] text-[var(--text-sm)] flex flex-wrap items-center">
+                      <%!-- Status badge: only for post owner --%>
+                      <%= if @current_scope && post.user_id == @current_scope.user.id do %>
+                        <.post_status_badge post={post} />
+                      <% end %>
+
+                      <%!-- Metadata: date, read time, author --%>
                       <%= if post.published_at do %>
-                        <div class="badge badge-success gap-[var(--spacing-inline)]">
-                          <.icon name="hero-check-circle" class="h-3 w-3" />
-                          {gettext("Published")}
-                        </div>
                         <div class="opacity-70">
                           <.icon name="hero-calendar" class="inline h-4 w-4" />
                           <time datetime={post.published_at}>
@@ -56,64 +58,50 @@ defmodule HomesiteWeb.PostLive.Index do
                           <.icon name="hero-clock" class="inline h-4 w-4" />
                           {post.read_time_minutes} {gettext("min read")}
                         </div>
-                        <div class="opacity-70">
-                          <span>{post.user.display_name || post.user.email}</span>
-                        </div>
-                        <%= if post.is_public do %>
-                          <div class="dropdown dropdown-end">
-                            <button
-                              tabindex="0"
-                              class="gap-[var(--spacing-inline)] inline-flex items-center opacity-70 hover:underline"
-                            >
-                              <.icon name="hero-share" class="h-4 w-4" /> {gettext("Share")}
-                            </button>
-                            <ul
-                              tabindex="0"
-                              class="dropdown-content menu bg-base-200 rounded-box z-10 w-52 p-2 shadow-lg"
-                            >
-                              <li>
-                                <a phx-click="share_bluesky" phx-value-id={post.id}>
-                                  <.icon name="hero-chat-bubble-left-ellipsis" class="h-4 w-4" />
-                                  {gettext("Share on Bluesky")}
-                                </a>
-                              </li>
-                              <li>
-                                <a phx-click="share_mastodon" phx-value-id={post.id}>
-                                  <.icon name="hero-globe-alt" class="h-4 w-4" />
-                                  {gettext("Share on Mastodon")}
-                                </a>
-                              </li>
-                              <li>
-                                <a phx-click="share_linkedin" phx-value-id={post.id}>
-                                  <.icon name="hero-briefcase" class="h-4 w-4" />
-                                  {gettext("Share on LinkedIn")}
-                                </a>
-                              </li>
-                              <li>
-                                <a phx-click="share_email" phx-value-id={post.id}>
-                                  <.icon name="hero-envelope" class="h-4 w-4" />
-                                  {gettext("Share via Email")}
-                                </a>
-                              </li>
-                            </ul>
-                          </div>
-                        <% end %>
-                      <% else %>
-                        <div class="badge badge-warning gap-[var(--spacing-inline)]">
-                          <.icon name="hero-pencil" class="h-3 w-3" />
-                          {gettext("Draft")}
-                        </div>
                       <% end %>
 
-                      <%= if post.is_public do %>
-                        <div class="badge badge-ghost gap-[var(--spacing-inline)]">
-                          <.icon name="hero-globe-alt" class="h-3 w-3" />
-                          {gettext("Public")}
-                        </div>
-                      <% else %>
-                        <div class="badge badge-ghost gap-[var(--spacing-inline)]">
-                          <.icon name="hero-lock-closed" class="h-3 w-3" />
-                          {gettext("Private")}
+                      <div class="opacity-70">
+                        <span>{post.user.display_name || post.user.email}</span>
+                      </div>
+
+                      <%!-- Share dropdown: only for public posts --%>
+                      <%= if post.is_public && post.published_at do %>
+                        <div class="dropdown dropdown-end">
+                          <button
+                            tabindex="0"
+                            class="gap-[var(--spacing-inline)] inline-flex items-center opacity-70 hover:underline"
+                          >
+                            <.icon name="hero-share" class="h-4 w-4" /> {gettext("Share")}
+                          </button>
+                          <ul
+                            tabindex="0"
+                            class="dropdown-content menu bg-base-200 rounded-box z-10 w-52 p-2 shadow-lg"
+                          >
+                            <li>
+                              <a phx-click="share_bluesky" phx-value-id={post.id}>
+                                <.icon name="hero-chat-bubble-left-ellipsis" class="h-4 w-4" />
+                                {gettext("Share on Bluesky")}
+                              </a>
+                            </li>
+                            <li>
+                              <a phx-click="share_mastodon" phx-value-id={post.id}>
+                                <.icon name="hero-globe-alt" class="h-4 w-4" />
+                                {gettext("Share on Mastodon")}
+                              </a>
+                            </li>
+                            <li>
+                              <a phx-click="share_linkedin" phx-value-id={post.id}>
+                                <.icon name="hero-briefcase" class="h-4 w-4" />
+                                {gettext("Share on LinkedIn")}
+                              </a>
+                            </li>
+                            <li>
+                              <a phx-click="share_email" phx-value-id={post.id}>
+                                <.icon name="hero-envelope" class="h-4 w-4" />
+                                {gettext("Share via Email")}
+                              </a>
+                            </li>
+                          </ul>
                         </div>
                       <% end %>
                     </div>
@@ -260,6 +248,34 @@ defmodule HomesiteWeb.PostLive.Index do
   defp list_posts(current_scope) do
     # Authenticated users see their own posts
     Content.list_posts(current_scope)
+  end
+
+  # Combined status badge: Published (public), Unlisted (private but published), or Draft
+  defp post_status_badge(%{post: %{published_at: nil}} = assigns) do
+    ~H"""
+    <div class="badge badge-warning gap-[var(--spacing-inline)]">
+      <.icon name="hero-pencil" class="h-3 w-3" />
+      {gettext("Draft")}
+    </div>
+    """
+  end
+
+  defp post_status_badge(%{post: %{is_public: true}} = assigns) do
+    ~H"""
+    <div class="badge badge-success gap-[var(--spacing-inline)]">
+      <.icon name="hero-globe-alt" class="h-3 w-3" />
+      {gettext("Published")}
+    </div>
+    """
+  end
+
+  defp post_status_badge(assigns) do
+    ~H"""
+    <div class="badge badge-info gap-[var(--spacing-inline)]">
+      <.icon name="hero-lock-closed" class="h-3 w-3" />
+      {gettext("Unlisted")}
+    </div>
+    """
   end
 
   defp preview_text(body) do

@@ -295,6 +295,7 @@ defmodule HomesiteWeb.Router do
       ] do
       live "/users/:user_identifier", UserLive.Profile, :show
       live "/users/:user_identifier/projects", UserLive.Projects, :index
+      live "/users/:user_identifier/reading/:id", UserLive.Reading, :show
       live "/users/:user_identifier/followers", UserLive.Followers, :followers
       live "/users/:user_identifier/following", UserLive.Followers, :following
       live "/posts/:slug", PostLive.Show, :show

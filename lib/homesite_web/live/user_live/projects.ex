@@ -7,7 +7,9 @@ defmodule HomesiteWeb.UserLive.Projects do
   alias Homesite.Accounts
   alias Homesite.Media
 
-  import HomesiteWeb.MediaComponents, only: [project_card: 1]
+  import HomesiteWeb.MediaComponents, only: [project_card: 1, template_icon: 1, template_name: 1]
+
+  @template_display_order ~w(photography coding writing books gears movies custom)
 
   @impl true
   def mount(%{"user_identifier" => user_identifier}, _session, socket) do
@@ -20,12 +22,14 @@ defmodule HomesiteWeb.UserLive.Projects do
 
       user ->
         projects = Media.list_public_projects_for_user(user.id)
+        grouped_projects = group_projects_by_template(projects)
 
         {:ok,
          socket
          |> assign(:page_title, "#{user.display_name || user.email}'s Projects")
          |> assign(:user, user)
-         |> assign(:projects, projects)}
+         |> assign(:projects, projects)
+         |> assign(:grouped_projects, grouped_projects)}
     end
   end
 
@@ -58,16 +62,33 @@ defmodule HomesiteWeb.UserLive.Projects do
             <p class="text-base-content/60">{gettext("No public projects yet.")}</p>
           </div>
         <% else %>
-          <div class="gap-[var(--space-md)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            <.project_card
-              :for={project <- @projects}
-              project={project}
-              show_template_badge={true}
-            />
+          <div
+            :for={{template_type, group_projects} <- @grouped_projects}
+            class="mb-[var(--space-lg)]"
+          >
+            <h2 class="mb-[var(--space-sm)] gap-[var(--space-xs)] text-[var(--text-xl)] flex items-center font-semibold">
+              <.icon name={template_icon(template_type)} class="h-5 w-5" />
+              {template_name(template_type)}
+            </h2>
+            <div class="gap-[var(--space-md)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              <.project_card :for={project <- group_projects} project={project} />
+            </div>
           </div>
         <% end %>
       </div>
     </Layouts.app>
     """
+  end
+
+  defp group_projects_by_template(projects) do
+    grouped = Enum.group_by(projects, & &1.template_type)
+
+    (@template_display_order ++ [nil])
+    |> Enum.flat_map(fn type ->
+      case Map.get(grouped, type) do
+        nil -> []
+        group -> [{type, group}]
+      end
+    end)
   end
 end
