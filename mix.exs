@@ -89,7 +89,7 @@ defmodule Homesite.MixProject do
       {:phoenix_seo, "0.1.11"},
       {:atomex, "0.5.1"},
       {:mdex, "~> 0.11.3"},
-      {:yaml_elixir, "2.12.0"},
+      {:yaml_elixir, "~> 2.12"},
       {:nimble_publisher, "1.1.1"},
       {:nimble_csv, "~> 1.1"},
       {:floki, "0.38.0"},
@@ -117,7 +117,7 @@ defmodule Homesite.MixProject do
 
       # Dev and Test
       {:phoenix_test, "0.9.1", only: :test, runtime: false},
-      {:phoenix_test_playwright, "~> 0.10.1", only: :test, runtime: false},
+      {:phoenix_test_playwright, "~> 0.12.1", only: :test, runtime: false},
       {:a11y_audit, "~> 0.3.1", only: :test, runtime: false},
       {:esbuild, "0.10.0", runtime: Mix.env() == :dev},
       {:tailwind, "0.4.1", runtime: Mix.env() == :dev},
@@ -127,11 +127,11 @@ defmodule Homesite.MixProject do
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:sobelow, "~> 0.14", only: [:dev, :test], runtime: false},
       {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
-      {:lazy_html, "0.1.8", only: :test},
+      {:lazy_html, "~> 0.1.8", only: :test},
       {:tidewave, "~> 0.5", only: :dev},
       # {:tidewave_formatter, "~> 0.5", only: [:dev, :test], runtime: false},
       {:igniter, "~> 0.7.2", only: [:dev, :test]},
-      {:usage_rules, "~> 0.1", only: [:dev]}
+      {:usage_rules, "~> 1.2", only: [:dev]}
     ]
   end
 

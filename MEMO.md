@@ -15,6 +15,28 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2026-03-01 - Dependency Update
+
+### Session Summary
+
+Updated all Elixir dependencies to latest versions. 11 deps updated, all tests pass.
+
+#### Updated Dependencies
+- phoenix 1.8.3 → 1.8.4, phoenix_live_view 1.1.22 → 1.1.25
+- bandit 1.10.2 → 1.10.3, swoosh 1.21.0 → 1.22.1
+- mdex 0.11.3 → 0.11.6, hammer 7.1.0 → 7.2.0
+- tidewave 0.5.4 → 0.5.5, lazy_html 0.1.8 → 0.1.10
+- yaml_elixir 2.12.0 → 2.12.1
+- phoenix_test_playwright 0.10.1 → 0.12.1, usage_rules 0.1.26 → 1.2.3
+
+#### Blocked
+- gettext 0.26.2 → 1.0.2: blocked by timex `~> 0.26`
+
+#### Verification
+- `mix test.all`: 1842 tests, 0 failures, credo clean
+
+---
+
 ## 2026-03-01 - Fix Media Upload Crash + CSP
 
 ### Session Summary
