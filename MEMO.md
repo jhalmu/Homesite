@@ -15,6 +15,27 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2026-03-01 - Fix Media Upload Crash + CSP
+
+### Session Summary
+
+Fixed LiveView crash during image upload in `/media` and CSP frame-src issue.
+
+#### Root Cause
+PubSub broadcast sent full `MediaItem` struct (including binary image data) with unpreloaded `:tags` association. When `handle_info({:created, media_item})` ran `stream_insert`, the template called `length(media.tags)` on `%Ecto.Association.NotLoaded{}`, crashing the process. The crash caused a remount which cleared the success flash, making users see a brief error banner.
+
+#### Fixes (291f4cf)
+- **Re-fetch from DB in PubSub handlers** — `handle_info({:created, %{id: id}})` now extracts just the ID and calls `Media.get_media_item!/2` (which preloads `:tags`)
+- **Fixed `successful_uploads` filter** — `consume_uploaded_entries` returns bare values, not `{:ok, value}` tuples
+- **Upload error display** — Only show errors when `entry.progress == 0` (pre-upload validation)
+- **Defensive try/rescue** — `apply_post_upload_actions` wrapped to prevent tag/EXIF failures from crashing uploads
+- **CSP frame-src** — Added `'self'` for Phoenix LiveReload iframe
+
+#### Earlier: Issue #106 (51e75e1)
+All 6 items resolved: grouped projects by template type, template-aware portfolio show page with hero-image header, fixed post status badges (Published/Unlisted/Draft).
+
+---
+
 ## 2026-02-09 - Credo Zero: Eliminate All Strict Warnings
 
 ### Session Summary
