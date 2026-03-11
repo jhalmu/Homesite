@@ -1,5 +1,5 @@
 defmodule HomesiteWeb.ProjectLive.Show do
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :authenticated_live_view
 
   import Ecto.Query
   import HomesiteWeb.Helpers.DateHelpers

@@ -3,7 +3,7 @@ defmodule HomesiteWeb.FollowingLive.Index do
   LiveView for displaying posts from users you follow.
   Shows a chronological feed of public posts from followed users.
   """
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :authenticated_live_view
 
   alias Homesite.Content
   alias Homesite.Follows

@@ -2,7 +2,7 @@ defmodule HomesiteWeb.ChatLive.Index do
   @moduledoc """
   LiveView for displaying chat channel list.
   """
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :authenticated_live_view
 
   alias Homesite.Chat
 

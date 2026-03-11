@@ -1,5 +1,5 @@
 defmodule HomesiteWeb.TagLive.Show do
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :authenticated_live_view
 
   import HomesiteWeb.Helpers.DateHelpers
 

@@ -9,7 +9,7 @@ defmodule HomesiteWeb.AdminLive.Feedback.Index do
   - Recent feedback submissions
   - Response rate by user rank
   """
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :admin_live_view
 
   alias Homesite.Feedback
   import HomesiteWeb.Helpers.DateHelpers

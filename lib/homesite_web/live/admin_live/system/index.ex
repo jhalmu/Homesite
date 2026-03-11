@@ -2,7 +2,7 @@ defmodule HomesiteWeb.AdminLive.System.Index do
   @moduledoc """
   Admin LiveView for displaying system information, version, and changelog.
   """
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :admin_live_view
 
   alias Homesite.System
 

@@ -22,6 +22,9 @@
 		reverse_proxy app:4000 {
 			# Tell Phoenix we're using HTTPS
 			header_up X-Forwarded-Proto https
+			# Forward WebSocket upgrade headers for LiveView
+			header_up Upgrade {http.request.header.Upgrade}
+			header_up Connection {http.request.header.Connection}
 		}
 	}
 

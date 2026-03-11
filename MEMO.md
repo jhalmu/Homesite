@@ -15,6 +15,37 @@ Session notes and progress tracking for the Homesite project.
 
 ---
 
+## 2026-03-11 - Fix WebSocket and Cross-Session Navigation Bugs
+
+### Session Summary
+
+Fixed two production bugs on orangedinos.de:
+1. **Cross-session navigation errors**: Every LiveView navigation triggered "redirecting across live_sessions" because the router had 7 separate `live_session` blocks
+2. **WebSocket fallback to longpoll**: Caddy reverse proxy wasn't forwarding upgrade headers
+
+### Changes Made
+
+#### Consolidated live_sessions (7 → 1)
+- Added `authenticated_live_view` and `admin_live_view` macros to `homesite_web.ex` with module-level `on_mount` hooks
+- Updated 25 authenticated LiveViews → `use HomesiteWeb, :authenticated_live_view`
+- Updated 20 admin LiveViews → `use HomesiteWeb, :admin_live_view`
+- Consolidated all `live` routes into single `live_session :default` in router
+- Fixed route ordering: specific paths (`/users/register`, `/users/settings`, `/posts/new`) before catch-all params (`/users/:user_identifier`, `/posts/:slug`)
+
+#### WebSocket fix (Caddyfile)
+- Added `Upgrade` and `Connection` header forwarding to reverse_proxy block
+
+### Post-Deploy Steps
+- Reload Caddy: `docker compose exec caddy caddy reload --config /etc/caddy/Caddyfile`
+- Verify WebSocket transport in browser DevTools (should show `websocket` not `longpoll`)
+- Navigate between public/auth/admin pages — no full page reloads expected
+
+### Test Results
+- 1842 tests pass, 0 failures
+- Credo: no issues
+
+---
+
 ## 2026-03-01 - Dependency Update + Fix Hetzner Deploy
 
 ### Session Summary

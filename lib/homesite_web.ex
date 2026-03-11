@@ -60,6 +60,31 @@ defmodule HomesiteWeb do
     end
   end
 
+  def authenticated_live_view do
+    quote do
+      use Phoenix.LiveView
+
+      on_mount {HomesiteWeb.UserAuth, :require_authenticated}
+
+      import HomesiteWeb.LiveHelpers
+
+      unquote(html_helpers())
+    end
+  end
+
+  def admin_live_view do
+    quote do
+      use Phoenix.LiveView
+
+      on_mount {HomesiteWeb.UserAuth, :require_authenticated}
+      on_mount {HomesiteWeb.UserAuth, :require_admin}
+
+      import HomesiteWeb.LiveHelpers
+
+      unquote(html_helpers())
+    end
+  end
+
   def live_component do
     quote do
       use Phoenix.LiveComponent

@@ -4,7 +4,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Reports do
 
   Supports listing reports with filtering and viewing/resolving individual reports.
   """
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :admin_live_view
 
   alias Homesite.Moderation
 

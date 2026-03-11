@@ -5,7 +5,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Violations do
   Shows users with violations, sorted by total weight.
   Includes real-time alerts when users reach violation thresholds.
   """
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :admin_live_view
 
   alias Homesite.Accounts
   alias Homesite.Moderation

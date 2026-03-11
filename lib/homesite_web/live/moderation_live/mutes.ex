@@ -4,7 +4,7 @@ defmodule HomesiteWeb.ModerationLive.Mutes do
 
   Users can view their muted users list and unmute users.
   """
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :authenticated_live_view
 
   alias Homesite.Moderation
 

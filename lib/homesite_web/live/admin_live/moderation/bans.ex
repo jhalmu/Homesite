@@ -4,7 +4,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Bans do
 
   Admins can view active bans, create new bans, and lift existing ones (rare).
   """
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :admin_live_view
 
   alias Homesite.Accounts
   alias Homesite.Moderation

@@ -2,7 +2,7 @@ defmodule HomesiteWeb.AdminLive.Invitations.Index do
   @moduledoc """
   LiveView for managing invitation codes (admin only).
   """
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :admin_live_view
 
   import HomesiteWeb.Helpers.DateHelpers
 

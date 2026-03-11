@@ -8,7 +8,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Settings do
   - Default durations
   - Reason presets
   """
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :admin_live_view
 
   alias Homesite.Moderation
 

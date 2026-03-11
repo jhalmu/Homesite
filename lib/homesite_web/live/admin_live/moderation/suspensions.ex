@@ -4,7 +4,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Suspensions do
 
   Admins can view active suspensions, create new suspensions, and lift existing ones.
   """
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :admin_live_view
 
   alias Homesite.Accounts
   alias Homesite.Moderation

@@ -4,7 +4,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Dashboard do
 
   Shows overview of moderation activity and quick access to all moderation features.
   """
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :admin_live_view
 
   alias Homesite.Moderation
   import HomesiteWeb.Helpers.ModerationHelpers

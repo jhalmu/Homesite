@@ -1,6 +1,6 @@
 defmodule HomesiteWeb.AdminLive.Threat.AuditLog do
   @moduledoc false
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :admin_live_view
 
   alias Homesite.Accounts
   alias Homesite.ThreatReputation

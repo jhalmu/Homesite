@@ -1,5 +1,5 @@
 defmodule HomesiteWeb.PostLive.Form do
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :authenticated_live_view
 
   import Ecto.Query
 

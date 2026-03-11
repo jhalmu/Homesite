@@ -1,5 +1,5 @@
 defmodule HomesiteWeb.FeedSourceLive.Index do
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :authenticated_live_view
 
   alias Homesite.ExternalFeeds
   import HomesiteWeb.Helpers.DateHelpers

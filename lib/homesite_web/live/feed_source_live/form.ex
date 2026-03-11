@@ -1,5 +1,5 @@
 defmodule HomesiteWeb.FeedSourceLive.Form do
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :authenticated_live_view
 
   alias Homesite.ExternalFeeds
   alias Homesite.ExternalFeeds.FeedSource

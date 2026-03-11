@@ -37,62 +37,6 @@ defmodule HomesiteWeb.Router do
     plug HomesiteWeb.Plugs.RateLimitPlug, limiter: :feeds
   end
 
-  scope "/", HomesiteWeb do
-    pipe_through :browser
-
-    # SEO routes
-    get "/sitemap.xml", SitemapController, :index
-
-    # Image serving for OpenGraph and social sharing
-    get "/images/posts/:post_id/hero", ImageController, :post_hero
-    get "/images/posts/:post_id/og-card.png", ImageController, :post_og_card
-    get "/images/users/:user_id/avatar", ImageController, :user_avatar
-    get "/images/users/:user_id/avatar.png", ImageController, :user_avatar_png
-    get "/images/og-default.png", ImageController, :default_og_image
-    get "/images/media/:id/public", ImageController, :public_media
-
-    live_session :public,
-      on_mount: [
-        {HomesiteWeb.UserAuth, :mount_current_scope},
-        {HomesiteWeb.SetLocaleHook, :default},
-        {HomesiteWeb.CaptureConnectionInfoHook, :default}
-      ] do
-      live "/", PageLive.Home, :index
-
-      # Public FAQ viewing
-      live "/faqs", FaqLive.Index, :index
-
-      # Public happiness meter and testimonials
-      live "/happiness", HappinessLive.Index, :index
-      live "/testimonials/:token", TestimonialLive.Show, :show
-
-      # Public portfolio showcase
-      live "/portfolio", PortfolioLive.Index, :index
-      live "/portfolio/:slug", PortfolioLive.Show, :show
-
-      # Legal pages
-      live "/privacy", PrivacyLive.Index, :index
-    end
-  end
-
-  # Public search with rate limiting
-  scope "/", HomesiteWeb do
-    if Mix.env() != :test do
-      pipe_through [:browser, :rate_limit_search]
-    else
-      pipe_through [:browser]
-    end
-
-    live_session :public_search,
-      on_mount: [
-        {HomesiteWeb.UserAuth, :mount_current_scope},
-        {HomesiteWeb.SetLocaleHook, :default},
-        {HomesiteWeb.CaptureConnectionInfoHook, :default}
-      ] do
-      live "/search", SearchLive.Index, :index
-    end
-  end
-
   # Other scopes may use custom stacks.
   # scope "/api", HomesiteWeb do
   #   pipe_through :api
@@ -118,22 +62,70 @@ defmodule HomesiteWeb.Router do
     end
   end
 
-  ## Authentication routes
-
   scope "/", HomesiteWeb do
-    pipe_through [:browser, :require_authenticated_user]
+    pipe_through :browser
 
-    live_session :require_authenticated_user,
+    # SEO routes
+    get "/sitemap.xml", SitemapController, :index
+
+    # Image serving for OpenGraph and social sharing
+    get "/images/posts/:post_id/hero", ImageController, :post_hero
+    get "/images/posts/:post_id/og-card.png", ImageController, :post_og_card
+    get "/images/users/:user_id/avatar", ImageController, :user_avatar
+    get "/images/users/:user_id/avatar.png", ImageController, :user_avatar_png
+    get "/images/og-default.png", ImageController, :default_og_image
+    get "/images/media/:id/public", ImageController, :public_media
+
+    live_session :default,
       on_mount: [
-        {HomesiteWeb.UserAuth, :require_authenticated},
+        {HomesiteWeb.UserAuth, :mount_current_scope},
         {HomesiteWeb.SetLocaleHook, :default},
         {HomesiteWeb.CaptureConnectionInfoHook, :default}
       ] do
+      # Public routes
+      live "/", PageLive.Home, :index
+
+      # Public FAQ viewing
+      live "/faqs", FaqLive.Index, :index
+
+      # Public happiness meter and testimonials
+      live "/happiness", HappinessLive.Index, :index
+      live "/testimonials/:token", TestimonialLive.Show, :show
+
+      # Public portfolio showcase
+      live "/portfolio", PortfolioLive.Index, :index
+      live "/portfolio/:slug", PortfolioLive.Show, :show
+
+      # Legal pages
+      live "/privacy", PrivacyLive.Index, :index
+
+      # Public search
+      live "/search", SearchLive.Index, :index
+
+      # Registration and login (must be before /users/:user_identifier catch-all)
+      live "/users/register", UserLive.Registration, :new
+      live "/users/log-in", UserLive.Login, :new
+      live "/users/log-in/:token", UserLive.Confirmation, :new
+
+      # Authenticated user settings (must be before /users/:user_identifier catch-all)
+      live "/users/settings", UserLive.Settings, :edit
+      live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
+
+      # Public user profiles (catch-all, must be after specific /users/* routes)
+      live "/users/:user_identifier", UserLive.Profile, :show
+      live "/users/:user_identifier/projects", UserLive.Projects, :index
+      live "/users/:user_identifier/reading/:id", UserLive.Reading, :show
+      live "/users/:user_identifier/followers", UserLive.Followers, :followers
+      live "/users/:user_identifier/following", UserLive.Followers, :following
+
+      # Authenticated routes (auth enforced via on_mount in LiveView modules)
       live "/dashboard", DashboardLive.Index, :index
 
+      # Post routes (specific before catch-all :slug)
       live "/posts", PostLive.Index, :index
       live "/posts/new", PostLive.Form, :new
       live "/posts/:slug/edit", PostLive.Form, :edit
+      live "/posts/:slug", PostLive.Show, :show
 
       live "/tags", TagLive.Index, :index
       live "/tags/new", TagLive.Form, :new
@@ -161,9 +153,6 @@ defmodule HomesiteWeb.Router do
       live "/chat", ChatLive.Index, :index
       live "/chat/:slug", ChatLive.Show, :show
 
-      live "/users/settings", UserLive.Settings, :edit
-      live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
-
       # Feedback submission (authenticated users only)
       live "/feedback", FeedbackLive.Index, :index
 
@@ -174,22 +163,8 @@ defmodule HomesiteWeb.Router do
       # Notifications
       live "/notifications", NotificationLive.Index, :index
       live "/notifications/settings", NotificationLive.Settings, :index
-    end
 
-    post "/users/update-password", UserSessionController, :update_password
-  end
-
-  # Admin routes (require admin role)
-  scope "/", HomesiteWeb do
-    pipe_through [:browser, :require_authenticated_user]
-
-    live_session :require_admin,
-      on_mount: [
-        {HomesiteWeb.UserAuth, :require_authenticated},
-        {HomesiteWeb.UserAuth, :require_admin},
-        {HomesiteWeb.SetLocaleHook, :default},
-        {HomesiteWeb.CaptureConnectionInfoHook, :default}
-      ] do
+      # Admin routes (auth + admin enforced via on_mount in LiveView modules)
       live "/admin", AdminLive.Dashboard, :index
       live "/admin/users", AdminLive.Users.Index, :index
       live "/admin/invitations", AdminLive.Invitations.Index, :index
@@ -220,43 +195,26 @@ defmodule HomesiteWeb.Router do
       live "/admin/threats/country-watchlist", AdminLive.Threat.CountryWatchlist, :index
       live "/admin/threats/audit-log", AdminLive.Threat.AuditLog, :index
     end
+
+    # Redirect old /posts/:id/:slug URLs to new /posts/:slug format
+    get "/posts/:id/:slug", PostRedirectController, :show_with_slug
+
+    delete "/users/log-out", UserSessionController, :delete
   end
 
-  # Registration route - requires invitation code
+  # Authenticated non-live routes
   scope "/", HomesiteWeb do
-    # Only apply rate limiting in non-test environments
-    if Mix.env() != :test do
-      pipe_through [:browser, :rate_limit_registration]
-    else
-      pipe_through [:browser]
-    end
+    pipe_through [:browser, :require_authenticated_user]
 
-    live_session :registration,
-      on_mount: [
-        {HomesiteWeb.UserAuth, :mount_current_scope},
-        {HomesiteWeb.SetLocaleHook, :default},
-        {HomesiteWeb.CaptureConnectionInfoHook, :default}
-      ] do
-      live "/users/register", UserLive.Registration, :new
-    end
+    post "/users/update-password", UserSessionController, :update_password
   end
 
+  # Login POST route with rate limiting
   scope "/", HomesiteWeb do
-    # Only apply rate limiting in non-test environments
     if Mix.env() != :test do
       pipe_through [:browser, :rate_limit_auth]
     else
       pipe_through [:browser]
-    end
-
-    live_session :login,
-      on_mount: [
-        {HomesiteWeb.UserAuth, :mount_current_scope},
-        {HomesiteWeb.SetLocaleHook, :default},
-        {HomesiteWeb.CaptureConnectionInfoHook, :default}
-      ] do
-      live "/users/log-in", UserLive.Login, :new
-      live "/users/log-in/:token", UserLive.Confirmation, :new
     end
 
     post "/users/log-in", UserSessionController, :create
@@ -282,28 +240,5 @@ defmodule HomesiteWeb.Router do
     get "/tags/:slug/rss.xml", FeedController, :tag
     get "/tags/:slug/feed.xml", FeedController, :tag
     get "/tags/:slug/feed.json", FeedController, :tag
-  end
-
-  scope "/", HomesiteWeb do
-    pipe_through [:browser]
-
-    live_session :current_user,
-      on_mount: [
-        {HomesiteWeb.UserAuth, :mount_current_scope},
-        {HomesiteWeb.SetLocaleHook, :default},
-        {HomesiteWeb.CaptureConnectionInfoHook, :default}
-      ] do
-      live "/users/:user_identifier", UserLive.Profile, :show
-      live "/users/:user_identifier/projects", UserLive.Projects, :index
-      live "/users/:user_identifier/reading/:id", UserLive.Reading, :show
-      live "/users/:user_identifier/followers", UserLive.Followers, :followers
-      live "/users/:user_identifier/following", UserLive.Followers, :following
-      live "/posts/:slug", PostLive.Show, :show
-    end
-
-    # Redirect old /posts/:id/:slug URLs to new /posts/:slug format
-    get "/posts/:id/:slug", PostRedirectController, :show_with_slug
-
-    delete "/users/log-out", UserSessionController, :delete
   end
 end

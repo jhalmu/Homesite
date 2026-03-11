@@ -1,5 +1,5 @@
 defmodule HomesiteWeb.UserLive.Settings do
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :authenticated_live_view
 
   on_mount {HomesiteWeb.UserAuth, :require_sudo_mode}
 

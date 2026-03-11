@@ -1,5 +1,5 @@
 defmodule HomesiteWeb.AdminLive.Index do
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :admin_live_view
 
   alias Homesite.Accounts
   alias Homesite.Analytics

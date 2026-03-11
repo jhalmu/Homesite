@@ -3,7 +3,7 @@ defmodule HomesiteWeb.FeedLive.Index do
   LiveView for displaying unified feed view with all external feed items.
   Supports read/unread tracking, bookmarks, and filtering.
   """
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :authenticated_live_view
 
   alias Homesite.ExternalFeeds
   import HomesiteWeb.Helpers.DateHelpers

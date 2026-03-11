@@ -6,7 +6,7 @@ defmodule HomesiteWeb.ModerationLive.Report do
   Supports content context (e.g., reporting from a chat message or post)
   and reason presets for common report types.
   """
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :authenticated_live_view
 
   alias Homesite.Accounts
   alias Homesite.Moderation

@@ -4,7 +4,7 @@ defmodule HomesiteWeb.FeedbackLive.Index do
 
   Users can voluntarily submit feedback at any time.
   """
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :authenticated_live_view
 
   alias Homesite.Feedback
   import HomesiteWeb.CoreComponents

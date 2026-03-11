@@ -1,5 +1,5 @@
 defmodule HomesiteWeb.ProjectLive.SteppedForm do
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :authenticated_live_view
 
   alias Homesite.Content
   alias Homesite.Media

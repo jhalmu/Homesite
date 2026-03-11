@@ -4,7 +4,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Logs do
 
   Shows all moderation actions with filtering by action type and target user.
   """
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :admin_live_view
 
   alias Homesite.Moderation
   import HomesiteWeb.Helpers.ModerationHelpers

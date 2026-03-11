@@ -4,7 +4,7 @@ defmodule HomesiteWeb.AdminLive.Users.Index do
 
   Requires admin role with minimum flower level 3 for access.
   """
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :admin_live_view
 
   import HomesiteWeb.Helpers.DateHelpers
 

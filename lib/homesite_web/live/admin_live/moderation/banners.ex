@@ -4,7 +4,7 @@ defmodule HomesiteWeb.AdminLive.Moderation.Banners do
 
   Admins can send warning messages to users that appear on their dashboard.
   """
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :admin_live_view
 
   alias Homesite.Moderation
 

@@ -3,7 +3,7 @@ defmodule HomesiteWeb.NotificationLive.Settings do
   Notification Settings LiveView.
   Allows users to configure their notification preferences.
   """
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :authenticated_live_view
 
   alias Homesite.Accounts
 

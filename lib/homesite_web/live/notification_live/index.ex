@@ -3,7 +3,7 @@ defmodule HomesiteWeb.NotificationLive.Index do
   Notification Center LiveView.
   Displays all notifications with real-time updates via PubSub.
   """
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :authenticated_live_view
 
   import HomesiteWeb.Helpers.DateHelpers
 

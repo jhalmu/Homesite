@@ -11,7 +11,7 @@ defmodule HomesiteWeb.ChatLive.Show do
   - User blocking (personal)
   - Ban/mute checks before sending
   """
-  use HomesiteWeb, :live_view
+  use HomesiteWeb, :authenticated_live_view
 
   alias Homesite.Accounts
   alias Homesite.Chat
